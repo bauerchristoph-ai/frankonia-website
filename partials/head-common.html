@@ -1,0 +1,17 @@
+<!-- No font preload here — typography is now a system stack (Helvetica
+     Neue / Arial, see tokens.css --font-family-base), nothing to
+     self-host or preload. These two lines used to preload Open Sans;
+     removing them also fixes a pre-existing bug worth knowing about:
+     they pointed at open-sans-regular-400.woff2/open-sans-extrabold-800.woff2,
+     two static files that never actually existed in assets/fonts/ (only
+     the single open-sans-variable.woff2 file was ever added, 2026-07-15)
+     — every page load was silently issuing two failed preload requests
+     for files that 404'd. -->
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/reset.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/layout.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/site-chrome.css">
+<link rel="stylesheet" href="/css/motion.css">
+<script src="/js/main.js" defer></script>

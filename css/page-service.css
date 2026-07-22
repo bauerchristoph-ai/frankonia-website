@@ -1,0 +1,436 @@
+/*
+  Service-page template styles. Page-scoped per CLAUDE.md convention —
+  linked from pages/werkschutz.html after the head-common include, same
+  pattern as page-home.css on the homepage.
+
+  REUSE MODEL FOR THE NEXT 9 SERVICE PAGES:
+  - Every class below is named `.service-*`, not `.werkschutz-*` — it's
+    the template, not a one-off. To build the next service page (e.g.
+    Objektschutz): copy pages/werkschutz.html to pages/objektschutz.html,
+    swap the service name/copy/URLs/image throughout, keep this same
+    stylesheet linked, and reuse every `.service-*` class as-is. Nothing
+    in this file should need to change per service.
+  - Sections that are genuinely sitewide (not just service-page-wide) —
+    .section rhythm, .brand-bar/.hex, .breadcrumbs, .faq__list/.faq-item,
+    .review-card — live in components.css instead, so city pages and any
+    future page type can reuse them too without depending on this file.
+  - Deliberately NOT reused from page-home.css: the oversized `main h2`
+    treatment (3–6rem headings). Service-page H2s intentionally stay at
+    base.css's default h2 size — see the brief this page was built
+    against ("do not create oversized headings everywhere"). If a future
+    service page wants a different heading scale, that's a page-service.css
+    change (affecting all service pages consistently), not a per-page hack.
+*/
+
+/* ---- Service hero ---- */
+/* Contained two-column layout (text | real service photo), not another
+   full-bleed homepage-style hero — this is a secondary/service-specific
+   hero, sized accordingly. */
+
+.service-hero {
+  padding-block: var(--space-8) var(--space-9);
+}
+
+.service-hero__grid {
+  display: grid;
+  gap: var(--space-8);
+  align-items: center;
+}
+
+.service-hero__content .brand-bar {
+  display: block;
+  margin-bottom: var(--space-4);
+}
+
+/* Regular weight, same reasoning as the homepage hero H1 — size stays at
+   base.css's default (--font-size-3xl, 2.25–3.06rem), deliberately well
+   below the homepage hero's 2.5–4rem, since this hero shares the page
+   with a photo and isn't meant to be the biggest thing on the site. */
+.service-hero h1 {
+  font-weight: var(--font-weight-regular);
+}
+
+.service-hero__lead {
+  margin-top: var(--space-4);
+  max-width: 34rem;
+  color: var(--color-text-muted);
+}
+
+.service-hero__actions {
+  margin-top: var(--space-6);
+}
+
+.service-hero__reassurance {
+  margin-top: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.service-hero__trust-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.service-hero__cert-seal {
+  height: 3.5rem;
+  width: auto;
+}
+
+/* Contained, not full-bleed — aspect-ratio matches the real image
+   (820×1227) exactly, so there's no layout shift and no crop/distortion
+   (object-fit: contain, not cover, per the brief's explicit "do not
+   distort the person/site image" requirement). max-width keeps a
+   portrait photo from reading as oversized next to the text column, same
+   reasoning as the homepage outfit viewer's image frame. */
+.service-hero__media {
+  width: 100%;
+  max-width: 22rem;
+  margin-inline: auto;
+  aspect-ratio: 820 / 1227;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: var(--color-bg-elevated);
+}
+
+.service-hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@media (min-width: 1024px) {
+  .service-hero__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+/* ---- Service introduction ("Was ist X?") ---- */
+
+.service-intro__lede {
+  margin-top: var(--space-4);
+  font-size: var(--font-size-md);
+}
+
+.service-intro__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 42rem;
+  color: var(--color-text-muted);
+}
+
+/* ---- Customer problems / use cases ---- */
+/* A divided list (hairline top borders), not the homepage's unboxed
+   icon+title+text Pain Hook grid — reusable as-is for any other
+   service's situations list; only the copy changes per service. */
+
+.service-problems__list {
+  list-style: none;
+  display: grid;
+  gap: var(--space-6);
+  margin-top: var(--space-2);
+}
+
+.service-problems__list li {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.service-problems__list h3 {
+  font-size: var(--font-size-md);
+  margin-bottom: var(--space-2);
+}
+
+.service-problems__list p {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+@media (min-width: 768px) {
+  .service-problems__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-7);
+  }
+}
+
+/* ---- What the service includes ---- */
+/* Plain grid, no dividers/cards — visually distinct from the problems
+   list above and the pillars list below, per the brief's "vary section
+   compositions" direction. */
+
+.service-scope__grid {
+  display: grid;
+  gap: var(--space-6);
+  margin-top: var(--space-2);
+}
+
+.service-scope__item h3 {
+  font-size: var(--font-size-md);
+  margin-bottom: var(--space-2);
+}
+
+.service-scope__item p {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+@media (min-width: 768px) {
+  .service-scope__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-7);
+  }
+}
+
+@media (min-width: 1024px) {
+  .service-scope__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---- Six value pillars, applied to this service ---- */
+/* A left-border-accented list, not the homepage's .pillar-card grid —
+   a genuinely different composition, per the brief's explicit "do not
+   simply copy the homepage Our System section". */
+
+.service-pillars__grid {
+  display: grid;
+  gap: var(--space-6);
+  margin-top: var(--space-2);
+}
+
+.service-pillars__item {
+  padding-left: var(--space-4);
+  /* Blue-dark on --color-bg-subtle (near-black, not the elevated gray)
+     clears the same contrast this section's background always clears —
+     see the tokens.css caveat: the fail case is elevated GRAY, not
+     bg-subtle, which is black with a 3% white wash. Safe here. */
+  border-left: 2px solid var(--color-accent-strong);
+}
+
+.service-pillars__item h3 {
+  font-size: var(--font-size-md);
+  margin-bottom: var(--space-2);
+}
+
+.service-pillars__item p {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+@media (min-width: 768px) {
+  .service-pillars__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-7);
+  }
+}
+
+@media (min-width: 1024px) {
+  .service-pillars__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---- How the engagement works (process) ---- */
+/* A numbered list, not a SaaS-style onboarding graphic — plain type,
+   grid-positioned so the number sits beside its step's title+text
+   without extra wrapper markup. */
+
+.service-process__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin-top: var(--space-2);
+  max-width: 42rem;
+}
+
+.service-process__step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: var(--space-4);
+  row-gap: var(--space-1);
+}
+
+.service-process__number {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  align-self: start;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.service-process__step h3 {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: var(--font-size-md);
+}
+
+.service-process__step p {
+  grid-column: 2;
+  grid-row: 2;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* ---- Certifications and trust (contextual) ---- */
+/* Same badge/review-card primitives as the homepage trust section (real,
+   shared certification assets), but no invented employee/customer-count
+   metrics and no full-bleed background photo — a lighter, contextual
+   version, not a duplicate. */
+
+.service-trust__badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
+
+.service-trust__cert-seal {
+  height: 5rem;
+  width: auto;
+}
+
+.service-trust__members {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-top: var(--space-7);
+  padding-top: var(--space-6);
+  border-top: 1px solid rgb(255 255 255 / 0.22);
+  font-size: var(--font-size-sm);
+  color: rgb(255 255 255 / 0.65);
+}
+
+.service-trust__members-label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: var(--font-weight-bold);
+  color: rgb(255 255 255 / 0.5);
+}
+
+/* ---- Operational areas / local SEO links ---- */
+
+.service-areas__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  max-width: 30rem;
+}
+
+.service-areas__link {
+  display: block;
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+}
+
+.service-areas__link:hover {
+  color: var(--color-accent);
+}
+
+.service-areas__note {
+  margin-top: var(--space-6);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ---- Reference / customer result ---- */
+/* Every value in here is a bracketed placeholder (see the HTML) — this
+   is scaffolding for a real case study, not real content dressed up to
+   look like one. Replace wholesale once the client supplies an approved
+   reference. */
+
+.service-reference__disclaimer {
+  margin-top: var(--space-3);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+.service-reference__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+  padding: var(--space-7);
+  background-color: var(--color-bg-elevated);
+  border-radius: var(--radius-lg);
+}
+
+.service-reference__facts {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.service-reference__facts dt {
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgb(255 255 255 / 0.6);
+  margin-bottom: var(--space-1);
+}
+
+.service-reference__facts dd {
+  margin: 0;
+}
+
+.service-reference__quote {
+  padding-top: var(--space-6);
+  border-top: 1px solid rgb(255 255 255 / 0.16);
+  font-style: italic;
+}
+
+.service-reference__quote footer {
+  margin-top: var(--space-3);
+  font-style: normal;
+  font-size: var(--font-size-sm);
+  color: rgb(255 255 255 / 0.65);
+}
+
+@media (min-width: 768px) {
+  .service-reference__facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+}
+
+/* FAQ section reuses .section__intro/.faq__list/.faq-item as-is (no
+   page-service.css overrides needed) — unlike the homepage's forced
+   one-line FAQ heading, this page's H2s all stay at one consistent,
+   unforced scale. */
+
+/* ---- Final conversion ---- */
+
+.service-cta__content {
+  max-width: 38rem;
+}
+
+.service-cta__content .brand-bar {
+  display: block;
+  margin-bottom: var(--space-4);
+}
+
+.service-cta__content > p {
+  margin-top: var(--space-4);
+  color: var(--color-text-muted);
+}
+
+.service-cta__actions {
+  margin-top: var(--space-6);
+}
+
+.service-cta__reassurance {
+  margin-top: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}

@@ -1,0 +1,3941 @@
+/*
+  Homepage-only styles. Page-scoped per CLAUDE.md convention — linked from
+  pages/index.html after the head-common include. Not shared: service/city
+  page templates will need their own section layouts, even where the
+  visual language (spacing, cards, badges) overlaps. Promote a piece to
+  components.css only once a second page actually reuses it verbatim.
+
+  2026-07-15: .review-card__stars-fill--94, .section/.section--subtle/
+  .section--inverse/.section__intro, .brand-bar/.hex, and the FAQ
+  accordion (.faq__list, .faq-item and its children, .faq__toggle-row)
+  were promoted to components.css when pages/werkschutz.html became the second page to
+  need them verbatim — see components.css's header comment. They are
+  intentionally NOT duplicated here anymore; this file now only
+  overrides/extends them where the homepage specifically needs to (e.g.
+  `main h2` below, and .faq__intro further down), same pattern as any
+  other page-scoped stylesheet layering on top of the shared foundation.
+*/
+
+/* Big, regular-weight section headings (client request 2026-07-13) —
+   applied to every section H2 on the homepage, not just Trust where this
+   treatment started. Scoped to `main h2`, not a bare `h2` selector: the
+   footer's column headings (site-chrome.css .site-footer__heading) are
+   also literal <h2> elements on this same page, but they live outside
+   <main>, so this doesn't reach them. This makes H2s (48–96px) larger
+   than the H1 (36–49px, --font-size-3xl) — a deliberate visual choice
+   here, not the usual H1 > H2 size relationship, confirmed with the
+   client rather than assumed. Homepage-only: the service-page template
+   (css/page-service.css) deliberately does NOT reuse this — see the
+   note there and the brief that shaped /werkschutz/ ("do not create
+   oversized headings everywhere"). */
+/* Unified 2026-07-15 (client request: "make all the titles the same
+   size and boldness, matching the References section") — every section
+   H2 that doesn't have its own documented exception now uses exactly
+   the same clamp/weight as .references__intro h2 (below). Was
+   clamp(3rem, 2rem+5vw, 6rem); the References numbers are noticeably
+   smaller at the top end (4.25rem max) and much smaller at the bottom
+   end (1rem min, vs. 3rem) — that lower bound was tuned for a specific
+   forced-one-line string there, but works fine as a general mobile
+   floor too since headings wrap normally everywhere except
+   References/FAQ (see those rules for the one-line-specific
+   white-space: nowrap, which is NOT part of this shared default). */
+/* Bigger and lighter again (client request 2026-07-15, after the real
+   Open Sans variable font was added — see assets/fonts/README.md):
+   anchored at 2.25rem/400px viewport and 6.5rem/1440px (up from
+   5.5rem), and now actually lighter than regular via
+   --font-weight-light (300) — only possible because the real font file
+   has a wght axis down to 300; that token is a documented, narrow
+   exception to the client's own "400/800 only" CI guideline, made for
+   this exact rule — see the long comment on --font-weight-light in
+   tokens.css before reusing 300 anywhere else. NOT applied to
+   .faq__intro h2/.social__intro h2 (still 4.25rem, still regular 400) —
+   both are hard-capped by their own one-line requirement: at 1440px
+   container width, their respective strings literally cannot render
+   past ~4.4rem without overflowing past the container, so raising them
+   to match would break the "must not wrap" fix each of them has. Also
+   not applied to .conversion__info h2/.outfits__intro h2 — see those
+   rules' comments for why those stay compact (shared column with a
+   form/viewer, per an earlier explicit request). Two exceptions used to
+   live here too and are now moot: .pillars__intro h2 (smaller than
+   every other section title) — that selector's whole section was
+   removed 2026-07-17; and .references__intro h2, which had the exact
+   same one-line treatment as .faq__intro h2/.social__intro h2 above
+   until 2026-07-17, when a layout change (heading now shares its row
+   with new supporting copy, see .references__intro) made forcing one
+   line counterproductive — it was removed there and now just inherits
+   this rule directly, no exception anymore. */
+/* Much bigger again (client request 2026-07-15) — 2.5rem/400px up to
+   9rem/1440px, clean 10vw slope. Weight stays --font-weight-light (300)
+   — that's the font file's actual floor (fvar wght axis is 300–800, see
+   assets/fonts/README.md), so this is already as light as this font can
+   go; can't reduce further without a different font file. */
+/* Smaller again (client request 2026-07-15) — was
+   clamp(2rem, 0.46rem + 6.15vw, 6rem) = 32–96px, now 28–84px. */
+/* Smaller again (client request 2026-07-15) — was
+   clamp(1.75rem, 0.4rem + 5.4vw, 5.25rem) = 28–84px, now 24–72px. */
+main h2 {
+  /* Reduced a bit 2026-07-21 (client: "un poco más chicos") — was
+     clamp(1.5rem, 0.35rem + 4.6vw, 4.5rem). Same scale is mirrored on
+     .trust-metrics__cards-heading below (an <h3> deliberately styled to
+     match this) — keep the two in sync. */
+  font-size: clamp(1.375rem, 0.4rem + 3.7vw, 3.75rem);
+  font-weight: var(--font-weight-regular);
+}
+
+/* ---- Hero ---- */
+
+/* Pulled up behind the sticky header again (client request 2026-07-17,
+   reversing the 2026-07-13 decision the old comment here described —
+   see site-chrome.css .site-header for the matching note). The header
+   is transparent again, and this negative margin-top pulls .hero (the
+   first child of <main>, no padding/border on <main> to block margin
+   collapsing) up so its full-bleed photo reaches the literal top of the
+   page, visible through the header instead of sitting below a solid bar.
+   --hero-header-overlap is a deliberately generous constant, not a
+   pixel-measured header height — safely taller than the header renders
+   at any breakpoint (logo/button sizes vary responsively), so the photo
+   always reaches y=0 with no gap; a slightly-too-large value just shows
+   a little more photo above the header, never a visible seam. The
+   matching padding-top adds the same amount back so the actual hero
+   content (h1/lead/CTA in .hero__grid) lands in the same visual spot it
+   was in before the pull-up — only the background photo (position:
+   absolute, inset:0 to .hero) extends into the extra space. */
+.hero {
+  --hero-header-overlap: 6rem;
+  position: relative;
+  margin-top: calc(-1 * var(--hero-header-overlap));
+  /* Height follows the IMAGE (client request 2026-07-22): the hero shows
+     the full WIDTH of the photo, uncropped, and its height is simply
+     whatever the image is at 100% width — so a wider / more panoramic image
+     makes the hero shorter automatically, and the whole image (widthwise)
+     is always visible. Grid-stack: .hero__bg (the in-flow image) and
+     .hero__grid (the content) share one grid cell, so the taller of the two
+     sets the height. This REPLACES the old object-fit:cover + min-height:100vh
+     approach, which forced a full-screen height and cropped the image to
+     fill it — that's exactly why a wider image alone couldn't shorten the
+     hero before. If content is ever taller than the image (very narrow
+     viewports / a very wide image), the cell grows to the content and the
+     page background fills below the image — acceptable per "height doesn't
+     matter." */
+  display: grid;
+  grid-template-areas: "hero";
+}
+
+.hero__bg {
+  grid-area: hero;
+  z-index: 0;
+  min-width: 0;
+}
+
+/* Full image, full width, no crop — height auto-follows the width, which is
+   what makes .hero size to the image (see .hero above). display:block drops
+   the inline-image baseline gap. (The old .hero__bg picture rule + object-fit
+   cover were removed with the switch away from the cover/100vh model; there's
+   only a single <img> here now anyway.) */
+.hero__bg img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Re-added 2026-07-15 (supersedes the "removed outright" note this
+   comment used to have) — but deliberately not the old full-photo
+   overlay. Two narrow, targeted gradients instead of one flat tint: a
+   top fade and a left-side fade so the H1/lead/CTA column (which sits
+   on the left) has contrast regardless of what's busy in the photo
+   underneath it. The right side of the photo is left completely
+   unfiltered on purpose — client request: "a la derecha dejalo igual"
+   (leave the right as-is).
+
+   Left-side gradient strengthened 2026-07-17, client request: darker at
+   the far-left edge, fading toward the center, without darkening the
+   photo uniformly (the guard/vehicle on the right of the frame must
+   stay visible — same "leave the right as-is" instruction as above,
+   just reaffirmed for this specific change). A three-stop gradient
+   (0.78 -> 0.5 -> 0 opacity) reads as a smoother, more gradual falloff
+   than the previous flat two-stop version, and the darkest point is
+   noticeably darker than before (was 0.55 at 0%). The 48% end point is
+   unchanged — still fades out well before the right half of the frame.
+
+   Top fade updated 2026-07-17 alongside the header going transparent
+   again (.hero's negative margin-top, above) — it now also carries the
+   nav's legibility, not just a soft edge against a solid bar, so the
+   stop is a fixed length (matches --hero-header-overlap) instead of a
+   percentage of the hero's total height, and the opacity is higher.
+   Percentage-based stops would shrink this fade on a short viewport and
+   grow it pointlessly on a tall one; a fixed length reliably covers the
+   header regardless of how tall the rest of the hero content makes the
+   section. Needs a visual check once there's a browser available — this
+   is a legibility-critical value, not just decorative. */
+/* Readability overlay (client refinement 2026-07-22, revised same day).
+   LEFT-SIDE ONLY — a single horizontal fade that darkens the left (where
+   all the content sits) and reaches FULL transparency by 76%, so the right
+   side of the photo (the operator + monitors) is completely clear with
+   nothing over it. The earlier full-width bottom and top fades were removed
+   on purpose: they darkened the whole frame, including the right, which is
+   exactly what must stay clean. Because the gradient runs the full height
+   on the left, it already covers the top-left (logo) and bottom-left
+   (reassurance/trust) without any separate bands. Applied to this
+   pseudo-element, never the <img>; pointer-events:none so it never blocks
+   clicks on the content above (which sits at .hero__grid z-index:1).
+   Trade-off flagged: no dedicated top fade anymore, so nav legibility over
+   the bright right-side monitors relies on the nav's own styling. */
+.hero__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Three stacked gradients: (1) the left readability fade (unchanged),
+     plus (2) a top and (3) a bottom vignette that fade the image's top and
+     bottom EDGES to black (client 2026-07-22). The top/bottom fades only
+     touch the outer ~15% of the height, so the operator/monitors in the
+     centre stay clear; the bottom fade also blends the hero into the black
+     page below with no seam. */
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.92) 0%,
+      rgba(0, 0, 0, 0.72) 20%,
+      rgba(0, 0, 0, 0.34) 38%,
+      rgba(0, 0, 0, 0) 52%
+    ),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 15%),
+    linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 15%);
+}
+
+/* Mobile: the content column is much wider relative to the screen, so the
+   left fade reaches further across for readable text — but STILL clears to
+   fully transparent at the right edge, so the image is never flattened. The
+   top/bottom vignette is unchanged. */
+@media (max-width: 767.98px) {
+  .hero__bg::after {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.88) 0%,
+        rgba(0, 0, 0, 0.70) 45%,
+        rgba(0, 0, 0, 0.35) 74%,
+        rgba(0, 0, 0, 0) 100%
+      ),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 15%),
+      linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 15%);
+  }
+}
+
+/* No longer sharing the row with a side image (that became the
+   full-bleed .hero__bg instead), so this needs its own width cap —
+   otherwise the H1/CTA/trust-row would stretch the full 1440px container
+   on wide screens. */
+.hero__content {
+  max-width: 44rem;
+  /* Editorial left inset (client refinement, 2026-07-22) — the primary
+     homepage content alignment, reusable via --content-inset (tokens.css).
+     Only this content column is pushed inward; the logo/nav keep the plain
+     container alignment. Container padding remains the base floor, so on
+     mobile (see the max-width override below) edge-to-text stays ~20–24px;
+     box-sizing: border-box (reset.css) keeps this padding inside the
+     max-width cap, so it never causes horizontal overflow. */
+  padding-inline-start: var(--content-inset);
+}
+
+/* Mobile: --content-inset's 48px desktop floor is too large for a phone,
+   so the editorial inset drops to a small value here (≈8px + the container
+   padding ≈ 20–24px edge-to-text total), per the brief. */
+@media (max-width: 767.98px) {
+  .hero__content {
+    padding-inline-start: var(--space-2);
+  }
+}
+
+/* Used to match the section H2 treatment exactly (2.5rem–4rem, same
+   fluid clamp as "main h2") — reduced 2026-07-17, client request: the
+   shortened headline ("Certified security for businesses across
+   Franconia and Bavaria," was "Security services for Bamberg, Franconia
+   and Bavaria") needed less visual dominance so it stops competing with
+   the hero photo. Still its own clamp, not reusing "main h2" — this H1
+   is now deliberately smaller than that shared treatment, not equal to
+   it. Regular weight kept. */
+.hero__content h1 {
+  font-size: clamp(2rem, 1.6rem + 2.2vw, 3.25rem);
+  font-weight: var(--font-weight-regular);
+}
+
+.hero__grid {
+  /* Stacked in the same grid cell as .hero__bg, above it, and vertically
+     centred over the image. Padding is SYMMETRIC (padding-block, not just
+     padding-top) so the content is truly centred: an asymmetric top padding
+     made align-self:center centre the padded box, which pushed the visible
+     text below the real centre (client: "a bit more down"). Equal top/bottom
+     padding keeps the box symmetric → text centred, while still reserving
+     header clearance at the top (the image itself bleeds to the very top
+     behind the transparent header). */
+  grid-area: hero;
+  z-index: 1;
+  align-self: center;
+  padding-block: var(--hero-header-overlap);
+}
+
+/* Secondary to the H1, but tightened for readability (client refinement
+   2026-07-22): narrower measure for a controlled line length, slightly
+   brighter than the muted body colour (still clearly below white H1), and a
+   more compact line-height. margin-top keeps clear separation from the H1. */
+.hero__lead {
+  margin-top: var(--space-5);
+  font-size: var(--font-size-md);
+  color: rgb(255 255 255 / 0.82);
+  max-width: 32rem;
+  line-height: 1.5;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
+
+/* Outline twin of the .btn--primary pill next to it in .hero__actions —
+   the HTML carries .btn too, so border-radius/transitions/PADDING/FONT-SIZE
+   all come from the shared foundation (components.css). This rule now ONLY
+   swaps the fill for a stroke and sets its colors: background transparent,
+   .btn's own `border: 2px solid transparent` made visible via border-color.
+
+   Sizes matched to the primary CTA (client request 2026-07-22: "both
+   buttons the same size, intermediate"). Both now sit at the base .btn
+   size (padding var(--space-3)/var(--space-5), font-base, 2px border) —
+   the primary CTA dropped .btn--lg for this, and the phone dropped its own
+   smaller padding/font-size/1px-border overrides. Result: identical box,
+   just fill vs. outline. Colours stay muted (lower-opacity white) so the
+   phone still reads as the secondary action even at the matched size. */
+.hero__phone {
+  background-color: transparent;
+  border-color: rgb(255 255 255 / 0.35);
+  color: rgb(255 255 255 / 0.85);
+}
+
+/* Icon forced to a solid fill (client correction, same day: the shared
+   .icon default — fill: none, stroke: currentColor, see
+   partials/icon-sprite.html — reads as a thin white outline on a photo
+   background, which the client saw as "black" since the unfilled
+   interior just shows the dark photo through it). Scoped to
+   .hero__phone .icon only, not the shared .icon rule — icon-phone has no
+   other usage on the site right now (see pages/index.html's comment on
+   this element), but if it ever gets reused elsewhere the default
+   stroke-only look should stay the default, not be changed globally for
+   this one placement's sake. */
+.hero__phone .icon {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* Same subtle hover fill already used by .footer-pill (site-chrome.css)
+   for an outline pill on a dark surface — keeps the stroke look instead
+   of switching to a solid fill like .btn--primary's own hover does. */
+.hero__phone:hover,
+.hero__phone:focus-visible {
+  background-color: rgb(255 255 255 / 0.08);
+}
+
+/* Three individual reassurance points (client refinement, 2026-07-22) —
+   a <ul> of icon+text items, one row when space allows, wrapping cleanly
+   on narrow screens (flex-wrap). Quiet/secondary: muted text, small check
+   icon per item. The two-value gap is row-gap / column-gap: items keep a
+   tight vertical rhythm when they wrap but a clear separation across the
+   row. (Was a single middot <p> before; history in git.) */
+.hero__reassurance {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-5);
+  margin-top: var(--space-5);
+  padding: 0;
+  font-size: var(--font-size-sm);
+  /* White, not muted grey (client request, 2026-07-22). The check icons
+     override this to blue via .hero__reassurance-icon below — the icons
+     do NOT inherit this white. */
+  color: var(--color-white);
+}
+
+.hero__reassurance-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* icon-check (sprite, currentColor) replaces the old fixed-color
+   tic-check.png here specifically so it can be tinted blue — "subtle
+   blue check icon" was the brief's own wording. Safe against the hero
+   photo for the same reason .hero__phone's blue elements already are:
+   see the contrast caveat in tokens.css, this only fails against
+   --color-bg-elevated (gray cards), not a photo with its own dark
+   gradient overlay. */
+.hero__reassurance-icon {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  /* THE FIX for the "black ticks" bug (2026-07-22): icon-check is a STROKE
+     icon, but its fill:none/stroke:currentColor live on the sprite's
+     <g id="icon-defs"> wrapper, and those presentation attributes do NOT
+     propagate through <use>/<symbol> cloning. So the cloned <path> fell
+     back to the SVG defaults — fill:black, stroke:none — rendering a solid
+     BLACK checkmark; setting `color` alone did nothing, because nothing on
+     the path used currentColor. Must set fill/stroke/stroke-width EXPLICITLY
+     here (same proven fix as .services__item-arrow / .hero__phone .icon).
+     color still drives currentColor -> the stroke resolves to blue-dark
+     (matches the primary CTA; ≈5.7:1 on the dark hero photo — see the
+     tokens.css contrast caveat, which only bites on gray elevated cards). */
+  color: var(--color-blue-dark);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The original .hero__badges/.hero__cert-seal (a DEKRA seal pair that
+   used to lead the column, ahead of the H1) was removed entirely
+   2026-07-17, moved to #trust-metrics. 2026-07-20: DEKRA badges are
+   back in the hero per a new brief ("compact mini trust row" beside the
+   Google rating) — these are fresh rules for that, not a restore of the
+   old ones (different position: beside the rating, not leading the
+   column; different markup: no longer paired with an .hero__cert-seal
+   sibling class). */
+
+/* Flex row wrapper for the rating card + DEKRA badges together (client
+   brief: "compact mini trust row... align cleanly with the hero
+   content"). Replaces .hero__rating's own former margin-top — that's
+   now here instead, so it applies once to the whole row rather than
+   needing duplicating onto .hero__badges too. flex-wrap allows the
+   badges to drop to their own line on narrow widths without needing a
+   separate breakpoint rule. */
+/* The hero's trust row: Google rating + DEKRA badges as ONE integrated
+   group (client refinement 2026-07-22). The earlier full-width top hairline
+   was removed — it made the hero read as two separate interfaces; the row
+   now sits on spacing alone so it feels part of the composition, not
+   attached below it. align-items:center keeps the rating and the badges on
+   a shared baseline; flex-wrap lets the badges drop below the rating on
+   narrow widths without any divider looking stranded. */
+.hero__trust {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-5);
+  margin-top: var(--space-6);
+}
+
+.hero__rating {
+  margin-top: 0;
+}
+
+/* Same real seal images/alt text used elsewhere on this page. Sized
+   smaller here than their old #trust-metrics treatment (2.75rem vs.
+   3.5rem there) — brief: "remain compact... not dominate the hero." */
+.hero__badges {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.hero__badge {
+  height: 2.75rem;
+  width: auto;
+}
+
+/* The hero bouncing scroll-cue chevron (.hero__scroll-cue /
+   .hero__scroll-cue-arrow + its hero-scroll-cue-bounce keyframes) was
+   removed 2026-07-21 (client: "sacame la flecha que rebota en el hero").
+   Deleted markup + CSS together rather than just hiding it, per this
+   project's "if unused, delete completely" convention. */
+
+/* ---- Trust metrics (redesigned 2026-07-20) ----
+   Was an editorial band with a left-heading/right-copy split (client
+   brief, 2026-07-17) — that split, and the DEKRA badges that used to
+   sit under it, are both gone now. Client brief 2026-07-20: one
+   coherent, fully centered trust experience (intro → metrics → client
+   logos → value pillars), badges moved to the hero instead (see
+   .hero__trust above). Reuses .section for its padding-block rhythm
+   (components.css) rather than inventing new spacing — same vertical
+   rhythm as every other section on the page. No .section--subtle —
+   plain --color-bg, same as Pain Hook itself, so there's no visible
+   seam between the two. */
+
+/* Centered, narrower max-width (brief: "620-720px... controlled and
+   editorial" — was an unconstrained 2-column grid at full container
+   width). margin-inline: auto centers the whole block; each child's own
+   text-align: center (below) handles the text itself, since this is a
+   plain flow column now, not a grid needing per-child placement. */
+.trust-metrics__intro {
+  max-width: 44rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* Centered under the heading too now (was left-aligned prose in the old
+   2-column split, sized to fill its own side of the grid). */
+/* White, not muted (client request 2026-07-20) — was
+   var(--color-text-muted) (white at 0.65 alpha). */
+.trust-metrics__text {
+  margin-top: var(--space-4);
+  margin-inline: auto;
+  /* Narrower 2026-07-21 (client: "hacele menos width") — was 40rem. */
+  max-width: 30rem;
+  color: var(--color-text);
+}
+
+/* ---- Scroll-drawn proof diagram (client redesign 2026-07-22) ---- */
+/* Replaces the old .trust-metrics__list grid. Everything is fully visible by
+   default; js/trust-diagram.js applies the hidden "from" state + the scrubbed
+   draw only when it runs with motion enabled (no-JS / reduced-motion see the
+   finished diagram immediately). Mobile-first here is the simplified vertical
+   sequence — the branching SVG (.trust-diagram__lines) is hidden and the
+   metrics stack in one column connected by a single thin blue line; the
+   desktop three-branch diagram switches on at 768px below. */
+.trust-diagram {
+  max-width: 46rem;
+  margin: var(--space-7) auto 0;
+  text-align: center;
+}
+
+.trust-diagram__lines {
+  display: none;
+}
+
+.trust-diagram__metrics {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: var(--space-6);
+  position: relative;
+}
+
+/* Mobile vertical connector — a thin blue line behind the stacked metrics,
+   visible only in the gaps between them (each .stat masks it with the
+   section's own background). */
+.trust-diagram__metrics::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1.5px;
+  transform: translateX(-50%);
+  background-color: var(--color-accent);
+  opacity: 0.5;
+  z-index: 0;
+}
+
+.trust-diagram__metrics .stat {
+  position: relative;
+  z-index: 1;
+  align-items: center;
+  text-align: center;
+  padding-inline: var(--space-4);
+  /* masks the connector behind the metric block, leaving it visible only in
+     the gaps — this section sits on the page's --color-bg (black). */
+  background-color: var(--color-bg);
+}
+
+.trust-diagram__metrics .stat__value {
+  font-size: clamp(2.5rem, 1.6rem + 3.5vw, 4.5rem);
+  font-weight: var(--font-weight-regular);
+  font-variant-numeric: tabular-nums;
+}
+
+/* .section-eyebrow's shared default is display: flex (for its icon +
+   text pairing) — a flex container doesn't center itself via a parent's
+   text-align (that only affects inline/text content), so it needs an
+   explicit rule here now that .trust-metrics__intro is fully centered.
+   Scoped to this section only; every other .section-eyebrow usage stays
+   left-aligned within its own (also left-aligned) intro. */
+/* The "Why FRANKONIA" eyebrow was removed 2026-07-21 (client) — its
+   .trust-metrics__intro .section-eyebrow centering rule went with it. */
+
+/* Forces the heading's 2-line break unconditionally (client-specified:
+   "Trusted Across" / "the region") — a plain <br> was tried first and
+   didn't reliably hold in every browser, since this h2 inherits
+   text-wrap: balance (base.css, shared by every heading site-wide),
+   which recalculates its own wrap points and can override a <br> in
+   some engines. display: block on each line-span sidesteps that
+   entirely — block boxes always start a new line regardless of
+   whatever the balancing algorithm decides around them. */
+.trust-metrics__heading-line {
+  display: block;
+}
+
+/* Tighter gap between the two lines (client request 2026-07-20: "menos
+   espaciado entre los renglones") — the h2's own inherited line-height
+   (--line-height-heading, 1.25, base.css) is what was spacing the two
+   .trust-metrics__heading-line blocks apart; scoped down here rather
+   than lowering that shared token, which every other heading site-wide
+   also relies on. */
+.trust-metrics__intro h2 {
+  line-height: 1;
+}
+
+@media (min-width: 768px) {
+  /* Desktop: the full three-branch diagram. The SVG shows, the mobile
+     vertical connector is dropped, and the three metrics sit in one row of
+     equal columns aligned under the three branch endpoints (x = 1/6, 1/2,
+     5/6 — the SVG paths' endpoints under preserveAspectRatio:none). */
+  .trust-diagram__lines {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 9rem;
+    margin: 0 auto;
+  }
+
+  .trust-diagram__svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .trust-diagram__line,
+  .trust-diagram__branch {
+    stroke: var(--color-accent);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+
+  .trust-diagram__node {
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    width: 0.7rem;
+    height: 0.7rem;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background-color: var(--color-accent);
+  }
+
+  .trust-diagram__metrics {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+    margin-top: var(--space-4);
+  }
+
+  .trust-diagram__metrics::before {
+    display: none;
+  }
+
+  .trust-diagram__metrics .stat {
+    background: none;
+    padding-inline: var(--space-4);
+  }
+}
+
+/* ---- Client-logo trust subsection (2026-07-20) ---- */
+/* Sits between the metrics and the value-pillar photo band. Centered,
+   its own generous top margin (brief: "clear separation between
+   metrics and client logos"). Its own heading + lede ("Trusted by
+   companies across the region" / "Long-term security partnerships...")
+   were removed the same day, right after being added — client
+   correction: "vamos a dejar solo un título." Both lines of copy moved
+   up into .trust-metrics__intro's own .trust-metrics__text paragraphs
+   instead, under the one consolidated heading. This wrapper now holds
+   only the logo grid. */
+/* Small, understated label above the logo marquee (client redesign
+   2026-07-22) — muted, regular weight, centered; far less prominent than
+   the main heading. Its top margin provides the gap from the metrics above;
+   the marquee's own margin-top is 0 so the label controls that spacing. */
+.trust-metrics__logos-label {
+  margin: var(--space-8) auto var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-muted);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.trust-metrics__clients {
+  /* Now holds the auto-scrolling logo marquee (client request 2026-07-22),
+     which replaced the old .trust-metrics__logos/.trust-metrics__logo tile
+     grid entirely. margin-top is 0 — the .trust-metrics__logos-label above
+     now owns the gap from the metrics. margin-bottom stays 8rem to cancel
+     .trust-metrics__cards-bg's own -8rem (below) so the photo block still
+     meets the content above it with no seam — keep the two in sync. */
+  margin-top: 0;
+  margin-bottom: 8rem;
+}
+
+/* Client logo marquee — an auto-scrolling "trusted by" ticker: monochrome-
+   white client logos (assets/images/client-logos/*.png, cropped from the
+   transparent white-logo PNGs in assets/logos/) sliding continuously left
+   on this dark section, like a classic logo strip.
+
+   Pure CSS, transform-only (GPU-composited), no JS. The logo set is
+   duplicated into two identical .logo-marquee__group children; the track
+   animates translateX(0 -> -50%), and since -50% equals exactly one
+   group's width the loop is seamless. Each group carries the same
+   padding-right as its internal gap, so the spacing across the loop seam
+   matches the spacing between logos. The 2nd group is aria-hidden, so
+   assistive tech reads each logo once; every logo is a real <img> with alt
+   in the DOM, so the set is crawlable with no JS. */
+.logo-marquee {
+  overflow: hidden;
+  /* soft-fade the left/right edges so logos ease in/out rather than
+     hard-clipping at the container edge */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+.logo-marquee__track {
+  display: flex;
+  width: max-content;
+  /* Slowed 55s -> 70s (client refinement 2026-07-22): inside the narrow
+     left half-panel the logos cross the visible window faster, so a longer
+     cycle keeps the movement calm and readable. Seamless loop unchanged
+     (two groups, translateX -50%). */
+  animation: logo-marquee-scroll 70s linear infinite;
+}
+
+/* Pause on hover — lets a visitor rest on a logo. */
+.logo-marquee:hover .logo-marquee__track {
+  animation-play-state: paused;
+}
+
+.logo-marquee__group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding-right: var(--space-8);
+  flex-shrink: 0;
+}
+
+.logo-marquee__logo {
+  height: 2.75rem;
+  width: auto;
+  flex-shrink: 0;
+  /* white logos on the dark section — slightly muted so the strip reads as
+     a background trust signal, full white on hover. */
+  opacity: 0.8;
+  transition: opacity var(--duration-base) var(--easing-standard);
+}
+
+.logo-marquee__logo:hover {
+  opacity: 1;
+}
+
+@keyframes logo-marquee-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Reduced motion: no auto-scroll — a static, natively-scrollable strip so
+   every logo stays reachable. Also drops the edge mask and overrides
+   motion.css's global animation-duration clamp (which would otherwise
+   freeze the track mid-loop). */
+@media (prefers-reduced-motion: reduce) {
+  .logo-marquee {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .logo-marquee__track {
+    animation: none;
+  }
+}
+
+/* ===================================================================
+   Trust story — sticky 3-panel region (client redesign 2026-07-22)
+   BASE here = NORMAL DOCUMENT FLOW: three readable stacked sections
+   (Trust -> Logos -> What Clients Can Expect). This is what no-JS,
+   mobile (<1024px), and reduced-motion visitors get. The sticky / absolute
+   layout is gated on a (min-width:1024px)+(prefers-reduced-motion:
+   no-preference) media query AND the html.js-story class the inline <head>
+   script sets — so it applies from first paint on desktop (no load flash),
+   reverts natively on resize/reduced-motion, and never applies without JS.
+   assets/js/sticky-sections.js adds only the scrubbed ANIMATION (via
+   gsap.matchMedia on the same query). Never transform the sticky element
+   (.story__stage) — only .story__panel-inner is animated. The scroll
+   ancestor (.story) is kept free of overflow clipping; clipping lives on
+   .story__stage's own box only.
+   =================================================================== */
+
+/* Centered "Trusted across the region" lead-in before the sticky split —
+   extra breathing room above and below it (client 2026-07-22), more than the
+   shared .section rhythm, so it reads as its own deliberate moment. */
+.story-lead {
+  padding-block: var(--space-10);
+}
+
+.story__panel {
+  padding-block: var(--space-9);
+}
+
+.story__panel-inner {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin-inline: auto;
+  padding-inline: var(--container-padding);
+}
+
+.story__heading {
+  line-height: 1;
+}
+
+.story__text {
+  margin-top: var(--space-4);
+  max-width: 34rem;
+}
+
+.story__logos-label {
+  margin-bottom: var(--space-5);
+}
+
+/* Neutralize the old margins the marquee carried for the removed cards-bg
+   overlap — inside the story it just sits under its label. */
+.story .trust-metrics__clients {
+  margin: 0;
+}
+
+.story__metrics {
+  list-style: none;
+  margin: var(--space-7) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-6);
+}
+
+.story__metrics .stat {
+  align-items: center;
+  text-align: center;
+}
+
+.story__metrics .stat__value {
+  font-size: clamp(2.5rem, 1.6rem + 3.5vw, 4.5rem);
+  font-weight: var(--font-weight-regular);
+  font-variant-numeric: tabular-nums;
+}
+
+.story__pillars {
+  list-style: none;
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (min-width: 560px) {
+  .story__metrics {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .story__pillars {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ---- Active sticky layout ----
+   Gated on BOTH a media query (>=1024px + motion) AND the .js-story class
+   the tiny inline <head> script adds. The media query means resize and
+   reduced-motion are handled natively by CSS (revert to normal flow with no
+   JS work); the .js-story class means none of this applies without JS, so
+   the no-JS fallback is the base normal flow above. Applying the layout from
+   FIRST PAINT (not from the deferred module) is what removes the load flash. */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .js-story .story {
+    position: relative;
+    /* Stick length = (multiplier - 1) x 100svh of scroll. 3.4 -> ~2.4
+       screens of stick across the 3 panels: a readable hold each without
+       excessive scrolling. Tuned with the JS timeline (sticky-sections.js). */
+    height: calc(3.4 * 100svh);
+  }
+
+  .js-story .story__stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    /* clips the sliding inners; this is the sticky element's OWN box, so it
+       doesn't break stickiness (no ancestor of .story__stage clips). */
+    overflow: hidden;
+    background-color: var(--color-bg);
+    /* Quiet, intentional fill for the empty half — a whisper-faint central
+       glow, side-neutral (works for both left- and right-content panels).
+       No image, no lines, no text. */
+    background-image: radial-gradient(
+      100% 100% at 50% 42%,
+      rgb(255 255 255 / 0.03),
+      transparent 55%
+    );
+  }
+
+  .js-story .story__panel {
+    position: absolute;
+    inset: 0;
+    padding-block: 0;
+    display: flex;
+    /* stretch so the inner fills the FULL half height (the coloured half is
+       the whole 50% of the viewport, not a content-sized block). */
+    align-items: stretch;
+  }
+
+  .js-story .story__panel--right {
+    justify-content: flex-end;
+  }
+
+  .js-story .story__panel--left {
+    justify-content: flex-start;
+  }
+
+  /* The inner IS the half now: 50% of the viewport width, full height, with
+     its content centred vertically inside. Animating it (opacity/y/scale)
+     moves the whole coloured half + content together. */
+  .js-story .story__panel-inner {
+    width: 50%;
+    max-width: none;
+    height: 100%;
+    margin-inline: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-inline: clamp(2rem, 5vw, 5rem);
+    padding-block: var(--space-8);
+    /* only while the sticky interaction is live (this whole block reverts
+       natively below 1024px / under reduced motion). */
+    will-change: opacity, transform;
+  }
+
+  /* TEMPORARY debug backgrounds (client request 2026-07-22, "después los
+     cambiamos") — fill the ENTIRE content half so the entering/exiting panel
+     is obvious against the dark stage. P1 & P3 (--right) grey, P2 (--left)
+     white → right → left → right. NOTE: on the white P2 the white logo
+     artwork + muted label won't show (white-on-white) — expected for this
+     temporary pass; final panel backgrounds/content colours come later. */
+  .js-story .story__panel--right .story__panel-inner {
+    background-color: var(--color-gray);
+  }
+
+  .js-story .story__panel--left .story__panel-inner {
+    background-color: var(--color-white);
+  }
+
+  /* Panels 2 & 3 hidden from FIRST PAINT so there's no "all three visible"
+     flash before the deferred timeline sets them. Gated on .js-story, so
+     no-JS never hides them. Panel 1 is the opening focus (stays visible). */
+  .js-story [data-story-panel]:not(:first-child) .story__panel-inner {
+    opacity: 0;
+  }
+
+  .js-story .story__logos-label {
+    text-align: left;
+  }
+
+  /* Panel 1 metrics: stacked, left-aligned, dominant. */
+  .js-story .story__metrics {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+
+  .js-story .story__metrics .stat {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  /* Panel 3: compact 2-col x 3-row editorial list — no card box, tighter
+     gaps, smaller icon, controlled line length, so all six pillars fit the
+     half-panel at 100svh without shrinking type unreasonably. Icons keep
+     their invert(1) (read as light detail on the dark panel). */
+  .js-story .story__panel .trust-metrics__cards-heading {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-4);
+    text-align: left;
+  }
+
+  .js-story .story__pillars {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3) var(--space-5);
+    margin-top: var(--space-4);
+  }
+
+  .js-story .story__pillars .pillar-card {
+    min-height: 0;
+    padding: 0;
+    background: none;
+    border: none;
+  }
+
+  .js-story .story__pillars .pillar-card__icon img {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .js-story .story__pillars .pillar-card__title {
+    font-size: var(--font-size-md);
+    margin-top: var(--space-2);
+  }
+
+  .js-story .story__pillars .pillar-card__text {
+    font-size: var(--font-size-sm);
+    line-height: 1.45;
+    margin-top: var(--space-1);
+    max-width: 22rem;
+  }
+}
+
+/* 1024-1199px: shortest desktop stage (the 1024x768 target) — squeeze
+   Panel 3 a touch more to guarantee no clip, without shrinking type below
+   the base small step. */
+@media (min-width: 1024px) and (max-width: 1199.98px) and (prefers-reduced-motion: no-preference) {
+  .js-story .story__panel-inner {
+    padding-inline: clamp(1.5rem, 3.5vw, 3rem);
+  }
+  .js-story .story__panel .trust-metrics__cards-heading {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-3);
+  }
+  .js-story .story__pillars {
+    gap: var(--space-2) var(--space-4);
+  }
+  .js-story .story__pillars .pillar-card__title {
+    margin-top: var(--space-1);
+  }
+}
+/* .trust-metrics__photo (a contained, capped-width <picture> below the
+   cards) was tried first, 2026-07-17, then replaced same day by the
+   full-bleed CSS-background version below — client correction: the
+   photo needed to sit BEHIND the card grid, full-bleed, not as a
+   separate contained image element after it. */
+
+/* .trust-metrics loses .section's own bottom padding (components.css
+   gives every .section padding-block: var(--space-9) top AND bottom) —
+   .trust-metrics__cards-bg below supplies its own bottom padding
+   instead, specifically so the background photo extends across that
+   space too, instead of the photo stopping short and leaving a plain
+   --color-bg gap before Pain Hook starts. Top padding is untouched
+   (still comes from .section) since only the bottom edge needs this. */
+.trust-metrics {
+  padding-bottom: 0;
+}
+
+/* Full-bleed photo background for the card grid (client correction,
+   2026-07-17) — sits outside .trust-metrics' first .container (full
+   section width), with its own nested .container around the cards.
+   Same negative-margin/compensating-padding technique already used by
+   .hero to bite into the header above it (page-home.css, search
+   --hero-header-overlap) — here it bites into the stats block above
+   instead, so there's no hard seam between the plain section background
+   and the photo. -8rem/10.5rem are the client's own supplied values,
+   not independently derived; if the photo's crop looks off after a
+   visual check, these are the two numbers to retune together (a bigger
+   negative margin needs a bigger compensating padding-top, in lockstep,
+   same as the hero's own --hero-header-overlap single variable does it
+   more safely — not replicated here since the client gave two explicit,
+   separate numbers rather than one overlap amount).
+
+   background-image is declared twice: a plain JPEG url() first (every
+   browser understands this), then image-set() with explicit webp/jpeg
+   type() hints — browsers that don't support image-set() ignore that
+   whole declaration and keep the JPEG fallback above it; browsers that
+   do support it (all current evergreen browsers) pick the smaller webp.
+   This is a CSS background-image, not a <picture>, so it can't use this
+   project's usual <source type="image/webp"> fallback pattern. */
+.trust-metrics__cards-bg {
+  position: relative;
+  background-image: url("/assets/images/trust-monitoring-room.jpg");
+  background-image: image-set(
+    url("/assets/images/trust-monitoring-room.webp") type("image/webp"),
+    url("/assets/images/trust-monitoring-room.jpg") type("image/jpeg")
+  );
+  background-size: cover;
+  background-position: center top;
+  margin-top: -8rem;
+  padding-top: 10.5rem;
+  padding-bottom: var(--space-9);
+}
+
+/* Stronger dark overlay (client brief, 2026-07-20: "the image should not
+   compete with the cards... ensure card text remains highly readable")
+   — this section had no overlay of any kind before; the photo sat fully
+   exposed behind the cards, relying entirely on .pillar-card's own white
+   background + shadow for legibility. A flat, fairly heavy black wash
+   rather than a gradient — the brief asks for readability across the
+   whole card grid, not just a top/bottom fade, and the "most important
+   focal point" of this particular photo isn't concentrated in one
+   corner that a gradient would need to protect. */
+.trust-metrics__cards-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgb(1 1 1 / 0.55);
+}
+
+.trust-metrics__cards-bg > .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Matches the section's main heading ("Trusted Across The Region")
+   exactly — client request 2026-07-21 ("mismo estilo... centrado y
+   mismo todo"): the same oversized `main h2` clamp + regular weight,
+   centered. Was previously a small uppercase label. Stays white because
+   it sits directly on the darkened photo (::before above), same as
+   before. font-size/weight are set explicitly (not inherited from
+   `main h2`) since this is an <h3>, not an h2 — the tag stays h3 to keep
+   the heading hierarchy correct, only the visual treatment matches. */
+.trust-metrics__cards-heading {
+  margin-bottom: var(--space-7);
+  text-align: center;
+  /* Kept identical to `main h2` above (reduced 2026-07-21, client: "un
+     poco más chicos") — keep the two clamps in sync. */
+  font-size: clamp(1.375rem, 0.4rem + 3.7vw, 3.75rem);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-white);
+}
+
+/* ---- Pain hook: patrol journey ---- */
+/* Redesigned 2026-07-20 (client brief: "premium scroll-driven security
+   journey") from the previous static 4-column grid (.pain-hook__grid/
+   .pain-item, both removed — see git history) to a scroll-driven patrol-
+   route metaphor. Full interaction logic lives in
+   js/pain-hook-journey.js; this file only owns layout/appearance.
+   Mobile-first per this project's convention: base rules below are the
+   simplified mobile/tablet fallback (stacked list + a plain progress
+   line, no SVG route), the min-width: 1024px block at the end is what
+   switches on the full floating zigzag composition + SVG route.
+   Reduced-motion end-state (.pain-hook--journey.is-static, set by JS
+   when prefers-reduced-motion matches — no ScrollTrigger is created at
+   all in that case) lives at the bottom of this block. */
+
+/* Left-aligned (client request 2026-07-20) — was centered
+   (margin-inline: auto + text-align: center). This section's own
+   .section__intro override, so it doesn't disturb every other page's
+   centered/left default (components.css' base .section__intro has no
+   text-align of its own — this rule is what centered it before). */
+/* Clip the off-canvas bleed of the route (see .pain-hook__route's
+   overflow: visible, desktop block below) to the section's own edges, so
+   the "line entering from outside the frame" effect never spills past the
+   viewport and causes horizontal scroll. Safe now that the section is no
+   longer pinned (a pin needs visible overflow; this one scrubs in place). */
+.pain-hook {
+  overflow: hidden;
+}
+
+.pain-hook__intro {
+  max-width: 34rem;
+  text-align: left;
+}
+
+/* Standardized to the shared section-title size (client request,
+   2026-07-22: "make all section titles the same size as 'Trusted across
+   the region'"). That heading uses no override — it just inherits `main h2`
+   — so this override was removed entirely and this h2 now inherits `main h2`
+   too. The old forced-one-line clamp + white-space: nowrap (2026-07-20) is
+   gone; the heading now wraps/balances like the trust heading, which also
+   avoids the narrow-viewport overflow that a bare nowrap risked. */
+
+/* ---- Mobile/tablet base: stacked list + simple progress line ---- */
+
+.pain-hook__journey {
+  position: relative;
+}
+
+/* The zigzag SVG route is desktop-only (see min-width: 1024px below) —
+   hidden here so it never renders/measures on the narrower layout this
+   section falls back to. */
+.pain-hook__route {
+  display: none;
+}
+
+/* Checkpoint node — a small square marker sitting exactly on its point
+   of the single route. Its left/top are set from JS
+   (js/pain-hook-journey.js) using the same checkpoint coordinates that
+   define the path, so node and route can never drift apart (no more
+   hand-kept CSS percentages). Plain <span>, not an SVG <circle>: the
+   route SVG uses preserveAspectRatio="none", which would stretch a real
+   circle into an oval — a fixed px/rem span with translate(-50%,-50%)
+   stays a true square/round marker at any wrapper proportion. Hidden on
+   mobile/tablet, shown from 1024px alongside the route. */
+.pain-hook__node {
+  display: none;
+  position: absolute;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 2px;
+  background-color: rgb(255 255 255 / 0.25);
+  transform: translate(-50%, -50%) scale(1);
+  transition: background-color var(--duration-base) var(--easing-premium),
+    transform var(--duration-base) var(--easing-premium);
+}
+
+/* Active checkpoint (brief 2026-07-21): FRANKONIA blue + a slight
+   scale-up. The translate stays in the transform so the node remains
+   centred on its point while it scales. */
+.pain-hook__node.is-active {
+  background-color: var(--color-accent);
+  transform: translate(-50%, -50%) scale(1.45);
+}
+
+/* Passed — an earlier checkpoint once a later one is active: stays
+   visible but less prominent (dimmed blue, back to base scale), never
+   disappears. */
+.pain-hook__node.is-passed {
+  background-color: rgb(61 154 211 / 0.5);
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* One-shot activation halo (brief: "a subtle halo or pulse appears
+   once", explicitly NOT an infinite pulse) — a single expanding ring
+   that plays each time the node becomes active. prefers-reduced-motion
+   neutralises it via motion.css's global animation-duration override,
+   and the reduced-motion static path never adds .is-active at all, so
+   it stays silent there. */
+.pain-hook__node::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  border: 1px solid var(--color-accent);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.4);
+  pointer-events: none;
+}
+
+.pain-hook__node.is-active::after {
+  animation: pain-hook-halo 0.9s var(--easing-premium);
+}
+
+@keyframes pain-hook-halo {
+  0%   { opacity: 0;    transform: translate(-50%, -50%) scale(0.4); }
+  35%  { opacity: 0.5; }
+  100% { opacity: 0;    transform: translate(-50%, -50%) scale(1.7); }
+}
+
+.pain-hook__progress {
+  position: absolute;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  left: 0.9rem;
+  width: 2px;
+  background-color: var(--color-border);
+}
+
+.pain-hook__progress-fill {
+  display: block;
+  width: 100%;
+  height: 0%;
+  background-color: var(--color-accent);
+  transform-origin: top;
+}
+
+.pain-hook__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding-left: var(--space-8);
+}
+
+/* No opacity/transform hiding here by default — js/pain-hook-journey.js
+   is the only thing that ever hides these (via gsap.set(), as an inline
+   style), and only right before it actually sets up the scroll journey.
+   Same "JS only ever enhances" contract as initScrollReveal() in
+   main.js: a no-JS visitor, a crawler that doesn't execute JS, or a
+   script error anywhere before this runs all see the four problems
+   fully visible in place, never permanently blanked out. */
+.pain-hook__item {
+  max-width: 32rem;
+}
+
+.pain-hook__icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-bottom: var(--space-4);
+}
+
+.pain-hook__title {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-2);
+}
+
+.pain-hook__text {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  max-width: 32rem;
+}
+
+.pain-hook__cta {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-9);
+}
+
+/* .btn--primary already carries its own border/background — the CTA
+   "arrival" state (js/pain-hook-journey.js, active once the journey's
+   scroll progress nears its end) only nudges the existing button,
+   never restyles it from scratch. */
+.pain-hook__cta .btn {
+  transition: transform var(--duration-base) var(--easing-premium),
+    box-shadow var(--duration-base) var(--easing-premium);
+}
+
+.pain-hook__cta.is-active .btn {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ---- Reduced-motion end-state ---- */
+/* Set once by js/pain-hook-journey.js (no ScrollTrigger is ever created
+   in this case, and the four problem blocks/icons need no extra rule
+   here at all — they're already visible by default, see the comment on
+   .pain-hook__item above). Only the route/progress-fill/nodes need an
+   explicit "completed" state, since those (unlike the text content) do
+   start visually empty until JS draws them. */
+.pain-hook--journey.is-static .pain-hook__progress-fill {
+  height: 100%;
+}
+
+.pain-hook--journey.is-static .pain-hook__route-path--active {
+  stroke-dashoffset: 0;
+}
+
+.pain-hook--journey.is-static .pain-hook__node {
+  background-color: var(--color-accent);
+}
+
+/* ---- Desktop: full floating composition + SVG patrol route ---- */
+@media (min-width: 1024px) {
+  /* Tall enough to comfortably fit the four irregular checkpoints
+     without crowding — see js/pain-hook-journey.js's POINTS for the
+     percentage grid this height maps onto. */
+  .pain-hook__journey {
+    height: clamp(56rem, 58vw, 72rem);
+  }
+
+  .pain-hook__route {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    /* Let the route bleed past the journey box so it "enters from
+       outside the frame" (client reference, thin traces coming in from
+       the edge) — the path's first/last points sit off-canvas
+       (js/pain-hook-journey.js POINTS). .pain-hook itself is overflow:
+       hidden (below) so this bleed is clipped at the section edges and
+       never causes horizontal scroll. */
+    overflow: visible;
+  }
+
+  .pain-hook__route-path {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Two layers, one geometry (redesign 2026-07-21, client brief — this
+     re-adds the muted base route that the 2026-07-20 pass had removed).
+     Both paths share the exact same `d`; stroke-width values are
+     unitless (user-space) but rendered at constant screen size by
+     vector-effect: non-scaling-stroke above, so ~1 / ~1.75 read as
+     roughly 1px / 1.75px (fine hairlines, per the reference) regardless
+     of how preserveAspectRatio="none" stretches the viewBox. */
+
+  /* Base: the full route, always visible, low-contrast muted blue. No
+     glow, no dash — just the quiet "map" of where the journey goes. */
+  .pain-hook__route-path--base {
+    stroke: rgb(61 154 211 / 0.35);
+    stroke-width: 1;
+  }
+
+  /* Active: FRANKONIA blue, slightly brighter and thicker, drawn on top
+     of the base as scroll progresses (stroke-dasharray/dashoffset set at
+     runtime once js/pain-hook-journey.js knows the path's real length).
+     Restrained two-step drop-shadow glow (brief's recommended treatment)
+     — controlled, not neon; no large blur, no cyan, no pulse. */
+  .pain-hook__route-path--active {
+    stroke: var(--color-accent);
+    stroke-width: 1.75;
+    filter: drop-shadow(0 0 3px rgb(61 154 211 / 0.75))
+      drop-shadow(0 0 9px rgb(61 154 211 / 0.28));
+  }
+
+  /* Colors/transition/positioning are all set unconditionally above
+     (not SVG geometry anymore, see .pain-hook__node's own comment) —
+     only visibility is breakpoint-gated. */
+  .pain-hook__node {
+    display: block;
+  }
+
+  .pain-hook__progress {
+    display: none;
+  }
+
+  .pain-hook__list {
+    position: relative;
+    height: 100%;
+    padding-left: 0;
+  }
+
+  /* Irregular, editorial placement (redesign 2026-07-21, client brief:
+     explicitly NOT a symmetric zigzag, NOT one column, NOT equal
+     spacing). Each block sits in a "bay" of the single serpentine route:
+     01 upper-left, 02 lower center-left, 03 middle-right, 04 lower-right
+     (indented toward centre). max-width caps each block so the left- and
+     right-side blocks never collide across the middle, and so the route
+     always passes just outside the text rather than through it. */
+  .pain-hook__item {
+    position: absolute;
+    max-width: 26%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Blocks alternate sides in the circuit's bays: 01 right-upper,
+     02 left-mid, 03 right-lower, 04 lower-centre-left. Right-side blocks
+     read right-aligned, left-side blocks left-aligned. Colour is never
+     the only active cue — the reveal (opacity/position) + the node/halo
+     carry it too. */
+  .pain-hook__item--1,
+  .pain-hook__item--3 {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .pain-hook__item--2,
+  .pain-hook__item--4 {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  /* Placement uses `top`/`left`/`right` (NOT a translate) so GSAP's
+     reveal tween can own `transform` exclusively — it animates y/opacity
+     and resolves the computed transform matrix wholesale on every tween,
+     which would silently erase any CSS translate used for positioning.
+     These are block positions, independent of the route/node coordinates
+     (those live in js/pain-hook-journey.js's POINTS); the two are
+     coordinated by hand so the circuit trace threads the bays between the
+     blocks without crossing any text. Each block sits just inside the
+     edge from its checkpoint node. */
+  .pain-hook__item--1 { top: 2%;  right: 2%; }
+  .pain-hook__item--2 { top: 30%; left: 2%; }
+  .pain-hook__item--3 { top: 56%; right: 2%; }
+  .pain-hook__item--4 { top: 78%; left: 8%; }
+
+  .pain-hook__text {
+    max-width: 22rem;
+  }
+}
+
+/* ---- Our System (6-outcome scroll section) ---- */
+/* Added 2026-07-20 (client brief: premium scroll-driven 6-outcome
+   section, between Pain Hook and Services). Full interaction logic
+   lives in js/system-panels.js; this file only owns layout/appearance.
+   Mobile-first per this project's convention: base rules below are the
+   simplified stacked mobile/tablet layout (no sticky column, no
+   active/dimmed emphasis — every panel just fades in once as it's
+   scrolled to, see .system__panel's own comment), the min-width: 1024px
+   block at the end is what switches on the sticky two-column
+   composition + active/dimmed panel emphasis. */
+
+.system__grid {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.system__intro {
+  max-width: 28rem;
+}
+
+/* Standardized to the shared section-title size (client request,
+   2026-07-22 — see .pain-hook__intro h2's note). The old restrained
+   "not main h2" clamp was removed; this now inherits `main h2` like every
+   other section title. Only the margin-block (its own spacing) is kept. */
+.system__intro h2 {
+  margin-block: var(--space-3) var(--space-4);
+}
+
+.system__lede {
+  color: var(--color-text-muted);
+}
+
+.system__panels {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+/* No opacity/transform hiding here by default — same "JS only ever
+   enhances" contract as .pain-hook__item above and initScrollReveal()
+   in main.js: js/system-panels.js is the only thing that ever hides
+   these (via gsap.set(), an inline style), and only right before it
+   sets up whichever scroll behavior actually applies (a one-time
+   mobile fade-in, or the desktop active/dimmed emphasis). A no-JS
+   visitor, a crawler that doesn't execute JS, or a script error
+   anywhere before this runs all see every panel fully visible and
+   readable — exactly the "simple static stack" the brief separately
+   asks for under prefers-reduced-motion, which is why that case needs
+   no extra CSS of its own here at all. */
+.system__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-block: var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Consistent aspect ratio across all six panels (client brief) —
+   reserves its own space, so swapping the label text for a real <img>
+   later never causes layout shift as long as the replacement keeps this
+   same ratio. border-radius removed 2026-07-20 (client request: "sin
+   border radius las imagenes") — square corners now, was --radius-md. */
+.system__panel-media {
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+}
+
+.system__panel-media-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+  max-width: 24ch;
+}
+
+/* Panel 06 only — a real rendered flow, not a "swap this for a photo"
+   placeholder (see the HTML comment on this element for why). Vertical,
+   not the brief's inline "Issue → Root cause → ..." horizontal text:
+   at this box's actual rendered width (52% of the right column on
+   desktop, was 42%), four full phrases don't fit legibly in a row without
+   shrinking past this section's restrained-typography intent — stacked
+   with a small down-arrow between each reads clearly at any width. */
+.system__flow {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.system__flow li:not(:last-child)::after {
+  content: "↓";
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--color-accent);
+}
+
+.system__panel-title {
+  font-size: var(--font-size-lg);
+}
+
+.system__panel-text {
+  color: var(--color-text-muted);
+}
+
+.system__panel-points {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Small dot bullets, not the browser default list marker — matches this
+   section's restrained/editorial direction. */
+.system__panel-points li {
+  position: relative;
+  padding-left: var(--space-4);
+}
+
+.system__panel-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+}
+
+.system__panel-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: fit-content;
+  color: var(--color-link);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+}
+
+.system__panel-link .icon {
+  width: 0.9em;
+  height: 0.9em;
+}
+
+.system__panel-link:hover,
+.system__panel-link:focus-visible {
+  color: var(--color-link-hover);
+}
+
+@media (min-width: 1024px) {
+  .system__grid {
+    grid-template-columns: minmax(260px, 26rem) 1fr;
+    gap: var(--space-9);
+    align-items: start;
+  }
+
+  /* Native CSS sticky, zero JS — stays pinned while .system__panels
+     (the taller column) scrolls past it. */
+  .system__intro {
+    position: sticky;
+    top: 8rem;
+  }
+
+  .system__panel {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-7);
+    /* Soft floor, not a hard height — six of these plus gaps is what
+       gives this section its ~180-240vh total scroll distance (brief),
+       without pinning the section itself. Content this short (one
+       description + 2-3 points) comfortably fits within this at normal
+       desktop viewport heights; needs a real npm run dev check once
+       content/images are final, same standing caveat as everything else
+       in this phase (no browser tool in these sessions). */
+    min-height: 30vh;
+    /* Opacity/transform only (both compositor-only) — toggled by
+       js/system-panels.js via .is-active, gated behind .system--armed
+       (see that class' own comment below). */
+    transition: opacity var(--duration-slow) var(--easing-premium),
+      transform var(--duration-slow) var(--easing-premium);
+  }
+
+  /* Bigger image (client request 2026-07-20: "la imagen mas grande") —
+     was 42%. Text sizing is untouched, just has less width to wrap in
+     now. */
+  .system__panel-media {
+    flex: 0 0 52%;
+  }
+
+  .system__panel-body {
+    flex: 1;
+  }
+
+  /* Gated behind .system--armed (added by js/system-panels.js only once
+     it's actually driving the desktop interaction) — without this gate,
+     every panel would render dimmed the instant the viewport matched
+     1024px, even before any scrolling happened, or permanently if the
+     script ever failed to load. Same reasoning as .pain-hook__item's
+     JS-only-ever-enhances contract above. */
+  .system--armed .system__panel:not(.is-active) {
+    opacity: 0.45;
+    transform: scale(0.98);
+  }
+
+  .system--armed .system__panel.is-active {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+/* ---- Value pillars (now inside #trust-metrics, "Security you can
+   trust.") ----
+   Moved 2026-07-17, client request — used to be their own section
+   ("Less Effort. More Security.", white background, heading-left/
+   cards-right layout) further up the page; that whole section was
+   removed since these 6 cards were its only real content. See the HTML
+   comment in pages/index.html (right above <ul class="trust-metrics__cards">)
+   for the full history.
+
+   .trust-metrics__cards replaces the old .pillars__grid — a plain fluid
+   responsive grid (1 column mobile, 2 at 640px, 3 at 1024px) instead of
+   the old fixed-width flex-wrap row, since this section's own heading +
+   supporting text already live above the stats, separately (unlike the
+   old section, which needed the grid itself to carry a "heading left,
+   cards right" two-column split). The old white-background .pillars
+   section rule and its .pillars__intro/__lede/h2-size overrides are
+   gone too — this section's heading ("Security you can trust.") already
+   has its own styling, and .pillar-card was always a white card
+   regardless of what sat behind it. */
+.trust-metrics__cards {
+  list-style: none;
+  display: grid;
+  /* 1rem (client spec), was --space-5 (1.5rem). No align-items override
+     here on purpose — default `stretch` is what makes every card in a
+     row match the tallest one automatically; adding align-items: start
+     would undo that and let cards size to their own content instead. */
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+  margin-top: var(--space-8);
+  /* justify-items (inline axis) is independent of align-items (block
+     axis, still default stretch above) — this centers each card within
+     its column instead of stretching it full-width, which is what lets
+     .pillar-card's own max-width (below) actually narrow the card
+     instead of being ignored. */
+  justify-items: center;
+}
+
+@media (min-width: 640px) {
+  .trust-metrics__cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .trust-metrics__cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* All 6 cards on one row (client request 2026-07-21, reference: a
+   "Designing a Better Experience" 6-step layout — tall vertical
+   rectangles in a single line, icon+title top, description bottom).
+   Only kicks in at >=1200px, where six ~180px columns fit comfortably;
+   below that the 3/2/1 steps above still apply so cards never get
+   crushed on narrower screens. Slightly tighter gap here so six columns
+   plus gutters clear the container. */
+@media (min-width: 1200px) {
+  .trust-metrics__cards {
+    grid-template-columns: repeat(6, 1fr);
+    gap: var(--space-3);
+  }
+  /* Taller, so each card reads as a vertical rectangle at the narrow
+     six-column width (matching the reference), and so the description
+     sitting at the card's bottom (margin-top: auto below) has room to
+     separate from the icon+title group at the top. Scoped to this
+     breakpoint only — the 3/2/1-column layouts below 1200px keep the
+     shorter 220px min-height. */
+  .pillar-card {
+    min-height: 280px;
+    /* Fill the column edge-to-edge for the even single-row look — the
+       320px cap + centering (for the old wider multi-row grid) would
+       otherwise leave gaps between narrow cards. */
+    max-width: none;
+  }
+}
+
+/* Order is set here, not by DOM position — the HTML keeps <h3> before
+   <p> (heading precedes its own content, correct order for assistive
+   tech) while this visually resequences to match the reference: icon,
+   then the description, then the divider, then the title underneath it.
+
+   width: 100% (was a fixed 300px) — changed 2026-07-17 when these cards
+   moved into .trust-metrics__cards, a fluid responsive grid (see above),
+   rather than the old fixed-width flex-wrap row that used to size
+   itself deliberately past a 50/50 split against a heading column. That
+   whole reason no longer applies now that the surrounding grid is fluid
+   — fighting it back to a fixed px width here would just make cards
+   overflow their own grid cell. min-height: 300px is unchanged, so
+   cards are still visually square-ish at typical column widths, just no
+   longer pixel-locked.
+   White with a drop shadow at rest, strong blue on hover (client
+   request 2026-07-15, superseding the solid-blue-always version from
+   earlier the same day). Content stays left-aligned, not centered, per
+   the earlier request.
+
+   Internal layout simplified 2026-07-17 (client correction, adapted
+   from a reference component on another project): back to a plain
+   top-to-bottom flex flow — icon, then title, then description, in
+   that order, matching the DOM order already (icon span, h3, p — no
+   CSS `order` needed anymore, so those properties were removed from
+   .pillar-card__title/__text below). This replaces two earlier,
+   more elaborate attempts at solving "cards need to look uniform sized":
+   (1) the icon used to be position: absolute, pinned to the card's own
+   top-left corner, so title/text could be bottom-aligned independently
+   via justify-content: flex-end — removed, the icon is back in normal
+   flow at the top; (2) a fixed 2-line title min-height was tried and
+   reverted the same day (see git history / the .pillar-card__title
+   comment that used to be here). The current, simpler approach: a fixed
+   min-height (280px, client spec) on the card itself, plus flex: 1 on
+   .pillar-card__text (below) so the description is what stretches to
+   fill any leftover space — combined with .trust-metrics__cards' grid
+   defaulting to align-items: stretch, every card in a row ends up the
+   same height automatically regardless of title/description length,
+   without needing per-element height tricks. */
+.pillar-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  /* Sized down (client request, 2026-07-17: not much copy per card, so
+     280px/2rem padding read as too much empty space) — gap 1.25rem ->
+     1rem, padding var(--space-6) (2rem) -> var(--space-5) (1.5rem),
+     min-height 280px -> 220px. Same design otherwise, just smaller. */
+  /* 0.5rem (was 1rem) — client request 2026-07-21, pull the title up
+     closer to the icon. Since .pillar-card__text uses margin-top: auto
+     (pinned to the card's bottom), this gap really only controls the
+     icon->title spacing; the auto margin keeps the description at the
+     bottom regardless. */
+  gap: var(--space-2);
+  padding: var(--space-5);
+  width: 100%;
+  /* Capped narrower than the grid column (client request, 2026-07-17)
+     — combined with .trust-metrics__cards' justify-items: center
+     above, this centers each card in its column at a fixed max width
+     instead of stretching edge-to-edge across it. */
+  max-width: 320px;
+  min-height: 220px;
+  background-color: var(--color-white);
+  /* Stronger than the shared --shadow-lg token (client request
+     2026-07-15: "más como widgets" — the cards were reading as flat/lost
+     against the section's own white background with the standard
+     tokens; a white-on-white card needs a more pronounced shadow than
+     one sitting on a colored/dark surface to read as "floating" at
+     all). Two layers: a soft wide spread for the "lifted" effect, plus
+     a tighter one for definition right at the edge. Still applies now
+     that the section behind these cards is a photo, not white — the
+     shadow reads as depth either way. */
+  box-shadow:
+    0 16px 40px rgb(1 1 1 / 0.16),
+    0 4px 10px rgb(1 1 1 / 0.08);
+  /* --radius-md (8px) — down from --radius-lg (16px), client request
+     2026-07-20: "reduce excessive rounding if currently too soft."
+     --radius-lg itself replaced a hardcoded 1.5rem/24px back on
+     2026-07-17, for reference. */
+  border-radius: var(--radius-md);
+  transition: background-color var(--duration-base) var(--easing-standard);
+}
+
+.pillar-card:hover {
+  background-color: var(--color-blue-dark);
+}
+
+.pillar-card__icon {
+  display: inline-flex;
+}
+
+/* Client-supplied two-tone icons (assets/icons/icon-*.svg, fixed
+   #F7F7F7/#010101 fill, not currentColor) — sized directly, not via the
+   .icon utility class, which assumes an inline <svg> using currentColor.
+   Back down to 3.5rem (client request 2026-07-17, alongside shrinking
+   the whole card — was bumped to 4.25rem earlier the same day; scaled
+   back down to match, not an independent decision).
+
+   filter: invert(1), not an edited copy of the SVG file — these same
+   6 icon files are also used un-inverted elsewhere (icon-lock and
+   icon-check-shield specifically are shared with .pain-hook__icon in
+   the "Facing these challenges?" section). Directly swapping the SVGs'
+   own fill colors was tried first and broke that other section (the
+   icons went black-on-black there, invisible) — inverting only within
+   this one selector fixes Pillars without touching the shared files at
+   all, so every other usage keeps the original light-backing/black-
+   detail look. */
+.pillar-card__icon img {
+  width: 3.5rem;
+  height: 3.5rem;
+  filter: invert(1);
+}
+
+/* Solid black — passes comfortably on white (~19:1) and clears the
+   blue-dark hover fill too (~5.7:1, blue-dark's luminance is close
+   enough to black that white text would fail 4.5:1 there), so neither
+   title nor text needs to change color on hover — only the card's own
+   background-color transitions.
+   Bumped to --font-size-md, client request 2026-07-17 (was
+   --font-size-sm, the smallest step on the scale).
+
+   Weight down to 600 (same day, client correction) — less bold than
+   h3's own default (--font-weight-bold, 800). No named token sits
+   between regular (400) and bold (800), so this is a literal number.
+   Under the system Helvetica/Arial stack (tokens.css
+   --font-family-base) this is inherently approximate: real Helvetica
+   Neue (macOS) has genuine in-between static faces (e.g. Medium) that
+   600 can land on, but Arial (Windows) only ships Regular/Bold —
+   browsers snap an unavailable weight to the nearest one they have, so
+   600 may render there as full Bold, Regular, or something in between
+   depending on the browser's own matching threshold. Needs a visual
+   check on both platforms if that gap matters.
+
+   No `order` anymore — removed 2026-07-17 alongside .pillar-card's
+   layout simplification above (see that rule's comment); DOM order
+   (icon, this title, then .pillar-card__text) already matches the
+   wanted visual order on its own now. */
+.pillar-card__title {
+  font-size: var(--font-size-md);
+  /* 500 (was 600) — client request 2026-07-21, "un poco menos bold".
+     Same literal-number / system-font caveat as noted above: only
+     reliably distinct from regular on real Helvetica Neue, may snap to
+     the nearest available weight on Arial. */
+  font-weight: 500;
+  color: var(--color-logo-black);
+}
+
+/* .pillar-card__divider (the underline below the title) removed
+   entirely 2026-07-17, client request — was a <span> in the markup
+   (pages/index.html) plus this rule; both deleted rather than just
+   hidden, since it had no other purpose and no other instance on the
+   page reused the class. */
+
+.pillar-card__text {
+  color: var(--color-logo-black);
+  /* Between regular (400) and light (300) — client correction,
+     2026-07-17: full --font-weight-regular (the previous value) read as
+     too heavy, but --font-weight-light before that had read as too
+     light — neither existing token was right. No token sits between
+     them, so this is a literal number; same system-font caveat as
+     .pillar-card__title's weight above applies here too (an in-between
+     weight is only reliably distinct on real Helvetica Neue, not
+     Arial). */
+  font-weight: 350;
+  font-size: var(--font-size-sm);
+  /* Tighter than the inherited body line-height (--line-height-base,
+     1.6) — client correction, 2026-07-17: "a bit less" spacing between
+     lines. --line-height-tight (1.2) is the only "less than base" step
+     already on the scale (tokens.css); reused rather than a one-off
+     number. */
+  line-height: var(--line-height-tight);
+  /* Stretches to fill whatever space is left in the card (client spec,
+     2026-07-17, same pass as .pillar-card's layout simplification) —
+     this, plus the grid's default align-items: stretch, is what makes
+     every card in a row match the tallest one's height without any
+     fixed per-title spacing tricks. No longer clamped to 3 lines with
+     an ellipsis either (client correction, same day: text must always
+     render in full, never truncated) — a card whose text needs more
+     than 3 lines just grows the whole row taller instead of clipping. */
+  /* margin-top: auto (was flex: 1) pushes the description to the bottom
+     of the card, leaving the icon + title grouped at the top with a
+     gap between — the composition the client asked for 2026-07-21
+     ("icon arriba con el título y abajo el texto"). Card-height
+     equalisation across a row is unaffected: the grid's own
+     align-items: stretch still makes every card in a row match the
+     tallest, so the auto margin just decides where the text lands
+     within that shared height, not the height itself. */
+  margin-top: auto;
+}
+
+/* ---- Services overview ---- */
+/* Redesigned 2026-07-13 from a 10-card grid to an editorial numbered
+   index + live preview (client brief: "no cards, no icon grids, no
+   rounded containers, no repeated Learn more buttons"). Mobile is a
+   plain scannable list — no preview column, no accordion. Desktop splits
+   into list (left) + sticky preview (right) at 1024px, matching the
+   grid's old first breakpoint. */
+
+.services__index {
+  display: grid;
+  gap: var(--space-7);
+}
+
+.services__list {
+  list-style: none;
+}
+
+.services__list li {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.services__list li:first-child {
+  border-top: 1px solid var(--color-border);
+}
+
+.services__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding-block: var(--space-5);
+  /* Added 2026-07-20 alongside the white hover fill below — gives that
+     fill a bit of inset instead of running flush to the row's own edges
+     (previously only padding-block existed, no inline padding at all). */
+  padding-inline: var(--space-4);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: background-color var(--duration-base) var(--easing-standard),
+    color var(--duration-base) var(--easing-standard);
+}
+
+.services__item-number {
+  flex-shrink: 0;
+  width: 2.5ch;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  transition: color var(--duration-base) var(--easing-standard);
+}
+
+/* Enlarged 2026-07-20 (client request: "agranda las tipografia de cada
+   servicio") — was --font-size-xl. */
+.services__item-name {
+  flex: 1;
+  font-size: var(--font-size-2xl);
+}
+
+/* A bit bigger (client request 2026-07-15: "a little, it's tiny") —
+   was unset (inherited the item's base font-size). Swapped from a plain
+   "→" text character to the shared icon-arrow-diagonal sprite symbol
+   2026-07-20 (client-supplied reference: two states of the same arrow,
+   rotated) — drawn pointing up-right (↗) at rest; rotate(0deg) here is
+   that as-drawn orientation. On hover it rotates to rotate(45deg),
+   turning it into a straight right arrow (→) — see icon-sprite.html's
+   own comment on icon-arrow-diagonal for why this is one icon rotating,
+   not two icons swapping. Duration bumped to --duration-base (was
+   --duration-fast) so the rotation itself reads as smooth rather than
+   snapping — client asked specifically for "smooth rotation." */
+/* Always visible now (client request 2026-07-20: "tiene que ser blanca
+   y despues pasar a negra" — was opacity: 0 at rest, only fading in on
+   hover). White at rest, readable against this row's black background;
+   flips to black on hover along with the rest of the row's white-fill
+   inversion (see .services__item:hover below) — the rotation + slight
+   slide stay as the "movement" on top of that color change. */
+.services__item-arrow {
+  flex-shrink: 0;
+  font-size: var(--font-size-lg);
+  color: var(--color-white);
+  /* Explicit CSS stroke, on top of icon-sprite.html's own
+     stroke="currentColor" presentation attribute — belt-and-suspenders
+     for an earlier report that the arrow wasn't rendering at all. A real
+     CSS rule always wins over a presentation attribute, so this
+     guarantees the stroke resolves to `color` above regardless of how
+     reliably that attribute inherits through the <use>/<symbol> shadow
+     tree in any given browser. Scoped to this one selector only — don't
+     widen this to the shared .icon class, since icon-star deliberately
+     sets stroke="none" directly and a blanket CSS rule here would
+     override that and add an unwanted stroke to every star icon on the
+     site. */
+  stroke: currentColor;
+  transform-origin: center;
+  transform: translateX(-0.4rem) rotate(0deg);
+  transition: transform var(--duration-base) var(--easing-standard),
+    color var(--duration-base) var(--easing-standard);
+}
+
+/* .is-active is a JS-added convenience (initServicePreview() in main.js)
+   that mirrors :hover/:focus-visible so the currently-previewed item
+   stays marked even after the pointer/keyboard moves elsewhere — purely
+   visual, never required to reach any service's content. Without JS,
+   :hover/:focus-visible alone already satisfy "active state is clear"
+   for the item actually being interacted with.
+
+   Changed 2026-07-20 (client request: "que cuando hoveree cambie de
+   color... quiero que en el tiempo que este hovereando sean fondo
+   blanco tipografia negra") from a text-only blue tint to a full
+   white-fill/black-text inversion — was `color: var(--color-accent)`
+   with no background change at all; the client found that too subtle
+   next to the preview image swap. --color-bg-inverse/--color-text-inverse
+   are the same white/black tokens the skip-link uses for the same
+   "invert against black specifically" purpose (tokens.css). */
+.services__item:hover,
+.services__item:focus-visible,
+.services__item.is-active {
+  background-color: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+}
+
+/* Hardcoded "on white" alpha rather than --color-text-muted (built for
+   dark surfaces, would be near-invisible here) — same documented
+   exception pattern as .review-card's on-white text colors, CLAUDE.md. */
+.services__item:hover .services__item-number,
+.services__item:focus-visible .services__item-number,
+.services__item.is-active .services__item-number {
+  color: rgb(1 1 1 / 0.55);
+}
+
+.services__item:hover .services__item-arrow,
+.services__item:focus-visible .services__item-arrow,
+.services__item.is-active .services__item-arrow {
+  transform: translateX(0) rotate(45deg);
+  color: var(--color-text-inverse);
+}
+
+/* Outline recolored to black: this state now always coincides with the
+   white background fill above, and --color-focus-ring (white, chosen to
+   work on every OTHER surface on this dark-themed site) would be
+   invisible against it — a real accessibility regression if left as-is. */
+.services__item:focus-visible {
+  outline: 2px solid var(--color-text-inverse);
+  outline-offset: -2px;
+}
+
+/* Hidden on mobile — the brief calls for a simple scannable list there,
+   not a persistent preview competing for a narrow viewport. Shown from
+   1024px, same breakpoint the old 3-column card grid switched on. */
+/* max-width matches .services__preview-media's own cap — needed now
+   that the grid column sizes to max-content (see .services__index
+   below): without a bound here, .services__preview-text's full
+   sentence would want to render as one unwrapped line under
+   max-content sizing, stretching the whole right column far past the
+   image's actual width instead of wrapping at it. */
+.services__preview {
+  display: none;
+  max-width: 24rem;
+}
+
+/* Portrait, matching the real service photos (~820×1227, client-supplied
+   2026-07-14) — was 4/3 (landscape), left over from the earlier
+   placeholder photos and cropping most of each portrait image away.
+   This ratio is exact enough (each of the 10 source photos is within
+   ~1% of it) that object-fit: cover below shows the whole image with no
+   visible crop, instead of forcing a landscape frame onto portrait
+   photography (client request 2026-07-15: "make the container taller
+   until the whole image shows"). max-width caps the overall size (client
+   follow-up 2026-07-15: at full column width — roughly half the page —
+   the tall aspect-ratio made it read as oversized) — the image stays
+   proportionally smaller within its column instead of stretching to
+   fill it, still with no crop. */
+/* max-width bumped a little (client request 2026-07-15: "a little
+   bigger, not too much") — was 20rem. */
+.services__preview-media {
+  aspect-ratio: 820 / 1227;
+  max-width: 24rem;
+  overflow: hidden;
+  background-color: var(--color-bg-elevated);
+}
+
+.services__preview-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Cross-fade on swap, not a hard cut — skipped entirely under
+     reduced-motion below. */
+  transition: opacity var(--duration-base) var(--easing-standard);
+}
+
+.services__preview-media img.is-swapping {
+  opacity: 0;
+}
+
+.services__preview-body {
+  padding-top: var(--space-5);
+}
+
+.services__preview-name {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-regular);
+  margin-bottom: var(--space-3);
+}
+
+.services__preview-text {
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
+}
+
+.services__preview-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-accent);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: border-color var(--duration-fast) var(--easing-standard),
+    gap var(--duration-fast) var(--easing-standard);
+}
+
+.services__preview-link:hover,
+.services__preview-link:focus-visible {
+  border-bottom-color: var(--color-accent);
+  gap: var(--space-2);
+}
+
+/* No longer a fixed 50/50 (client follow-up 2026-07-15, superseding the
+   true-half fix below in file history) — the list now fills whatever
+   width is left after the image column, instead of both being forced to
+   an equal half regardless of how wide the (fairly narrow,
+   max-width-capped) preview image actually is. max-content sizes the
+   right column to the image's real rendered width (see
+   .services__preview-media's max-width) and pins it to the right edge
+   of the container; minmax(0, 1fr) on the left lets the list grow to
+   fill the rest. The old .pillars__layout used to follow this same
+   pattern for the same reason; that selector no longer exists (the
+   section it belonged to was removed 2026-07-17). */
+@media (min-width: 1024px) {
+  .services__index {
+    grid-template-columns: minmax(0, 1fr) max-content;
+    align-items: start;
+  }
+
+  .services__preview {
+    display: block;
+    position: sticky;
+    top: calc(var(--space-6) + 5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .services__preview-media img {
+    transition: none;
+  }
+}
+
+/* ---- Uniforms / outfit viewer ---- */
+/* Added 2026-07-15, substantially refined 2026-07-17 (client brief: make
+   the viewer itself the section's main content, not the text — smaller/
+   lighter intro copy, bigger character, lighter-weight controls). See
+   the HTML comment above this section in pages/index.html and the
+   header comment in js/outfits.js for the image-sourcing background (no
+   genuine side-angle photography exists; the second view is an
+   alternate front pose, labeled "Angled" rather than "Side") — none of
+   that changed in this pass, only the visual treatment around it. */
+
+.outfits__layout {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.outfits__intro {
+  max-width: none;
+}
+
+/* No h2 override here anymore (removed 2026-07-15, client follow-up:
+   "apply that same [References] style to all the titles" — confirmed
+   this includes the two-column sections too, not just the centered
+   full-width ones). Inherits "main h2" directly. NOT paired with
+   white-space: nowrap, unlike References/FAQ — this heading shares a
+   narrower two-column layout with the outfit viewer, and forcing it
+   onto one line at the References clamp would overflow that column
+   badly (the nowrap trick there is tuned against the full container
+   width, not a half-width column). */
+/* line-height tightened (client correction, 2026-07-17: "que sea como
+   el resto de los títulos, no más grande, y menos espaciado entre
+   renglones") — font-size is untouched and already identical to every
+   other section's "main h2" (no override existed here before this
+   either), so it was never actually bigger; the complaint was really
+   about this heading's two-line wrap ("The right uniform" / "for every
+   role.") reading as taller/heavier than single-line headings
+   elsewhere. --line-height-heading (the shared h1–h6 default,
+   base.css) is 1.25; 1.1 here shrinks just the gap between these two
+   specific lines without touching font-size. */
+.outfits__intro h2 {
+  margin-top: var(--space-3);
+  line-height: 1.1;
+  /* Black, not grey (client request 2026-07-21) — was inheriting
+     .outfits' own color: var(--color-gray), same as this section's body
+     copy. --color-logo-black is FRANKONIA's real black, same token the
+     page's own background uses (tokens.css) — a heading is a stronger
+     visual moment than body text and reads better at full black on this
+     section's light background. */
+  color: var(--color-logo-black);
+}
+
+.outfits__intro > p {
+  margin-top: var(--space-4);
+  max-width: 34rem;
+  color: var(--color-text-muted);
+}
+
+/* .outfits__contexts (the 4-item context list: Corporate reception &
+   front-of-house / Industrial sites & outdoor patrols / Cold-weather and
+   winter shifts / Formal, client-facing assignments) removed entirely
+   2026-07-17, client request — not replaced with more descriptive text,
+   per the brief. Both rules that styled it (here and in the white-
+   background block further down) are deleted, not just unused. */
+
+/* ---- Viewer ---- */
+
+/* gap (not per-child margins) spaces the stage/views-toggle/info block
+   stack — client brief: "generous whitespace... remove unnecessary
+   dividers." */
+.outfits__viewer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+/* Overlaid on top of the image now, not beside it in a row (client
+   request 2026-07-15: "más cerca, arriba de la imagen") — .outfits__stage
+   is sized to match .outfits__image-frame's own max-width exactly
+   (instead of the full column width) and centered, so the arrows'
+   absolute positioning below is relative to the image's own bounds, not
+   the wider column.
+   32rem (client correction, 2026-07-17, third size change same day: was
+   40rem, then shrunk to 28rem for reading "too big," now nudged back up
+   — "a bit bigger" — without returning anywhere near 40rem). */
+.outfits__stage {
+  position: relative;
+  width: 100%;
+  max-width: 32rem;
+  margin-inline: auto;
+}
+
+/* Real arrow characters (←/→), not the chevron/triangle sprite icon
+   (client request 2026-07-15: "flechas en vez de triángulos") — plain
+   text glyphs, same no-circle/no-border treatment as before.
+   Bigger + thinner + lighter (client brief, 2026-07-17: "larger,
+   thinner and cleaner") — 2.5rem, up from 2rem; font-weight 300 is a
+   literal number, not a token (same caveat as .pillar-card__title/__text
+   elsewhere in this file: only approximately reliable under the system
+   Helvetica/Arial stack, see tokens.css --font-weight-light's comment),
+   and a muted gray instead of full --color-gray so it reads as
+   secondary/quiet until hovered. */
+.outfits__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  font-size: 2.5rem;
+  font-weight: 300;
+  line-height: 1;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: rgb(59 73 86 / 0.55);
+  background-color: transparent;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--easing-standard);
+}
+
+.outfits__arrow--prev {
+  left: var(--space-2);
+}
+
+.outfits__arrow--next {
+  right: var(--space-2);
+}
+
+.outfits__arrow:hover {
+  color: var(--color-logo-black);
+}
+
+.outfits__arrow:focus-visible {
+  outline: 2px solid var(--color-blue-dark);
+  outline-offset: 2px;
+}
+
+/* No visible frame/background — the transparent-cutout photo sits
+   directly on the section's own background rather than inside a boxed
+   "widget", per the brief's "integrated into the section, not a
+   separate widget". aspect-ratio (matching the real 800x1200 source
+   images exactly) is what actually reserves the space and prevents
+   layout shift when outfits.js swaps the image.
+   position: relative added 2026-07-17 so ::after (the grounding shadow
+   below) can anchor to this box specifically, not the wider .outfits__stage. */
+.outfits__image-frame {
+  position: relative;
+  width: 100%;
+  max-width: 32rem;
+  aspect-ratio: 800 / 1200;
+}
+
+/* Subtle grounding shadow (client brief, 2026-07-17: "so it does not
+   feel like a floating cutout") — a soft blurred ellipse under the
+   character's feet, not a literal box-shadow on the image itself (which
+   would shadow the whole transparent PNG's bounding box, including all
+   the empty space around the person, not just where they stand).
+   radial-gradient, not an image asset — no new decorative graphic per
+   the brief's "do not add... decorative graphics," just a CSS effect.
+   Positioned near the bottom of the frame, sized narrow relative to the
+   frame width so it reads as contact-shadow, not a spotlight. */
+.outfits__image-frame::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 4%;
+  transform: translateX(-50%);
+  width: 55%;
+  height: 6%;
+  background: radial-gradient(ellipse, rgb(1 1 1 / 0.16) 0%, rgb(1 1 1 / 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.outfits__image-frame img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity var(--duration-base) var(--easing-standard);
+}
+
+.outfits__image-frame img.is-swapping {
+  opacity: 0;
+}
+
+/* Front/Angled toggle — moved into .outfits__viewer 2026-07-17 (client
+   request: "closer to the image" — was in .outfits__intro on the left
+   since 2026-07-15) and shrunk/lightened to read as secondary: smaller
+   padding/font-size, and a soft blue tint instead of a solid
+   --color-blue-dark chip. */
+.outfits__views {
+  display: inline-flex;
+  padding: 2px;
+  background-color: rgb(82 135 201 / 0.12);
+  border-radius: var(--radius-md);
+}
+
+.outfits__view-btn {
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-regular);
+  color: rgb(1 1 1 / 0.55);
+  background-color: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--easing-standard),
+    color var(--duration-fast) var(--easing-standard);
+}
+
+.outfits__view-btn:hover {
+  color: var(--color-logo-black);
+}
+
+.outfits__view-btn[aria-pressed="true"] {
+  background-color: var(--color-white);
+  color: var(--color-logo-black);
+}
+
+/* Black, not the sitewide white --color-focus-ring — outline-offset
+   pushes this mostly outside the padded chip, landing on the section's
+   own light background, where white would be invisible. */
+.outfits__view-btn:focus-visible {
+  outline: 2px solid var(--color-logo-black);
+  outline-offset: 2px;
+}
+
+.outfits__view-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* .outfits__info/.outfits__info-name/.outfits__info-context (active
+   outfit name + one-line context, shown below the character) removed
+   entirely 2026-07-17, same-day client correction — see the HTML
+   comment in pages/index.html where that markup used to sit for why.
+   outfits.js still guards for these elements' absence in render()
+   rather than assuming they exist, so no JS changes were needed. */
+
+/* ---- Light neutral background (client reference 2026-07-15;
+   "very light neutral rather than pure white," client brief, 2026-07-17) ----
+   This section deliberately breaks from the site's dark theme. #FAFAFA,
+   a hardcoded near-white (not a token — same documented-exception
+   pattern components.css already uses for .review-card's "on white"
+   colors), rather than pure var(--color-white): with pure white behind
+   it, a transparent-cutout PNG on this same white had no visual
+   grounding at all before the shadow above existed; the very slight
+   off-white now gives the character (and its new shadow) a surface to
+   visibly sit on. Every color below is still a hardcoded "on white"
+   value (var(--color-gray) + rgb(59 73 86 / ...) tints), not the page's
+   dark-mode tokens — those assume this section sits on black or
+   --color-bg-elevated, neither of which is true here. */
+/* Extra padding-top on top of .section's own padding-block — the
+   .pixel-seam band sits entirely inside this section (7th revision —
+   see .pixel-seam__band's own comment for why it moved from straddling
+   the boundary to living fully within this section), and this
+   section's intro content started right at the default padding-block
+   edge with no room to spare. Real, permanent layout space — present
+   at every scroll position, not just during the transition — so the
+   covered zone always lands in genuinely empty space instead of eating
+   real content, whether or not JS/GSAP ever runs at all. Matches the
+   band's own height exactly (64px / 40px mobile, reduced from
+   120px/70px 2026-07-21 — client: too much white space at the top of
+   this section) — keep these two values in sync if the band's height
+   ever changes again. */
+.outfits {
+  padding-top: calc(var(--space-9) + 64px);
+  background-color: #FAFAFA;
+  color: var(--color-gray);
+}
+
+@media (max-width: 767.98px) {
+  .outfits {
+    padding-top: calc(var(--space-9) + 40px);
+  }
+}
+
+.outfits__intro > p {
+  color: rgb(59 73 86 / 0.75);
+}
+
+/* ---- Outfit name picker ---- */
+/* One button per garment — a direct-jump alternative to the prev/next
+   arrows, not a replacement for them (both remain, per the brief:
+   "besides the arrow, the buttons"). outfits.js keeps aria-pressed in
+   sync with whichever outfit is currently shown, including when it
+   changes via the arrows or keyboard, not just a click on this row.
+   Lives in the intro column, left-aligned like the rest of that
+   column's text, not centered like the viewer column.
+
+   Restyled 2026-07-17 (client brief: "lightweight text tabs instead of
+   filled blue pills") — no background/border/pill shape anymore, just
+   text with a bottom-border indicator on the active item. Layout
+   switched from wrapped pill row to a column list (one tab per line):
+   a horizontal wrapped row of plain text tabs with no visual container
+   reads ambiguously (hard to tell where one tab ends and the next
+   begins without the pill boundary that used to separate them); a
+   vertical list avoids that without reintroducing a boundary per item. */
+/* align-items: stretch (was flex-start), client correction 2026-07-17:
+   "the dividers have to be... the same width all of them." Each button
+   was display:inline-flex, shrink-to-fit its own text — with
+   align-items: flex-start, every button (and therefore every divider
+   border-top on it, see .outfits__name-btn below) was only as wide as
+   its own outfit name, so "Polo"'s divider was visibly narrower than
+   "Softshell Jacket"'s. Stretch forces every button to the column's
+   full width regardless of its own text length, so every divider now
+   spans the identical, full width. */
+.outfits__names {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-1);
+  margin-top: var(--space-6);
+}
+
+/* Muted text, transparent background, at rest.
+
+   Back to a single row (inline-flex — was briefly flex-direction:
+   column, same day) — client correction: the name + reveal-on-hover
+   detail must sit on the exact same line, not the detail pushed onto a
+   line of its own below. width: 100% is kept (that's what makes the
+   divider below span the full, consistent column width, independent of
+   which direction the button's own content flows) — only the internal
+   layout changed back to a row. Hairline divider (border-top) between
+   consecutive items — `.outfits__name-btn + .outfits__name-btn`
+   (adjacent-sibling) naturally skips the first item without a
+   :not(:first-child) exception.
+
+   Hover/active fill (2026-07-21, client: "no me gusta el hover azul y
+   bold... prefiero fondo negro y tipografia blanca") replaces the old
+   blue-text/bold/underline active state entirely — see the combined
+   hover/focus/[aria-pressed] rule below, same "invert the whole row"
+   idea as .services__item's white-fill/black-text hover (Services
+   Overview, this file), just inverted the other way since this section
+   sits on a light background instead of a dark one. padding-inline +
+   the matching negative margin-inline let the fill bleed slightly past
+   the text's own edges (a proper filled row, not a flush-edge tint)
+   without shifting where the text itself lines up relative to the
+   heading/lede above it. font-size stepped down one notch (2026-07-21,
+   client: "a bit smaller") — was --font-size-xl. */
+.outfits__name-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-4);
+  margin-inline: calc(-1 * var(--space-4));
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-regular);
+  /* Solid black (client request: "use the black of the webpage") — was
+     a muted rgb(59 73 86 / 0.6), the same gray this section's other
+     "on white" text uses at lower emphasis. --color-logo-black is the
+     literal page-background black (tokens.css), same token
+     .outfits__name-detail already uses. */
+  color: var(--color-logo-black);
+  background-color: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--easing-standard),
+    background-color var(--duration-fast) var(--easing-standard);
+}
+
+.outfits__name-btn + .outfits__name-btn {
+  border-top: 1px solid rgb(59 73 86 / 0.15);
+}
+
+/* Same opacity/translateX hover-reveal pattern as .services__item-arrow
+   (Services Overview section, this file) — inline, same line as the
+   name, not a block pushed below it (client correction, 2026-07-17: a
+   same-day earlier version used max-height/display:block specifically
+   to avoid this sitting on the same line, which turned out to be the
+   opposite of what was wanted). Content is real text always in the DOM,
+   just invisible until revealed: "→ For everyday reception and
+   front-of-house duty," etc. — client correction: "really write the
+   things that go in the arrows... say what the outfit is for."
+   Revealed (and left open) when the item is the active one
+   (aria-pressed), matching how .services__item-arrow also stays
+   visible for .is-active — so the currently-shown outfit's context is
+   visible without requiring a hover. Color flips to white together with
+   the rest of the row on hover/active — see the combined rule below. */
+.outfits__name-detail {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-logo-black);
+  opacity: 0;
+  transform: translateX(-0.4rem);
+  transition: opacity var(--duration-fast) var(--easing-standard),
+    transform var(--duration-fast) var(--easing-standard),
+    color var(--duration-fast) var(--easing-standard);
+}
+
+.outfits__name-btn:hover .outfits__name-detail,
+.outfits__name-btn:focus-visible .outfits__name-detail,
+.outfits__name-btn[aria-pressed="true"] .outfits__name-detail {
+  opacity: 1;
+  transform: translateX(0);
+  color: var(--color-white);
+}
+
+/* Same shared sprite symbol as .services__item-arrow (client request,
+   2026-07-21: "the same arrow that we use in our services") — drawn
+   pointing up-right (↗) at rest, rotating to a straight right arrow (→)
+   on hover/active, identical mechanism. Black at rest (visible against
+   this section's light background) — the opposite of Services' own
+   arrow, which is white at rest because THAT section sits on the dark
+   page background; each one is colored to be visible against whatever
+   it's actually resting on. margin-left: auto pushes it to the row's
+   far end regardless of how long the outfit name + reveal-on-hover
+   detail text next to it are. */
+.outfits__name-arrow {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: var(--font-size-lg);
+  color: var(--color-logo-black);
+  stroke: currentColor;
+  transform-origin: center;
+  transform: rotate(0deg);
+  transition: transform var(--duration-base) var(--easing-standard),
+    color var(--duration-fast) var(--easing-standard);
+}
+
+/* The one hover/active state now: a solid black fill with white text +
+   arrow, replacing the old blue-text/bold/underline treatment entirely
+   (client, 2026-07-21: "no me gusta el hover azul y bold... prefiero
+   fondo negro y tipografia blanca, la flecha y el texto"). */
+.outfits__name-btn:hover,
+.outfits__name-btn:focus-visible,
+.outfits__name-btn[aria-pressed="true"] {
+  background-color: var(--color-logo-black);
+  color: var(--color-white);
+}
+
+.outfits__name-btn:hover .outfits__name-arrow,
+.outfits__name-btn:focus-visible .outfits__name-arrow,
+.outfits__name-btn[aria-pressed="true"] .outfits__name-arrow {
+  transform: rotate(45deg);
+  color: var(--color-white);
+}
+
+.outfits__name-btn:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: -2px;
+}
+
+@media (min-width: 1024px) {
+  .outfits__layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    /* start, not center (2026-07-21, client: too much white space at the
+       top of this section) — the text column (heading/lede/picker) is
+       shorter than the tall image column, so centering it pushed the
+       heading down into the middle of the section. Top-aligning both
+       columns anchors the heading just below the section padding
+       instead. */
+    align-items: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .outfits__image-frame img {
+    transition: none;
+  }
+}
+
+/* ---- Trust / certifications & numbers ----
+   Removed entirely 2026-07-17, client request ("sacame la seccion de
+   Certified Quality") — this whole section (.trust and its __title-row/
+   __badges-inline/__cert-seal--sm/__intro-text/__metrics/__review/
+   __members children) is gone from pages/index.html. Deleted here too
+   rather than left unreferenced, per this project's "if certain
+   something is unused, delete it completely" convention — none of
+   these classes have any other usage on the site (page-service.css uses
+   a completely separate service-trust__* namespace for /werkschutz/,
+   untouched by this).
+
+   This was the homepage's only full-size .review-card and its only
+   mention of Wirtschaftsclub Bamberg (WCB)/Deutscher Mittelstands-Bund
+   — flagged in pages/index.html (see the comment near .hero__bg) since
+   CLAUDE.md documents those as required trust elements "wherever the
+   design calls for a trust section (homepage §5 at minimum)." Not
+   re-added here; worth the client's attention. */
+
+/* ---- References ---- */
+
+/* Narrower content width, scoped to this section only (added 2026-07-21,
+   client brief: "the entire testimonials section feels too wide, too
+   horizontally stretched... use a constrained centered content width
+   instead of allowing the reviews to span almost the full page").
+   .container's own shared max-width is 1440px (layout.css, sitewide) —
+   this overrides it just within .references, to 1200px (the brief's own
+   "approximately 1180-1280px" recommendation), rather than changing the
+   shared token and affecting every other section on the site. */
+.references .container {
+  max-width: 75rem;
+}
+
+/* Re-centered 2026-07-21 (client brief: "centered eyebrow, centered
+   heading, centered supporting paragraph... reduce the vertical gap
+   between heading and supporting text") — reverses the 2026-07-17
+   change described in the history below, which had matched
+   #trust-metrics' left-heading/right-copy split. That split is gone;
+   this is back to a single centered column, same composition as
+   .social__intro/.faq__intro elsewhere on this page. margin-bottom
+   overridden to 0 (was inheriting .section__intro's shared 64px) —
+   the gap to .references__results below is now controlled from ONE
+   place (that element's own margin-top), not two stacked margins. */
+.references__intro {
+  max-width: 34rem;
+  margin-inline: auto;
+  margin-bottom: 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* .section-eyebrow's shared default is display: flex (for its icon+text
+   pairing) — text-align: center on the parent above doesn't center a
+   flex row by itself, same gotcha already documented on
+   .trust-metrics__intro's own eyebrow. */
+.references__intro .section-eyebrow {
+  justify-content: center;
+}
+
+/* .section-eyebrow's shared default (--color-accent-strong, blue-dark)
+   only clears WCAG contrast against white at LARGE text sizes (~3.7:1
+   here — same figure already used by .references__results .stat__value
+   above, which is why that one gets away with blue on this section's
+   white background and this smaller eyebrow text can't). Darker,
+   readable override scoped to this one light-background section — every
+   other section using .section-eyebrow is on the dark theme, where the
+   shared blue already clears contrast fine. */
+.references .section-eyebrow {
+  color: var(--color-gray);
+}
+
+.references__lede {
+  color: rgb(59 73 86 / 0.75);
+  max-width: 34rem;
+}
+
+/* History: this intro was a left-heading/right-lede 2-column grid
+   (matching #trust-metrics' own split) from 2026-07-17 to 2026-07-21,
+   including a 3-children-in-a-2-column-grid fix identical to
+   .trust-metrics__intro's own (same root cause, same day). Removed
+   entirely as part of the 2026-07-21 re-centering above — a future
+   edit shouldn't need to know this history to touch the current
+   (much simpler) centered layout, but it's kept here in case the
+   split composition is ever requested again.
+
+   .references__intro h2's old forced-one-line treatment (a tuned clamp
+   + white-space: nowrap, specifically calibrated for a 31-character
+   string spanning the section's full width, from before 2026-07-17) is
+   also long gone — this just inherits "main h2" like most other section
+   headings do, wrapping normally. */
+
+/* Reuses the shared .stat component directly (components.css — same one
+   #trust-metrics uses), recolored for this section's white background:
+   .stat__value's shared default is white text (built for dark
+   backgrounds), invisible here without this override. Structure/spacing
+   otherwise identical to #trust-metrics__list — same gap, same
+   thin-divider desktop layout instead of boxed cards (the old
+   .result-tile border/padding/radius treatment this replaced is gone
+   entirely, not hidden). */
+/* Both margins tightened 2026-07-21 (client brief: "reduce the space
+   between the header and the reviews grid... reduce spacing
+   throughout") — margin-top was --space-8 (64px, on top of the intro's
+   own now-removed 64px margin-bottom — see .references__intro's own
+   comment above), margin-bottom was --space-9 (96px). Now the sole
+   source of both surrounding gaps (48px each), landing at the low end
+   of the brief's own "subtitle to grid: ~48-64px" recommendation. */
+.references__results {
+  list-style: none;
+  display: grid;
+  gap: var(--space-6);
+  margin-top: var(--space-7);
+  margin-bottom: var(--space-7);
+}
+
+.references__results .stat {
+  align-items: center;
+  text-align: center;
+}
+
+.references__results .stat__value {
+  font-size: clamp(2.5rem, 1.6rem + 3.5vw, 4.5rem);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-accent-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.references__results .stat__label {
+  color: rgb(59 73 86 / 0.75);
+}
+
+@media (min-width: 768px) {
+  .references__results {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+
+  .references__results li {
+    padding-inline: var(--space-6);
+    border-inline-start: 1px solid rgb(59 73 86 / 0.2);
+  }
+
+  .references__results li:first-child {
+    border-inline-start: none;
+  }
+}
+
+/* Restyled 2026-07-20 (client-supplied reference image) from a
+   horizontally scrollable, draggable strip of 9 to a 2-column CSS
+   masonry of 3 — see the HTML comment in pages/index.html above this
+   element for the full content/format history. columns (not grid) is
+   what gives the uneven, "stacks flow into whichever column has room"
+   look the reference image has, with no JS and no fixed row heights —
+   this is still the "preferred" approach per the 2026-07-21 brief
+   below, so the underlying mechanism is unchanged, only spacing/sizing.
+
+   Compacted 2026-07-21 (client brief: "too wide, too horizontally
+   stretched... more compact, more editorial... irregular puzzle
+   composition, not a standard card grid"). column-gap tightened to
+   --space-5 (24px, was --space-6/32px — brief's own "gap between
+   columns: ~20-28px"). With only 3 real testimonials (no invented
+   ones added to fill both columns evenly — see CLAUDE.md's own
+   authenticity history on this section), CSS columns' natural
+   balancing already distributes them 2-in-one-column/1-in-the-other
+   rather than a strict 2x2 matrix, which is the "puzzle, not a rigid
+   grid" the brief asks for — no artificial fixed heights or manual
+   reordering were introduced to force this, per the brief's own
+   explicit instruction not to fake it. */
+.references__testimonials {
+  columns: 1;
+  column-gap: var(--space-5);
+}
+
+@media (min-width: 640px) {
+  .references__testimonials {
+    columns: 2;
+  }
+}
+
+/* break-inside: avoid keeps a card from being split across the column
+   break; display: inline-block (required for break-inside to work in
+   multi-column layouts) + width: 100% makes each card still behave like
+   a full-width block within its column. Rounded, filled card (client
+   reference) — replaces the old horizontal strip's hairline-divider,
+   no-background treatment entirely, not just a tweak of it.
+
+   Compacted 2026-07-21 (see .references__testimonials' own comment,
+   just above, for the full brief) — margin-bottom and padding both
+   tightened from --space-6 (32px) to --space-5 (24px), matching the
+   brief's own "vertical gap between cards: ~20-28px" and "moderate...
+   not excessive padding." border-radius stepped down from --radius-lg
+   (16px) to --radius-md (8px) — "moderate rounded corners," same
+   less-soft direction this project has taken elsewhere (e.g.
+   .pillar-card's own radius reduction) when a brief asks for a less
+   rounded, more editorial look. */
+.testimonial {
+  display: inline-block;
+  width: 100%;
+  break-inside: avoid;
+  margin-bottom: var(--space-5);
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  background-color: rgb(59 73 86 / 0.04);
+  text-align: left;
+}
+
+.testimonial__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.testimonial__person {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Real client-supplied photos, 2026-07-20 — was a plain flat-color
+   circle (this project had no real photos of these 3 customers at the
+   time; see CLAUDE.md for that decision's full history). Now an <img>,
+   not a <span> — object-fit: cover crops each one to a circle regardless
+   of its own source aspect ratio (all 3 originals are landscape).
+   Fixed width/height, not em-based, so every avatar is exactly the same
+   size regardless of the card's own font-size context; background-color
+   kept as a fallback fill so there's no flash of empty white circle
+   while each image loads. */
+.testimonial__avatar {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background-color: var(--color-accent-subtle);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* Black, not grey (client request 2026-07-21) — was inheriting
+   .references' own color: var(--color-gray), same as this section's
+   body copy. Same reasoning as .references__intro h2 above. */
+.testimonial__name {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  color: var(--color-logo-black);
+}
+
+.testimonial__role {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* Top-right, alone (client request 2026-07-20: stars moved below the
+   quote instead — was paired with the Google icon here in a
+   .testimonial__badge column, now removed; see .testimonial__stars
+   below). Replaces the Twitter/X icon in the reference image — reuses
+   assets/icons/google-icon.png, already in this project for the hero's
+   compact review card, since these are Google reviews. */
+.testimonial__google {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* Moved below the quote 2026-07-20 (client correction) — was paired with
+   the Google icon top-right. #F5B400 is the same documented "on white"
+   gold exception .review-card already uses (components.css/CLAUDE.md),
+   reused here rather than introducing a second gold value. */
+.testimonial__stars {
+  display: block;
+  /* Tightened 2026-07-21 (brief: "reduce spacing throughout") — was
+     --space-5 (24px). */
+  margin-top: var(--space-4);
+  color: #F5B400;
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.1em;
+}
+
+/* Italic (client reference) — the one deliberately non-token style
+   property here; every color/spacing value still comes from the shared
+   scale. Size reduced 2026-07-20 (client request: "make this text
+   smaller") — was --font-size-md. */
+.testimonial__quote {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+  font-style: italic;
+}
+
+/* Mobile (added 2026-07-21, brief: "reduce border radius and internal
+   padding slightly" on mobile) — one step down from the already-reduced
+   desktop/tablet values above (--space-5/--radius-md), matching the
+   same "one step smaller on the narrowest viewport" pattern already
+   used elsewhere on this page rather than introducing new arbitrary
+   numbers. */
+@media (max-width: 639.98px) {
+  .testimonial {
+    padding: var(--space-4);
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* ---- White background (client reference 2026-07-15, "white mode" —
+   same treatment as .outfits above; the old .pillars section used to be
+   a third example here too, before it was removed 2026-07-17) ----
+   .result-tile/.result-tile__text (plain bordered boxes) are gone —
+   replaced 2026-07-17 by the shared .stat component, recolored directly
+   in the .references__results rules above rather than down here, since
+   those overrides are specific to the shared component in this one
+   context, not a section-wide color flip the way this block handles
+   .testimonial below. .stat__value's --color-accent-strong (blue-dark)
+   is large text (2.5–4.5rem), which only needs 3:1 against white and
+   clears it comfortably, same threshold this token already relies on
+   elsewhere. */
+.references {
+  background-color: var(--color-white);
+  color: var(--color-gray);
+}
+
+/* Black, not grey (client request 2026-07-21) — was inheriting
+   .references' own color: var(--color-gray) above, same as this
+   section's body copy. Same reasoning as .outfits__intro h2
+   (page-home.css). */
+.references__intro h2 {
+  color: var(--color-logo-black);
+}
+
+/* The old border-inline-end override that used to live here is gone —
+   .testimonial has no border to color anymore since the 2026-07-20
+   masonry restyle (filled card instead of a hairline divider). */
+.testimonial__role {
+  color: rgb(59 73 86 / 0.75);
+}
+
+/* ---- Social media (client request, 2026-07-17) ----
+   "Story reel" format adapted from a client-supplied reference (a travel
+   company's testimonial section) — see the HTML comment in
+   pages/index.html above this section for the full brief and the
+   placeholder-content reasoning. Unlike References/Outfits, this section
+   doesn't break into "white mode" — .section--subtle (--color-bg-elevated)
+   is the same dark-theme surface Pain Hook already uses, so every color
+   below is a normal sitewide token, not a hardcoded "on white" value. */
+.social__intro {
+  text-align: center;
+  margin-inline: auto;
+}
+
+/* Standardized to the shared section-title size (client request,
+   2026-07-22 — see .pain-hook__intro h2's note). Override removed; this
+   now inherits `main h2` and wraps/balances like the trust heading. */
+
+.social__lede {
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+}
+
+/* Bottom-aligned row (client reference: cards read as "standing" on a
+   shared baseline, captions below each at their own height) — the
+   featured middle card is both wider and taller (aspect-ratio locks the
+   two together), not just stretched vertically. */
+.social__grid {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--space-5);
+  margin-top: var(--space-8);
+}
+
+.social__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: 9.5rem;
+}
+
+.social__item--featured {
+  width: 12rem;
+}
+
+/* Was a plain flat-color rectangle (no real social content existed yet)
+   — now holds a real cover photo (.social__cover below), 2026-07-20.
+   Still not a final video, just a placeholder photo standing in for
+   one — see the HTML comment above this section. 9/16, a standard
+   vertical social-video ratio. overflow: hidden clips .social__cover to
+   this box's own rounded corners (an <img> doesn't inherit a parent's
+   border-radius on its own). */
+.social__placeholder {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  background-color: var(--color-bg);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fills the box completely regardless of the source photo's own
+   proportions — all 3 were already center-cropped to this exact 9:16
+   ratio before saving, so object-fit: cover here is a safety net, not
+   doing the real cropping work. */
+.social__cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Plain CSS-drawn play glyph (border-triangle inside a circle), not an
+   icon-sprite symbol or image — signals "this will be a video" without
+   adding a new asset or repurposing an unrelated sprite icon for
+   something it doesn't mean. z-index/position: relative keeps it above
+   .social__cover now that there's a real image in the stacking order
+   (previously the only content in this flex-centered box, so no
+   stacking conflict existed). */
+.social__play {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius-pill);
+  background-color: rgb(255 255 255 / 0.12);
+}
+
+.social__play::before {
+  content: "";
+  margin-left: 3px;
+  border-style: solid;
+  border-width: 7px 0 7px 11px;
+  border-color: transparent transparent transparent var(--color-text);
+}
+
+.social__caption {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.social__cta {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-8);
+}
+
+/* Narrower fixed widths + tighter gap below 400px — the base sizes
+   (9.5rem/12rem side-by-side, 3 items + 2 gaps) don't fit the smallest
+   phone viewports this site targets without this; wrapping instead was
+   considered and rejected — with an odd number of items and one
+   deliberately wider "featured" card, a wrap would put 2 cards on one
+   row and 1 alone on the next, which reads as a layout mistake rather
+   than an intentional composition. */
+@media (max-width: 400px) {
+  .social__grid {
+    gap: var(--space-2);
+  }
+
+  .social__item {
+    width: 5.5rem;
+  }
+
+  .social__item--featured {
+    width: 7rem;
+  }
+}
+
+/* ---- Free security analysis (primary conversion) ---- */
+/* Redesigned 2026-07-20 — full editorial split-screen replacing the
+   2026-07-15 boxed form-card layout entirely (that version's rationale
+   is now moot; see git history if it's ever needed). Client brief:
+   black editorial panel (left) / white form panel (right), ~50/50,
+   both full viewport height on desktop, no outer container, no card
+   around the form — "the vertical split itself defines the
+   composition." Mobile-first: base rules are the stacked single-column
+   fallback, the min-width: 768px block switches on the side-by-side
+   split (this section's own breakpoint, chosen because 768px is where
+   there's realistically enough width for two full-height columns without
+   either one feeling cramped — every other breakpoint on this page is
+   768/1024, so this isn't a new number, just applied to a layout that
+   didn't exist before). */
+
+.conversion {
+  scroll-margin-top: 5rem;
+}
+
+@media (min-width: 768px) {
+  .conversion {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+  }
+}
+
+.conversion__panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-8) var(--container-padding);
+}
+
+@media (min-width: 768px) {
+  .conversion__panel {
+    /* Brief's desktop padding targets (64-80px / 72-96px) via clamp
+       rather than a fixed value, so it scales down gracefully on the
+       narrower end of this breakpoint range instead of jumping straight
+       to the full desktop figure at exactly 768px. */
+    padding-inline: clamp(2.5rem, 5vw, 5rem);
+  }
+
+  .conversion__panel--form {
+    padding-inline: clamp(3rem, 6vw, 6rem);
+  }
+}
+
+/* Black panel — already the page's default --color-bg/--color-text, no
+   override needed for those. justify-content: space-between spreads
+   intro / visual / microcopy across the panel's full height instead of
+   bunching them at center, per the brief's "abstract visual in the
+   lower half... microcopy at the bottom" structure. */
+.conversion__panel--info {
+  justify-content: space-between;
+  gap: var(--space-7);
+}
+
+.conversion__info {
+  max-width: 26rem;
+}
+
+/* Standardized to the shared section-title size (client request,
+   2026-07-22 — see .pain-hook__intro h2's note). The earlier deliberately-
+   "quietest heading" clamp was removed so this matches every other section
+   title (inherits `main h2`). max-width still caps its line length, and
+   overflow-wrap (base.css) still handles long German words. Note:
+   .conversion__form-title below keeps its own separate 32–42px size — it's
+   a form heading (h3), not a section title, so it's intentionally left. */
+.conversion__headline {
+  max-width: 25rem;
+  margin-top: var(--space-3);
+}
+
+.conversion__lede {
+  max-width: 26rem;
+  margin-top: var(--space-4);
+  color: var(--color-text-muted);
+}
+
+/* ---- Abstract visual system ---- */
+
+.conversion__visual {
+  position: relative;
+  width: 100%;
+  max-width: 30rem;
+}
+
+.conversion__visual-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.conversion__visual-fragments path,
+.conversion__visual-order {
+  fill: none;
+  stroke: var(--color-border-strong);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* One continuous path, left to right — its own gradient (defined inline
+   in pages/index.html's <defs>) fades from the same muted grey as the
+   fragments to --color-accent, which is what carries the brief's
+   "fragmented → ordered" transition without a second visual element. A
+   generously large stroke-dasharray/dashoffset pair (900 — comfortably
+   longer than this path's real rendered length, ~650-700 units) is the
+   standard CSS-only "draw a line" technique: exact length doesn't need
+   to be measured in JS as long as the chosen value is larger than it. */
+.conversion__visual-path {
+  fill: none;
+  stroke: url(#conversion-path-gradient);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+  animation: conversion-path-draw 1.4s var(--easing-premium) 0.3s forwards;
+}
+
+.conversion__visual-node {
+  fill: var(--color-border-strong);
+}
+
+.conversion__visual-node--marker {
+  fill: var(--color-accent);
+}
+
+/* Fragments/order-rect/nodes fade in with a small stagger (brief:
+   "opacity fade, small stagger, no looping") — separate from the path's
+   own draw-in above. Neither animation loops; both are plain CSS
+   @keyframes, not GSAP, per the brief's explicit "no heavy GSAP
+   dependency" for this one graphic. prefers-reduced-motion needs no
+   extra rule here — motion.css's existing blanket
+   animation-duration: 0.01ms override already neutralizes both of
+   these the same way it does every other animation on this site. */
+.conversion__visual-fragments path,
+.conversion__visual-order,
+.conversion__visual-node {
+  opacity: 0;
+  animation: conversion-fade-in 0.6s var(--easing-standard) forwards;
+}
+
+.conversion__visual-fragments path:nth-child(1) { animation-delay: 0.05s; }
+.conversion__visual-fragments path:nth-child(2) { animation-delay: 0.15s; }
+.conversion__visual-fragments path:nth-child(3) { animation-delay: 0.25s; }
+.conversion__visual-fragments path:nth-child(4) { animation-delay: 0.35s; }
+.conversion__visual-fragments path:nth-child(5) { animation-delay: 0.45s; }
+.conversion__visual-node { animation-delay: 0.9s; }
+.conversion__visual-order { animation-delay: 1.1s; }
+
+@keyframes conversion-path-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes conversion-fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Tiny, uppercase, widely spaced, low-contrast (brief: "should not
+   become a prominent infographic") — a plain row under the graphic
+   rather than positioned to point at individual coordinates, which
+   would need per-label JS measurement for something this subtle. */
+.conversion__visual-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-3);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgb(255 255 255 / 0.35);
+}
+
+/* "Almost like footer information inside the panel" (brief) — quiet,
+   bottom-anchored via the parent's justify-content: space-between. */
+.conversion__micro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--font-size-sm);
+}
+
+.conversion__micro-sub {
+  color: var(--color-text-muted);
+}
+
+/* White form panel (brief: "warm white / very light neutral gray" — this
+   project's five-brand-color system, tokens.css, has no such hue and a
+   new one isn't being introduced for one section; --color-white is the
+   existing token every other "light mode" section on this page already
+   uses for the same purpose — References/Outfits/FAQ, see page-home.css).
+   No card, no border, no shadow — the form sits directly on the panel,
+   per the brief. */
+.conversion__panel--form {
+  background-color: var(--color-white);
+  color: var(--color-gray);
+}
+
+.conversion__form-wrap {
+  width: 100%;
+  max-width: 38.75rem;
+  /* Slightly above exact vertical center (brief) — a small upward
+     nudge on top of the parent's justify-content: center, cheaper than
+     hand-tuning asymmetric flex values. */
+  margin-top: -2rem;
+}
+
+/* Dedicated size (brief: "32-42px"), NOT "main h2"/.conversion__headline's
+   own restrained clamp — this is the more prominent of the two headings
+   on this page now that the black panel's is deliberately quiet, so it
+   gets its own, slightly larger, independent scale. */
+.conversion__form-title {
+  font-size: clamp(2rem, 1.6rem + 1.5vw, 2.625rem);
+  font-weight: var(--font-weight-regular);
+}
+
+.conversion__form-lede {
+  margin-top: var(--space-3);
+  color: rgb(59 73 86 / 0.75);
+}
+
+.conversion__form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  margin-top: var(--space-8);
+}
+
+@media (min-width: 640px) {
+  .conversion__form {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.conversion__form-field--full,
+.conversion__form .form-checkbox,
+.conversion__form > .btn {
+  grid-column: 1 / -1;
+}
+
+/* ---- Minimal editorial field style ---- */
+/* Scoped to .conversion__form only, per this brief — the shared
+   .form-field / .form-checkbox components (components.css) are untouched
+   for any future reuse elsewhere. Brief: "no filled backgrounds, no
+   large rounded rectangles, thin bottom border only, labels above in
+   small uppercase, clear blue focus state, no exaggerated radius." */
+.conversion__form .form-field__label {
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-regular);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  /* Same "on white" muted alpha as .testimonial__role/.references__lede
+     elsewhere in this file, not a one-off value — 0.75, not 0.65. */
+  color: rgb(59 73 86 / 0.75);
+}
+
+.conversion__form .form-field__input,
+.conversion__form .form-field__textarea {
+  padding: var(--space-2) 0;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid rgb(59 73 86 / 0.25);
+  border-radius: 0;
+  color: var(--color-gray);
+}
+
+.conversion__form .form-field__textarea {
+  /* "Should not be excessively tall" (brief) — was 8.125rem. */
+  min-height: 4.5rem;
+  resize: vertical;
+}
+
+.conversion__form .form-field__input:hover,
+.conversion__form .form-field__textarea:hover {
+  border-bottom-color: rgb(59 73 86 / 0.45);
+}
+
+/* Blue focus state (brief) — the shared component's default focus ring
+   is tuned for this site's dark surfaces (white ring/border, see
+   components.css's own comment on why); this form sits on white, where
+   --color-accent already clears contrast on its own merits, so a plain
+   underline-color change reads as the "clear focus state in FRANKONIA
+   blue" the brief asks for without needing an outline at all here. */
+.conversion__form .form-field__input:focus-visible,
+.conversion__form .form-field__textarea:focus-visible {
+  outline: none;
+  border-bottom-color: var(--color-accent-strong);
+  border-bottom-width: 2px;
+}
+
+.conversion__form .form-checkbox__label {
+  color: rgb(59 73 86 / 0.75);
+}
+
+.conversion__form .form-checkbox__label a {
+  color: var(--color-accent-strong);
+}
+
+/* ---- Compact submit button ---- */
+/* Overrides .btn's shared border-radius: var(--radius-pill) (components.css)
+   down to something small (brief: "small corner radius or square edges"),
+   and cancels the grid item's default stretch (justify-self: stretch is
+   CSS Grid's own default — combined with grid-column: 1/-1 above, that's
+   what made the old button full-width) so it sizes to its own content
+   instead, per "width based on content, not full width." */
+.conversion__submit {
+  justify-self: start;
+  border-radius: var(--radius-sm);
+  margin-top: var(--space-2);
+}
+
+@media (min-width: 1024px) {
+  .conversion__panel {
+    padding-block: var(--space-9);
+  }
+}
+
+/* ---- Mobile (below 768px) ---- */
+/* Brief: "left panel should not use 100vh on mobile... keep the abstract
+   visual but simplify and reduce its height... submit button can become
+   full width." No media query needed for the stacked single-column
+   layout itself (.conversion has no display:grid until 768px, so it's
+   already a plain block stack by default) — only these three
+   adjustments are mobile-specific. */
+@media (max-width: 767.98px) {
+  .conversion__visual {
+    max-width: 20rem;
+  }
+
+  .conversion__visual-labels {
+    font-size: 0.625rem;
+  }
+
+  .conversion__submit {
+    justify-self: stretch;
+    width: 100%;
+  }
+}
+
+/* ---- Coverage areas (client request, 2026-07-17) ----
+   Plain black --color-bg, no .section--subtle — same treatment as Pain
+   Hook/Trust Metrics, so it reads as one more section in the page's
+   existing rhythm, not a new visual style. Pills reuse the same
+   icon-pin + pill shape as the footer's .footer-pill (site-chrome.css),
+   but with blue-light for the icon/border instead of white — safe here
+   specifically because this section sits directly on --color-bg
+   (plain black), where blue-light clears contrast comfortably; the
+   footer uses white instead because it sits on --color-bg-elevated
+   (gray), where blue-light does not (see the caveat in tokens.css). Not
+   merged into one shared component: two different contexts, two
+   different safe colors, per that same caveat. */
+.coverage__intro {
+  max-width: 34rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.coverage__lede {
+  color: var(--color-text-muted);
+  margin-top: var(--space-3);
+}
+
+/* ---- Interactive coverage map (client brief, 2026-07-21) ---- */
+/* Leaflet needs an explicit height on its container or it renders at
+   0px — the three heights below (mobile/tablet/desktop) are the brief's
+   own suggested ranges. overflow: hidden clips Leaflet's internal tile
+   panes to this element's own border-radius (Leaflet doesn't respect an
+   ancestor's radius on its own). */
+.coverage__map-wrap {
+  position: relative;
+  margin-top: var(--space-8);
+  height: 420px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.coverage__map {
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-bg-elevated);
+}
+
+/* Subtle loading cue (brief: "show a subtle loading state... do not
+   freeze the page... keep the previous map visible until the new
+   boundary is ready") — the map/markers/previous polygon all stay fully
+   visible and interactive throughout; this is a restrained opacity dip
+   on the map tiles themselves, nothing that blocks input. Transition
+   (not an @keyframes loop) so prefers-reduced-motion's blanket
+   animation-duration override doesn't need a separate rule here —
+   transition-duration is covered by that same override. */
+.coverage__map.is-loading .leaflet-tile-pane {
+  opacity: 0.6;
+  transition: opacity var(--duration-base) var(--easing-standard);
+}
+
+/* Compact overlay panel — content is now just a small label + city name
+   (sub-line removed 2026-07-21, client: "saca el texto de abajo," see
+   below). Moved top-left -> top-right same day (client: "el mas menos
+   lo tapa" — Leaflet's default top-left zoom control was sitting over
+   this panel). Still never sits over Leaflet's own attribution control,
+   which stays in its default bottom-right corner — top-right and
+   bottom-right don't overlap. z-index above Leaflet's own panes (max
+   ~650 for popups); 650 here is comfortably past the highest a piece of
+   static UI chrome like this needs to clear. */
+.coverage__overlay {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 650;
+  max-width: 12rem;
+  padding: var(--space-3) var(--space-4);
+  background-color: rgb(1 1 1 / 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgb(255 255 255 / 0.12);
+}
+
+.coverage__overlay-label {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.coverage__overlay-city {
+  margin-top: var(--space-1);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+}
+
+/* Custom circular marker (brief: "no default Leaflet pin, no bouncing")
+   — a divIcon wrapping a single styled <span>, not an image. The dot
+   itself carries the visual style; the wrapping .coverage-marker (the
+   divIcon's own element) stays unstyled/transparent, just Leaflet's
+   positioning hook. transform: scale for the active state rather than
+   changing width/height directly — scale doesn't require recalculating
+   Leaflet's iconAnchor positioning math, width/height would. */
+.coverage-marker__dot {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  border: 2px solid var(--color-white);
+  transition: transform var(--duration-base) var(--easing-standard);
+}
+
+.coverage-marker.is-active .coverage-marker__dot {
+  transform: scale(1.35);
+}
+
+@media (min-width: 768px) {
+  .coverage__map-wrap {
+    height: 500px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .coverage__map-wrap {
+    height: 600px;
+  }
+}
+
+/* Two explicit rows (client request 2026-07-20, same pattern/reasoning
+   as .footer-pills-rows, site-chrome.css — see that rule's own comment).
+   Replaces margin-top: var(--space-7), which used to live on
+   .coverage__list itself back when there was only one of it. */
+.coverage__rows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-7);
+}
+
+.coverage__list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.coverage__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1.5px solid rgb(61 154 211 / 0.4);
+  border-radius: var(--radius-pill);
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  transition:
+    border-color var(--duration-fast) var(--easing-standard),
+    background-color var(--duration-fast) var(--easing-standard),
+    color var(--duration-fast) var(--easing-standard);
+}
+
+/* Client-supplied pin icon (assets/icons/icon-location.svg, added
+   2026-07-17, replacing the shared sprite's icon-pin — client reported
+   that one as "feo"/ugly here). Fixed white fill (not currentColor),
+   same "client-supplied two-tone icon, sized directly as an <img>"
+   pattern as .pillar-card__icon img — not a sprite <use>, so no `color`
+   rule needed here, unlike the old icon-pin usage this replaced. Scoped
+   to .coverage__pill only; the footer's separate city-pill list
+   (.footer-pill, site-chrome.css) still uses the shared icon-pin sprite
+   symbol and wasn't part of this request. */
+.coverage__pill-icon {
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+}
+
+.coverage__pill:hover,
+.coverage__pill:focus-visible {
+  border-color: var(--color-blue-light);
+  background-color: rgb(61 154 211 / 0.12);
+  color: var(--color-white);
+}
+
+/* Active state (client brief, 2026-07-21: "blue background with white
+   text... one restrained distinction, no exaggerated glow"), set by
+   js/coverage-map.js via aria-current="true" on the 10 real city <a>
+   links (aria-current is the spec-valid ARIA pattern for "the currently
+   selected item in a set of choices" on a link) — and, added same day
+   for the new "All" button, aria-pressed="true" on that one <button>
+   instead, since aria-current doesn't apply to buttons and aria-pressed
+   is exactly what a toggle button should use. .is-active is a plain
+   CSS-hook duplicate of the same state on both element types — the
+   script sets it alongside whichever ARIA attribute is correct for that
+   element, this rule only needs one selector to key off but listing all
+   three keeps the intent obvious from the CSS alone. */
+.coverage__pill.is-active,
+.coverage__pill[aria-current="true"],
+.coverage__pill[aria-pressed="true"] {
+  border-color: var(--color-blue-dark);
+  background-color: var(--color-blue-dark);
+  color: var(--color-white);
+}
+
+/* .coverage__pill--all: a real <button> now (added 2026-07-21, client
+   request — "deberia haber un boton con all"), not the old removed link
+   to /einsatzgebiete/ this same class name used to style (that one was
+   removed earlier the same day, see the HTML comment on .coverage__rows
+   for why — this is a fresh, unrelated use of the name, not a revival).
+   Reuses .coverage__pill's base look but stays visibly blue at rest
+   (rather than only on hover/active) so it reads as a distinct view
+   toggle, not one more city in the list. Active/hover states still key
+   off the same .is-active/[aria-pressed="true"] as every other pill —
+   see the comment on .coverage__pill.is-active below for why this one
+   uses aria-pressed instead of aria-current. */
+.coverage__pill--all {
+  border-color: var(--color-blue-light);
+  font-weight: var(--font-weight-bold);
+}
+
+/* ---- FAQ ---- */
+/* Only the homepage-specific heading override lives here now — the
+   accordion primitive itself (.faq__list, .faq-item and its children,
+   .faq__toggle-row) was promoted to components.css 2026-07-15 (see this file's header comment).
+   Native <details>/<summary> — zero JS, keyboard-operable and readable
+   with CSS entirely disabled, content never depends on JavaScript. */
+
+/* Client request 2026-07-14: one line, smaller, same fix as
+   .references__intro h2 — a clamp tuned to this specific 26-character
+   string rather than the shared scale (this string is shorter than
+   References', so the same clamp numbers carry even more safety
+   margin — reused deliberately for visual consistency between the two
+   "forced one-line" headings).
+   max-width: none overrides the shared .section__intro's 42rem cap —
+   left in place from the original edit despite this comment's intent,
+   it left the block narrower than the boxes below it, which read as
+   the title being off-center from them (client report 2026-07-14). */
+.faq__intro {
+  max-width: none;
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* Standardized to the shared section-title size (client request,
+   2026-07-22 — see .pain-hook__intro h2's note). Size/nowrap override
+   removed; this h2 now inherits `main h2`. (A separate .faq__intro h2 rule
+   below still sets its on-white text color — that's unaffected.) */
+.faq__intro h2 {
+  font-weight: var(--font-weight-regular);
+}
+
+/* Same contrast fix as .references .section-eyebrow above — this
+   section's white background can't carry the shared blue eyebrow color
+   at this small a text size (see that rule's own comment for the
+   contrast math). */
+.faq .section-eyebrow {
+  color: var(--color-gray);
+}
+
+/* ---- White background (client reference 2026-07-15, "white mode" —
+   same treatment as .outfits/.references above; the old .pillars
+   section used to be a third example here too, before it was removed
+   2026-07-17) ----
+   .faq-item/.faq__list/.faq__toggle-row live in components.css (shared
+   with /werkschutz/, still dark there) — everything here is scoped to
+   .faq specifically so werkschutz's FAQ is untouched. Hardcoded "on
+   white" values again, same rgb(59 73 86 / ...) pattern used elsewhere
+   in this file. */
+.faq {
+  background-color: var(--color-white);
+  color: var(--color-gray);
+}
+
+/* Black, not grey (client request 2026-07-21) — was inheriting .faq's
+   own color: var(--color-gray) above, same as this section's body copy.
+   Same reasoning as .outfits__intro h2/.references__intro h2
+   (page-home.css). Scoped to the section's own intro heading, not
+   .faq-item summary h3 (each question) — those weren't part of this
+   request and already have their own treatment. */
+.faq__intro h2 {
+  color: var(--color-logo-black);
+}
+
+/* Restyled 2026-07-20 (client reference image) — two columns instead of
+   one, replacing .faq-item's border-only look with a filled pill (no
+   border), plus-icon moved to the left of the question instead of the
+   right, shorter/more compact row height, bigger radius. This whole
+   block only ever loads on the homepage (page-home.css isn't linked on
+   /werkschutz/ — see CLAUDE.md's build architecture), so none of these
+   overrides touch that page's dark-theme FAQ, which keeps the shared
+   component's original bordered/single-column look from components.css.
+   Two columns from 768px up; single column below that stays the
+   mobile-first default (no media query needed for that half — it's
+   just never overridden). */
+.faq__list {
+  max-width: 64rem;
+}
+
+@media (min-width: 768px) {
+  .faq__list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+}
+
+.faq-item {
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  background-color: rgb(59 73 86 / 0.05);
+}
+
+/* space-between (shared default) pushed the "+" to the far right, which
+   is what put it opposite the question text — flex-start + an explicit
+   gap keeps icon and question close together on the left instead. */
+.faq-item summary {
+  justify-content: flex-start;
+  gap: var(--space-4);
+}
+
+.faq-item__answer {
+  color: rgb(59 73 86 / 0.75);
+}
+
+/* order: -1 visually moves the "+" before the question (a generated
+   ::after normally renders last in flow) without touching the real
+   summary/h3 markup or its DOM/reading order — screen readers and
+   keyboard navigation see the exact same content either way, only the
+   visual position changes.
+   Dark instead of --color-accent-strong (blue-dark) — at this "+"
+   glyph's size the blue clears large-text's 3:1 but not normal text's
+   4.5:1 against white, and it's ambiguous which threshold applies at
+   the smaller end of .faq-item summary's fluid sizing, so this sidesteps
+   the question entirely rather than relying on a borderline number. */
+.faq-item summary::after {
+  order: -1;
+  color: var(--color-gray);
+}
+
+.faq__toggle {
+  border-color: rgb(59 73 86 / 0.35);
+  color: var(--color-gray);
+}
+
+.faq__toggle:hover {
+  border-color: var(--color-blue-dark);
+  color: var(--color-blue-dark);
+}
+
+/* ---- Pixel-transition "seam" (client request, 2026-07-21) ----
+   Second revision of an effect recreating a WebGL "pixel dissolve"
+   reveal the client linked (github.com/J0SUKE/gsap-threejs-codrops —
+   a per-image reveal via a real Three.js shader), rebuilt in CSS/GSAP
+   instead (Three.js/WebGL stays out of scope for this project, see
+   CLAUDE.md tech constraints — client confirmed this approach
+   explicitly over lifting that restriction).
+
+   First attempt (removed, see CLAUDE.md for the full history) covered
+   an entire INCOMING section in tiles on entrance — client feedback:
+   "no estoy viendo nada" (also traced to a real tile-color bug: tiles
+   were matched to each section's own background, so they had zero
+   contrast against it). Once shown two concrete options, client
+   clarified the effect should live in the SEAM between two sections
+   instead of belonging to either one's entrance: "los pixeles viven en
+   la costura entre ambas." This is what's built now.
+
+   Structure: `.pixel-seam` is a real, empty DOM sibling placed directly
+   between two sections (currently just Services -> Uniforms, see the
+   div in pages/index.html) with real height: 0 — it takes up no layout
+   space of its own. `.pixel-seam__band` (built by
+   js/pixel-transition.js) is absolutely positioned with a negative top
+   offset equal to half its own height, so it straddles the boundary:
+   half overlapping the end of the section above, half the start of the
+   section below. A grid of solid tiles inside it disappears tile-by-
+   tile, in a rough left-to-right wipe with random per-tile jitter, as
+   the seam scrolls through the middle of the viewport — the same
+   "grid + per-cell random threshold" idea as the shader, via a plain
+   CSS opacity transition per tile instead of a fragment shader.
+
+   Currently applied to exactly one boundary (client asked to confirm
+   the mechanism works before it's used elsewhere) — chosen because
+   Services (dark) -> Uniforms (light) gives real contrast. Extending
+   this to another boundary means adding another `.pixel-seam` div
+   (with its own data-color-above/data-color-below) at that DOM
+   position; see js/pixel-transition.js, which discovers every
+   `[data-pixel-seam]` element generically.
+
+   4th revision — 3 concrete bugs fixed after a real screenshot showed
+   white gridlines cutting across the tiles: gap removed (a gap is an
+   empty gutter painted with whatever's behind it, which differs on
+   each half of the band — that mismatch produced the gridlines); tiles
+   colored per-tile by which half of the band they're in, not one fixed
+   color; grid column/row counts computed from the band's measured
+   width. 5th revision: the color fallback was a hardcoded hex literal
+   duplicating a token's value instead of reading it live — fixed in JS.
+
+   6th revision — rebuilt after actually reading the FULL reference
+   repo (media.ts/fragment.glsl/vertex.glsl/canvas.ts/main.ts, not just
+   the fragment shader in isolation), per client feedback: "no estas
+   captando el efecto... analiza bien la carpeta." Two real corrections:
+   (1) squares were still not guaranteed — dividing width by cols and
+   height by rows independently (each Math.round'd separately) can
+   differ by a pixel or two per axis; now both axes use ONE explicit
+   shared pixel size (`--pixel-tile-size`, set by JS), matching the
+   shader's own single `gridSize` scalar applied to both dimensions
+   after its own aspect correction. (2) the reveal was uncorrelated
+   random per tile across the ENTIRE scroll range — meaning revealed
+   tiles were scattered evenly across the whole band at any given
+   scroll position, with no sense of directional motion. The shader
+   actually has one continuous sweep position, and only cells NEAR that
+   sweep ever show noise — cells far from it are always cleanly
+   revealed or covered. `js/pixel-transition.js` now gives each row a
+   clean "ideal" reveal progress (a top-to-bottom wipe) plus a small
+   jitter bounded to about one row's worth of progress-space, so
+   jaggedness only ever appears in the localized band currently being
+   crossed, not scattered everywhere at once.
+
+   JS-only-ever-enhances, same contract as every other motion primitive
+   on this site: `.pixel-seam` is empty by default — js/pixel-
+   transition.js only ever appends the band + tiles into it at runtime.
+   If that script never runs, or prefers-reduced-motion is set (checked
+   before anything is built), the div stays empty and effectively
+   invisible, so the two sections simply meet with nothing between
+   them, same as if this feature didn't exist. */
+.pixel-seam {
+  position: relative;
+  z-index: 2;
+  height: 0;
+  overflow: visible;
+}
+
+.pixel-seam__band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* Sits ENTIRELY within the section below the seam now (Uniforms),
+     not straddling the boundary (7th revision, client: "los pixeles
+     son negros... tendria que estar arriba de la seccion blanca").
+     Every tile is one fixed color (var(--color-bg), black — see
+     .pixel-seam__tile below), so it's only ever visible against a
+     light background; the previous ±120px straddle wasted half its
+     height sitting invisibly over the dark section above. */
+  top: 0;
+  /* 64px (was 120px — 2026-07-21, client: too much white space at the
+     top of the Uniforms section; the reserved space is driven by this
+     band height). Keep .outfits' matching padding-top (above, this
+     file) in sync if this changes again. */
+  height: 64px;
+  display: grid;
+  /* Column/row counts AND the explicit shared tile size are all set
+     inline by js/pixel-transition.js after measuring the band's actual
+     rendered width/height — using the SAME pixel size on both axes
+     (not two independently-rounded `1fr` fractions) is what actually
+     guarantees square cells regardless of viewport width. The 10/3/24px
+     fallbacks here only matter if that measurement somehow fails. */
+  grid-template-columns: repeat(var(--pixel-cols, 10), var(--pixel-tile-size, 24px));
+  grid-template-rows: repeat(var(--pixel-rows, 3), var(--pixel-tile-size, 24px));
+  /* No gap — a gap here would be an empty gutter painted with whatever
+     is actually behind the band; tiles sit flush against each other so
+     the only visible boundaries are between a still-opaque tile and an
+     already-revealed (transparent) one. */
+  pointer-events: none;
+}
+
+.pixel-seam__tile {
+  /* One fixed color for every tile (7th revision) — no more per-half
+     matching to whichever section is behind it. The whole point is
+     contrast: solid black tiles read clearly against the light section
+     this band now sits inside (Uniforms), and dissolve to reveal it.
+     Set directly here, not per-tile in JS, since there's no longer a
+     split to compute — still consumes the real --color-bg token, not a
+     hardcoded hex, per this project's own coding conventions. */
+  background-color: var(--color-bg);
+  opacity: 1;
+  transition: opacity 0.5s var(--easing-standard);
+}
+
+.pixel-seam__tile.is-revealed {
+  opacity: 0;
+}
+
+@media (max-width: 767.98px) {
+  .pixel-seam__band {
+    height: 40px;
+  }
+}

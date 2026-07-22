@@ -1,0 +1,108 @@
+
+
+
+
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+    <div class="site-footer__col">
+      <h2 class="site-footer__heading">Contact</h2>
+      <address class="site-footer__address">
+        FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG<br>
+        Neuerbstraße 19<br>
+        96052 Bamberg
+      </address>
+      <ul class="site-footer__list">
+        <li><a href="tel:+499519643520">+49 951 964352-0</a></li>
+        <li><a href="mailto:info@frankonia-sicherheit.de">info@frankonia-sicherheit.de</a></li>
+      </ul>
+    </div>
+
+    <div class="site-footer__col">
+      <h2 class="site-footer__heading">Legal</h2>
+      <ul class="site-footer__list">
+        <li><a href="/jobs/">Jobs &amp; Careers</a></li>
+        <li><a href="/referenzen/">References</a></li>
+        <li><a href="/impressum/">Imprint</a></li>
+        <li><a href="/datenschutz/">Privacy Policy</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Services moved out of the 3-column grid above and restyled as
+       pills, 2026-07-17 client request: "poné los servicios igual que
+       los de coverage areas, como pills centrados... en dos renglones."
+       Same .footer-pills-rows/.footer-pills/.footer-pill classes as the
+       Coverage Areas block below — same treatment, deliberately no icon
+       though (unlike Coverage Areas' location pins, these aren't
+       locations, so no icon was added just to force parity). Split into
+       two explicit rows of 5, same "two independently-centered rows"
+       pattern as Coverage Areas, for the same reason (10 items left to
+       wrap naturally lands unevenly). Grid above is a 2-column layout
+       now (Contact/Legal only) — see .site-footer__grid, site-chrome.css. -->
+  <div class="container site-footer__services">
+    <h2 class="site-footer__heading">Services</h2>
+    <div class="footer-pills-rows">
+      <ul class="footer-pills">
+        <li><a class="footer-pill" href="/werkschutz/">Industrial Site Security</a></li>
+        <li><a class="footer-pill" href="/objektschutz/">Property Protection</a></li>
+        <li><a class="footer-pill" href="/baustellenbewachung/">Construction Site Security</a></li>
+        <li><a class="footer-pill" href="/brandwache/">Fire Watch</a></li>
+        <li><a class="footer-pill" href="/revier-schliessdienst/">Patrol &amp; Lock-Up Service</a></li>
+      </ul>
+      <ul class="footer-pills">
+        <li><a class="footer-pill" href="/empfangsdienst/">Reception Services</a></li>
+        <li><a class="footer-pill" href="/veranstaltungsschutz/">Event Security</a></li>
+        <li><a class="footer-pill" href="/kaufhausdetektei/">Retail Loss Prevention</a></li>
+        <li><a class="footer-pill" href="/sicherheitstechnik/">Security Technology</a></li>
+        <li><a class="footer-pill" href="/interventionsdienst/">Intervention Service</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Full-width, not squeezed into the 3-column grid above: pill badges
+       need room to wrap across rows (client reference image). Full city
+       list here is a deliberate local-SEO signal (guidelines §2.7), not
+       just decoration. -->
+  <div class="container site-footer__coverage">
+    <h2 class="site-footer__heading">Coverage Areas</h2>
+    <!-- Two explicit rows (client request 2026-07-14), not one list left
+         to wrap naturally — a single flex-wrap list put all 10 cities on
+         row 1 and stranded "All Coverage Areas" alone on row 2. Two
+         separate <ul>s, each centered independently, guarantee an even
+         split at normal desktop widths; on narrow mobile either row can
+         still wrap further, which is fine (vertical wrap, no horizontal
+         overflow).
+
+         Pin icon swapped 2026-07-17 (client request) from the shared
+         sprite's icon-pin to the same client-supplied
+         assets/icons/icon-location.svg used on the homepage's Coverage
+         Areas section (.coverage__pill-icon, page-home.css) — the
+         sprite version is stroke-only/unfilled (see icon-sprite.html's
+         shared fill:none default), which on this background read as a
+         dark/near-black shape rather than genuinely white, the same
+         underlying issue already fixed once for the hero phone icon.
+         icon-location.svg is a solid fixed-white fill, so it doesn't
+         have that problem. -->
+    <div class="footer-pills-rows">
+      <ul class="footer-pills">
+        <li><a class="footer-pill" href="/sicherheitsdienst-bamberg/"><img class="footer-pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Bamberg</a></li>
+        <li><a class="footer-pill" href="/sicherheitsdienst-nuernberg/"><img class="footer-pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Nuremberg</a></li>
+        <li><a class="footer-pill" href="/sicherheitsdienst-wuerzburg/"><img class="footer-pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Würzburg</a></li>
+        <li><a class="footer-pill" href="/sicherheitsdienst-erlangen/"><img class="footer-pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Erlangen</a></li>
+        <li><a class="footer-pill" href="/sicherheitsdienst-fuerth/"><img class="footer-pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Fürth</a></li>
+        <li><a class="footer-pill" href="/sicherheitsdienst-schweinfurt/"><img class="footer-pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Schweinfurt</a></li>
+      </ul>
+      <ul class="footer-pills">
+        <li><a class="footer-pill" href="/sicherheitsdienst-bayreuth/"><img class="footer-pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Bayreuth</a></li>
+        <li><a class="footer-pill" href="/sicherheitsdienst-coburg/"><img class="footer-pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Coburg</a></li>
+        <li><a class="footer-pill" href="/sicherheitsdienst-ansbach/"><img class="footer-pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Ansbach</a></li>
+        <li><a class="footer-pill" href="/sicherheitsdienst-hof/"><img class="footer-pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Hof</a></li>
+        <li><a class="footer-pill" href="/einsatzgebiete/"><img class="footer-pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">All Coverage Areas</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="site-footer__bottom container">
+    <p>&copy; 2026 FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG</p>
+  </div>
+</footer>

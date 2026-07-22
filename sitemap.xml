@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Manually maintained per CLAUDE.md / guidelines §2.6 — update whenever a
+  page ships, don't generate entries for pages that don't exist yet.
+  robots.txt already references this file's URL; this is the first time
+  the file itself has been created (homepage shipped without one — gap
+  closed here alongside /werkschutz/, the second real page).
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://frankonia-sicherheit.de/</loc>
+    <lastmod>2026-07-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/werkschutz/</loc>
+    <lastmod>2026-07-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>

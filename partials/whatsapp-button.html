@@ -1,0 +1,21 @@
+<!--
+  Global floating WhatsApp contact button — shared across every page via
+  this partial (single place to update, per CLAUDE.md). Pure CSS/HTML, no
+  JavaScript: it's a plain <a> to a wa.me link.
+
+  PLACEHOLDER NUMBER — not yet confirmed by the client. "491234567890" is
+  a deliberately fake, obviously-not-real number (do not treat as real).
+  Once the client confirms a WhatsApp Business number, replace the href
+  below with https://wa.me/<countrycode+number>, digits only, no "+",
+  no spaces, no leading zero after the country code — e.g. a Bamberg
+  mobile number would look like https://wa.me/49171XXXXXXX.
+-->
+<a
+  class="whatsapp-button"
+  href="https://wa.me/491234567890"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Contact via WhatsApp (opens in new tab)"
+>
+  <img class="whatsapp-button__icon" src="/assets/icons/whatsapp-icon.png" alt="" width="128" height="128" loading="lazy">
+</a>

@@ -1,0 +1,40 @@
+/*
+  Motion foundation. Two responsibilities only, and this file is the only
+  place either one is handled (base.css must not duplicate the
+  reduced-motion block):
+  1. A hard global override for prefers-reduced-motion.
+  2. A generic scroll-reveal primitive. Elements never carry the
+     .u-reveal class in raw HTML — js/main.js adds it itself, immediately
+     before observing, and only when JS + IntersectionObserver are both
+     available. That means content is fully visible by default for
+     no-JS users, crawlers that don't execute JS, and any page where a
+     script error stops main.js before it runs. See js/main.js for the
+     full contract. Do not build page-specific motion here.
+*/
+
+.u-reveal {
+  opacity: 0;
+  transform: translateY(var(--space-4));
+  /* --easing-premium (tokens.css, added 2026-07-20): expo-out curve for
+     content arriving into view — was --easing-standard (a symmetric
+     material-style ease). Duration unchanged. */
+  transition:
+    opacity var(--duration-slow) var(--easing-premium),
+    transform var(--duration-slow) var(--easing-premium);
+}
+
+.u-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

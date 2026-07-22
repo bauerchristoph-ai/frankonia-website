@@ -1,0 +1,728 @@
+/*
+  Shared site chrome — header/nav and footer. Included on every page via
+  partials/header.html + partials/footer.html, so this stylesheet is part
+  of the shared cascade (head-common.html), not page-scoped CSS.
+*/
+
+/* ---- Header ---- */
+
+/* Solid var(--color-bg) (client revision, 2026-07-13 — reverted a same-day
+   transparent-header experiment that merged the header with the hero
+   photo behind it). The header now sits on its own solid black bar and
+   the hero background image starts below it, not behind it. No
+   border-bottom anymore (removed 2026-07-15, client request) — the
+   hard blue line under the header read as an unwanted seam; the hero's
+   own top vignette (.hero__bg::after in page-home.css, added the same
+   request) now handles softening that transition instead. */
+/* Transparent again (client request 2026-07-17, reversing the
+   2026-07-13 solid-black decision documented in CLAUDE.md — treated as a
+   fresh request per that note, not a revert of this comment). On every
+   page except the homepage this is visually identical to the old solid
+   fill, since the page background (--color-bg) is the same black — it
+   only matters where .hero (page-home.css) pulls its photo up behind the
+   header via a negative margin-top, so the photo becomes the nav's
+   background too instead of a solid bar sitting above it. */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  background-color: transparent;
+  transition: background-color var(--duration-slower) var(--easing-standard);
+}
+
+/* ---- Scroll-based light/dark theme (client request, 2026-07-17 —
+   ported behavior from another project, "Sacramentum Advisors";
+   typography/link structure here is untouched, only this state
+   toggle is new) ----
+   Toggled by initHeaderScrollTheme() (js/main.js), which adds/removes
+   this one class based on whether a light-background section
+   ([data-nav-theme="light"] — .outfits/.references/.faq on the
+   homepage; see pages/index.html) is currently passing behind the
+   header, or a page has forced it on via [data-nav-force-dark] on
+   <body>. Every element below that carries its own hardcoded white
+   (nav links, hamburger bars, the submenu caret, the logo) needs its
+   own override here — .site-header itself only controls the
+   background/blur, it doesn't cascade text color down to any of these
+   since they're already hardcoded to var(--color-white)/
+   var(--color-text) at the token level, not inherited.
+
+   background/backdrop-filter values are the ones specified for the
+   ported behavior, not independently chosen — a barely-there white
+   wash + heavy blur, meant to sit against this page's own light
+   sections (#FAFAFA/white) once scrolled behind the header, same as
+   the source implementation's intent against its own light-mode
+   pages. Logo has no dark/color variant asset (see the comment on
+   .site-header__logo img in header.html) — filter: brightness(0)
+   forces the existing white PNG to solid black instead, same
+   filter-based-recolor technique already used elsewhere in this
+   codebase (.pillar-card__icon img) rather than waiting on a new
+   asset. */
+.site-header--dark {
+  background-color: rgb(255 255 255 / 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.site-header--dark .site-header__logo img {
+  filter: brightness(0);
+}
+
+.site-header--dark .site-nav__list a,
+.site-header--dark .site-nav__caret {
+  color: var(--color-gray);
+}
+
+.site-header--dark .nav-toggle__bar,
+.site-header--dark .nav-toggle__bar::before,
+.site-header--dark .nav-toggle__bar::after {
+  background-color: var(--color-gray);
+}
+
+/* Not addressed here, flagged for a follow-up visual check rather than
+   guessed at: the active-page pill (.site-nav__link[aria-current="page"],
+   still its own gray chip + white text) and the Services submenu panel
+   (.site-nav__submenu, its own always-dark floating panel) weren't part
+   of the behavior spec this was ported from and may want their own
+   light-mode treatment once this is actually seen scrolling on a real
+   page. */
+
+.site-header__inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block: var(--space-4);
+}
+
+.site-header__logo {
+  display: inline-flex;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+/* Smaller again (client request 2026-07-17) — was 1.5rem/1.75rem.
+   transition: filter added same day for .site-header--dark further down
+   — defined here on the base rule, not just inside that state, so the
+   fade also plays in reverse when the class is removed (a transition
+   only declared on the "to" state only animates one direction). */
+.site-header__logo img {
+  height: 1.15rem;
+  width: auto;
+  transition: filter var(--duration-slower) var(--easing-standard);
+}
+
+@media (min-width: 640px) {
+  .site-header__logo img {
+    height: 1.35rem;
+  }
+}
+
+/* ---- Mobile nav toggle (hamburger -> X) ---- */
+/* Visible by default (mobile-first); hidden at the desktop breakpoint
+   where the full nav is always shown instead. */
+
+.nav-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius-md);
+}
+
+.nav-toggle__bar,
+.nav-toggle__bar::before,
+.nav-toggle__bar::after {
+  position: absolute;
+  width: 1.375rem;
+  height: 2px;
+  background-color: var(--color-text);
+  /* background-color transition added 2026-07-17 for .site-header--dark
+     (below) — same slower duration as the nav links', same reasoning. */
+  transition: transform var(--duration-fast) var(--easing-standard),
+    opacity var(--duration-fast) var(--easing-standard),
+    background-color var(--duration-slower) var(--easing-standard);
+}
+
+.nav-toggle__bar::before {
+  content: "";
+  transform: translateY(-6px);
+}
+
+.nav-toggle__bar::after {
+  content: "";
+  transform: translateY(6px);
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar {
+  background-color: transparent;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar::before {
+  transform: translateY(0) rotate(45deg);
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar::after {
+  transform: translateY(0) rotate(-45deg);
+}
+
+/* ---- Primary nav ---- */
+/* Visible by default in markup (no-JS fallback) — js/main.js is the only
+   thing that ever sets [hidden] on mobile, same JS-applies-hiding
+   principle as the scroll-reveal system. The desktop media query below
+   forces it visible regardless of the [hidden] attribute's state. */
+
+.site-nav {
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-5) var(--container-padding);
+}
+
+.site-nav__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  font-weight: var(--font-weight-regular);
+}
+
+.site-nav__list a {
+  display: inline-block;
+  color: var(--color-text);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  padding-block: var(--space-1);
+  /* Two different speeds on purpose: the existing fast hover-underline
+     stays fast, but color now also transitions — slower — for the
+     header's light/dark theme swap (.site-header--dark above), added
+     2026-07-17, so that specific change reads as smooth per the ported
+     behavior spec ("nunca brusco"). */
+  transition: border-color var(--duration-fast) var(--easing-standard),
+    color var(--duration-slower) var(--easing-standard);
+}
+
+.site-nav__list a:hover,
+.site-nav__list a:focus-visible {
+  border-bottom-color: var(--color-accent-strong);
+}
+
+/* Active-page pill (client reference, 2026-07-17) — aria-current="page"
+   is set at runtime by initActiveNavLink() (main.js), never in the
+   static markup, since the header partial is shared byte-for-byte across
+   every page. `a.site-nav__link`, not just `.site-nav__link` — matches
+   the specificity-bump pattern already used above (see that rule's own
+   comment): a bare `.site-nav__link[aria-current="page"]` has the same
+   specificity as `.site-nav__list a` and would lose the
+   padding/background override depending on source order, so this pins
+   it to win outright. Only applies to top-level items (a.site-nav__link,
+   added 2026-07-17 to every plain nav link, not just Services) — never
+   matches inside .site-nav__submenu, which has its own hover treatment
+   already and no pill design was requested there.
+
+   Padding/border-radius live only on the [aria-current] state, not on
+   a.site-nav__link generally — matches the reference image (inactive
+   items are plain text, only the active one gets the pill), and, more
+   importantly, avoids widening every single item's hit area: this nav
+   row's fit at the 1400px breakpoint is already tight (see that media
+   query's own comment on the history of squeezing it in), and padding
+   on all ~4 top-level items instead of just the active one would have
+   added real width for no visual benefit most of the time. */
+a.site-nav__link[aria-current="page"] {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-bg-elevated);
+  border-bottom-color: transparent;
+  font-weight: var(--font-weight-bold);
+}
+
+a.site-nav__link[aria-current="page"]:hover,
+a.site-nav__link[aria-current="page"]:focus-visible {
+  border-bottom-color: transparent;
+}
+
+.site-nav__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ---- Services submenu ---- */
+/* Added 2026-07-15 (client reference: dachdeckermeister-hornus.de's
+   mega-menu). FRANKONIA's version stays flat — a plain list of the 10
+   real services, no invented categories/groupings, since the client
+   guidelines never defined sub-categories within the service list and
+   this file avoids introducing structure that isn't confirmed. */
+
+.site-nav__item--has-submenu {
+  position: relative;
+}
+
+/* a.site-nav__link, not just .site-nav__link — the shared
+   ".site-nav__list a" rule (higher specificity: one class + one
+   element beats one class alone) was winning its own "display:
+   inline-block" over this rule's "inline-flex", so the icon fell onto
+   its own line below "Services" instead of sitting beside it
+   (client report 2026-07-15: "Services moved up a bit, the arrow
+   ended up below"). Bumping this selector's specificity to match
+   fixes it without touching the shared rule other nav links still
+   need. */
+a.site-nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* icon-chevron (icon-sprite.html) points left by default; rotated to
+   point down here (and up on open) rather than adding a second symbol —
+   same reuse approach as .outfits__arrow--next in page-home.css. White
+   explicitly, not left to inherit — belt-and-suspenders after the
+   display bug above turned out to also make the icon hard to read in
+   its wrapped position (client report: "the icon ended up black"). */
+.site-nav__caret {
+  width: 0.65rem;
+  height: 0.65rem;
+  color: var(--color-white);
+  transform: rotate(-90deg);
+  /* color transition added 2026-07-17 for .site-header--dark below. */
+  transition: transform var(--duration-fast) var(--easing-standard),
+    color var(--duration-slower) var(--easing-standard);
+}
+
+.site-nav__item--has-submenu:hover .site-nav__caret,
+.site-nav__item--has-submenu:focus-within .site-nav__caret {
+  transform: rotate(90deg);
+}
+
+/* Mobile/tablet default: no panel chrome, no hover — a plain nested list
+   that's always expanded under "Services". Touch has no hover state, so
+   this avoids needing a second tap-to-open interaction on top of the
+   hamburger menu itself. */
+.site-nav__submenu {
+  margin-top: var(--space-3);
+  padding-left: var(--space-4);
+  border-left: 1px solid var(--color-border);
+}
+
+.site-nav__submenu-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.site-nav__submenu-list a {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.site-nav__submenu-all {
+  display: inline-block;
+  margin-top: var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+/* White hover, not the inherited accent-strong border from
+   .site-nav__list a:hover — the submenu panel sits on
+   --color-bg-elevated (gray) at desktop, where blue-dark only clears
+   ~2.5:1 (fails 3:1). Same fix already applied throughout the codebase
+   wherever a blue decoration lands on an elevated surface — see the
+   caveat in tokens.css. */
+.site-nav__submenu a:hover,
+.site-nav__submenu a:focus-visible {
+  color: var(--color-white);
+  border-bottom-color: var(--color-white);
+}
+
+/* 1400px, not 1320px: raised again to make room for the wider nav-item
+   gap below (client wanted more breathing room between nav items,
+   2026-07-13) — logo + 6 nav items + the CTA button genuinely don't fit
+   in one row below that — they were wrapping onto two lines (this kept
+   getting worse: first the button went from 19px bold to 24px regular
+   for the no-bold change, now the nav gap doubled). Below this, the
+   compact hamburger nav (which has plenty of room, since it doesn't
+   compete with the button for width) is used instead.
+   .site-header__logo/.site-nav__list/.site-nav__actions all carry
+   flex-shrink:0 or nowrap so nothing quietly wraps again if this still
+   isn't enough room — it'll overflow visibly instead, which is easier to
+   spot and fix than a silent two-line wrap. */
+@media (min-width: 1400px) {
+  .nav-toggle {
+    display: none;
+  }
+
+  /* Must match .site-nav's own display below (flex), not just any
+     non-none value — [hidden] is higher specificity than .site-nav
+     alone, so if this said "block" it would silently win over the
+     "display: flex" a few lines down whenever JS has set the hidden
+     attribute (which it does by default on every load, see
+     initNavToggle() in main.js). That was the actual bug behind the
+     button rendering below the nav instead of beside it: the parent
+     fell back to block-level stacking while its children stayed flex
+     internally, which is exactly the "links in a row, button on its own
+     line below" shape that produced. */
+  .site-nav[hidden] {
+    display: flex;
+  }
+
+  .site-nav {
+    position: static;
+    /* Reset the mobile dropdown panel's solid backdrop (.site-nav's base
+       rule above, var(--color-bg)) — left over unreset here until
+       2026-07-17, it painted a solid black bar behind the desktop nav
+       row even after .site-header itself went transparent, since this
+       media query overrode position/padding/border but not background.
+       Desktop nav must stay transparent so the hero photo shows through
+       the whole header, not just around the nav row. */
+    background-color: transparent;
+    border-bottom: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  /* True viewport-center (client correction, 2026-07-17 — the first
+     attempt at this, a 1fr/auto/1fr grid split inside .site-nav, only
+     centered the list within the leftover space *next to the logo*, not
+     the actual middle of the header row, since .site-nav itself didn't
+     start at the row's left edge). Taken out of the flex flow entirely
+     and anchored directly to .site-header__inner (position: relative,
+     just below) via left: 50% + translateX(-50%) — this centers it
+     against the *whole* row's width regardless of how wide the logo or
+     the button are, instead of centering within whatever space those
+     two happen to leave. top: 50% + translateY(-50%) centers it
+     vertically too, so it's independent of the row's exact height.
+     Because it's out of flow, .site-nav's own flex layout below no
+     longer needs to reserve space for it — .site-nav__actions (the
+     button) is the only thing left participating in that flex row, kept
+     pinned right via justify-content: flex-end above.
+     Real risk: at exactly the 1400px breakpoint, an absolutely
+     positioned, viewport-centered list can overlap the logo or the
+     button if the row is narrower than (2 × distance from center to the
+     list's outer edge) — unlike the flex/grid approaches before it,
+     this one doesn't automatically yield space to its neighbors. Needs
+     a check via npm run dev; if it collides, the breakpoint needs
+     raising further, same as every previous round of this fight (see
+     this file's own history a few lines up). */
+  .site-nav__list {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: var(--space-6);
+  }
+
+  .site-nav__actions {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  /* Dropdown panel, not the mobile nested-list treatment above — hidden
+     via opacity/visibility (not display) so the transition can animate
+     and, more importantly, so focus can still land on the links inside
+     via keyboard even a frame before :focus-within's visual state
+     catches up (display:none would remove them from the tab order
+     entirely while "closed"). visibility:hidden with a transition delay
+     is what actually keeps it un-tabbable while closed despite
+     opacity/position remaining in the layout. */
+  /* Light editorial panel (client refinement, 2026-07-22) — a warm-white
+     surface floating over the dark hero, deliberately NOT a dark SaaS
+     mega-menu. Its inner text uses "on white" colours (same documented
+     dark-theme exception as .review-card / the outfit viewer). A soft
+     shadow gives depth against the dark background; discreet radius and
+     restrained padding keep it premium and minimal. */
+  .site-nav__submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: var(--space-3);
+    width: 26rem;
+    padding: var(--space-4);
+    border: none;
+    background-color: var(--color-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity var(--duration-fast) var(--easing-standard),
+      transform var(--duration-fast) var(--easing-standard),
+      visibility 0s linear var(--duration-fast);
+  }
+
+  .site-nav__item--has-submenu:hover .site-nav__submenu,
+  .site-nav__item--has-submenu:focus-within .site-nav__submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition-delay: 0s;
+  }
+
+  .site-nav__submenu-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-1) var(--space-3);
+  }
+
+  /* Dark body text on the white panel. The shared .site-nav__list a
+     underline mechanic is dropped here in favour of a block hit-area with
+     a pale-blue hover wash + FRANKONIA-blue text — cleaner separation
+     between links via controlled spacing than a hard rule line. */
+  .site-nav__submenu-list a {
+    display: block;
+    color: var(--color-logo-black);
+    border-bottom: none;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    transition: color var(--duration-fast) var(--easing-standard),
+      background-color var(--duration-fast) var(--easing-standard);
+  }
+
+  .site-nav__submenu-list a:hover,
+  .site-nav__submenu-list a:focus-visible {
+    color: var(--color-blue-dark);
+    background-color: var(--color-accent-subtle);
+    border-bottom-color: transparent;
+  }
+
+  /* "All Services" — slightly emphasised (dark, bold, its own row under a
+     hairline separator), not a large CTA. Left padding matches the service
+     links so it lines up with them. */
+  .site-nav__submenu-all {
+    display: block;
+    margin-top: var(--space-3);
+    padding: var(--space-3) var(--space-3) 0;
+    border-top: 1px solid rgb(1 1 1 / 0.08);
+    color: var(--color-logo-black);
+    font-weight: var(--font-weight-bold);
+    border-bottom: none;
+  }
+
+  .site-nav__submenu-all:hover,
+  .site-nav__submenu-all:focus-visible {
+    color: var(--color-blue-dark);
+    border-bottom-color: transparent;
+  }
+
+  /* The global focus ring is white (--color-focus-ring) and would be
+     invisible on this white panel — override to a dark on-brand ring so
+     keyboard focus stays clearly visible (WCAG 2.4.11 / 1.4.11;
+     blue-dark clears 3:1 on white). */
+  .site-nav__submenu a:focus-visible {
+    outline-color: var(--color-blue-dark);
+  }
+}
+
+/* prefers-reduced-motion already collapses all transition durations
+   sitewide (motion.css) — the submenu's opacity/transform still applies
+   instantly in that case, it just won't animate, same as everywhere
+   else on the site. */
+
+/* ---- Floating WhatsApp button ---- */
+/* Global, shared via partials/whatsapp-button.html. The client-supplied
+   icon (assets/icons/whatsapp-icon.png) is WhatsApp's own circular badge
+   — green background baked in, not a transparent glyph. The icon is
+   shown at 78% (see .whatsapp-button__icon) so it sits smaller inside
+   the button rather than filling it edge to edge; background-color below
+   fills the visible ring around it, so it's sampled from the icon's own
+   green (rgb(0,188,57), picked with a pixel sampler, not guessed) rather
+   than the site's dark-mode gray — the ring reads as "still WhatsApp
+   green," not as a mismatched border. env() safe-area insets keep it
+   clear of notches/home indicator on mobile. z-index sits above the
+   sticky header (var(--z-sticky)) but below any future modal/toast — if
+   a cookie-consent banner is added later, re-check it doesn't overlap
+   this button. */
+
+.whatsapp-button {
+  position: fixed;
+  right: calc(var(--space-5) + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
+  z-index: var(--z-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #00BC39;
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--duration-fast) var(--easing-standard),
+    filter var(--duration-fast) var(--easing-standard);
+}
+
+.whatsapp-button:hover {
+  filter: brightness(1.08);
+  transform: scale(1.06);
+}
+
+.whatsapp-button:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+
+.whatsapp-button__icon {
+  /* Shrunk from 130% (which cropped the source's own transparent margin
+     away to fill the circle edge-to-edge) down to 78%, so the icon sits
+     smaller inside the button with the button's own --color-bg-elevated
+     visible as a ring around it. */
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+}
+
+/* ---- Footer ---- */
+
+.site-footer {
+  background-color: var(--color-bg-elevated);
+  color: rgb(255 255 255 / 0.82);
+  padding-block: var(--space-9) var(--space-6);
+}
+
+.site-footer__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-7);
+}
+
+.site-footer__heading {
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-white);
+  margin-bottom: var(--space-4);
+}
+
+.site-footer__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.site-footer__list a {
+  color: rgb(255 255 255 / 0.82);
+  text-decoration: none;
+}
+
+.site-footer__list a:hover,
+.site-footer__list a:focus-visible {
+  color: var(--color-white);
+  text-decoration: underline;
+}
+
+.site-footer__address {
+  font-style: normal;
+  line-height: var(--line-height-base);
+  margin-bottom: var(--space-4);
+}
+
+/* ---- Services + Coverage area pills ---- */
+/* Full-width blocks below the (now 2-column) grid — see the comments in
+   footer.html for why these aren't just grid columns. .site-footer__services
+   added 2026-07-17 (client request: style Services the same way as
+   Coverage Areas — centered pills, two rows) reuses the exact same
+   treatment as .site-footer__coverage below it; both get their own
+   top border/spacing, so the footer reads as three stacked bands
+   (text columns, Services pills, Coverage Areas pills), not two. */
+
+.site-footer__services,
+.site-footer__coverage {
+  margin-top: var(--space-8);
+  padding-top: var(--space-8);
+  border-top: 1px solid rgb(255 255 255 / 0.16);
+  text-align: center;
+}
+
+/* Centers just these columns' headings — .site-footer__heading is
+   shared with the 2-column grid above (Contact/Legal), which stays
+   left-aligned; scoped here so only these pill blocks' own headings are
+   affected (client request 2026-07-14, extended to Services 2026-07-17). */
+.site-footer__services .site-footer__heading,
+.site-footer__coverage .site-footer__heading {
+  text-align: center;
+}
+
+/* Two explicit rows (see the HTML comment in footer.html for why —
+   client request 2026-07-14, natural flex-wrap was landing 10 pills on
+   row 1 and stranding 1 alone on row 2). Each .footer-pills row centers
+   independently; this just stacks the two rows with consistent spacing. */
+.footer-pills-rows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.footer-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.footer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  color: rgb(255 255 255 / 0.82);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  transition: border-color var(--duration-fast) var(--easing-standard),
+    background-color var(--duration-fast) var(--easing-standard),
+    color var(--duration-fast) var(--easing-standard);
+}
+
+/* Only used by the Coverage Areas pills (Services pills have no icon —
+   they aren't locations, so one wasn't added just for visual parity).
+   Client-supplied icon-location.svg (added 2026-07-17, replacing the
+   shared sprite's icon-pin — see the HTML comment on this element in
+   footer.html for why) is a fixed solid-white fill, unlike the sprite
+   version this replaced, so there's no `color` property to set here the
+   way there was for the old currentColor-based icon. */
+.footer-pill-icon {
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+}
+
+.footer-pill:hover,
+.footer-pill:focus-visible {
+  border-color: var(--color-white);
+  background-color: rgb(255 255 255 / 0.08);
+  color: var(--color-white);
+}
+
+.site-footer__bottom {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid rgb(255 255 255 / 0.16);
+  font-size: var(--font-size-sm);
+}
+
+/* Only 2 columns now (Contact/Legal — Services moved out to its own
+   full-width pill block above, 2026-07-17), so the 1024px 3-column
+   override this used to have is gone too; 2 columns is the final state
+   at every width down to 640px, not just an intermediate step. */
+@media (min-width: 640px) {
+  .site-footer__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

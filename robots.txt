@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /staging/
+Disallow: /preview/
+
+Sitemap: https://frankonia-sicherheit.de/sitemap.xml

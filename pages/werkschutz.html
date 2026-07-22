@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- lang="en" is TEMPORARY — same content-language rule as pages/index.html
+     (see CLAUDE.md "Content language"): 100% English placeholder copy
+     until the client supplies final German content for this page, then
+     translate the whole page in one pass and flip this + og:locale to
+     "de"/"de_DE". "Werkschutz" itself stays untranslated everywhere — it's
+     the service's proper-noun taxonomy name, not a phrase to translate,
+     same reasoning as the homepage Services list (see CLAUDE.md). Image
+     alt text on this page is the one deliberate exception: written in
+     German per this page's explicit brief (guidelines §2.8 + this page's
+     build brief both call for German alt text specifically) — see the
+     <img> below and the build report for why that's scoped narrower than
+     the rest of the page's language rule. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- PLACEHOLDER meta — English structural copy, not finalized German SEO
+       copy (that requires client-approved keyword/benefit phrasing per
+       guidelines §2.3). Update in the German translation pass. -->
+  <title>Werkschutz — Industrial Site Security | FRANKONIA</title>
+  <meta name="description" content="FRANKONIA Werkschutz: certified industrial and company-site security with DIN 77200-1 personnel and one dedicated contact. Request your free security analysis.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/werkschutz/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Werkschutz — Industrial Site Security | FRANKONIA">
+  <meta property="og:description" content="Certified industrial and company-site security with DIN 77200-1 personnel and one dedicated contact.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/werkschutz/">
+  <!-- Placeholder path — swap for a real 1200x630 social-share image before launch, same caveat as pages/index.html's og:image. -->
+  <meta property="og:image" content="https://frankonia-sicherheit.de/assets/images/og-werkschutz.jpg">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- Hero image is above the fold and LCP-critical, same pattern as the
+       homepage hero. -->
+  <link rel="preload" as="image" href="/assets/images/werkschutz.webp" type="image/webp">
+
+  <!-- include: head-common -->
+  <link rel="stylesheet" href="/css/page-service.css">
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Real <nav><ol>, shaped to accept BreadcrumbList JSON-LD later
+         without restructuring — no schema added yet (see CLAUDE.md
+         "Current phase"). /leistungen/ (the services hub this trail
+         points through) does not exist yet — see the build report. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Home</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">/</li>
+        <li><a class="breadcrumbs__link" href="/leistungen/">Services</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">/</li>
+        <li><span class="breadcrumbs__current" aria-current="page">Werkschutz</span></li>
+      </ol>
+    </nav>
+
+    <!-- ============ 1. SERVICE HERO ============ -->
+    <!-- Deliberately not another full-bleed homepage-style hero — a
+         contained two-column layout (text | real service photo), sized
+         to feel like "this specific service", not a second homepage
+         moment. See css/page-service.css header comment for the
+         reusable/service-specific split. -->
+    <section class="service-hero">
+      <div class="container service-hero__grid">
+        <div class="service-hero__content">
+          <span class="brand-bar" aria-hidden="true"></span>
+          <h1>Werkschutz — Reliable Protection for Industrial Sites</h1>
+          <p class="service-hero__lead">
+            Certified security personnel, documented shift coverage, and one dedicated contact — protecting your industrial site or company premises around the clock.
+          </p>
+
+          <div class="service-hero__actions">
+            <a class="btn btn--primary" href="/#sicherheitsanalyse">Request Free Security Analysis</a>
+          </div>
+          <p class="service-hero__reassurance">Free · No obligation · Response within 1 business day</p>
+
+          <div class="service-hero__trust-row">
+            <img class="service-hero__cert-seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="service-hero__cert-seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            <div class="review-card">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">4.7</span>
+                <span class="review-card__count">97 Reviews</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="service-hero__media">
+          <picture>
+            <source srcset="/assets/images/werkschutz.webp" type="image/webp">
+            <img src="/assets/images/werkschutz.jpg" alt="FRANKONIA Sicherheitsmitarbeiter beim Werkschutz auf einem Industriegelände" width="820" height="1227" loading="eager" fetchpriority="high">
+          </picture>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2. SERVICE INTRODUCTION ============ -->
+    <!-- GEO pattern: question-phrased H2, direct answer in the first
+         sentence, short paragraphs. -->
+    <section class="section service-intro">
+      <div class="container">
+        <div class="section__intro" data-reveal>
+          <h2>What is Werkschutz?</h2>
+          <p class="service-intro__lede">Werkschutz is on-site industrial security: a dedicated, certified team protecting a company's premises, personnel, and assets around the clock. It combines access control, patrols, and incident response tailored to industrial and manufacturing environments.</p>
+        </div>
+
+        <div class="service-intro__body">
+          <p>Werkschutz differs from general property protection mainly in scope: it's built around a single industrial or commercial site, typically staffed by a fixed, site-trained team rather than rotating patrol coverage. That consistency matters for sites with specific access rules, hazardous areas, or shift patterns that a rotating guard wouldn't already know.</p>
+          <p>FRANKONIA provides Werkschutz for manufacturing plants, logistics centers, and industrial campuses across Franconia and Bavaria, with personnel certified under DIN 77200-1.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 3. CUSTOMER PROBLEMS / USE CASES ============ -->
+    <!-- Deliberately not the homepage Pain Hook layout (unboxed 4-col
+         icon grid) — a plain divided list instead, reusable as-is for
+         any other service's situations list. -->
+    <section class="section section--subtle service-problems">
+      <div class="container">
+        <div class="section__intro" data-reveal>
+          <h2>When Do Companies Need Werkschutz?</h2>
+          <p>Werkschutz becomes a priority once a site's size, hours, or risk profile outgrow informal or part-time coverage. Common situations include:</p>
+        </div>
+
+        <ul class="service-problems__list" data-reveal>
+          <li>
+            <h3>Industrial premises with valuable equipment or materials</h3>
+            <p>Machinery, raw materials, or inventory that would be costly to replace or dangerous if tampered with.</p>
+          </li>
+          <li>
+            <h3>Production sites running outside normal business hours</h3>
+            <p>Night shifts, weekend operations, or fully unattended periods where the site still needs coverage.</p>
+          </li>
+          <li>
+            <h3>Access control for employees, contractors, and visitors</h3>
+            <p>A single site with multiple types of legitimate visitors needs a consistent, enforced entry process.</p>
+          </li>
+          <li>
+            <h3>Recurring unauthorized entry or trespassing incidents</h3>
+            <p>Sites that have already experienced break-ins, trespassing, or perimeter breaches.</p>
+          </li>
+          <li>
+            <h3>Incident prevention for high-risk or regulated processes</h3>
+            <p>Operations where a security or safety incident carries outsized financial or regulatory consequences.</p>
+          </li>
+          <li>
+            <h3>Documentation requirements for insurance or compliance audits</h3>
+            <p>Insurers or auditors requiring proof of consistent, documented site security.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ 4. WHAT THE SERVICE INCLUDES ============ -->
+    <!-- Structural placeholder scope — exact Werkschutz service content
+         still needs client confirmation, see build report. Scannable
+         list, not cards. -->
+    <section class="section service-scope">
+      <div class="container">
+        <div class="section__intro" data-reveal>
+          <h2>What Werkschutz Includes</h2>
+          <p>Exact scope is defined per site during the security analysis. A typical FRANKONIA Werkschutz deployment includes:</p>
+        </div>
+
+        <div class="service-scope__grid" data-reveal>
+          <div class="service-scope__item">
+            <h3>Access &amp; Visitor Control</h3>
+            <p>Checking credentials and logging entry for employees, contractors, and visitors at the site's access points.</p>
+          </div>
+          <div class="service-scope__item">
+            <h3>Patrols</h3>
+            <p>Scheduled and randomized patrols across the premises, including perimeter and high-risk areas.</p>
+          </div>
+          <div class="service-scope__item">
+            <h3>Gatehouse Duties</h3>
+            <p>Staffing entry points, managing barriers, and coordinating deliveries or shift-change traffic.</p>
+          </div>
+          <div class="service-scope__item">
+            <h3>Incident Reporting</h3>
+            <p>Documenting irregularities, safety hazards, or security incidents as they're observed.</p>
+          </div>
+          <div class="service-scope__item">
+            <h3>Alarm Response Coordination</h3>
+            <p>First response to triggered alarms on-site, coordinated with your existing alarm system.</p>
+          </div>
+          <div class="service-scope__item">
+            <h3>Documentation</h3>
+            <p>Digital shift logs covering patrols, incidents, and access activity, available for review at any time.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 5. THE FRANKONIA SYSTEM, APPLIED TO WERKSCHUTZ ============ -->
+    <!-- Service-detail interpretation of the six value pillars, not a
+         copy of the homepage's card-grid "Our System" section — a plain
+         list, applying each pillar specifically to Werkschutz. -->
+    <section class="section section--subtle service-pillars">
+      <div class="container">
+        <div class="section__intro" data-reveal>
+          <h2>The FRANKONIA Standard, Applied to Werkschutz</h2>
+          <p>The same six principles behind every FRANKONIA deployment, and what they mean specifically for your Werkschutz coverage.</p>
+        </div>
+
+        <div class="service-pillars__grid" data-reveal>
+          <div class="service-pillars__item">
+            <h3>Reliability</h3>
+            <p>Your site is covered by a fixed, site-trained team — not rotating temporary staff who don't know your premises or procedures.</p>
+          </div>
+          <div class="service-pillars__item">
+            <h3>Transparency</h3>
+            <p>Digital shift reports show exactly who patrolled your site, when, and what — if anything — was found.</p>
+          </div>
+          <div class="service-pillars__item">
+            <h3>Single Point of Contact</h3>
+            <p>One dedicated contact person coordinates your Werkschutz deployment — no call centers, no repeating your site's requirements.</p>
+          </div>
+          <div class="service-pillars__item">
+            <h3>Fast Response Times</h3>
+            <p>Standard Werkschutz deployment within 48–72 hours; on-site incidents are escalated through a defined response chain.</p>
+          </div>
+          <div class="service-pillars__item">
+            <h3>Certified Quality</h3>
+            <p>All Werkschutz personnel are certified under DIN 77200-1 and background-checked under §34a GewO before their first shift.</p>
+          </div>
+          <div class="service-pillars__item">
+            <h3>Flexible Scheduling</h3>
+            <p>Coverage scales from a single night shift to full 24/7 site presence as your operational needs change.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 6. HOW THE ENGAGEMENT WORKS ============ -->
+    <!-- Structural placeholder process — confirm exact steps with client.
+         Plain numbered list, not a SaaS-style onboarding graphic. -->
+    <section class="section service-process">
+      <div class="container">
+        <div class="section__intro" data-reveal>
+          <h2>How a Werkschutz Engagement Works</h2>
+        </div>
+
+        <ol class="service-process__list" data-reveal>
+          <li class="service-process__step">
+            <span class="service-process__number" aria-hidden="true">01</span>
+            <h3>Initial Security Analysis</h3>
+            <p>A free, focused conversation about your site, current setup, and risk areas.</p>
+          </li>
+          <li class="service-process__step">
+            <span class="service-process__number" aria-hidden="true">02</span>
+            <h3>Site &amp; Risk Assessment</h3>
+            <p>An on-site walkthrough to assess access points, shift patterns, and specific risk factors.</p>
+          </li>
+          <li class="service-process__step">
+            <span class="service-process__number" aria-hidden="true">03</span>
+            <h3>Security Concept</h3>
+            <p>A written proposal covering scope, staffing levels, and shift structure for your site.</p>
+          </li>
+          <li class="service-process__step">
+            <span class="service-process__number" aria-hidden="true">04</span>
+            <h3>Personnel &amp; Deployment Planning</h3>
+            <p>Matching certified personnel to your site and scheduling the shift structure you approved.</p>
+          </li>
+          <li class="service-process__step">
+            <span class="service-process__number" aria-hidden="true">05</span>
+            <h3>Start of Service</h3>
+            <p>Deployment begins on the agreed date, with your dedicated contact person as the single point of coordination.</p>
+          </li>
+          <li class="service-process__step">
+            <span class="service-process__number" aria-hidden="true">06</span>
+            <h3>Reporting &amp; Ongoing Optimization</h3>
+            <p>Regular shift reporting and periodic check-ins to adjust coverage as your site's needs change.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ 7. CERTIFICATIONS AND TRUST ============ -->
+    <!-- Contextual to the Werkschutz decision, not a repeat of the
+         homepage trust section — no invented employee/customer counts,
+         see CLAUDE.md on why those stay off pages until confirmed. -->
+    <section class="section section--inverse service-trust">
+      <div class="container">
+        <div class="section__intro" data-reveal>
+          <h2>Certified Werkschutz You Can Verify</h2>
+          <p>FRANKONIA's Werkschutz personnel are certified under DIN 77200-1 and DIN EN ISO 9001, with every deployment documented and auditable — not just a claim on a page.</p>
+        </div>
+
+        <div class="service-trust__badges" data-reveal>
+          <img class="service-trust__cert-seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+          <img class="service-trust__cert-seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+          <div class="review-card">
+            <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+            <span class="review-card__stars">
+              <span class="review-card__stars-track" aria-hidden="true">
+                <svg class="icon"><use href="#icon-star"></use></svg>
+                <svg class="icon"><use href="#icon-star"></use></svg>
+                <svg class="icon"><use href="#icon-star"></use></svg>
+                <svg class="icon"><use href="#icon-star"></use></svg>
+                <svg class="icon"><use href="#icon-star"></use></svg>
+              </span>
+              <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                <svg class="icon"><use href="#icon-star"></use></svg>
+                <svg class="icon"><use href="#icon-star"></use></svg>
+                <svg class="icon"><use href="#icon-star"></use></svg>
+                <svg class="icon"><use href="#icon-star"></use></svg>
+                <svg class="icon"><use href="#icon-star"></use></svg>
+              </span>
+            </span>
+            <span class="review-card__score">
+              <span class="review-card__value">4.7</span>
+              <span class="review-card__count">97 Reviews</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="service-trust__members">
+          <span class="service-trust__members-label">Member of</span>
+          <span>Wirtschaftsclub Bamberg (WCB) · Deutscher Mittelstands-Bund</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 8. OPERATIONAL AREAS / LOCAL SEO LINKS ============ -->
+    <!-- Links to the general city pages (guidelines §2.2's confirmed URL
+         map has no dedicated /werkschutz-{city}/ combo page — those combo
+         URLs are reserved for specific high-CPC pairings like
+         /brandwache-nuernberg/, and Werkschutz isn't one of the listed
+         examples). None of these city pages exist yet — see build report. -->
+    <section class="section section--subtle service-areas">
+      <div class="container">
+        <div class="section__intro" data-reveal>
+          <h2>Werkschutz Across Franconia and Bavaria</h2>
+          <p>FRANKONIA provides Werkschutz within roughly 100 km of Bamberg, including:</p>
+        </div>
+
+        <ul class="service-areas__list">
+          <li><a class="service-areas__link" href="/sicherheitsdienst-bamberg/">Werkschutz in Bamberg</a></li>
+          <li><a class="service-areas__link" href="/sicherheitsdienst-nuernberg/">Werkschutz in Nürnberg</a></li>
+          <li><a class="service-areas__link" href="/sicherheitsdienst-wuerzburg/">Werkschutz in Würzburg</a></li>
+          <li><a class="service-areas__link" href="/sicherheitsdienst-erlangen/">Werkschutz in Erlangen</a></li>
+        </ul>
+        <p class="service-areas__note">Don't see your location? <a href="/einsatzgebiete/">Check our full coverage area</a> or request a security analysis to confirm.</p>
+      </div>
+    </section>
+
+    <!-- ============ 9. REFERENCE / CUSTOMER RESULT ============ -->
+    <!-- No real customer, quote, or result exists for Werkschutz yet —
+         every field below is a clearly labeled placeholder, not a
+         soft-real-sounding invention. Replace wholesale once the client
+         supplies an approved reference; don't edit around the edges. -->
+    <section class="section service-reference">
+      <div class="container">
+        <div class="section__intro" data-reveal>
+          <h2>A Recent Werkschutz Engagement</h2>
+          <p class="service-reference__disclaimer">Placeholder structure — awaiting a client-approved Werkschutz reference. No real customer, quote, or figure below.</p>
+        </div>
+
+        <div class="service-reference__card" data-reveal>
+          <dl class="service-reference__facts">
+            <div>
+              <dt>Industry</dt>
+              <dd>[Placeholder — e.g. manufacturing, logistics]</dd>
+            </div>
+            <div>
+              <dt>Challenge</dt>
+              <dd>[Placeholder — the customer's Werkschutz problem before FRANKONIA]</dd>
+            </div>
+            <div>
+              <dt>FRANKONIA Solution</dt>
+              <dd>[Placeholder — the Werkschutz setup FRANKONIA deployed]</dd>
+            </div>
+            <div>
+              <dt>Measurable Result</dt>
+              <dd>[Placeholder — a real, client-confirmed figure only]</dd>
+            </div>
+          </dl>
+          <blockquote class="service-reference__quote">
+            <p>[Placeholder testimonial quote — awaiting client-approved reference]</p>
+            <footer>— Placeholder, Job Title, Company</footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 10. FAQ ============ -->
+    <!-- Reuses the shared .faq__list/.faq-item accordion (components.css)
+         — no data-faq-extra/toggle here, all 7 questions show directly.
+         Question wording matches how a customer would actually ask, per
+         GEO guidance; answers open with the direct answer. -->
+    <section class="section service-faq">
+      <div class="container">
+        <div class="section__intro" data-reveal>
+          <h2>Frequently Asked Questions About Werkschutz</h2>
+        </div>
+
+        <div class="faq__list">
+          <details class="faq-item">
+            <summary><h3>What is Werkschutz?</h3></summary>
+            <p class="faq-item__answer">Werkschutz is on-site industrial security — a dedicated, certified team protecting a company's premises, personnel, and assets, typically with a fixed team rather than rotating patrol coverage.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Which tasks are included in Werkschutz?</h3></summary>
+            <p class="faq-item__answer">A typical deployment covers access and visitor control, patrols, gatehouse duties, incident reporting, alarm response coordination, and documentation. Exact scope is confirmed per site during the security analysis.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>When does a company need Werkschutz?</h3></summary>
+            <p class="faq-item__answer">Typically once a site runs outside normal business hours, holds valuable equipment or materials, or needs consistent access control and documentation that informal or part-time coverage can't provide.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>How quickly can Werkschutz start?</h3></summary>
+            <p class="faq-item__answer">For standard assignments, FRANKONIA can typically deploy certified Werkschutz personnel within 48–72 hours of an agreed security concept. Ask your contact person for current availability.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Which qualifications does Werkschutz personnel have?</h3></summary>
+            <p class="faq-item__answer">All personnel are certified under DIN 77200-1, background-checked and trained under §34a GewO, and onboarded to your specific site before their first shift.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>How is a Werkschutz deployment documented?</h3></summary>
+            <p class="faq-item__answer">Through digital shift reports covering patrols, access activity, and any incidents — available for your review at any time, not just on request.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Is 24/7 Werkschutz coverage possible?</h3></summary>
+            <p class="faq-item__answer">Yes. Coverage scales from a single shift to full 24/7 site presence, and can change as your operational needs change.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 11. FINAL CONVERSION ============ -->
+    <!-- Links back to the homepage's existing form section rather than
+         duplicating the whole form — see build report for why. -->
+    <section class="section section--subtle service-cta">
+      <div class="container service-cta__content" data-reveal>
+        <span class="brand-bar" aria-hidden="true"></span>
+        <h2>Ready for a Werkschutz Security Analysis?</h2>
+        <p>A FRANKONIA security expert reviews your site's current setup — coverage gaps, access control, and risk areas — in a focused, free conversation. No sales pitch, no obligation.</p>
+        <div class="service-cta__actions">
+          <a class="btn btn--primary" href="/#sicherheitsanalyse">Request Free Security Analysis</a>
+        </div>
+        <p class="service-cta__reassurance">Free · No obligation · Response within 1 business day. Prefer WhatsApp? Use the contact button in the bottom-right corner.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

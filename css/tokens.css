@@ -1,0 +1,226 @@
+/*
+  Design tokens — FRANKONIA Sicherheitsdienst
+  Single source of truth for color, type, spacing, and other design values.
+  Every other stylesheet must consume these custom properties instead of
+  hardcoding raw values. See CLAUDE.md for the naming/usage rules.
+
+  Breakpoints are documented here for reference only — CSS custom properties
+  cannot be used inside @media conditions. Use the literal px values below
+  and stay mobile-first (base styles = mobile, then min-width up).
+    --bp-sm  480px  small phones
+    --bp-md  768px  tablets
+    --bp-lg  1024px small laptops
+    --bp-xl  1280px desktop
+    --bp-xxl 1440px large desktop / container max-width
+*/
+
+:root {
+  /* Tells the browser to use its dark UI variants for anything it
+     controls itself — form control chrome, scrollbars, etc. — so native
+     elements match the site instead of rendering light by default. */
+  color-scheme: dark;
+
+  /* ---- Brand color (FRANKONIA CI — do not add hues outside this palette) ---- */
+  --color-white: #FFFFFF;
+  --color-gray: #3B4956;
+  --color-blue-light: #3D9AD3;
+  --color-blue-dark: #5287C9;
+  --color-logo-black: #010101;
+
+  /* ---- Dark-theme site-wide (client decision, 2026-07-12) ----
+     The whole site runs on --color-logo-black now, not white. This
+     flipped every derived tint and every contrast calculation below —
+     they're recalibrated against BLACK, not white. Don't copy an old
+     "on white" contrast number from memory; recheck against black. */
+
+  /* White-alpha tints on black for chrome (borders, subtle fills) —
+     mirrors how the old light theme tinted gray-on-white, just inverted.
+     --color-border-strong is calibrated to ~3.7:1 against black — the
+     WCAG 1.4.11 minimum for a UI-component boundary (e.g. an input
+     border). Don't lighten/darken without re-checking that ratio. */
+  --color-border: rgb(255 255 255 / 0.12);
+  --color-border-strong: rgb(255 255 255 / 0.42);
+  --color-bg-subtle: rgb(255 255 255 / 0.03);
+  --color-overlay: rgb(1 1 1 / 0.7);
+  /* Dark-gray tile background, client-specified 2026-07-21 for the
+     trust-metrics client-logo tiles (previously white). A one-off
+     surface color rather than a brand color — kept as a token instead
+     of a hardcoded hex per this project's "no hardcoded hex outside
+     tokens.css" rule. */
+  --color-logo-tile: #1E1E1E;
+  /* Blue tint for icon-container chips etc. — needs more alpha than the
+     old light-theme version to read as a visible chip against black
+     rather than nearly-black-on-black. */
+  --color-accent-subtle: rgb(61 154 211 / 0.16);
+
+  /* ---- Semantic aliases — use these in components, not the raw brand colors ---- */
+  --color-bg: var(--color-logo-black);
+  /* "Elevated" dark surface — one step lighter than --color-bg, for
+     anything that needs to visually lift off the page: cards, the
+     sticky-footer-style dark section, form/rating cards. Still --color-gray,
+     same token as the old light-theme's one dark section — it just serves
+     a different role now that black, not white, is the page default. */
+  --color-bg-elevated: var(--color-gray);
+  --color-bg-inverse: var(--color-white);
+  --color-text: var(--color-white);
+  --color-text-inverse: var(--color-logo-black);
+  /* White at 0.65 alpha ≈ 7.4:1 against black (WCAG AA needs 4.5:1). */
+  --color-text-muted: rgb(255 255 255 / 0.65);
+  --color-accent: var(--color-blue-light);
+  --color-accent-strong: var(--color-blue-dark);
+  /* On a BLACK background both brand blues clear 4.5:1 at normal text
+     size (blue-light ≈6.8:1, blue-dark ≈5.7:1) — the opposite of the old
+     light-theme finding, where neither passed on white. Links can use the
+     accent color directly now; kept underlined anyway so they're never
+     identified by color alone (WCAG 1.4.1), not because color contrast
+     forces it here.
+     CAVEAT — this only holds against --color-bg (black). Against
+     --color-bg-elevated (gray, #3B4956) neither blue clears even 3:1
+     (blue-light ≈3.0:1, blue-dark ≈2.5:1) for text/icons/borders. Any
+     blue-on-blue... blue-on-gray decoration inside an elevated card
+     (form card, service cards, the gray trust section) needs white
+     instead — see components.css/page-home.css for the specific fixes
+     already made (service-card hover border, stat values). Check this
+     again before adding a new blue decoration to anything sitting on
+     --color-bg-elevated. (Pain hook no longer has this concern at all —
+     it was rebuilt 2026-07-13 to not use a card background anymore.) */
+  --color-link: var(--color-accent);
+  --color-link-hover: var(--color-white);
+  /* White, not a brand blue: the focus ring has to work on every surface
+     (black page, gray elevated cards, and inside the form specifically)
+     without knowing which one it'll land on. White clears 3:1 against
+     both unconditionally; blue-light only clears it against black. */
+  --color-focus-ring: var(--color-white);
+  --color-success: #2E8B57;
+  --color-error: #E0564A;
+
+  /* ---- Typography ---- */
+  /* Switched from self-hosted Open Sans to a system font stack (client
+     request, 2026-07-17: wanted Helvetica, understood real Helvetica
+     can't be self-hosted without a paid Monotype license and no such
+     files exist to embed here — accepted the standard web-safe
+     workaround instead). "Helvetica Neue" renders on macOS/iOS (where
+     it's actually installed); everywhere else — Windows has never
+     shipped real Helvetica — this falls through to Arial, a
+     metric-compatible clone, which the client also explicitly said was
+     an acceptable fallback. No self-hosted font file backs this stack
+     at all, unlike Open Sans before it — see base.css for what got
+     removed and assets/fonts/README.md for why the old file is kept as
+     a spare rather than deleted. */
+  --font-family-base: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-bold: 800;
+  /* Documented exception to the client's CI guidelines ("Regular 400 and
+     Extra Bold 800 only, no other weights") — added 2026-07-15, explicit
+     client request for the big section-title treatment ("main h2" in
+     page-home.css) to be "bigger and a bit less bold" than regular.
+     Originally reliable only because assets/fonts/open-sans-variable.woff2
+     was a real variable font with a wght axis down to 300 — since the
+     2026-07-17 switch to a system Helvetica/Arial stack (see
+     --font-family-base above), this is no longer backed by a variable
+     font at all. Neither "Helvetica Neue" nor Arial ships a distinct
+     Light face on every OS, so font-weight: 300 against this stack is a
+     *request*, not a guarantee — browsers without a matching static
+     weight will typically just render Regular instead, silently. Not
+     necessarily broken, but needs a visual check on "main h2" (npm run
+     dev) now that this token can no longer assume it'll always land on
+     something visibly lighter than 400. Don't reach for this anywhere
+     else without the same kind of explicit go-ahead; the CI guideline
+     default is still "just these two". */
+  --font-weight-light: 300;
+
+  /* Fluid type scale: clamps between a mobile and desktop size so long German
+     compound words (Baustellenbewachung, Sicherheitsanalyse) never force
+     awkward breakpoints. Rebuilt 2026-07-13 on one consistent ratio
+     (1.25, "major third") from the 16px base at the desktop end — md
+     through 3xl are each exactly 1.25× the previous step's desktop
+     value. (sm is the one deliberate exception: held at 14–15px rather
+     than 16/1.25≈12.8px, since text that small hurts legibility more
+     than it helps the ratio purity.) Mobile-end values compress more
+     gently than a strict 1.25× would give, which is normal for fluid
+     scales — see the full reference table shared alongside this change
+     for the exact px/rem at each step. Fluid bounds: 400px viewport (min)
+     to 1440px (max, matches --container-max-width). */
+  --font-size-sm: clamp(0.875rem, 0.83rem + 0.2vw, 0.9375rem);
+  --font-size-base: 1rem;
+  --font-size-md: clamp(1.125rem, 1.05rem + 0.3vw, 1.25rem);
+  --font-size-lg: clamp(1.3125rem, 1.22rem + 0.39vw, 1.5625rem);
+  --font-size-xl: clamp(1.5625rem, 1.42rem + 0.58vw, 1.9375rem);
+  --font-size-2xl: clamp(1.875rem, 1.66rem + 0.87vw, 2.4375rem);
+  --font-size-3xl: clamp(2.25rem, 1.94rem + 1.25vw, 3.0625rem);
+
+  --line-height-tight: 1.2;
+  --line-height-heading: 1.25;
+  --line-height-base: 1.6;
+
+  /* ---- Spacing scale (4px base unit) ---- */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.5rem;    /* 24px */
+  --space-6: 2rem;      /* 32px */
+  --space-7: 3rem;      /* 48px */
+  --space-8: 4rem;      /* 64px */
+  --space-9: 6rem;      /* 96px */
+  --space-10: 8rem;     /* 128px */
+
+  /* ---- Layout ----
+     Widened 2026-07-12 per client feedback ("too much side margin"), then
+     widened further ("still more"), then pulled back to 1440 / 32px.
+     Widened AGAIN 2026-07-21 — client asked again for the content to sit
+     closer to the screen edges ("que el contenido vaya más contra los
+     bordes"), which is exactly the "ask again" the previous note gated
+     this on: max-width 1440 -> 1600, gutter max 32px -> 24px, with the
+     min gutter trimmed too. */
+  --container-max-width: 1600px;
+  --container-padding: clamp(0.75rem, 2vw, 1.5rem);
+
+  /* Editorial left inset for primary homepage content columns (client
+     refinement, 2026-07-22 — established on the hero, meant to be reused
+     across the homepage as the main content alignment). This is ADDITIONAL
+     to --container-padding and only offsets the content column; it never
+     moves the logo/nav, which keep the plain container alignment. Desktop/
+     tablet value only — components reduce it to ~a phone-appropriate value
+     on mobile (see .hero__content in page-home.css), since this clamp's
+     48px floor is intentionally too large for small screens. */
+  --content-inset: clamp(3rem, 5.5vw, 6rem); /* 48px → 96px */
+
+  /* ---- Radius ---- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* ---- Motion ---- */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  /* Added 2026-07-17 for the header's light/dark scroll transition
+     (site-chrome.css .site-header) — a ported behavior spec explicitly
+     asked for "duration-500 o duration-600" so the background/text
+     color swap reads as smooth, never abrupt; --duration-slow (400ms)
+     was already the closest existing step but noticeably faster than
+     that ask. */
+  --duration-slower: 550ms;
+  --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Added 2026-07-20 (client direction, via Chris) — a more "Apple-like"
+     expo-out curve for deliberate entrance moments (scroll-reveal,
+     GSAP-driven hero text), sitting alongside --easing-standard rather
+     than replacing it: --easing-standard still backs ordinary hover/
+     toggle transitions (site-chrome.css header theme swap, etc.), this
+     one is specifically for content arriving into view. No overshoot —
+     decelerates smoothly to rest, reads as premium rather than playful. */
+  --easing-premium: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ---- Elevation ---- */
+  --shadow-sm: 0 1px 2px rgb(1 1 1 / 0.06), 0 1px 3px rgb(1 1 1 / 0.08);
+  --shadow-md: 0 4px 12px rgb(1 1 1 / 0.10);
+  --shadow-lg: 0 12px 32px rgb(1 1 1 / 0.14);
+
+  /* ---- Z-index scale ---- */
+  --z-sticky: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+}

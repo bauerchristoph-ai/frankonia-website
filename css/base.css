@@ -1,0 +1,105 @@
+/*
+  Base element styles — the unstyled document defaults.
+  No classes here, only element selectors and global behaviors.
+  Component-specific look (buttons, form controls) lives in components.css.
+*/
+
+/*
+  No @font-face here anymore — removed 2026-07-17 when the client asked
+  to switch to Helvetica (see --font-family-base, tokens.css, for the
+  full reasoning: real Helvetica can't be self-hosted without a paid
+  license, so this now relies entirely on whatever system font the
+  visitor's OS provides — "Helvetica Neue" on macOS/iOS, Arial
+  elsewhere). Self-hosted Open Sans (assets/fonts/open-sans-variable.woff2)
+  used to be declared here; the file itself is kept as a spare, not
+  deleted, in case this ever reverts — see assets/fonts/README.md.
+*/
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+/* German compound words (Baustellenbewachung, Revierschließdienst) must be
+   able to break inside headings/body copy without overflowing narrow
+   columns — applies everywhere as a safety net against overflow. */
+h1, h2, h3, h4, h5, h6,
+p, li, blockquote {
+  overflow-wrap: break-word;
+}
+
+/* Automatic mid-word hyphenation only on body copy, not display headings —
+   a hyphen breaking a large bold h1/h2 mid-word reads as a typo, not a
+   feature. break-word above already prevents overflow on headings without
+   it. Depends on <html lang="de"> being set (mandatory per CLAUDE.md). */
+p, li, blockquote {
+  hyphens: auto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-heading);
+  text-wrap: balance;
+  /* Client request, 2026-07-20: tighter tracking on every heading
+     sitewide. A flat -1px, not an em-based value — no letter-spacing
+     token exists for a negative value yet (tokens.css only has positive
+     em ones, for uppercase eyebrow/label text), and a flat px matches
+     what was actually asked rather than inventing a proportional scale
+     nobody requested. */
+  letter-spacing: -1px;
+}
+
+h1 { font-size: var(--font-size-3xl); }
+h2 { font-size: var(--font-size-2xl); }
+h3 { font-size: var(--font-size-xl); }
+h4 { font-size: var(--font-size-lg); }
+h5, h6 { font-size: var(--font-size-md); }
+
+p {
+  text-wrap: pretty;
+}
+
+/* Underlined by default: --color-link is the body text color (see
+   tokens.css), not the brand blue, because neither brand blue reaches
+   4.5:1 contrast on white at normal text size. The underline is what
+   makes a link identifiable without relying on color alone (WCAG 1.4.1).
+   A component that sets its own link color (e.g. a nav on a dark
+   background) should also reconsider whether it still needs the
+   underline. */
+a {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-decoration-thickness: from-font;
+  text-underline-offset: 0.15em;
+  transition: color var(--duration-fast) var(--easing-standard);
+}
+
+a:hover {
+  color: var(--color-link-hover);
+}
+
+/* Only ever show a focus ring for keyboard/AT navigation, never on mouse click. */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-text-inverse);
+}
+
+/* prefers-reduced-motion handling (including the smooth-scroll override
+   above) lives entirely in motion.css — one place owns that concern. */

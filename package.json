@@ -1,0 +1,9 @@
+{
+  "name": "frankonia-website",
+  "private": true,
+  "description": "Static HTML/CSS/JS site for FRANKONIA Sicherheitsdienst. No runtime dependencies — build.js uses only Node core modules.",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js && npx --yes serve dist"
+  }
+}

@@ -1,0 +1,44 @@
+/*
+  Layout primitives — the small set of reusable structural utilities that
+  are genuinely needed on every page, regardless of content. Page- and
+  section-specific layout belongs in that page's own CSS, not here.
+*/
+
+.container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin-inline: auto;
+  padding-inline: var(--container-padding);
+}
+
+/* Jump straight to <main>, before the nav, for keyboard and screen-reader
+   users. Every page template must include the matching <a class="skip-link"
+   href="#main">Zum Inhalt springen</a> as the first focusable element. */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--space-4);
+  z-index: var(--z-toast);
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-sm);
+  transition: top var(--duration-fast) var(--easing-standard);
+}
+
+.skip-link:focus-visible {
+  top: var(--space-4);
+}
+
+/* Hide content visually while keeping it available to assistive tech. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

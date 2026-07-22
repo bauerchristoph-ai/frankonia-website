@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- lang="en" is TEMPORARY — content is English-only right now by explicit
+     client request (avoid mixed-language review), but CLAUDE.md's
+     per-page SEO rules mandate lang="de" for the final German site. This
+     MUST flip back to "de" as part of the German translation pass — see
+     CLAUDE.md "Content language" for the full note. Same applies to
+     og:locale below and the hyphens:auto behavior in base.css, which
+     depends on lang matching content language. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tiny JS-ready flag for the sticky trust-story ONLY (load-flash fix):
+       sets html.js-story before first paint so the sticky layout can apply
+       from the first frame instead of after the deferred module runs (which
+       caused a normal-flow → sticky flash). Progressive-enhancement-safe:
+       the sticky CSS is gated on BOTH this class AND a
+       (min-width:1024px)+(prefers-reduced-motion:no-preference) media query,
+       so with no JS the class is never added and the region stays in normal
+       document flow — nothing is hidden without JS. -->
+  <script>document.documentElement.classList.add("js-story");</script>
+  <title>Security Services Bamberg, Franconia &amp; Bavaria | FRANKONIA</title>
+  <meta name="description" content="FRANKONIA Security Services: certified industrial and property security for Bamberg, Franconia, and Bavaria. DIN 77200 certified, dedicated point of contact. Request your free security analysis.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Security Services Bamberg, Franconia &amp; Bavaria | FRANKONIA">
+  <meta property="og:description" content="Certified industrial and property security for Bamberg, Franconia, and Bavaria. DIN 77200 certified, dedicated point of contact.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/">
+  <!-- Placeholder path — swap for a real 1200x630 JPG/PNG social-share image before launch; SVG previews render inconsistently on social platforms. -->
+  <meta property="og:image" content="https://frankonia-sicherheit.de/assets/images/og-home.jpg">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- Hero image is above the fold and LCP-critical. Client-supplied
+       FrankoniaHero.png, used verbatim/uncompressed by explicit request
+       (2026-07-22) — see the perf caveat on .hero__bg below. -->
+  <link rel="preload" as="image" href="/assets/images/heroedit.png" type="image/png">
+
+  <!-- include: head-common -->
+  <link rel="stylesheet" href="/css/page-home.css">
+  <!-- Page-specific module, not in main.js (see js/outfits.js header
+       comment) — same reasoning as page-home.css being linked here
+       directly rather than folded into the shared head-common bundle. -->
+  <script src="/js/outfits.js" defer></script>
+
+  <!-- GSAP core + ScrollTrigger, self-hosted (assets/js/vendor/ — no CDN,
+       same self-hosting pattern as fonts), approved 2026-07-20 for a
+       small set of deliberate motion moments (see CLAUDE.md
+       "Non-negotiable tech constraints"). Must load before
+       js/hero-reveal.js and js/title-reveal.js, which both depend on
+       them — all defer, so document order is what guarantees that.
+       hero-reveal.js handles the hero <h1> only (fires once on page
+       load); title-reveal.js handles every other <h2> on this page
+       (fires per-heading via ScrollTrigger as each scrolls into view). -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+
+  <!-- Lenis smooth scroll (self-hosted, v1.3.23 — same no-CDN pattern as
+       GSAP/Leaflet/fonts), ported from the Sacramentum Advisors reference.
+       Must load AFTER gsap + ScrollTrigger (js/smooth-scroll.js drives Lenis
+       from GSAP's ticker and syncs ScrollTrigger) and BEFORE
+       js/smooth-scroll.js — all defer, so document order guarantees both.
+       js/smooth-scroll.js skips Lenis entirely under prefers-reduced-motion
+       and disables smoothWheel on touch, so no-JS/reduced-motion/mobile all
+       fall back to native scroll. See docs/project-strategy.md ("Lenis"). -->
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <!-- Staggered, scroll-scrubbed reveal for repeated content blocks
+       (lists/card grids) — the list-level companion to title-reveal.js.
+       Opt-in per container via data-item-reveal="<item-selector>". Same
+       GSAP + ScrollTrigger + Lenis stack; skipped under
+       prefers-reduced-motion; content stays visible with no JS. -->
+  <script src="/js/item-reveal.js" defer></script>
+  <!-- Sticky trust-story region (Hero → 3 half-panels → Pain Hook). One
+       scrubbed ScrollTrigger timeline (gsap.matchMedia, desktop + motion
+       only) crossfades/slides the three panels; CSS position:sticky, no pin.
+       Uses the shared Lenis + GSAP ticker (no new Lenis/rAF). Base is normal
+       document flow, so no-JS / mobile / reduced-motion show three readable
+       stacked sections. (Replaced the old js/trust-diagram.js, now unused.) -->
+  <script src="/assets/js/sticky-sections.js" defer></script>
+  <script src="/js/pain-hook-journey.js" defer></script>
+  <script src="/js/system-panels.js" defer></script>
+  <!-- Also depends on GSAP + ScrollTrigger above (must load after them,
+       same document-order guarantee as every other GSAP-moment script
+       here). Homepage-only, its own tag — see js/pixel-transition.js's
+       own header comment for the full mechanism. -->
+  <script src="/js/pixel-transition.js" defer></script>
+
+  <!-- Leaflet.js + OpenStreetMap, self-hosted (assets/js/vendor/leaflet.js,
+       css/vendor/leaflet.css — no CDN, same self-hosting pattern as
+       GSAP/fonts). Approved 2026-07-21 (client brief: interactive
+       Coverage Areas map) as a documented, scoped exception to this
+       project's "no framework/no heavy dependency" default — see
+       CLAUDE.md "Non-negotiable tech constraints". No account, API key,
+       token, or billing of any kind: OpenStreetMap's tile server and
+       Nominatim (used once, offline, during this build to fetch the
+       boundary GeoJSON files now committed in
+       assets/data/coverage-boundaries/ — never called at runtime) are
+       both free, keyless services. leaflet.js must load before
+       js/coverage-map.js, which depends on the global `L` it defines —
+       both defer, so document order guarantees that. -->
+  <link rel="stylesheet" href="/css/vendor/leaflet.css">
+  <script src="/assets/js/vendor/leaflet.js" defer></script>
+  <script src="/js/coverage-map.js" defer></script>
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header -->
+
+  <main id="main">
+
+    <!-- ============ 1. HERO ============ -->
+    <section class="hero">
+      <!-- Full-bleed background photo, starts below the solid-black sticky
+           header (see .hero in page-home.css). alt="" since it's
+           decorative background now. -->
+      <!-- The "Certified Quality" trust section (DEKRA seals, 4 metrics,
+           full review card, WCB/Deutscher Mittelstands-Bund membership
+           mention) that used to sit between Uniforms and References was
+           removed entirely 2026-07-17, client request. That was this
+           page's only mention of the two membership orgs and its only
+           full-size .review-card. The DEKRA seals that were briefly in
+           this hero afterward have since moved on again too (same day,
+           later correction) — to #trust-metrics, directly below this
+           section — so nothing on the homepage mentions WCB/Deutscher
+           Mittelstands-Bund at all anymore. Flagged since CLAUDE.md
+           documents these as required trust elements "wherever the
+           design calls for a trust section (homepage §5 at minimum)" —
+           worth the client's attention, not re-added unilaterally
+           here. -->
+      <!-- Client-supplied FrankoniaHero.png (frankonia-hero.png), used
+           verbatim and uncompressed by explicit request (2026-07-22). This
+           is a ~3.5MB PNG on the LCP critical path (preloaded + eager +
+           fetchpriority high) — a real Core Web Vitals cost, kept
+           deliberately per the client's "don't compress it." Per
+           docs/project-strategy.md ("Hero asset"), the final hero should be
+           optimized later (responsive srcset, WebP/AVIF, explicit
+           dimensions). Single <img> now, not a <picture> — there's only the
+           one PNG source; the previous hero-bg.webp/.jpg are kept in
+           assets/images/ as spares. -->
+      <div class="hero__bg" aria-hidden="true">
+        <img src="/assets/images/heroedit.png" alt="" loading="eager" fetchpriority="high">
+      </div>
+
+      <div class="container hero__grid">
+        <div class="hero__content">
+          <!-- Hero order (client refinement, 2026-07-22): message → action
+               → reassurance → trust. No eyebrow — the hero begins directly
+               with the H1. Copy is a temporary client-approved draft (Chris
+               may revise) — kept as plain, easy-to-edit text. Left inset of
+               this whole column is the reusable --content-inset (tokens.css,
+               applied in page-home.css); the logo/nav alignment is
+               deliberately NOT changed. -->
+          <h1>Reliable Werkschutz for complex industrial operations.</h1>
+
+          <p class="hero__lead">
+            Certified personnel, digital reporting and one dedicated contact for your entire security operation.
+          </p>
+
+          <div class="hero__actions">
+            <!-- Primary CTA stays visually dominant (.btn--primary .btn--lg,
+                 arrow kept per brief). The phone is the quieter secondary
+                 action — same real number as the footer; .hero__phone
+                 (page-home.css) turns the shared .btn pill into an outline
+                 and de-emphasizes it so it never competes with the blue CTA. -->
+            <a class="btn btn--primary" href="#sicherheitsanalyse">Request Free Security Analysis<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn hero__phone" href="tel:+499519643520">
+              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              +49 951 964352-0
+            </a>
+          </div>
+
+          <!-- Three individual reassurance points, each real HTML text led
+               by a small check icon (icon-check, sprite — decorative/
+               aria-hidden; the meaning is carried by the text, never by
+               colour or the icon alone). Renders on one row when space
+               allows and wraps cleanly on narrow screens (see
+               .hero__reassurance, page-home.css). "Free consultation" is
+               intentionally dropped — the CTA already says "Free Security
+               Analysis," so this shows "Free" without repeating the phrase. -->
+          <ul class="hero__reassurance">
+            <li class="hero__reassurance-item">
+              <svg class="icon hero__reassurance-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Free
+            </li>
+            <li class="hero__reassurance-item">
+              <svg class="icon hero__reassurance-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              No obligation
+            </li>
+            <li class="hero__reassurance-item">
+              <svg class="icon hero__reassurance-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Reply within 1 business day
+            </li>
+          </ul>
+
+          <!-- Bottom trust row — the hero's lower band (message → action →
+               reassurance → trust). Existing VERIFIED elements only: the
+               confirmed Google rating (4.7 / 97) and the two DEKRA
+               certification seals already present in the hero. No invented
+               metrics/memberships. Set apart from the content above via a
+               subtle hairline top separator (.hero__trust, page-home.css),
+               deliberately not turned into a card. -->
+          <div class="hero__trust">
+            <div class="hero__rating">
+              <div class="review-card review-card--sm">
+                <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+                <span class="review-card__stars">
+                  <span class="review-card__stars-track" aria-hidden="true">
+                    <svg class="icon"><use href="#icon-star"></use></svg>
+                    <svg class="icon"><use href="#icon-star"></use></svg>
+                    <svg class="icon"><use href="#icon-star"></use></svg>
+                    <svg class="icon"><use href="#icon-star"></use></svg>
+                    <svg class="icon"><use href="#icon-star"></use></svg>
+                  </span>
+                  <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                    <svg class="icon"><use href="#icon-star"></use></svg>
+                    <svg class="icon"><use href="#icon-star"></use></svg>
+                    <svg class="icon"><use href="#icon-star"></use></svg>
+                    <svg class="icon"><use href="#icon-star"></use></svg>
+                    <svg class="icon"><use href="#icon-star"></use></svg>
+                  </span>
+                </span>
+                <span class="review-card__score">
+                  <span class="review-card__value">4.7</span>
+                  <span class="review-card__count">97 Reviews</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="hero__badges">
+              <img class="hero__badge" src="/assets/icons/dekra-din-77200.png" alt="DEKRA certification seal: security services under DIN 77200" width="399" height="600" loading="lazy">
+              <img class="hero__badge" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA certification seal: quality management under ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============ 1.5. TRUST METRICS ============ -->
+    <!-- Redesigned 2026-07-20 (client brief: rebuild as one coherent,
+         centered B2B trust experience — reference: a "Trusted by
+         industry leaders" style page, used only for composition/
+         spacing/centered-hierarchy direction, not literally copied).
+         Structure, in order: centered eyebrow/heading/lede (was a
+         left-heading/right-copy split, added 2026-07-17 — that split is
+         gone now, client request) → existing 3 metrics, unchanged →
+         NEW client-logo subsection → existing 6 value pillars, now with
+         their own "What Clients Can Expect" heading and a stronger photo
+         overlay. DEKRA badges moved OUT of this section entirely, back
+         to the hero (see that section's own comment) — this section no
+         longer shows certification badges or the Google rating at all,
+         per the brief's "focus only on: trust statement, metrics,
+         client logos, value pillars."
+
+         Whole-section "pixel dissolve" scroll-entrance effect (client
+         request 2026-07-21, see js/pixel-transition.js) was originally
+         planned for 4 section transitions including this one — DISABLED
+         HERE for now, same day, client feedback: "no estoy viendo nada"
+         (couldn't see it at all). Root cause: tiles were colored to
+         exactly match each section's own background (to "blend in"),
+         which made them invisible against that same background — a
+         black tile has zero contrast against this section's own black
+         background, so nothing was perceptibly happening. Client asked
+         to isolate testing to just Services → Uniforms (data-nav-theme
+         white section), where there's real black/white contrast to
+         confirm the mechanism works at all before re-enabling it here.
+         data-pixel-transition attribute removed from this section for
+         now — see CLAUDE.md for the full note and what needs to change
+         (tile color strategy, not just re-adding the attribute) before
+         this comes back. -->
+    <!-- ============ 1.4 TRUST LEAD-IN (centered heading) ============ -->
+    <!-- Centered "Trusted across the region" + supporting line, char-revealed
+         on scroll (title-reveal — no data-no-title-reveal here, unlike inside
+         the panels), as the lead-in BEFORE the sticky two-panel split (client
+         2026-07-22). The heading lives here now — it was moved OUT of the
+         metrics panel, so "the title goes first" and only then the split
+         shows metrics on one side / logos on the other. -->
+    <section class="section story-lead">
+      <div class="container">
+        <div class="trust-metrics__intro" data-reveal>
+          <h2><span class="trust-metrics__heading-line">Trusted across</span><span class="trust-metrics__heading-line">the region</span></h2>
+          <p class="trust-metrics__text">Long-term security partnerships across industry, infrastructure, retail and the public sector.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 1.5 TRUST STORY (sticky split region) ============ -->
+    <!-- Dedicated sticky "story" region between the lead-in above and Pain
+         Hook (client redesign 2026-07-22). Codrops StickySections index9 is
+         INTERACTION inspiration only — this structure is our own. The heading
+         is now the centered lead-in ABOVE; the split panels here are, one in
+         focus at a time: P1 metrics (right), P2 logos (left), P3 What Clients
+         Can Expect (right); the inactive half stays dark negative space and
+         panels crossfade/slide so a previous panel never lingers beside the
+         current one.
+
+         Architecture: CSS position:sticky (NO ScrollTrigger pin), the
+         existing single Lenis + GSAP-ticker integration, and ONE scrubbed
+         ScrollTrigger in assets/js/sticky-sections.js that drives an
+         inner-wrapper timeline (.story__panel-inner — never the sticky
+         element itself). Base CSS = NORMAL DOCUMENT FLOW (three readable
+         stacked sections, order Trust -> Logos -> What Clients Can Expect);
+         the sticky/absolute/animated layout + hidden panel states are added
+         ONLY by JS via gsap.matchMedia() for (min-width:1024px) and
+         (prefers-reduced-motion: no-preference), reverted cleanly otherwise.
+         Headings here carry data-no-title-reveal and metric values
+         data-no-countup, so the shared title-reveal / stat-count-up modules
+         never double-animate inside these transformed panels — the reveal is
+         owned by the story timeline. (This replaced the earlier
+         #trust-metrics section: its scroll diagram is gone, its content
+         moved here unchanged.) -->
+    <section class="story" data-story aria-label="Why clients trust FRANKONIA">
+      <div class="story__stage">
+
+        <!-- Panel 1 — Metrics (right half). Heading moved OUT to the centered
+             lead-in above (client 2026-07-22), so this panel is metrics only;
+             the supporting paragraph also lives in the lead-in now. -->
+        <div class="story__panel story__panel--right" data-story-panel>
+          <div class="story__panel-inner">
+            <ul class="story__metrics">
+              <li class="stat">
+                <span class="stat__value" data-no-countup>300+</span>
+                <span class="stat__label">Satisfied Customers</span>
+              </li>
+              <li class="stat">
+                <span class="stat__value" data-no-countup>1,000,000+</span>
+                <span class="stat__label">Service Hours</span>
+              </li>
+              <li class="stat">
+                <span class="stat__value" data-no-countup>4.7★</span>
+                <span class="stat__label">Google Reviews (97)</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Panel 2 — Trusted by leading organizations (left half). Logo
+             marquee kept (pure-CSS animation; its overflow/mask live on
+             .logo-marquee, a descendant of the sticky stage, so they don't
+             affect stickiness). -->
+        <div class="story__panel story__panel--left" data-story-panel>
+          <div class="story__panel-inner">
+            <p class="trust-metrics__logos-label story__logos-label">Trusted by leading organizations</p>
+            <div class="trust-metrics__clients logo-marquee">
+              <div class="logo-marquee__track">
+                <div class="logo-marquee__group">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="DB Netze logo" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="ADAC logo" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="Bayerisches Rotes Kreuz logo" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="Liapor logo" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="Stadt Bamberg logo" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="CleanTech Innovation Park logo" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="Stadtwerke Bamberg logo" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="Sozialstiftung Bamberg logo" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="Bürgerspital Bamberg logo" loading="lazy">
+                </div>
+                <div class="logo-marquee__group" aria-hidden="true">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
+                  <img class="logo-marquee__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="" loading="lazy">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 3 — What Clients Can Expect (right half). All six existing
+             value pillars, verbatim; laid out compact 2-col to fit the
+             half-panel (see .story__pillars in page-home.css). -->
+        <div class="story__panel story__panel--right" data-story-panel>
+          <div class="story__panel-inner">
+            <h3 class="trust-metrics__cards-heading story__heading" data-no-title-reveal>What Clients Can Expect</h3>
+            <ul class="story__pillars">
+              <li class="pillar-card">
+                <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-lock.svg" alt="" width="350" height="350" loading="lazy"></span>
+                <h4 class="pillar-card__title">Reliability</h4>
+                <p class="pillar-card__text">Certified security professionals on site as scheduled, with documented shift coverage you can verify at any time.</p>
+              </li>
+              <li class="pillar-card">
+                <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-tie-person.svg" alt="" width="350" height="350" loading="lazy"></span>
+                <h4 class="pillar-card__title">Dedicated Contact</h4>
+                <p class="pillar-card__text">One dedicated contact person coordinates your account — no call centers, no rotating staff, no repeating yourself.</p>
+              </li>
+              <li class="pillar-card">
+                <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-eye.svg" alt="" width="350" height="350" loading="lazy"></span>
+                <h4 class="pillar-card__title">Transparency</h4>
+                <p class="pillar-card__text">Digital shift reports and clear invoicing mean you always know who was on site, when, and why.</p>
+              </li>
+              <li class="pillar-card">
+                <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-clock.svg" alt="" width="350" height="350" loading="lazy"></span>
+                <h4 class="pillar-card__title">Fast Response</h4>
+                <p class="pillar-card__text">Standard deployments within 48–72 hours, with faster turnaround for urgent Fire Watch and Intervention Service requests.</p>
+              </li>
+              <li class="pillar-card">
+                <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-check-shield.svg" alt="" width="350" height="350" loading="lazy"></span>
+                <h4 class="pillar-card__title">Certified Quality</h4>
+                <p class="pillar-card__text">DIN 77200-1 and DIN EN ISO 9001 certified, with all personnel background-checked and trained under §34a GewO.</p>
+              </li>
+              <li class="pillar-card">
+                <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-vest.svg" alt="" width="350" height="350" loading="lazy"></span>
+                <h4 class="pillar-card__title">Flexible Scheduling</h4>
+                <p class="pillar-card__text">Short-term, long-term, or one-off assignments — your security setup adapts as your business needs change.</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============ 2. PAIN HOOK ============ -->
+    <!-- Redesigned 2026-07-20 (client brief: "premium scroll-driven
+         security journey") from a static 4-column grid to a scroll-driven
+         patrol-route metaphor — see js/pain-hook-journey.js for the full
+         interaction and CLAUDE.md for the complete build report. Same
+         four problems/copy, same CTA, unchanged. -->
+    <section id="pain-hook" class="section section--subtle pain-hook pain-hook--journey">
+      <div class="container">
+        <div class="section__intro pain-hook__intro" data-reveal>
+          <!-- Now included in the scrubbed char reveal (client request
+               2026-07-22, "apply it to all the titles") — the old
+               data-no-title-reveal opt-out was removed. It's safe here:
+               the patrol journey below is NOT pinned (plain scrub, see
+               js/pain-hook-journey.js) and this h2 sits in .pain-hook__intro,
+               separate from .pain-hook__journey, so the two triggers don't
+               interfere. -->
+          <p class="section-eyebrow">Common Challenges</p>
+          <h2>Facing these challenges?</h2>
+        </div>
+
+        <!-- data-pain-hook-journey: the interaction root. NOT pinned —
+             the route draws and checkpoints reveal against the section's
+             own natural scroll (client 2026-07-21: wanted a "flowy"
+             scroll with no stop/freeze), same non-pinned scrub the mobile
+             fallback uses. Height/positioning for the four items and the
+             SVG route are set in page-home.css; see js/pain-hook-journey.js
+             for how the checkpoint thresholds are derived from the path
+             geometry so a node always activates as the drawn route
+             reaches it. -->
+        <div class="pain-hook__journey" data-pain-hook-journey>
+          <!-- Desktop/tablet only (≥1024px, page-home.css hides this
+               below that) — the single continuous "journey" route.
+               viewBox is a plain 0-100 x/y grid with
+               preserveAspectRatio="none", so every path coordinate maps
+               directly to a percentage of this wrapper's rendered box.
+               Straight horizontal/vertical segments render correctly at
+               any wrapper aspect ratio; the few soft curves stretch with
+               it, which is visually fine. A true <circle> does NOT
+               survive that stretch (it becomes an oval), which is why the
+               checkpoint nodes are plain CSS <span> dots below, not SVG
+               <circle>s — sized in real px so they're always round.
+
+               TWO layers, ONE geometry (redesign 2026-07-21, client
+               brief): a muted always-visible BASE path showing the full
+               route, and a FRANKONIA-blue ACTIVE path drawn on top of it
+               via stroke-dashoffset as scroll progresses. Both share the
+               exact same `d`, set at runtime by js/pain-hook-journey.js
+               from a single segment list (the one source of truth for the
+               route shape + where each checkpoint falls along it). This
+               reverses the 2026-07-20 "only one line, nothing pre-drawn"
+               version — the new brief explicitly asks for the muted base
+               route to be visible underneath the glowing progress line
+               (treated as a fresh request, per CLAUDE.md's convention). -->
+          <svg class="pain-hook__route" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <path class="pain-hook__route-path pain-hook__route-path--base"></path>
+            <path class="pain-hook__route-path pain-hook__route-path--active"></path>
+          </svg>
+
+          <!-- Checkpoint nodes — plain <span> dots, positioned by
+               js/pain-hook-journey.js from the same checkpoint coordinates
+               that define the path (single source of truth), not by
+               hardcoded CSS percentages, so the node always sits exactly
+               on its point of the route. The ::after pseudo-element is the
+               one-shot activation halo (see .pain-hook__node, page-home
+               .css). -->
+          <span class="pain-hook__node" data-pain-hook-node aria-hidden="true"></span>
+          <span class="pain-hook__node" data-pain-hook-node aria-hidden="true"></span>
+          <span class="pain-hook__node" data-pain-hook-node aria-hidden="true"></span>
+          <span class="pain-hook__node" data-pain-hook-node aria-hidden="true"></span>
+
+          <!-- Mobile/tablet-narrow only (<1024px) — the brief's simpler
+               vertical version: a thin track with a blue fill whose height
+               is tied to scroll progress (the "path still draws with
+               scroll" requirement, without the desktop route geometry). -->
+          <div class="pain-hook__progress" aria-hidden="true">
+            <span class="pain-hook__progress-fill" data-pain-hook-progress-fill></span>
+          </div>
+
+          <!-- Four challenge blocks, DOM order = narrative reading order
+               01→04 (reordered 2026-07-21 to match the client brief's
+               numbering: reflects-poorly, onboarding, problems-come-back,
+               real-results — was 01/03/02/04 before). Copy + icons are the
+               existing approved content, unchanged. Positioned irregularly
+               (not a symmetric zigzag) via .pain-hook__item--1..4 in
+               page-home.css. NOT inside cards, per the brief. -->
+          <ol class="pain-hook__list">
+            <li class="pain-hook__item pain-hook__item--1" data-pain-hook-item>
+              <img class="pain-hook__icon" data-pain-hook-icon src="/assets/icons/icon-lock.svg" alt="" width="350" height="350" loading="lazy">
+              <h3 class="pain-hook__title">Your security team reflects poorly on your business</h3>
+              <p class="pain-hook__text">Unprofessional conduct leads to complaints from guests, employees and customers.</p>
+            </li>
+            <li class="pain-hook__item pain-hook__item--2" data-pain-hook-item>
+              <img class="pain-hook__icon" data-pain-hook-icon src="/assets/icons/icon-check-shield.svg" alt="" width="350" height="350" loading="lazy">
+              <h3 class="pain-hook__title">You are constantly onboarding new guards</h3>
+              <p class="pain-hook__text">Frequent personnel changes create inconsistency and a lack of site knowledge.</p>
+            </li>
+            <li class="pain-hook__item pain-hook__item--3" data-pain-hook-item>
+              <img class="pain-hook__icon" data-pain-hook-icon src="/assets/icons/icon-unreliable-coverage.svg" alt="" width="350" height="350" loading="lazy">
+              <h3 class="pain-hook__title">Problems always come back to you</h3>
+              <p class="pain-hook__text">Your contact is difficult to reach, leaving you accountable for every issue.</p>
+            </li>
+            <li class="pain-hook__item pain-hook__item--4" data-pain-hook-item>
+              <img class="pain-hook__icon" data-pain-hook-icon src="/assets/icons/icon-unclear-costs.svg" alt="" width="350" height="350" loading="lazy">
+              <h3 class="pain-hook__title">You cannot demonstrate real results</h3>
+              <p class="pain-hook__text">Security adds to your workload without delivering clear, measurable outcomes.</p>
+            </li>
+          </ol>
+        </div>
+
+        <div class="pain-hook__cta" data-pain-hook-cta>
+          <!-- Matched to the hero/header CTA treatment (client request,
+               2026-07-17) — .btn--lg + arrow, same as pages/index.html's
+               .hero__actions button. The conversion form's submit button
+               (further down this page) wasn't part of this request and
+               keeps the plain default size. -->
+          <a class="btn btn--primary btn--lg" href="#sicherheitsanalyse">Request Free Security Analysis →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2.5. OUR SYSTEM ============ -->
+    <!-- Added 2026-07-20 (client brief: "premium scroll-driven" 6-outcome
+         section), between Pain Hook and Services — deliberately "2.5" in
+         this numbering, not a renumber of every section after it, same
+         convention as 1.5/4.5/6.5 elsewhere on this page. Full
+         interaction logic lives in js/system-panels.js; see CLAUDE.md
+         for the complete build report. Copy is 100% client-approved,
+         used verbatim — nothing invented here.
+
+         Spiritually similar to the old "Six Value Pillars" section
+         (also six items, also led with "Less Effort...") that was
+         removed outright 2026-07-13 — see CLAUDE.md's Corporate
+         Identity section for that history. This is NOT a revival of
+         that section: the content below is genuinely different
+         (specific, client-approved operational outcomes, not generic
+         pillars), just worth flagging the echo since the heading
+         wording is close.
+
+         Pixel-transition attribute removed 2026-07-21, same day it was
+         added — see Trust Metrics' own section comment above and
+         CLAUDE.md for why (invisible black-tile-on-black-background,
+         client asked to isolate testing to Services → Uniforms only). -->
+    <section id="our-system" class="section section--subtle system">
+      <div class="container system__grid">
+        <div class="system__intro">
+          <p class="section-eyebrow">Our System</p>
+          <h2>Less effort. More control.</h2>
+          <p class="system__lede">Six practical ways FRANKONIA makes security more professional, transparent and easier to manage.</p>
+        </div>
+
+        <ol class="system__panels">
+          <li class="system__panel" data-system-panel>
+            <div class="system__panel-media" aria-hidden="true">
+              <span class="system__panel-media-label">Placeholder — a FRANKONIA guard or uniform-focused image</span>
+            </div>
+            <div class="system__panel-body">
+              <h3 class="system__panel-title">A professional first impression</h3>
+              <p class="system__panel-text">Security personnel who represent your business professionally.</p>
+              <ul class="system__panel-points">
+                <li>Uniforms tailored to your requirements</li>
+                <li>Permanent core teams</li>
+                <li>Personnel selected for your environment</li>
+              </ul>
+              <!-- Links to the existing Uniforms/outfit-viewer section
+                   further down this same page (id="uniforms" added to
+                   that section for this link — see its own comment). -->
+              <a class="system__panel-link" href="#uniforms">
+                Explore uniforms
+                <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </div>
+          </li>
+
+          <li class="system__panel" data-system-panel>
+            <!-- "Do not make the visual look like a generic SaaS
+                 dashboard" — noted here for whoever replaces this
+                 placeholder with a real image later. -->
+            <div class="system__panel-media" aria-hidden="true">
+              <span class="system__panel-media-label">Placeholder — a clean digital reporting/shift-log image, not a generic SaaS dashboard</span>
+            </div>
+            <div class="system__panel-body">
+              <h3 class="system__panel-title">Full operational control</h3>
+              <p class="system__panel-text">Know what is happening on site and access the information you need.</p>
+              <ul class="system__panel-points">
+                <li>Digital security logbook</li>
+                <li>Digital reports</li>
+                <li>Shared cloud-based database</li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="system__panel" data-system-panel>
+            <div class="system__panel-media" aria-hidden="true">
+              <span class="system__panel-media-label">Placeholder — a supervisor briefing or onboarding a security team</span>
+            </div>
+            <div class="system__panel-body">
+              <h3 class="system__panel-title">Reliable teams</h3>
+              <p class="system__panel-text">Consistent personnel who understand your site, expectations and procedures.</p>
+              <ul class="system__panel-points">
+                <li>Jointly defined onboarding</li>
+                <li>Professional onboarding by a supervisor</li>
+                <li>Communication and behavioural training</li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="system__panel" data-system-panel>
+            <div class="system__panel-media" aria-hidden="true">
+              <span class="system__panel-media-label">Placeholder — a dedicated account contact or professional communication scene</span>
+            </div>
+            <div class="system__panel-body">
+              <h3 class="system__panel-title">One accountable contact</h3>
+              <p class="system__panel-text">One dedicated person who knows your account and coordinates everything.</p>
+              <ul class="system__panel-points">
+                <li>Chat, email or phone communication</li>
+                <li>24/7 availability</li>
+                <li>One single point of contact</li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="system__panel" data-system-panel>
+            <div class="system__panel-media" aria-hidden="true">
+              <span class="system__panel-media-label">Placeholder — a professional security report or management summary</span>
+            </div>
+            <div class="system__panel-body">
+              <h3 class="system__panel-title">Verifiable results</h3>
+              <p class="system__panel-text">Clear security information you can communicate and present to management.</p>
+              <ul class="system__panel-points">
+                <li>Executive reports and management summaries</li>
+                <li>Individual security concept</li>
+                <li>Regular reviews and updates</li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="system__panel" data-system-panel>
+            <!-- Not a "[Placeholder — photo]" like the five above: the
+                 brief's own visual for this one IS this exact 4-step
+                 flow, not a stand-in for a future photograph — so it's
+                 rendered as real content, in the same aspect-ratio box
+                 as every other panel's media for visual consistency. -->
+            <div class="system__panel-media system__panel-media--flow" aria-hidden="true">
+              <ol class="system__flow">
+                <li>Issue</li>
+                <li>Root cause</li>
+                <li>Corrective action</li>
+                <li>Resolved</li>
+              </ol>
+            </div>
+            <div class="system__panel-body">
+              <h3 class="system__panel-title">Full responsibility</h3>
+              <p class="system__panel-text">Problems are followed through until the underlying cause is resolved.</p>
+              <ul class="system__panel-points">
+                <li>Root-cause resolution for complaints</li>
+                <li>Direct feedback process with FRANKONIA</li>
+              </ul>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ 3. SERVICES OVERVIEW ============ -->
+    <!-- Redesigned 2026-07-13 from a 10-card grid to an editorial numbered
+         index + live preview. Service NAMES here are the real German
+         taxonomy (Werkschutz, Objektschutz, etc.) per explicit client
+         instruction for this list — an intentional exception to the
+         page's English-only placeholder rule, same reasoning as URLs and
+         other proper-noun taxonomy: these are category names, not
+         translatable prose. Descriptions stay English placeholder like
+         the rest of the page. See CLAUDE.md "Content language". -->
+    <section class="section section--subtle services">
+      <div class="container">
+        <div class="section__intro" data-reveal>
+          <p class="section-eyebrow">What We Offer</p>
+          <h2>Our Services</h2>
+        </div>
+
+        <div class="services__index" data-item-reveal=".services__item">
+          <!-- All 10 services are real links with full names — works
+               completely without JavaScript. The preview panel on the
+               right is a hover/focus enhancement only, see main.js
+               initServicePreview(); it never gates access to any
+               service's name, URL, or description. -->
+          <ol class="services__list">
+            <li>
+              <a class="services__item" href="/werkschutz/"
+                data-preview-name="Werkschutz"
+                data-preview-text="Round-the-clock protection for industrial sites and company premises."
+                data-preview-webp="/assets/images/werkschutz.webp"
+                data-preview-jpg="/assets/images/werkschutz.jpg">
+                <span class="services__item-number" aria-hidden="true">01</span>
+                <span class="services__item-name">Werkschutz</span>
+                <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="services__item" href="/objektschutz/"
+                data-preview-name="Objektschutz"
+                data-preview-text="Comprehensive protection for buildings, facilities, and property."
+                data-preview-webp="/assets/images/objektschutz.webp"
+                data-preview-jpg="/assets/images/objektschutz.jpg">
+                <span class="services__item-number" aria-hidden="true">02</span>
+                <span class="services__item-name">Objektschutz</span>
+                <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="services__item" href="/baustellenbewachung/"
+                data-preview-name="Baustellenbewachung"
+                data-preview-text="Reliable security for construction sites, day and night."
+                data-preview-webp="/assets/images/baustellenbewachung.webp"
+                data-preview-jpg="/assets/images/baustellenbewachung.jpg">
+                <span class="services__item-number" aria-hidden="true">03</span>
+                <span class="services__item-name">Baustellenbewachung</span>
+                <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="services__item" href="/brandwache/"
+                data-preview-name="Brandwache"
+                data-preview-text="Certified fire watch service for compliance and risk prevention."
+                data-preview-webp="/assets/images/brandwache.webp"
+                data-preview-jpg="/assets/images/brandwache.jpg">
+                <span class="services__item-number" aria-hidden="true">04</span>
+                <span class="services__item-name">Brandwache</span>
+                <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="services__item" href="/revier-schliessdienst/"
+                data-preview-name="Revier- &amp; Schließdienst"
+                data-preview-text="Scheduled patrols and lock-up service for your premises."
+                data-preview-webp="/assets/images/revier-schliessdienst.webp"
+                data-preview-jpg="/assets/images/revier-schliessdienst.jpg">
+                <span class="services__item-number" aria-hidden="true">05</span>
+                <span class="services__item-name">Revier- &amp; Schließdienst</span>
+                <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="services__item" href="/empfangsdienst/"
+                data-preview-name="Empfangsdienst"
+                data-preview-text="Professional reception and access control for a strong first impression."
+                data-preview-webp="/assets/images/empfangsdienst.webp"
+                data-preview-jpg="/assets/images/empfangsdienst.jpg">
+                <span class="services__item-number" aria-hidden="true">06</span>
+                <span class="services__item-name">Empfangsdienst</span>
+                <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="services__item" href="/veranstaltungsschutz/"
+                data-preview-name="Veranstaltungsschutz"
+                data-preview-text="Security planning and on-site protection for events of any size."
+                data-preview-webp="/assets/images/veranstaltungsschutz.webp"
+                data-preview-jpg="/assets/images/veranstaltungsschutz.jpg">
+                <span class="services__item-number" aria-hidden="true">07</span>
+                <span class="services__item-name">Veranstaltungsschutz</span>
+                <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="services__item" href="/kaufhausdetektei/"
+                data-preview-name="Kaufhausdetektei"
+                data-preview-text="Discreet loss prevention for retail and department stores."
+                data-preview-webp="/assets/images/kaufhausdetektei.webp"
+                data-preview-jpg="/assets/images/kaufhausdetektei.jpg">
+                <span class="services__item-number" aria-hidden="true">08</span>
+                <span class="services__item-name">Kaufhausdetektei</span>
+                <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="services__item" href="/sicherheitstechnik/"
+                data-preview-name="Sicherheitstechnik"
+                data-preview-text="Modern surveillance and access technology, installed and maintained."
+                data-preview-webp="/assets/images/sicherheitstechnik.webp"
+                data-preview-jpg="/assets/images/sicherheitstechnik.jpg">
+                <span class="services__item-number" aria-hidden="true">09</span>
+                <span class="services__item-name">Sicherheitstechnik</span>
+                <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="services__item" href="/interventionsdienst/"
+                data-preview-name="Interventionsdienst"
+                data-preview-text="Fast-response intervention when your alarm system triggers."
+                data-preview-webp="/assets/images/interventionsdienst.webp"
+                data-preview-jpg="/assets/images/interventionsdienst.jpg">
+                <span class="services__item-number" aria-hidden="true">10</span>
+                <span class="services__item-name">Interventionsdienst</span>
+                <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+          </ol>
+
+          <!-- Sticky preview, desktop only (hidden on mobile via CSS —
+               see .services__preview). Default state shown here (before
+               any hover/focus) mirrors the first list item, so it's
+               correct and complete even if JS never runs. JS only ever
+               swaps these same fields; it never injects new content the
+               HTML doesn't already have a slot for. -->
+          <div class="services__preview">
+            <div class="services__preview-media">
+              <picture>
+                <source data-preview-source srcset="/assets/images/werkschutz.webp" type="image/webp">
+                <img data-preview-img src="/assets/images/werkschutz.jpg" alt="" width="820" height="1227" loading="lazy">
+              </picture>
+            </div>
+            <div class="services__preview-body">
+              <h3 class="services__preview-name" data-preview-name-el>Werkschutz</h3>
+              <p class="services__preview-text" data-preview-text-el>Round-the-clock protection for industrial sites and company premises.</p>
+              <a class="services__preview-link" data-preview-link href="/werkschutz/">Learn more →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pixel-transition "seam" (client request, 2026-07-21) — recreates
+         the look of a WebGL shader demo the client linked
+         (github.com/J0SUKE/gsap-threejs-codrops — a per-image "pixel
+         dissolve" reveal) without Three.js/WebGL (out of scope for this
+         project, see CLAUDE.md tech constraints). Full revision history
+         in CLAUDE.md; current (7th revision) state:
+
+         This div is a real DOM sibling between Services and Uniforms
+         (not a child of either). Its tile band (js/pixel-transition.js)
+         now sits ENTIRELY inside Uniforms (not straddling the boundary
+         — client: "los pixeles son negros... tendria que estar arriba
+         de la seccion blanca") since every tile is one fixed black
+         color (page-home.css .pixel-seam__tile) and is therefore only
+         ever visible against a light background — Uniforms is the one
+         light section of this pair, Services is not.
+
+         JS-only-ever-enhances: this div is empty by default (real
+         height: 0 in CSS) — js/pixel-transition.js only ever appends
+         tile children into it at runtime. If that script never runs,
+         or prefers-reduced-motion is set, this div stays empty and
+         effectively invisible, so Services and Uniforms simply meet
+         normally with nothing between them, same as if this feature
+         didn't exist. -->
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 4. UNIFORMS / OUTFIT VIEWER ============ -->
+    <!-- Added 2026-07-15. Image notes (see CLAUDE.md "Folder architecture"
+         for the full asset investigation): the client's source photos
+         (assets/images/Manu*.png / ManuSide*.png) are all front-facing —
+         there is no genuine side/three-quarter angle in the set, only a
+         second front-facing pose per outfit (ManuSide3.png was also found
+         to be a byte-identical duplicate of ManuSide2.png and isn't
+         used). Per client direction 2026-07-15, the view toggle stays but
+         is labeled "Front"/"Angled" rather than "Front"/"Side", since
+         "Angled" doesn't claim an angle that isn't actually there.
+
+         Correction, 2026-07-17: this used to say Softshell had no second
+         photo and its "Angled" button was disabled as a result — that
+         was wrong. assets/images/ManuSide5.png is Softshell's second
+         pose; it had just been missed during the original file-by-file
+         inspection (client caught it). See js/outfits.js's own header
+         comment for the verification steps before it was wired in. All 7
+         outfits now have a working Angled view.
+
+         data-nav-theme="light" added 2026-07-17 — marks this as one of
+         the page's white/near-white ("#FAFAFA") sections for
+         initHeaderScrollTheme() (js/main.js): when a section carrying
+         this attribute is scrolled behind the fixed header, the header
+         switches to its frosted-glass/dark-text look
+         (.site-header--dark, site-chrome.css) instead of the default
+         transparent/white-text one. Same attribute is on .references
+         and .faq further down — those three are the only genuinely
+         light-background sections on this page; everything else
+         (including the hero) stays dark, so the header stays in its
+         default look over them.
+
+         id="uniforms" added 2026-07-20 — anchor target for the "Our
+         System" section's "Explore uniforms" link further up this page
+         (#our-system's panel 01). This section had no id at all before;
+         adding one is purely additive, nothing about this section's own
+         markup/content/behavior changed.
+
+         Pixel effect, 2nd revision (2026-07-21): the `data-pixel-
+         transition` attribute this section briefly carried (covering
+         this whole section in tiles on entrance) is gone — client
+         clarified, after seeing two concrete options, that the effect
+         should live in the SEAM between two sections, not belong to
+         either section's own entrance. See the new `.pixel-seam` div
+         placed between Services and this section (just above, in this
+         same file) and js/pixel-transition.js for the current
+         mechanism. -->
+    <section id="uniforms" class="section outfits" data-nav-theme="light">
+      <div class="container">
+        <div class="outfits__layout" data-reveal>
+          <div class="outfits__intro">
+            <!-- Copy replaced 2026-07-17, client request: shorter
+                 heading/lede, and the 4-item context list (Corporate
+                 reception & front-of-house / Industrial sites & outdoor
+                 patrols / Cold-weather and winter shifts / Formal,
+                 client-facing assignments) removed outright, not
+                 replaced with more text — the brief wanted the viewer
+                 itself to be the section's main content, not a longer
+                 description competing with it. -->
+            <h2>The right uniform for every role.</h2>
+            <p>Choose the outfit and view that best fits your security environment.</p>
+
+            <!-- Direct outfit picker (client reference, 2026-07-15; moved
+                 here from the viewer column 2026-07-15 per client
+                 follow-up — sits under the intro copy, not above the
+                 person image) — real buttons, one per outfit, "besides"
+                 (in addition to) the prev/next arrows in the viewer
+                 column, not instead of them. Clicking one jumps straight
+                 to that outfit; view (Front/Angled) is left unchanged,
+                 same as the arrows already do.
+                 Restyled 2026-07-17 (client request) from filled blue
+                 pills to lightweight text tabs — see .outfits__name-btn,
+                 page-home.css. Same buttons, same behavior, just a
+                 lighter visual treatment so the picker doesn't compete
+                 with the viewer for attention.
+
+                 Hairline divider between items + a reveal-on-hover detail
+                 (arrow + short "what it's for" text) added same day,
+                 two client corrections. The reveal still uses the same
+                 opacity/translateX hover-reveal pattern already
+                 established by .services__item-arrow (Services Overview
+                 section) — same "type of effect" already in use
+                 elsewhere on this page. First pass had just a bare
+                 arrow; client correction: "really write the things that
+                 go in the arrows... say what the outfit is for" — the
+                 revealed text now carries the same real per-outfit
+                 use-case copy already written for outfits.js's `context`
+                 field (which still exists there too, unused by JS right
+                 now — see that file's own note). Black text (client
+                 request), was blue. Whole reveal is aria-hidden since
+                 it's decorative/supplementary — the button's own text
+                 (the outfit name) is the real accessible label; a screen
+                 reader user doesn't need this repeated. -->
+            <div class="outfits__names" role="group" aria-label="Choose outfit" data-item-reveal=".outfits__name-btn">
+              <button type="button" class="outfits__name-btn" data-outfit-index="0" aria-pressed="true">Polo<span class="outfits__name-detail" aria-hidden="true">→ For everyday reception and front-of-house duty</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+              <button type="button" class="outfits__name-btn" data-outfit-index="1" aria-pressed="false">Pullover<span class="outfits__name-detail" aria-hidden="true">→ For general on-site assignments in mild weather</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+              <button type="button" class="outfits__name-btn" data-outfit-index="2" aria-pressed="false">Vest<span class="outfits__name-detail" aria-hidden="true">→ For high-visibility outdoor and patrol duty</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+              <button type="button" class="outfits__name-btn" data-outfit-index="3" aria-pressed="false">Softshell Jacket<span class="outfits__name-detail" aria-hidden="true">→ For active outdoor assignments in changing weather</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+              <button type="button" class="outfits__name-btn" data-outfit-index="4" aria-pressed="false">Winter Jacket<span class="outfits__name-detail" aria-hidden="true">→ For outdoor patrols and cold-weather assignments</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+              <button type="button" class="outfits__name-btn" data-outfit-index="5" aria-pressed="false">Shirt<span class="outfits__name-detail" aria-hidden="true">→ For client-facing reception and desk assignments</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+              <button type="button" class="outfits__name-btn" data-outfit-index="6" aria-pressed="false">Suit<span class="outfits__name-detail" aria-hidden="true">→ For formal, client-facing assignments</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+            </div>
+          </div>
+
+          <!-- Progressive enhancement, same principle as
+               initServicePreview()/initNavToggle(): this single <picture>
+               is real, visible, correct content on its own (default
+               outfit, front view) — outfits.js only ever swaps its
+               src/alt/label when it successfully initializes. If JS
+               fails, the arrows/view buttons stay inert but the section
+               copy and this default image remain fully understandable. -->
+          <div class="outfits__viewer">
+            <div class="outfits__stage">
+              <button type="button" class="outfits__arrow outfits__arrow--prev" data-outfit-prev aria-label="Show previous outfit">
+                <span aria-hidden="true">←</span>
+              </button>
+
+              <div class="outfits__image-frame">
+                <picture>
+                  <source data-outfit-source srcset="/assets/images/outfits/polo-front.webp" type="image/webp">
+                  <img data-outfit-img src="/assets/images/outfits/polo-front.png" alt="FRANKONIA security staff member wearing a black polo uniform, front view." width="800" height="1200" loading="lazy">
+                </picture>
+              </div>
+
+              <button type="button" class="outfits__arrow outfits__arrow--next" data-outfit-next aria-label="Show next outfit">
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+
+            <!-- Front/Angled toggle — moved here 2026-07-17 (client
+                 request: "closer to the image," was in .outfits__intro on
+                 the left since 2026-07-15) and restyled smaller/secondary
+                 to match, see .outfits__views, page-home.css. Same
+                 buttons/behavior, just relocated + de-emphasized. -->
+            <div class="outfits__views" role="group" aria-label="Photo angle">
+              <button type="button" class="outfits__view-btn" data-outfit-view="front" aria-pressed="true">Front</button>
+              <button type="button" class="outfits__view-btn" data-outfit-view="angled" aria-pressed="false">Angled</button>
+            </div>
+            <!-- The active-outfit name + context label that used to sit
+                 here (.outfits__info, added 2026-07-17 the same day)
+                 was removed a few hours later, same-day client
+                 correction: "quiero que lo de front y angled sea lo
+                 único que está debajo del personaje" — Front/Angled is
+                 now deliberately the only thing below the character.
+                 The name is already shown via the active state in the
+                 outfit picker list on the left (Polo highlighted blue),
+                 so it wasn't lost information, just no longer
+                 duplicated here. outfits.js still has the `context`
+                 string per outfit (js/outfits.js) and still guards for
+                 this element's absence in render() — nothing there
+                 needed to change, it simply no-ops now that
+                 [data-outfit-name]/[data-outfit-context] don't exist in
+                 the DOM. Left the context copy in outfits.js rather than
+                 deleting it, in case this comes back. -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 4.5. SOCIAL MEDIA ============ -->
+    <!-- Added 2026-07-17, client request: a "story reel" style social
+         proof section, format adapted from a client-supplied reference
+         screenshot (a travel company's testimonial section — title +
+         subtitle, a row of vertical story-style cards with the middle
+         one taller/featured, caption below each, CTA button under the
+         row). Originally placed directly after References (same "social
+         proof" content category); moved same day, client request, to
+         directly BEFORE References instead — renumbered "4.5" (was
+         "5.5") to match, sitting between Uniforms/4 and References/5
+         now instead of between References/5 and Conversion/6.
+
+         Cover photos added 2026-07-20 (client-supplied: VideoPlaceholder
+         1-3.png, found on the user's Desktop, not in this project) —
+         real FRANKONIA photos (on-site guards in branded gear, a
+         briefing/presentation moment, a control-room scene), each
+         center-cropped to the section's existing 9:16 ratio and
+         downscaled to 480px wide, saved as assets/images/social-*.jpg.
+         These are STILL a placeholder stage, not final — client said
+         explicitly these images themselves will be replaced by real
+         video later ("después van a ser sustituidos por videos"); the
+         .social__play icon stays overlaid on each to keep signaling
+         "this becomes a video," now over a real photo instead of a flat
+         background-color box. Captions (On-Site Patrol / Night Shift
+         Briefing / Team Training) are unchanged generic content-type
+         labels, matched to each photo by content, not renamed to
+         anything more specific — see CLAUDE.md for why these stayed
+         deliberately generic. CTA button href="#" and label are still
+         both placeholder — client said "después vemos a dónde va" (we'll
+         decide the destination later); update both once a real social
+         profile/page is confirmed. -->
+    <section class="section section--subtle social">
+      <div class="container">
+        <div class="section__intro social__intro" data-reveal>
+          <p class="section-eyebrow">Follow Our Work</p>
+          <h2>See Our Team in Action</h2>
+          <p class="social__lede">Real moments from the field, shared on our social channels.</p>
+        </div>
+
+        <div class="social__grid" data-reveal>
+          <div class="social__item">
+            <div class="social__placeholder">
+              <img class="social__cover" src="/assets/images/social-on-site-patrol.jpg" width="480" height="853" alt="FRANKONIA security personnel on site" loading="lazy">
+              <span class="social__play" aria-hidden="true"></span>
+            </div>
+            <p class="social__caption">On-Site Patrol</p>
+          </div>
+          <div class="social__item social__item--featured">
+            <div class="social__placeholder">
+              <img class="social__cover" src="/assets/images/social-night-shift-briefing.jpg" width="480" height="853" alt="FRANKONIA team briefing" loading="lazy">
+              <span class="social__play" aria-hidden="true"></span>
+            </div>
+            <p class="social__caption">Night Shift Briefing</p>
+          </div>
+          <div class="social__item">
+            <div class="social__placeholder">
+              <img class="social__cover" src="/assets/images/social-team-training.jpg" width="480" height="853" alt="FRANKONIA control room" loading="lazy">
+              <span class="social__play" aria-hidden="true"></span>
+            </div>
+            <p class="social__caption">Team Training</p>
+          </div>
+        </div>
+
+        <div class="social__cta">
+          <a class="btn btn--secondary" href="#">Follow Us on Social Media</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 5. REFERENCES — CUSTOMER RESULTS ============ -->
+    <!-- Intro + results restyled 2026-07-17, client request: match
+         #trust-metrics' top section exactly (sizing/spacing/composition
+         — heading left, supporting copy right, then large-number stats
+         with thin dividers instead of boxed cards) but recolored for
+         this section's own white background/dark text instead of
+         trust-metrics' dark background/white text. .references__results
+         now reuses the shared .stat component directly (same one
+         #trust-metrics uses) instead of the bespoke .result-tile
+         markup/classes that used to be here — see page-home.css for the
+         light-mode color overrides this needed. The heading's old
+         forced-one-line treatment (a narrow tuned clamp + white-space:
+         nowrap, previously the origin of the same clamp reused by
+         .faq__intro h2/.social__intro h2) is gone — this heading is
+         significantly narrower now that it shares the row with the new
+         lede text next to it, so forcing one line here would overflow;
+         it just wraps naturally now, like #trust-metrics' own heading
+         does. -->
+    <section class="section references" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro references__intro" data-reveal>
+          <p class="section-eyebrow">Client Results</p>
+          <h2>Real Results</h2>
+          <p class="references__lede">Real numbers from the security programs we run for our customers every day.</p>
+        </div>
+
+        <ul class="references__results" data-reveal>
+          <li class="stat">
+            <span class="stat__value">€25,000</span>
+            <span class="stat__label">Annual savings in operational security expenditure.</span>
+          </li>
+          <li class="stat">
+            <span class="stat__value">30%</span>
+            <span class="stat__label">Annual savings on security personnel for a major client.</span>
+          </li>
+          <li class="stat">
+            <span class="stat__value">20%</span>
+            <span class="stat__label">Cost savings with no reduction in security.</span>
+          </li>
+        </ul>
+
+        <!-- Replaced 2026-07-20 (client-supplied real testimonials) — 3
+             real, named customer reviews (Robert Crispens/MORELO
+             Motorhomes, Hermann Schleier/Bamberg Social Foundation,
+             Peter Keller/CleanTech Innovation Park), replacing the
+             previous 9 invented ones entirely. This resolves the
+             content-authenticity flag CLAUDE.md carried on this section
+             since 2026-07-15/2026-07-17 — these are real, client-
+             provided names/companies/quotes, not placeholders.
+
+             Format changed from a horizontal drag-scroll strip (no
+             longer needed at 3 items) to a 2-column CSS masonry
+             (`columns: 2`, page-home.css — client-supplied reference
+             image), each card now: avatar + name/company top-left,
+             Google icon alone top-right (client request — was a
+             Twitter/X icon in the reference image; swapped for
+             assets/icons/google-icon.png, already in this project for
+             the hero's review card, since these are Google reviews),
+             5 stars moved below the quote (client correction, same
+             day — originally paired with the Google icon top-right).
+             Avatar stays a plain flat-color circle, not a photo — the
+             "no fake photos" decision below this element (page-home.css)
+             is unchanged even though these are now real people, since
+             this project has no actual photos of them to use.
+             data-drag-scroll/tabindex/role dropped along with the old
+             horizontal-scroll interaction — a plain masonry needs none
+             of that. -->
+        <div class="references__testimonials" data-reveal>
+          <blockquote class="testimonial">
+            <header class="testimonial__header">
+              <div class="testimonial__person">
+                <img class="testimonial__avatar" src="/assets/images/testimonial-robert-crispens.jpg" width="240" height="240" alt="Robert Crispens" loading="lazy">
+                <div>
+                  <p class="testimonial__name">Robert Crispens</p>
+                  <p class="testimonial__role">Managing Director, MORELO Motorhomes</p>
+                </div>
+              </div>
+              <img class="testimonial__google" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+            </header>
+            <p class="testimonial__quote">"I am delighted to have found a reliable regional partner in FRANKONIA. Every security service is tailored personally to our individual requirements. It is very reassuring to know that we can always rely on both quality and the professional conduct of the security personnel."</p>
+            <span class="testimonial__stars" role="img" aria-label="5 out of 5 stars">★★★★★</span>
+          </blockquote>
+          <blockquote class="testimonial">
+            <header class="testimonial__header">
+              <div class="testimonial__person">
+                <!-- Client-supplied image for this contact is a building
+                     (the Bamberg Social Foundation site), not a personal
+                     headshot — real, as-supplied, not swapped for
+                     anything else; flagged in CLAUDE.md in case a real
+                     headshot exists later. -->
+                <img class="testimonial__avatar" src="/assets/images/testimonial-hermann-schleier.jpg" width="240" height="240" alt="Hermann Schleier" loading="lazy">
+                <div>
+                  <p class="testimonial__name">Hermann Schleier</p>
+                  <p class="testimonial__role">Executive Management, Bamberg Social Foundation</p>
+                </div>
+              </div>
+              <img class="testimonial__google" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+            </header>
+            <p class="testimonial__quote">"During the coronavirus pandemic, we needed a professional security provider for our hospitals as well as our vaccination and testing centres. With FRANKONIA, we found a 100% reliable partner. I was impressed by how flexibly all our requirements and requested changes were implemented."</p>
+            <span class="testimonial__stars" role="img" aria-label="5 out of 5 stars">★★★★★</span>
+          </blockquote>
+          <blockquote class="testimonial">
+            <header class="testimonial__header">
+              <div class="testimonial__person">
+                <!-- Same as Hermann Schleier above — client-supplied
+                     image is the CleanTech Innovation Park site, not a
+                     personal headshot. -->
+                <img class="testimonial__avatar" src="/assets/images/testimonial-peter-keller.jpg" width="240" height="240" alt="Peter Keller" loading="lazy">
+                <div>
+                  <p class="testimonial__name">Peter Keller</p>
+                  <p class="testimonial__role">Managing Director, CleanTech Innovation Park</p>
+                </div>
+              </div>
+              <img class="testimonial__google" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+            </header>
+            <p class="testimonial__quote">"As the infrastructure at the CleanTech Innovation Park continues to evolve, the security requirements for the site and its buildings will also change and become more specific. With FRANKONIA, we have exactly the reliable partner we need at our side."</p>
+            <span class="testimonial__stars" role="img" aria-label="5 out of 5 stars">★★★★★</span>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 6. FREE SECURITY ANALYSIS (PRIMARY CONVERSION) ============ -->
+    <!-- Redesigned 2026-07-20 (client brief: editorial split-screen contact
+         page, reference: a Glassmoon-style contact page) — full-bleed
+         black/white 50-50 split replacing the previous boxed form-card
+         layout. Confirmed with the client before building: this stays the
+         existing homepage section (#sicherheitsanalyse, same place in the
+         scroll, same build/page architecture) styled to FEEL like a
+         focused full-viewport landing moment — not a new page/URL. See
+         CLAUDE.md for the full build report.
+
+         Deliberately NOT `.section` this time (no .container wrapper
+         either) — that shared class's padding-block/max-width rhythm is
+         exactly what this brief asks to break out of ("no large outer
+         container... the vertical split itself should define the
+         composition"). Both .conversion__panel children are full
+         viewport-height on desktop/tablet (min-width: 768px) via CSS
+         grid, not JS/pinning — see page-home.css.
+
+         data-nav-theme="light" added — this section is the one genuine
+         edge case for that system: it's HALF light (the white form
+         panel), not entirely light like References/Outfits/FAQ, which is
+         what that attribute was built for. The header's frosted
+         dark-text state (site-chrome.css .site-header--dark) still reads
+         reasonably against both halves since its own translucent
+         white-wash + blur sits on top of whatever scrolls under it, but
+         this specific split case hasn't been visually confirmed — flag
+         it if the header looks off scrolling over the black half here. -->
+    <section id="sicherheitsanalyse" class="conversion" data-nav-theme="light">
+      <div class="conversion__panel conversion__panel--info" data-reveal>
+        <div class="conversion__info">
+          <p class="section-eyebrow">Free Security Analysis</p>
+          <!-- Headline replaced per the brief — was "Free Security
+               Analysis — Clarity in 20 Minutes" (still present, just
+               moved: see .conversion__form-title on the right panel and
+               .conversion__micro below for where "20 minutes"/"free"
+               reassurance now lives instead). -->
+          <h2 class="conversion__headline">Clarity before action.</h2>
+          <p class="conversion__lede">A focused review of your current security setup, risks and practical next steps.</p>
+        </div>
+
+        <!-- Abstract visual system (client brief) — NOT an illustration
+             of a guard/shield/lock/camera/dashboard, deliberately. A
+             single inline SVG: disconnected "blueprint" line fragments +
+             an open corner bracket on the left (unclear current setup),
+             one small blue marker in the middle (a detected risk), a
+             cleaner/straighter line continuing right (a clear plan). One
+             continuous path connects left to right, its stroke fading
+             from muted grey to FRANKONIA blue via a gradient — the
+             "fragmented → ordered" transition the brief asks for, without
+             a second element. Small circles mark a few coordinates along
+             it; only the risk-marker and endpoint ones are blue, per "one
+             or two highlighted points." Static in the raw markup — the
+             one-time draw-in (stroke-dashoffset) and fade/stagger on the
+             fragments are both plain CSS animations gated by
+             prefers-reduced-motion (motion.css's existing blanket
+             override neutralizes both automatically, no extra rule
+             needed here), not GSAP — the brief explicitly asked to avoid
+             a GSAP dependency for this one graphic. -->
+        <div class="conversion__visual" aria-hidden="true">
+          <svg class="conversion__visual-svg" viewBox="0 0 480 280" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <defs>
+              <linearGradient id="conversion-path-gradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="var(--color-border-strong)"></stop>
+                <stop offset="65%" stop-color="var(--color-border-strong)"></stop>
+                <stop offset="100%" stop-color="var(--color-accent)"></stop>
+              </linearGradient>
+            </defs>
+
+            <!-- Fragmented cluster — left, "unclear current setup." Short
+                 disconnected segments, deliberately not joined into one
+                 shape. -->
+            <g class="conversion__visual-fragments">
+              <path d="M20 46 H72"></path>
+              <path d="M96 22 V64"></path>
+              <path d="M112 96 H162"></path>
+              <path d="M24 96 H58 V128"></path>
+              <path d="M150 34 H150.01"></path>
+            </g>
+
+            <!-- The one continuous diagnostic path, left to right. -->
+            <path class="conversion__visual-path" d="M12 202 L74 189 L98 213 L136 176 L178 188 L222 141 L284 141 L344 99 L468 99"></path>
+
+            <!-- Coordinates along the path — only the risk marker (mid)
+                 and the endpoint are blue ("one or two highlighted
+                 points"), the rest stay muted grey. -->
+            <circle class="conversion__visual-node" cx="12" cy="202" r="2.5"></circle>
+            <circle class="conversion__visual-node" cx="98" cy="213" r="2.5"></circle>
+            <circle class="conversion__visual-node conversion__visual-node--marker" cx="222" cy="141" r="3.5"></circle>
+            <circle class="conversion__visual-node conversion__visual-node--marker" cx="468" cy="99" r="3"></circle>
+
+            <!-- Clean, straighter fragment on the right — "a clear
+                 action plan." A closed-ish rectangle corner, unlike the
+                 open bracket on the left. -->
+            <path class="conversion__visual-order" d="M392 60 H460 V92"></path>
+          </svg>
+
+          <div class="conversion__visual-labels">
+            <span>Current Setup</span>
+            <span>Risk Review</span>
+            <span>Next Steps</span>
+          </div>
+        </div>
+
+        <p class="conversion__micro">
+          <span class="conversion__micro-main">20 minutes · Free · No obligation</span>
+          <span class="conversion__micro-sub">Response within one business day</span>
+        </p>
+      </div>
+
+      <div class="conversion__panel conversion__panel--form" data-reveal>
+        <div class="conversion__form-wrap">
+          <h3 class="conversion__form-title">Request your free analysis</h3>
+          <p class="conversion__form-lede">Tell us briefly about your current security situation.</p>
+
+          <!-- Same fields, names, types, autocomplete, required attributes
+               and action="#"/method="post" placeholder as before — no
+               submission logic exists yet to preserve beyond native HTML5
+               validation, and none of that changed here, only the visual
+               treatment (page-home.css) and the button markup (now an
+               icon + text pairing instead of the old full-width pill —
+               see .conversion__submit). -->
+          <form class="conversion__form" action="#" method="post">
+            <div class="form-field">
+              <label class="form-field__label" for="cf-name">Name *</label>
+              <input class="form-field__input" type="text" id="cf-name" name="name" autocomplete="name" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="cf-company">Company *</label>
+              <input class="form-field__input" type="text" id="cf-company" name="company" autocomplete="organization" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="cf-email">Email *</label>
+              <input class="form-field__input" type="email" id="cf-email" name="email" autocomplete="email" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="cf-phone">Phone *</label>
+              <input class="form-field__input" type="tel" id="cf-phone" name="phone" autocomplete="tel" required>
+            </div>
+
+            <div class="form-field conversion__form-field--full">
+              <label class="form-field__label" for="cf-message">Message</label>
+              <textarea class="form-field__textarea" id="cf-message" name="message"></textarea>
+            </div>
+
+            <div class="form-checkbox">
+              <input class="form-checkbox__input" type="checkbox" id="cf-privacy" name="privacy" required>
+              <label class="form-checkbox__label" for="cf-privacy">
+                I have read and agree to the <a href="/datenschutz/">Privacy Policy</a>. *
+              </label>
+            </div>
+
+            <button class="btn btn--primary conversion__submit" type="submit">
+              Request free analysis
+              <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 6.5. COVERAGE AREAS ============ -->
+    <!-- Added 2026-07-17, client request: an in-body coverage-areas
+         section above FAQ, specifically for internal-link SEO value —
+         the footer already has this exact content (site-footer__coverage
+         in partials/footer.html: same 10 real cities, same real
+         /sicherheitsdienst-<city>/ URLs from the guidelines' confirmed
+         URL map, guidelines §2.2). Not a numbered step in the original
+         1-9 list (hence "6.5"), inserted directly above FAQ. None of
+         these city pages exist yet (see CLAUDE.md "Current phase") —
+         same situation as the nav's existing links to /leistungen/
+         before that page existed; the URLs are the confirmed, real,
+         planned ones, just pointing at pages not yet built.
+
+         Interactive Leaflet map added 2026-07-21 (client brief) — see
+         CLAUDE.md for the full build report. Leaflet.js + OpenStreetMap
+         tiles, self-hosted (assets/js/vendor/leaflet.js,
+         css/vendor/leaflet.css — no CDN, same pattern as GSAP), no
+         account/API key/token/billing of any kind. Each city's real
+         administrative boundary (assets/data/coverage-boundaries/*.geojson
+         — fetched once from Nominatim/OSM during this build session,
+         not at runtime, per the brief's explicit "download once during
+         development" instruction) is fetched on demand when that city
+         is selected and cached in memory afterward — see
+         js/coverage-map.js.
+
+         The 10 city pills below are UNCHANGED real links (same hrefs as
+         before) — data-coverage-city is an added hook for
+         js/coverage-map.js's click handler (which calls
+         preventDefault() and drives the map instead of navigating),
+         but if that script never runs, every pill still works exactly
+         as a plain link to its city page, same as before this map
+         existed. aria-current is set/toggled by that same script.
+
+         "All" view button added 2026-07-21 (client request: "por
+         defayl se muestren todas... deberia haber un boton con all y
+         ahi se ve el mapa de mas lejos con todas las ciudades
+         coloreadas") — a real <button>, not an <a>, since it has no
+         page of its own to navigate to (unlike the 10 city pills, and
+         unlike the old removed "All Coverage Areas" link that used to
+         point at /einsatzgebiete/); it only ever toggles the map's own
+         view state, so aria-pressed is the correct ARIA role here, not
+         aria-current (see js/coverage-map.js's setActiveButton, which
+         now branches on tag name for exactly this reason). This is now
+         the DEFAULT active state on page load — all 10 boundaries load
+         upfront and draw together, zoomed out to fit every city, rather
+         than only Bamberg's boundary loading first (the previous
+         default). Kept as its own first list item rather than folded
+         into the footer-matching 6+5 split below, so that split (still
+         real navigation links only) stays exactly mirroring the
+         footer's own city list.
+
+         Pixel-transition attribute removed 2026-07-21, same day it was
+         added — see Trust Metrics' own section comment above and
+         CLAUDE.md for why (invisible black-tile-on-black-background,
+         client asked to isolate testing to Services → Uniforms only). -->
+    <section class="section coverage">
+      <div class="container">
+        <div class="section__intro coverage__intro" data-reveal>
+          <p class="section-eyebrow">Service Area</p>
+          <h2>Coverage Areas</h2>
+          <p class="coverage__lede">On-site security services across Bamberg, Nuremberg, Würzburg, and every city we serve throughout Franconia and Bavaria.</p>
+        </div>
+
+        <div class="coverage__map-wrap" data-reveal>
+          <div id="coverage-map" class="coverage__map"></div>
+          <!-- Moved top-left -> top-right 2026-07-21 (client: "el mas
+               menos lo tapa" — Leaflet's default top-left zoom control
+               was overlapping this panel). Still never covers Leaflet's
+               attribution control, which stays in its own default
+               bottom-right corner — top-right vs. bottom-right don't
+               overlap. Sub-line (secondary "Administrative area"/city-
+               count/fallback-message text) removed same day (client:
+               "saca el texto de abajo") — panel is label + city name
+               only now; see js/coverage-map.js for what that removal
+               simplified. Default content here (before JS runs) matches
+               the "All" default state, not a single city. -->
+          <div class="coverage__overlay">
+            <p class="coverage__overlay-label">Coverage area</p>
+            <p class="coverage__overlay-city" data-coverage-overlay-city>All Cities</p>
+          </div>
+        </div>
+
+        <!-- Split into two explicit rows, 2026-07-20 (client request:
+             "separalas en dos renglones como están en el footer") — same
+             6+5 split as partials/footer.html's own city list at the
+             time. "All Coverage Areas" link removed 2026-07-21 (separate
+             client request, unrelated to the map) — every real city is
+             already shown directly here. The "All" view-toggle button
+             (see the section comment above) is intentionally NOT part of
+             this 6+5 split — it's prepended as its own first item so the
+             footer-matching count/order of real city links is untouched. -->
+        <div class="coverage__rows" data-reveal>
+          <ul class="coverage__list">
+            <li><button type="button" class="coverage__pill coverage__pill--all" data-coverage-city="all" aria-pressed="true">All</button></li>
+            <li><a class="coverage__pill" data-coverage-city="bamberg" href="/sicherheitsdienst-bamberg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Bamberg</a></li>
+            <li><a class="coverage__pill" data-coverage-city="nuremberg" href="/sicherheitsdienst-nuernberg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Nuremberg</a></li>
+            <li><a class="coverage__pill" data-coverage-city="wuerzburg" href="/sicherheitsdienst-wuerzburg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Würzburg</a></li>
+            <li><a class="coverage__pill" data-coverage-city="erlangen" href="/sicherheitsdienst-erlangen/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Erlangen</a></li>
+            <li><a class="coverage__pill" data-coverage-city="fuerth" href="/sicherheitsdienst-fuerth/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Fürth</a></li>
+            <li><a class="coverage__pill" data-coverage-city="schweinfurt" href="/sicherheitsdienst-schweinfurt/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Schweinfurt</a></li>
+          </ul>
+          <ul class="coverage__list">
+            <li><a class="coverage__pill" data-coverage-city="bayreuth" href="/sicherheitsdienst-bayreuth/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Bayreuth</a></li>
+            <li><a class="coverage__pill" data-coverage-city="coburg" href="/sicherheitsdienst-coburg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Coburg</a></li>
+            <li><a class="coverage__pill" data-coverage-city="ansbach" href="/sicherheitsdienst-ansbach/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Ansbach</a></li>
+            <li><a class="coverage__pill" data-coverage-city="hof" href="/sicherheitsdienst-hof/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Hof</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 7. FAQ ============ -->
+    <section class="section faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro faq__intro" data-reveal>
+          <p class="section-eyebrow">Got Questions?</p>
+          <h2>Frequently Asked Questions</h2>
+        </div>
+
+        <div class="faq__list">
+          <details class="faq-item">
+            <summary><h3>How much does a security service cost per hour?</h3></summary>
+            <p class="faq-item__answer">A qualified security service in Bavaria typically costs between €22 and €42 per hour, depending on qualification, deployment location, and requirements. Standard object protection with certified personnel usually starts around €28–30 per hour.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>What's the difference between Industrial Site Security and Property Protection?</h3></summary>
+            <p class="faq-item__answer">Industrial Site Security refers to on-site protection for industrial and commercial premises, typically with a fixed team. Property Protection is broader property protection, covering buildings and facilities of any type, including patrols and access control.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>How quickly can FRANKONIA provide security staff?</h3></summary>
+            <p class="faq-item__answer">For standard assignments, FRANKONIA can typically deploy certified security personnel within 48–72 hours. Urgent requests, including Fire Watch and Intervention Service, can often be arranged faster — ask your contact person for current availability.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Are FRANKONIA's security staff certified?</h3></summary>
+            <p class="faq-item__answer">Yes. FRANKONIA is certified to DIN 77200-1 and DIN EN ISO 9001, and all personnel undergo background checks and role-specific training before deployment.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Which regions does FRANKONIA serve?</h3></summary>
+            <p class="faq-item__answer">FRANKONIA operates within roughly 100 km of Bamberg, covering Franconia and Bavaria — including Nuremberg, Würzburg, and Erlangen. Contact us to confirm coverage for your specific location.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>What happens during the free security analysis?</h3></summary>
+            <p class="faq-item__answer">A FRANKONIA security expert reviews your current setup — coverage gaps, compliance status, and risk areas — in a focused 20-minute conversation. You'll receive a written recommendation with no obligation to continue.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Does FRANKONIA offer short-term or one-off assignments?</h3></summary>
+            <p class="faq-item__answer">Yes. Services such as Fire Watch and Event Security are commonly booked for defined, short-term periods, alongside long-term contracts for ongoing Industrial Site Security and Property Protection.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Is there a single point of contact for my account?</h3></summary>
+            <p class="faq-item__answer">Every FRANKONIA client is assigned one dedicated contact person responsible for coordination, reporting, and any changes to your security setup — no call centers or rotating staff.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>How are security personnel selected and trained?</h3></summary>
+            <p class="faq-item__answer">All candidates undergo background screening, certification checks under §34a GewO, and role-specific onboarding before their first shift, with ongoing training to maintain DIN 77200-1 compliance.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>What contract terms does FRANKONIA offer?</h3></summary>
+            <p class="faq-item__answer">FRANKONIA offers both flexible short-term agreements and longer-term contracts, depending on the service. Terms are discussed individually during the free security analysis.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>
