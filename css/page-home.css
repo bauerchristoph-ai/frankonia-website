@@ -902,18 +902,16 @@ main h2 {
     will-change: opacity, transform;
   }
 
-  /* TEMPORARY debug backgrounds (client request 2026-07-22, "después los
-     cambiamos") — fill the ENTIRE content half so the entering/exiting panel
-     is obvious against the dark stage. P1 & P3 (--right) grey, P2 (--left)
-     white → right → left → right. NOTE: on the white P2 the white logo
-     artwork + muted label won't show (white-on-white) — expected for this
-     temporary pass; final panel backgrounds/content colours come later. */
+  /* Temporary panel backgrounds (client 2026-07-22, "después los cambiamos").
+     P1 & P3 (--right) grey. P2 (--left) is the LOGOS panel — its logos are
+     white PNGs, so it's black (not white) so they're actually visible
+     (client fix). Final panel backgrounds/colours come later. */
   .js-story .story__panel--right .story__panel-inner {
     background-color: var(--color-gray);
   }
 
   .js-story .story__panel--left .story__panel-inner {
-    background-color: var(--color-white);
+    background-color: var(--color-bg);
   }
 
   /* Panels 2 & 3 hidden from FIRST PAINT so there's no "all three visible"
