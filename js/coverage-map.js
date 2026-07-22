@@ -314,7 +314,7 @@
 
     setActiveButton(ALL_ID);
     setActiveMarker(null);
-    if (overlayCityEl) overlayCityEl.textContent = "All Cities";
+    if (overlayCityEl) overlayCityEl.textContent = document.documentElement.lang === "de" ? "Alle Städte" : "All Cities";
     mapEl.classList.add("is-loading");
 
     loadAllBoundaries()

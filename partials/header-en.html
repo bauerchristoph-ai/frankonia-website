@@ -1,0 +1,57 @@
+<!-- English homepage header (/en/). Same markup as partials/header.html but
+     with the language switcher and /en/-relative logo + CTA. Werkschutz and
+     other single-language pages keep partials/header.html. See header-de.html
+     for the German counterpart. -->
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="site-header__inner container">
+    <a class="site-header__logo" href="/en/" aria-label="FRANKONIA Sicherheitsdienst — Home">
+      <img src="/assets/icons/logo-wide-right-icon.png" alt="FRANKONIA Sicherheitsdienst" width="800" height="83">
+    </a>
+
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="primary-nav">
+      <span class="nav-toggle__bar"></span>
+      <span class="visually-hidden">Open menu</span>
+    </button>
+
+    <nav id="primary-nav" class="site-nav" aria-label="Main navigation">
+      <ul class="site-nav__list">
+        <li class="site-nav__item site-nav__item--has-submenu">
+          <a class="site-nav__link" href="/leistungen/">
+            Services
+            <svg class="icon site-nav__caret" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+          </a>
+          <div class="site-nav__submenu">
+            <ul class="site-nav__submenu-list">
+              <li><a href="/werkschutz/">Werkschutz</a></li>
+              <li><a href="/objektschutz/">Objektschutz</a></li>
+              <li><a href="/baustellenbewachung/">Baustellenbewachung</a></li>
+              <li><a href="/brandwache/">Brandwache</a></li>
+              <li><a href="/revier-schliessdienst/">Revier- &amp; Schließdienst</a></li>
+              <li><a href="/empfangsdienst/">Empfangsdienst</a></li>
+              <li><a href="/veranstaltungsschutz/">Veranstaltungsschutz</a></li>
+              <li><a href="/kaufhausdetektei/">Kaufhausdetektei</a></li>
+              <li><a href="/sicherheitstechnik/">Sicherheitstechnik</a></li>
+              <li><a href="/interventionsdienst/">Interventionsdienst</a></li>
+            </ul>
+            <a class="site-nav__submenu-all" href="/leistungen/">All Services →</a>
+          </div>
+        </li>
+        <li><a class="site-nav__link" href="/referenzen/">References</a></li>
+        <li><a href="#">Our System</a></li>
+        <li><a href="#">Jobs</a></li>
+        <li><a class="site-nav__link" href="/kontakt/">Contact</a></li>
+      </ul>
+
+      <div class="site-nav__actions">
+        <!-- Language switch: EN is current here; DE links to the German
+             homepage at the root. hreflang set for assistive tech / SEO. -->
+        <div class="lang-switch" aria-label="Language">
+          <a class="lang-switch__link" href="/" hreflang="de" lang="de">DE</a>
+          <a class="lang-switch__link is-active" href="/en/" hreflang="en" lang="en" aria-current="true">EN</a>
+        </div>
+        <a class="btn btn--primary" href="/en/#sicherheitsanalyse">Request Analysis<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+      </div>
+    </nav>
+  </div>
+</header>

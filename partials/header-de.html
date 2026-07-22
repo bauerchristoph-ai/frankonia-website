@@ -1,0 +1,57 @@
+<!-- German homepage header (/, the default language). German nav labels +
+     language switcher + /-relative logo & CTA. Service submenu slugs are the
+     real German service names (shared across languages). See header-en.html
+     for the English counterpart. -->
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="site-header">
+  <div class="site-header__inner container">
+    <a class="site-header__logo" href="/" aria-label="FRANKONIA Sicherheitsdienst — Startseite">
+      <img src="/assets/icons/logo-wide-right-icon.png" alt="FRANKONIA Sicherheitsdienst" width="800" height="83">
+    </a>
+
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="primary-nav">
+      <span class="nav-toggle__bar"></span>
+      <span class="visually-hidden">Menü öffnen</span>
+    </button>
+
+    <nav id="primary-nav" class="site-nav" aria-label="Hauptnavigation">
+      <ul class="site-nav__list">
+        <li class="site-nav__item site-nav__item--has-submenu">
+          <a class="site-nav__link" href="/leistungen/">
+            Leistungen
+            <svg class="icon site-nav__caret" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+          </a>
+          <div class="site-nav__submenu">
+            <ul class="site-nav__submenu-list">
+              <li><a href="/werkschutz/">Werkschutz</a></li>
+              <li><a href="/objektschutz/">Objektschutz</a></li>
+              <li><a href="/baustellenbewachung/">Baustellenbewachung</a></li>
+              <li><a href="/brandwache/">Brandwache</a></li>
+              <li><a href="/revier-schliessdienst/">Revier- &amp; Schließdienst</a></li>
+              <li><a href="/empfangsdienst/">Empfangsdienst</a></li>
+              <li><a href="/veranstaltungsschutz/">Veranstaltungsschutz</a></li>
+              <li><a href="/kaufhausdetektei/">Kaufhausdetektei</a></li>
+              <li><a href="/sicherheitstechnik/">Sicherheitstechnik</a></li>
+              <li><a href="/interventionsdienst/">Interventionsdienst</a></li>
+            </ul>
+            <a class="site-nav__submenu-all" href="/leistungen/">Alle Leistungen →</a>
+          </div>
+        </li>
+        <li><a class="site-nav__link" href="/referenzen/">Referenzen</a></li>
+        <li><a href="#">Unser System</a></li>
+        <li><a href="#">Karriere</a></li>
+        <li><a class="site-nav__link" href="/kontakt/">Kontakt</a></li>
+      </ul>
+
+      <div class="site-nav__actions">
+        <!-- Sprachumschalter: DE ist hier aktiv; EN verlinkt die englische
+             Startseite unter /en/. -->
+        <div class="lang-switch" aria-label="Sprache">
+          <a class="lang-switch__link is-active" href="/" hreflang="de" lang="de" aria-current="true">DE</a>
+          <a class="lang-switch__link" href="/en/" hreflang="en" lang="en">EN</a>
+        </div>
+        <a class="btn btn--primary" href="/#sicherheitsanalyse">Analyse anfordern<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+      </div>
+    </nav>
+  </div>
+</header>

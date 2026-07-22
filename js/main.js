@@ -121,7 +121,7 @@ function initServicePreview() {
       img.alt = "";
       nameEl.textContent = item.dataset.previewName;
       textEl.textContent = item.dataset.previewText;
-      link.textContent = "Learn more →";
+      link.textContent = document.documentElement.lang === "de" ? "Mehr erfahren →" : "Learn more →";
       link.href = item.getAttribute("href");
     };
 

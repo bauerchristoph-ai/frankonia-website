@@ -254,6 +254,46 @@ a.site-nav__link[aria-current="page"]:focus-visible {
   border-top: 1px solid var(--color-border);
 }
 
+/* Language switch (DE/EN) — small toggle in the header actions (added
+   2026-07-22 for the bilingual homepage). Sits next to the CTA on desktop
+   (see the min-width block below), stacked with it on mobile. */
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-sm);
+}
+
+.lang-switch__link {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  line-height: 1;
+  transition: color var(--duration-fast) var(--easing-standard);
+}
+
+.lang-switch__link:hover,
+.lang-switch__link:focus-visible {
+  color: var(--color-text);
+}
+
+.lang-switch__link.is-active {
+  color: var(--color-text);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Frosted/dark header state (scrolled over a light section): dark text. */
+.site-header--dark .lang-switch__link {
+  color: rgb(1 1 1 / 0.55);
+}
+
+.site-header--dark .lang-switch__link.is-active,
+.site-header--dark .lang-switch__link:hover,
+.site-header--dark .lang-switch__link:focus-visible {
+  color: var(--color-logo-black);
+}
+
 /* ---- Services submenu ---- */
 /* Added 2026-07-15 (client reference: dachdeckermeister-hornus.de's
    mega-menu). FRANKONIA's version stays flat — a plain list of the 10
