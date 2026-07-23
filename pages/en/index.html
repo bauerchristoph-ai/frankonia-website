@@ -42,7 +42,7 @@
   <!-- Hero image is above the fold and LCP-critical. Client-supplied
        FrankoniaHero.png, used verbatim/uncompressed by explicit request
        (2026-07-22) — see the perf caveat on .hero__bg below. -->
-  <link rel="preload" as="image" href="/assets/images/heroedit.png" type="image/png">
+  <link rel="preload" as="image" href="/assets/images/herofog.png" type="image/png">
 
   <!-- include: head-common -->
   <link rel="stylesheet" href="/css/page-home.css">
@@ -140,9 +140,9 @@
            design calls for a trust section (homepage §5 at minimum)" —
            worth the client's attention, not re-added unilaterally
            here. -->
-      <!-- Client-supplied FrankoniaHero.png (frankonia-hero.png), used
-           verbatim and uncompressed by explicit request (2026-07-22). This
-           is a ~3.5MB PNG on the LCP critical path (preloaded + eager +
+      <!-- Client-supplied herofog.png, used verbatim and uncompressed by
+           explicit request (swapped in 2026-07-23, was heroedit.png). This
+           is a ~3.6MB PNG on the LCP critical path (preloaded + eager +
            fetchpriority high) — a real Core Web Vitals cost, kept
            deliberately per the client's "don't compress it." Per
            docs/project-strategy.md ("Hero asset"), the final hero should be
@@ -151,7 +151,7 @@
            one PNG source; the previous hero-bg.webp/.jpg are kept in
            assets/images/ as spares. -->
       <div class="hero__bg" aria-hidden="true">
-        <img src="/assets/images/heroedit.png" alt="" loading="eager" fetchpriority="high">
+        <img src="/assets/images/herofog.png" alt="" loading="eager" fetchpriority="high">
       </div>
 
       <div class="container hero__grid">
