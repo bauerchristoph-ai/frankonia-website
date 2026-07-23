@@ -109,24 +109,83 @@
   letter-spacing: -0.01em;
 }
 
-/* --- Scene 1: metrics ----------------------------------------------------- */
+/* --- Scene 1: metrics — editorial rows + certs strip (client 2026-07-23) --- */
+/* Subtle secondary CTA under the heading (zone 1). Dark ink + thin underline
+   for contrast on the white panel; blue on hover. */
+.sticky-story__metrics-cta {
+  display: inline-block;
+  margin-top: var(--sticky-story-space-2);
+  font-size: 0.95rem;
+  color: var(--sticky-story-ink);
+  text-decoration: none;
+  border-bottom: 1px solid rgb(1 1 1 / 0.35);
+  padding-bottom: 2px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.sticky-story__metrics-cta:hover,
+.sticky-story__metrics-cta:focus-visible {
+  color: var(--sticky-story-blue);
+  border-bottom-color: var(--sticky-story-blue);
+}
+
+/* Three editorial rows: big value left, label right, thin full-width divider
+   between rows. NOT cards. */
 .sticky-story__metrics {
+  list-style: none;
+  margin: var(--sticky-story-space-5) 0 0;
+  padding: 0;
   display: grid;
+}
+.sticky-story__metric {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
   gap: var(--sticky-story-space-4);
+  padding-block: var(--sticky-story-space-3);
+  border-top: 1px solid var(--sticky-story-neutral-200);
+}
+.sticky-story__metric:last-child {
+  border-bottom: 1px solid var(--sticky-story-neutral-200);
 }
 .sticky-story__metric-value {
-  margin: 0;
-  font-size: clamp(2.6rem, 5vw, 4rem);
-  /* Regular weight + dark ink (client 2026-07-23: not bold, not blue). */
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
   font-weight: var(--font-weight-regular);
   line-height: 1;
   letter-spacing: -0.02em;
   color: var(--sticky-story-ink);
+  white-space: nowrap;
 }
 .sticky-story__metric-label {
-  margin: var(--sticky-story-space-1) 0 0;
-  font-size: 1rem;
+  text-align: right;
+  font-size: 0.95rem;
   color: var(--sticky-story-ink-muted);
+}
+
+/* Certs strip (zone 3) — a thin divider, a subtle label, then the two DEKRA
+   seals shown small so they read as secondary to the metrics. Lives OUTSIDE
+   the parallax inner and is pushed to the panel bottom on desktop (below). */
+.sticky-story__certs {
+  padding-top: var(--sticky-story-space-3);
+  border-top: 1px solid var(--sticky-story-neutral-200);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sticky-story-space-2);
+}
+.sticky-story__certs-label {
+  margin: 0;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sticky-story-ink-muted);
+}
+.sticky-story__certs-badges {
+  display: flex;
+  align-items: center;
+  gap: var(--sticky-story-space-3);
+}
+.sticky-story__cert {
+  height: 3.25rem;
+  width: auto;
 }
 
 /* --- Scene 2: logos ------------------------------------------------------- */
@@ -210,6 +269,14 @@
   /* The inner content is vertically centred within the tall sticky scene. */
   .sticky-story__inner {
     max-width: none;
+  }
+
+  /* Metrics panel = three zones: the parallax inner (heading + CTA + metric
+     rows) at the top, and the certs strip anchored to the bottom via auto
+     margin — generous negative space between them. The certs sit OUTSIDE the
+     parallax inner so they stay put while the metrics drift. */
+  .sticky-story__scene--metrics .sticky-story__certs {
+    margin-top: auto;
   }
 }
 
