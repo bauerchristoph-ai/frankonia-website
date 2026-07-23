@@ -82,7 +82,9 @@
   color: var(--sticky-story-ink);
 }
 .sticky-story__scene--logos {
-  background: var(--sticky-story-blue);
+  /* Dark gray surface (client 2026-07-23: gris oscuro instead of blue) — the
+     site's elevated dark gray; white logos + title still read well on it. */
+  background: var(--color-gray);
   color: var(--sticky-story-on-blue);
 }
 .sticky-story__scene--cards {
