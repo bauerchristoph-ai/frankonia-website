@@ -143,21 +143,6 @@
   color: var(--sticky-story-ink-muted);
 }
 
-/* Rating star — a bit smaller than the number, with softly rounded points
-   (client 2026-07-23). A same-colour, round-joined stroke rounds the sharp
-   tips of the star path. Scoped here only (icon-star is stroke:none by
-   default — do not add a global .icon stroke). */
-.sticky-story__metric-star {
-  width: 0.58em;
-  height: 0.58em;
-  margin-left: 0.14em;
-  vertical-align: middle;
-  fill: currentColor;
-  stroke: currentColor;
-  stroke-width: 2.5;
-  stroke-linejoin: round;
-}
-
 /* Certs strip (zone 3) — a thin divider, a subtle label, then the two DEKRA
    seals shown small so they read as secondary to the metrics. Lives OUTSIDE
    the parallax inner and is pushed to the panel bottom on desktop (below). */
