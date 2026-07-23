@@ -44,20 +44,37 @@
       : group.querySelectorAll(":scope > *");
     if (!items.length) return;
 
+    // "strong" preset — opt-in via data-item-reveal-strong on the container
+    // (client request 2026-07-23: the Services list rows should reveal
+    // "mientras escrolleamos, de una forma muy smooth" — more pronounced and
+    // more sequential than the default). Bigger slide + blur + a slight scale,
+    // a larger per-item stagger, and a LONGER scrubbed range (down to the
+    // group's bottom) so the rows come in one-by-one across the scroll-through
+    // rather than all at once. Everything else (e.g. the outfit-name list)
+    // keeps the original subtle values. Same JS-only-ever-enhances contract:
+    // the start state is applied only here at runtime; no CSS hides anything.
+    const strong = group.hasAttribute("data-item-reveal-strong");
+
     gsap.fromTo(
       items,
-      { opacity: 0, y: 24, filter: "blur(6px)" },
+      {
+        opacity: 0,
+        y: strong ? 48 : 24,
+        scale: strong ? 0.97 : 1,
+        filter: strong ? "blur(10px)" : "blur(6px)",
+      },
       {
         opacity: 1,
         y: 0,
+        scale: 1,
         filter: "blur(0px)",
-        ease: "power2.out",
-        stagger: 0.1,
+        ease: strong ? "power3.out" : "power2.out",
+        stagger: strong ? 0.16 : 0.1,
         scrollTrigger: {
           trigger: group,
-          start: "top 88%",
-          end: "top 60%",
-          scrub: 0.5,
+          start: strong ? "top 85%" : "top 88%",
+          end: strong ? "bottom 60%" : "top 60%",
+          scrub: strong ? 0.6 : 0.5,
         },
       }
     );
