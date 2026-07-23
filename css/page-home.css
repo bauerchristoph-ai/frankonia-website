@@ -996,10 +996,10 @@ main h2 {
 @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
   .js-story .story {
     position: relative;
-    /* stick length for the compact 5.7-unit timeline (see sticky-sections.js).
-       Shortened from 4.5 so the three enter/hold/exit cycles feel tight and
-       there are no long empty scroll stretches. */
-    height: calc(3.4 * 100svh);
+    /* stick length for the compact 5.5-unit stacked timeline (see
+       sticky-sections.js): three full-screen scenes enter/hold in sequence,
+       the last exits. Tight — no long empty scroll stretches. */
+    height: calc(3.5 * 100svh);
   }
 
   .js-story .story__stage {
@@ -1010,24 +1010,31 @@ main h2 {
     background-color: var(--color-bg);
   }
 
+  /* Each STEP is a FULL-VIEWPORT black scene layer (client architecture fix
+     2026-07-23). GSAP slides the SCENE vertically (yPercent 100 -> 0 -> -100);
+     the half-width surface inside it is STATIC. Because every incoming scene is
+     full-screen black, it fully COVERS the previous scene as it rises — the
+     Codrops stacking principle — so white/blue/grey never appear together and
+     there is no split-screen transition. Parked below from first paint (no
+     flash); z-index is set in JS (metrics 1 < logos 2 < benefits 3). */
   .js-story .story__panel {
     position: absolute;
     inset: 0;
+    width: 100%;
+    height: 100svh;
+    background-color: var(--color-bg);
+    overflow: hidden;
+    transform: translateY(100%);
+    will-change: transform;
   }
 
-  /* THE sheet the timeline slides vertically — a complete half-screen
-     surface (50vw x 100svh) on the correct side, its own background. */
+  /* Half-width design surface — STATIC inside its scene, never animated.
+     50vw on its correct side; the other half is the scene's black background. */
   .js-story .story__panel-surface {
     position: absolute;
     top: 0;
     height: 100svh;
     width: 50vw;
-    /* Parked below the viewport from FIRST PAINT so the stage starts black
-       and each surface visibly rises from below — matches the JS gsap.set,
-       so no flash. Gated on .js-story (JS present) + the media query, so
-       no-JS never hides content. */
-    transform: translateY(100%);
-    will-change: transform;
   }
 
   .js-story .story__panel--right .story__panel-surface {
@@ -1036,15 +1043,6 @@ main h2 {
 
   .js-story .story__panel--left .story__panel-surface {
     left: 0;
-  }
-
-  /* Panel 1 (metrics) rests IN PLACE from first paint — it is not parked
-     below like Panels 2 & 3. It rides into view with the sticky stage as the
-     story scrolls in (native scroll), so the stage is never shown as an empty
-     black half; only its EXIT is animated by GSAP. Must come after the general
-     surface rule above (equal specificity, source-order wins). */
-  .js-story .story__panel-surface--proof {
-    transform: translateY(0);
   }
 
   .js-story .story__panel-inner {

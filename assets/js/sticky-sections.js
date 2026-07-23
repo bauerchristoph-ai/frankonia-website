@@ -1,13 +1,15 @@
 /*
   Sticky trust-story region (Hero → 3 half-panels → Pain Hook).
 
-  Codrops StickySections (index9) is interaction inspiration only — the
-  structure and code here are our own. Three half-panel SURFACES slide
-  vertically one at a time (right → left → right: metrics, logos, benefits);
-  the inactive half stays dark negative space. CSS `position: sticky` holds
-  the stage in view (NO ScrollTrigger pin); a single scrubbed ScrollTrigger
-  drives one timeline that translates the surfaces (never the sticky element
-  itself). Surfaces are chosen by [data-story-surface] role, not DOM order.
+  Codrops StickySections (index9) stacking, our own structure. Three
+  FULL-VIEWPORT black scenes (.story__panel) slide up one at a time
+  (yPercent 100 → 0), each covering the previous — so consecutive scenes
+  never show together even though the design surfaces inside them are on
+  opposite halves (metrics right, logos left, benefits right). The half-width
+  .story__panel-surface is static inside its scene; only the SCENE is
+  animated. CSS `position: sticky` holds the stage in view (NO ScrollTrigger
+  pin); one scrubbed ScrollTrigger drives one timeline. Scenes are resolved
+  from [data-story-surface] roles, not DOM order.
 
   Scroll engine: reuses the ONE existing Lenis + GSAP-ticker integration from
   js/smooth-scroll.js. This module only creates a ScrollTrigger — it never
@@ -51,6 +53,14 @@
   const benefits = story.querySelector('[data-story-surface="benefits"]');
   if (!metrics || !logos || !benefits) return bail();
 
+  // The animated element is the FULL-VIEWPORT scene (.story__panel), not the
+  // half-width surface. Each scene's black background covers the previous
+  // scene as it rises, so consecutive opposite-side panels never show together.
+  const metricsScene = metrics.closest(".story__panel");
+  const logosScene = logos.closest(".story__panel");
+  const benefitsScene = benefits.closest(".story__panel");
+  if (!metricsScene || !logosScene || !benefitsScene) return bail();
+
   // Dev verification (harmless one-time log): confirm each role resolves to a
   // single unique surface.
   console.log("[story] surfaces:", {
@@ -66,67 +76,55 @@
   mm.add(
     "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
     () => {
-      // Codrops index9 motion: each COMPLETE half-screen surface slides
-      // VERTICALLY with scroll (yPercent 100 -> 0 -> -100). The sticky
-      // .story__stage is never transformed; only these surfaces move, so the
-      // background and content travel together as one sheet. No opacity
-      // crossfade — pure vertical translation. CSS already parks the surfaces
-      // at translateY(100%) from first paint (gated on .js-story + the media
-      // query), so there's no flash; these sets just hand them to GSAP.
-      // Explicit initial states BEFORE building the timeline.
-      // metrics rests visible in place (yPercent 0, autoAlpha 1) — it rides into
-      // view with the sticky stage during the pre-pin scroll, so there's no
-      // empty black half; only its EXIT is animated. logos + benefits start
-      // parked below (yPercent 100) AND hidden (autoAlpha 0) so a parked panel
-      // can never bleed through before its turn. Static z-index (later = higher)
-      // so an incoming surface stacks above the outgoing one. autoAlpha is
-      // toggled by the timeline at each enter/exit boundary; because it's part
-      // of the one scrubbed timeline it reverses automatically on scroll-up.
-      gsap.set(metrics, { yPercent: 0, autoAlpha: 1, zIndex: 1 });
-      gsap.set(logos, { yPercent: 100, autoAlpha: 0, zIndex: 2 });
-      gsap.set(benefits, { yPercent: 100, autoAlpha: 0, zIndex: 3 });
+      // Codrops index9 stacking: each FULL-VIEWPORT scene (.story__panel, black
+      // background) slides VERTICALLY (yPercent 100 -> 0), covering the scene
+      // beneath it. The sticky .story__stage is never transformed; the
+      // half-width surface inside each scene is static. No opacity crossfade.
+      // Explicit initial states BEFORE building the timeline. All THREE scenes
+      // start parked fully below (yPercent 100) — including metrics, so nothing
+      // shows while the story wrapper is still rising; metrics enters only once
+      // the stage pins. Static z-index (later stacks higher) so each incoming
+      // scene covers the one before it. No autoAlpha: the full-screen black
+      // background does the covering, and metrics/logos must stay present (at
+      // yPercent 0) UNDERNEATH so scrolling back up reveals them cleanly.
+      gsap.set(metricsScene, { yPercent: 100, zIndex: 1 });
+      gsap.set(logosScene, { yPercent: 100, zIndex: 2 });
+      gsap.set(benefitsScene, { yPercent: 100, zIndex: 3 });
 
-      // ONE scrubbed ScrollTrigger (existing Lenis/ticker untouched).
-      // start:"top top" — the timeline begins only once the sticky stage is
-      // actually fixed at the top (metrics is already visible during the ride-in
-      // via its CSS/gsap default, so there is no black gap before it). NO pin.
-      // end:"bottom bottom" releases exactly as benefitsExit completes → Pain
-      // Hook follows immediately.
+      // ONE scrubbed ScrollTrigger (existing Lenis/ticker untouched). NO pin.
+      // start:"top top" — timeline begins the instant the sticky stage is fixed
+      // at the top (i.e. as the intro finishes scrolling away), so metrics
+      // enters immediately. end:"bottom bottom" releases as the last scene
+      // exits → Pain Hook follows.
       const tl = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
           trigger: story,
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.6,
+          scrub: 0.5,
         },
       });
 
-      // COMPACT timeline (labels below), total 5.7 units. Right -> Left -> Right.
-      // Each incoming panel begins entering ~0.2u (≈25% of the 0.8u transition)
-      // before the outgoing one finishes exiting — a small MOVEMENT overlap, so
-      // there's never an empty black viewport, yet no panel stays parked and
-      // readable while the next is active. autoAlpha flips visible exactly when
-      // a panel starts entering and hidden right after it has fully exited.
-      tl.addLabel("metricsHold", 0)                                 // 0.0 -> 0.7 hold
-        .addLabel("metricsExit", 0.7)
-        .to(metrics, { yPercent: -100, duration: 0.8 }, "metricsExit")   // 0.7 -> 1.5
-        .set(metrics, { autoAlpha: 0 }, 1.5)
+      // COMPACT STACKED timeline (total 5.5 units). Each scene ENTERS (yPercent
+      // 100 -> 0) over the previous one and HOLDS. Metrics and logos are NOT
+      // animated upward — they stay at yPercent 0 underneath, covered by the
+      // next full-screen scene (and revealed again on reverse scroll). Only the
+      // final scene (benefits) exits upward, handing off to Pain Hook.
+      tl.addLabel("metricsEnter", 0)
+        .to(metricsScene, { yPercent: 0, duration: 1 }, "metricsEnter")   // 0   -> 1
+        .addLabel("metricsHold", 1)                                       // 1   -> 1.5 hold
 
-        .addLabel("logosEnter", 1.3)                                // overlaps metrics exit ~0.2u
-        .set(logos, { autoAlpha: 1 }, "logosEnter")
-        .to(logos, { yPercent: 0, duration: 0.8 }, "logosEnter")    // 1.3 -> 2.1
-        .addLabel("logosHold", 2.1)                                 // 2.1 -> 2.8 hold
-        .addLabel("logosExit", 2.8)
-        .to(logos, { yPercent: -100, duration: 0.8 }, "logosExit")  // 2.8 -> 3.6
-        .set(logos, { autoAlpha: 0 }, 3.6)
+        .addLabel("logosEnter", 1.5)
+        .to(logosScene, { yPercent: 0, duration: 1 }, "logosEnter")       // 1.5 -> 2.5 (covers metrics)
+        .addLabel("logosHold", 2.5)                                       // 2.5 -> 3   hold
 
-        .addLabel("benefitsEnter", 3.4)                             // overlaps logos exit ~0.2u
-        .set(benefits, { autoAlpha: 1 }, "benefitsEnter")
-        .to(benefits, { yPercent: 0, duration: 0.8 }, "benefitsEnter")   // 3.4 -> 4.2
-        .addLabel("benefitsHold", 4.2)                              // 4.2 -> 4.9 hold
-        .addLabel("benefitsExit", 4.9)
-        .to(benefits, { yPercent: -100, duration: 0.8 }, "benefitsExit");// 4.9 -> 5.7
+        .addLabel("benefitsEnter", 3)
+        .to(benefitsScene, { yPercent: 0, duration: 1 }, "benefitsEnter") // 3   -> 4   (covers logos)
+        .addLabel("benefitsHold", 4)                                      // 4   -> 4.5 hold
+
+        .addLabel("benefitsExit", 4.5)
+        .to(benefitsScene, { yPercent: -100, duration: 1 }, "benefitsExit");// 4.5 -> 5.5 exit
 
       // Panel 1 metric count-up — driven by THIS timeline (scrub-synced,
       // reversible, deterministic; no setInterval, no IntersectionObserver,
@@ -153,9 +151,10 @@
         });
       };
       if (meta.length) {
-        // From timeline position 0 so numbers read 0 on the first frame (no
-        // final->0 reset flash) and finish counting up within the metrics hold.
-        tl.fromTo(proxy, { p: 0 }, { p: 1, duration: 0.6, onUpdate: render }, 0);
+        // Runs across the metrics enter into its hold (0 -> 1.2): numbers count
+        // up as the metrics scene rises in. From position 0 so they read 0 on
+        // the first frame (no final->0 reset flash).
+        tl.fromTo(proxy, { p: 0 }, { p: 1, duration: 1.2, onUpdate: render }, 0);
       }
 
       // Layout is CSS-driven from first paint, but the hero image is
