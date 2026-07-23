@@ -744,41 +744,53 @@ main h2 {
 }
 
 /* ===================================================================
-   Trust story — sticky 3-panel region (client redesign 2026-07-22)
-   BASE here = NORMAL DOCUMENT FLOW: three readable stacked sections
-   (Trust -> Logos -> What Clients Can Expect). This is what no-JS,
-   mobile (<1024px), and reduced-motion visitors get. The sticky / absolute
-   layout is gated on a (min-width:1024px)+(prefers-reduced-motion:
-   no-preference) media query AND the html.js-story class the inline <head>
-   script sets — so it applies from first paint on desktop (no load flash),
-   reverts natively on resize/reduced-motion, and never applies without JS.
-   assets/js/sticky-sections.js adds only the scrubbed ANIMATION (via
-   gsap.matchMedia on the same query). Never transform the sticky element
-   (.story__stage) — only .story__panel-inner is animated. The scroll
-   ancestor (.story) is kept free of overflow clipping; clipping lives on
-   .story__stage's own box only.
+   Trust story — sticky SLIDING-PANEL region (client redesign 2026-07-23,
+   Codrops StickySections index9 motion). Three complete half-screen
+   SURFACES (.story__panel-surface, 50vw x 100svh) slide vertically with
+   scroll: the GSAP timeline (assets/js/sticky-sections.js) translates each
+   surface yPercent 100 -> 0 -> -100 — background + content move together as
+   one sheet. The sticky .story__stage is NEVER transformed; NO ScrollTrigger
+   pin.
+   BASE here (this block, no media query) = NORMAL DOCUMENT FLOW: three
+   stacked full-width coloured sections (P1 white, P2 black, P3 grey) — what
+   no-JS / mobile (<1024px) / reduced-motion get. The sticky+absolute+sliding
+   layout is gated below on (min-width:1024px)+(prefers-reduced-motion:
+   no-preference) AND html.js-story (set in <head> before first paint → no
+   flash; reverts natively; never applies without JS).
    =================================================================== */
 
-/* Centered "Trusted across the region" lead-in before the sticky split —
-   extra breathing room above and below it (client 2026-07-22), more than the
-   shared .section rhythm, so it reads as its own deliberate moment. */
-.story-lead {
-  padding-block: var(--space-10);
+/* Surfaces carry the panel background + text colour in BOTH modes, so mobile
+   reads as coloured stacked sections and desktop slides coloured sheets. */
+.story__panel-surface--proof {
+  background-color: var(--color-white);
+  color: var(--color-logo-black);
 }
-
-.story__panel {
-  padding-block: var(--space-9);
+.story__panel-surface--logos {
+  background-color: var(--color-bg);
+}
+.story__panel-surface--expect {
+  background-color: var(--color-gray);
 }
 
 .story__panel-inner {
   width: 100%;
   max-width: var(--container-max-width);
   margin-inline: auto;
-  padding-inline: var(--container-padding);
+  padding: var(--space-9) var(--container-padding);
+}
+
+/* Panel 1 — editorial composition (white surface, black type) */
+.story__eyebrow {
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-gray);
 }
 
 .story__heading {
-  line-height: 1;
+  line-height: 1.05;
 }
 
 .story__text {
@@ -786,35 +798,43 @@ main h2 {
   max-width: 34rem;
 }
 
-.story__logos-label {
-  margin-bottom: var(--space-5);
+.story__panel-surface--proof .story__text {
+  color: var(--color-gray);
 }
 
-/* Neutralize the old margins the marquee carried for the removed cards-bg
-   overlap — inside the story it just sits under its label. */
-.story .trust-metrics__clients {
-  margin: 0;
-}
-
+/* metrics — editorial vertical list with thin separators, numbers dominant */
 .story__metrics {
   list-style: none;
   margin: var(--space-7) 0 0;
   padding: 0;
   display: grid;
-  gap: var(--space-6);
+  gap: 0;
 }
 
 .story__metrics .stat {
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
+  padding-block: var(--space-4);
+  border-top: 1px solid rgb(1 1 1 / 0.1);
+}
+
+.story__metrics .stat:first-child {
+  border-top: none;
+  padding-top: 0;
 }
 
 .story__metrics .stat__value {
-  font-size: clamp(2.5rem, 1.6rem + 3.5vw, 4.5rem);
+  font-size: clamp(2.25rem, 1.4rem + 2.6vw, 3.25rem);
   font-weight: var(--font-weight-regular);
   font-variant-numeric: tabular-nums;
+  line-height: 1;
 }
 
+.story__panel-surface--proof .stat__label {
+  color: var(--color-gray);
+}
+
+/* Panel 3 pillars + Panel 2 logos label */
 .story__pillars {
   list-style: none;
   margin: var(--space-6) 0 0;
@@ -823,153 +843,108 @@ main h2 {
   gap: var(--space-5);
 }
 
+.story__logos-label {
+  margin-bottom: var(--space-5);
+}
+
+.story .trust-metrics__clients {
+  margin: 0;
+}
+
 @media (min-width: 560px) {
-  .story__metrics {
-    grid-template-columns: repeat(3, 1fr);
-  }
   .story__pillars {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* ---- Active sticky layout ----
-   Gated on BOTH a media query (>=1024px + motion) AND the .js-story class
-   the tiny inline <head> script adds. The media query means resize and
-   reduced-motion are handled natively by CSS (revert to normal flow with no
-   JS work); the .js-story class means none of this applies without JS, so
-   the no-JS fallback is the base normal flow above. Applying the layout from
-   FIRST PAINT (not from the deferred module) is what removes the load flash. */
+/* ---- Active sticky sliding layout (>=1024px + motion, JS present) ---- */
 @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
   .js-story .story {
     position: relative;
-    /* Stick length = (multiplier - 1) x 100svh of scroll. 3.4 -> ~2.4
-       screens of stick across the 3 panels: a readable hold each without
-       excessive scrolling. Tuned with the JS timeline (sticky-sections.js). */
-    height: calc(3.4 * 100svh);
+    /* stick length for three enter/hold/exit cycles (see the JS timeline) */
+    height: calc(4.5 * 100svh);
   }
 
   .js-story .story__stage {
     position: sticky;
     top: 0;
     height: 100svh;
-    /* clips the sliding inners; this is the sticky element's OWN box, so it
-       doesn't break stickiness (no ancestor of .story__stage clips). */
     overflow: hidden;
     background-color: var(--color-bg);
-    /* Quiet, intentional fill for the empty half — a whisper-faint central
-       glow, side-neutral (works for both left- and right-content panels).
-       No image, no lines, no text. */
-    background-image: radial-gradient(
-      100% 100% at 50% 42%,
-      rgb(255 255 255 / 0.03),
-      transparent 55%
-    );
   }
 
   .js-story .story__panel {
     position: absolute;
     inset: 0;
-    padding-block: 0;
-    display: flex;
-    /* stretch so the inner fills the FULL half height (the coloured half is
-       the whole 50% of the viewport, not a content-sized block). */
-    align-items: stretch;
   }
 
-  .js-story .story__panel--right {
-    justify-content: flex-end;
+  /* THE sheet the timeline slides vertically — a complete half-screen
+     surface (50vw x 100svh) on the correct side, its own background. */
+  .js-story .story__panel-surface {
+    position: absolute;
+    top: 0;
+    height: 100svh;
+    width: 50vw;
+    /* Parked below the viewport from FIRST PAINT so the stage starts black
+       and each surface visibly rises from below — matches the JS gsap.set,
+       so no flash. Gated on .js-story (JS present) + the media query, so
+       no-JS never hides content. */
+    transform: translateY(100%);
+    will-change: transform;
   }
 
-  .js-story .story__panel--left {
-    justify-content: flex-start;
+  .js-story .story__panel--right .story__panel-surface {
+    right: 0;
   }
 
-  /* The inner IS the half now: 50% of the viewport width, full height, with
-     its content centred vertically inside. Animating it (opacity/y/scale)
-     moves the whole coloured half + content together. */
+  .js-story .story__panel--left .story__panel-surface {
+    left: 0;
+  }
+
   .js-story .story__panel-inner {
-    width: 50%;
-    max-width: none;
     height: 100%;
+    max-width: none;
     margin-inline: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-inline: clamp(2rem, 5vw, 5rem);
-    padding-block: var(--space-8);
-    /* only while the sticky interaction is live (this whole block reverts
-       natively below 1024px / under reduced motion). */
-    will-change: opacity, transform;
+    /* clear the fixed header at the top; controlled, generous padding */
+    padding: calc(var(--space-8) + 4rem) clamp(2.5rem, 4vw, 5rem) var(--space-8);
   }
 
-  /* Temporary panel backgrounds (client 2026-07-22, "después los cambiamos").
-     P1 & P3 (--right) grey. P2 (--left) is the LOGOS panel — its logos are
-     white PNGs, so it's black (not white) so they're actually visible
-     (client fix). Final panel backgrounds/colours come later. */
-  .js-story .story__panel--right .story__panel-inner {
-    background-color: var(--color-gray);
+  /* Panel 1: heading block up top, metrics pushed to the lower area */
+  .js-story .story__panel-surface--proof .story__panel-inner {
+    justify-content: flex-start;
+  }
+  .js-story .story__panel-surface--proof .story__metrics {
+    margin-top: auto;
   }
 
-  .js-story .story__panel--left .story__panel-inner {
-    background-color: var(--color-bg);
-  }
-
-  /* Panels 2 & 3 hidden from FIRST PAINT so there's no "all three visible"
-     flash before the deferred timeline sets them. Gated on .js-story, so
-     no-JS never hides them. Panel 1 is the opening focus (stays visible). */
-  .js-story [data-story-panel]:not(:first-child) .story__panel-inner {
-    opacity: 0;
-  }
-
-  .js-story .story__logos-label {
-    text-align: left;
-  }
-
-  /* Panel 1 metrics: stacked, left-aligned, dominant. */
-  .js-story .story__metrics {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-    margin-top: var(--space-6);
-  }
-
-  .js-story .story__metrics .stat {
-    align-items: flex-start;
-    text-align: left;
-  }
-
-  /* Panel 3: compact 2-col x 3-row editorial list — no card box, tighter
-     gaps, smaller icon, controlled line length, so all six pillars fit the
-     half-panel at 100svh without shrinking type unreasonably. Icons keep
-     their invert(1) (read as light detail on the dark panel). */
-  .js-story .story__panel .trust-metrics__cards-heading {
+  /* Panel 3: compact 2-col pillar list, header-safe, fits the half at 100svh */
+  .js-story .story__panel-surface--expect .trust-metrics__cards-heading {
     font-size: var(--font-size-xl);
     margin-bottom: var(--space-4);
     text-align: left;
   }
-
   .js-story .story__pillars {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-3) var(--space-5);
     margin-top: var(--space-4);
   }
-
   .js-story .story__pillars .pillar-card {
     min-height: 0;
     padding: 0;
     background: none;
     border: none;
   }
-
   .js-story .story__pillars .pillar-card__icon img {
     width: 1.75rem;
     height: 1.75rem;
   }
-
   .js-story .story__pillars .pillar-card__title {
     font-size: var(--font-size-md);
     margin-top: var(--space-2);
   }
-
   .js-story .story__pillars .pillar-card__text {
     font-size: var(--font-size-sm);
     line-height: 1.45;
@@ -978,22 +953,17 @@ main h2 {
   }
 }
 
-/* 1024-1199px: shortest desktop stage (the 1024x768 target) — squeeze
-   Panel 3 a touch more to guarantee no clip, without shrinking type below
-   the base small step. */
+/* 1024-1199px: shortest desktop stage — squeeze Panel 3 a touch more. */
 @media (min-width: 1024px) and (max-width: 1199.98px) and (prefers-reduced-motion: no-preference) {
   .js-story .story__panel-inner {
-    padding-inline: clamp(1.5rem, 3.5vw, 3rem);
+    padding-inline: clamp(1.5rem, 3vw, 3rem);
   }
-  .js-story .story__panel .trust-metrics__cards-heading {
+  .js-story .story__panel-surface--expect .trust-metrics__cards-heading {
     font-size: var(--font-size-lg);
     margin-bottom: var(--space-3);
   }
   .js-story .story__pillars {
     gap: var(--space-2) var(--space-4);
-  }
-  .js-story .story__pillars .pillar-card__title {
-    margin-top: var(--space-1);
   }
 }
 /* .trust-metrics__photo (a contained, capped-width <picture> below the

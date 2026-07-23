@@ -288,139 +288,117 @@
          2026-07-22). The heading lives here now — it was moved OUT of the
          metrics panel, so "the title goes first" and only then the split
          shows metrics on one side / logos on the other. -->
-    <section class="section story-lead">
-      <div class="container">
-        <div class="trust-metrics__intro" data-reveal>
-          <h2><span class="trust-metrics__heading-line">Trusted across</span><span class="trust-metrics__heading-line">the region</span></h2>
-          <p class="trust-metrics__text">Long-term security partnerships across industry, infrastructure, retail and the public sector.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ 1.5 TRUST STORY (sticky split region) ============ -->
-    <!-- Dedicated sticky "story" region between the lead-in above and Pain
-         Hook (client redesign 2026-07-22). Codrops StickySections index9 is
-         INTERACTION inspiration only — this structure is our own. The heading
-         is now the centered lead-in ABOVE; the split panels here are, one in
-         focus at a time: P1 metrics (right), P2 logos (left), P3 What Clients
-         Can Expect (right); the inactive half stays dark negative space and
-         panels crossfade/slide so a previous panel never lingers beside the
-         current one.
-
-         Architecture: CSS position:sticky (NO ScrollTrigger pin), the
-         existing single Lenis + GSAP-ticker integration, and ONE scrubbed
-         ScrollTrigger in assets/js/sticky-sections.js that drives an
-         inner-wrapper timeline (.story__panel-inner — never the sticky
-         element itself). Base CSS = NORMAL DOCUMENT FLOW (three readable
-         stacked sections, order Trust -> Logos -> What Clients Can Expect);
-         the sticky/absolute/animated layout + hidden panel states are added
-         ONLY by JS via gsap.matchMedia() for (min-width:1024px) and
-         (prefers-reduced-motion: no-preference), reverted cleanly otherwise.
-         Headings here carry data-no-title-reveal and metric values
-         data-no-countup, so the shared title-reveal / stat-count-up modules
-         never double-animate inside these transformed panels — the reveal is
-         owned by the story timeline. (This replaced the earlier
-         #trust-metrics section: its scroll diagram is gone, its content
-         moved here unchanged.) -->
+    <!-- ============ 1.5 TRUST STORY (sticky sliding-panel region) ========= -->
+    <!-- Codrops StickySections index9 motion, our structure (client redesign
+         2026-07-23). Three complete half-screen SURFACES slide vertically with
+         scroll: each .story__panel-surface (50vw x 100svh, one side, its own
+         background + all content) rises from yPercent:100 to 0 and exits to
+         -100 — background and content move together as one sheet. Right ->
+         Left -> Right (P1 proof/metrics white, P2 logos black, P3 "What
+         Clients Can Expect" grey). See pages/index.html (German) for the full
+         architecture note; base CSS stays normal document flow for
+         no-JS/mobile/reduced-motion. -->
     <section class="story" data-story aria-label="Why clients trust FRANKONIA">
       <div class="story__stage">
 
-        <!-- Panel 1 — Metrics (right half). Heading moved OUT to the centered
-             lead-in above (client 2026-07-22), so this panel is metrics only;
-             the supporting paragraph also lives in the lead-in now. -->
+        <!-- Panel 1 — Trust / Proof (RIGHT half, white editorial surface) -->
         <div class="story__panel story__panel--right" data-story-panel>
-          <div class="story__panel-inner">
-            <ul class="story__metrics">
-              <li class="stat">
-                <span class="stat__value" data-no-countup>300+</span>
-                <span class="stat__label">Satisfied Customers</span>
-              </li>
-              <li class="stat">
-                <span class="stat__value" data-no-countup>1,000,000+</span>
-                <span class="stat__label">Service Hours</span>
-              </li>
-              <li class="stat">
-                <span class="stat__value" data-no-countup>4.7★</span>
-                <span class="stat__label">Google Reviews (97)</span>
-              </li>
-            </ul>
+          <div class="story__panel-surface story__panel-surface--proof">
+            <div class="story__panel-inner">
+              <p class="story__eyebrow">Proven Experience</p>
+              <h2 class="story__heading" data-no-title-reveal><span class="trust-metrics__heading-line">Trusted across</span><span class="trust-metrics__heading-line">the region</span></h2>
+              <p class="story__text">Long-term security partnerships built on reliability, consistency and measurable performance.</p>
+              <ul class="story__metrics">
+                <li class="stat">
+                  <span class="stat__value" data-no-countup><span class="stat__num" data-count-to="300" data-suffix="+">300+</span></span>
+                  <span class="stat__label">Satisfied Customers</span>
+                </li>
+                <li class="stat">
+                  <span class="stat__value" data-no-countup><span class="stat__num" data-count-to="1000000" data-suffix="+">1,000,000+</span></span>
+                  <span class="stat__label">Service Hours</span>
+                </li>
+                <li class="stat">
+                  <span class="stat__value" data-no-countup><span class="stat__num" data-count-to="4.7" data-decimals="1">4.7</span><span class="stat__star" aria-hidden="true"> ★</span></span>
+                  <span class="stat__label">Google Reviews (97)</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        <!-- Panel 2 — Trusted by leading organizations (left half). Logo
-             marquee kept (pure-CSS animation; its overflow/mask live on
-             .logo-marquee, a descendant of the sticky stage, so they don't
-             affect stickiness). -->
+        <!-- Panel 2 — Logos (LEFT half, black surface) -->
         <div class="story__panel story__panel--left" data-story-panel>
-          <div class="story__panel-inner">
-            <p class="trust-metrics__logos-label story__logos-label">Trusted by leading organizations</p>
-            <div class="trust-metrics__clients logo-marquee">
-              <div class="logo-marquee__track">
-                <div class="logo-marquee__group">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="DB Netze logo" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="ADAC logo" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="Bayerisches Rotes Kreuz logo" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="Liapor logo" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="Stadt Bamberg logo" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="CleanTech Innovation Park logo" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="Stadtwerke Bamberg logo" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="Sozialstiftung Bamberg logo" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="Bürgerspital Bamberg logo" loading="lazy">
-                </div>
-                <div class="logo-marquee__group" aria-hidden="true">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
-                  <img class="logo-marquee__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="" loading="lazy">
+          <div class="story__panel-surface story__panel-surface--logos">
+            <div class="story__panel-inner">
+              <p class="trust-metrics__logos-label story__logos-label">Trusted by leading organizations</p>
+              <div class="trust-metrics__clients logo-marquee">
+                <div class="logo-marquee__track">
+                  <div class="logo-marquee__group">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="DB Netze logo" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="ADAC logo" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="Bayerisches Rotes Kreuz logo" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="Liapor logo" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="Stadt Bamberg logo" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="CleanTech Innovation Park logo" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="Stadtwerke Bamberg logo" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="Sozialstiftung Bamberg logo" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="Bürgerspital Bamberg logo" loading="lazy">
+                  </div>
+                  <div class="logo-marquee__group" aria-hidden="true">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
+                    <img class="logo-marquee__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="" loading="lazy">
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Panel 3 — What Clients Can Expect (right half). All six existing
-             value pillars, verbatim; laid out compact 2-col to fit the
-             half-panel (see .story__pillars in page-home.css). -->
+        <!-- Panel 3 — What Clients Can Expect (RIGHT half, grey surface) -->
         <div class="story__panel story__panel--right" data-story-panel>
-          <div class="story__panel-inner">
-            <h3 class="trust-metrics__cards-heading story__heading" data-no-title-reveal>What Clients Can Expect</h3>
-            <ul class="story__pillars">
-              <li class="pillar-card">
-                <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-lock.svg" alt="" width="350" height="350" loading="lazy"></span>
-                <h4 class="pillar-card__title">Reliability</h4>
-                <p class="pillar-card__text">Certified security professionals on site as scheduled, with documented shift coverage you can verify at any time.</p>
-              </li>
-              <li class="pillar-card">
-                <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-tie-person.svg" alt="" width="350" height="350" loading="lazy"></span>
-                <h4 class="pillar-card__title">Dedicated Contact</h4>
-                <p class="pillar-card__text">One dedicated contact person coordinates your account — no call centers, no rotating staff, no repeating yourself.</p>
-              </li>
-              <li class="pillar-card">
-                <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-eye.svg" alt="" width="350" height="350" loading="lazy"></span>
-                <h4 class="pillar-card__title">Transparency</h4>
-                <p class="pillar-card__text">Digital shift reports and clear invoicing mean you always know who was on site, when, and why.</p>
-              </li>
-              <li class="pillar-card">
-                <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-clock.svg" alt="" width="350" height="350" loading="lazy"></span>
-                <h4 class="pillar-card__title">Fast Response</h4>
-                <p class="pillar-card__text">Standard deployments within 48–72 hours, with faster turnaround for urgent Fire Watch and Intervention Service requests.</p>
-              </li>
-              <li class="pillar-card">
-                <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-check-shield.svg" alt="" width="350" height="350" loading="lazy"></span>
-                <h4 class="pillar-card__title">Certified Quality</h4>
-                <p class="pillar-card__text">DIN 77200-1 and DIN EN ISO 9001 certified, with all personnel background-checked and trained under §34a GewO.</p>
-              </li>
-              <li class="pillar-card">
-                <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-vest.svg" alt="" width="350" height="350" loading="lazy"></span>
-                <h4 class="pillar-card__title">Flexible Scheduling</h4>
-                <p class="pillar-card__text">Short-term, long-term, or one-off assignments — your security setup adapts as your business needs change.</p>
-              </li>
-            </ul>
+          <div class="story__panel-surface story__panel-surface--expect">
+            <div class="story__panel-inner">
+              <h3 class="trust-metrics__cards-heading story__heading" data-no-title-reveal>What Clients Can Expect</h3>
+              <ul class="story__pillars">
+                <li class="pillar-card">
+                  <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-lock.svg" alt="" width="350" height="350" loading="lazy"></span>
+                  <h4 class="pillar-card__title">Reliability</h4>
+                  <p class="pillar-card__text">Certified security professionals on site as scheduled, with documented shift coverage you can verify at any time.</p>
+                </li>
+                <li class="pillar-card">
+                  <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-tie-person.svg" alt="" width="350" height="350" loading="lazy"></span>
+                  <h4 class="pillar-card__title">Dedicated Contact</h4>
+                  <p class="pillar-card__text">One dedicated contact person coordinates your account — no call centers, no rotating staff, no repeating yourself.</p>
+                </li>
+                <li class="pillar-card">
+                  <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-eye.svg" alt="" width="350" height="350" loading="lazy"></span>
+                  <h4 class="pillar-card__title">Transparency</h4>
+                  <p class="pillar-card__text">Digital shift reports and clear invoicing mean you always know who was on site, when, and why.</p>
+                </li>
+                <li class="pillar-card">
+                  <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-clock.svg" alt="" width="350" height="350" loading="lazy"></span>
+                  <h4 class="pillar-card__title">Fast Response</h4>
+                  <p class="pillar-card__text">Standard deployments within 48–72 hours, with faster turnaround for urgent Fire Watch and Intervention Service requests.</p>
+                </li>
+                <li class="pillar-card">
+                  <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-check-shield.svg" alt="" width="350" height="350" loading="lazy"></span>
+                  <h4 class="pillar-card__title">Certified Quality</h4>
+                  <p class="pillar-card__text">DIN 77200-1 and DIN EN ISO 9001 certified, with all personnel background-checked and trained under §34a GewO.</p>
+                </li>
+                <li class="pillar-card">
+                  <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-vest.svg" alt="" width="350" height="350" loading="lazy"></span>
+                  <h4 class="pillar-card__title">Flexible Scheduling</h4>
+                  <p class="pillar-card__text">Short-term, long-term, or one-off assignments — your security setup adapts as your business needs change.</p>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 

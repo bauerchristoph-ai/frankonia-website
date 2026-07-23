@@ -45,8 +45,8 @@
   const panels = story.querySelectorAll("[data-story-panel]");
   if (panels.length < 3) return bail();
 
-  const inners = Array.from(panels).map((p) => p.querySelector(".story__panel-inner"));
-  if (inners.some((el) => !el)) return bail();
+  const surfaces = Array.from(panels).map((p) => p.querySelector(".story__panel-surface"));
+  if (surfaces.some((el) => !el)) return bail();
 
   gsap.registerPlugin(ScrollTrigger);
 
@@ -55,27 +55,18 @@
   mm.add(
     "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
     () => {
-      // The sticky/absolute LAYOUT is applied by CSS (gated on the same
-      // media query + the html.js-story class set in <head>), so it's live
-      // from first paint — nothing to toggle here, no load flash. This
-      // module only owns the scroll-driven ANIMATION.
-      const [p1, p2, p3] = inners;
+      // Codrops index9 motion: each COMPLETE half-screen surface slides
+      // VERTICALLY with scroll (yPercent 100 -> 0 -> -100). The sticky
+      // .story__stage is never transformed; only these surfaces move, so the
+      // background and content travel together as one sheet. No opacity
+      // crossfade — pure vertical translation. CSS already parks the surfaces
+      // at translateY(100%) from first paint (gated on .js-story + the media
+      // query), so there's no flash; these sets just hand them to GSAP.
+      const [s1, s2, s3] = surfaces;
+      gsap.set(surfaces, { yPercent: 100 });
 
-      // Motion: primarily translateY with a very small scale, opacity as
-      // support — so a panel reads as being replaced through scroll rather
-      // than simply fading. Panel 1 is the opening focus; 2 and 3 wait just
-      // below and slightly scaled down. (CSS already hid 2 & 3 from first
-      // paint; these sets add the y/scale offset.) Applied in JS only, and
-      // auto-reverted by matchMedia on breakpoint/reduced-motion change.
-      gsap.set(p1, { opacity: 1, y: 0, scale: 1 });
-      gsap.set([p2, p3], { opacity: 0, y: 72, scale: 0.98 });
-
-      // ONE scrubbed timeline over the tall .story wrapper. Progress 0 when
-      // the stage becomes stuck (story top hits viewport top); progress 1
-      // when the story bottom reaches the viewport bottom (stage unsticks
-      // and Pain Hook, next in flow, takes over full width).
       const tl = gsap.timeline({
-        defaults: { ease: "power2.inOut" },
+        defaults: { ease: "none" },
         scrollTrigger: {
           trigger: story,
           start: "top top",
@@ -84,35 +75,59 @@
         },
       });
 
-      // Right → Left → Right. Each panel: entrance → readable HOLD → exit.
-      // The outgoing panel slides UP and slightly recedes (scale 0.98) as the
-      // incoming one rises into place on the opposite half — a spatial
-      // replacement, not a slideshow fade. Timeline units are arbitrary;
-      // scrub maps the whole ~6.5-unit timeline across the ~2.4-screen stuck
-      // range. Holds are the gaps between an entrance finishing and the next
-      // exit starting. Exact positions/durations reported in the changelog.
+      // Right -> Left -> Right. Each surface: enter (rise from below) -> hold
+      // -> exit (up). The outgoing exit overlaps the next enter by ~0.2 units
+      // so the sequence stays continuous — no black gap, and (being on
+      // opposite halves) never two panels readable in the same place.
+      tl.to(s1, { yPercent: 0, duration: 1.3 }, 0.0);     // P1 enter  0.0–1.3
+      tl.to(s1, { yPercent: -100, duration: 1.3 }, 2.6);  // P1 exit   2.6–3.9
+      tl.to(s2, { yPercent: 0, duration: 1.3 }, 2.8);     // P2 enter  2.8–4.1
+      tl.to(s2, { yPercent: -100, duration: 1.3 }, 5.4);  // P2 exit   5.4–6.7
+      tl.to(s3, { yPercent: 0, duration: 1.3 }, 5.6);     // P3 enter  5.6–6.9
+      tl.to(s3, { yPercent: -100, duration: 1.3 }, 8.2);  // P3 exit   8.2–9.5
 
-      // — Panel 1 holds t0.0–1.4, then exits as Panel 2 enters —
-      tl.to(p1, { opacity: 0, y: -72, scale: 0.98, duration: 1.1 }, 1.4);
-      tl.to(p2, { opacity: 1, y: 0, scale: 1, duration: 1.1, ease: "power2.out" }, 1.6);
+      // Panel 1 metric count-up — driven by THIS timeline (scrub-synced,
+      // reversible, deterministic; no setInterval, no IntersectionObserver,
+      // and these metrics stay excluded from the global stat count-up via
+      // data-no-countup). One proxy p:0->1; each number is target*p, formatted
+      // in onUpdate with en-US thousands commas / fixed decimals / static
+      // suffix. Positioned to start ~0.4 (≈30% into P1's 0.0–1.3 entrance) and
+      // finish at 1.6, just after P1 rests.
+      const nums = Array.from(s1.querySelectorAll(".stat__num[data-count-to]"));
+      const meta = nums.map((el) => ({
+        el: el,
+        original: el.textContent,
+        target: parseFloat(el.dataset.countTo),
+        decimals: parseInt(el.dataset.decimals || "0", 10),
+        suffix: el.dataset.suffix || "",
+      }));
+      const proxy = { p: 0 };
+      const render = function () {
+        meta.forEach(function (m) {
+          const v = m.target * proxy.p;
+          const text = m.decimals > 0
+            ? v.toFixed(m.decimals)
+            : Math.round(v).toLocaleString("en-US");
+          m.el.textContent = text + m.suffix;
+        });
+      };
+      if (meta.length) {
+        tl.fromTo(proxy, { p: 0 }, { p: 1, duration: 1.2, onUpdate: render }, 0.4);
+      }
 
-      // — Panel 2 holds ~t2.7–3.5, then exits as Panel 3 enters —
-      tl.to(p2, { opacity: 0, y: -72, scale: 0.98, duration: 1.1 }, 3.5);
-      tl.to(p3, { opacity: 1, y: 0, scale: 1, duration: 1.1, ease: "power2.out" }, 3.7);
-
-      // — Panel 3 holds ~t4.8–5.6, then exits into Pain Hook at the very end —
-      tl.to(p3, { opacity: 0, y: -72, scale: 0.98, duration: 1.0 }, 5.6);
-
-      // The layout is CSS-driven from first paint, but the hero image is
-      // height:auto and can settle late — one refresh keeps every trigger's
-      // start/end accurate against final layout.
+      // Layout is CSS-driven from first paint, but the hero image is
+      // height:auto and can settle late — one refresh keeps trigger
+      // start/end accurate.
       ScrollTrigger.refresh();
 
-      // Cleanup on breakpoint change / reduced-motion: matchMedia auto-
-      // reverts the gsap.set/tween inline styles and kills this context's
-      // ScrollTrigger. Nothing else to undo (no class was added), so no
-      // stale inline transforms remain.
-      return () => {};
+      // Cleanup on breakpoint change / reduced-motion: matchMedia auto-reverts
+      // the gsap.set/tweens (surfaces return to their CSS state) and kills this
+      // context's ScrollTrigger. Restore the metric numbers' original text
+      // (onUpdate wrote textContent, which GSAP doesn't revert) so a revert to
+      // mobile shows the correct static final values.
+      return function () {
+        meta.forEach(function (m) { m.el.textContent = m.original; });
+      };
     }
   );
 })();
