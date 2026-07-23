@@ -110,6 +110,16 @@
   background: var(--sys-color-page);
   color: var(--sys-color-on-dark);
   font-family: var(--sys-font);
+  /* Extra top space reserves the pixel-seam band (Pain Hook -> Our System)
+     that sits at this section's top — the band covers empty space, never real
+     content, JS or not. Matches the band height (200px / 120px mobile — see
+     .pixel-seam__band in page-home.css; keep in sync). */
+  padding-top: calc(var(--space-9) + 200px);
+}
+@media (max-width: 767.98px) {
+  .system-story {
+    padding-top: calc(var(--space-9) + 120px);
+  }
 }
 
 .system-story__track { position: relative; }
