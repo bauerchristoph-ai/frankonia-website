@@ -1015,6 +1015,15 @@ main h2 {
     left: 0;
   }
 
+  /* Panel 1 (metrics) rests IN PLACE from first paint — it is not parked
+     below like Panels 2 & 3. It rides into view with the sticky stage as the
+     story scrolls in (native scroll), so the stage is never shown as an empty
+     black half; only its EXIT is animated by GSAP. Must come after the general
+     surface rule above (equal specificity, source-order wins). */
+  .js-story .story__panel-surface--proof {
+    transform: translateY(0);
+  }
+
   .js-story .story__panel-inner {
     height: 100%;
     max-width: none;
