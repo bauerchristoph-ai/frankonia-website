@@ -130,7 +130,10 @@ function buildPassthrough() {
 }
 
 function build() {
-  fs.rmSync(DIST_DIR, { recursive: true, force: true });
+  // maxRetries/retryDelay: macOS can throw a transient ENOTEMPTY/EBUSY here if
+  // something touches dist/ mid-delete (a .DS_Store / Spotlight write, or a
+  // still-running `serve` from a previous `npm run dev`). Retrying clears it.
+  fs.rmSync(DIST_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 120 });
   fs.mkdirSync(DIST_DIR, { recursive: true });
   const count = buildPages();
   buildPassthrough();
