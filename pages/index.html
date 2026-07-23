@@ -10,15 +10,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Tiny JS-ready flag for the sticky trust-story ONLY (load-flash fix):
-       sets html.js-story before first paint so the sticky layout can apply
-       from the first frame instead of after the deferred module runs (which
-       caused a normal-flow → sticky flash). Progressive-enhancement-safe:
-       the sticky CSS is gated on BOTH this class AND a
-       (min-width:1024px)+(prefers-reduced-motion:no-preference) media query,
-       so with no JS the class is never added and ganzen Region stays in normal
-       document flow — nothing is hidden without JS. -->
-  <script>document.documentElement.classList.add("js-story");</script>
   <title>Sicherheitsdienst Bamberg, Franken &amp; Bayern | FRANKONIA</title>
   <meta name="description" content="FRANKONIA Sicherheitsdienst: zertifizierter Werk- und Objektschutz für Bamberg, Franken und Bayern. DIN 77200 zertifiziert, fester Ansprechpartner. Jetzt kostenlose Sicherheitsanalyse anfordern.">
   <link rel="canonical" href="https://frankonia-sicherheit.de/">
@@ -50,6 +41,7 @@
   <!-- include: head-common -->
   <link rel="stylesheet" href="/css/page-home.css">
   <link rel="stylesheet" href="/css/system-story.css">
+  <link rel="stylesheet" href="/css/sticky-story.css">
   <!-- Page-specific module, not in main.js (see js/outfits.js header
        comment) — same reasoning as page-home.css being linked here
        directly rather than folded into the shared head-common bundle. -->
@@ -93,7 +85,7 @@
        Uses the shared Lenis + GSAP ticker (no new Lenis/rAF). Base is normal
        document flow, so no-JS / mobile / reduced-motion show three readable
        stacked sections. (Replaced the old js/trust-diagram.js, now unused.) -->
-  <script src="/assets/js/sticky-sections.js" defer></script>
+  <script src="/js/sticky-story.js" defer></script>
   <script src="/js/pain-hook-journey.js" defer></script>
   <script src="/js/system-story.js" defer></script>
   <!-- Also depends on GSAP + ScrollTrigger above (must load after them,
@@ -297,58 +289,45 @@
       </div>
     </section>
 
-    <!-- ============ 1.5 TRUST STORY (sticky sliding-panel region) ========= -->
-    <!-- Codrops StickySections index9 motion, our structure (client redesign
-         2026-07-23). Three complete half-screen SURFACES that slide vertically
-         with scroll: each .story__panel-surface (50vw x 100svh, one side, its
-         own background + all content) rises from yPercent:100 (below) to 0
-         (rest) and exits to yPercent:-100 (up) — background and content move
-         together as one sheet. Right -> Left -> Right (P1 metrics/proof white,
-         P2 logos on FRANKONIA blue, P3 "Was Kunden erwarten können" grey). The inactive
-         half stays the black stage.
+    <!-- ============ 1.5 TRUST STORY (sticky story — Codrops index9) ====== -->
+    <!-- Integrated 2026-07-23 from ../frankonia-sticky-story. Three 50vw
+         position:sticky scenes in normal flow inside the black .sticky-story
+         track: scene 1 metrics (right, white), scene 2 logos (left, blue),
+         scene 3 value cards (right, light). Each rises + sticks via CSS; a
+         later scene covers an earlier one sharing its column (scene 3 over
+         scene 1). No pin, no artificial scroll distance, no exit animation —
+         track height is the natural sum of the three 100svh scenes, so Pain
+         Hook follows through the natural sticky release. GSAP adds only an
+         entrance parallax per scene (js/sticky-story.js). Replaces the old
+         sliding-panel .story in place; the "Trusted across the region" intro
+         above is unchanged. Scene 2 reuses the real-logo .story-logos
+         marquee. Readable in normal flow with no JS / mobile / reduced motion. -->
+    <section class="sticky-story" data-sticky-story aria-label="Warum Kunden FRANKONIA vertrauen">
 
-         Architecture: CSS position:sticky on .story__stage (NEVER transformed,
-         NO ScrollTrigger pin); the SURFACES are transformed by ONE scrubbed
-         gsap.matchMedia timeline in assets/js/sticky-sections.js, reusing the
-         existing single Lenis + GSAP ticker. Base CSS = normal document flow
-         (no-JS / mobile / reduced-motion see three readable stacked sections).
-         The "Trusted across the region" heading now lives in a full-width
-         intro section ABOVE this story (client 2026-07-23); Panel 1 holds only
-         a small eyebrow + the metrics. Panel headings keep data-no-title-reveal
-         and the metrics data-no-countup so the shared modules don't double-
-         animate; the metric count-up is driven by the story timeline itself. -->
-    <section class="story" data-story aria-label="Warum Kunden FRANKONIA vertrauen">
-      <div class="story__stage">
-
-        <!-- Panel 1 — Trust / Proof (RIGHT half, white editorial surface) -->
-        <div class="story__panel story__panel--right" data-story-panel>
-          <div class="story__panel-surface story__panel-surface--proof" data-story-surface="metrics">
-            <div class="story__panel-inner">
-              <p class="story__eyebrow">Einige unserer Kennzahlen</p>
-              <ul class="story__metrics">
-                <li class="stat">
-                  <span class="stat__value" data-no-countup><span class="stat__num" data-count-to="300" data-suffix="+">300+</span></span>
-                  <span class="stat__label">Zufriedene Kunden</span>
-                </li>
-                <li class="stat">
-                  <span class="stat__value" data-no-countup><span class="stat__num" data-count-to="1000000" data-suffix="+">1,000,000+</span></span>
-                  <span class="stat__label">Einsatzstunden</span>
-                </li>
-                <li class="stat">
-                  <span class="stat__value" data-no-countup><span class="stat__num" data-count-to="4.7" data-decimals="1">4.7</span><span class="stat__star" aria-hidden="true"> ★</span></span>
-                  <span class="stat__label">Google-Bewertungen (97)</span>
-                </li>
-              </ul>
-            </div>
+      <div class="sticky-story__scene sticky-story__scene--1 sticky-story__scene--right sticky-story__scene--metrics" data-sticky-story-scene>
+        <div class="sticky-story__inner" data-sticky-story-inner>
+          <h3 class="sticky-story__scene-title">Einige unserer Kennzahlen</h3>
+          <div class="sticky-story__metrics">
+                <div class="sticky-story__metric">
+                  <p class="sticky-story__metric-value">300+</p>
+                  <p class="sticky-story__metric-label">Zufriedene Kunden</p>
+                </div>
+                <div class="sticky-story__metric">
+                  <p class="sticky-story__metric-value">1,000,000+</p>
+                  <p class="sticky-story__metric-label">Einsatzstunden</p>
+                </div>
+                <div class="sticky-story__metric">
+                  <p class="sticky-story__metric-value">4.7 ★</p>
+                  <p class="sticky-story__metric-label">Google-Bewertungen (97)</p>
+                </div>
           </div>
         </div>
+      </div>
 
-        <!-- Panel 2 — Logos (LEFT half, black surface) -->
-        <div class="story__panel story__panel--left" data-story-panel>
-          <div class="story__panel-surface story__panel-surface--logos" data-story-surface="logos">
-            <div class="story__panel-inner">
-              <p class="trust-metrics__logos-label story__logos-label">Vertraut von führenden Organisationen</p>
-              <div class="story-logos">
+      <div class="sticky-story__scene sticky-story__scene--2 sticky-story__scene--left sticky-story__scene--logos" data-sticky-story-scene>
+        <div class="sticky-story__inner" data-sticky-story-inner>
+          <h3 class="sticky-story__scene-title">Vertraut von führenden Organisationen</h3>
+          <div class="story-logos">
               <div class="story-logos__row story-logos__row--left">
                 <div class="story-logos__track">
                   <div class="story-logos__group">
@@ -436,52 +415,45 @@
                 </div>
               </div>
               </div>
-            </div>
-            </div>
+        </div>
+      </div>
+
+      <div class="sticky-story__scene sticky-story__scene--3 sticky-story__scene--right sticky-story__scene--cards" data-sticky-story-scene>
+        <div class="sticky-story__inner" data-sticky-story-inner>
+          <h3 class="sticky-story__scene-title">Was Kunden erwarten können</h3>
+          <div class="sticky-story__cards">
+              <article class="sticky-story__card">
+                <img class="sticky-story__card-icon" src="/assets/icons/icon-lock.svg" alt="" width="350" height="350" loading="lazy">
+                <h4 class="sticky-story__card-title">Zuverlässigkeit</h4>
+                <p class="sticky-story__card-text">Zertifizierte Sicherheitskräfte planmäßig vor Ort, mit dokumentierter Schichtabdeckung, die Sie jederzeit nachvollziehen können.</p>
+              </article>
+              <article class="sticky-story__card">
+                <img class="sticky-story__card-icon" src="/assets/icons/icon-tie-person.svg" alt="" width="350" height="350" loading="lazy">
+                <h4 class="sticky-story__card-title">Fester Ansprechpartner</h4>
+                <p class="sticky-story__card-text">Ein fester Ansprechpartner koordiniert Ihr Konto — kein Callcenter, kein wechselndes Personal, keine Wiederholungen.</p>
+              </article>
+              <article class="sticky-story__card">
+                <img class="sticky-story__card-icon" src="/assets/icons/icon-eye.svg" alt="" width="350" height="350" loading="lazy">
+                <h4 class="sticky-story__card-title">Transparenz</h4>
+                <p class="sticky-story__card-text">Digitale Schichtberichte und klare Abrechnung — Sie wissen immer, wer wann und warum vor Ort war.</p>
+              </article>
+              <article class="sticky-story__card">
+                <img class="sticky-story__card-icon" src="/assets/icons/icon-clock.svg" alt="" width="350" height="350" loading="lazy">
+                <h4 class="sticky-story__card-title">Schnelle Reaktion</h4>
+                <p class="sticky-story__card-text">Standardeinsätze innerhalb von 48–72 Stunden, mit schnellerer Bearbeitung dringender Anfragen für Brandwache und Interventionsdienst.</p>
+              </article>
+              <article class="sticky-story__card">
+                <img class="sticky-story__card-icon" src="/assets/icons/icon-check-shield.svg" alt="" width="350" height="350" loading="lazy">
+                <h4 class="sticky-story__card-title">Zertifizierte Qualität</h4>
+                <p class="sticky-story__card-text">Zertifiziert nach DIN 77200-1 und DIN EN ISO 9001, alle Mitarbeitenden mit Zuverlässigkeitsprüfung und Schulung nach §34a GewO.</p>
+              </article>
+              <article class="sticky-story__card">
+                <img class="sticky-story__card-icon" src="/assets/icons/icon-vest.svg" alt="" width="350" height="350" loading="lazy">
+                <h4 class="sticky-story__card-title">Flexible Einsatzplanung</h4>
+                <p class="sticky-story__card-text">Kurzfristige, langfristige oder einmalige Einsätze — Ihr Sicherheitskonzept passt sich Ihren geschäftlichen Anforderungen an.</p>
+              </article>
           </div>
         </div>
-
-        <!-- Panel 3 — Was Kunden erwarten können (RIGHT half, grey surface) -->
-        <div class="story__panel story__panel--right" data-story-panel>
-          <div class="story__panel-surface story__panel-surface--expect" data-story-surface="benefits">
-            <div class="story__panel-inner">
-              <h3 class="trust-metrics__cards-heading story__heading" data-no-title-reveal>Was Kunden erwarten können</h3>
-              <ul class="story__pillars">
-                <li class="pillar-card">
-                  <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-lock.svg" alt="" width="350" height="350" loading="lazy"></span>
-                  <h4 class="pillar-card__title">Zuverlässigkeit</h4>
-                  <p class="pillar-card__text">Zertifizierte Sicherheitskräfte planmäßig vor Ort, mit dokumentierter Schichtabdeckung, die Sie jederzeit nachvollziehen können.</p>
-                </li>
-                <li class="pillar-card">
-                  <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-tie-person.svg" alt="" width="350" height="350" loading="lazy"></span>
-                  <h4 class="pillar-card__title">Fester Ansprechpartner</h4>
-                  <p class="pillar-card__text">Ein fester Ansprechpartner koordiniert Ihr Konto — kein Callcenter, kein wechselndes Personal, keine Wiederholungen.</p>
-                </li>
-                <li class="pillar-card">
-                  <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-eye.svg" alt="" width="350" height="350" loading="lazy"></span>
-                  <h4 class="pillar-card__title">Transparenz</h4>
-                  <p class="pillar-card__text">Digitale Schichtberichte und klare Abrechnung — Sie wissen immer, wer wann und warum vor Ort war.</p>
-                </li>
-                <li class="pillar-card">
-                  <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-clock.svg" alt="" width="350" height="350" loading="lazy"></span>
-                  <h4 class="pillar-card__title">Schnelle Reaktion</h4>
-                  <p class="pillar-card__text">Standardeinsätze innerhalb von 48–72 Stunden, mit schnellerer Bearbeitung dringender Anfragen für Brandwache und Interventionsdienst.</p>
-                </li>
-                <li class="pillar-card">
-                  <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-check-shield.svg" alt="" width="350" height="350" loading="lazy"></span>
-                  <h4 class="pillar-card__title">Zertifizierte Qualität</h4>
-                  <p class="pillar-card__text">Zertifiziert nach DIN 77200-1 und DIN EN ISO 9001, alle Mitarbeitenden mit Zuverlässigkeitsprüfung und Schulung nach §34a GewO.</p>
-                </li>
-                <li class="pillar-card">
-                  <span class="pillar-card__icon" aria-hidden="true"><img src="/assets/icons/icon-vest.svg" alt="" width="350" height="350" loading="lazy"></span>
-                  <h4 class="pillar-card__title">Flexible Einsatzplanung</h4>
-                  <p class="pillar-card__text">Kurzfristige, langfristige oder einmalige Einsätze — Ihr Sicherheitskonzept passt sich Ihren geschäftlichen Anforderungen an.</p>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
       </div>
     </section>
 

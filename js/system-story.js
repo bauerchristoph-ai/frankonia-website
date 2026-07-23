@@ -5,7 +5,7 @@
   (Codrops StickySections index8 stacking). Behaviour is the prototype's;
   the wiring is adapted to Frankonia's architecture:
 
-    - Self-initialising deferred IIFE (same pattern as sticky-sections.js /
+    - Self-initialising deferred IIFE (same pattern as sticky-story.js /
       pain-hook-journey.js) — NOT a global that needs a separate call, and NO
       new DOMContentLoaded (the <script defer> guarantees the DOM is ready).
     - Reuses the site's SINGLE GSAP + ScrollTrigger and the SINGLE Lenis
@@ -14,7 +14,7 @@
       ScrollTrigger, which the existing lenis.on("scroll", ScrollTrigger.update)
       wiring drives transparently.
     - Enhancement is gated by gsap.matchMedia("(min-width:1024px) and
-      (prefers-reduced-motion:no-preference)"), exactly like sticky-sections.js.
+      (prefers-reduced-motion:no-preference)"), exactly like sticky-story.js.
       matchMedia auto-reverts the enhanced class, every gsap.set/tween and the
       ScrollTrigger when the query stops matching — so resizing below 1024px or
       turning on reduced motion cleanly restores the base vertical list with NO

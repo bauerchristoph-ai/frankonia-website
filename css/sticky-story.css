@@ -1,0 +1,211 @@
+/* ==========================================================================
+   sticky-story.css — Trust "sticky story" (Codrops StickySections index9)
+   ----------------------------------------------------------------------------
+   Integrated 2026-07-23 from the sibling prototype ../frankonia-sticky-story.
+   Behaviour/composition = the prototype; architecture/tokens = Frankonia.
+
+   Mechanism: three HALF-WIDTH (50vw) `position: sticky; top: 0` scenes in
+   NORMAL FLOW inside the black `.sticky-story` track. Scene 1 right, scene 2
+   left, scene 3 right (margin-left/right:auto). Each rises from below within
+   its own column and sticks; consecutive scenes are on opposite halves so
+   they never split-overlap, and scene 3 (higher z-index) covers scene 1 in
+   the right column. The empty half is the track's black background. No pin,
+   no artificial scroll distance, no exit animation — the track height is the
+   natural sum of the three 100svh scenes, so the next section follows through
+   the natural sticky release. GSAP adds ONLY an entrance parallax on each
+   scene's inner content (js/sticky-story.js).
+
+   Enhanced (sticky) layout is gated to >=1024px + no reduced-motion — the same
+   query js/sticky-story.js's gsap.matchMedia() uses. Below that it is normal
+   vertical flow (also the no-JS / reduced-motion fallback), scenes 1->2->3.
+
+   Prototype --sticky-story-* tokens are MAPPED onto Frankonia tokens here;
+   only genuinely component-specific values (scene z-index, content max-width)
+   stay namespaced. The prototype's global resets (*, html, body, img), its
+   placeholder + intro sections, and its chip-based logo marquee are NOT
+   ported: the intro is Frankonia's existing "Trusted across the region"
+   section, and scene 2 reuses Frankonia's real-logo .story-logos marquee.
+   On-light muted/border shades have no dark-theme token to map onto, so they
+   are explicit values (same documented exception as .review-card).
+   ========================================================================== */
+
+:root {
+  /* --- mapped onto Frankonia tokens --- */
+  --sticky-story-black:      var(--color-bg);
+  --sticky-story-white:      var(--color-white);
+  --sticky-story-blue:       var(--color-blue-dark);   /* scene 2 surface + metric values */
+  --sticky-story-neutral:    #fafafa;                  /* scene 3 surface (documented light exception) */
+  --sticky-story-neutral-200: rgb(1 1 1 / 0.08);       /* card hairline on light */
+  --sticky-story-ink:        var(--color-logo-black);
+  --sticky-story-ink-muted:  rgb(1 1 1 / 0.6);         /* on-light muted (no dark-theme token fits) */
+  --sticky-story-on-blue:    var(--color-white);
+  --sticky-story-font:       var(--font-family-base);
+
+  --sticky-story-space-1:    var(--space-2);   /* 8px  */
+  --sticky-story-space-2:    var(--space-4);   /* 16px */
+  --sticky-story-space-3:    var(--space-5);   /* 24px */
+  --sticky-story-space-4:    var(--space-6);   /* 32px */
+  --sticky-story-space-5:    var(--space-7);   /* 48px */
+  --sticky-story-space-6:    var(--space-8);   /* 64px */
+
+  --sticky-story-radius:     var(--radius-lg);
+
+  /* --- component-specific (kept namespaced) --- */
+  --sticky-story-maxw:       34rem;
+  --sticky-story-z-1:        1;
+  --sticky-story-z-2:        2;
+  --sticky-story-z-3:        3;
+}
+
+/* --------------------------------------------------------------------------
+   Track + scenes — BASE (normal flow / no-JS / mobile)
+   -------------------------------------------------------------------------- */
+.sticky-story {
+  position: relative;
+  background: var(--sticky-story-black);
+  font-family: var(--sticky-story-font);
+}
+
+.sticky-story__scene {
+  position: relative;
+  width: 100%;
+  min-height: 70svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--sticky-story-space-6) var(--sticky-story-space-4);
+  overflow: hidden;
+}
+
+.sticky-story__scene--metrics {
+  background: var(--sticky-story-white);
+  color: var(--sticky-story-ink);
+}
+.sticky-story__scene--logos {
+  background: var(--sticky-story-blue);
+  color: var(--sticky-story-on-blue);
+}
+.sticky-story__scene--cards {
+  background: var(--sticky-story-neutral);
+  color: var(--sticky-story-ink);
+}
+
+/* Inner wrapper — the GSAP parallax target (static in flow mode). */
+.sticky-story__inner {
+  width: 100%;
+  max-width: var(--sticky-story-maxw);
+  margin: 0 auto;
+}
+
+.sticky-story__scene-title {
+  margin: 0 0 var(--sticky-story-space-4);
+  font-size: clamp(1.7rem, 3.4vw, 2.6rem);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.01em;
+}
+
+/* --- Scene 1: metrics ----------------------------------------------------- */
+.sticky-story__metrics {
+  display: grid;
+  gap: var(--sticky-story-space-4);
+}
+.sticky-story__metric-value {
+  margin: 0;
+  font-size: clamp(2.6rem, 5vw, 4rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--sticky-story-blue);
+}
+.sticky-story__metric-label {
+  margin: var(--sticky-story-space-1) 0 0;
+  font-size: 1rem;
+  color: var(--sticky-story-ink-muted);
+}
+
+/* --- Scene 2: logos ------------------------------------------------------- */
+/* Scene 2 reuses the existing real-logo marquee (.story-logos*, page-home.css).
+   Only the label colour needs setting for the blue surface — the scene-title
+   inherits the scene's white `color`. The .story-logos rows collapse to a
+   static grid below 1024px / under reduced motion (their own media queries),
+   which is exactly the mobile fallback we want here. */
+.sticky-story__scene--logos .story-logos {
+  margin-top: var(--sticky-story-space-2);
+}
+
+/* --- Scene 3: value cards ------------------------------------------------- */
+.sticky-story__cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sticky-story-space-2);
+}
+.sticky-story__card {
+  padding: var(--sticky-story-space-3);
+  border-radius: var(--sticky-story-radius);
+  background: var(--sticky-story-white);
+  border: 1px solid var(--sticky-story-neutral-200);
+}
+.sticky-story__card-icon {
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: var(--sticky-story-space-1);
+}
+.sticky-story__card-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--sticky-story-ink);
+}
+.sticky-story__card-text {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--sticky-story-ink-muted);
+}
+
+/* --------------------------------------------------------------------------
+   ENHANCED — Demo 9 sticky half-panels (>=1024px + no reduced motion).
+   Same query as js/sticky-story.js's gsap.matchMedia().
+   -------------------------------------------------------------------------- */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  /* New stacking context so scene z-indexes never paint over sibling
+     sections (the intro above / Pain Hook below). */
+  .sticky-story {
+    isolation: isolate;
+  }
+
+  .sticky-story__scene {
+    position: sticky;
+    top: 0;
+    width: 50vw;
+    height: 100svh;
+    min-height: 0;
+    /* Clear the fixed header at the top; generous, controlled padding. */
+    padding: calc(var(--sticky-story-space-6) + 2rem) var(--sticky-story-space-6)
+      var(--sticky-story-space-6);
+    overflow: hidden;
+    will-change: transform;
+  }
+
+  /* Alternating sides: scene 1 right, scene 2 left, scene 3 right. */
+  .sticky-story__scene--right { margin-left: auto; }
+  .sticky-story__scene--left  { margin-right: auto; }
+
+  /* Increasing z-index: scene 3 covers scene 1 where they share the right
+     column; scene 2 (left) never overlaps them. */
+  .sticky-story__scene--1 { z-index: var(--sticky-story-z-1); }
+  .sticky-story__scene--2 { z-index: var(--sticky-story-z-2); }
+  .sticky-story__scene--3 { z-index: var(--sticky-story-z-3); }
+
+  /* The inner content is vertically centred within the tall sticky scene. */
+  .sticky-story__inner {
+    max-width: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Reduced-motion: nothing extra needed — the enhanced layout is already
+   gated off above, so scenes render in normal flow. (The .story-logos
+   marquee has its own reduced-motion stop.)
+   -------------------------------------------------------------------------- */

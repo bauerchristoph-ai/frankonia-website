@@ -240,9 +240,8 @@ function initActiveNavLink() {
  * enhancement, never the only way the number is available.
  */
 function initStatCountUp() {
-  // Skips [data-no-countup] — the trust-story panel metrics opt out (their
-  // reveal is owned by assets/js/sticky-sections.js's timeline, so the
-  // count-up doesn't fire independently inside those transformed panels).
+  // Skips [data-no-countup] — an opt-out for any metric whose reveal is
+  // driven by its own scroll animation and shouldn't also count up here.
   // Scoped exclusion only; every other .stat__value still counts up.
   const values = document.querySelectorAll(".stat__value:not([data-no-countup])");
   if (!values.length || !("IntersectionObserver" in window)) return;
