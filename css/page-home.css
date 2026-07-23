@@ -238,11 +238,32 @@ main h2 {
   padding-inline-start: var(--content-inset);
 }
 
+/* Left-aligned section titles share the hero's editorial inset (client
+   request, 2026-07-23: the left-aligned headings sat too close to the left
+   edge — "muy pegados a la izquierda"). Same --content-inset token as
+   .hero__content, so every left-aligned homepage title starts on the same
+   vertical line as the hero copy. Scoped to the four LEFT-aligned section
+   intros only — the centered intros (trust-metrics / social / references /
+   coverage / faq / story-intro) are deliberately excluded, since an inset
+   would knock their margin-inline:auto centering off. */
+.pain-hook__intro,
+.services .section__intro,
+.system__intro,
+.outfits__intro {
+  padding-inline-start: var(--content-inset);
+}
+
 /* Mobile: --content-inset's 48px desktop floor is too large for a phone,
    so the editorial inset drops to a small value here (≈8px + the container
-   padding ≈ 20–24px edge-to-text total), per the brief. */
+   padding ≈ 20–24px edge-to-text total), per the brief. Same reduction is
+   mirrored onto the section titles above so they aren't over-indented on a
+   phone. */
 @media (max-width: 767.98px) {
-  .hero__content {
+  .hero__content,
+  .pain-hook__intro,
+  .services .section__intro,
+  .system__intro,
+  .outfits__intro {
     padding-inline-start: var(--space-2);
   }
 }
