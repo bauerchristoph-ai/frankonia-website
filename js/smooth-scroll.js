@@ -17,7 +17,7 @@
     - ONE Lenis instance, ONE animation loop. When GSAP + ScrollTrigger are
       present (they are on the homepage), Lenis is driven from GSAP's single
       ticker and pushes ScrollTrigger.update on every scroll — this is what
-      keeps the pinned pain-hook / system-panels triggers accurate under
+      keeps the pain-hook / system-story (CSS-sticky) triggers accurate under
       smooth scroll, with no second rAF loop. If GSAP isn't on the page,
       it falls back to Lenis's own rAF so it still works standalone.
 

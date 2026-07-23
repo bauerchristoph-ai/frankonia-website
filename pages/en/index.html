@@ -46,6 +46,7 @@
 
   <!-- include: head-common -->
   <link rel="stylesheet" href="/css/page-home.css">
+  <link rel="stylesheet" href="/css/system-story.css">
   <!-- Page-specific module, not in main.js (see js/outfits.js header
        comment) — same reasoning as page-home.css being linked here
        directly rather than folded into the shared head-common bundle. -->
@@ -91,7 +92,7 @@
        stacked sections. (Replaced the old js/trust-diagram.js, now unused.) -->
   <script src="/assets/js/sticky-sections.js" defer></script>
   <script src="/js/pain-hook-journey.js" defer></script>
-  <script src="/js/system-panels.js" defer></script>
+  <script src="/js/system-story.js" defer></script>
   <!-- Also depends on GSAP + ScrollTrigger above (must load after them,
        same document-order guarantee as every other GSAP-moment script
        here). Homepage-only, its own tag — see js/pixel-transition.js's
@@ -592,145 +593,142 @@
     </section>
 
     <!-- ============ 2.5. OUR SYSTEM ============ -->
-    <!-- Added 2026-07-20 (client brief: "premium scroll-driven" 6-outcome
-         section), between Pain Hook and Services — deliberately "2.5" in
-         this numbering, not a renumber of every section after it, same
-         convention as 1.5/4.5/6.5 elsewhere on this page. Full
-         interaction logic lives in js/system-panels.js; see CLAUDE.md
-         for the complete build report. Copy is 100% client-approved,
-         used verbatim — nothing invented here.
+    <!-- Stacked-card "Our System" component (integrated 2026-07-23 from the
+         sibling prototype ../frankonia-system-cards, Codrops StickySections
+         index8). Replaces the previous .system panel layout IN PLACE: same
+         position, same #our-system nav anchor, same client-approved copy —
+         each of the six panels' title / description / bullet points is
+         preserved verbatim and maps to one .system-story__card. Interaction
+         in js/system-story.js (CSS position:sticky, NO ScrollTrigger pin,
+         reuses the site's single GSAP/ScrollTrigger + Lenis); styles in
+         css/system-story.css. Renders as a readable vertical list with no JS
+         / on mobile / under reduced motion. Media areas are placeholders
+         (data-visual) to be replaced with real images later; card 6's visual
+         IS the process flow, kept as real content. -->
+    <section id="our-system" class="system-story" data-system-story aria-label="Our System">
+      <div class="system-story__track">
+        <div class="system-story__stage">
 
-         Spiritually similar to the old "Six Value Pillars" section
-         (also six items, also led with "Less Effort...") that was
-         removed outright 2026-07-13 — see CLAUDE.md's Corporate
-         Identity section for that history. This is NOT a revival of
-         that section: the content below is genuinely different
-         (specific, client-approved operational outcomes, not generic
-         pillars), just worth flagging the echo since the heading
-         wording is close.
+          <header class="system-story__intro">
+            <p class="system-story__eyebrow">Our System</p>
+            <h2 class="system-story__intro-title" data-no-title-reveal>Less effort. More control.</h2>
+            <p class="system-story__lede">Six practical ways FRANKONIA makes security more professional, transparent and easier to manage.</p>
+          </header>
 
-         Pixel-transition attribute removed 2026-07-21, same day it was
-         added — see Trust Metrics' own section comment above and
-         CLAUDE.md for why (invisible black-tile-on-black-background,
-         client asked to isolate testing to Services → Uniforms only). -->
-    <section id="our-system" class="section section--subtle system">
-      <div class="container system__grid">
-        <div class="system__intro">
-          <p class="section-eyebrow">Our System</p>
-          <h2>Less effort. More control.</h2>
-          <p class="system__lede">Six practical ways FRANKONIA makes security more professional, transparent and easier to manage.</p>
+          <div class="system-story__stack" data-system-stack>
+
+            <article class="system-story__card" data-system-card>
+              <div class="system-story__card-inner">
+              <div class="system-story__media" data-visual="uniforms" aria-hidden="true">
+                <span class="system-story__visual-label">Placeholder — a FRANKONIA guard or uniform-focused image</span>
+              </div>
+                <div class="system-story__body">
+                  <h3 class="system-story__title"><span class="system-story__num">1.</span> A professional first impression</h3>
+                  <p class="system-story__desc">Security personnel who represent your business professionally.</p>
+                  <ul class="system-story__points">
+                  <li>Uniforms tailored to your requirements</li>
+                  <li>Permanent core teams</li>
+                  <li>Personnel selected for your environment</li>
+                  </ul>
+                <a class="system-story__cta" href="#uniforms">
+                  Explore uniforms
+                  <span class="system-story__cta-arrow" aria-hidden="true">&rarr;</span>
+                </a>
+                </div>
+              </div>
+            </article>
+
+            <article class="system-story__card" data-system-card>
+              <div class="system-story__card-inner">
+              <div class="system-story__media" data-visual="reporting" aria-hidden="true">
+                <span class="system-story__visual-label">Placeholder — a clean digital reporting/shift-log image, not a generic SaaS dashboard</span>
+              </div>
+                <div class="system-story__body">
+                  <h3 class="system-story__title"><span class="system-story__num">2.</span> Full operational control</h3>
+                  <p class="system-story__desc">Know what is happening on site and access the information you need.</p>
+                  <ul class="system-story__points">
+                  <li>Digital security logbook</li>
+                  <li>Digital reports</li>
+                  <li>Shared cloud-based database</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="system-story__card" data-system-card>
+              <div class="system-story__card-inner">
+              <div class="system-story__media" data-visual="onboarding" aria-hidden="true">
+                <span class="system-story__visual-label">Placeholder — a supervisor briefing or onboarding a security team</span>
+              </div>
+                <div class="system-story__body">
+                  <h3 class="system-story__title"><span class="system-story__num">3.</span> Reliable teams</h3>
+                  <p class="system-story__desc">Consistent personnel who understand your site, expectations and procedures.</p>
+                  <ul class="system-story__points">
+                  <li>Jointly defined onboarding</li>
+                  <li>Professional onboarding by a supervisor</li>
+                  <li>Communication and behavioural training</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="system-story__card" data-system-card>
+              <div class="system-story__card-inner">
+              <div class="system-story__media" data-visual="contact" aria-hidden="true">
+                <span class="system-story__visual-label">Placeholder — a dedicated account contact or professional communication scene</span>
+              </div>
+                <div class="system-story__body">
+                  <h3 class="system-story__title"><span class="system-story__num">4.</span> One accountable contact</h3>
+                  <p class="system-story__desc">One dedicated person who knows your account and coordinates everything.</p>
+                  <ul class="system-story__points">
+                  <li>Chat, email or phone communication</li>
+                  <li>24/7 availability</li>
+                  <li>One single point of contact</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="system-story__card" data-system-card>
+              <div class="system-story__card-inner">
+              <div class="system-story__media" data-visual="management" aria-hidden="true">
+                <span class="system-story__visual-label">Placeholder — a professional security report or management summary</span>
+              </div>
+                <div class="system-story__body">
+                  <h3 class="system-story__title"><span class="system-story__num">5.</span> Verifiable results</h3>
+                  <p class="system-story__desc">Clear security information you can communicate and present to management.</p>
+                  <ul class="system-story__points">
+                  <li>Executive reports and management summaries</li>
+                  <li>Individual security concept</li>
+                  <li>Regular reviews and updates</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="system-story__card" data-system-card>
+              <div class="system-story__card-inner">
+              <div class="system-story__media system-story__media--flow" data-visual="resolution" aria-hidden="true">
+                <ol class="system-story__flow">
+                  <li>Issue</li>
+                  <li>Root cause</li>
+                  <li>Corrective action</li>
+                  <li>Resolved</li>
+                </ol>
+              </div>
+                <div class="system-story__body">
+                  <h3 class="system-story__title"><span class="system-story__num">6.</span> Full responsibility</h3>
+                  <p class="system-story__desc">Problems are followed through until the underlying cause is resolved.</p>
+                  <ul class="system-story__points">
+                  <li>Root-cause resolution for complaints</li>
+                  <li>Direct feedback process with FRANKONIA</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+          </div>
         </div>
-
-        <ol class="system__panels">
-          <li class="system__panel" data-system-panel>
-            <div class="system__panel-media" aria-hidden="true">
-              <span class="system__panel-media-label">Placeholder — a FRANKONIA guard or uniform-focused image</span>
-            </div>
-            <div class="system__panel-body">
-              <h3 class="system__panel-title">A professional first impression</h3>
-              <p class="system__panel-text">Security personnel who represent your business professionally.</p>
-              <ul class="system__panel-points">
-                <li>Uniforms tailored to your requirements</li>
-                <li>Permanent core teams</li>
-                <li>Personnel selected for your environment</li>
-              </ul>
-              <!-- Links to the existing Uniforms/outfit-viewer section
-                   further down this same page (id="uniforms" added to
-                   that section for this link — see its own comment). -->
-              <a class="system__panel-link" href="#uniforms">
-                Explore uniforms
-                <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
-              </a>
-            </div>
-          </li>
-
-          <li class="system__panel" data-system-panel>
-            <!-- "Do not make the visual look like a generic SaaS
-                 dashboard" — noted here for whoever replaces this
-                 placeholder with a real image later. -->
-            <div class="system__panel-media" aria-hidden="true">
-              <span class="system__panel-media-label">Placeholder — a clean digital reporting/shift-log image, not a generic SaaS dashboard</span>
-            </div>
-            <div class="system__panel-body">
-              <h3 class="system__panel-title">Full operational control</h3>
-              <p class="system__panel-text">Know what is happening on site and access the information you need.</p>
-              <ul class="system__panel-points">
-                <li>Digital security logbook</li>
-                <li>Digital reports</li>
-                <li>Shared cloud-based database</li>
-              </ul>
-            </div>
-          </li>
-
-          <li class="system__panel" data-system-panel>
-            <div class="system__panel-media" aria-hidden="true">
-              <span class="system__panel-media-label">Placeholder — a supervisor briefing or onboarding a security team</span>
-            </div>
-            <div class="system__panel-body">
-              <h3 class="system__panel-title">Reliable teams</h3>
-              <p class="system__panel-text">Consistent personnel who understand your site, expectations and procedures.</p>
-              <ul class="system__panel-points">
-                <li>Jointly defined onboarding</li>
-                <li>Professional onboarding by a supervisor</li>
-                <li>Communication and behavioural training</li>
-              </ul>
-            </div>
-          </li>
-
-          <li class="system__panel" data-system-panel>
-            <div class="system__panel-media" aria-hidden="true">
-              <span class="system__panel-media-label">Placeholder — a dedicated account contact or professional communication scene</span>
-            </div>
-            <div class="system__panel-body">
-              <h3 class="system__panel-title">One accountable contact</h3>
-              <p class="system__panel-text">One dedicated person who knows your account and coordinates everything.</p>
-              <ul class="system__panel-points">
-                <li>Chat, email or phone communication</li>
-                <li>24/7 availability</li>
-                <li>One single point of contact</li>
-              </ul>
-            </div>
-          </li>
-
-          <li class="system__panel" data-system-panel>
-            <div class="system__panel-media" aria-hidden="true">
-              <span class="system__panel-media-label">Placeholder — a professional security report or management summary</span>
-            </div>
-            <div class="system__panel-body">
-              <h3 class="system__panel-title">Verifiable results</h3>
-              <p class="system__panel-text">Clear security information you can communicate and present to management.</p>
-              <ul class="system__panel-points">
-                <li>Executive reports and management summaries</li>
-                <li>Individual security concept</li>
-                <li>Regular reviews and updates</li>
-              </ul>
-            </div>
-          </li>
-
-          <li class="system__panel" data-system-panel>
-            <!-- Not a "[Placeholder — photo]" like the five above: the
-                 brief's own visual for this one IS this exact 4-step
-                 flow, not a stand-in for a future photograph — so it's
-                 rendered as real content, in the same aspect-ratio box
-                 as every other panel's media for visual consistency. -->
-            <div class="system__panel-media system__panel-media--flow" aria-hidden="true">
-              <ol class="system__flow">
-                <li>Issue</li>
-                <li>Root cause</li>
-                <li>Corrective action</li>
-                <li>Resolved</li>
-              </ol>
-            </div>
-            <div class="system__panel-body">
-              <h3 class="system__panel-title">Full responsibility</h3>
-              <p class="system__panel-text">Problems are followed through until the underlying cause is resolved.</p>
-              <ul class="system__panel-points">
-                <li>Root-cause resolution for complaints</li>
-                <li>Direct feedback process with FRANKONIA</li>
-              </ul>
-            </div>
-          </li>
-        </ol>
       </div>
     </section>
 

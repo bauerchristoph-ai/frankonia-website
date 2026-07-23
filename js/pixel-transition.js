@@ -63,7 +63,7 @@
 
   Homepage-only, its own <script defer> tag (same pattern as
   outfits.js/hero-reveal.js/title-reveal.js/pain-hook-journey.js/
-  system-panels.js) — not folded into main.js. Requires GSAP core +
+  system-story.js) — not folded into main.js. Requires GSAP core +
   ScrollTrigger, both self-hosted and loaded earlier in this page's
   <head>; the one defensive gsap.registerPlugin(ScrollTrigger) call
   below is harmless to run more than once.

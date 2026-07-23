@@ -1,0 +1,463 @@
+/* ============================================================================
+   system-story.css — "Our System" stacked-card component
+   ----------------------------------------------------------------------------
+   Integrated 2026-07-23 from the sibling prototype ../frankonia-system-cards
+   (Codrops StickySections index8 interaction). Behaviour is the prototype's;
+   architecture is Frankonia's.
+
+   The prototype's --sys-* tokens are MAPPED here onto Frankonia's existing
+   design tokens (colour / spacing / type / radius / width). Only the
+   component-specific motion + card-geometry values stay as raw --sys-*
+   (js/system-story.js reads several of them live). Every selector is scoped
+   under .system-story — nothing leaks globally. Loaded page-scoped (homepage
+   only), linked directly in pages/index.html + pages/en/index.html AFTER
+   page-home.css.
+
+   NOTE on the light card surfaces: this is a dark-theme site, so a few of the
+   "text/lines on a LIGHT card" colours below have no Frankonia token to map
+   onto (the palette is all calibrated for on-black). Those are kept as
+   explicit on-light shades here — the same documented exception pattern as
+   .review-card / .services__item:hover in page-home.css.
+   ============================================================================ */
+
+:root {
+  /* --- Colour (mapped onto Frankonia tokens) ----------------------------- */
+  --sys-color-page:            var(--color-bg);           /* black page bg    */
+  --sys-color-surface:         var(--color-white);        /* light card (odd) */
+  --sys-color-surface-2:       #eef0f2;                   /* visual placeholder shade (temporary — replaced by real images) */
+  --sys-color-ink:             var(--color-logo-black);   /* dark type on card */
+  --sys-color-ink-soft:        var(--color-gray);         /* secondary text   */
+  --sys-color-ink-faint:       rgb(1 1 1 / 0.55);         /* on-white muted — matches .services__item-number */
+  --sys-color-line:            rgb(1 1 1 / 0.12);         /* hairline on light */
+  --sys-color-accent:          var(--color-blue-dark);    /* CTA fill / bullets */
+  --sys-color-accent-ink:      #1e4e8c;                   /* darker blue for link text on white (no on-light blue token exists) */
+  --sys-color-on-dark:         var(--color-text);         /* intro title on black */
+  --sys-color-on-dark-soft:    var(--color-text-muted);   /* intro lede on black  */
+
+  /* Even cards render on a light grey instead of white (like the demo). */
+  --sys-card-panel-bg-alt:     #e6e9ec;
+
+  /* --- Radius (mapped) --------------------------------------------------- */
+  --sys-radius-card:           var(--radius-lg);
+  --sys-radius-visual:         var(--radius-md);
+  --sys-radius-chip:           var(--radius-pill);
+
+  /* --- Spacing (Frankonia's --space-* matches the prototype 1:1) --------- */
+  --sys-space-2:               var(--space-2);   /* 8px  */
+  --sys-space-3:               var(--space-3);   /* 12px */
+  --sys-space-4:               var(--space-4);   /* 16px */
+  --sys-space-5:               var(--space-5);   /* 24px */
+  --sys-space-6:               var(--space-6);   /* 32px */
+  --sys-space-7:               var(--space-7);   /* 48px */
+  --sys-space-8:               var(--space-8);   /* 64px */
+
+  /* --- Typography (mapped) ----------------------------------------------- */
+  --sys-font:                  var(--font-family-base);
+  --sys-fs-step:               var(--font-size-sm);
+  --sys-fs-eyebrow:            var(--font-size-sm);
+  --sys-fs-title:              var(--font-size-xl);
+  --sys-fs-intro-title:        var(--font-size-3xl);
+  --sys-fs-desc:               var(--font-size-base);
+  --sys-fs-point:              var(--font-size-sm);
+  --sys-fs-visual-label:       var(--font-size-sm);
+  --sys-lh-tight:              var(--line-height-tight);
+  --sys-lh-normal:             var(--line-height-base);
+  --sys-fw-regular:            var(--font-weight-regular);
+  --sys-fw-medium:             500;   /* no 500 token; the system font stack renders it fine */
+  --sys-fw-bold:               var(--font-weight-bold);
+
+  /* --- Layout width (mapped to a scoped content width) ------------------- */
+  --sys-max-width:             75rem;
+
+  /* ======================================================================
+     COMPONENT-SPECIFIC geometry + motion — kept as raw --sys-* (the JS
+     reads several of these live; retune here, not in the module).
+     ====================================================================== */
+  --sys-card-max-width:        500px;
+  --sys-card-width:            min(92vw, var(--sys-card-max-width));
+  --sys-card-height:           76svh;
+  --sys-card-aspect:           0.8;
+  --sys-card-pad:              28px 28px 26px;
+  --sys-card-gap:              14px;
+  --sys-media-ratio:           58%;
+  --sys-card-panel-bg:         var(--sys-color-surface);
+  --sys-card-panel-ink:        var(--sys-color-ink);
+  --sys-header-band:           16svh;
+
+  --sys-scale-active:          1;
+  --sys-scale-prev:            0.96;
+  --sys-scale-older:           0.92;
+  --sys-stack-offset:          26px;
+  --sys-prev-opacity:          0.72;
+  --sys-blur-prev:             1.5px;
+  --sys-blur-older:            4px;
+  --sys-title-scale-start:     1;
+
+  --sys-stage-height:          100svh;
+  --sys-scroll-per-card:       90svh;
+  --sys-scroll-final-hold:     40svh;
+}
+
+/* ---------------------------------------------------------------------------
+   1. BASE / FALLBACK  (always applied — no-JS / mobile / reduced-motion)
+   --------------------------------------------------------------------------- */
+
+.system-story {
+  position: relative;
+  background: var(--sys-color-page);
+  color: var(--sys-color-on-dark);
+  font-family: var(--sys-font);
+}
+
+.system-story__track { position: relative; }
+.system-story__stage { position: relative; width: 100%; }
+
+.system-story__intro {
+  max-width: var(--sys-max-width);
+  margin: 0 auto;
+  padding: var(--sys-space-8) var(--sys-space-6) var(--sys-space-5);
+  text-align: center;
+}
+
+.system-story__eyebrow {
+  margin: 0 0 var(--sys-space-3);
+  font-size: var(--sys-fs-eyebrow);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: var(--sys-fw-medium);
+  color: var(--sys-color-accent);
+}
+
+.system-story__intro-title {
+  margin: 0;
+  font-size: var(--sys-fs-intro-title);
+  line-height: var(--sys-lh-tight);
+  letter-spacing: -0.02em;
+  font-weight: var(--sys-fw-bold);
+  color: var(--sys-color-on-dark);
+}
+
+.system-story__lede {
+  margin: var(--sys-space-3) 0 0;
+  font-size: var(--sys-fs-desc);
+  line-height: var(--sys-lh-normal);
+  color: var(--sys-color-on-dark-soft);
+  max-width: 52ch;
+}
+
+.system-story__stack {
+  margin: 0 auto;
+  padding: var(--sys-space-5) var(--sys-space-6) var(--sys-space-8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sys-space-6);
+}
+
+.system-story__card {
+  width: var(--sys-card-width);
+  max-width: var(--sys-card-max-width);
+  height: var(--sys-card-height);
+  aspect-ratio: var(--sys-card-aspect);
+}
+
+.system-story__card-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: var(--sys-radius-card);
+  overflow: hidden;
+  background: var(--sys-card-panel-bg);
+}
+
+.system-story__media {
+  position: relative;
+  flex: 0 0 var(--sys-media-ratio);
+  min-height: 120px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: var(--sys-space-4);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      var(--sys-color-surface-2) 0,
+      var(--sys-color-surface-2) 14px,
+      #e4e7eb 14px,
+      #e4e7eb 15px
+    );
+  color: var(--sys-color-ink-faint);
+}
+
+.system-story__visual-label {
+  font-size: var(--sys-fs-visual-label);
+  font-weight: var(--sys-fw-medium);
+  letter-spacing: 0.02em;
+  padding: var(--sys-space-2) var(--sys-space-4);
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: var(--sys-radius-chip);
+}
+
+/* Card 6 process flow rendered AS the card visual (not a placeholder) —
+   preserves the original section's Issue -> Root cause -> ... -> Resolved
+   content in the same media box shape as every other card. */
+.system-story__media--flow {
+  align-items: center;
+  justify-content: center;
+  background: var(--sys-color-surface-2);
+}
+.system-story__flow {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-space-2);
+  align-items: center;
+  text-align: center;
+  color: var(--sys-color-ink-soft);
+  font-size: var(--sys-fs-point);
+  font-weight: var(--sys-fw-medium);
+}
+.system-story__flow li:not(:last-child)::after {
+  content: "\2193"; /* ↓ */
+  display: block;
+  margin-top: var(--sys-space-2);
+  color: var(--sys-color-accent);
+}
+
+.system-story__num {
+  color: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.system-story__body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-card-gap);
+  padding: var(--sys-card-pad);
+  background: var(--sys-card-panel-bg);
+  color: var(--sys-card-panel-ink);
+  overflow: hidden;
+}
+
+.system-story__title {
+  margin: 0;
+  font-size: var(--sys-fs-title);
+  line-height: var(--sys-lh-tight);
+  letter-spacing: -0.01em;
+  font-weight: var(--sys-fw-bold);
+  color: var(--sys-card-panel-ink);
+  max-width: 22ch;
+}
+
+.system-story__desc {
+  margin: 0;
+  font-size: var(--sys-fs-desc);
+  line-height: var(--sys-lh-normal);
+  color: var(--sys-color-ink-soft);
+  max-width: 46ch;
+}
+
+.system-story__points {
+  margin: var(--sys-space-2) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-space-2);
+  width: 100%;
+}
+
+.system-story__points li {
+  position: relative;
+  padding-left: var(--sys-space-5);
+  font-size: var(--sys-fs-point);
+  line-height: 1.35;
+  color: var(--sys-card-panel-ink);
+}
+
+.system-story__points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sys-color-accent);
+}
+
+/* Card 1 CTA — accent pill with arrow (prototype look, Frankonia colour). */
+.system-story__cta {
+  align-self: flex-start;
+  margin-top: var(--sys-space-4);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sys-space-2);
+  padding: 10px 18px;
+  font-size: var(--sys-fs-point);
+  font-weight: var(--sys-fw-medium);
+  line-height: 1;
+  color: #fff;
+  background: var(--sys-color-accent);
+  border-radius: var(--sys-radius-chip);
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.system-story__cta:hover { background: var(--sys-color-accent-ink); }
+.system-story__cta-arrow { transition: transform 0.2s ease; }
+.system-story__cta:hover .system-story__cta-arrow { transform: translateX(3px); }
+
+/* ---------------------------------------------------------------------------
+   2. ENHANCED  (added by JS: `.system-story--enhanced`, >=1024px + motion)
+   Sticky stage + absolutely-stacked, GSAP-animated portrait cards.
+   --------------------------------------------------------------------------- */
+
+/* Tall track supplies scroll distance while the stage sticks. Six cards ->
+   five transitions, so the multiplier is (cards - 1) = 5. */
+.system-story--enhanced .system-story__track {
+  height: calc(
+    100svh
+    + (var(--sys-scroll-per-card) * 5)
+    + var(--sys-scroll-final-hold)
+  );
+}
+
+/* Stage sticks via CSS (NOT ScrollTrigger pin). Never transformed. */
+.system-story--enhanced .system-story__stage {
+  position: sticky;
+  top: 0;
+  height: var(--sys-stage-height);
+  overflow: hidden;
+}
+
+/* LEFT half → title/eyebrow/lede, vertically centred, left-aligned.
+   pointer-events:none so it never blocks the cards' links on the right. */
+.system-story--enhanced .system-story__intro {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  gap: var(--sys-space-4);
+  max-width: none;
+  margin: 0;
+  padding: 0 var(--sys-space-7) 0 clamp(var(--sys-space-6), 6vw, 120px);
+  pointer-events: none;
+}
+.system-story--enhanced .system-story__intro-title {
+  font-size: clamp(2rem, 3.6vw, 3.4rem);
+  line-height: 1.05;
+  text-align: left;
+  max-width: 14ch;
+  transform-origin: 0% 50%;
+  will-change: transform;
+}
+.system-story--enhanced .system-story__lede { max-width: 34ch; }
+
+/* RIGHT half → the card stack (cards centred within that half). */
+.system-story--enhanced .system-story__stack {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 50%;
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+
+/* Each card centred in the stage; GSAP owns its transform (y / scale).
+   Horizontal centring via margin-inline:auto, vertical via top + negative
+   margin — neither touches `transform`, leaving it free for GSAP. */
+.system-story--enhanced .system-story__card {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  top: 50%;
+  margin-top: calc(var(--sys-card-height) / -2);
+  width: var(--sys-card-width);
+  max-width: var(--sys-card-max-width);
+  height: var(--sys-card-height);
+  will-change: transform, opacity, filter;
+  transform-origin: 50% 0%;
+  backface-visibility: hidden;
+}
+
+.system-story--enhanced .system-story__card-inner {
+  box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.55);
+}
+
+/* Alternate surfaces: odd = white, even = grey. */
+.system-story__card:nth-child(even) .system-story__card-inner,
+.system-story__card:nth-child(even) .system-story__body {
+  background: var(--sys-card-panel-bg-alt);
+}
+
+/* Later cards sit in front (each new card rises OVER the previous). */
+.system-story--enhanced .system-story__card:nth-child(1) { z-index: 1; }
+.system-story--enhanced .system-story__card:nth-child(2) { z-index: 2; }
+.system-story--enhanced .system-story__card:nth-child(3) { z-index: 3; }
+.system-story--enhanced .system-story__card:nth-child(4) { z-index: 4; }
+.system-story--enhanced .system-story__card:nth-child(5) { z-index: 5; }
+.system-story--enhanced .system-story__card:nth-child(6) { z-index: 6; }
+
+/* ---------------------------------------------------------------------------
+   3. DESKTOP SCOPE — enhancement is >=1024px only. Below that, the base
+   vertical list always shows (even if the enhanced class was added).
+   --------------------------------------------------------------------------- */
+@media (max-width: 1023.98px) {
+  .system-story--enhanced .system-story__track { height: auto; }
+  .system-story--enhanced .system-story__stage {
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+  .system-story--enhanced .system-story__intro {
+    position: static;
+    width: auto;
+    inset: auto;
+    align-items: center;
+    text-align: center;
+    padding: var(--sys-space-8) var(--sys-space-6) var(--sys-space-5);
+    pointer-events: auto;
+  }
+  .system-story--enhanced .system-story__intro-title { text-align: center; }
+  .system-story--enhanced .system-story__lede { max-width: 52ch; }
+  .system-story--enhanced .system-story__stack {
+    position: static;
+    inset: auto;
+    left: auto;
+    right: auto;
+    margin: 0 auto;
+    padding: var(--sys-space-5) var(--sys-space-6) var(--sys-space-8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sys-space-6);
+  }
+  .system-story--enhanced .system-story__card {
+    position: static;
+    margin-inline: auto;
+    margin-top: 0;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Reduced-motion safety net (JS also skips enhancement in this case). */
+@media (prefers-reduced-motion: reduce) {
+  .system-story--enhanced .system-story__card {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

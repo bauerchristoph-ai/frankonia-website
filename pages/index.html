@@ -49,6 +49,7 @@
 
   <!-- include: head-common -->
   <link rel="stylesheet" href="/css/page-home.css">
+  <link rel="stylesheet" href="/css/system-story.css">
   <!-- Page-specific module, not in main.js (see js/outfits.js header
        comment) — same reasoning as page-home.css being linked here
        directly rather than folded into the shared head-common bundle. -->
@@ -94,7 +95,7 @@
        stacked sections. (Replaced the old js/trust-diagram.js, now unused.) -->
   <script src="/assets/js/sticky-sections.js" defer></script>
   <script src="/js/pain-hook-journey.js" defer></script>
-  <script src="/js/system-panels.js" defer></script>
+  <script src="/js/system-story.js" defer></script>
   <!-- Also depends on GSAP + ScrollTrigger above (must load after them,
        same document-order guarantee as every other GSAP-moment script
        here). Homepage-only, its own tag — see js/pixel-transition.js's
@@ -605,145 +606,142 @@
     </section>
 
     <!-- ============ 2.5. OUR SYSTEM ============ -->
-    <!-- Added 2026-07-20 (client brief: "premium scroll-driven" 6-outcome
-         section), between Pain Hook and Services — deliberately "2.5" in
-         this numbering, not a renumber of every section after it, same
-         convention as 1.5/4.5/6.5 elsewhere on this page. Full
-         interaction logic lives in js/system-panels.js; see CLAUDE.md
-         for the complete build report. Copy is 100% client-approved,
-         used verbatim — nothing invented here.
+    <!-- Stacked-card "Our System" component (integrated 2026-07-23 from the
+         sibling prototype ../frankonia-system-cards, Codrops StickySections
+         index8). Replaces the previous .system panel layout IN PLACE: same
+         position, same #our-system nav anchor, same client-approved copy —
+         each of the six panels' title / description / bullet points is
+         preserved verbatim and maps to one .system-story__card. Interaction
+         in js/system-story.js (CSS position:sticky, NO ScrollTrigger pin,
+         reuses the site's single GSAP/ScrollTrigger + Lenis); styles in
+         css/system-story.css. Renders as a readable vertical list with no JS
+         / on mobile / under reduced motion. Media areas are placeholders
+         (data-visual) to be replaced with real images later; card 6's visual
+         IS the process flow, kept as real content. -->
+    <section id="our-system" class="system-story" data-system-story aria-label="Unser System">
+      <div class="system-story__track">
+        <div class="system-story__stage">
 
-         Spiritually similar to the old "Six Value Pillars" section
-         (also six items, also led with "Less Effort...") that was
-         removed outright 2026-07-13 — see CLAUDE.md's Corporate
-         Identity section for that history. This is NOT a revival of
-         that section: the content below is genuinely different
-         (specific, client-approved operational outcomes, not generic
-         pillars), just worth flagging the echo since the heading
-         wording is close.
+          <header class="system-story__intro">
+            <p class="system-story__eyebrow">Unser System</p>
+            <h2 class="system-story__intro-title" data-no-title-reveal>Weniger Aufwand. Mehr Kontrolle.</h2>
+            <p class="system-story__lede">Sechs praktische Wege, wie FRANKONIA Sicherheit professioneller, transparenter und einfacher steuerbar macht.</p>
+          </header>
 
-         Pixel-transition attribute removed 2026-07-21, same day it was
-         added — see Trust Metrics' own section comment above and
-         CLAUDE.md for why (invisible black-tile-on-black-background,
-         client asked to isolate testing to Services → Uniforms only). -->
-    <section id="our-system" class="section section--subtle system">
-      <div class="container system__grid">
-        <div class="system__intro">
-          <p class="section-eyebrow">Unser System</p>
-          <h2>Weniger Aufwand. Mehr Kontrolle.</h2>
-          <p class="system__lede">Sechs praktische Wege, wie FRANKONIA Sicherheit professioneller, transparenter und einfacher steuerbar macht.</p>
+          <div class="system-story__stack" data-system-stack>
+
+            <article class="system-story__card" data-system-card>
+              <div class="system-story__card-inner">
+              <div class="system-story__media" data-visual="uniforms" aria-hidden="true">
+                <span class="system-story__visual-label">Platzhalter — ein FRANKONIA-Mitarbeiter oder ein Bild mit Fokus auf die Dienstkleidung</span>
+              </div>
+                <div class="system-story__body">
+                  <h3 class="system-story__title"><span class="system-story__num">1.</span> Ein professioneller erster Eindruck</h3>
+                  <p class="system-story__desc">Sicherheitspersonal, das Ihr Unternehmen professionell repräsentiert.</p>
+                  <ul class="system-story__points">
+                  <li>Kleidung nach Ihren Anforderungen</li>
+                  <li>Feste Stammteams</li>
+                  <li>Personal, passend zu Ihrem Umfeld ausgewählt</li>
+                  </ul>
+                <a class="system-story__cta" href="#uniforms">
+                  Explore uniforms
+                  <span class="system-story__cta-arrow" aria-hidden="true">&rarr;</span>
+                </a>
+                </div>
+              </div>
+            </article>
+
+            <article class="system-story__card" data-system-card>
+              <div class="system-story__card-inner">
+              <div class="system-story__media" data-visual="reporting" aria-hidden="true">
+                <span class="system-story__visual-label">Platzhalter — ein klares Bild zur digitalen Dokumentation/zum Schichtbuch, kein generisches SaaS-Dashboard</span>
+              </div>
+                <div class="system-story__body">
+                  <h3 class="system-story__title"><span class="system-story__num">2.</span> Volle operative Kontrolle</h3>
+                  <p class="system-story__desc">Wissen, was vor Ort passiert, und Zugriff auf die benötigten Informationen.</p>
+                  <ul class="system-story__points">
+                  <li>Digitales Sicherheits-Logbuch</li>
+                  <li>Digitale Berichte</li>
+                  <li>Gemeinsame cloudbasierte Datenbank</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="system-story__card" data-system-card>
+              <div class="system-story__card-inner">
+              <div class="system-story__media" data-visual="onboarding" aria-hidden="true">
+                <span class="system-story__visual-label">Platzhalter — ein Vorgesetzter beim Briefing oder bei der Einarbeitung eines Sicherheitsteams</span>
+              </div>
+                <div class="system-story__body">
+                  <h3 class="system-story__title"><span class="system-story__num">3.</span> Zuverlässige Teams</h3>
+                  <p class="system-story__desc">Beständiges Personal, das Ihr Objekt, Ihre Erwartungen und Abläufe kennt.</p>
+                  <ul class="system-story__points">
+                  <li>Gemeinsam definierte Einarbeitung</li>
+                  <li>Professionelle Einarbeitung durch einen Vorgesetzten</li>
+                  <li>Kommunikations- und Verhaltensschulung</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="system-story__card" data-system-card>
+              <div class="system-story__card-inner">
+              <div class="system-story__media" data-visual="contact" aria-hidden="true">
+                <span class="system-story__visual-label">Platzhalter — ein fester Ansprechpartner oder eine professionelle Kommunikationsszene</span>
+              </div>
+                <div class="system-story__body">
+                  <h3 class="system-story__title"><span class="system-story__num">4.</span> Ein verantwortlicher Ansprechpartner</h3>
+                  <p class="system-story__desc">Eine feste Person, die Ihr Konto kennt und alles koordiniert.</p>
+                  <ul class="system-story__points">
+                  <li>Kommunikation per Chat, E-Mail oder Telefon</li>
+                  <li>24/7 availability</li>
+                  <li>Ein einziger Ansprechpartner</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="system-story__card" data-system-card>
+              <div class="system-story__card-inner">
+              <div class="system-story__media" data-visual="management" aria-hidden="true">
+                <span class="system-story__visual-label">Platzhalter — ein professioneller Sicherheitsbericht oder eine Management-Zusammenfassung</span>
+              </div>
+                <div class="system-story__body">
+                  <h3 class="system-story__title"><span class="system-story__num">5.</span> Nachweisbare Ergebnisse</h3>
+                  <p class="system-story__desc">Klare Sicherheitsinformationen, die Sie kommunizieren und dem Management präsentieren können.</p>
+                  <ul class="system-story__points">
+                  <li>Management-Berichte und Zusammenfassungen</li>
+                  <li>Individuelles Sicherheitskonzept</li>
+                  <li>Regelmäßige Überprüfungen und Aktualisierungen</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="system-story__card" data-system-card>
+              <div class="system-story__card-inner">
+              <div class="system-story__media system-story__media--flow" data-visual="resolution" aria-hidden="true">
+                <ol class="system-story__flow">
+                  <li>Problem</li>
+                  <li>Ursache</li>
+                  <li>Korrekturmaßnahme</li>
+                  <li>Behoben</li>
+                </ol>
+              </div>
+                <div class="system-story__body">
+                  <h3 class="system-story__title"><span class="system-story__num">6.</span> Volle Verantwortung</h3>
+                  <p class="system-story__desc">Probleme werden konsequent verfolgt, bis die zugrunde liegende Ursache behoben ist.</p>
+                  <ul class="system-story__points">
+                  <li>Ursachenbehebung bei Beschwerden</li>
+                  <li>Direkter Feedback-Prozess mit FRANKONIA</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+          </div>
         </div>
-
-        <ol class="system__panels">
-          <li class="system__panel" data-system-panel>
-            <div class="system__panel-media" aria-hidden="true">
-              <span class="system__panel-media-label">Platzhalter — ein FRANKONIA-Mitarbeiter oder ein Bild mit Fokus auf die Dienstkleidung</span>
-            </div>
-            <div class="system__panel-body">
-              <h3 class="system__panel-title">Ein professioneller erster Eindruck</h3>
-              <p class="system__panel-text">Sicherheitspersonal, das Ihr Unternehmen professionell repräsentiert.</p>
-              <ul class="system__panel-points">
-                <li>Kleidung nach Ihren Anforderungen</li>
-                <li>Feste Stammteams</li>
-                <li>Personal, passend zu Ihrem Umfeld ausgewählt</li>
-              </ul>
-              <!-- Links to the existing Uniforms/outfit-viewer section
-                   further down this same page (id="uniforms" added to
-                   that section for this link — see its own comment). -->
-              <a class="system__panel-link" href="#uniforms">
-                Explore uniforms
-                <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
-              </a>
-            </div>
-          </li>
-
-          <li class="system__panel" data-system-panel>
-            <!-- "Do not make the visual look like a generic SaaS
-                 dashboard" — noted here for whoever replaces this
-                 placeholder with a real image later. -->
-            <div class="system__panel-media" aria-hidden="true">
-              <span class="system__panel-media-label">Platzhalter — ein klares Bild zur digitalen Dokumentation/zum Schichtbuch, kein generisches SaaS-Dashboard</span>
-            </div>
-            <div class="system__panel-body">
-              <h3 class="system__panel-title">Volle operative Kontrolle</h3>
-              <p class="system__panel-text">Wissen, was vor Ort passiert, und Zugriff auf die benötigten Informationen.</p>
-              <ul class="system__panel-points">
-                <li>Digitales Sicherheits-Logbuch</li>
-                <li>Digitale Berichte</li>
-                <li>Gemeinsame cloudbasierte Datenbank</li>
-              </ul>
-            </div>
-          </li>
-
-          <li class="system__panel" data-system-panel>
-            <div class="system__panel-media" aria-hidden="true">
-              <span class="system__panel-media-label">Platzhalter — ein Vorgesetzter beim Briefing oder bei der Einarbeitung eines Sicherheitsteams</span>
-            </div>
-            <div class="system__panel-body">
-              <h3 class="system__panel-title">Zuverlässige Teams</h3>
-              <p class="system__panel-text">Beständiges Personal, das Ihr Objekt, Ihre Erwartungen und Abläufe kennt.</p>
-              <ul class="system__panel-points">
-                <li>Gemeinsam definierte Einarbeitung</li>
-                <li>Professionelle Einarbeitung durch einen Vorgesetzten</li>
-                <li>Kommunikations- und Verhaltensschulung</li>
-              </ul>
-            </div>
-          </li>
-
-          <li class="system__panel" data-system-panel>
-            <div class="system__panel-media" aria-hidden="true">
-              <span class="system__panel-media-label">Platzhalter — ein fester Ansprechpartner oder eine professionelle Kommunikationsszene</span>
-            </div>
-            <div class="system__panel-body">
-              <h3 class="system__panel-title">Ein verantwortlicher Ansprechpartner</h3>
-              <p class="system__panel-text">Eine feste Person, die Ihr Konto kennt und alles koordiniert.</p>
-              <ul class="system__panel-points">
-                <li>Kommunikation per Chat, E-Mail oder Telefon</li>
-                <li>24/7 availability</li>
-                <li>Ein einziger Ansprechpartner</li>
-              </ul>
-            </div>
-          </li>
-
-          <li class="system__panel" data-system-panel>
-            <div class="system__panel-media" aria-hidden="true">
-              <span class="system__panel-media-label">Platzhalter — ein professioneller Sicherheitsbericht oder eine Management-Zusammenfassung</span>
-            </div>
-            <div class="system__panel-body">
-              <h3 class="system__panel-title">Nachweisbare Ergebnisse</h3>
-              <p class="system__panel-text">Klare Sicherheitsinformationen, die Sie kommunizieren und dem Management präsentieren können.</p>
-              <ul class="system__panel-points">
-                <li>Management-Berichte und Zusammenfassungen</li>
-                <li>Individuelles Sicherheitskonzept</li>
-                <li>Regelmäßige Überprüfungen und Aktualisierungen</li>
-              </ul>
-            </div>
-          </li>
-
-          <li class="system__panel" data-system-panel>
-            <!-- Not a "[Placeholder — photo]" like the five above: the
-                 brief's own visual for this one IS this exact 4-step
-                 flow, not a stand-in for a future photograph — so it's
-                 rendered as real content, in the same aspect-ratio box
-                 as every other panel's media for visual consistency. -->
-            <div class="system__panel-media system__panel-media--flow" aria-hidden="true">
-              <ol class="system__flow">
-                <li>Problem</li>
-                <li>Ursache</li>
-                <li>Korrekturmaßnahme</li>
-                <li>Behoben</li>
-              </ol>
-            </div>
-            <div class="system__panel-body">
-              <h3 class="system__panel-title">Volle Verantwortung</h3>
-              <p class="system__panel-text">Probleme werden konsequent verfolgt, bis die zugrunde liegende Ursache behoben ist.</p>
-              <ul class="system__panel-points">
-                <li>Ursachenbehebung bei Beschwerden</li>
-                <li>Direkter Feedback-Prozess mit FRANKONIA</li>
-              </ul>
-            </div>
-          </li>
-        </ol>
       </div>
     </section>
 
