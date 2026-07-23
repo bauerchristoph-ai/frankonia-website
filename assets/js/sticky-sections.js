@@ -63,14 +63,27 @@
       // at translateY(100%) from first paint (gated on .js-story + the media
       // query), so there's no flash; these sets just hand them to GSAP.
       const [s1, s2, s3] = surfaces;
-      gsap.set(surfaces, { yPercent: 100 });
 
-      // start:"top bottom" (not "top top") so Panel 1 begins rising from below
-      // the moment the story region enters the viewport from the bottom — i.e.
-      // right as the visitor scrolls past the full-width intro — instead of
-      // waiting for the sticky stage to pin at the top, which left a long empty
-      // black viewport before anything moved. P1's entrance finishes before the
-      // stage pins; the hold/exit + Panels 2–3 then play during the pinned run.
+      // Explicit initial states BEFORE building the timeline: all three
+      // surfaces parked fully below the stage (yPercent 100). Static z-index so
+      // each later panel stacks ABOVE the earlier ones — an incoming surface
+      // can never reveal an unrelated panel underneath, and a just-exited
+      // surface can't show through its replacement. The stage's overflow:hidden
+      // clips any surface at yPercent -100 completely off the top (not visible,
+      // not interactable), so pure transforms suffice — no autoAlpha needed,
+      // which also keeps reverse-scroll flicker-free.
+      gsap.set(s1, { yPercent: 100, zIndex: 1 });
+      gsap.set(s2, { yPercent: 100, zIndex: 2 });
+      gsap.set(s3, { yPercent: 100, zIndex: 3 });
+
+      // ONE scrubbed ScrollTrigger (existing Lenis/ticker untouched).
+      // start:"top bottom" so metricsEnter runs the instant the story scrolls
+      // in from the bottom: the white metrics surface is already rising while
+      // the black stage scrolls up, so there is NO empty black viewport waiting
+      // for the pin. metricsEnter is sized (duration 2 vs 1) to span that
+      // ~one-viewport scroll-in and land right as the sticky stage locks.
+      // end:"bottom bottom" releases exactly as benefitsExit completes, handing
+      // straight off to Pain Hook.
       const tl = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
@@ -81,24 +94,36 @@
         },
       });
 
-      // Right -> Left -> Right. Each surface: enter (rise from below) -> hold
-      // -> exit (up). The outgoing exit overlaps the next enter by ~0.2 units
-      // so the sequence stays continuous — no black gap, and (being on
-      // opposite halves) never two panels readable in the same place.
-      tl.to(s1, { yPercent: 0, duration: 1.3 }, 0.0);     // P1 enter  0.0–1.3
-      tl.to(s1, { yPercent: -100, duration: 1.3 }, 2.6);  // P1 exit   2.6–3.9
-      tl.to(s2, { yPercent: 0, duration: 1.3 }, 2.8);     // P2 enter  2.8–4.1
-      tl.to(s2, { yPercent: -100, duration: 1.3 }, 5.4);  // P2 exit   5.4–6.7
-      tl.to(s3, { yPercent: 0, duration: 1.3 }, 5.6);     // P3 enter  5.6–6.9
-      tl.to(s3, { yPercent: -100, duration: 1.3 }, 8.2);  // P3 exit   8.2–9.5
+      // Clean sequential timeline. Right -> Left -> Right. Each surface:
+      // enter (yPercent 100->0) -> HOLD (dead time, no tween) -> exit (0->-100).
+      // Holds NEVER overlap. Each incoming enter starts 0.3 units before the
+      // outgoing exit ends — a MOVEMENT overlap only: the previous panel is
+      // ~70% off the top before the next becomes readable, so two panels are
+      // never parked on screen together. Total = 9.4 units.
+      tl.addLabel("metricsEnter", 0)
+        .to(s1, { yPercent: 0, duration: 2 }, "metricsEnter")     // 0.0 -> 2.0 (scroll-in)
+        .addLabel("metricsHold", 2)                               // 2.0 -> 3.0 hold
+        .addLabel("metricsExit", 3)
+        .to(s1, { yPercent: -100, duration: 1 }, "metricsExit")   // 3.0 -> 4.0
+
+        .addLabel("logosEnter", 3.7)
+        .to(s2, { yPercent: 0, duration: 1 }, "logosEnter")       // 3.7 -> 4.7
+        .addLabel("logosHold", 4.7)                               // 4.7 -> 5.7 hold
+        .addLabel("logosExit", 5.7)
+        .to(s2, { yPercent: -100, duration: 1 }, "logosExit")     // 5.7 -> 6.7
+
+        .addLabel("benefitsEnter", 6.4)
+        .to(s3, { yPercent: 0, duration: 1 }, "benefitsEnter")    // 6.4 -> 7.4
+        .addLabel("benefitsHold", 7.4)                            // 7.4 -> 8.4 hold
+        .addLabel("benefitsExit", 8.4)
+        .to(s3, { yPercent: -100, duration: 1 }, "benefitsExit"); // 8.4 -> 9.4
 
       // Panel 1 metric count-up — driven by THIS timeline (scrub-synced,
       // reversible, deterministic; no setInterval, no IntersectionObserver,
       // and these metrics stay excluded from the global stat count-up via
       // data-no-countup). One proxy p:0->1; each number is target*p, formatted
       // in onUpdate with en-US thousands commas / fixed decimals / static
-      // suffix. Positioned to start ~0.4 (≈30% into P1's 0.0–1.3 entrance) and
-      // finish at 1.6, just after P1 rests.
+      // suffix. Runs across metricsEnter + into the hold (0.4 -> 2.4).
       const nums = Array.from(s1.querySelectorAll(".stat__num[data-count-to]"));
       const meta = nums.map((el) => ({
         el: el,
@@ -118,7 +143,7 @@
         });
       };
       if (meta.length) {
-        tl.fromTo(proxy, { p: 0 }, { p: 1, duration: 1.2, onUpdate: render }, 0.4);
+        tl.fromTo(proxy, { p: 0 }, { p: 1, duration: 2, onUpdate: render }, "metricsEnter+=0.4");
       }
 
       // Layout is CSS-driven from first paint, but the hero image is
