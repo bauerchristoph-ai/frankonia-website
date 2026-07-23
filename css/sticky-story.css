@@ -247,7 +247,14 @@
      column; scene 2 (left) never overlaps them. */
   .sticky-story__scene--1 { z-index: var(--sticky-story-z-1); }
   .sticky-story__scene--2 { z-index: var(--sticky-story-z-2); }
-  .sticky-story__scene--3 { z-index: var(--sticky-story-z-3); }
+  /* Taller last scene (client 2026-07-23) so it stays pinned ~60svh longer and
+     reads comfortably before the track releases into Pain Hook. The extra
+     height is scene 3's own light surface (not empty black), so there's still
+     no gap — it just gives the final panel a proper hold. */
+  .sticky-story__scene--3 {
+    z-index: var(--sticky-story-z-3);
+    height: 160svh;
+  }
 
   /* The inner content is vertically centred within the tall sticky scene. */
   .sticky-story__inner {
