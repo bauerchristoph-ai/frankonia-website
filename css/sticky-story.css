@@ -78,7 +78,10 @@
 }
 
 .sticky-story__scene--metrics {
-  background: var(--sticky-story-white);
+  /* White at the top fading to FRANKONIA blue at the bottom (client
+     2026-07-23). Metrics rows sit in the white zone; the DEKRA certs at the
+     bottom land on the blue (their colours are lightened below to read). */
+  background: linear-gradient(180deg, var(--color-white) 62%, var(--color-blue-dark));
   color: var(--sticky-story-ink);
 }
 .sticky-story__scene--logos {
@@ -145,10 +148,13 @@
 
 /* Certs strip (zone 3) — a thin divider, a subtle label, then the two DEKRA
    seals shown small so they read as secondary to the metrics. Lives OUTSIDE
-   the parallax inner and is pushed to the panel bottom on desktop (below). */
+   the parallax inner. Pushed to the panel bottom (margin-top:auto) so it
+   always lands on the blue foot of the gradient. Its divider + label are
+   LIGHT because they sit on the blue. */
 .sticky-story__certs {
+  margin-top: auto;
   padding-top: var(--sticky-story-space-3);
-  border-top: 1px solid var(--sticky-story-neutral-200);
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
   display: flex;
   flex-direction: column;
   gap: var(--sticky-story-space-2);
@@ -158,7 +164,7 @@
   font-size: 0.7rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--sticky-story-ink-muted);
+  color: rgba(255, 255, 255, 0.85);
 }
 .sticky-story__certs-badges {
   display: flex;
@@ -259,14 +265,6 @@
   /* The inner content is vertically centred within the tall sticky scene. */
   .sticky-story__inner {
     max-width: none;
-  }
-
-  /* Metrics panel = three zones: the parallax inner (heading + CTA + metric
-     rows) at the top, and the certs strip anchored to the bottom via auto
-     margin — generous negative space between them. The certs sit OUTSIDE the
-     parallax inner so they stay put while the metrics drift. */
-  .sticky-story__scene--metrics .sticky-story__certs {
-    margin-top: auto;
   }
 
   /* Logos panel: the marquee runs edge-to-edge (client 2026-07-23: no side
