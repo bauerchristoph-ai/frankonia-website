@@ -975,8 +975,10 @@ main h2 {
 @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
   .js-story .story {
     position: relative;
-    /* stick length for three enter/hold/exit cycles (see the JS timeline) */
-    height: calc(4.5 * 100svh);
+    /* stick length for the compact 5.7-unit timeline (see sticky-sections.js).
+       Shortened from 4.5 so the three enter/hold/exit cycles feel tight and
+       there are no long empty scroll stretches. */
+    height: calc(3.4 * 100svh);
   }
 
   .js-story .story__stage {
