@@ -1562,6 +1562,19 @@ main h2 {
    into list (left) + sticky preview (right) at 1024px, matching the
    grid's old first breakpoint. */
 
+/* Extra top space reserves the pixel-seam band (Our System -> Services) that
+   now sits at this section's top — covered zone lands in empty space, never
+   over real content, JS or not. Matches the band height (200px / 120px mobile
+   — see .pixel-seam__band; keep in sync). */
+.services {
+  padding-top: calc(var(--space-9) + 200px);
+}
+@media (max-width: 767.98px) {
+  .services {
+    padding-top: calc(var(--space-9) + 120px);
+  }
+}
+
 .services__index {
   display: grid;
   gap: var(--space-7);
