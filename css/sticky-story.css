@@ -85,13 +85,18 @@
   color: var(--sticky-story-ink);
 }
 .sticky-story__scene--logos {
-  /* Dark gray surface (client 2026-07-23: gris oscuro instead of blue) — the
-     site's elevated dark gray; white logos + title still read well on it. */
-  background: var(--color-gray);
+  /* Mirror of the metrics gradient (client 2026-07-23: "the other way
+     around") — FRANKONIA blue at the TOP fading to the dark gray at the
+     bottom. The non-blue end stays dark (not white) so the white logos +
+     title remain visible across the whole panel. */
+  background: linear-gradient(180deg, var(--color-blue-dark), var(--color-gray) 50%);
   color: var(--sticky-story-on-blue);
 }
 .sticky-story__scene--cards {
-  background: var(--sticky-story-neutral);
+  /* Same white -> Frankonia-blue gradient as the metrics panel (client
+     2026-07-23). The value cards are opaque white, so they stay readable over
+     the blue foot. */
+  background: linear-gradient(180deg, var(--color-white) 62%, var(--color-blue-dark));
   color: var(--sticky-story-ink);
 }
 
