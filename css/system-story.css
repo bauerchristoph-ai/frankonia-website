@@ -133,7 +133,11 @@
   font-size: var(--sys-fs-intro-title);
   line-height: var(--sys-lh-tight);
   letter-spacing: -0.02em;
-  font-weight: var(--sys-fw-bold);
+  /* Regular weight to match every other homepage section title (page-home.css
+     `main h2` is --font-weight-regular, not bold) — client 2026-07-23: "same
+     font and boldness as the rest of the titles". Font family already matches
+     (--font-family-base via --sys-font). */
+  font-weight: var(--sys-fw-regular);
   color: var(--sys-color-on-dark);
 }
 
