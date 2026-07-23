@@ -843,7 +843,9 @@ main h2 {
 }
 
 .story-logos__logo {
-  height: clamp(3.25rem, 1.5rem + 3vw, 5rem);
+  /* A touch smaller (client 2026-07-23) — same group gaps, so spacing is
+     unchanged, only the logos shrink slightly. */
+  height: clamp(2.75rem, 1.2rem + 2.6vw, 4.25rem);
   width: auto;
   object-fit: contain;
   flex-shrink: 0;
