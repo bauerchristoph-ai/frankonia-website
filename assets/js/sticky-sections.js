@@ -65,11 +65,17 @@
       const [s1, s2, s3] = surfaces;
       gsap.set(surfaces, { yPercent: 100 });
 
+      // start:"top bottom" (not "top top") so Panel 1 begins rising from below
+      // the moment the story region enters the viewport from the bottom — i.e.
+      // right as the visitor scrolls past the full-width intro — instead of
+      // waiting for the sticky stage to pin at the top, which left a long empty
+      // black viewport before anything moved. P1's entrance finishes before the
+      // stage pins; the hold/exit + Panels 2–3 then play during the pinned run.
       const tl = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
           trigger: story,
-          start: "top top",
+          start: "top bottom",
           end: "bottom bottom",
           scrub: 0.8,
         },

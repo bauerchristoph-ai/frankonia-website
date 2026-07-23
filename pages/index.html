@@ -284,13 +284,18 @@
          now — see CLAUDE.md for the full note and what needs to change
          (tile color strategy, not just re-adding the attribute) before
          this comes back. -->
-    <!-- ============ 1.4 TRUST LEAD-IN (centered heading) ============ -->
-    <!-- Centered "Vertraut in der ganzen Region" + supporting line, char-revealed
-         on scroll (title-reveal — no data-no-title-reveal here, unlike inside
-         the panels), as the lead-in BEFORE the sticky two-panel split (client
-         2026-07-22). The heading lives here now — it was moved OUT of the
-         metrics panel, so "the title goes first" and only then the split
-         shows metrics on one side / logos on the other. -->
+    <!-- ============ 1.4 TRUST INTRO (full-width, before the sticky story) === -->
+    <!-- "Trusted across the region" heading lives here now (client 2026-07-23),
+         NOT inside Panel 1 — a full-width black intro to the proof sequence. -->
+    <section class="section story-intro">
+      <div class="container">
+        <div class="story-intro__inner" data-reveal>
+          <h2><span class="trust-metrics__heading-line">Vertraut in der</span><span class="trust-metrics__heading-line">ganzen Region</span></h2>
+          <p class="story-intro__text">Langfristige Sicherheitspartnerschaften auf Basis von Zuverlässigkeit, Beständigkeit und messbarer Leistung.</p>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ 1.5 TRUST STORY (sticky sliding-panel region) ========= -->
     <!-- Codrops StickySections index9 motion, our structure (client redesign
          2026-07-23). Three complete half-screen SURFACES that slide vertically
@@ -298,7 +303,7 @@
          own background + all content) rises from yPercent:100 (below) to 0
          (rest) and exits to yPercent:-100 (up) — background and content move
          together as one sheet. Right -> Left -> Right (P1 metrics/proof white,
-         P2 logos black, P3 "Was Kunden erwarten können" grey). The inactive
+         P2 logos on FRANKONIA blue, P3 "Was Kunden erwarten können" grey). The inactive
          half stays the black stage.
 
          Architecture: CSS position:sticky on .story__stage (NEVER transformed,
@@ -306,10 +311,11 @@
          gsap.matchMedia timeline in assets/js/sticky-sections.js, reusing the
          existing single Lenis + GSAP ticker. Base CSS = normal document flow
          (no-JS / mobile / reduced-motion see three readable stacked sections).
-         The heading + metrics now live INSIDE Panel 1 (the earlier centered
-         lead-in was removed). Panel headings keep data-no-title-reveal and the
-         metrics data-no-countup so the shared modules don't double-animate;
-         the metric count-up is driven by the story timeline itself. -->
+         The "Trusted across the region" heading now lives in a full-width
+         intro section ABOVE this story (client 2026-07-23); Panel 1 holds only
+         a small eyebrow + the metrics. Panel headings keep data-no-title-reveal
+         and the metrics data-no-countup so the shared modules don't double-
+         animate; the metric count-up is driven by the story timeline itself. -->
     <section class="story" data-story aria-label="Warum Kunden FRANKONIA vertrauen">
       <div class="story__stage">
 
@@ -317,9 +323,7 @@
         <div class="story__panel story__panel--right" data-story-panel>
           <div class="story__panel-surface story__panel-surface--proof">
             <div class="story__panel-inner">
-              <p class="story__eyebrow">Bewährte Erfahrung</p>
-              <h2 class="story__heading" data-no-title-reveal><span class="trust-metrics__heading-line">Vertraut in der</span><span class="trust-metrics__heading-line">ganzen Region</span></h2>
-              <p class="story__text">Langfristige Sicherheitspartnerschaften auf Basis von Zuverlässigkeit, Beständigkeit und messbarer Leistung.</p>
+              <p class="story__eyebrow">Einige unserer Kennzahlen</p>
               <ul class="story__metrics">
                 <li class="stat">
                   <span class="stat__value" data-no-countup><span class="stat__num" data-count-to="300" data-suffix="+">300+</span></span>
@@ -343,32 +347,95 @@
           <div class="story__panel-surface story__panel-surface--logos">
             <div class="story__panel-inner">
               <p class="trust-metrics__logos-label story__logos-label">Vertraut von führenden Organisationen</p>
-              <div class="trust-metrics__clients logo-marquee">
-                <div class="logo-marquee__track">
-                  <div class="logo-marquee__group">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="DB Netze Logo" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="ADAC Logo" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="Bayerisches Rotes Kreuz Logo" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="Liapor Logo" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="Stadt Bamberg Logo" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="CleanTech Innovation Park Logo" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="Stadtwerke Bamberg Logo" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="Sozialstiftung Bamberg Logo" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="Bürgerspital Bamberg Logo" loading="lazy">
+              <div class="story-logos">
+              <div class="story-logos__row story-logos__row--left">
+                <div class="story-logos__track">
+                  <div class="story-logos__group">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="DB Netze Logo" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="ADAC Logo" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="Bayerisches Rotes Kreuz Logo" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="Liapor Logo" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="Stadt Bamberg Logo" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="CleanTech Innovation Park Logo" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="Stadtwerke Bamberg Logo" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="Sozialstiftung Bamberg Logo" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="Bürgerspital Bamberg Logo" loading="lazy">
                   </div>
-                  <div class="logo-marquee__group" aria-hidden="true">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
-                    <img class="logo-marquee__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="" loading="lazy">
+                  <div class="story-logos__group" aria-hidden="true">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="" loading="lazy">
                   </div>
                 </div>
               </div>
+              <div class="story-logos__row story-logos__row--right" aria-hidden="true">
+                <div class="story-logos__track">
+                  <div class="story-logos__group">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="" loading="lazy">
+                  </div>
+                  <div class="story-logos__group" aria-hidden="true">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="" loading="lazy">
+                  </div>
+                </div>
+              </div>
+              <div class="story-logos__row story-logos__row--left" aria-hidden="true">
+                <div class="story-logos__track">
+                  <div class="story-logos__group">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="" loading="lazy">
+                  </div>
+                  <div class="story-logos__group" aria-hidden="true">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="" loading="lazy">
+                  </div>
+                </div>
+              </div>
+              <div class="story-logos__row story-logos__row--right" aria-hidden="true">
+                <div class="story-logos__track">
+                  <div class="story-logos__group">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
+                  </div>
+                  <div class="story-logos__group" aria-hidden="true">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
             </div>
           </div>
         </div>

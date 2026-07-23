@@ -765,8 +765,12 @@ main h2 {
   background-color: var(--color-white);
   color: var(--color-logo-black);
 }
+/* Panel 2 — FRANKONIA brand blue (client redesign 2026-07-23), white logos
+   + label. Was --color-bg (black); the white client logos read as white-on-
+   blue now, so the four marquee rows below invert their fill to white. */
 .story__panel-surface--logos {
-  background-color: var(--color-bg);
+  background-color: var(--color-blue-dark);
+  color: var(--color-white);
 }
 .story__panel-surface--expect {
   background-color: var(--color-gray);
@@ -857,6 +861,116 @@ main h2 {
   }
 }
 
+/* ===================================================================
+   1.4 Trust intro — full-width black lead-in that sits BETWEEN the Hero
+   and the sticky story (client 2026-07-23). Holds the "Trusted across the
+   region" heading (moved out of Panel 1) + one supporting sentence.
+   Centered, editorial, generous spacing. NOT sticky, no metrics/logos.
+   =================================================================== */
+.story-intro {
+  text-align: center;
+  background-color: var(--color-bg);
+}
+
+.story-intro__inner {
+  max-width: 48rem;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.story-intro h2 {
+  line-height: 1.05;
+}
+
+.story-intro__text {
+  margin: 0;
+  max-width: 40rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-lg);
+}
+
+/* ===================================================================
+   Panel 2 logo marquee — FOUR horizontal rows (client 2026-07-23) on the
+   blue surface. Rows alternate direction (left / right / left / right) and
+   use different durations + negative delays + varied logo ordering so the
+   four rows never read as identical. Seamless loop: each row's track holds
+   two IDENTICAL groups; each group carries a trailing gap (padding-right)
+   so translateX(-50%) lands exactly on the second group = no jump. The
+   duplicate groups are aria-hidden; only Row 1's first group carries real
+   alt text (all nine organisations, once). Reduced-motion / mobile drop the
+   animation and wrap into a static centred grid — every logo still visible.
+   =================================================================== */
+.story__panel-surface--logos .story__logos-label {
+  color: var(--color-white);
+}
+
+.story-logos {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(var(--space-4), 2.5vw, var(--space-6));
+  width: 100%;
+}
+
+.story-logos__row {
+  overflow: hidden;
+  /* subtle side fade so logos ease in/out of the row edges */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.story-logos__track {
+  display: flex;
+  width: max-content;
+  animation: story-logos-scroll 60s linear infinite;
+}
+
+/* alternating directions + varied speeds/offsets per row */
+.story-logos__row--right .story-logos__track {
+  animation-direction: reverse;
+}
+.story-logos__row:nth-child(1) .story-logos__track { animation-duration: 62s; animation-delay: 0s; }
+.story-logos__row:nth-child(2) .story-logos__track { animation-duration: 74s; animation-delay: -19s; }
+.story-logos__row:nth-child(3) .story-logos__track { animation-duration: 68s; animation-delay: -9s; }
+.story-logos__row:nth-child(4) .story-logos__track { animation-duration: 56s; animation-delay: -27s; }
+
+.story-logos__group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: clamp(2.5rem, 4vw, 4.5rem);
+  padding-right: clamp(2.5rem, 4vw, 4.5rem);
+}
+
+.story-logos__logo {
+  height: clamp(3.25rem, 1.5rem + 3vw, 5rem);
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+@keyframes story-logos-scroll {
+  to { transform: translateX(-50%); }
+}
+
+/* Static fallback: mobile (<1024px) and reduced-motion — no marquee, wrap
+   each row into a centred static grid with every logo shown. Hides the
+   duplicate loop group so no logo appears twice. */
+@media (max-width: 1023.98px) {
+  .story-logos__row { -webkit-mask-image: none; mask-image: none; }
+  .story-logos__track { animation: none; width: 100%; flex-wrap: wrap; justify-content: center; }
+  .story-logos__group:nth-child(2) { display: none; }
+  .story-logos__group { flex-wrap: wrap; justify-content: center; padding-right: 0; row-gap: clamp(2rem, 4vw, 3rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .story-logos__row { -webkit-mask-image: none; mask-image: none; }
+  .story-logos__track { animation: none; width: 100%; flex-wrap: wrap; justify-content: center; }
+  .story-logos__group:nth-child(2) { display: none; }
+  .story-logos__group { flex-wrap: wrap; justify-content: center; padding-right: 0; row-gap: clamp(2rem, 4vw, 3rem); }
+}
+
 /* ---- Active sticky sliding layout (>=1024px + motion, JS present) ---- */
 @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
   .js-story .story {
@@ -912,12 +1026,11 @@ main h2 {
     padding: calc(var(--space-8) + 4rem) clamp(2.5rem, 4vw, 5rem) var(--space-8);
   }
 
-  /* Panel 1: heading block up top, metrics pushed to the lower area */
+  /* Panel 1: no heading anymore (moved to the full-width intro) — just the
+     small eyebrow + the metrics list, centred as one balanced group so there
+     is no large empty band on the white half. */
   .js-story .story__panel-surface--proof .story__panel-inner {
-    justify-content: flex-start;
-  }
-  .js-story .story__panel-surface--proof .story__metrics {
-    margin-top: auto;
+    justify-content: center;
   }
 
   /* Panel 3: compact 2-col pillar list, header-safe, fits the half at 100svh */
