@@ -2543,19 +2543,18 @@ main h2 {
    at every scroll position, not just during the transition — so the
    covered zone always lands in genuinely empty space instead of eating
    real content, whether or not JS/GSAP ever runs at all. Matches the
-   band's own height exactly (64px / 40px mobile, reduced from
-   120px/70px 2026-07-21 — client: too much white space at the top of
-   this section) — keep these two values in sync if the band's height
-   ever changes again. */
+   band's own height exactly (200px / 120px mobile — client 2026-07-23:
+   taller band for a more irregular dissolve edge) — keep these two
+   values in sync if the band's height ever changes again. */
 .outfits {
-  padding-top: calc(var(--space-9) + 64px);
+  padding-top: calc(var(--space-9) + 200px);
   background-color: #FAFAFA;
   color: var(--color-gray);
 }
 
 @media (max-width: 767.98px) {
   .outfits {
-    padding-top: calc(var(--space-9) + 40px);
+    padding-top: calc(var(--space-9) + 120px);
   }
 }
 
@@ -4007,11 +4006,11 @@ main h2 {
      light background; the previous ±120px straddle wasted half its
      height sitting invisibly over the dark section above. */
   top: 0;
-  /* 64px (was 120px — 2026-07-21, client: too much white space at the
-     top of the Uniforms section; the reserved space is driven by this
-     band height). Keep .outfits' matching padding-top (above, this
-     file) in sync if this changes again. */
-  height: 64px;
+  /* 200px (client 2026-07-23: taller so the dissolve edge has real depth
+     to be irregular across — with 40px tiles that's ~5 rows, vs the ~3 of
+     the old 64px band which forced an almost single-row comb). Keep
+     .outfits' matching padding-top (above, this file) in sync. */
+  height: 200px;
   display: grid;
   /* Column/row counts AND the explicit shared tile size are all set
      inline by js/pixel-transition.js after measuring the band's actual
@@ -4047,6 +4046,6 @@ main h2 {
 
 @media (max-width: 767.98px) {
   .pixel-seam__band {
-    height: 40px;
+    height: 120px;
   }
 }

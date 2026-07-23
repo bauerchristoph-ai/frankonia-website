@@ -92,10 +92,10 @@
   // One shared pixel size for BOTH columns and rows (not two
   // independently-rounded grid fractions) — this is what actually
   // guarantees square cells, matching the shader's own aspect-corrected
-  // single `gridSize` scalar. Smaller than the previous 48px so the band
-  // gets enough rows for the localized sweep-noise to read as noise
-  // rather than 2-3 chunky steps.
-  const TILE_SIZE = 24;
+  // single `gridSize` scalar. 40px (was 24px, client 2026-07-23: "bigger
+  // squares") — the taller band below keeps enough rows for the dissolve
+  // edge to stay noisy despite the chunkier tiles.
+  const TILE_SIZE = 40;
 
   seams.forEach((seam) => {
     const band = document.createElement("div");
@@ -109,12 +109,16 @@
     band.style.setProperty("--pixel-rows", rows);
     band.style.setProperty("--pixel-tile-size", TILE_SIZE + "px");
 
-    // Bounded to roughly one row's worth of progress-space (see the
-    // header comment above) — this is what keeps the noise localized
-    // around the moving sweep line instead of scattered across the
-    // whole band regardless of scroll position.
+    // Jitter widened to ~2 rows of progress-space (client 2026-07-23:
+    // "more irregular" — the previous ~1-row bound made an almost even
+    // comb edge). Now a tile can be out of step with its row by up to a
+    // full row on each side, so the black->transparent boundary spans
+    // several rows at once and reads as a rough, scattered, staticky
+    // dissolve rather than a single tidy line. Still anchored to the
+    // per-row ideal (below), so it stays a directional sweep, not fully
+    // uncorrelated noise across the whole band.
     const rowStep = rows > 1 ? 1 / (rows - 1) : 1;
-    const jitter = rowStep * 0.9;
+    const jitter = rowStep * 2.0;
 
     const tiles = [];
 
@@ -140,7 +144,7 @@
         // ever be out of step with its row by roughly one row's worth
         // of scroll, never scattered arbitrarily across the whole range.
         const rowJitter = (Math.random() - 0.5) * jitter;
-        const colJitter = (Math.random() - 0.5) * jitter * 0.4;
+        const colJitter = (Math.random() - 0.5) * jitter * 0.7;
         const revealAt = Math.min(1, Math.max(0, idealProgress + rowJitter + colJitter));
 
         tiles.push({ el: tile, revealAt, revealed: false });
