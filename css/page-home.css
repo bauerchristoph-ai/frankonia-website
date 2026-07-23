@@ -2704,8 +2704,14 @@ main h2 {
    right card (matches the current visual positions, just fills the right col).
    The tall card stretches to the left column's combined height by default. */
 @media (min-width: 640px) {
+  /* Left column WIDER than the right (client 2026-07-23: "las horizontales más
+     horizontales, así la vertical queda más chiquita y entra bien todo"). Wider
+     left cards wrap their text into fewer lines -> shorter -> the left column's
+     combined height drops; the narrower right column makes the tall card's text
+     wrap into MORE lines -> its content fills it. Both shrink the empty space
+     under the tall card. */
   .references__testimonials {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.6fr 1fr;
   }
   .references__testimonials .testimonial:nth-child(1) { grid-column: 1; grid-row: 1; }
   .references__testimonials .testimonial:nth-child(3) { grid-column: 1; grid-row: 2; }
