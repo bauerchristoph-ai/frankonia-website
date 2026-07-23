@@ -260,6 +260,17 @@
   .sticky-story__scene--metrics .sticky-story__certs {
     margin-top: auto;
   }
+
+  /* Logos panel: the marquee runs edge-to-edge (client 2026-07-23: no side
+     padding — logos start at the very panel edge). Drop the scene's inline
+     padding and re-apply it to just the heading so the title stays indented
+     while the rows bleed full-width. */
+  .sticky-story__scene--logos {
+    padding-inline: 0;
+  }
+  .sticky-story__scene--logos .sticky-story__scene-title {
+    padding-inline: var(--sticky-story-space-6);
+  }
 }
 
 /* --------------------------------------------------------------------------
