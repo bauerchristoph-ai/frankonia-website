@@ -101,7 +101,9 @@
 
 .sticky-story__scene-title {
   margin: 0 0 var(--sticky-story-space-4);
-  font-size: clamp(1.7rem, 3.4vw, 2.6rem);
+  /* Same size as the "Trusted across the region" intro heading (main h2,
+     page-home.css) — client 2026-07-23. */
+  font-size: clamp(1.375rem, 0.4rem + 3.7vw, 3.75rem);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-tight);
   letter-spacing: -0.01em;

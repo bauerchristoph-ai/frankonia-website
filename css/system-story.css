@@ -22,8 +22,11 @@
 
 :root {
   /* --- Colour (mapped onto Frankonia tokens) ----------------------------- */
-  --sys-color-page:            var(--color-bg);           /* black page bg    */
-  --sys-color-surface:         var(--color-white);        /* light card (odd) */
+  /* Light/white section (client 2026-07-23: white section, black letters —
+     was a black page bg). Cards use a light-gray surface so they stay visible
+     against the white section. */
+  --sys-color-page:            var(--color-white);        /* white section bg */
+  --sys-color-surface:         #f1f2f4;                   /* light-gray card (odd) — visible on white */
   --sys-color-surface-2:       #eef0f2;                   /* visual placeholder shade (temporary — replaced by real images) */
   --sys-color-ink:             var(--color-logo-black);   /* dark type on card */
   --sys-color-ink-soft:        var(--color-gray);         /* secondary text   */
@@ -31,8 +34,8 @@
   --sys-color-line:            rgb(1 1 1 / 0.12);         /* hairline on light */
   --sys-color-accent:          var(--color-blue-dark);    /* CTA fill / bullets */
   --sys-color-accent-ink:      #1e4e8c;                   /* darker blue for link text on white (no on-light blue token exists) */
-  --sys-color-on-dark:         var(--color-text);         /* intro title on black */
-  --sys-color-on-dark-soft:    var(--color-text-muted);   /* intro lede on black  */
+  --sys-color-on-dark:         var(--color-logo-black);   /* intro title on the white section */
+  --sys-color-on-dark-soft:    rgb(1 1 1 / 0.6);          /* intro lede on the white section */
 
   /* Even cards render on a light grey instead of white (like the demo). */
   --sys-card-panel-bg-alt:     #e6e9ec;
