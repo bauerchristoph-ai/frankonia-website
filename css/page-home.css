@@ -3657,6 +3657,16 @@ main h2 {
 .faq {
   background-color: var(--color-white);
   color: var(--color-gray);
+  /* Extra top space reserves the pixel-seam band (Coverage -> FAQ) that now
+     sits at this section's top — covered zone lands in empty space, never over
+     real content, JS or not. Matches the band height (200px / 120px mobile —
+     see .pixel-seam__band; keep in sync). */
+  padding-top: calc(var(--space-9) + 200px);
+}
+@media (max-width: 767.98px) {
+  .faq {
+    padding-top: calc(var(--space-9) + 120px);
+  }
 }
 
 /* Black, not grey (client request 2026-07-21) — was inheriting .faq's
