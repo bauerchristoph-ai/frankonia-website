@@ -91,6 +91,10 @@
     "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
     function () {
       scenes.forEach(function (el) {
+        // The metrics panel stays STILL (client 2026-07-23: its content should
+        // not drift while scrolling) — skip the parallax for scene 1.
+        if (el.classList.contains("sticky-story__scene--metrics")) return;
+
         var inner = el.querySelector("[data-sticky-story-inner]");
         if (!inner) return;
 
