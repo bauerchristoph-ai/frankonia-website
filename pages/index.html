@@ -1086,6 +1086,13 @@
       </div>
     </section>
 
+    <!-- Pixel-transition seam (Uniforms -> Social), client 2026-07-23.
+         LIGHT tiles (.pixel-seam--light = #FAFAFA, the colour of the
+         Uniforms section it transitions FROM) so they read against the dark
+         Social section the band sits inside. Empty by default; the tile band
+         is built by js/pixel-transition.js. See .pixel-seam in page-home.css. -->
+    <div class="pixel-seam pixel-seam--light" data-pixel-seam aria-hidden="true"></div>
+
     <!-- ============ 4.5. SOCIAL MEDIA ============ -->
     <!-- Added 2026-07-17, client request: a "story reel" style social
          proof section, format adapted from a client-supplied reference
@@ -1154,6 +1161,12 @@
         </div>
       </div>
     </section>
+
+    <!-- Pixel-transition seam (Social -> References), client 2026-07-23.
+         Default BLACK tiles (the colour of the dark Social section it
+         transitions FROM) against the white References section the band
+         sits inside. See .pixel-seam in page-home.css. -->
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
 
     <!-- ============ 5. REFERENCES — CUSTOMER RESULTS ============ -->
     <!-- Intro + results restyled 2026-07-17, client request: match

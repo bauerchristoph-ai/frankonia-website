@@ -2839,6 +2839,16 @@ main h2 {
 .references {
   background-color: var(--color-white);
   color: var(--color-gray);
+  /* Extra top space reserves the pixel-seam band (Social -> References) that
+     now sits at this section's top — the covered zone lands in empty space,
+     never over real content, whether or not JS runs. Matches the band height
+     (200px / 120px mobile — see .pixel-seam__band; keep in sync). */
+  padding-top: calc(var(--space-9) + 200px);
+}
+@media (max-width: 767.98px) {
+  .references {
+    padding-top: calc(var(--space-9) + 120px);
+  }
 }
 
 /* Black, not grey (client request 2026-07-21) — was inheriting
@@ -2864,6 +2874,19 @@ main h2 {
    doesn't break into "white mode" — .section--subtle (--color-bg-elevated)
    is the same dark-theme surface Pain Hook already uses, so every color
    below is a normal sitewide token, not a hardcoded "on white" value. */
+/* Extra top space reserves the pixel-seam band (Uniforms -> Social) that now
+   sits at this section's top — covered zone lands in empty space, never over
+   real content, JS or not. Matches the band height (200px / 120px mobile —
+   see .pixel-seam__band; keep in sync). */
+.social {
+  padding-top: calc(var(--space-9) + 200px);
+}
+@media (max-width: 767.98px) {
+  .social {
+    padding-top: calc(var(--space-9) + 120px);
+  }
+}
+
 .social__intro {
   text-align: center;
   margin-inline: auto;
@@ -3805,16 +3828,25 @@ main h2 {
 }
 
 .pixel-seam__tile {
-  /* One fixed color for every tile (7th revision) — no more per-half
-     matching to whichever section is behind it. The whole point is
-     contrast: solid black tiles read clearly against the light section
-     this band now sits inside (Uniforms), and dissolve to reveal it.
-     Set directly here, not per-tile in JS, since there's no longer a
-     split to compute — still consumes the real --color-bg token, not a
-     hardcoded hex, per this project's own coding conventions. */
-  background-color: var(--color-bg);
+  /* Tile colour = the background of the section ABOVE the seam (the
+     "outgoing" section that pixelates away), so it always contrasts against
+     the section the band sits inside (the one BELOW). Adjacent homepage
+     sections alternate light/dark, so this stays visible everywhere:
+       - Services (dark)  -> Uniforms (light):  black tiles  [default]
+       - Uniforms (light) -> Social (dark):     light tiles  [.pixel-seam--light]
+       - Social (dark)    -> References (light): black tiles [default]
+     Default is --color-bg (black); .pixel-seam--light overrides per seam via
+     --pixel-tile-color. Set here, not per-tile in JS. */
+  background-color: var(--pixel-tile-color, var(--color-bg));
   opacity: 1;
   transition: opacity 0.5s var(--easing-standard);
+}
+
+/* Seams that transition FROM a light section INTO a dark one need light
+   tiles (they sit over the dark section below). #FAFAFA matches .outfits'
+   own background — same documented on-light exception as elsewhere. */
+.pixel-seam--light {
+  --pixel-tile-color: #FAFAFA;
 }
 
 .pixel-seam__tile.is-revealed {
