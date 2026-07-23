@@ -92,33 +92,38 @@
           trigger: story,
           start: "top bottom",
           end: "bottom bottom",
-          scrub: 0.8,
+          // tighter scrub than before (0.8): the panels track the scroll more
+          // closely so a fast scroll can't leave an exiting panel lingering
+          // half-on-screen next to the one arriving.
+          scrub: 0.4,
         },
       });
 
-      // Sequential timeline (labels below). Right -> Left -> Right.
-      // metrics: rides in + HOLDS [0 -> 2.8] (spans the pre-pin ride-in, ~2.26u
-      //   to the pin, plus a pinned beat) then EXITS up.
-      // logos / benefits: parked below -> ENTER (yPercent 100->0) -> HOLD ->
-      //   EXIT (0->-100). Holds NEVER overlap; each incoming enter starts 0.3u
-      //   before the outgoing exit ends (movement overlap only), so the
-      //   previous panel is ~70% off the top before the next is readable —
-      //   never two panels parked on screen at once. Total = 10.2 units.
-      tl.addLabel("metricsHold", 0)                              // 0 -> 2.8 (ride-in + hold)
-        .addLabel("metricsExit", 2.8)
-        .to(s1, { yPercent: -100, duration: 1 }, "metricsExit")  // 2.8 -> 3.8
+      // STRICTLY SEQUENTIAL timeline (labels below). Right -> Left -> Right.
+      // Because the panels sit on OPPOSITE halves (metrics/benefits right, logos
+      // left), any moment two of them are mid-slide shows both at once. So there
+      // is ZERO overlap: each panel fully EXITS to yPercent -100 before the next
+      // one begins its enter. Only one panel is ever on screen (a brief fully-
+      // black handoff instant between them is intended — that is "one at a time",
+      // never two side by side). Exits/enters are short (0.8u) so the handoff is
+      // quick; holds are long (1.8u) for reading. Total = 10.6 units.
+      // metrics rides in with the stage and HOLDS [0 -> 3.0] (pin lands ~2.35u
+      // in, so it is resting well before it exits).
+      tl.addLabel("metricsHold", 0)                              // 0 -> 3.0 (ride-in + hold)
+        .addLabel("metricsExit", 3.0)
+        .to(s1, { yPercent: -100, duration: 0.8 }, "metricsExit")// 3.0 -> 3.8
 
-        .addLabel("logosEnter", 3.5)
-        .to(s2, { yPercent: 0, duration: 1 }, "logosEnter")      // 3.5 -> 4.5
-        .addLabel("logosHold", 4.5)                              // 4.5 -> 6.0 hold
-        .addLabel("logosExit", 6.0)
-        .to(s2, { yPercent: -100, duration: 1 }, "logosExit")    // 6.0 -> 7.0
+        .addLabel("logosEnter", 3.8)                             // starts as metrics finishes
+        .to(s2, { yPercent: 0, duration: 0.8 }, "logosEnter")    // 3.8 -> 4.6
+        .addLabel("logosHold", 4.6)                              // 4.6 -> 6.4 hold
+        .addLabel("logosExit", 6.4)
+        .to(s2, { yPercent: -100, duration: 0.8 }, "logosExit")  // 6.4 -> 7.2
 
-        .addLabel("benefitsEnter", 6.7)
-        .to(s3, { yPercent: 0, duration: 1 }, "benefitsEnter")   // 6.7 -> 7.7
-        .addLabel("benefitsHold", 7.7)                           // 7.7 -> 9.2 hold
-        .addLabel("benefitsExit", 9.2)
-        .to(s3, { yPercent: -100, duration: 1 }, "benefitsExit");// 9.2 -> 10.2
+        .addLabel("benefitsEnter", 7.2)                          // starts as logos finishes
+        .to(s3, { yPercent: 0, duration: 0.8 }, "benefitsEnter") // 7.2 -> 8.0
+        .addLabel("benefitsHold", 8.0)                           // 8.0 -> 9.8 hold
+        .addLabel("benefitsExit", 9.8)
+        .to(s3, { yPercent: -100, duration: 0.8 }, "benefitsExit");// 9.8 -> 10.6
 
       // Panel 1 metric count-up — driven by THIS timeline (scrub-synced,
       // reversible, deterministic; no setInterval, no IntersectionObserver,
