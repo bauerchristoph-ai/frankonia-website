@@ -76,16 +76,22 @@
     these checkpoint coordinates are chosen to sit just OUTSIDE each
     block's box so the route threads the bays without crossing text.
   */
+  // Redesign 2026-07-23 (client brief: match the BLUE reference — a delicate
+  // hairline thread with LARGE, smooth rounded corners and a spacious,
+  // editorial staircase, not a tight technical circuit). Big radii (14) and
+  // wide sweeps leave generous negative space; the four checkpoints sit in a
+  // scattered top-right / mid-left / lower-right / bottom-left rhythm that the
+  // text blocks (page-home.css .pain-hook__item--1..4) follow.
   const POINTS = [
-    { x: -12, y: 12 },                       // enters from OUTSIDE the box (off-canvas left)
-    { x: 66,  y: 12, checkpoint: 0, r: 7 },  // CP1 corner — turn down (right-upper)
-    { x: 66,  y: 40, r: 7 },                 // corner — turn left
-    { x: 30,  y: 40, checkpoint: 1, r: 7 },  // CP2 corner — turn down (left-mid)
-    { x: 30,  y: 66, r: 7 },                 // corner — turn right
-    { x: 66,  y: 66, checkpoint: 2, r: 7 },  // CP3 corner — turn down (right-lower)
-    { x: 66,  y: 88, r: 7 },                 // corner — turn left
-    { x: 40,  y: 88, checkpoint: 3, r: 7 },  // CP4 corner — turn down (centre-lower)
-    { x: 40,  y: 106 },                      // exits OUTSIDE the box (off-canvas bottom)
+    { x: -10, y: 12 },                        // enters off-canvas (top-left)
+    { x: 54,  y: 12, checkpoint: 0, r: 14 },  // CP1 — top, near the top-right block
+    { x: 54,  y: 36, r: 14 },                 // big rounded turn — sweep left
+    { x: 14,  y: 36, checkpoint: 1, r: 14 },  // CP2 — mid-left block
+    { x: 14,  y: 60, r: 14 },                 // big rounded turn — sweep right
+    { x: 60,  y: 60, checkpoint: 2, r: 14 },  // CP3 — lower-right block
+    { x: 60,  y: 84, r: 14 },                 // big rounded turn — sweep left
+    { x: 22,  y: 84, checkpoint: 3, r: 14 },  // CP4 — bottom-left block
+    { x: 22,  y: 112 },                       // exits off-canvas (bottom)
   ];
 
   // Circuit-trace builder (redesign 2026-07-21, client brief: rectilinear

@@ -1265,10 +1265,13 @@ main h2 {
 .pain-hook__node {
   display: none;
   position: absolute;
-  width: 0.6rem;
-  height: 0.6rem;
-  border-radius: 2px;
-  background-color: rgb(255 255 255 / 0.25);
+  /* Tiny, minimal square marker (redesign 2026-07-23 to match the blue
+     reference's small subtle dots) — smaller and quieter than before so the
+     nodes stay secondary to the thin line and the text. */
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 1px;
+  background-color: rgb(255 255 255 / 0.3);
   transform: translate(-50%, -50%) scale(1);
   transition: background-color var(--duration-base) var(--easing-premium),
     transform var(--duration-base) var(--easing-premium);
@@ -1356,15 +1359,16 @@ main h2 {
   max-width: 32rem;
 }
 
-.pain-hook__icon {
-  width: 2.75rem;
-  height: 2.75rem;
-  margin-bottom: var(--space-4);
-}
-
+/* Large, LIGHT, left-aligned heading (redesign 2026-07-23, blue reference):
+   these scattered challenge headings are the dominant text now that the icons
+   are gone. Regular weight (matches the site's `main h2`, not the bold h3
+   default) + a fluid clamp so they read big but stay below the section h2. */
 .pain-hook__title {
-  font-size: var(--font-size-lg);
-  margin-bottom: var(--space-2);
+  font-size: clamp(1.5rem, 1.15rem + 1.5vw, 2.5rem);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-3);
 }
 
 .pain-hook__text {
@@ -1451,23 +1455,20 @@ main h2 {
      roughly 1px / 1.75px (fine hairlines, per the reference) regardless
      of how preserveAspectRatio="none" stretches the viewBox. */
 
-  /* Base: the full route, always visible, low-contrast muted blue. No
-     glow, no dash — just the quiet "map" of where the journey goes. */
+  /* Redesign 2026-07-23 (blue reference): the line is a DELICATE, secondary
+     thread — a true hairline, no glow. Base is a barely-there guide; the
+     active draw is FRANKONIA blue at the same ~1px weight, just a touch
+     brighter, so it reads as one fine line quietly filling in — never the
+     dominant visual object. non-scaling-stroke (above) keeps it ~1px on
+     screen regardless of how preserveAspectRatio="none" stretches the box. */
   .pain-hook__route-path--base {
-    stroke: rgb(61 154 211 / 0.35);
+    stroke: rgb(255 255 255 / 0.14);
     stroke-width: 1;
   }
 
-  /* Active: FRANKONIA blue, slightly brighter and thicker, drawn on top
-     of the base as scroll progresses (stroke-dasharray/dashoffset set at
-     runtime once js/pain-hook-journey.js knows the path's real length).
-     Restrained two-step drop-shadow glow (brief's recommended treatment)
-     — controlled, not neon; no large blur, no cyan, no pulse. */
   .pain-hook__route-path--active {
     stroke: var(--color-accent);
-    stroke-width: 1.75;
-    filter: drop-shadow(0 0 3px rgb(61 154 211 / 0.75))
-      drop-shadow(0 0 9px rgb(61 154 211 / 0.28));
+    stroke-width: 1.25;
   }
 
   /* Colors/transition/positioning are all set unconditionally above
@@ -1494,26 +1495,15 @@ main h2 {
      (indented toward centre). max-width caps each block so the left- and
      right-side blocks never collide across the middle, and so the route
      always passes just outside the text rather than through it. */
+  /* All blocks LEFT-aligned now (redesign 2026-07-23, blue reference: even the
+     top-right block reads left-aligned within its own column — text is never
+     right-aligned). Scattered, spacious placement via --1..4 below; the thin
+     line threads the negative space between them. */
   .pain-hook__item {
     position: absolute;
-    max-width: 26%;
+    max-width: min(32%, 26rem);
     display: flex;
     flex-direction: column;
-  }
-
-  /* Blocks alternate sides in the circuit's bays: 01 right-upper,
-     02 left-mid, 03 right-lower, 04 lower-centre-left. Right-side blocks
-     read right-aligned, left-side blocks left-aligned. Colour is never
-     the only active cue — the reveal (opacity/position) + the node/halo
-     carry it too. */
-  .pain-hook__item--1,
-  .pain-hook__item--3 {
-    align-items: flex-end;
-    text-align: right;
-  }
-
-  .pain-hook__item--2,
-  .pain-hook__item--4 {
     align-items: flex-start;
     text-align: left;
   }
@@ -1527,10 +1517,10 @@ main h2 {
      coordinated by hand so the circuit trace threads the bays between the
      blocks without crossing any text. Each block sits just inside the
      edge from its checkpoint node. */
-  .pain-hook__item--1 { top: 2%;  right: 2%; }
-  .pain-hook__item--2 { top: 30%; left: 2%; }
-  .pain-hook__item--3 { top: 56%; right: 2%; }
-  .pain-hook__item--4 { top: 78%; left: 8%; }
+  .pain-hook__item--1 { top: 5%;  right: 5%; }
+  .pain-hook__item--2 { top: 31%; left: 6%; }
+  .pain-hook__item--3 { top: 56%; right: 5%; }
+  .pain-hook__item--4 { top: 81%; left: 8%; }
 
   .pain-hook__text {
     max-width: 22rem;
