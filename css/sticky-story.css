@@ -177,7 +177,8 @@
    static grid below 1024px / under reduced motion (their own media queries),
    which is exactly the mobile fallback we want here. */
 .sticky-story__scene--logos .story-logos {
-  margin-top: var(--sticky-story-space-2);
+  /* Larger gap between the title and the logo rows (client 2026-07-23). */
+  margin-top: var(--sticky-story-space-6);
 }
 
 /* --- Scene 3: value cards ------------------------------------------------- */
