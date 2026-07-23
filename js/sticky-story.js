@@ -39,6 +39,52 @@
 
   gsap.registerPlugin(ScrollTrigger);
 
+  // Scene 1 metric count-up — numbers rise to their target as they scroll into
+  // view (client 2026-07-23: "like before"). Decimal-aware (4.7) via
+  // data-count-to/data-suffix/data-decimals, en-US thousands grouping. Runs at
+  // ALL widths, independent of the desktop parallax below. Reduced-motion / no
+  // IntersectionObserver / no-JS all just keep the real final number that is
+  // already in the markup — pure enhancement.
+  initCounters(root);
+
+  function initCounters(el) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!("IntersectionObserver" in window)) return;
+    var nums = el.querySelectorAll("[data-count-to]");
+    if (!nums.length) return;
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          countUp(entry.target);
+          io.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.4 }
+    );
+    nums.forEach(function (n) { io.observe(n); });
+  }
+
+  function countUp(node) {
+    var target = parseFloat(node.getAttribute("data-count-to"));
+    if (isNaN(target)) return;
+    var decimals = parseInt(node.getAttribute("data-decimals") || "0", 10);
+    var suffix = node.getAttribute("data-suffix") || "";
+    var duration = 1200;
+    var start = performance.now();
+    function tick(now) {
+      var p = Math.min((now - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      var v = target * eased;
+      var text = decimals > 0
+        ? v.toFixed(decimals)
+        : Math.round(v).toLocaleString("en-US");
+      node.textContent = text + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
   var mm = gsap.matchMedia();
 
   mm.add(

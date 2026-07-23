@@ -113,10 +113,11 @@
 .sticky-story__metric-value {
   margin: 0;
   font-size: clamp(2.6rem, 5vw, 4rem);
-  font-weight: var(--font-weight-bold);
+  /* Regular weight + dark ink (client 2026-07-23: not bold, not blue). */
+  font-weight: var(--font-weight-regular);
   line-height: 1;
   letter-spacing: -0.02em;
-  color: var(--sticky-story-blue);
+  color: var(--sticky-story-ink);
 }
 .sticky-story__metric-label {
   margin: var(--sticky-story-space-1) 0 0;
