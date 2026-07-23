@@ -807,31 +807,32 @@ main h2 {
 .story-logos {
   display: flex;
   flex-direction: column;
-  gap: clamp(var(--space-4), 2.5vw, var(--space-6));
+  /* More vertical space between rows (client 2026-07-23). */
+  gap: clamp(var(--space-6), 4vw, var(--space-8));
   width: 100%;
 }
 
 .story-logos__row {
+  /* No edge fade (client 2026-07-23: logos run to the section edge). */
   overflow: hidden;
-  /* subtle side fade so logos ease in/out of the row edges */
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
 
 .story-logos__track {
   display: flex;
   width: max-content;
-  animation: story-logos-scroll 60s linear infinite;
+  animation: story-logos-scroll 110s linear infinite;
 }
 
-/* alternating directions + varied speeds/offsets per row */
+/* alternating directions + varied (slower) speeds/offsets per row.
+   Durations raised ~1.8x (client 2026-07-23: less velocity). */
 .story-logos__row--right .story-logos__track {
   animation-direction: reverse;
 }
-.story-logos__row:nth-child(1) .story-logos__track { animation-duration: 62s; animation-delay: 0s; }
-.story-logos__row:nth-child(2) .story-logos__track { animation-duration: 74s; animation-delay: -19s; }
-.story-logos__row:nth-child(3) .story-logos__track { animation-duration: 68s; animation-delay: -9s; }
-.story-logos__row:nth-child(4) .story-logos__track { animation-duration: 56s; animation-delay: -27s; }
+.story-logos__row:nth-child(1) .story-logos__track { animation-duration: 110s; animation-delay: 0s; }
+.story-logos__row:nth-child(2) .story-logos__track { animation-duration: 128s; animation-delay: -19s; }
+.story-logos__row:nth-child(3) .story-logos__track { animation-duration: 118s; animation-delay: -9s; }
+.story-logos__row:nth-child(4) .story-logos__track { animation-duration: 100s; animation-delay: -27s; }
+.story-logos__row:nth-child(5) .story-logos__track { animation-duration: 134s; animation-delay: -14s; }
 
 .story-logos__group {
   display: flex;

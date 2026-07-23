@@ -186,6 +186,10 @@
     width: 50vw;
     height: 100svh;
     min-height: 0;
+    /* Top-aligned content (client 2026-07-23: the scene titles must line up
+       across panels — was centred, so shorter/taller content put the titles
+       at different heights). Same top padding on every scene → titles align. */
+    justify-content: flex-start;
     /* Clear the fixed header at the top; generous, controlled padding. */
     padding: calc(var(--sticky-story-space-6) + 2rem) var(--sticky-story-space-6)
       var(--sticky-story-space-6);
