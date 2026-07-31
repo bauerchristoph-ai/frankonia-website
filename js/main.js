@@ -8,6 +8,7 @@
 
 initScrollReveal();
 initNavToggle();
+initMobileSubmenu();
 initServicePreview();
 initFaqToggle();
 initActiveNavLink();
@@ -36,6 +37,70 @@ function initNavToggle() {
     toggle.setAttribute("aria-expanded", String(!isOpen));
     nav.hidden = isOpen;
   });
+}
+
+/**
+ * Turns the mobile nav's "Leistungen" submenu into a real disclosure.
+ *
+ * Below the desktop breakpoint the submenu renders as a permanently-expanded
+ * nested list. That was a deliberate call (no extra tap-to-open step on touch),
+ * but on a phone it costs more than it saves: the ten service links push
+ * Referenzen / Unser System / Karriere / Kontakt — and the header's
+ * Sicherheitsanalyse CTA, the site's primary conversion action — off the bottom
+ * of the open menu, so the top-level nav no longer fits on one screen.
+ *
+ * Same JS-only-ever-enhances contract as initNavToggle above: the markup ships
+ * expanded, and this function is the ONLY thing that ever collapses it. No JS,
+ * a script error, or a viewport at/above the desktop breakpoint all leave every
+ * service link visible and reachable. The caret in the markup is decorative
+ * (aria-hidden) and lives inside the parent <a>, which must stay a real link to
+ * /leistungen/ — so the disclosure gets its own sibling <button> rather than
+ * hijacking that link's click.
+ */
+function initMobileSubmenu() {
+  const item = document.querySelector(".site-nav__item--has-submenu");
+  if (!item) return;
+  const submenu = item.querySelector(".site-nav__submenu");
+  const link = item.querySelector(".site-nav__link");
+  if (!submenu || !link) return;
+
+  // Matches site-chrome.css's own desktop-nav breakpoint — above it the submenu
+  // is a hover/focus panel and this button has no business existing.
+  const mobile = window.matchMedia("(max-width: 1399.98px)");
+
+  const id = submenu.id || "site-nav-submenu";
+  submenu.id = id;
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "site-nav__submenu-toggle";
+  btn.setAttribute("aria-controls", id);
+  btn.setAttribute("aria-expanded", "false");
+  // The label names what it discloses; the visible caret is decorative.
+  btn.setAttribute("aria-label", link.textContent.trim() + " – Untermenü");
+
+  function setOpen(open) {
+    btn.setAttribute("aria-expanded", String(open));
+    item.classList.toggle("is-submenu-open", open);
+  }
+
+  btn.addEventListener("click", () => {
+    setOpen(btn.getAttribute("aria-expanded") !== "true");
+  });
+
+  function apply() {
+    if (mobile.matches) {
+      if (!btn.isConnected) link.after(btn);
+      item.classList.add("has-js-submenu");
+      setOpen(false);
+    } else {
+      if (btn.isConnected) btn.remove();
+      item.classList.remove("has-js-submenu", "is-submenu-open");
+    }
+  }
+
+  apply();
+  mobile.addEventListener("change", apply);
 }
 
 /**
@@ -202,7 +267,13 @@ function initActiveNavLink() {
   const currentPath = window.location.pathname.replace(/\/?$/, "/");
 
   list.querySelectorAll("a[href]").forEach((link) => {
-    if (link.getAttribute("href") === "#") return;
+    const href = link.getAttribute("href");
+    // Skip in-page anchor links (e.g. Contact -> "/en/#sicherheitsanalyse").
+    // An anchor to a section of a page is not a distinct page, so it must
+    // never get the current-page pill — otherwise Contact lights up on the
+    // homepage it points into. Keeps DE/EN nav consistent (German "Kontakt"
+    // points to the real /kontakt/ page and is unaffected).
+    if (!href || href.includes("#")) return;
 
     const linkPath = link.pathname.replace(/\/?$/, "/");
     if (linkPath !== currentPath) return;
@@ -273,11 +344,16 @@ function initStatCountUp() {
  * guessing.
  */
 function animateCountUp(el) {
-  const match = el.textContent.trim().match(/^(\D*)([\d,]+)(\D*)$/);
+  const match = el.textContent.trim().match(/^(\D*)([\d.,]+)(\D*)$/);
   if (!match) return;
 
   const prefix = match[1];
-  const target = parseInt(match[2].replace(/,/g, ""), 10);
+  // Preserve the source's thousands separator so this shared function formats
+  // correctly on BOTH homepages: comma → "25,000" (en), period → "25.000" (de),
+  // none → plain digits. (main.js is loaded by the DE and EN pages alike.)
+  const sepMatch = match[2].match(/[.,]/);
+  const sep = sepMatch ? sepMatch[0] : "";
+  const target = parseInt(match[2].replace(/[.,]/g, ""), 10);
   const suffix = match[3];
   const duration = 1200;
   const start = performance.now();
@@ -285,7 +361,10 @@ function animateCountUp(el) {
   function tick(now) {
     const progress = Math.min((now - start) / duration, 1);
     const eased = 1 - Math.pow(1 - progress, 3);
-    el.textContent = prefix + Math.round(target * eased).toLocaleString("en-US") + suffix;
+    let formatted = Math.round(target * eased).toLocaleString("en-US");
+    if (sep === ".") formatted = formatted.replace(/,/g, ".");
+    else if (sep === "") formatted = formatted.replace(/,/g, "");
+    el.textContent = prefix + formatted + suffix;
     if (progress < 1) requestAnimationFrame(tick);
   }
 

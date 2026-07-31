@@ -31,13 +31,20 @@ const PAGES_DIR = path.join(ROOT, "pages");
 const PARTIALS_DIR = path.join(ROOT, "partials");
 const DIST_DIR = path.join(ROOT, "dist");
 
-// Copied into dist/ verbatim, no processing.
+// Copied into dist/ verbatim, no processing. (css/ is handled by buildCss()
+// below — minified + bundled — so it's not a plain passthrough.)
 const PASSTHROUGH = [
-  { from: "css", to: "css" },
   { from: "js", to: "js" },
   { from: "assets", to: "assets" },
   { from: "robots.txt", to: "robots.txt" },
   { from: "sitemap.xml", to: "sitemap.xml" },
+];
+
+// The 7 site-wide stylesheets (head-common.html cascade order) are concatenated
+// into a single /css/app.css bundle to cut render-blocking requests. Keep this
+// list + order in sync with partials/head-common.html.
+const SHARED_CSS_ORDER = [
+  "tokens", "reset", "base", "layout", "components", "site-chrome", "motion",
 ];
 
 const INCLUDE_RE = /<!--\s*include:\s*([\w-]+)\s*-->/g;
@@ -129,6 +136,57 @@ function buildPassthrough() {
   }
 }
 
+// Conservative, safe CSS minification: strip /* comments */, then trim each
+// line and drop blank lines. It never touches whitespace *within* a line, so
+// strings (content:"…", font-family, url()) are untouched. This codebase is
+// heavily commented, so this alone is a large size cut with no risk of
+// breaking values. (Not maximal minification — deliberately, for safety.)
+function minifyCss(css) {
+  return css
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .join("\n");
+}
+
+// Minify every css/**/*.css into dist/, and concatenate the SHARED_CSS_ORDER
+// files (in cascade order) into a single dist/css/app.css bundle that
+// head-common.html links instead of the 7 individual files.
+function buildCss() {
+  const srcRoot = path.join(ROOT, "css");
+  const outRoot = path.join(DIST_DIR, "css");
+  if (!fs.existsSync(srcRoot)) return;
+  fs.mkdirSync(outRoot, { recursive: true });
+  const shared = {};
+
+  (function walk(dir, rel) {
+    for (const entry of fs.readdirSync(dir)) {
+      if (entry === ".DS_Store") continue;
+      const full = path.join(dir, entry);
+      const relPath = rel ? path.join(rel, entry) : entry;
+      if (fs.statSync(full).isDirectory()) {
+        walk(full, relPath);
+        continue;
+      }
+      if (!entry.endsWith(".css")) continue;
+      const minified = minifyCss(fs.readFileSync(full, "utf8"));
+      const name = entry.replace(/\.css$/, "");
+      // Top-level shared file -> goes into the bundle, not copied individually.
+      if (!rel && SHARED_CSS_ORDER.includes(name)) {
+        shared[name] = minified;
+        continue;
+      }
+      const dest = path.join(outRoot, relPath);
+      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      fs.writeFileSync(dest, minified, "utf8");
+    }
+  })(srcRoot, "");
+
+  const bundle = SHARED_CSS_ORDER.map((n) => shared[n] || "").join("\n");
+  fs.writeFileSync(path.join(outRoot, "app.css"), bundle, "utf8");
+}
+
 function build() {
   // maxRetries/retryDelay: macOS can throw a transient ENOTEMPTY/EBUSY here if
   // something touches dist/ mid-delete (a .DS_Store / Spotlight write, or a
@@ -137,6 +195,7 @@ function build() {
   fs.mkdirSync(DIST_DIR, { recursive: true });
   const count = buildPages();
   buildPassthrough();
+  buildCss();
   console.log(`build: done — ${count} page(s) compiled, assets copied to dist/.`);
 }
 

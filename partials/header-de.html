@@ -44,13 +44,11 @@
       </ul>
 
       <div class="site-nav__actions">
-        <!-- Sprachumschalter: DE ist hier aktiv; EN verlinkt die englische
-             Startseite unter /en/. -->
-        <div class="lang-switch" aria-label="Sprache">
-          <a class="lang-switch__link is-active" href="/" hreflang="de" lang="de" aria-current="true">DE</a>
-          <a class="lang-switch__link" href="/en/" hreflang="en" lang="en">EN</a>
-        </div>
-        <a class="btn btn--primary" href="/#sicherheitsanalyse">Analyse anfordern<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        <!-- Language switch removed from the nav (client 2026-07-27): the site
+             reads as German-only; the English version (/en/) still exists and is
+             connected via the <head> hreflang alternates, so Google can still
+             surface / offer the English page in search. No in-page toggle. -->
+        <a class="btn btn--primary" href="/#sicherheitsanalyse">Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
       </div>
     </nav>
   </div>

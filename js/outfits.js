@@ -43,12 +43,10 @@ const OUTFITS = [
     context: "For everyday reception and front-of-house duty",
     front: {
       webp: "/assets/images/outfits/polo-front.webp",
-      png: "/assets/images/outfits/polo-front.png",
       alt: "FRANKONIA security staff member wearing a black polo uniform, front view.",
     },
     angled: {
       webp: "/assets/images/outfits/polo-angled.webp",
-      png: "/assets/images/outfits/polo-angled.png",
       alt: "FRANKONIA security staff member wearing a black polo uniform, alternate view.",
     },
   },
@@ -57,12 +55,10 @@ const OUTFITS = [
     context: "For general on-site assignments in mild weather",
     front: {
       webp: "/assets/images/outfits/pullover-front.webp",
-      png: "/assets/images/outfits/pullover-front.png",
       alt: "FRANKONIA security staff member wearing a black quarter-zip pullover, front view.",
     },
     angled: {
       webp: "/assets/images/outfits/pullover-angled.webp",
-      png: "/assets/images/outfits/pullover-angled.png",
       alt: "FRANKONIA security staff member wearing a black quarter-zip pullover, alternate view.",
     },
   },
@@ -71,21 +67,18 @@ const OUTFITS = [
     context: "For high-visibility outdoor and patrol duty",
     front: {
       webp: "/assets/images/outfits/weste-front.webp",
-      png: "/assets/images/outfits/weste-front.png",
       alt: "FRANKONIA security staff member wearing a high-visibility safety vest, front view.",
     },
     angled: {
       webp: "/assets/images/outfits/weste-angled.webp",
-      png: "/assets/images/outfits/weste-angled.png",
       alt: "FRANKONIA security staff member wearing a high-visibility safety vest, alternate view.",
     },
   },
   {
     label: "Softshell Jacket",
-    context: "For active outdoor assignments in changing weather",
+    context: "For outdoor assignments in changing weather",
     front: {
       webp: "/assets/images/outfits/softshell-front.webp",
-      png: "/assets/images/outfits/softshell-front.png",
       alt: "FRANKONIA security staff member wearing a black softshell jacket, front view.",
     },
     // Found 2026-07-17 — the "no angled photo for Softshell" finding
@@ -102,7 +95,6 @@ const OUTFITS = [
     // genuine RGBA, confirmed via getextrema, not just file mode).
     angled: {
       webp: "/assets/images/outfits/softshell-angled.webp",
-      png: "/assets/images/outfits/softshell-angled.png",
       alt: "FRANKONIA security staff member wearing a black softshell jacket, alternate view.",
     },
   },
@@ -111,12 +103,10 @@ const OUTFITS = [
     context: "For outdoor patrols and cold-weather assignments",
     front: {
       webp: "/assets/images/outfits/winterjacke-front.webp",
-      png: "/assets/images/outfits/winterjacke-front.png",
       alt: "FRANKONIA security staff member wearing a black winter jacket with hood, front view.",
     },
     angled: {
       webp: "/assets/images/outfits/winterjacke-angled.webp",
-      png: "/assets/images/outfits/winterjacke-angled.png",
       alt: "FRANKONIA security staff member wearing a black winter jacket with hood, alternate view.",
     },
   },
@@ -125,12 +115,10 @@ const OUTFITS = [
     context: "For client-facing reception and desk assignments",
     front: {
       webp: "/assets/images/outfits/hemd-front.webp",
-      png: "/assets/images/outfits/hemd-front.png",
       alt: "FRANKONIA security staff member wearing a light gray dress shirt, front view.",
     },
     angled: {
       webp: "/assets/images/outfits/hemd-angled.webp",
-      png: "/assets/images/outfits/hemd-angled.png",
       alt: "FRANKONIA security staff member wearing a light gray dress shirt, alternate view.",
     },
   },
@@ -139,12 +127,10 @@ const OUTFITS = [
     context: "For formal, client-facing assignments",
     front: {
       webp: "/assets/images/outfits/anzug-front.webp",
-      png: "/assets/images/outfits/anzug-front.png",
       alt: "FRANKONIA security staff member wearing a black suit, front view.",
     },
     angled: {
       webp: "/assets/images/outfits/anzug-angled.webp",
-      png: "/assets/images/outfits/anzug-angled.png",
       alt: "FRANKONIA security staff member wearing a black suit, alternate view.",
     },
   },
@@ -219,11 +205,14 @@ function initOutfitViewer() {
     if (nameEl) nameEl.textContent = outfit.label;
     if (contextEl) contextEl.textContent = outfit.context;
 
-    if (img.src.endsWith(asset.png) && source.srcset === asset.webp) return;
+    if (img.src.endsWith(asset.webp) && source.srcset === asset.webp) return;
 
     const swap = () => {
       source.srcset = asset.webp;
-      img.src = asset.png;
+      // webp-only now (perf, 2026-07-27): the PNG fallbacks were ~4.6MB of the
+      // deploy and only served to the ~2-3% of browsers without webp support.
+      // The <img> src is the webp too; the <source> is redundant but harmless.
+      img.src = asset.webp;
       img.alt = asset.alt;
     };
 

@@ -47,6 +47,12 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-heading);
   text-wrap: balance;
+  /* No mid-word hyphenation on display headings — a hyphen breaking a large
+     heading reads as a typo. `hyphens` is inherited, so a heading nested
+     inside a <li>/<p> (e.g. .pain-hook__title inside <li>) would otherwise
+     inherit the `hyphens: auto` set on body copy above. Force it off. */
+  -webkit-hyphens: none;
+  hyphens: none;
   /* Client request, 2026-07-20: tighter tracking on every heading
      sitewide. A flat -1px, not an em-based value — no letter-spacing
      token exists for a negative value yet (tokens.css only has positive

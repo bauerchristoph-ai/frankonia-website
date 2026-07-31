@@ -7,11 +7,8 @@
      the single open-sans-variable.woff2 file was ever added, 2026-07-15)
      — every page load was silently issuing two failed preload requests
      for files that 404'd. -->
-<link rel="stylesheet" href="/css/tokens.css">
-<link rel="stylesheet" href="/css/reset.css">
-<link rel="stylesheet" href="/css/base.css">
-<link rel="stylesheet" href="/css/layout.css">
-<link rel="stylesheet" href="/css/components.css">
-<link rel="stylesheet" href="/css/site-chrome.css">
-<link rel="stylesheet" href="/css/motion.css">
+<!-- The 7 site-wide stylesheets (tokens, reset, base, layout, components,
+     site-chrome, motion) are bundled + minified into /css/app.css by
+     build.js (buildCss). Keep SHARED_CSS_ORDER there in sync with this. -->
+<link rel="stylesheet" href="/css/app.css">
 <script src="/js/main.js" defer></script>

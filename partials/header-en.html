@@ -40,16 +40,13 @@
         <li><a class="site-nav__link" href="/referenzen/">References</a></li>
         <li><a href="#">Our System</a></li>
         <li><a href="#">Jobs</a></li>
-        <li><a class="site-nav__link" href="/kontakt/">Contact</a></li>
+        <li><a class="site-nav__link" href="/en/#sicherheitsanalyse">Contact</a></li>
       </ul>
 
       <div class="site-nav__actions">
-        <!-- Language switch: EN is current here; DE links to the German
-             homepage at the root. hreflang set for assistive tech / SEO. -->
-        <div class="lang-switch" aria-label="Language">
-          <a class="lang-switch__link" href="/" hreflang="de" lang="de">DE</a>
-          <a class="lang-switch__link is-active" href="/en/" hreflang="en" lang="en" aria-current="true">EN</a>
-        </div>
+        <!-- Language switch removed from the nav (client 2026-07-27): no in-page
+             DE/EN toggle. The German site (/) and this English version (/en/) are
+             still linked via the <head> hreflang alternates for Google. -->
         <a class="btn btn--primary" href="/en/#sicherheitsanalyse">Request Analysis<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
       </div>
     </nav>

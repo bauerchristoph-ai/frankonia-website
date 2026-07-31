@@ -25,17 +25,20 @@
   /* Light/white section (client 2026-07-23: white section, black letters —
      was a black page bg). Cards use a light-gray surface so they stay visible
      against the white section. */
-  --sys-color-page:            var(--color-white);        /* white section bg */
+  /* Solid WHITE section (client 2026-07-29 — full-image editorial cards carry
+     the visual richness; the section itself is bright/spacious). The intro
+     title is BLACK on this. */
+  --sys-bg:                    var(--color-white);
   --sys-color-surface:         #f1f2f4;                   /* light-gray card (odd) — visible on white */
   --sys-color-surface-2:       #eef0f2;                   /* visual placeholder shade (temporary — replaced by real images) */
   --sys-color-ink:             var(--color-logo-black);   /* dark type on card */
   --sys-color-ink-soft:        var(--color-gray);         /* secondary text   */
   --sys-color-ink-faint:       rgb(1 1 1 / 0.55);         /* on-white muted — matches .services__item-number */
   --sys-color-line:            rgb(1 1 1 / 0.12);         /* hairline on light */
-  --sys-color-accent:          var(--color-blue-dark);    /* CTA fill / bullets */
+  --sys-color-accent:          var(--color-blue-light);    /* CTA fill / bullets */
   --sys-color-accent-ink:      #1e4e8c;                   /* darker blue for link text on white (no on-light blue token exists) */
-  --sys-color-on-dark:         var(--color-logo-black);   /* intro title on the white section */
-  --sys-color-on-dark-soft:    rgb(1 1 1 / 0.6);          /* intro lede on the white section */
+  --sys-color-on-dark:         var(--color-white);        /* intro title — white on the FRANKONIA-blue section */
+  --sys-color-on-dark-soft:    rgb(255 255 255 / 0.82);   /* intro lede — soft white on the blue section */
 
   /* Even cards render on a light grey instead of white (like the demo). */
   --sys-card-panel-bg-alt:     #e6e9ec;
@@ -59,7 +62,11 @@
   --sys-fs-step:               var(--font-size-sm);
   --sys-fs-eyebrow:            var(--font-size-sm);
   --sys-fs-title:              var(--font-size-xl);
-  --sys-fs-intro-title:        var(--font-size-3xl);
+  /* Match the homepage's standard section title ("main h2" in page-home.css)
+     so "Less Effort. More Control." reads the same size as e.g. "Our Services"
+     (client 2026-07-26). Was --font-size-3xl (maxed ~3.06rem, visibly smaller
+     than main h2's 3.75rem). Keep in sync with `main h2`. */
+  --sys-fs-intro-title:        clamp(1.375rem, 0.4rem + 3.7vw, 3.75rem);
   --sys-fs-desc:               var(--font-size-base);
   --sys-fs-point:              var(--font-size-sm);
   --sys-fs-visual-label:       var(--font-size-sm);
@@ -76,14 +83,16 @@
      COMPONENT-SPECIFIC geometry + motion — kept as raw --sys-* (the JS
      reads several of these live; retune here, not in the module).
      ====================================================================== */
-  --sys-card-max-width:        500px;
+  /* Slightly more landscape (client 2026-07-26: "un poco más horizontales, no
+     tanto") — wider + a touch shorter than the old 500px / 76svh portrait. */
+  --sys-card-max-width:        540px;
   --sys-card-width:            min(92vw, var(--sys-card-max-width));
-  --sys-card-height:           76svh;
+  --sys-card-height:           70svh;
   --sys-card-aspect:           0.8;
   --sys-card-pad:              28px 28px 26px;
   --sys-card-gap:              14px;
   --sys-media-ratio:           58%;
-  --sys-card-panel-bg:         var(--sys-color-surface);
+  --sys-card-panel-bg:         var(--color-white);
   --sys-card-panel-ink:        var(--sys-color-ink);
   --sys-header-band:           16svh;
 
@@ -97,8 +106,40 @@
   --sys-title-scale-start:     1;
 
   --sys-stage-height:          100svh;
-  --sys-scroll-per-card:       90svh;
-  --sys-scroll-final-hold:     40svh;
+  /* Scroll budget for the pinned sequence (track height uses these; keep the JS
+     timeline unit ratios roughly in step). */
+  --sys-scroll-per-card:       55svh;    /* scroll per card entrance */
+  --sys-scroll-final-hold:     60svh;    /* full stack held here before release */
+  --sys-scroll-intro-hold:     28svh;    /* card 1 alone, readable, before card 2 */
+
+  /* --- Sticky STACK (desktop, client 2026-07-26) --------------------------
+     Cards pin from the top at staggered offsets: card N sticks --sys-stack-top
+     + (N-1)*--sys-stack-peek from the top, so every earlier card's title strip
+     stays visible above the current one. All knobs — tune freely after a
+     visual check; they trade off "how many titles peek" vs "how much of the
+     active card fits" (6 tall cards is a tight vertical budget). */
+  --sys-stack-top:             16.5rem;   /* cards sit just below the (header-cleared) 2-line title (client 2026-07-27); +1.5rem 2026-07-29 to follow the title's extra top padding */
+  --sys-stack-peek:            5.75rem;   /* downward offset of the front (active) card vs the one behind — bumped 2026-07-29 for clearer separation so the behind card's title strip never touches the active card's content */
+  --sys-stack-gap:             8svh;      /* (legacy) */
+  --sys-stack-card-w:          min(92vw, 760px);
+  --sys-stack-img-aspect:      16 / 7;    /* image (bottom of card) shape */
+  /* Fixed card height for the pinned peek-stack — must leave room for the
+     staggered tops (top + 5*peek) above the last card within the 100svh stage.
+     Clamped so it also fits shorter viewports. */
+  /* A touch less tall (client 2026-07-27) so the full title shows and the image
+     — a fixed 48% of this height — covers ~half the card with little empty gap. */
+  --sys-stack-card-h:          min(34rem, calc(100svh - 22rem));
+  /* Room AFTER the last card so card 6 can fully reach its stacked position and
+     hold there. It must be LARGER than a card's height (~55-60svh) — otherwise
+     the stack's bottom edge clips card 6 before it settles, and the last card
+     never rises all the way up like the others (client 2026-07-27). */
+  --sys-stack-end-room:        90svh;
+  /* Pinned-stack scroll budget (2026-07-26 rework). Each of the 5 card
+     entrances gets --sys-stack-scroll-per-card of scroll; --sys-stack-hold-units
+     is the final hold in entrance-units, shared by BOTH the track-height calc
+     (below) and js/system-story.js's timeline so they stay in lockstep. */
+  --sys-stack-scroll-per-card: 55svh;
+  --sys-stack-hold-units:      0.9;
 }
 
 /* ---------------------------------------------------------------------------
@@ -107,19 +148,49 @@
 
 .system-story {
   position: relative;
-  background: var(--sys-color-page);
-  color: var(--sys-color-on-dark);
+  /* Solid section background, alternated PER CARD by js/system-story.js in the
+     enhanced (scrubbed) mode — card 1 white, card 2 celeste, card 3 white, …
+     (client 2026-07-26, replacing the old static white->blue gradient). This
+     white default is what a no-JS / reduced-motion / mobile visitor sees;
+     the JS only ever tweens background-color on top of it. */
+  background-color: var(--sys-bg);
+  color: var(--sys-color-ink);
   font-family: var(--sys-font);
-  /* Extra top space reserves the pixel-seam band (Pain Hook -> Our System)
-     that sits at this section's top — the band covers empty space, never real
-     content, JS or not. Matches the band height (200px / 120px mobile — see
-     .pixel-seam__band in page-home.css; keep in sync). */
-  padding-top: calc(var(--space-9) + 200px);
+  /* Normal top padding now (client 2026-07-28): the pixel-seam moved up to the
+     Sicherheitskonzept band above (Pain Hook -> Konzept boundary), and Konzept
+     is blue like this section, so the two flow as one continuous blue block —
+     no seam and no seam-reserve needed here anymore. */
+  padding-top: var(--space-9);
 }
+
 @media (max-width: 767.98px) {
   .system-story {
-    padding-top: calc(var(--space-9) + 120px);
+    padding-top: var(--space-9);
   }
+
+  /* MOBILE (2026-07-30) — six stacked cards at the desktop 70svh ran the section
+     to ~4000px, nearly five phone screens for one section, and 70svh cards left
+     the reader scrolling a single card at a time with no sense of the sequence.
+     52svh keeps each card comfortably image-led while showing the top of the next
+     one, which is what makes a stack read as a stack. Saves ~900px.
+     aspect-ratio is dropped: with an explicit height it only fought the width and
+     never resolved to anything on a phone. */
+  .system-story {
+    --sys-card-width: min(100%, 34rem);
+    --sys-card-height: 52svh;
+  }
+  .system-story__card { aspect-ratio: auto; }
+  .system-story__cards { gap: var(--sys-space-4); }
+  /* Tighter internal padding — 28px all round on a ~350px card is a lot of the
+     card spent on air. */
+  .system-story__body { padding: var(--sys-space-5) var(--sys-space-4); }
+  .system-story__intro { padding: var(--sys-space-6) var(--sys-space-4) var(--sys-space-4); }
+}
+
+/* Short phones (SE-class): 52svh of a 667px viewport is only ~347px, which the
+   title + three bullets start to crowd. Give it a floor. */
+@media (max-width: 767.98px) and (max-height: 700px) {
+  .system-story { --sys-card-height: 22rem; }
 }
 
 .system-story__track { position: relative; }
@@ -151,7 +222,7 @@
      font and boldness as the rest of the titles". Font family already matches
      (--font-family-base via --sys-font). */
   font-weight: var(--sys-fw-regular);
-  color: var(--sys-color-on-dark);
+  color: var(--sys-color-ink);
 }
 
 .system-story__lede {
@@ -178,33 +249,72 @@
   aspect-ratio: var(--sys-card-aspect);
 }
 
+/* Full-image editorial card (client 2026-07-29): the image fills the whole
+   card; the text sits at the top over a localized top-down gradient. No white
+   panel, no image/text split. */
 .system-story__card-inner {
-  display: flex;
-  flex-direction: column;
+  position: relative;
   height: 100%;
-  border-radius: var(--sys-radius-card);
+  border-radius: 20px;
   overflow: hidden;
-  background: var(--sys-card-panel-bg);
+  background: #0c0e11;   /* shows only until the image paints */
+  transition: opacity 0.4s var(--easing-standard, ease), filter 0.4s var(--easing-standard, ease);
 }
 
 .system-story__media {
-  position: relative;
-  flex: 0 0 var(--sys-media-ratio);
-  min-height: 120px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
-  padding: var(--sys-space-4);
-  background:
-    repeating-linear-gradient(
-      45deg,
-      var(--sys-color-surface-2) 0,
-      var(--sys-color-surface-2) 14px,
-      #e4e7eb 14px,
-      #e4e7eb 15px
-    );
-  color: var(--sys-color-ink-faint);
+  position: absolute;
+  inset: 0;
 }
+
+/* ---- Behind (inactive) cards (client 2026-07-29): only number + title show,
+   the card reads clearly BEHIND the active one — dimmer, darker, desaturated,
+   softly blurred. Dimming is on the card-INNER + img (NOT the article, whose
+   opacity/filter/transform the GSAP timeline already owns — avoids conflict).
+   JS toggles .is-behind on a back-row card once its front card has entered. */
+/* Recede by going BLACK, not by going transparent (client 2026-07-30).
+   The old `opacity: 0.58` on the card-inner faded the ENTIRE card, title
+   included — which is why the back titles read as grey text rather than white
+   text on a darker card. Opacity can't distinguish "push the photo back" from
+   "dim the label"; it hits both.
+   So the card stays fully opaque and the recession is done where it belongs:
+   the photo is darkened hard, and the body's wash is carried all the way down
+   instead of fading out. The title keeps its own #fff at full strength. */
+.system-story__card.is-behind .system-story__card-inner {
+  opacity: 1;
+  filter: none;
+}
+.system-story__card.is-behind .system-story__img {
+  filter: blur(2px) brightness(0.3) saturate(0.55);
+  transition: filter 0.4s var(--easing-standard, ease);
+}
+.system-story__card.is-behind .system-story__points { display: none; }
+/* Behind cards: a full-height dark wash (the active card's fades out by 62% to
+   leave the photo open — a behind card has nothing to show off, so it stays
+   dark top to bottom and the title sits on near-black). */
+.system-story__card.is-behind .system-story__body {
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.86) 0%, rgb(0 0 0 / 0.7) 45%, rgb(0 0 0 / 0.62) 100%);
+}
+
+/* Real card image (client 2026-07-24) — fills the media box regardless of the
+   box's flex-derived size; the box is position:relative so this anchors to it.
+   Replaces the striped placeholder + visual-label on the cards that now have a
+   supplied image. */
+.system-story__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Landscape source in a portrait card — crop toward the upper subjects by
+     default; tuned per card below so faces/subjects aren't cut. */
+  object-position: 50% 32%;
+}
+.system-story__card:nth-child(1) .system-story__img { object-position: 50% 30%; }
+.system-story__card:nth-child(2) .system-story__img { object-position: 50% 42%; }
+.system-story__card:nth-child(3) .system-story__img { object-position: 50% 34%; }
+.system-story__card:nth-child(4) .system-story__img { object-position: 50% 30%; }
+.system-story__card:nth-child(5) .system-story__img { object-position: 50% 40%; }
+.system-story__card:nth-child(6) .system-story__img { object-position: 50% 36%; }
 
 .system-story__visual-label {
   font-size: var(--sys-fs-visual-label);
@@ -243,66 +353,100 @@
   color: var(--sys-color-accent);
 }
 
+/* Step number on its own line above the title ("01" / newline / "Titel"). */
+/* Number is now part of the title on the SAME line, identical size/weight/colour
+   (client 2026-07-29 — "1. Professioneller Eindruck", not a separate eyebrow /
+   "01"). Inline so the whole "N. Title" wraps naturally as one heading. */
 .system-story__num {
+  display: inline;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
   color: inherit;
   font-variant-numeric: tabular-nums;
 }
 
+/* Full-card overlay with TWO layered gradients (client 2026-07-29): a strong
+   one at the top (behind number + title) and a subtle one at the bottom (behind
+   the bullets), with the MIDDLE left open so the image stays visible. Number +
+   title sit at the top, bullets at the bottom (justify-content: space-between).
+   Not a flat dark layer. */
 .system-story__body {
-  flex: 1 1 auto;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: var(--sys-card-gap);
-  padding: var(--sys-card-pad);
-  background: var(--sys-card-panel-bg);
-  color: var(--sys-card-panel-ink);
-  overflow: hidden;
+  justify-content: space-between;
+  padding: var(--sys-space-6) var(--sys-space-5);
+  color: #fff;
+  pointer-events: none;
+  background:
+    /* Top: behind the number + title. */
+    linear-gradient(to bottom, rgb(0 0 0 / 0.8) 0%, rgb(0 0 0 / 0.42) 20%, rgb(0 0 0 / 0) 44%),
+    /* Bottom: a stronger, LOCALIZED readability zone behind the bullets (client
+       2026-07-29) — transparent through the middle, darkening toward the bottom,
+       darkest behind the list. Not a uniform dark wash. */
+    linear-gradient(to bottom, rgb(0 0 0 / 0) 42%, rgb(0 0 0 / 0.35) 62%, rgb(0 0 0 / 0.78) 100%);
 }
 
 .system-story__title {
   margin: 0;
-  font-size: var(--sys-fs-title);
+  /* Sized so the longest title fits on ONE line inside the ~444px card body
+     (client 2026-07-24: "1. A professional first impression" was wrapping).
+     The old --font-size-xl reached ~31px, at which that title (and the longer
+     German ones) overflowed the card and wrapped; capped at 1.5rem it fits in
+     both languages. The 22ch max-width that also forced an early wrap is
+     removed. */
+  /* Reduced (client 2026-07-27) so the (now shorter) titles fit on ONE line in
+     the narrower 3-column cards — German compound words are long. Nudged up a
+     touch 2026-07-29 (client: "un poquito más grandes"). */
+  font-size: clamp(1.35rem, 1.1rem + 0.7vw, 1.7rem);
   line-height: var(--sys-lh-tight);
   letter-spacing: -0.01em;
-  font-weight: var(--sys-fw-bold);
-  color: var(--sys-card-panel-ink);
-  max-width: 22ch;
+  font-weight: var(--sys-fw-medium);
+  color: #fff;
 }
 
 .system-story__desc {
   margin: 0;
-  font-size: var(--sys-fs-desc);
+  /* Same size as the white list items below (client 2026-07-27) — was
+     --sys-fs-desc (1rem), now matches --sys-fs-point. */
+  font-size: var(--sys-fs-point);
   line-height: var(--sys-lh-normal);
   color: var(--sys-color-ink-soft);
-  max-width: 46ch;
+  /* Full body width — no early wrap (client 2026-07-27; was max-width: 46ch). */
+  /* No mid-word hyphenation ("informa-tion") — override base.css's hyphens:auto. */
+  -webkit-hyphens: none;
+  hyphens: none;
 }
 
+/* Compact supporting points over the image — small blue square marker, white
+   text, no dividers, no white panel (client 2026-07-29). */
 .system-story__points {
-  margin: var(--sys-space-2) 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: var(--sys-space-2);
+  gap: 0.4rem;
   width: 100%;
 }
-
 .system-story__points li {
-  position: relative;
-  padding-left: var(--sys-space-5);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
   font-size: var(--sys-fs-point);
   line-height: 1.35;
-  color: var(--sys-card-panel-ink);
+  color: rgb(255 255 255 / 0.9);
 }
-
 .system-story__points li::before {
   content: "";
-  position: absolute;
-  left: 0;
-  top: 0.55em;
+  flex: none;
   width: 6px;
   height: 6px;
-  border-radius: 50%;
+  margin-top: 0.45em;
+  border-radius: 0;   /* square blue marker */
   background: var(--sys-color-accent);
 }
 
@@ -332,101 +476,158 @@
    Sticky stage + absolutely-stacked, GSAP-animated portrait cards.
    --------------------------------------------------------------------------- */
 
-/* Tall track supplies scroll distance while the stage sticks. Six cards ->
-   five transitions, so the multiplier is (cards - 1) = 5. */
+/* Tall track supplies scroll distance while the stage sticks. Cards enter one
+   by one (client 2026-07-27): now ALL 6 cards animate in (card 1 too), so 6
+   sequential entrances → multiplier 6, plus the brief initial empty hold and
+   the final hold. */
 .system-story--enhanced .system-story__track {
   height: calc(
     100svh
-    + (var(--sys-scroll-per-card) * 5)
+    + var(--sys-scroll-intro-hold)
+    + (var(--sys-scroll-per-card) * 6)
     + var(--sys-scroll-final-hold)
   );
 }
 
-/* Stage sticks via CSS (NOT ScrollTrigger pin). Never transformed. */
+/* Stage sticks via CSS (NOT ScrollTrigger pin) — ONE sticky element, so the
+   whole stack releases together when the track ends. Capped to the site
+   container so the intro lines up with other sections. */
 .system-story--enhanced .system-story__stage {
   position: sticky;
   top: 0;
   height: var(--sys-stage-height);
   overflow: hidden;
+  max-width: var(--container-max-width);
+  margin-inline: auto;
 }
 
-/* LEFT half → title/eyebrow/lede, vertically centred, left-aligned.
-   pointer-events:none so it never blocks the cards' links on the right. */
+/* TOP band → title/eyebrow/lede, horizontally centred (client 2026-07-27:
+   "centrada el titulo y el texto y debajo las cards"). Full width, pinned to
+   the top of the stage; the card peek-stack sits below it (its staggered tops
+   start at --sys-stack-top, which clears this band). pointer-events:none so it
+   never blocks the cards' links below. */
 .system-story--enhanced .system-story__intro {
   position: absolute;
   top: 0;
-  bottom: 0;
   left: 0;
-  width: 50%;
+  right: 0;
+  width: auto;
   z-index: 10;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  text-align: left;
-  gap: var(--sys-space-4);
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  gap: var(--sys-space-3);
   max-width: none;
   margin: 0;
-  padding: 0 var(--sys-space-7) 0 clamp(var(--sys-space-6), 6vw, 120px);
+  /* Top padding clears the STICKY header (~5rem tall, always pinned at top:0),
+     which was cutting off the title's first line (client 2026-07-27). Bumped a
+     bit 2026-07-29 (client: "más padding top, un poco más") — --sys-stack-top
+     was raised by the same amount so the title-to-cards gap stays the same. */
+  padding: 7rem var(--sys-space-6) var(--sys-space-4);
   pointer-events: none;
 }
 .system-story--enhanced .system-story__intro-title {
-  font-size: clamp(2rem, 3.6vw, 3.4rem);
+  /* Same size as the homepage's standard section title ("main h2"). Keep in
+     sync with main h2. Centred now, not left-aligned. */
+  font-size: clamp(1.375rem, 0.4rem + 3.7vw, 3.75rem);
   line-height: 1.05;
-  text-align: left;
-  max-width: 14ch;
-  transform-origin: 0% 50%;
-  will-change: transform;
+  text-align: center;
+  max-width: 20ch;
+  margin-inline: auto;
+  transform-origin: 50% 50%;
 }
-.system-story--enhanced .system-story__lede { max-width: 34ch; }
+.system-story--enhanced .system-story__lede {
+  max-width: 52ch;
+  margin-inline: auto;
+  text-align: center;
+}
 
-/* RIGHT half → the card stack (cards centred within that half). */
+/* Card stack spans the FULL width; each card is centred within it (the
+   .system-story__card rule below sets left:0/right:0/margin-inline:auto). */
 .system-story--enhanced .system-story__stack {
   position: absolute;
   top: 0;
   bottom: 0;
   right: 0;
-  left: 50%;
+  left: 0;
   margin: 0;
   padding: 0;
   display: block;
 }
 
-/* Each card centred in the stage; GSAP owns its transform (y / scale).
-   Horizontal centring via margin-inline:auto, vertical via top + negative
-   margin — neither touches `transform`, leaving it free for GSAP. */
+/* Peek-stack: each card is absolute at a staggered top (set per nth-child
+   below), fixed height, so earlier titles peek above the current card. GSAP
+   owns only `transform` (yPercent) to raise cards 2..N into place. Because the
+   whole STAGE is the single sticky element, when the track ends the entire
+   stack releases together — no per-card peel. */
 .system-story--enhanced .system-story__card {
   position: absolute;
-  left: 0;
-  right: 0;
-  margin-inline: auto;
-  top: 50%;
-  margin-top: calc(var(--sys-card-height) / -2);
-  width: var(--sys-card-width);
-  max-width: var(--sys-card-max-width);
-  height: var(--sys-card-height);
+  /* 3 columns across the stage (client 2026-07-27): cards 1/2/3 fill the bottom
+     row left→centre→right, then 4/5/6 stack above them in the same columns.
+     Column x-position (left) + row y-position (top) are set per nth-child below;
+     width is ~a third of the stage. */
+  width: 28%;
+  max-width: none;
+  height: var(--sys-stack-card-h);
   will-change: transform, opacity, filter;
-  transform-origin: 50% 0%;
+  transform-origin: 50% 50%;
   backface-visibility: hidden;
 }
 
 .system-story--enhanced .system-story__card-inner {
-  box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.55);
+  /* Downward drop shadow + a soft shadow ABOVE the top edge, so each front card
+     (4/5/6) casts onto the card behind it — the layering reads clearly instead
+     of two cards blurring together (client 2026-07-27). */
+  box-shadow:
+    0 -5px 16px -6px rgba(0, 0, 0, 0.28),
+    0 24px 60px -26px rgba(0, 0, 0, 0.6);
 }
 
-/* Alternate surfaces: odd = white, even = grey. */
-.system-story__card:nth-child(even) .system-story__card-inner,
-.system-story__card:nth-child(even) .system-story__body {
-  background: var(--sys-card-panel-bg-alt);
+/* All cards stay pure white (client 2026-07-27: "grises no, el drop shadow sí").
+   The layering now reads purely from the drop shadow above each front card,
+   with no grey tint on the back row. */
+
+/* Image sits at the bottom (card-inner is column-reverse). A FIXED fraction of
+   the (fixed) card height — not width-derived — so it covers ~half the card and
+   lines up at exactly the same height on every card (client 2026-07-27; the old
+   aspect-ratio made it ~a third and left a big empty gap above it). */
+.system-story--enhanced .system-story__media {
+  /* A touch more image height (client 2026-07-27) — 48% -> 53%. */
+  flex: 0 0 53%;
+  aspect-ratio: auto;
+  min-height: 0;
 }
 
-/* Later cards sit in front (each new card rises OVER the previous). */
-.system-story--enhanced .system-story__card:nth-child(1) { z-index: 1; }
-.system-story--enhanced .system-story__card:nth-child(2) { z-index: 2; }
-.system-story--enhanced .system-story__card:nth-child(3) { z-index: 3; }
-.system-story--enhanced .system-story__card:nth-child(4) { z-index: 4; }
-.system-story--enhanced .system-story__card:nth-child(5) { z-index: 5; }
-.system-story--enhanced .system-story__card:nth-child(6) { z-index: 6; }
+/* Less top padding so the title sits near the card's top edge and is fully
+   visible in the peek strip above the next card (client 2026-07-27). */
+.system-story--enhanced .system-story__body {
+  padding-top: var(--sys-space-4);
+}
+
+/* All cards are white (client 2026-07-27) — the earlier white/black alternation
+   was removed; every card now uses the default white panel + dark text tokens. */
+
+/* 3-column stack (client 2026-07-27): columns via `left`, the two rows via
+   `top`. Cards 1/2/3 land in the bottom row (left/centre/right); 4/5/6 then rise
+   and stack ABOVE 1/2/3 in the same column, each with a higher z-index so it
+   sits in front. `left` (not transform) positions the columns so GSAP's yPercent
+   rise never clobbers the horizontal placement. */
+/* BACKGROUND row — cards 1,2,3 appear first, sit slightly HIGHER and BEHIND
+   (lower z-index), so their TOP edge peeks out above the newer card in each
+   column (client 2026-07-27). */
+/* Columns pulled inward a bit 2026-07-29 (client: left card more to the right,
+   right card more to the left) — was 3% / 36% / 69%; centre column unchanged. */
+.system-story--enhanced .system-story__card:nth-child(1) { left: 6%;  top: calc(var(--sys-stack-top) + 1rem); z-index: 1; }
+.system-story--enhanced .system-story__card:nth-child(2) { left: 36%; top: calc(var(--sys-stack-top) + 1rem); z-index: 2; }
+.system-story--enhanced .system-story__card:nth-child(3) { left: 66%; top: calc(var(--sys-stack-top) + 1rem); z-index: 3; }
+/* FRONT row — cards 4,5,6 enter from below and stack IN FRONT of 1,2,3 in the
+   same column (higher z-index), finishing slightly LOWER (+--sys-stack-peek) so
+   the stack grows DOWNWARD and the older card stays visible at the top edge. */
+.system-story--enhanced .system-story__card:nth-child(4) { left: 6%;  top: calc(var(--sys-stack-top) + var(--sys-stack-peek)); z-index: 4; }
+.system-story--enhanced .system-story__card:nth-child(5) { left: 36%; top: calc(var(--sys-stack-top) + var(--sys-stack-peek)); z-index: 5; }
+.system-story--enhanced .system-story__card:nth-child(6) { left: 66%; top: calc(var(--sys-stack-top) + var(--sys-stack-peek)); z-index: 6; }
 
 /* ---------------------------------------------------------------------------
    3. DESKTOP SCOPE — enhancement is >=1024px only. Below that, the base
@@ -478,3 +679,7 @@
     opacity: 1 !important;
   }
 }
+
+/* (The per-card position:sticky block was removed 2026-07-27 — it peeled at the
+   end. The pinned sticky-STAGE version above (.system-story--enhanced) handles
+   the desktop layout + peek-stack now, releasing the whole stack as one unit.) */

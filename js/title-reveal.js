@@ -123,23 +123,38 @@
       backfaceVisibility: "hidden",
       willChange: "transform, opacity",
     });
-    gsap.fromTo(
-      chars,
-      { opacity: 0, rotateX: 18, z: -30, y: 10 },
-      {
-        opacity: 1,
-        rotateX: 0,
-        z: 0,
-        y: 0,
-        stagger: 0.018,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: heading,
-          start: "top 88%",
-          end: "top 42%",
-          scrub: 0.6,
-        },
-      }
-    );
+    const toVars = {
+      opacity: 1,
+      rotateX: 0,
+      z: 0,
+      y: 0,
+      stagger: 0.018,
+      ease: "power2.out",
+    };
+
+    // A heading inside a pinned/sticky section (system-story: the title stays
+    // fixed while the card stack scrolls) can't use a scroll-SCRUBBED reveal —
+    // once the section pins, the heading stops moving, so the scrub range maps
+    // to the wrong scroll position and the reveal only played as you LEFT the
+    // section (client 2026-07-28). For those, play the char reveal ONCE,
+    // time-based, as the title first rises into view. Every other heading keeps
+    // the scrubbed reveal tied 1:1 to scroll.
+    if (heading.closest("[data-system-story]")) {
+      toVars.duration = 0.7;
+      toVars.scrollTrigger = {
+        trigger: heading,
+        start: "top 80%",
+        toggleActions: "play none none none",
+      };
+    } else {
+      toVars.scrollTrigger = {
+        trigger: heading,
+        start: "top 88%",
+        end: "+=46%",
+        scrub: 0.6,
+      };
+    }
+
+    gsap.fromTo(chars, { opacity: 0, rotateX: 18, z: -30, y: 10 }, toVars);
   });
 })();

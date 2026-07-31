@@ -33,7 +33,197 @@
   <!-- Hero image is above the fold and LCP-critical. Client-supplied
        FrankoniaHero.png, used verbatim/uncompressed by explicit request
        (2026-07-22) — see the perf caveat on .hero__bg below. -->
-  <link rel="preload" as="image" href="/assets/images/herofog.png" type="image/png">
+  <link rel="preload" as="image" type="image/webp" imagesrcset="/assets/images/herofinal-768.webp 768w, /assets/images/herofinal-1280.webp 1280w, /assets/images/herofinal-1347.webp 1347w" imagesizes="100vw">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      },
+      "sameAs": [
+        "https://www.instagram.com/frankonia_sicherheitsdienst/",
+        "https://www.linkedin.com/company/frankonia-sicherheit/"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://frankonia-sicherheit.de/en/#website",
+      "url": "https://frankonia-sicherheit.de/en/",
+      "name": "FRANKONIA Sicherheitsdienst",
+      "inLanguage": "en",
+      "publisher": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "image": "https://frankonia-sicherheit.de/assets/images/herofinal-1347.jpg",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "+49 951 964352-0",
+      "email": "info@frankonia-sicherheit.de",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Neuerbstraße 19",
+        "postalCode": "96052",
+        "addressLocality": "Bamberg",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Bamberg"
+        },
+        {
+          "@type": "City",
+          "name": "Nürnberg"
+        },
+        {
+          "@type": "City",
+          "name": "Würzburg"
+        },
+        {
+          "@type": "City",
+          "name": "Erlangen"
+        },
+        {
+          "@type": "City",
+          "name": "Fürth"
+        },
+        {
+          "@type": "City",
+          "name": "Schweinfurt"
+        },
+        {
+          "@type": "City",
+          "name": "Bayreuth"
+        },
+        {
+          "@type": "City",
+          "name": "Coburg"
+        },
+        {
+          "@type": "City",
+          "name": "Ansbach"
+        },
+        {
+          "@type": "City",
+          "name": "Hof"
+        }
+      ],
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "reviewCount": "97",
+        "bestRating": "5"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/en/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How much does a security service cost per hour?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A qualified security service in Bavaria typically costs between €22 and €42 per hour, depending on qualification, deployment location, and requirements. Standard object protection with certified personnel usually starts around €28–30 per hour."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What's the difference between Industrial Site Security and Property Protection?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Industrial Site Security refers to on-site protection for industrial and commercial premises, typically with a fixed team. Property Protection is broader property protection, covering buildings and facilities of any type, including patrols and access control."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How quickly can FRANKONIA provide security staff?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For standard assignments, FRANKONIA can typically deploy certified security personnel within 48–72 hours. Urgent requests, including Fire Watch and Intervention Service, can often be arranged faster — ask your contact person for current availability."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are FRANKONIA's security staff certified?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. FRANKONIA is certified to DIN 77200-1 and DIN EN ISO 9001, and all personnel undergo background checks and role-specific training before deployment."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which regions does FRANKONIA serve?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "FRANKONIA operates within roughly 100 km of Bamberg, covering Franconia and Bavaria — including Nuremberg, Würzburg, and Erlangen. Contact us to confirm coverage for your specific location."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens during the free security analysis?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A FRANKONIA security expert reviews your current setup — coverage gaps, compliance status, and risk areas — in a focused 20-minute conversation. You'll receive a written recommendation with no obligation to continue."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does FRANKONIA offer short-term or one-off assignments?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Services such as Fire Watch and Event Security are commonly booked for defined, short-term periods, alongside long-term contracts for ongoing Industrial Site Security and Property Protection."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a single point of contact for my account?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Every FRANKONIA client is assigned one dedicated contact person responsible for coordination, reporting, and any changes to your security setup — no call centers or rotating staff."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How are security personnel selected and trained?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "All candidates undergo background screening, certification checks under §34a GewO, and role-specific onboarding before their first shift, with ongoing training to maintain DIN 77200-1 compliance."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What contract terms does FRANKONIA offer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "FRANKONIA offers both flexible short-term agreements and longer-term contracts, depending on the service. Terms are discussed individually during the free security analysis."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
 
   <!-- include: head-common -->
   <link rel="stylesheet" href="/css/page-home.css">
@@ -85,6 +275,10 @@
   <script src="/js/sticky-story.js" defer></script>
   <script src="/js/pain-hook-journey.js" defer></script>
   <script src="/js/system-story.js" defer></script>
+
+  <!-- Diagnostic-flow visual in the free-analysis section (reuses the GSAP +
+       ScrollTrigger loaded above; no new lib / Lenis / RAF / pin). -->
+  <script src="/js/conversion-visual.js" defer></script>
   <!-- Also depends on GSAP + ScrollTrigger above (must load after them,
        same document-order guarantee as every other GSAP-moment script
        here). Homepage-only, its own tag — see js/pixel-transition.js's
@@ -104,9 +298,11 @@
        both free, keyless services. leaflet.js must load before
        js/coverage-map.js, which depends on the global `L` it defines —
        both defer, so document order guarantees that. -->
-  <link rel="stylesheet" href="/css/vendor/leaflet.css">
-  <script src="/assets/js/vendor/leaflet.js" defer></script>
-  <script src="/js/coverage-map.js" defer></script>
+  <!-- Leaflet + the coverage map are now LAZY-loaded (perf, 2026-07-27):
+       js/coverage-lazy.js injects the Leaflet CSS/JS and js/coverage-map.js
+       only when the map nears the viewport, instead of ~41K gzip of Leaflet on
+       every visit. The city pills stay real <a> links, usable with no JS. -->
+  <script src="/js/coverage-lazy.js" defer></script>
 </head>
 <body>
   <!-- include: icon-sprite -->
@@ -133,18 +329,18 @@
            design calls for a trust section (homepage §5 at minimum)" —
            worth the client's attention, not re-added unilaterally
            here. -->
-      <!-- Client-supplied herofog.png, used verbatim and uncompressed by
-           explicit request (swapped in 2026-07-23, was heroedit.png). This
-           is a ~3.6MB PNG on the LCP critical path (preloaded + eager +
-           fetchpriority high) — a real Core Web Vitals cost, kept
-           deliberately per the client's "don't compress it." Per
-           docs/project-strategy.md ("Hero asset"), the final hero should be
-           optimized later (responsive srcset, WebP/AVIF, explicit
-           dimensions). Single <img> now, not a <picture> — there's only the
-           one PNG source; the previous hero-bg.webp/.jpg are kept in
-           assets/images/ as spares. -->
+      <!-- Client-supplied HEROFINAL.png (swapped in 2026-07-27, was
+           heroedit.png). Exported to responsive WebP + JPEG variants at 768 /
+           1280 / 1347w from the 1347x853 source, HIGH quality / low compression
+           — WebP q92 (~222KB at 1347w), JPEG q92 fallback. On the LCP critical
+           path (preloaded + eager + fetchpriority high); smaller screens get
+           the 768/1280w variants. Note: source maxes at 1347px wide, so it
+           upscales slightly on monitors wider than that. -->
       <div class="hero__bg" aria-hidden="true">
-        <img src="/assets/images/herofog.png" alt="" loading="eager" fetchpriority="high">
+        <picture>
+          <source type="image/webp" srcset="/assets/images/herofinal-768.webp 768w, /assets/images/herofinal-1280.webp 1280w, /assets/images/herofinal-1347.webp 1347w" sizes="100vw">
+          <img src="/assets/images/herofinal-1347.jpg" srcset="/assets/images/herofinal-768.jpg 768w, /assets/images/herofinal-1280.jpg 1280w, /assets/images/herofinal-1347.jpg 1347w" sizes="100vw" width="1347" height="853" alt="" loading="eager" fetchpriority="high">
+        </picture>
       </div>
 
       <div class="container hero__grid">
@@ -274,37 +470,28 @@
          now — see CLAUDE.md for the full note and what needs to change
          (tile color strategy, not just re-adding the attribute) before
          this comes back. -->
-    <!-- ============ 1.4 TRUST INTRO (full-width, before the sticky story) === -->
-    <!-- "Trusted across the region" heading lives here now (client 2026-07-23),
-         NOT inside Panel 1 — a full-width black intro to the proof sequence. -->
-    <section class="section story-intro">
-      <div class="container">
-        <div class="story-intro__inner" data-reveal>
-          <h2><span class="trust-metrics__heading-line">Trusted across</span><span class="trust-metrics__heading-line">the region</span></h2>
-          <p class="story-intro__text">Long-term security partnerships built on reliability, consistency and measurable performance.</p>
-        </div>
-      </div>
-    </section>
-
+    <!-- ============ 1.4 TRUST BAND (metrics + logos) ============ -->
+    <!-- The standalone dark "Trusted across the region" intro that used to sit
+         here was removed 2026-07-29 (client — duplicated the trust band heading
+         below). Its H2 + lede moved INTO the white metrics band. Mirrors DE. -->
     <!-- ============ 1.5 TRUST STORY (sticky story — Codrops index9) ====== -->
-    <!-- Integrated 2026-07-23 from ../frankonia-sticky-story. Three 50vw
-         position:sticky scenes in normal flow inside the black .sticky-story
-         track: scene 1 metrics (right, white), scene 2 logos (left, blue),
-         scene 3 value cards (right, light). Each rises + sticks via CSS; a
-         later scene covers an earlier one sharing its column (scene 3 over
-         scene 1). No pin, no artificial scroll distance, no exit animation —
-         track height is the natural sum of the three 100svh scenes, so Pain
-         Hook follows through the natural sticky release. GSAP adds only an
-         entrance parallax per scene (js/sticky-story.js). Replaces the old
-         sliding-panel .story in place; the "Trusted across the region" intro
-         above is unchanged. Scene 2 reuses the real-logo .story-logos
-         marquee. Readable in normal flow with no JS / mobile / reduced motion. -->
-    <section class="sticky-story" data-sticky-story aria-label="Why clients trust FRANKONIA">
+    <!-- Trust band. REWRITTEN 2026-07-29 (client): the old 3-scene sticky
+         split-screen (coverage map + metrics, then logos + value cards) was
+         collapsed into ONE plain section — a full-screen white METRICS band laid
+         out HORIZONTALLY, with the auto-scrolling client-logo marquee below it.
+         The coverage map + pins and the value-cards scene were removed. No
+         sticky/50vw/parallax; see css/sticky-story.css + js/sticky-story.js.
+         Mirrors the DE homepage. -->
+    <!-- Pixel-seam Hero (dark) -> white metrics band (client 2026-07-29). Default
+         black tiles dissolve over the white band. Mirrors DE. -->
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <section class="sticky-story" data-sticky-story data-nav-theme="light" aria-label="Why clients trust FRANKONIA">
 
-      <div class="sticky-story__scene sticky-story__scene--1 sticky-story__scene--right sticky-story__scene--metrics" data-sticky-story-scene>
-        <div class="sticky-story__inner" data-sticky-story-inner>
-          <h3 class="sticky-story__scene-title">The numbers that build trust</h3>
-          <ul class="sticky-story__metrics" data-item-reveal=".sticky-story__metric" data-item-reveal-strong>
+      <div class="sticky-story__scene sticky-story__scene--metrics">
+        <div class="sticky-story__inner">
+          <h2 class="sticky-story__scene-title">Trusted across the region</h2>
+          <p class="sticky-story__lede">Long-term security partnerships built on reliability, consistency and measurable performance.</p>
+          <ul class="sticky-story__metrics">
           <li class="sticky-story__metric">
             <span class="sticky-story__metric-value"><span data-count-to="300" data-suffix="+">300+</span></span>
             <span class="sticky-story__metric-label">Satisfied Customers</span>
@@ -314,7 +501,7 @@
             <span class="sticky-story__metric-label">Service Hours</span>
           </li>
           <li class="sticky-story__metric">
-            <span class="sticky-story__metric-value"><span data-count-to="4.7" data-decimals="1">4.7</span> ★</span>
+            <span class="sticky-story__metric-value"><span data-count-to="4.7" data-decimals="1">4.7</span><span class="sticky-story__metric-star" aria-hidden="true"></span></span>
             <span class="sticky-story__metric-label">Google Reviews (97)</span>
           </li>
           <li class="sticky-story__metric">
@@ -322,18 +509,18 @@
             <span class="sticky-story__metric-label">Availability</span>
           </li>
           </ul>
-        </div>
-        <div class="sticky-story__certs">
-          <p class="sticky-story__certs-label">Certified &amp; independently audited</p>
-          <div class="sticky-story__certs-badges">
-            <img class="sticky-story__cert" src="/assets/icons/dekra-din-77200.png" alt="DEKRA certification: DIN 77200" width="399" height="600" loading="lazy">
-            <img class="sticky-story__cert" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA certification: ISO 9001" width="399" height="600" loading="lazy">
+          <div class="sticky-story__certs">
+            <p class="sticky-story__certs-label">Certified &amp; independently audited</p>
+            <div class="sticky-story__certs-badges">
+              <img class="sticky-story__cert" src="/assets/icons/dekra-din-77200.png" alt="DEKRA certification: DIN 77200" width="399" height="600" loading="lazy">
+              <img class="sticky-story__cert" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA certification: ISO 9001" width="399" height="600" loading="lazy">
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="sticky-story__scene sticky-story__scene--2 sticky-story__scene--left sticky-story__scene--logos" data-sticky-story-scene>
-        <div class="sticky-story__inner" data-sticky-story-inner>
+      <div class="sticky-story__scene sticky-story__scene--logos">
+        <div class="sticky-story__inner">
           <h3 class="sticky-story__scene-title">Trusted by leading organizations</h3>
           <div class="story-logos">
               <div class="story-logos__row story-logos__row--left">
@@ -382,88 +569,14 @@
                   </div>
                 </div>
               </div>
-              <div class="story-logos__row story-logos__row--left" aria-hidden="true">
-                <div class="story-logos__track">
-                  <div class="story-logos__group">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="" loading="lazy">
-                  </div>
-                  <div class="story-logos__group" aria-hidden="true">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="" loading="lazy">
-                  </div>
-                </div>
               </div>
-              <div class="story-logos__row story-logos__row--right" aria-hidden="true">
-                <div class="story-logos__track">
-                  <div class="story-logos__group">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
-                  </div>
-                  <div class="story-logos__group" aria-hidden="true">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
-                    <img class="story-logos__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
-                  </div>
-                </div>
-              </div>
-              </div>
-        </div>
-      </div>
-
-      <div class="sticky-story__scene sticky-story__scene--3 sticky-story__scene--right sticky-story__scene--cards" data-sticky-story-scene>
-        <div class="sticky-story__inner" data-sticky-story-inner>
-          <h3 class="sticky-story__scene-title">What Clients Can Expect</h3>
-          <div class="sticky-story__cards">
-              <article class="sticky-story__card">
-                <img class="sticky-story__card-icon" src="/assets/icons/icon-lock.svg" alt="" width="350" height="350" loading="lazy">
-                <h4 class="sticky-story__card-title">Reliability</h4>
-                <p class="sticky-story__card-text">Certified security professionals on site as scheduled, with documented shift coverage you can verify at any time.</p>
-              </article>
-              <article class="sticky-story__card">
-                <img class="sticky-story__card-icon" src="/assets/icons/icon-tie-person.svg" alt="" width="350" height="350" loading="lazy">
-                <h4 class="sticky-story__card-title">Dedicated Contact</h4>
-                <p class="sticky-story__card-text">One dedicated contact person coordinates your account — no call centers, no rotating staff, no repeating yourself.</p>
-              </article>
-              <article class="sticky-story__card">
-                <img class="sticky-story__card-icon" src="/assets/icons/icon-eye.svg" alt="" width="350" height="350" loading="lazy">
-                <h4 class="sticky-story__card-title">Transparency</h4>
-                <p class="sticky-story__card-text">Digital shift reports and clear invoicing mean you always know who was on site, when, and why.</p>
-              </article>
-              <article class="sticky-story__card">
-                <img class="sticky-story__card-icon" src="/assets/icons/icon-clock.svg" alt="" width="350" height="350" loading="lazy">
-                <h4 class="sticky-story__card-title">Fast Response</h4>
-                <p class="sticky-story__card-text">Standard deployments within 48–72 hours, with faster turnaround for urgent Fire Watch and Intervention Service requests.</p>
-              </article>
-              <article class="sticky-story__card">
-                <img class="sticky-story__card-icon" src="/assets/icons/icon-check-shield.svg" alt="" width="350" height="350" loading="lazy">
-                <h4 class="sticky-story__card-title">Certified Quality</h4>
-                <p class="sticky-story__card-text">DIN 77200-1 and DIN EN ISO 9001 certified, with all personnel background-checked and trained under §34a GewO.</p>
-              </article>
-              <article class="sticky-story__card">
-                <img class="sticky-story__card-icon" src="/assets/icons/icon-vest.svg" alt="" width="350" height="350" loading="lazy">
-                <h4 class="sticky-story__card-title">Flexible Scheduling</h4>
-                <p class="sticky-story__card-text">Short-term, long-term, or one-off assignments — your security setup adapts as your business needs change.</p>
-              </article>
-          </div>
         </div>
       </div>
     </section>
+
+    <!-- Pixel-seam: white trust band -> dark Pain Hook (client 2026-07-29).
+         White tiles dissolve over Pain Hook's dark top. Mirrors DE. -->
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
 
     <!-- ============ 2. PAIN HOOK ============ -->
     <!-- Redesigned 2026-07-20 (client brief: "premium scroll-driven
@@ -481,7 +594,6 @@
                js/pain-hook-journey.js) and this h2 sits in .pain-hook__intro,
                separate from .pain-hook__journey, so the two triggers don't
                interfere. -->
-          <p class="section-eyebrow">Common Challenges</p>
           <h2>Facing these challenges?</h2>
         </div>
 
@@ -519,6 +631,21 @@
                route to be visible underneath the glowing progress line
                (treated as a fresh request, per CLAUDE.md's convention). -->
           <svg class="pain-hook__route" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <!-- Gradient that TRACKS THE HEAD of the single drawn line (client
+                 2026-07-24): grey tail (blends into the unfilled base), blue
+                 body, white head. gradientUnits="userSpaceOnUse" + the x1..y2
+                 endpoints are updated every frame in js/pain-hook-journey.js so
+                 the gradient always runs from the route's start to the current
+                 leading point — white stays on the advancing tip. Stop colours
+                 from tokens in css/page-home.css. -->
+            <defs>
+              <linearGradient id="pain-hook-active-grad" gradientUnits="userSpaceOnUse" x1="-10" y1="12" x2="22" y2="112">
+                <stop class="pain-hook__grad-tail" offset="0"></stop>
+                <stop class="pain-hook__grad-mid" offset="0.34"></stop>
+                <stop class="pain-hook__grad-mid" offset="0.9"></stop>
+                <stop class="pain-hook__grad-head" offset="1"></stop>
+              </linearGradient>
+            </defs>
             <path class="pain-hook__route-path pain-hook__route-path--base"></path>
             <path class="pain-hook__route-path pain-hook__route-path--active"></path>
           </svg>
@@ -552,19 +679,19 @@
                page-home.css. NOT inside cards, per the brief. -->
           <ol class="pain-hook__list">
             <li class="pain-hook__item pain-hook__item--1" data-pain-hook-item>
-              <h3 class="pain-hook__title">Your security team reflects poorly on your business</h3>
+              <h3 class="pain-hook__title">Your security team <span class="pain-hook__mark">reflects poorly</span> on your business</h3>
               <p class="pain-hook__text">Unprofessional conduct leads to complaints from guests, employees and customers.</p>
             </li>
             <li class="pain-hook__item pain-hook__item--2" data-pain-hook-item>
-              <h3 class="pain-hook__title">You are constantly onboarding new guards</h3>
+              <h3 class="pain-hook__title">You are <span class="pain-hook__mark">constantly onboarding new guards</span></h3>
               <p class="pain-hook__text">Frequent personnel changes create inconsistency and a lack of site knowledge.</p>
             </li>
             <li class="pain-hook__item pain-hook__item--3" data-pain-hook-item>
-              <h3 class="pain-hook__title">Problems always come back to you</h3>
+              <h3 class="pain-hook__title">Problems always <span class="pain-hook__mark">come back to you</span></h3>
               <p class="pain-hook__text">Your contact is difficult to reach, leaving you accountable for every issue.</p>
             </li>
             <li class="pain-hook__item pain-hook__item--4" data-pain-hook-item>
-              <h3 class="pain-hook__title">You cannot demonstrate real results</h3>
+              <h3 class="pain-hook__title">You cannot demonstrate <span class="pain-hook__mark">real results</span></h3>
               <p class="pain-hook__text">Security adds to your workload without delivering clear, measurable outcomes.</p>
             </li>
           </ol>
@@ -581,11 +708,10 @@
       </div>
     </section>
 
-    <!-- Pixel-transition seam (Pain Hook -> Our System), client 2026-07-23.
-         Default BLACK tiles (the colour of the dark Pain Hook section it
-         transitions FROM) against the white Our System section the band sits
-         inside. See .pixel-seam in page-home.css. -->
-    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- Pixel-transition seam (Pain Hook -> Our System). Pain Hook is
+         .section--subtle, so the tiles use .pixel-seam--subtle (~#090909) to
+         match its rendered background exactly (client 2026-07-25). -->
+    <div class="pixel-seam pixel-seam--subtle" data-pixel-seam aria-hidden="true"></div>
 
     <!-- ============ 2.5. OUR SYSTEM ============ -->
     <!-- Stacked-card "Our System" component (integrated 2026-07-23 from the
@@ -605,42 +731,34 @@
         <div class="system-story__stage">
 
           <header class="system-story__intro">
-            <p class="system-story__eyebrow">Our System</p>
-            <h2 class="system-story__intro-title" data-no-title-reveal>Less effort. More control.</h2>
-            <p class="system-story__lede">Six practical ways FRANKONIA makes security more professional, transparent and easier to manage.</p>
+            <h2 class="system-story__intro-title">How our security system works.</h2>
           </header>
 
           <div class="system-story__stack" data-system-stack>
 
             <article class="system-story__card" data-system-card>
               <div class="system-story__card-inner">
-              <div class="system-story__media" data-visual="uniforms" aria-hidden="true">
-                <span class="system-story__visual-label">Placeholder — a FRANKONIA guard or uniform-focused image</span>
+              <div class="system-story__media" data-visual="uniforms">
+                <picture><source type="image/webp" srcset="/assets/images/system-first-impression-640.webp 640w, /assets/images/system-first-impression-956.webp 956w" sizes="(min-width: 768px) 540px, 100vw"><img class="system-story__img" src="/assets/images/system-first-impression.jpg" alt="Professional FRANKONIA security personnel on site" width="956" height="1052" loading="lazy"></picture>
               </div>
                 <div class="system-story__body">
-                  <h3 class="system-story__title"><span class="system-story__num">1.</span> A professional first impression</h3>
-                  <p class="system-story__desc">Security personnel who represent your business professionally.</p>
+                  <h3 class="system-story__title"><span class="system-story__num">01</span> A professional first impression</h3>
                   <ul class="system-story__points">
                   <li>Uniforms tailored to your requirements</li>
                   <li>Permanent core teams</li>
                   <li>Personnel selected for your environment</li>
                   </ul>
-                <a class="system-story__cta" href="#uniforms">
-                  Explore uniforms
-                  <span class="system-story__cta-arrow" aria-hidden="true">&rarr;</span>
-                </a>
                 </div>
               </div>
             </article>
 
             <article class="system-story__card" data-system-card>
               <div class="system-story__card-inner">
-              <div class="system-story__media" data-visual="reporting" aria-hidden="true">
-                <span class="system-story__visual-label">Placeholder — a clean digital reporting/shift-log image, not a generic SaaS dashboard</span>
+              <div class="system-story__media" data-visual="reporting">
+                <picture><source type="image/webp" srcset="/assets/images/system-operational-control-640.webp 640w, /assets/images/system-operational-control-751.webp 751w" sizes="(min-width: 768px) 540px, 100vw"><img class="system-story__img" src="/assets/images/system-operational-control.jpg" alt="Digital shift reporting and security logbook" width="751" height="941" loading="lazy"></picture>
               </div>
                 <div class="system-story__body">
-                  <h3 class="system-story__title"><span class="system-story__num">2.</span> Full operational control</h3>
-                  <p class="system-story__desc">Know what is happening on site and access the information you need.</p>
+                  <h3 class="system-story__title"><span class="system-story__num">02</span> Full operational control</h3>
                   <ul class="system-story__points">
                   <li>Digital security logbook</li>
                   <li>Digital reports</li>
@@ -652,12 +770,11 @@
 
             <article class="system-story__card" data-system-card>
               <div class="system-story__card-inner">
-              <div class="system-story__media" data-visual="onboarding" aria-hidden="true">
-                <span class="system-story__visual-label">Placeholder — a supervisor briefing or onboarding a security team</span>
+              <div class="system-story__media" data-visual="onboarding">
+                <picture><source type="image/webp" srcset="/assets/images/system-reliable-teams-640.webp 640w, /assets/images/system-reliable-teams-751.webp 751w" sizes="(min-width: 768px) 540px, 100vw"><img class="system-story__img" src="/assets/images/system-reliable-teams.jpg" alt="FRANKONIA security team onboarding" width="751" height="941" loading="lazy"></picture>
               </div>
                 <div class="system-story__body">
-                  <h3 class="system-story__title"><span class="system-story__num">3.</span> Reliable teams</h3>
-                  <p class="system-story__desc">Consistent personnel who understand your site, expectations and procedures.</p>
+                  <h3 class="system-story__title"><span class="system-story__num">03</span> Reliable teams</h3>
                   <ul class="system-story__points">
                   <li>Jointly defined onboarding</li>
                   <li>Professional onboarding by a supervisor</li>
@@ -669,12 +786,11 @@
 
             <article class="system-story__card" data-system-card>
               <div class="system-story__card-inner">
-              <div class="system-story__media" data-visual="contact" aria-hidden="true">
-                <span class="system-story__visual-label">Placeholder — a dedicated account contact or professional communication scene</span>
+              <div class="system-story__media" data-visual="contact">
+                <picture><source type="image/webp" srcset="/assets/images/system-accountable-contact-640.webp 640w, /assets/images/system-accountable-contact-1080.webp 1080w" sizes="(min-width: 768px) 540px, 100vw"><img class="system-story__img" src="/assets/images/system-accountable-contact.jpg" alt="A dedicated FRANKONIA account contact" width="1280" height="931" loading="lazy"></picture>
               </div>
                 <div class="system-story__body">
-                  <h3 class="system-story__title"><span class="system-story__num">4.</span> One accountable contact</h3>
-                  <p class="system-story__desc">One dedicated person who knows your account and coordinates everything.</p>
+                  <h3 class="system-story__title"><span class="system-story__num">04</span> One accountable contact</h3>
                   <ul class="system-story__points">
                   <li>Chat, email or phone communication</li>
                   <li>24/7 availability</li>
@@ -686,12 +802,11 @@
 
             <article class="system-story__card" data-system-card>
               <div class="system-story__card-inner">
-              <div class="system-story__media" data-visual="management" aria-hidden="true">
-                <span class="system-story__visual-label">Placeholder — a professional security report or management summary</span>
+              <div class="system-story__media" data-visual="management">
+                <picture><source type="image/webp" srcset="/assets/images/system-verifiable-results-640.webp 640w, /assets/images/system-verifiable-results-1080.webp 1080w" sizes="(min-width: 768px) 540px, 100vw"><img class="system-story__img" src="/assets/images/system-verifiable-results.jpg" alt="Security reports and management summary" width="1280" height="853" loading="lazy"></picture>
               </div>
                 <div class="system-story__body">
-                  <h3 class="system-story__title"><span class="system-story__num">5.</span> Verifiable results</h3>
-                  <p class="system-story__desc">Clear security information you can communicate and present to management.</p>
+                  <h3 class="system-story__title"><span class="system-story__num">05</span> Verifiable results</h3>
                   <ul class="system-story__points">
                   <li>Executive reports and management summaries</li>
                   <li>Individual security concept</li>
@@ -703,17 +818,11 @@
 
             <article class="system-story__card" data-system-card>
               <div class="system-story__card-inner">
-              <div class="system-story__media system-story__media--flow" data-visual="resolution" aria-hidden="true">
-                <ol class="system-story__flow">
-                  <li>Issue</li>
-                  <li>Root cause</li>
-                  <li>Corrective action</li>
-                  <li>Resolved</li>
-                </ol>
+              <div class="system-story__media" data-visual="resolution">
+                <picture><source type="image/webp" srcset="/assets/images/system-full-responsibility-640.webp 640w, /assets/images/system-full-responsibility-1080.webp 1080w" sizes="(min-width: 768px) 540px, 100vw"><img class="system-story__img" src="/assets/images/system-full-responsibility.jpg" alt="FRANKONIA taking full responsibility through root-cause resolution" width="1280" height="853" loading="lazy"></picture>
               </div>
                 <div class="system-story__body">
-                  <h3 class="system-story__title"><span class="system-story__num">6.</span> Full responsibility</h3>
-                  <p class="system-story__desc">Problems are followed through until the underlying cause is resolved.</p>
+                  <h3 class="system-story__title"><span class="system-story__num">06</span> Full responsibility</h3>
                   <ul class="system-story__points">
                   <li>Root-cause resolution for complaints</li>
                   <li>Direct feedback process with FRANKONIA</li>
@@ -727,11 +836,12 @@
       </div>
     </section>
 
-    <!-- Pixel-transition seam (Our System -> Services), client 2026-07-23.
-         LIGHT tiles (.pixel-seam--light = #FAFAFA, ~the white Our System
-         section it transitions FROM) against the dark Services section the
-         band sits inside. See .pixel-seam in page-home.css. -->
-    <div class="pixel-seam pixel-seam--light" data-pixel-seam aria-hidden="true"></div>
+    <!-- Pixel-transition seam (Our System -> Services). BLUE tiles
+         (.pixel-seam--sys = --color-blue-dark, matching the Our System section's
+         own background it transitions FROM) dissolving over the dark Services
+         section the band sits inside (client 2026-07-27; was --light/#FAFAFA,
+         from when Our System was white). See .pixel-seam in page-home.css. -->
+    <div class="pixel-seam pixel-seam--sys" data-pixel-seam aria-hidden="true"></div>
 
     <!-- ============ 3. SERVICES OVERVIEW ============ -->
     <!-- Redesigned 2026-07-13 from a 10-card grid to an editorial numbered
@@ -745,7 +855,6 @@
     <section class="section section--subtle services">
       <div class="container">
         <div class="section__intro" data-reveal>
-          <p class="section-eyebrow">What We Offer</p>
           <h2>Our Services</h2>
         </div>
 
@@ -762,6 +871,7 @@
                 data-preview-text="Round-the-clock protection for industrial sites and company premises."
                 data-preview-webp="/assets/images/werkschutz.webp"
                 data-preview-jpg="/assets/images/werkschutz.jpg">
+                <img class="services__thumb" src="/assets/images/services-thumb/werkschutz.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">01</span>
                 <span class="services__item-name">Werkschutz</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
@@ -773,6 +883,7 @@
                 data-preview-text="Comprehensive protection for buildings, facilities, and property."
                 data-preview-webp="/assets/images/objektschutz.webp"
                 data-preview-jpg="/assets/images/objektschutz.jpg">
+                <img class="services__thumb" src="/assets/images/services-thumb/objektschutz.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">02</span>
                 <span class="services__item-name">Objektschutz</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
@@ -784,6 +895,7 @@
                 data-preview-text="Reliable security for construction sites, day and night."
                 data-preview-webp="/assets/images/baustellenbewachung.webp"
                 data-preview-jpg="/assets/images/baustellenbewachung.jpg">
+                <img class="services__thumb" src="/assets/images/services-thumb/baustellenbewachung.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">03</span>
                 <span class="services__item-name">Baustellenbewachung</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
@@ -795,6 +907,7 @@
                 data-preview-text="Certified fire watch service for compliance and risk prevention."
                 data-preview-webp="/assets/images/brandwache.webp"
                 data-preview-jpg="/assets/images/brandwache.jpg">
+                <img class="services__thumb" src="/assets/images/services-thumb/brandwache.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">04</span>
                 <span class="services__item-name">Brandwache</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
@@ -806,6 +919,7 @@
                 data-preview-text="Scheduled patrols and lock-up service for your premises."
                 data-preview-webp="/assets/images/revier-schliessdienst.webp"
                 data-preview-jpg="/assets/images/revier-schliessdienst.jpg">
+                <img class="services__thumb" src="/assets/images/services-thumb/revier-schliessdienst.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">05</span>
                 <span class="services__item-name">Revier- &amp; Schließdienst</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
@@ -817,6 +931,7 @@
                 data-preview-text="Professional reception and access control for a strong first impression."
                 data-preview-webp="/assets/images/empfangsdienst.webp"
                 data-preview-jpg="/assets/images/empfangsdienst.jpg">
+                <img class="services__thumb" src="/assets/images/services-thumb/empfangsdienst.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">06</span>
                 <span class="services__item-name">Empfangsdienst</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
@@ -828,6 +943,7 @@
                 data-preview-text="Security planning and on-site protection for events of any size."
                 data-preview-webp="/assets/images/veranstaltungsschutz.webp"
                 data-preview-jpg="/assets/images/veranstaltungsschutz.jpg">
+                <img class="services__thumb" src="/assets/images/services-thumb/veranstaltungsschutz.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">07</span>
                 <span class="services__item-name">Veranstaltungsschutz</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
@@ -839,6 +955,7 @@
                 data-preview-text="Discreet loss prevention for retail and department stores."
                 data-preview-webp="/assets/images/kaufhausdetektei.webp"
                 data-preview-jpg="/assets/images/kaufhausdetektei.jpg">
+                <img class="services__thumb" src="/assets/images/services-thumb/kaufhausdetektei.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">08</span>
                 <span class="services__item-name">Kaufhausdetektei</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
@@ -850,6 +967,7 @@
                 data-preview-text="Modern surveillance and access technology, installed and maintained."
                 data-preview-webp="/assets/images/sicherheitstechnik.webp"
                 data-preview-jpg="/assets/images/sicherheitstechnik.jpg">
+                <img class="services__thumb" src="/assets/images/services-thumb/sicherheitstechnik.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">09</span>
                 <span class="services__item-name">Sicherheitstechnik</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
@@ -861,6 +979,7 @@
                 data-preview-text="Fast-response intervention when your alarm system triggers."
                 data-preview-webp="/assets/images/interventionsdienst.webp"
                 data-preview-jpg="/assets/images/interventionsdienst.jpg">
+                <img class="services__thumb" src="/assets/images/services-thumb/interventionsdienst.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">10</span>
                 <span class="services__item-name">Interventionsdienst</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
@@ -913,8 +1032,9 @@
          or prefers-reduced-motion is set, this div stays empty and
          effectively invisible, so Services and Uniforms simply meet
          normally with nothing between them, same as if this feature
-         didn't exist. -->
-    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+         didn't exist. Services is .section--subtle, so the tiles use
+         .pixel-seam--subtle (~#090909) to match it (client 2026-07-25). -->
+    <div class="pixel-seam pixel-seam--subtle" data-pixel-seam aria-hidden="true"></div>
 
     <!-- ============ 4. UNIFORMS / OUTFIT VIEWER ============ -->
     <!-- Added 2026-07-15. Image notes (see CLAUDE.md "Folder architecture"
@@ -1012,7 +1132,7 @@
               <button type="button" class="outfits__name-btn" data-outfit-index="0" aria-pressed="true">Polo<span class="outfits__name-detail" aria-hidden="true">→ For everyday reception and front-of-house duty</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
               <button type="button" class="outfits__name-btn" data-outfit-index="1" aria-pressed="false">Pullover<span class="outfits__name-detail" aria-hidden="true">→ For general on-site assignments in mild weather</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
               <button type="button" class="outfits__name-btn" data-outfit-index="2" aria-pressed="false">Vest<span class="outfits__name-detail" aria-hidden="true">→ For high-visibility outdoor and patrol duty</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
-              <button type="button" class="outfits__name-btn" data-outfit-index="3" aria-pressed="false">Softshell Jacket<span class="outfits__name-detail" aria-hidden="true">→ For active outdoor assignments in changing weather</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+              <button type="button" class="outfits__name-btn" data-outfit-index="3" aria-pressed="false">Softshell Jacket<span class="outfits__name-detail" aria-hidden="true">→ For outdoor assignments in changing weather</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
               <button type="button" class="outfits__name-btn" data-outfit-index="4" aria-pressed="false">Winter Jacket<span class="outfits__name-detail" aria-hidden="true">→ For outdoor patrols and cold-weather assignments</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
               <button type="button" class="outfits__name-btn" data-outfit-index="5" aria-pressed="false">Shirt<span class="outfits__name-detail" aria-hidden="true">→ For client-facing reception and desk assignments</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
               <button type="button" class="outfits__name-btn" data-outfit-index="6" aria-pressed="false">Suit<span class="outfits__name-detail" aria-hidden="true">→ For formal, client-facing assignments</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
@@ -1027,6 +1147,16 @@
                fails, the arrows/view buttons stay inert but the section
                copy and this default image remain fully understandable. -->
           <div class="outfits__viewer">
+            <!-- Front/Angled toggle — moved ABOVE the image 2026-07-28
+                 (client: the toggle sat below the tall character image and
+                 was scrolled off-screen / not visible; put it on top so
+                 it's seen before the photo). Was below .outfits__stage
+                 since 2026-07-17. Same buttons/behavior, just relocated. -->
+            <div class="outfits__views" role="group" aria-label="Photo angle">
+              <button type="button" class="outfits__view-btn" data-outfit-view="front" aria-pressed="true">Front</button>
+              <button type="button" class="outfits__view-btn" data-outfit-view="angled" aria-pressed="false">Angled</button>
+            </div>
+
             <div class="outfits__stage">
               <button type="button" class="outfits__arrow outfits__arrow--prev" data-outfit-prev aria-label="Show previous outfit">
                 <span aria-hidden="true">←</span>
@@ -1035,23 +1165,13 @@
               <div class="outfits__image-frame">
                 <picture>
                   <source data-outfit-source srcset="/assets/images/outfits/polo-front.webp" type="image/webp">
-                  <img data-outfit-img src="/assets/images/outfits/polo-front.png" alt="FRANKONIA security staff member wearing a black polo uniform, front view." width="800" height="1200" loading="lazy">
+                  <img data-outfit-img src="/assets/images/outfits/polo-front.webp" alt="FRANKONIA security staff member wearing a black polo uniform, front view." width="800" height="1200" loading="lazy">
                 </picture>
               </div>
 
               <button type="button" class="outfits__arrow outfits__arrow--next" data-outfit-next aria-label="Show next outfit">
                 <span aria-hidden="true">→</span>
               </button>
-            </div>
-
-            <!-- Front/Angled toggle — moved here 2026-07-17 (client
-                 request: "closer to the image," was in .outfits__intro on
-                 the left since 2026-07-15) and restyled smaller/secondary
-                 to match, see .outfits__views, page-home.css. Same
-                 buttons/behavior, just relocated + de-emphasized. -->
-            <div class="outfits__views" role="group" aria-label="Photo angle">
-              <button type="button" class="outfits__view-btn" data-outfit-view="front" aria-pressed="true">Front</button>
-              <button type="button" class="outfits__view-btn" data-outfit-view="angled" aria-pressed="false">Angled</button>
             </div>
             <!-- The active-outfit name + context label that used to sit
                  here (.outfits__info, added 2026-07-17 the same day)
@@ -1115,7 +1235,6 @@
     <section class="section section--subtle social">
       <div class="container">
         <div class="section__intro social__intro" data-reveal>
-          <p class="section-eyebrow">Follow Our Work</p>
           <h2>See Our Team in Action</h2>
           <p class="social__lede">Real moments from the field, shared on our social channels.</p>
         </div>
@@ -1123,38 +1242,37 @@
         <div class="social__grid" data-reveal>
           <div class="social__item">
             <div class="social__placeholder">
-              <img class="social__cover" src="/assets/images/social-on-site-patrol.jpg" width="480" height="853" alt="FRANKONIA security personnel on site" loading="lazy">
+              <img class="social__cover" src="/assets/images/social-werkschutz.jpg" width="480" height="850" alt="FRANKONIA industrial site security control room" loading="lazy">
               <span class="social__play" aria-hidden="true"></span>
             </div>
-            <p class="social__caption">On-Site Patrol</p>
+            <p class="social__caption">Site Security</p>
           </div>
           <div class="social__item social__item--featured">
             <div class="social__placeholder">
-              <img class="social__cover" src="/assets/images/social-night-shift-briefing.jpg" width="480" height="853" alt="FRANKONIA team briefing" loading="lazy">
+              <img class="social__cover" src="/assets/images/social-interview.jpg" width="480" height="850" alt="FRANKONIA team interview in Bamberg" loading="lazy">
               <span class="social__play" aria-hidden="true"></span>
             </div>
-            <p class="social__caption">Night Shift Briefing</p>
+            <p class="social__caption">Interview</p>
           </div>
           <div class="social__item">
             <div class="social__placeholder">
-              <img class="social__cover" src="/assets/images/social-team-training.jpg" width="480" height="853" alt="FRANKONIA control room" loading="lazy">
+              <img class="social__cover" src="/assets/images/social-veranstaltungsschutz.jpg" width="480" height="850" alt="FRANKONIA event security team on duty" loading="lazy">
               <span class="social__play" aria-hidden="true"></span>
             </div>
-            <p class="social__caption">Team Training</p>
+            <p class="social__caption">Event Security</p>
           </div>
         </div>
 
         <div class="social__cta">
-          <a class="btn btn--secondary" href="#">Follow Us on Social Media</a>
+          <a class="btn btn--primary" href="https://www.instagram.com/frankonia_sicherheitsdienst/" target="_blank" rel="noopener noreferrer">Follow Us on Instagram<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
         </div>
       </div>
     </section>
 
-    <!-- Pixel-transition seam (Social -> References), client 2026-07-23.
-         Default BLACK tiles (the colour of the dark Social section it
-         transitions FROM) against the white References section the band
-         sits inside. See .pixel-seam in page-home.css. -->
-    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- Pixel-transition seam (Social -> References). Social is
+         .section--subtle, so the tiles use .pixel-seam--subtle (~#090909) to
+         match its rendered background exactly (client 2026-07-25). -->
+    <div class="pixel-seam pixel-seam--subtle" data-pixel-seam aria-hidden="true"></div>
 
     <!-- ============ 5. REFERENCES — CUSTOMER RESULTS ============ -->
     <!-- Intro + results restyled 2026-07-17, client request: match
@@ -1177,7 +1295,6 @@
     <section class="section references" data-nav-theme="light">
       <div class="container">
         <div class="section__intro references__intro" data-reveal>
-          <p class="section-eyebrow">Client Results</p>
           <h2>Real Results</h2>
           <p class="references__lede">Real numbers from the security programs we run for our customers every day.</p>
         </div>
@@ -1305,88 +1422,12 @@
          white-wash + blur sits on top of whatever scrolls under it, but
          this specific split case hasn't been visually confirmed — flag
          it if the header looks off scrolling over the black half here. -->
+    <!-- Conversion section: the black left panel (headline + diagnostic-flow
+         visual + microcopy) was removed 2026-07-28 (client: keep only the form,
+         it's what users should see). Now a single, centered white form. The
+         .conversion__info / __visual / __micro CSS and js/conversion-visual.js
+         are left in place but unused. -->
     <section id="sicherheitsanalyse" class="conversion" data-nav-theme="light">
-      <div class="conversion__panel conversion__panel--info" data-reveal>
-        <div class="conversion__info">
-          <p class="section-eyebrow">Free Security Analysis</p>
-          <!-- Headline replaced per the brief — was "Free Security
-               Analysis — Clarity in 20 Minutes" (still present, just
-               moved: see .conversion__form-title on the right panel and
-               .conversion__micro below for where "20 minutes"/"free"
-               reassurance now lives instead). -->
-          <h2 class="conversion__headline">Clarity before action.</h2>
-          <p class="conversion__lede">A focused review of your current security setup, risks and practical next steps.</p>
-        </div>
-
-        <!-- Abstract visual system (client brief) — NOT an illustration
-             of a guard/shield/lock/camera/dashboard, deliberately. A
-             single inline SVG: disconnected "blueprint" line fragments +
-             an open corner bracket on the left (unclear current setup),
-             one small blue marker in the middle (a detected risk), a
-             cleaner/straighter line continuing right (a clear plan). One
-             continuous path connects left to right, its stroke fading
-             from muted grey to FRANKONIA blue via a gradient — the
-             "fragmented → ordered" transition the brief asks for, without
-             a second element. Small circles mark a few coordinates along
-             it; only the risk-marker and endpoint ones are blue, per "one
-             or two highlighted points." Static in the raw markup — the
-             one-time draw-in (stroke-dashoffset) and fade/stagger on the
-             fragments are both plain CSS animations gated by
-             prefers-reduced-motion (motion.css's existing blanket
-             override neutralizes both automatically, no extra rule
-             needed here), not GSAP — the brief explicitly asked to avoid
-             a GSAP dependency for this one graphic. -->
-        <div class="conversion__visual" aria-hidden="true">
-          <svg class="conversion__visual-svg" viewBox="0 0 480 280" preserveAspectRatio="xMidYMid meet" focusable="false">
-            <defs>
-              <linearGradient id="conversion-path-gradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stop-color="var(--color-border-strong)"></stop>
-                <stop offset="65%" stop-color="var(--color-border-strong)"></stop>
-                <stop offset="100%" stop-color="var(--color-accent)"></stop>
-              </linearGradient>
-            </defs>
-
-            <!-- Fragmented cluster — left, "unclear current setup." Short
-                 disconnected segments, deliberately not joined into one
-                 shape. -->
-            <g class="conversion__visual-fragments">
-              <path d="M20 46 H72"></path>
-              <path d="M96 22 V64"></path>
-              <path d="M112 96 H162"></path>
-              <path d="M24 96 H58 V128"></path>
-              <path d="M150 34 H150.01"></path>
-            </g>
-
-            <!-- The one continuous diagnostic path, left to right. -->
-            <path class="conversion__visual-path" d="M12 202 L74 189 L98 213 L136 176 L178 188 L222 141 L284 141 L344 99 L468 99"></path>
-
-            <!-- Coordinates along the path — only the risk marker (mid)
-                 and the endpoint are blue ("one or two highlighted
-                 points"), the rest stay muted grey. -->
-            <circle class="conversion__visual-node" cx="12" cy="202" r="2.5"></circle>
-            <circle class="conversion__visual-node" cx="98" cy="213" r="2.5"></circle>
-            <circle class="conversion__visual-node conversion__visual-node--marker" cx="222" cy="141" r="3.5"></circle>
-            <circle class="conversion__visual-node conversion__visual-node--marker" cx="468" cy="99" r="3"></circle>
-
-            <!-- Clean, straighter fragment on the right — "a clear
-                 action plan." A closed-ish rectangle corner, unlike the
-                 open bracket on the left. -->
-            <path class="conversion__visual-order" d="M392 60 H460 V92"></path>
-          </svg>
-
-          <div class="conversion__visual-labels">
-            <span>Current Setup</span>
-            <span>Risk Review</span>
-            <span>Next Steps</span>
-          </div>
-        </div>
-
-        <p class="conversion__micro">
-          <span class="conversion__micro-main">20 minutes · Free · No obligation</span>
-          <span class="conversion__micro-sub">Response within one business day</span>
-        </p>
-      </div>
-
       <div class="conversion__panel conversion__panel--form" data-reveal>
         <div class="conversion__form-wrap">
           <h3 class="conversion__form-title">Request your free analysis</h3>
@@ -1499,7 +1540,6 @@
     <section class="section coverage">
       <div class="container">
         <div class="section__intro coverage__intro" data-reveal>
-          <p class="section-eyebrow">Service Area</p>
           <h2>Coverage Areas</h2>
           <p class="coverage__lede">On-site security services across Bamberg, Nuremberg, Würzburg, and every city we serve throughout Franconia and Bavaria.</p>
         </div>
@@ -1562,7 +1602,6 @@
     <section class="section faq" data-nav-theme="light">
       <div class="container">
         <div class="section__intro faq__intro" data-reveal>
-          <p class="section-eyebrow">Got Questions?</p>
           <h2>Frequently Asked Questions</h2>
         </div>
 
@@ -1612,6 +1651,16 @@
     </section>
 
   </main>
+
+  <!-- Pixel-transition seam (FAQ -> footer), client 2026-07-24. PURE-WHITE
+       tiles (.pixel-seam--white = #FFFFFF, matching FAQ's own
+       background: var(--color-white)) dissolving over the blue footer the band
+       sits inside. Was --light (#FAFAFA), which read as a greyish second white
+       against FAQ's true #FFFFFF top edge (client 2026-07-26, "two whites"
+       fix). Placed between </main> and the footer so the band lands in the
+       footer's reserved top padding — see `.pixel-seam + .site-footer` in
+       page-home.css. Built by js/pixel-transition.js. -->
+  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
 
   <!-- include: footer -->
   <!-- include: whatsapp-button -->

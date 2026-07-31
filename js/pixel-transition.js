@@ -103,8 +103,15 @@
     seam.appendChild(band);
 
     const rect = band.getBoundingClientRect();
-    const cols = Math.max(4, Math.round(rect.width / TILE_SIZE));
-    const rows = Math.max(3, Math.round(rect.height / TILE_SIZE));
+    // ceil, not round (fixed 2026-07-30): the tiles are a FIXED pixel size, so
+    // rounding down leaves a bare strip at the right edge of the band. Ceil
+    // always over-covers instead; .pixel-seam__band's own overflow:hidden
+    // clips the leftover sliver. Rounding used to over-cover roughly half the
+    // time too — at a 1512px viewport it produced 38 x 40px = 1520px, i.e. 8px
+    // of real horizontal scroll on the WHOLE page (measured in Chrome), which
+    // shifted every section left and read as "the layout lost its margin".
+    const cols = Math.max(4, Math.ceil(rect.width / TILE_SIZE));
+    const rows = Math.max(3, Math.ceil(rect.height / TILE_SIZE));
     band.style.setProperty("--pixel-cols", cols);
     band.style.setProperty("--pixel-rows", rows);
     band.style.setProperty("--pixel-tile-size", TILE_SIZE + "px");

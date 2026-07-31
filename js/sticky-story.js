@@ -1,52 +1,31 @@
 /*
-  sticky-story.js — Trust "sticky story" (Codrops StickySections index9).
+  sticky-story.js — Trust band (metrics + client logos).
 
-  Integrated 2026-07-23 from the sibling prototype ../frankonia-sticky-story.
-  Behaviour = the prototype; wiring = Frankonia's architecture:
+  REWRITTEN 2026-07-29 alongside the CSS: the old 3-scene sticky choreography
+  (coverage-map parallax, pin pop-ins, half-panel entrance parallax, value-card
+  reveals) was removed with that structure. What remains is a plain full-width
+  section, so this script now only does two light enhancements:
 
-    - Self-initialising deferred IIFE (same pattern as system-story.js
-      / pain-hook-journey.js). NO extra DOMContentLoaded — the
-      <script defer> already guarantees the DOM is parsed. Runs once.
-    - Reuses the site's single GSAP + ScrollTrigger and the single Lenis from
-      js/smooth-scroll.js (native window scroll, no transformed wrapper, so real
-      CSS position:sticky works). It creates ONLY per-scene parallax
-      ScrollTriggers — no Lenis, no second RAF loop, no extra
-      lenis.on("scroll", ...) / gsap.ticker binding, no ScrollTrigger pin.
-    - gsap.matchMedia("(min-width:1024px) and (prefers-reduced-motion:
-      no-preference)") — the exact query the CSS enhanced block uses, so layout
-      and JS never diverge. matchMedia auto-kills the ScrollTriggers and reverts
-      inline transforms when the query stops matching (resize < 1024px or
-      reduced-motion), so crossing the breakpoint leaves no stale transforms and
-      rebuilds cleanly on return — no duplicates.
+    - Count-up on the metric numbers as they scroll into view (decimal-aware
+      4.7, locale thousands grouping).
+    - A one-time staggered fade/rise on the metrics as the row enters.
 
-  The half-panels rise + cover purely via CSS sticky + z-index (works with no
-  JS). GSAP adds only the entrance parallax on each scene's inner content; no
-  exit slide (with three scenes that would expose the black track as a gap).
-  JS-only-ever-enhances: every scene is fully readable in normal flow without
-  this script.
+  Same self-initialising deferred IIFE pattern as the other motion files. Reuses
+  the site's single GSAP + ScrollTrigger. JS-only-ever-enhances: every metric and
+  logo is fully readable with no JS / reduced-motion / mobile — nothing here
+  gates visibility.
 */
 
 (function () {
   "use strict";
 
-  if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
-
   var root = document.querySelector("[data-sticky-story]");
   if (!root) return;
 
-  var scenes = gsap.utils.toArray("[data-sticky-story-scene]", root);
-  if (scenes.length < 2) return;
-
-  gsap.registerPlugin(ScrollTrigger);
-
-  // Scene 1 metric count-up — numbers rise to their target as they scroll into
-  // view (client 2026-07-23: "like before"). Decimal-aware (4.7) via
-  // data-count-to/data-suffix/data-decimals, en-US thousands grouping. Runs at
-  // ALL widths, independent of the desktop parallax below. Reduced-motion / no
-  // IntersectionObserver / no-JS all just keep the real final number that is
-  // already in the markup — pure enhancement.
   initCounters(root);
+  initMetricsReveal(root);
 
+  // ---- Metric count-up ------------------------------------------------------
   function initCounters(el) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (!("IntersectionObserver" in window)) return;
@@ -70,66 +49,46 @@
     if (isNaN(target)) return;
     var decimals = parseInt(node.getAttribute("data-decimals") || "0", 10);
     var suffix = node.getAttribute("data-suffix") || "";
-    var duration = 1200;
+    // Slower + smoother count-up (client 2026-07-29: "un poquito más lento").
+    var duration = 2000;
     var start = performance.now();
+    // de-DE → "1.000.000", en-US → "1,000,000" — shared by both homepages.
+    var locale = document.documentElement.lang === "de" ? "de-DE" : "en-US";
     function tick(now) {
       var p = Math.min((now - start) / duration, 1);
-      var eased = 1 - Math.pow(1 - p, 3);
+      // easeOutQuart — gentler, longer glide into the final value than the
+      // previous cubic ease.
+      var eased = 1 - Math.pow(1 - p, 4);
       var v = target * eased;
       var text = decimals > 0
         ? v.toFixed(decimals)
-        : Math.round(v).toLocaleString("en-US");
+        : Math.round(v).toLocaleString(locale);
       node.textContent = text + suffix;
       if (p < 1) requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
   }
 
-  var mm = gsap.matchMedia();
+  // ---- Metrics entrance (staggered fade/rise, plays once) -------------------
+  function initMetricsReveal(el) {
+    if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var items = el.querySelectorAll(".sticky-story__metric");
+    if (!items.length) return;
 
-  mm.add(
-    "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
-    function () {
-      scenes.forEach(function (el) {
-        // Metrics + logos panels stay STILL (client 2026-07-23: their content
-        // should not drift while scrolling — the logo marquee still moves on
-        // its own). Only the cards panel keeps the entrance parallax.
-        if (
-          el.classList.contains("sticky-story__scene--metrics") ||
-          el.classList.contains("sticky-story__scene--logos")
-        ) return;
-
-        var inner = el.querySelector("[data-sticky-story-inner]");
-        if (!inner) return;
-
-        // Entrance parallax: the content drifts up as the panel rises into and
-        // through its sticky window. scrub keeps reverse scroll exact.
-        gsap.fromTo(
-          inner,
-          { yPercent: 16, scale: 0.95 },
-          {
-            ease: "none",
-            yPercent: -16,
-            scale: 1,
-            scrollTrigger: {
-              trigger: el,
-              start: "top bottom", // panel top enters from viewport bottom
-              end: "bottom top", // panel bottom leaves past viewport top
-              scrub: true,
-              invalidateOnRefresh: true,
-            },
-          }
-        );
-      });
-
-      // matchMedia auto-reverts every tween/ScrollTrigger created here when the
-      // query stops matching; also clear any inline transform it left behind.
-      return function cleanup() {
-        scenes.forEach(function (el) {
-          var inner = el.querySelector("[data-sticky-story-inner]");
-          if (inner) gsap.set(inner, { clearProps: "transform" });
-        });
-      };
-    }
-  );
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.from(items, {
+      opacity: 0,
+      y: 32,
+      filter: "blur(8px)",
+      ease: "power3.out",
+      duration: 0.7,
+      stagger: 0.12,
+      scrollTrigger: {
+        trigger: el.querySelector(".sticky-story__metrics") || el,
+        start: "top 80%",
+        toggleActions: "play none none none",
+      },
+    });
+  }
 })();

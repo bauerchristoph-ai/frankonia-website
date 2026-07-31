@@ -58,6 +58,157 @@ strategically and optimize it carefully," not "remove all animation."
 
 ## Current phase
 
+> **Tracker operativo: [docs/build-checklist.md](docs/build-checklist.md).**
+> Es la única lista de qué está hecho y qué falta, en las 49 páginas. Marcá lo
+> que termines **en el mismo commit** que el cambio. El *por qué* de cada
+> decisión de alcance vive en [docs/roadmap.md](docs/roadmap.md).
+>
+> El copy de las 49 páginas ESTÁ, en `content-de/` (49 `.docx`, con Title,
+> Meta-Description y H1 ya escritos). El contenido no es el bloqueo.
+
+**2026-07-30 — full mobile pass over the homepage (client brief: "make the
+entire homepage feel like it was originally designed for mobile, not simply
+shrunk from desktop"; explicit instruction to aim for *experience* parity,
+not visual parity, and to redesign a section's layout where that's what it
+takes). Every change is scoped inside a `max-width` media query, so the
+desktop composition is untouched — verified after the fact (see "Verified"
+below).**
+
+Measured before and after on a REAL 390x844 viewport, not by eye — see
+"Measuring mobile" below for the harness, which is worth reusing.
+
+- **Konzept cubes — critical defect fixed.** The three diagrams' SVG
+  annotations are positioned OUTSIDE the cube's own `0 0 1079 1110` viewBox
+  (boxes at x=-250 / x=1050) so the desktop split composition can use the
+  space beside the diagram. That only works while the SVG may overflow,
+  which is an enhanced-mode (≥1024px) affordance. Below it the SVG clips at
+  its box and every label was cut to two or three letters
+  ("Abdeckungslü…", "ch"). They are `aria-hidden` decoration, so mobile now
+  hides `.kz-tip` entirely and shows a new `.konzept-seq__terms` list — the
+  same words as real HTML, which is also **crawlable, unlike the SVG text
+  ever was**. Phone: names only, as a wrapped row of hairline-separated
+  chips. Tablet (640–1023px): name + description in a two-up grid. Desktop
+  hides the HTML list (the SVG does that job there). `--kz-frame` also went
+  88vw → 90vw now that no side room is needed.
+- **Hero.** The desktop model sizes the hero to the image's natural height
+  so the full width of the photo shows uncropped; at 390px that photo is
+  only ~234px tall, so it became a band across the top quarter with flat
+  black beneath — the least premium possible first screen. Mobile now has
+  the image `position:absolute` + `object-fit:cover` over the whole hero
+  (`object-position: 68% 42%` holds the operator/monitors), with a vertical
+  readability wash instead of the desktop left-side one. Both CTAs go
+  full-width and stacked; the reassurance row became a 2-column grid (2 + 1,
+  last item spanning) because the wrapping flex row broke 1 + 2 with a
+  ragged gap. 813 → 681px, and it now fits one screen with the photo
+  present.
+- **our-system.** Six cards at the desktop `70svh` ran the section to
+  ~4000px — nearly five phone screens — and showed one card at a time, so
+  the stack never read as a stack. `52svh` + `aspect-ratio: auto` (with an
+  explicit height it only fought the width) → **4003 → 3092px**. A
+  `22rem` floor under `max-height: 700px` keeps SE-class phones from
+  crowding.
+- **sticky-story.** Five metrics in one vertical column ran ~475px and read
+  as a plain list. Now a 2-up ruled grid (2 + 2 + 1, last spanning), same
+  ruled-not-carded language the ≥1024px row uses. Values step down a size
+  because they are `white-space: nowrap` and "1.000.000+" overflowed a
+  half-width column. **1225 → 900px.**
+- **Services.** Two problems: German compounds were auto-hyphenating
+  ("Baustellenbewa-chung", "Sicherheitstech-nik") because base.css sets
+  `hyphens: auto` on `li` — correct for prose, wrong for a label — and
+  mobile got no imagery at all, since the hover preview panel is
+  desktop-only, despite this project having a real unique photo per
+  service. Rows are now compact cards: **new 128x96 WebP thumbnails**
+  (`assets/images/services-thumb/`, 2–3KB each, **26KB for all ten**),
+  number, name, and a persistent arrow (no hover on touch, so the
+  affordance must be visible). `display:none` from 1024px + `loading="lazy"`
+  means desktop never fetches them — confirmed. **1703 → 1228px.**
+  Note `overflow-wrap: anywhere` + `min-width: 0` on the name: with
+  hyphenation off, an unbreakable 20-character compound set the row's
+  min-content width and caused real horizontal page scroll at 360px.
+- **Uniforms — the hover→tap case.** The picker was ABOVE the image, so
+  tapping "Polo" changed a photo ~350px further down, off-screen: a control
+  with no visible result. `display: contents` on `.outfits__intro` lifts
+  the heading, lede and picker into the layout grid so all four can be
+  ordered independently (the picker is nested, so grid order on the layout
+  alone could not reach it) → heading, lede, image, picker. The
+  hover-revealed use-case line now shows for the SELECTED outfit and wraps
+  under the name. Toggle 29px → 44px, picker rows → 48px.
+- **Social reel.** Three 9:16 cards side by side gave each ~85px of width;
+  the previous fix shrank them further (6rem below 400px) because only "fit
+  three across" and "wrap 2 + 1" had been considered. Now a snap-scrolling
+  strip at 62% viewport per card — one in frame, the next peeking. This is a
+  **contained** scroller (`.social__grid` clips itself); the document never
+  scrolls sideways, verified.
+- **References.** `hyphens: auto` fired on nearly every line
+  ("profes-sionellen", "Zutrittskon-trollen", "in punc-to"). Disabled on
+  mobile for this section: the result descriptions are *centred*, where
+  hyphenation buys nothing, and the real overflow guard is already
+  `overflow-wrap: break-word` sitewide.
+- **Lead form (primary conversion — got the generous end of every
+  trade-off).** 12px labels → 13px; inputs 43px → 48px with `font-size: 1rem`
+  **exactly** (anything smaller makes iOS Safari zoom the viewport on focus
+  and leave the user zoomed and scrolled sideways); consent checkbox 18px →
+  22px with a padded row; submit full-width.
+- **Mobile nav IA.** The submenu renders as a permanently-expanded nested
+  list below the desktop breakpoint — a deliberate old call (no tap-to-open
+  on touch), but it pushed Referenzen / Unser System / Karriere / Kontakt
+  **and the header's Sicherheitsanalyse CTA** off the bottom of the open
+  drawer. New `initMobileSubmenu()` (js/main.js) injects a real
+  `<button aria-expanded aria-controls>` beside the Leistungen link and
+  collapses the list, so all five top-level items plus the CTA fit one
+  screen. **This supersedes the "permanently-expanded, no extra tap-to-open
+  step on touch" note in the Services-submenu paragraph above.** Same
+  JS-only-ever-enhances contract as `initNavToggle`: the markup ships
+  expanded and this function is the only thing that ever collapses it, so no
+  JS / a script error / ≥1400px all leave every service link visible. The
+  parent stays a real link to `/leistungen/`; the button is a sibling.
+- **Touch targets + micro-type**, collected in one block at the end of
+  page-home.css and site-chrome.css (they must win over the component rules
+  they adjust): footer links 16–18px → 44px, footer/coverage pills 41px →
+  44px, header logo 18px → 44px, `.konzept__link` 28px → 44px. The two
+  INLINE links inside sentences (privacy policy in the consent row, the
+  tap-to-call number under submit) get vertical padding on an
+  `inline-block` instead — the hit area grows, the sentence doesn't move.
+
+**Verified, with numbers:**
+- No horizontal scroll at **360 / 390 / 430 / 768 / 1024 / 1440px**
+  (`documentElement.scrollWidth === innerWidth` at every one).
+- Total page height **19437 → 18297px** — and that is net of everything
+  ADDED in this pass (term lists, thumbnails, bigger social cards, taller
+  form fields).
+- Desktop unchanged, probed at 1440px: thumbnails `display:none`, submenu
+  toggle absent, preview panel `display:block`, caret visible, hero image
+  back to `position:static` (the natural-height model), hero 912px.
+- **Known limit: 320px still overflows by ~37px** in the hero. Not chased —
+  this project's own smallest breakpoint is 400px, and every current phone
+  (iPhone SE 2/3 included) is ≥360px, which is clean. Fixing it means
+  restructuring the hero trust row for a viewport essentially nobody uses.
+- **`.coverage__overlay-label` is deliberately 12px**, not the 13px floor
+  used elsewhere: it's an uppercase micro-label directly above the city
+  name, and 13px made the two compete.
+- **Not verified in a real browser** — no browser tool in these sessions;
+  everything above is Chrome-headless measurement + screenshots. Standing
+  caveat, same as every build this phase.
+
+**Measuring mobile — read this before trying to screenshot a phone layout.**
+Two traps cost real time here and will again:
+1. **Chrome enforces a ~500px minimum layout viewport.** `--window-size=390`
+   gives a 390px-wide SCREENSHOT of a 500px-wide LAYOUT, so content looks
+   clipped when it isn't. The hero H1 "cut off at the right edge" was
+   entirely this. Run the page in a fixed-width `<iframe>` inside a ≥500px
+   window and crop to the iframe.
+2. **Scrolling a live page under `--virtual-time-budget` does not settle.**
+   Lenis owns the scroll position (`window.__lenis`), ScrollTrigger needs
+   real scroll events, and CSS transitions freeze mid-flight under virtual
+   time — screenshots came back black with content at `opacity: 0.6`. Don't
+   fight it: extract one section into its own page (strip every `<script>`)
+   and force `prefers-reduced-motion`, which by this project's own contract
+   means no Lenis and no JS hiding, i.e. the honest static layout. Keep the
+   iframe at a real phone height (844px) and capture in slices — making it
+   as tall as its content feeds back into anything sized in `svh`
+   (`--sys-card-height: 70svh` inflated our-system to 4238px vs its true
+   4003px).
+
 **2026-07-22 — section-by-section homepage review begins; first round =
 hero + nav (implemented, pending visual review).** This is the start of
 the section-by-section process recorded in

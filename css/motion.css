@@ -15,17 +15,32 @@
 .u-reveal {
   opacity: 0;
   transform: translateY(var(--space-4));
+  /* Subtle blur-in added 2026-07-29 (client: the texts under titles should ease
+     in "como los items de listas" — matches js/item-reveal.js's blur(6px)
+     preset). Zero extra triggers: this is still the existing IntersectionObserver
+     toggling .is-visible, so no ScrollTrigger/perf cost — just one more CSS
+     property on the same transition. */
+  filter: blur(6px);
   /* --easing-premium (tokens.css, added 2026-07-20): expo-out curve for
      content arriving into view — was --easing-standard (a symmetric
      material-style ease). Duration unchanged. */
   transition:
     opacity var(--duration-slow) var(--easing-premium),
-    transform var(--duration-slow) var(--easing-premium);
+    transform var(--duration-slow) var(--easing-premium),
+    filter var(--duration-slow) var(--easing-premium);
 }
 
 .u-reveal.is-visible {
   opacity: 1;
   transform: none;
+  filter: blur(0);
+}
+
+/* Opt-in delay (client 2026-07-29): a reveal that should ease in AFTER a sibling
+   that animates on its own (e.g. a section lede after its title's word cascade).
+   Add data-reveal-delay next to data-reveal. --reveal-delay overrides the timing. */
+.u-reveal[data-reveal-delay] {
+  transition-delay: var(--reveal-delay, 0.45s);
 }
 
 @media (prefers-reduced-motion: reduce) {

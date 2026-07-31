@@ -1,0 +1,61 @@
+/* Contact page (/kontakt/) — small page-scoped stylesheet, linked directly in
+   pages/kontakt.html (same pattern as page-home.css). Reuses site tokens; adds
+   only the contact-detail list + the page H1 scale. */
+
+.contact {
+  padding-block: calc(var(--space-9) + 2rem) var(--space-9);
+}
+
+.contact h1 {
+  font-size: clamp(1.875rem, 1.3rem + 2.4vw, 3.25rem);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.01em;
+  margin-top: var(--space-3);
+}
+
+.contact__lead {
+  margin-top: var(--space-4);
+  max-width: 40rem;
+  color: var(--color-text-muted);
+}
+
+.contact__details {
+  display: grid;
+  gap: var(--space-6);
+  margin-top: var(--space-8);
+  max-width: 34rem;
+}
+
+@media (min-width: 640px) {
+  .contact__details {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.contact__detail-label {
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.contact__detail address {
+  font-style: normal;
+  line-height: var(--line-height-base);
+}
+
+.contact__detail a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+.contact__detail a:hover,
+.contact__detail a:focus-visible {
+  text-decoration: underline;
+}
+
+.contact__cta {
+  margin-top: var(--space-8);
+}

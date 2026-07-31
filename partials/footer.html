@@ -7,25 +7,39 @@
 <footer class="site-footer">
   <div class="container site-footer__grid">
     <div class="site-footer__col">
-      <h2 class="site-footer__heading">Contact</h2>
-      <address class="site-footer__address">
-        FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG<br>
-        Neuerbstraße 19<br>
-        96052 Bamberg
-      </address>
+      <h2 class="site-footer__heading">Company</h2>
       <ul class="site-footer__list">
-        <li><a href="tel:+499519643520">+49 951 964352-0</a></li>
-        <li><a href="mailto:info@frankonia-sicherheit.de">info@frankonia-sicherheit.de</a></li>
+        <li><a href="/jobs/">Jobs &amp; Careers</a></li>
+        <li><a href="/referenzen/">References</a></li>
       </ul>
     </div>
 
     <div class="site-footer__col">
       <h2 class="site-footer__heading">Legal</h2>
       <ul class="site-footer__list">
-        <li><a href="/jobs/">Jobs &amp; Careers</a></li>
-        <li><a href="/referenzen/">References</a></li>
         <li><a href="/impressum/">Imprint</a></li>
         <li><a href="/datenschutz/">Privacy Policy</a></li>
+      </ul>
+    </div>
+
+    <div class="site-footer__col">
+      <h2 class="site-footer__heading">Social Media</h2>
+      <ul class="site-footer__list">
+        <li><a href="https://www.instagram.com/frankonia_sicherheitsdienst/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+        <li><a href="https://www.linkedin.com/company/frankonia-sicherheit/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      </ul>
+    </div>
+
+    <!-- Contact moved to the 4th (right-most) column (client 2026-07-27). -->
+    <div class="site-footer__col">
+      <h2 class="site-footer__heading">Contact</h2>
+      <address class="site-footer__address">
+        FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG<br>
+        Neuerbstraße 19, 96052 Bamberg
+      </address>
+      <ul class="site-footer__list">
+        <li><a href="tel:+499519643520">+49 951 964352-0</a></li>
+        <li><a href="mailto:info@frankonia-sicherheit.de">info@frankonia-sicherheit.de</a></li>
       </ul>
     </div>
   </div>
@@ -107,4 +121,11 @@
   <div class="site-footer__bottom container">
     <p>&copy; 2026 FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG</p>
   </div>
+
+  <!-- Oversized decorative wordmark, clipped at the footer's bottom edge
+       (client 2026-07-24). data-reveal gives it the same soft scroll fade-in
+       as the section titles/lists (initScrollReveal, js/main.js). aria-hidden:
+       the real company name is in the Contact column above, so this is purely
+       visual. -->
+  <div class="site-footer__wordmark" aria-hidden="true" data-reveal>FRANKONIA</div>
 </footer>

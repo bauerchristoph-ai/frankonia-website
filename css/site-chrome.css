@@ -30,6 +30,34 @@
   transition: background-color var(--duration-slower) var(--easing-standard);
 }
 
+/* Progressive-blur backdrop layer (client 2026-07-24: "I love the blurry
+   effect — make that bottom line blurry too"). Before this, the frosted blur
+   lived directly on .site-header--dark, so backdrop-filter ended in a hard
+   clipped edge at the header's bottom — a visible seam/line between the
+   blurred and un-blurred page behind it. This pseudo-element carries the blur
+   + faint white wash instead and is masked with a vertical gradient so the
+   blur FADES OUT toward (and just past) the header's bottom edge — no hard
+   line. It sits behind the header content (z-index: -1) so the logo/nav stay
+   perfectly sharp; only the blur is soft-edged. Fades in via opacity when the
+   --dark state toggles (kept the old background-color transition's feel). */
+.site-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: -28px; /* extend below the header so the fade lands past its edge */
+  z-index: -1;
+  background-color: rgb(255 255 255 / 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+  opacity: 0;
+  transition: opacity var(--duration-slower) var(--easing-standard);
+  pointer-events: none;
+}
+
 /* ---- Scroll-based light/dark theme (client request, 2026-07-17 —
    ported behavior from another project, "Sacramentum Advisors";
    typography/link structure here is untouched, only this state
@@ -57,10 +85,11 @@
    filter-based-recolor technique already used elsewhere in this
    codebase (.pillar-card__icon img) rather than waiting on a new
    asset. */
-.site-header--dark {
-  background-color: rgb(255 255 255 / 0.08);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+/* The frosted blur + wash now live on .site-header::before (see above);
+   toggling --dark just fades that layer in. The child colour overrides below
+   (logo, nav links, hamburger) are unchanged. */
+.site-header--dark::before {
+  opacity: 1;
 }
 
 .site-header--dark .site-header__logo img {
@@ -330,6 +359,15 @@ a.site-nav__link {
   width: 0.65rem;
   height: 0.65rem;
   color: var(--color-white);
+  /* The #icon-chevron path is a stroke-style chevron (an open line), so render
+     it as a stroke in the current colour — otherwise the browser fills the
+     open path black by default (client 2026-07-27: "el piquito negro tiene que
+     ser blanco"). Now it follows `color`: white here, grey in the light header. */
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   transform: rotate(-90deg);
   /* color transition added 2026-07-17 for .site-header--dark below. */
   transition: transform var(--duration-fast) var(--easing-standard),
@@ -535,6 +573,8 @@ a.site-nav__link {
 
   .site-nav__submenu-list a:hover,
   .site-nav__submenu-list a:focus-visible {
+    /* Kept blue-dark (not the new global blue-light): this is text on the
+       WHITE submenu panel, where #3D9AD3 drops below 3:1. (client 2026-07-28) */
     color: var(--color-blue-dark);
     background-color: var(--color-accent-subtle);
     border-bottom-color: transparent;
@@ -555,6 +595,7 @@ a.site-nav__link {
 
   .site-nav__submenu-all:hover,
   .site-nav__submenu-all:focus-visible {
+    /* Kept blue-dark — text on the white submenu panel (client 2026-07-28). */
     color: var(--color-blue-dark);
     border-bottom-color: transparent;
   }
@@ -564,6 +605,8 @@ a.site-nav__link {
      keyboard focus stays clearly visible (WCAG 2.4.11 / 1.4.11;
      blue-dark clears 3:1 on white). */
   .site-nav__submenu a:focus-visible {
+    /* Kept blue-dark — focus ring on the white panel needs 3:1, which
+       #3D9AD3 misses on white (client 2026-07-28). */
     outline-color: var(--color-blue-dark);
   }
 }
@@ -629,33 +672,49 @@ a.site-nav__link {
 /* ---- Footer ---- */
 
 .site-footer {
-  background-color: var(--color-bg-elevated);
-  color: rgb(255 255 255 / 0.82);
-  padding-block: var(--space-9) var(--space-6);
+  /* FRANKONIA black (client 2026-07-28) — was FRANKONIA blue. White body
+     text on black clears AA comfortably. */
+  background-color: var(--color-logo-black);
+  color: var(--color-white);
+  padding-block: var(--space-9) 0;
+  /* Clips the oversized FRANKONIA wordmark at the bottom (client 2026-07-24,
+     reference: a giant partially-cut wordmark at the foot of the page). */
+  overflow: hidden;
 }
 
 .site-footer__grid {
   display: grid;
   grid-template-columns: 1fr;
+  /* Headings aligned at the top of every column (client 2026-07-24). */
+  align-items: start;
   gap: var(--space-7);
+  /* Group the columns in a tidy centred block instead of stretching
+     edge-to-edge across the full 1440px container (client 2026-07-24: Contact
+     was flush against the far-left edge with a big empty right side).
+     Widened 2026-07-25 for the 4th column (Social Media). */
+  max-width: 72rem;
+  margin-inline: auto;
 }
 
 .site-footer__heading {
   font-size: var(--font-size-sm);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--color-white);
+  /* Brand blue #3D9AD3 (same as the CTAs), on the now-black footer — clears
+     contrast comfortably (client 2026-07-28). */
+  color: var(--color-accent);
   margin-bottom: var(--space-4);
 }
 
 .site-footer__list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  /* Tighter link spacing for a more compact top section (client 2026-07-24). */
+  gap: var(--space-2);
 }
 
 .site-footer__list a {
-  color: rgb(255 255 255 / 0.82);
+  color: var(--color-white);
   text-decoration: none;
 }
 
@@ -686,6 +745,15 @@ a.site-nav__link {
   padding-top: var(--space-8);
   border-top: 1px solid rgb(255 255 255 / 0.16);
   text-align: center;
+}
+
+/* Coverage Areas sits directly under Services with less space and NO divider
+   between them (client 2026-07-24). The divider + larger gap above only stay
+   on Services (separating it from the Contact/Legal columns). */
+.site-footer__coverage {
+  margin-top: var(--space-7);
+  padding-top: 0;
+  border-top: none;
 }
 
 /* Centers just these columns' headings — .site-footer__heading is
@@ -720,9 +788,9 @@ a.site-nav__link {
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-4);
-  border: 1.5px solid var(--color-border-strong);
+  border: 1.5px solid rgb(255 255 255 / 0.5);
   border-radius: var(--radius-pill);
-  color: rgb(255 255 255 / 0.82);
+  color: var(--color-white);
   text-decoration: none;
   font-size: var(--font-size-sm);
   transition: border-color var(--duration-fast) var(--easing-standard),
@@ -757,12 +825,136 @@ a.site-nav__link {
   font-size: var(--font-size-sm);
 }
 
-/* Only 2 columns now (Contact/Legal — Services moved out to its own
-   full-width pill block above, 2026-07-17), so the 1024px 3-column
-   override this used to have is gone too; 2 columns is the final state
-   at every width down to 640px, not just an intermediate step. */
+/* Oversized decorative FRANKONIA wordmark at the very bottom (client
+   2026-07-24, reference: a huge partially-clipped wordmark). Sized to span the
+   footer width and set flush to the bottom; the footer's `overflow: hidden` +
+   a negative bottom margin clip the lower part of the letters so it reads as
+   "not fully shown but legible, big". Gets the shared soft scroll fade-in via
+   data-reveal in the markup. Decorative (aria-hidden) — the real company name
+   is in the Contact column above. */
+.site-footer__wordmark {
+  margin-top: var(--space-7);
+  margin-bottom: -0.16em;
+  font-size: clamp(3.5rem, 20vw, 16rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--color-white);
+  user-select: none;
+}
+
+/* Four columns (Contact / Company / Legal / Social Media) distributed across
+   the width from 640px up (client 2026-07-25 — Social Media added as its own
+   column); stacks to one column below that. Services + Coverage Areas remain
+   their own full-width pill blocks below. */
 @media (min-width: 640px) {
   .site-footer__grid {
-    grid-template-columns: repeat(2, 1fr);
+    /* Three link columns narrower; Contact (now the 4th/right-most column,
+       client 2026-07-27) wider so it holds the long company name / address. */
+    grid-template-columns: 1fr 1fr 1fr 1.7fr;
+  }
+}
+
+/* ==========================================================================
+   MOBILE TOUCH TARGETS (2026-07-30) — see the matching block at the end of
+   page-home.css for the audit this came from. Placed last so it wins over the
+   component rules above.
+   ========================================================================== */
+@media (max-width: 767.98px) {
+  /* Footer navigation links measured 16-18px tall: text-only links in a tight
+     8px-gap column, i.e. the hardest thing on the page to hit and the easiest to
+     mis-tap onto a neighbour. Padding grows the box, negative margin keeps the
+     visual rhythm, so nothing moves — only the target grows. */
+  .site-footer__list a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+  .site-footer__list {
+    /* The links' own new height now supplies the spacing. */
+    gap: 0;
+  }
+
+  /* 41px — same near-miss as .coverage__pill. */
+  .footer-pill {
+    min-height: 2.75rem;
+  }
+
+  /* The logo is an 18px-tall image acting as the home link in the header. */
+  .site-header__logo {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+}
+
+/* ==========================================================================
+   MOBILE SUBMENU DISCLOSURE (2026-07-30)
+   --------------------------------------------------------------------------
+   js/main.js's initMobileSubmenu() injects a real <button> beside the
+   "Leistungen" link below the desktop breakpoint and collapses the nested list,
+   so the open drawer shows all five top-level items plus the header CTA on one
+   screen instead of burying them under ten service links.
+
+   Everything here is gated on .has-js-submenu, a class only that function ever
+   adds — so with no JS the markup stays exactly as it ships: expanded, every
+   service link visible and tappable. Nothing is hidden by CSS alone.
+   ========================================================================== */
+@media (max-width: 1399.98px) {
+  /* Put the link and its new toggle on one row, with the toggle's own hit area
+     to the RIGHT of the link so tapping the label still navigates to
+     /leistungen/ and only the caret expands. */
+  .site-nav__item--has-submenu.has-js-submenu {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .site-nav__item--has-submenu.has-js-submenu .site-nav__submenu {
+    flex-basis: 100%;
+  }
+  /* Collapsed is the JS default; open is opt-in via the button. */
+  .site-nav__item--has-submenu.has-js-submenu:not(.is-submenu-open) .site-nav__submenu {
+    display: none;
+  }
+
+  /* The decorative caret inside the link would now duplicate the button's own,
+     so it steps aside for it. */
+  .site-nav__item--has-submenu.has-js-submenu .site-nav__caret {
+    display: none;
+  }
+
+  .site-nav__submenu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* Full 44px target, matching the touch-target floor used across this pass. */
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    margin-inline-start: var(--space-1);
+    padding: 0;
+    background: none;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+  }
+  /* Chevron drawn in CSS rather than a second sprite <use>: it has to rotate,
+     and a bare rotating border is cheaper than cloning shadow content. */
+  .site-nav__submenu-toggle::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform var(--duration-fast) var(--easing-standard);
+  }
+  .site-nav__submenu-toggle[aria-expanded="true"]::before {
+    transform: translateY(2px) rotate(225deg);
+  }
+  .site-nav__submenu-toggle:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
   }
 }

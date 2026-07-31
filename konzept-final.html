@@ -1,0 +1,507 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Konzept — FINAL editor (Capa 3)</title>
+<style>
+ html,body{margin:0;background:#0a0e12;color:#fff;font-family:system-ui,Arial;height:100%}
+ .wrap{display:flex;gap:16px;padding:16px;box-sizing:border-box;height:100%}
+ .stage{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;background:#010101;border-radius:10px}
+ svg#pick{width:min(92vh,100%);height:auto;touch-action:none;-webkit-user-select:none;user-select:none}
+ .handle{cursor:grab}
+ #art{filter:drop-shadow(0 0 3px rgba(61,154,211,.75)) drop-shadow(0 0 9px rgba(61,154,211,.4))}
+ .panel{width:340px;flex:0 0 340px;display:flex;flex-direction:column;gap:8px;overflow:auto}
+ h3{margin:0;font-size:13px;letter-spacing:.08em;opacity:.85}
+ .read{font:600 16px/1.3 monospace;background:#0003;padding:7px 10px;border-radius:8px}
+ label.h{font-size:11px;opacity:.7}
+ textarea{width:100%;box-sizing:border-box;background:#0006;color:#fff;border:1px solid #ffffff22;border-radius:8px;font:12px/1.4 monospace;padding:8px;resize:vertical}
+ #cout{height:74px}#pout{height:120px}
+ .row{display:flex;gap:6px;flex-wrap:wrap}
+ .row button{flex:1;min-width:64px;padding:8px;border:0;border-radius:8px;background:#243b52;color:#cfe8fb;font-weight:600;cursor:pointer;font-size:12px}
+ .row button.go{background:#3D9AD3;color:#fff}
+ .hint{font-size:11px;opacity:.7;line-height:1.4}
+ /* Delete mode: the whole stage signals it, and handles read as targets. */
+ #del.on{background:#c0392b;color:#fff;border-color:#c0392b}
+ .stage.deleting{outline:2px solid #c0392b;outline-offset:-2px}
+ .stage.deleting svg{cursor:crosshair}
+ .stage.deleting .handle circle{fill:#c0392b!important;stroke:#ff8b7a!important}
+</style></head><body>
+<div class="wrap">
+ <div class="stage">
+  <svg id="pick" viewBox="0 0 1079 1110" fill="none">
+   <g clip-path="url(#clip0_381_408)">
+<path d="M540 0.5V521.5" stroke="url(#paint0_linear_381_408)"/>
+<path d="M542 1109.5V588.5" stroke="url(#paint1_linear_381_408)"/>
+<path d="M540 0L1.5 325V773.5L542 1109.5L1078.5 775V324.5L540 0Z" stroke="white"/>
+<path d="M3 325L541.5 645" stroke="url(#paint2_linear_381_408)"/>
+<path d="M1079 325L539 646" stroke="url(#paint3_linear_381_408)"/>
+<path d="M502.682 890.166V893.2" stroke="white"/>
+<path d="M504.957 928.091L507.612 929.988L511.405 928.091V891.683M511.405 891.683L507.612 893.2L502.682 890.545L506.853 887.89L511.405 891.683Z" stroke="white"/>
+<path d="M456.791 920.238L501.703 892.821L504.577 894.578L460.025 921.644" stroke="white"/>
+<path d="M459.824 955.398L504.576 927.884V894.717" stroke="white"/>
+<path d="M518.609 816.59L545.916 834.794" stroke="white"/>
+<path d="M523.92 798.386L545.538 812.418" stroke="white"/>
+<path d="M523.919 792.318V798.765L518.609 794.973" stroke="white"/>
+<path d="M452.619 926.195V964.5" stroke="white"/>
+<path d="M445.035 922.023V958.811" stroke="white"/>
+<path d="M445.035 922.403L-37 615.964L539.09 240.5L1121.25 598.897L649.5 904.5" stroke="white" stroke-opacity="0.3"/>
+<path d="M597.496 713.433V728.603L602.426 731.637V715.708" stroke="white"/>
+<path d="M616.078 707.364V722.155" stroke="white"/>
+<path d="M602.805 731.637L616.458 722.155L671.071 758.943" stroke="white"/>
+<path d="M695.723 589.416L597.875 524.942" stroke="white" stroke-opacity="0.3"/>
+<path d="M570.568 542.388L683.966 467.295" stroke="white"/>
+<path d="M431.002 529.114L456.412 545.043" stroke="white"/>
+<path d="M342.635 695.228V686.126L366.528 703.193V711.536L342.635 695.228Z" stroke="white"/>
+<path d="M431.002 620.515L454.895 605.344" stroke="white"/>
+<path d="M385.113 590.933V607.999" stroke="white"/>
+<path d="M343.395 567.04V582.21L366.908 597.759" stroke="white"/>
+<path d="M325.947 554.524V569.694L332.015 573.866" stroke="white"/>
+<path d="M360.461 559.834V573.108" stroke="white"/>
+<path d="M390.8 538.975V555.283L381.318 561.351V545.422" stroke="white"/>
+<path d="M376.768 543.526V559.075L380.939 561.73" stroke="white"/>
+<path d="M331.637 500.67L292.953 526.838" stroke="white"/>
+<path d="M275.886 535.182L202.311 584.106" stroke="white"/>
+<path d="M258.82 620.515L343.394 566.66" stroke="white"/>
+<path d="M429.863 732.395L552.742 648.959" stroke="white"/>
+<path d="M545.537 812.418V834.415L572.085 851.861" stroke="white"/>
+<path d="M550.467 810.143L559.569 804.833V815.832" stroke="white"/>
+<path d="M599.771 772.596V788.146L612.666 798.007" stroke="white"/>
+<path d="M577.016 757.047V772.976" stroke="white"/>
+<path d="M581.567 755.151V770.321L577.395 772.976L559.949 760.081" stroke="white"/>
+<path d="M787.123 532.148L903.555 604.965" stroke="white"/>
+<path d="M786.745 517.357V532.148L716.203 579.555" stroke="white"/>
+<path d="M635.42 436.196L668.036 456.676" stroke="white"/>
+<path d="M683.586 450.987V467.295L770.056 521.908" stroke="white"/>
+<path d="M527.332 373.619L533.021 369.068L620.25 425.198" stroke="white"/>
+<path d="M522.781 353.139V369.826L526.953 373.24V356.552" stroke="white"/>
+<path d="M506.854 369.826V387.651L459.447 419.888" stroke="white"/>
+<path d="M836.047 655.027V677.024L727.58 747.945M727.58 747.945V725.568L721.512 722.534V743.014L727.58 747.945Z" stroke="white"/>
+<path d="M853.492 638.34V660.337L858.802 663.371" stroke="white"/>
+<path d="M858.803 641.753V662.991L922.518 621.273V598.897" stroke="white"/>
+<path d="M572.465 829.864V851.102L701.033 766.149V743.014" stroke="white"/>
+<path d="M580.429 731.637V746.048L574.361 750.22" stroke="white"/>
+<path d="M559.949 745.669V759.702L517.852 788.146" stroke="white"/>
+<path d="M427.588 642.132L359.701 686.505" stroke="white"/>
+<path d="M381.318 727.844L396.868 717.984V697.125" stroke="white"/>
+<path d="M578.152 476.777L635.42 435.817V420.647" stroke="white"/>
+<path d="M573.223 457.055V474.88L577.774 476.776V458.193" stroke="white"/>
+<path d="M294.47 670.956L179.176 595.863V575.004" stroke="white"/>
+<path d="M294.471 650.855V670.576L307.365 661.854V641.753" stroke="white"/>
+<path d="M330.879 627.341V645.546L394.594 601.552V585.623" stroke="white"/>
+<path d="M394.593 585.244L390.8 582.968L389.663 582.21L382.457 587.519L350.22 566.281L360.46 559.834L355.53 557.179L345.669 563.247L328.982 551.869L325.568 554.524L377.906 590.554L326.327 624.687L330.878 627.341L394.593 585.244Z" stroke="white"/>
+<path d="M381.32 545.422L377.148 543.526L386.63 537.458L390.802 538.975L381.32 545.422Z" stroke="white"/>
+<path d="M275.887 519.253V535.182L300.918 552.248L300.538 536.32" stroke="white"/>
+<path d="M456.412 606.103V622.032L472.341 611.413L611.528 703.951" stroke="white"/>
+<path d="M406.352 722.535V743.773L518.611 816.59V794.973" stroke="white"/>
+<path d="M430.244 513.565V528.735L413.936 539.354V524.184" stroke="white"/>
+<path d="M409.764 521.908V537.457L413.556 539.733" stroke="white"/>
+<path d="M495.476 517.736V533.286L460.205 556.799V540.491" stroke="white"/>
+<path d="M456.412 538.216V553.386L460.205 556.8" stroke="white"/>
+<path d="M437.069 556.8V573.108L416.969 586.761V570.832" stroke="white"/>
+<path d="M518.611 794.973L406.352 722.535L410.903 719.88L503.062 779.044L575.5 730.12L580.051 731.637L563.743 743.015L581.189 755.151L577.017 757.047L559.95 745.669L507.613 781.699L523.921 792.318L518.611 794.973Z" stroke="white"/>
+<path d="M530.745 554.524V570.074L527.332 572.728" stroke="white"/>
+<path d="M507.232 563.247V578.796L522.023 589.036V574.245" stroke="white"/>
+<path d="M527.333 570.832V585.623L522.402 589.416" stroke="white"/>
+<path d="M550.467 556.041L570.188 542.388V527.218" stroke="white"/>
+<path d="M545.537 538.595V553.386L550.088 555.662V540.491" stroke="white"/>
+<path d="M439.345 650.855L427.588 642.512V625.445" stroke="white"/>
+<path d="M439.346 633.409V650.855L444.655 646.683V629.996" stroke="white"/>
+<path d="M391.181 694.09L380.941 700.917L347.566 678.162L427.968 625.445L439.346 633.409L444.276 629.996L427.968 618.618L337.326 677.024L380.941 707.364L396.49 697.124L391.181 694.09Z" stroke="white"/>
+<path d="M416.59 570.832L412.039 568.177L432.519 554.524L436.691 556.8L416.59 570.832Z" stroke="white"/>
+<path d="M353.634 469.571V486.637L331.637 500.67V482.845M331.637 482.845L279.299 516.978L304.33 534.424L300.538 536.32L275.886 519.253L188.657 575.004L294.47 644.408L302.055 639.478L306.985 641.753L294.47 650.476L179.176 575.004L327.465 480.569L331.637 482.845Z" stroke="white"/>
+<path d="M360.082 465.399V481.707L413.557 519.253" stroke="white"/>
+<path d="M512.92 498.773V515.081L517.092 518.495" stroke="white"/>
+<path d="M546.295 481.328V498.394" stroke="white"/>
+<path d="M529.23 487.396L441.242 428.232V413.82" stroke="white"/>
+<path d="M376.768 472.225L441.241 428.232" stroke="white"/>
+<path d="M517.473 501.049V518.116L561.846 488.154V470.708" stroke="white"/>
+<path d="M922.517 598.897L532.263 347.071L522.781 353.139L526.953 356.552L532.263 353.139L632.007 417.992L573.602 457.055L577.394 458.193L635.42 420.267L679.414 449.091L545.916 538.595L550.088 540.492L683.586 450.987L782.192 513.944L695.343 571.591L822.014 657.682L721.511 722.155L727.58 725.569L836.047 655.027L830.737 652.372L827.703 654.648L704.445 571.591L786.364 517.357L913.794 598.897L853.493 638.34L858.423 641.374L922.517 598.897Z" stroke="white"/>
+<path d="M525.436 550.732L507.99 562.868L507.611 563.247L522.023 574.245L526.953 570.832L517.093 563.626L530.366 554.524L525.436 550.732Z" stroke="white"/>
+<path d="M517.472 500.67L561.465 470.709L557.294 467.675L543.261 477.156L446.172 410.407L506.853 369.826L502.302 367.172L349.082 466.157L353.254 469.571L360.08 465.02L426.83 510.91L410.142 521.908L413.935 524.184L430.243 513.564L461.342 534.803L456.412 538.216L460.204 540.492L495.096 517.736L490.545 515.082L465.134 532.148L364.252 463.503L441.241 413.441L540.227 480.19L513.3 498.774L517.472 500.67Z" stroke="white"/>
+<path d="M456.412 606.103L452.24 603.448L472.341 589.795L701.032 743.014L572.085 829.864L545.537 812.418L550.088 810.143L572.085 824.554L624.423 790.801L599.771 772.976L603.943 770.321L627.836 787.387L682.069 751.737L616.079 707.364L602.805 715.708L597.875 713.432L623.285 696.366L472.341 596.242L456.412 606.103Z" stroke="white"/>
+<path d="M337.326 677.024V698.641L380.941 727.465V707.743" stroke="white"/>
+<path d="M684.724 749.082L619.492 705.089L628.215 699.4L693.447 743.014L684.724 749.082Z" stroke="white"/>
+<path d="M641.869 702.813L752.612 626.962" stroke="white" stroke-opacity="0.3"/>
+<path d="M695.723 571.97V589.416L810.258 665.646" stroke="white"/>
+<path d="M82.0859 627.341L137.078 592.07" stroke="white" stroke-opacity="0.3"/>
+<path d="M106.738 644.787L161.73 609.516" stroke="white" stroke-opacity="0.3"/>
+<path d="M134.045 661.474L189.037 626.204" stroke="white" stroke-opacity="0.3"/>
+<path d="M158.695 678.92L213.687 643.649" stroke="white" stroke-opacity="0.3"/>
+<path d="M290.297 765.391L345.289 730.12" stroke="white" stroke-opacity="0.3"/>
+<path d="M314.949 782.836L369.941 747.565" stroke="white" stroke-opacity="0.3"/>
+<path d="M342.256 799.524L397.248 764.253" stroke="white" stroke-opacity="0.3"/>
+<path d="M376 812L422 782" stroke="white" stroke-opacity="0.3"/>
+<path d="M399 833L450 800" stroke="white" stroke-opacity="0.3"/>
+<path d="M426.5 851L477.271 818.107" stroke="white" stroke-opacity="0.3"/>
+<path d="M186.381 696.366L241.373 661.095" stroke="white" stroke-opacity="0.3"/>
+<path d="M211.033 713.812L266.025 678.541" stroke="white" stroke-opacity="0.3"/>
+<path d="M238.34 730.499L293.332 695.228" stroke="white" stroke-opacity="0.3"/>
+<path d="M262.992 747.945L317.984 712.674" stroke="white" stroke-opacity="0.3"/>
+<path d="M700.273 742.256L726.442 725.189" stroke="white"/>
+<path d="M366 815L50.6074 605.724L535.676 297.009L1055.26 627.341L649 896M-957 1444L-872.5 1500.5V1490L-957 1435V1444Z" stroke="white" stroke-opacity="0.3"/>
+<g filter="url(#filter0_d_381_408)">
+<path d="M559.191 871.203L135.562 592.07C131.769 587.519 127.597 576.369 141.251 568.177C154.904 559.985 391.181 409.522 507.612 335.314C515.577 329.12 539.546 321.812 571.706 342.141C603.867 362.469 868.79 533.412 997.232 616.343C1001.28 620.262 1006.18 630.224 993.439 638.719C980.696 647.214 771.085 785.365 641 871.203" stroke="#4D74FF"/>
+</g>
+<path d="M486.752 693.711L558.431 741.876" stroke="white"/>
+<path d="M646.527 309.027C648.939 311.004 653.737 317.357 653.632 326.953C653.528 336.548 653.589 344.292 653.632 346.964" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<path d="M659.5 299.836C658.066 300.205 654.989 302.404 654.155 308.245C653.32 314.085 653.503 322.933 653.698 326.627" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<path d="M664.713 316.002C661.389 314.894 654.532 315.102 653.697 324.802" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<circle cx="655.521" cy="308.766" r="20.3591" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<path d="M684.793 348.394C686.503 349.796 689.905 354.301 689.831 361.105C689.757 367.908 689.8 373.4 689.831 375.295" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<path d="M693.993 341.876C692.976 342.138 690.794 343.697 690.202 347.839C689.611 351.98 689.74 358.254 689.879 360.873" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<path d="M697.69 353.339C695.333 352.554 690.471 352.702 689.879 359.579" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<circle cx="691.172" cy="348.209" r="14.291" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<path d="M925.777 483.821C927.751 485.439 931.676 490.637 931.591 498.488C931.505 506.338 931.555 512.674 931.591 514.861" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<path d="M936.39 476.301C935.216 476.603 932.699 478.403 932.016 483.181C931.334 487.96 931.483 495.199 931.643 498.221" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<path d="M940.658 489.528C937.938 488.621 932.327 488.792 931.645 496.728" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<circle cx="933.135" cy="483.608" r="16.5665" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<path d="M965.318 508.466C967.774 510.479 972.659 516.948 972.553 526.718C972.446 536.487 972.508 544.372 972.553 547.093" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<path d="M978.526 499.108C977.066 499.484 973.934 501.723 973.084 507.669C972.234 513.616 972.42 522.625 972.619 526.386" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<path d="M983.836 515.567C980.451 514.439 973.469 514.651 972.619 524.527" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<circle cx="974.477" cy="508.2" r="20.7383" stroke="white" stroke-opacity="0.3" stroke-linecap="round"/>
+<path d="M444.655 930.367L-37 622.428V615.584" stroke="white" stroke-opacity="0.3"/>
+<path d="M559.191 870.824L950.584 618.618L922.519 600.793" stroke="white"/>
+<path d="M460.205 922.023L452.62 926.195L445.035 922.023L452.62 917.852L460.205 922.023ZM460.205 922.023V958.811L452.62 964.5L445.035 958.811" stroke="white"/>
+<path d="M447.311 742.635L556.916 667.542" stroke="white"/>
+<path d="M598.5 911.5L566.5 890.5V925L598.5 946.5V911.5Z" stroke="#B8B8B8"/>
+<path d="M641.5 896L616 912.5V944L641.5 928V896Z" stroke="#B8B8B8"/>
+<path d="M608.5 980L646.5 955.5V883L608.5 908.5L562.5 878.5V948.5L608.5 980ZM608.5 908.5V980" stroke="#B8B8B8"/>
+<path d="M559 871V952.5L607.5 985L649 956.5V877" stroke="white"/>
+<path d="M608.5 904.5L559 871L599 844L649.5 877L608.5 904.5Z" stroke="white"/>
+<path d="M482 908.5V941.5" stroke="white"/>
+<path d="M486 935.5V910L501 901V926.5L486 935.5Z" stroke="white"/>
+<path d="M463 949.5V924L478 915V940.5L463 949.5Z" stroke="white"/>
+<path d="M471 872.5V911.5" stroke="white"/>
+<path d="M479 867.5V906.5" stroke="white"/>
+<path d="M461.5 867V918" stroke="white"/>
+<path d="M365 826.5V815.5L374 810L382 815.5V826.5M365 815.5L374 821.5M382 826.5V862.5L374 867L365 862.5V826.5M374 867V831.5M382 815.5L374 821.5M374 821.5V831.5M365 826.5L374 831.5M374 831.5L382 826.5" stroke="white"/>
+<path d="M470.273 872.5L461 867.045L470.273 860.5L479 867.045L470.273 872.5Z" stroke="white"/>
+<path d="M377.5 829V819L461 873V884.5L377.5 829Z" fill="#050E1A" stroke="white"/>
+<path d="M599 947.731L566.985 926L566 950.258L599 973V947.731Z" fill="#00091F"/>
+<path d="M777.221 635.5C779.143 635.5 780.858 635.952 782.076 636.657C783.307 637.37 783.941 638.28 783.941 639.181C783.941 640.081 783.307 640.992 782.076 641.704C780.858 642.409 779.143 642.86 777.221 642.86C775.299 642.86 773.583 642.409 772.365 641.704C771.135 640.992 770.5 640.081 770.5 639.181C770.5 638.28 771.135 637.37 772.365 636.657C773.583 635.952 775.299 635.5 777.221 635.5Z" stroke="white"/>
+<path d="M770.381 639.18V669.963C770.874 670.977 772.895 673.004 777.037 673.004C781.178 673.004 783.446 670.723 784.062 669.583V638.8" stroke="white"/>
+<path d="M389.5 837L383 822.5L390.5 827.5L397 842L389.5 837Z" fill="#60BDFF" stroke="white"/>
+<path d="M410.5 850.5L404 836L411.5 841L418 855.5L410.5 850.5Z" fill="#60BDFF" stroke="white"/>
+<path d="M430.5 863.5L424 849L431.5 854L438 868.5L430.5 863.5Z" fill="#60BDFF" stroke="white"/>
+<path d="M449.5 876.5L443 862L450.5 867L457 881.5L449.5 876.5Z" fill="#60BDFF" stroke="white"/>
+</g>
+<defs>
+<filter id="filter0_d_381_408" x="107.552" y="304.481" width="918.387" height="590.94" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset/>
+<feGaussianBlur stdDeviation="11.9"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.243137 0 0 0 0 0.537255 0 0 0 0 0.811765 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_381_408"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_381_408" result="shape"/>
+</filter>
+<linearGradient id="paint0_linear_381_408" x1="540.5" y1="0.5" x2="540.5" y2="521.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="#B8B8B8"/>
+<stop offset="0.751005" stop-color="#525252" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint1_linear_381_408" x1="542.5" y1="1109.5" x2="542.5" y2="588.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="#B8B8B8"/>
+<stop offset="0.751005" stop-color="#525252" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint2_linear_381_408" x1="272.25" y1="325" x2="272.25" y2="645" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="#999999" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint3_linear_381_408" x1="809" y1="325" x2="809" y2="646" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="#999999" stop-opacity="0"/>
+</linearGradient>
+<clipPath id="clip0_381_408">
+<rect width="1079" height="1110" fill="white"/>
+</clipPath>
+</defs>
+<defs>
+<symbol id="konzept-firealarm" viewBox="0 0 33 18"><path d="M20.3724 6.92676L19.3457 13.1603" stroke="white" stroke-width="0.8"/>
+<path d="M0.425801 7.6601V3.84666C0.37691 3.52888 0.455135 2.83464 1.15915 2.59996C2.03918 2.30662 4.31258 0.399902 16.4129 0.399902C26.0932 0.399902 30.6155 1.9155 31.6667 2.6733C31.9111 2.77108 32.4 3.18665 32.4 4.06667C32.4 4.94669 32.4 7.12231 32.4 8.10012" stroke="white" stroke-width="0.8"/>
+<path d="M3.43302 9.86028C0.548493 8.98026 -2.84449 6.85353 6.65977 5.38682C16.164 3.92012 25.4336 5.16682 28.8803 5.97351C31.2759 6.53574 34.7911 8.10023 29.687 9.86028" stroke="white" stroke-width="0.8" stroke-linecap="round"/>
+<path d="M7.17516 14.7736L5.1951 9.1268C5.04843 8.80902 4.97509 8.12945 5.85512 7.95343C8.49519 7.22007 11.4286 6.8534 16.2687 6.78007C21.1089 6.70673 25.509 7.51342 26.7557 7.95343C27.7531 8.30544 27.7091 8.88235 27.5624 9.1268L25.509 14.7736C25.4601 15.1159 25.025 15.8737 23.6756 16.167C19.2022 17.5604 10.7686 16.7537 9.00854 16.167C7.6005 15.6976 7.1996 15.0425 7.17516 14.7736Z" stroke="white" stroke-width="0.8"/>
+<path d="M7.24609 14.7738C7.75944 14.1627 10.2822 12.9551 16.2663 13.0138C22.2505 13.0724 24.9688 14.2116 25.5799 14.7738" stroke="white" stroke-width="0.8"/>
+<path d="M8.12695 7.43994L9.887 13.6001" stroke="white" stroke-width="0.8"/>
+<path d="M12.4551 7.00024L13.1884 13.0871" stroke="white" stroke-width="0.8"/>
+<path d="M16.3398 6.78027V13.0138" stroke="white" stroke-width="0.8"/>
+<path d="M24.6988 7.43994L22.7188 13.7468" stroke="white" stroke-width="0.8"/></symbol>
+<symbol id="konzept-patrol-cp" viewBox="0 0 15 39"><path d="M7.33984 0.5C9.26181 0.5 10.9775 0.952174 12.1953 1.65723C13.426 2.36976 14.0605 3.27988 14.0605 4.18066C14.0604 5.08141 13.426 5.99162 12.1953 6.7041C10.9775 7.40914 9.26178 7.86035 7.33984 7.86035C5.4179 7.86035 3.70219 7.40914 2.48438 6.7041C1.25373 5.99162 0.619261 5.08141 0.619141 4.18066C0.619141 3.27988 1.25373 2.36976 2.48438 1.65723C3.70219 0.952174 5.41788 0.5 7.33984 0.5Z" fill="#60BDFF" stroke="white"/>
+<path d="M0.5 4.18033V34.9633C0.993021 35.9768 3.01441 38.0036 7.15578 38.0036C11.2972 38.0036 13.5651 35.7234 14.1813 34.5833V3.80029" stroke="white"/>
+<circle cx="7.61914" cy="18.5" r="3" stroke="white"/></symbol>
+<symbol id="konzept-sensor" viewBox="0 0 16 60"><path d="M4.5 40.5L0.5 38L0 4.5L7.5 0L16 5V38L12 40.5V56C12.1667 56.5 12.3 57.7 11.5 58.5C10.5 59.5 8.5 60.5 5.5 59C3.1 57.8 3.83333 55.5 4.5 54.5V40.5Z" fill="#00091F"/></symbol>
+<symbol id="konzept-cam-front" viewBox="0 0 39 31"><image href="/assets/images/konzept-cam-front.png" x="0" y="0" width="39" height="31" preserveAspectRatio="none"></image></symbol>
+<symbol id="konzept-cam-back" viewBox="0 0 38 33"><image href="/assets/images/konzept-cam-back.png" x="0" y="0" width="37.5" height="32.2917" preserveAspectRatio="none"></image><path d="M10.7752 17.5618L2.60352 14.7247C10.1637 10.3857 25.5176 1.57422 26.4515 1.04019C27.6189 0.372654 29.2866 0.539539 30.7875 0.539539C33.7227 1.07357 35.7906 2.87593 36.4577 3.71035C28.4528 8.43875 12.3095 17.9623 11.7758 18.2293C11.509 17.9623 10.9976 17.673 10.7752 17.5618Z" fill="#60BDFF"/></symbol>
+<symbol id="konzept-person" viewBox="0 0 335 730"><path fill="currentColor" d="M230.728 63.3C230.735 75.8276 227.026 88.0757 220.071 98.4952C213.116 108.915 203.227 117.037 191.654 121.836C180.082 126.635 167.347 127.894 155.059 125.454C142.772 123.014 131.484 116.985 122.623 108.129C113.762 99.2725 107.727 87.9877 105.281 75.7013C102.834 63.4149 104.087 50.679 108.879 39.1044C113.672 27.5298 121.789 17.6365 132.205 10.6759C142.621 3.71528 154.867 1.73512e-06 167.395 0C184.186 -2.32566e-06 200.29 6.66802 212.166 18.5381C224.043 30.4082 230.719 46.5087 230.728 63.3ZM218.861 163.333H115.928C102.137 163.33 88.7398 167.938 77.8681 176.424C66.9964 184.91 59.2737 196.787 55.9281 210.167L0.528063 431.9C-0.210574 435.228 -0.173872 438.682 0.635319 441.994C1.44451 445.306 3.00451 448.387 5.19472 451C7.85409 454.35 11.2192 457.072 15.0506 458.974C18.8819 460.875 23.0852 461.908 27.3614 462C32.0427 461.928 36.6 460.484 40.4689 457.847C44.3378 455.211 47.3485 451.497 49.128 447.167L100.728 266.667V396.667L69.9947 703.967C69.6638 707.259 70.027 710.584 71.061 713.728C72.0949 716.871 73.7766 719.763 75.9973 722.216C78.2181 724.669 80.9287 726.63 83.954 727.97C86.9794 729.311 90.2523 730.003 93.5614 730H96.0281C101.392 729.998 106.587 728.122 110.714 724.695C114.841 721.268 117.641 716.506 118.628 711.233L167.395 449.433L216.161 711.233C217.149 716.506 219.948 721.268 224.075 724.695C228.202 728.122 233.397 729.998 238.761 730H241.228C244.537 730.003 247.81 729.311 250.835 727.97C253.861 726.63 256.571 724.669 258.792 722.216C261.013 719.763 262.695 716.871 263.728 713.728C264.762 710.584 265.126 707.259 264.795 703.967L234.061 396.667V266.667L285.661 447.167C287.446 451.491 290.459 455.197 294.327 457.828C298.196 460.458 302.751 461.897 307.428 461.967C311.702 461.879 315.903 460.851 319.734 458.955C323.565 457.06 326.932 454.344 329.595 451C331.785 448.387 333.345 445.306 334.154 441.994C334.963 438.682 335 435.228 334.261 431.9L278.861 210.167C275.516 196.787 267.793 184.91 256.921 176.424C246.05 167.938 232.653 163.33 218.861 163.333Z"></path></symbol>
+</defs>
+   <defs id="defs"></defs>
+   <g id="grid"><line x1="0" y1="0" x2="0" y2="1110" stroke="#5fa8e0" stroke-opacity="0.4" stroke-width="1.2"/>
+<text x="3" y="18" fill="#8fd0ff" font-size="15" font-family="monospace">0</text>
+<line x1="100" y1="0" x2="100" y2="1110" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="103" y="18" fill="#8fd0ff" font-size="15" font-family="monospace">100</text>
+<line x1="200" y1="0" x2="200" y2="1110" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="203" y="18" fill="#8fd0ff" font-size="15" font-family="monospace">200</text>
+<line x1="300" y1="0" x2="300" y2="1110" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="303" y="18" fill="#8fd0ff" font-size="15" font-family="monospace">300</text>
+<line x1="400" y1="0" x2="400" y2="1110" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="403" y="18" fill="#8fd0ff" font-size="15" font-family="monospace">400</text>
+<line x1="500" y1="0" x2="500" y2="1110" stroke="#5fa8e0" stroke-opacity="0.4" stroke-width="1.2"/>
+<text x="503" y="18" fill="#8fd0ff" font-size="15" font-family="monospace">500</text>
+<line x1="600" y1="0" x2="600" y2="1110" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="603" y="18" fill="#8fd0ff" font-size="15" font-family="monospace">600</text>
+<line x1="700" y1="0" x2="700" y2="1110" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="703" y="18" fill="#8fd0ff" font-size="15" font-family="monospace">700</text>
+<line x1="800" y1="0" x2="800" y2="1110" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="803" y="18" fill="#8fd0ff" font-size="15" font-family="monospace">800</text>
+<line x1="900" y1="0" x2="900" y2="1110" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="903" y="18" fill="#8fd0ff" font-size="15" font-family="monospace">900</text>
+<line x1="1000" y1="0" x2="1000" y2="1110" stroke="#5fa8e0" stroke-opacity="0.4" stroke-width="1.2"/>
+<text x="1003" y="18" fill="#8fd0ff" font-size="15" font-family="monospace">1000</text>
+<line x1="0" y1="0" x2="1079" y2="0" stroke="#5fa8e0" stroke-opacity="0.4" stroke-width="1.2"/>
+<text x="3" y="-3" fill="#8fd0ff" font-size="15" font-family="monospace">0</text>
+<line x1="0" y1="100" x2="1079" y2="100" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="3" y="97" fill="#8fd0ff" font-size="15" font-family="monospace">100</text>
+<line x1="0" y1="200" x2="1079" y2="200" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="3" y="197" fill="#8fd0ff" font-size="15" font-family="monospace">200</text>
+<line x1="0" y1="300" x2="1079" y2="300" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="3" y="297" fill="#8fd0ff" font-size="15" font-family="monospace">300</text>
+<line x1="0" y1="400" x2="1079" y2="400" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="3" y="397" fill="#8fd0ff" font-size="15" font-family="monospace">400</text>
+<line x1="0" y1="500" x2="1079" y2="500" stroke="#5fa8e0" stroke-opacity="0.4" stroke-width="1.2"/>
+<text x="3" y="497" fill="#8fd0ff" font-size="15" font-family="monospace">500</text>
+<line x1="0" y1="600" x2="1079" y2="600" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="3" y="597" fill="#8fd0ff" font-size="15" font-family="monospace">600</text>
+<line x1="0" y1="700" x2="1079" y2="700" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="3" y="697" fill="#8fd0ff" font-size="15" font-family="monospace">700</text>
+<line x1="0" y1="800" x2="1079" y2="800" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="3" y="797" fill="#8fd0ff" font-size="15" font-family="monospace">800</text>
+<line x1="0" y1="900" x2="1079" y2="900" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="3" y="897" fill="#8fd0ff" font-size="15" font-family="monospace">900</text>
+<line x1="0" y1="1000" x2="1079" y2="1000" stroke="#5fa8e0" stroke-opacity="0.4" stroke-width="1.2"/>
+<text x="3" y="997" fill="#8fd0ff" font-size="15" font-family="monospace">1000</text>
+<line x1="0" y1="1100" x2="1079" y2="1100" stroke="#5fa8e0" stroke-opacity="0.12" stroke-width="0.6"/>
+<text x="3" y="1097" fill="#8fd0ff" font-size="15" font-family="monospace">1100</text></g>
+   <g id="art"></g>
+   <g id="handles"></g>
+  </svg>
+ </div>
+ <div class="panel">
+  <h3>EDITOR — CAPA 3 (SISTEMA / HARDWARE)</h3>
+  <div class="read" id="read">x: —  y: —</div>
+  <div class="hint">Agregá elementos y arrastralos. Cámara = 2 puntos (posición + hacia dónde apunta). El resto = 1 punto. Para borrar: activá <b>🗑 Borrar</b> y hacé clic en una manija (o doble-clic / tecla Supr en cualquier momento). G = grilla.</div>
+  <div class="row">
+   <button id="aCam">+ Cámara</button><button id="aAlarm">+ Alarma</button><button id="aFire">+ Incendio</button><button id="aSensor">+ Sensor</button><button id="aGate">+ Gate</button><button id="aCp">+ Checkpoint</button><button id="aGuard">+ Guardia</button>
+   <button id="del" title="Modo borrar: clic en cualquier manija para eliminarla">🗑 Borrar</button>
+  </div>
+  <button id="save" style="padding:12px;border:0;border-radius:8px;background:#2ec16b;color:#04220f;font-weight:800;cursor:pointer;font-size:15px">💾 Guardar en la web</button>
+  <div id="status" style="font-size:12px;min-height:16px;opacity:.85"></div>
+  <label class="h">CÁMARAS (pos_x pos_y  apunta_x apunta_y):</label>
+  <textarea id="cout" readonly></textarea>
+  <label class="h">PUNTOS (tipo: x y):</label>
+  <textarea id="pout" readonly></textarea>
+  <div class="row"><button id="copyC" class="go">Copiar cámaras</button><button id="copyP" class="go">Copiar puntos</button></div>
+  <div class="row"><button id="reset">Reset</button></div>
+ </div>
+</div>
+<script>
+var svg=document.getElementById("pick"),read=document.getElementById("read"),
+ defs=document.getElementById("defs"),art=document.getElementById("art"),handles=document.getElementById("handles"),
+ cout=document.getElementById("cout"),pout=document.getElementById("pout");
+function C(a){return a.map(function(p){return{ax:p[0],ay:p[1],fx:p[2],fy:p[3]};});}
+function P(a){return a.map(function(p){return{x:p[0],y:p[1]};});}
+/* Mirrors what is ACTUALLY on the live page right now (synced 2026-07-30, when
+   saving was wired up). This has to stay truthful: the save button rewrites the
+   whole KZ:final block from these arrays, so if INIT drifted from the real page
+   the first save would silently wipe the real layout and replace it with the
+   editor's placeholders. Camera entries are pos_x pos_y aim_x aim_y — the live
+   page stores an angle instead, and the aim points below are that angle read
+   back off each cone's own far edge. gates is EMPTY on purpose since 2026-07-30:
+   Baseconcept.svg draws a barrier at the entrance itself, so one placed here too
+   read as two. Add one from the button if a second barrier is ever wanted. */
+var INIT={
+ cams:[[360,432,493,570],[560,410,560,562],[800,478,724,601],[320,612,455,615],[920,600,790,610]],
+ alarms:[],
+ firealarms:[[405,505],[690,510]],
+ sensors:[[150,548],[258,778],[950,566],[882,762]],
+ gates:[],
+ cps:[[447,742],[470,425],[820,610],[600,790]],
+ guards:[[705,902],[560,628],[352,706]]
+};
+var cams,alarms,firealarms,sensors,gates,cps,guards;
+function load(){cams=C(INIT.cams);alarms=P(INIT.alarms);firealarms=P(INIT.firealarms);sensors=P(INIT.sensors);gates=P(INIT.gates);cps=P(INIT.cps);guards=P(INIT.guards);}
+load();
+/* INIT above is only the OFFLINE FALLBACK now. The live coordinates are pulled
+   from the page itself on load (GET /state/final), because a hardcoded INIT is a
+   data-loss trap: edit -> save -> reload the editor -> it resets to the stale
+   literal -> the next save silently overwrites your real layout with it. That
+   already happened once (2026-07-30). If the fetch fails (server down, or you
+   opened this via file://) we keep INIT and say so, rather than pretending. */
+fetch("/state/final")
+  .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+  .then(function (d) {
+    if (!d || !d.ok) return Promise.reject();
+    INIT = {
+      cams: d.cams, alarms: d.alarms, firealarms: d.firealarms,
+      sensors: d.sensors, gates: d.gates, cps: d.cps, guards: d.guards,
+    };
+    load();
+    render();
+    var st = document.getElementById("status");
+    st.textContent = "\u2713 Cargado desde la web (" + d.cams.length + " cam, " +
+      d.sensors.length + " sens, " + d.cps.length + " cp, " + d.guards.length + " guardias)";
+  })
+  .catch(function () {
+    var st = document.getElementById("status");
+    st.textContent = "\u26A0 No pude leer el estado actual \u2014 mostrando valores por defecto. " +
+      "NO guardes sin revisar, o pisarías el layout real.";
+  });
+var drag=null;
+function toSvg(e){var p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
+function r(n){return Math.round(n);}
+function el(t,a){var e=document.createElementNS("http://www.w3.org/2000/svg",t);for(var k in a)e.setAttribute(k,a[k]);return e;}
+function hnd(x,y,type,i,color){var g=el("g",{"class":"handle","data-t":type,"data-i":i});
+ g.appendChild(el("circle",{cx:x,cy:y,r:12,fill:color,"fill-opacity":.3,stroke:color,"stroke-width":2}));
+ g.appendChild(el("circle",{cx:x,cy:y,r:4,fill:color}));return g;}
+/* 0.34, not 0.32 (fixed 2026-07-30 when saving was wired up): konzept-server.js's
+   own cone() writes the saved path at 0.34, so a 0.32 preview here meant the
+   editor showed a slightly narrower beam than what actually landed on the site. */
+function cone(ax,ay,fx,fy){var dx=fx-ax,dy=fy-ay,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L,px=-uy,py=ux,hw=L*0.34;
+ return "M"+r(ax)+" "+r(ay)+" L"+r(fx+px*hw)+" "+r(fy+py*hw)+" L"+r(fx-px*hw)+" "+r(fy-py*hw)+" Z";}
+var BLUE="#3D9AD3";
+/* The client's camera artwork is a fixed isometric drawing, so it can't be rotated
+   toward its aim point. Aim = variant + mirror instead: "de frente" faces the
+   viewer (aim below the mount), "de atras" faces away. KEEP IN SYNC with
+   camMarkup() in konzept-server.js — that is what actually gets written to the
+   page, and a mismatch here means the editor lies about the result. */
+function camEl(c){var front=(c.fy-c.ay)>=0,mirror=front?(c.fx>c.ax):(c.fx<c.ax),
+ name=front?"front":"back",h=front?37:40;
+ var g=el("g",{transform:"translate("+r(c.ax)+" "+r(c.ay)+")"+(mirror?" scale(-1 1)":"")});
+ g.appendChild(el("use",{href:"#konzept-cam-"+name,width:46,height:h,x:-23,y:-Math.round(h/2)}));
+ return g;}
+function render(){
+ art.innerHTML="";handles.innerHTML="";defs.innerHTML="";
+ cams.forEach(function(c,i){
+  var g=el("linearGradient",{id:"cg"+i,gradientUnits:"userSpaceOnUse",x1:c.ax,y1:c.ay,x2:c.fx,y2:c.fy});
+  g.appendChild(el("stop",{offset:"0%","stop-color":BLUE,"stop-opacity":"0.5"}));
+  g.appendChild(el("stop",{offset:"100%","stop-color":BLUE,"stop-opacity":"0"}));
+  defs.appendChild(g);
+  art.appendChild(el("path",{d:cone(c.ax,c.ay,c.fx,c.fy),fill:"url(#cg"+i+")"}));
+  art.appendChild(camEl(c));
+  handles.appendChild(hnd(c.ax,c.ay,"ca",i,"#cfe8fb"));
+  handles.appendChild(hnd(c.fx,c.fy,"cf",i,BLUE));
+ });
+ alarms.forEach(function(a,i){var g=el("g",{transform:"translate("+a.x+" "+a.y+")"});
+  g.appendChild(el("rect",{x:-13,y:-15,width:26,height:30,rx:4,fill:"#010101",stroke:BLUE,"stroke-width":2.4}));
+  g.appendChild(el("circle",{cx:0,cy:0,r:4,fill:BLUE}));
+  g.appendChild(el("path",{d:"M18 -14 A26 26 0 0 1 18 14",fill:"none",stroke:BLUE,"stroke-width":2,opacity:.7}));
+  g.appendChild(el("path",{d:"M-18 -14 A26 26 0 0 0 -18 14",fill:"none",stroke:BLUE,"stroke-width":2,opacity:.7}));
+  art.appendChild(g);handles.appendChild(hnd(a.x,a.y,"al",i,BLUE));});
+ // Fire alarm = the client's own #konzept-firealarm art, white like on the site.
+ firealarms.forEach(function(f,i){var g=el("g",{transform:"translate("+f.x+" "+f.y+")",fill:"none",stroke:"#fff","stroke-width":0.8,"stroke-linejoin":"round","stroke-linecap":"round"});
+  var u=document.createElementNS("http://www.w3.org/2000/svg","use");
+  u.setAttribute("href","#konzept-firealarm");u.setAttribute("width","46");u.setAttribute("height","25");u.setAttribute("x","-23");u.setAttribute("y","-12.5");
+  g.appendChild(u);art.appendChild(g);handles.appendChild(hnd(f.x,f.y,"fa",i,"#fff"));});
+ // Sensor = the client's post art (#konzept-sensor) + inward waves. The post's
+ // source fill is #00091F, the section background, so the white stroke is the
+ // only reason it's visible — same as .sc-sensor__icon in konzept-seq.css.
+ sensors.forEach(function(s,i){var g=el("g",{transform:"translate("+r(s.x)+" "+r(s.y)+")"});
+  g.appendChild(el("use",{href:"#konzept-sensor",width:15,height:56,x:-7.5,y:-56,stroke:"#fff","stroke-width":1,"stroke-linejoin":"round"}));
+  var w=el("g",s.x>540?{transform:"scale(-1 1)"}:{});
+  w.appendChild(el("path",{d:"M12 -46 a13 13 0 0 1 0 20",fill:"none",stroke:BLUE,"stroke-width":1.8,"stroke-linecap":"round",opacity:.75}));
+  w.appendChild(el("path",{d:"M19 -50 a20 20 0 0 1 0 28",fill:"none",stroke:BLUE,"stroke-width":1.8,"stroke-linecap":"round",opacity:.75}));
+  g.appendChild(w);art.appendChild(g);
+  handles.appendChild(hnd(s.x,s.y,"se",i,BLUE));});
+ gates.forEach(function(g0,i){var g=el("g",{transform:"translate("+g0.x+" "+g0.y+")"});
+  g.appendChild(el("rect",{x:-6,y:-4,width:12,height:26,rx:2,fill:"#010101",stroke:BLUE,"stroke-width":2.4}));
+  g.appendChild(el("line",{x1:0,y1:0,x2:52,y2:-16,stroke:BLUE,"stroke-width":3}));
+  art.appendChild(g);handles.appendChild(hnd(g0.x,g0.y,"ga",i,BLUE));});
+ // Checkpoint = the client's #konzept-patrol-cp post. Drag these ONTO the patrol
+ // route line — the route itself is static markup, not editable from here.
+ cps.forEach(function(c,i){var g=el("g",{transform:"translate("+r(c.x)+" "+r(c.y)+")"});
+  g.appendChild(el("use",{href:"#konzept-patrol-cp",width:16,height:42,x:-8,y:-42}));
+  art.appendChild(g);handles.appendChild(hnd(c.x,c.y,"cp",i,BLUE));});
+ guards.forEach(function(w,i){var g=el("g",{transform:"translate("+w.x+" "+w.y+")",color:"#cfe8fb"});
+  // Guardia = Person.svg (#konzept-person), same scale/offset as the live site.
+  var u=document.createElementNS("http://www.w3.org/2000/svg","use");
+  u.setAttribute("href","#konzept-person");u.setAttribute("width","26");u.setAttribute("height","56");u.setAttribute("x","-13");u.setAttribute("y","-56");
+  g.appendChild(u);
+  art.appendChild(g);handles.appendChild(hnd(w.x,w.y,"gu",i,"#cfe8fb"));});
+ cout.value=cams.map(function(c,i){return "C"+(i+1)+": "+r(c.ax)+" "+r(c.ay)+"  "+r(c.fx)+" "+r(c.fy);}).join("\n");
+ var lines=[];alarms.forEach(function(a){lines.push("ALARM: "+r(a.x)+" "+r(a.y));});
+ firealarms.forEach(function(f){lines.push("FIRE: "+r(f.x)+" "+r(f.y));});
+ sensors.forEach(function(s){lines.push("SENSOR: "+r(s.x)+" "+r(s.y));});
+ gates.forEach(function(g){lines.push("GATE: "+r(g.x)+" "+r(g.y));});
+ cps.forEach(function(c){lines.push("CP: "+r(c.x)+" "+r(c.y));});
+ guards.forEach(function(w){lines.push("GUARD: "+r(w.x)+" "+r(w.y));});
+ pout.value=lines.join("\n");
+}
+svg.addEventListener("pointerdown",function(e){var h=e.target.closest(".handle");if(!h)return;
+ if(delMode){removeHandle(h);return;}
+ drag={t:h.getAttribute("data-t"),i:+h.getAttribute("data-i")};svg.setPointerCapture(e.pointerId);});
+svg.addEventListener("pointermove",function(e){var q=toSvg(e);read.textContent="x: "+r(q.x)+"   y: "+r(q.y);if(!drag)return;var i=drag.i;
+ if(drag.t==="ca"){cams[i].ax=q.x;cams[i].ay=q.y;}else if(drag.t==="cf"){cams[i].fx=q.x;cams[i].fy=q.y;}
+ else if(drag.t==="al"){alarms[i]={x:q.x,y:q.y};}else if(drag.t==="fa"){firealarms[i]={x:q.x,y:q.y};}
+ else if(drag.t==="se"){sensors[i]={x:q.x,y:q.y};}
+ else if(drag.t==="ga"){gates[i]={x:q.x,y:q.y};}else if(drag.t==="cp"){cps[i]={x:q.x,y:q.y};}
+ else if(drag.t==="gu"){guards[i]={x:q.x,y:q.y};}
+ render();});
+svg.addEventListener("pointerup",function(){drag=null;});
+
+/* ---- Deleting -------------------------------------------------------------
+   Double-click alone was the only way to remove something, and it is unreliable
+   here: the first click of the pair starts a drag, so the element usually shifts
+   before it disappears. Three paths now, all going through one map so they can't
+   drift apart:
+     - "Borrar" mode: a single pointerdown on a handle removes it (no drag).
+     - Double-click: kept as the shortcut it always was.
+     - Delete / Backspace: removes whatever handle the pointer is over.
+   For a camera, ca (position) and cf (aim) both index the SAME cams entry, so
+   hitting either removes that whole camera — which is what you want, since an
+   aim point with no camera is meaningless. */
+function arrays(){return {ca:cams,cf:cams,al:alarms,fa:firealarms,se:sensors,ga:gates,cp:cps,gu:guards};}
+function removeHandle(h){
+ if(!h) return false;
+ var t=h.getAttribute("data-t"), i=+h.getAttribute("data-i"), a=arrays()[t];
+ if(!a) return false;
+ a.splice(i,1); drag=null; render(); return true;
+}
+var delMode=false, hoverHandle=null;
+var delBtn=document.getElementById("del"), stage=document.querySelector(".stage");
+function setDel(on){
+ delMode=on;
+ delBtn.classList.toggle("on",on);
+ delBtn.setAttribute("aria-pressed",String(on));
+ stage.classList.toggle("deleting",on);
+}
+delBtn.setAttribute("aria-pressed","false");
+delBtn.onclick=function(){setDel(!delMode);};
+svg.addEventListener("dblclick",function(e){removeHandle(e.target.closest(".handle"));});
+svg.addEventListener("pointerover",function(e){hoverHandle=e.target.closest(".handle");});
+svg.addEventListener("pointerout",function(e){if(e.target.closest(".handle")===hoverHandle) hoverHandle=null;});
+addEventListener("keydown",function(e){
+ if(e.key!=="Delete"&&e.key!=="Backspace") return;
+ if(/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName)) return;
+ if(removeHandle(hoverHandle)){e.preventDefault(); hoverHandle=null;}
+});
+document.getElementById("aCam").onclick=function(){cams.push({ax:540,ay:430,fx:540,fy:640});render();};
+document.getElementById("aAlarm").onclick=function(){alarms.push({x:540,y:520});render();};
+document.getElementById("aFire").onclick=function(){firealarms.push({x:540,y:500});render();};
+document.getElementById("aSensor").onclick=function(){sensors.push({x:540,y:560});render();};
+document.getElementById("aGate").onclick=function(){gates.push({x:600,y:880});render();};
+document.getElementById("aCp").onclick=function(){cps.push({x:540,y:700});render();};
+document.getElementById("aGuard").onclick=function(){guards.push({x:560,y:640});render();};
+document.getElementById("copyC").onclick=function(){cout.select();document.execCommand("copy");};
+document.getElementById("copyP").onclick=function(){pout.select();document.execCommand("copy");};
+document.getElementById("reset").onclick=function(){load();render();};
+document.getElementById("save").onclick=function(){var st=document.getElementById("status");st.textContent="Guardando…";
+ fetch("/save/final",{method:"POST",headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({
+   cams:cams.map(function(c){return [r(c.ax),r(c.ay),r(c.fx),r(c.fy)];}),
+   alarms:alarms.map(function(a){return [r(a.x),r(a.y)];}),
+   firealarms:firealarms.map(function(f){return [r(f.x),r(f.y)];}),
+   sensors:sensors.map(function(s){return [r(s.x),r(s.y)];}),
+   gates:gates.map(function(g){return [r(g.x),r(g.y)];}),
+   cps:cps.map(function(c){return [r(c.x),r(c.y)];}),
+   guards:guards.map(function(w){return [r(w.x),r(w.y)];})})})
+  .then(function(r2){return r2.json();})
+  .then(function(d){st.textContent=d.ok?("\u2713 Guardado + "+d.build+" — refrescá la web"):("\u2717 "+d.error);})
+  .catch(function(){st.textContent="\u2717 ¿Está corriendo el servidor? Abrí este editor vía http://localhost:8787/konzept-final.html";});};
+addEventListener("keydown",function(e){if(e.key.toLowerCase()==="g")document.getElementById("grid").style.display=document.getElementById("grid").style.display==="none"?"":"none";});
+render();
+</script></body></html>

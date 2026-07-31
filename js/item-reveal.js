@@ -73,7 +73,11 @@
         scrollTrigger: {
           trigger: group,
           start: strong ? "top 85%" : "top 88%",
-          end: strong ? "bottom 60%" : "top 60%",
+          // Per-group end override (client 2026-07-28): the outfit-name list
+          // finished too late — the last item was still blurry as you scrolled
+          // the character out of view. data-item-reveal-end lets a single group
+          // complete its reveal earlier without touching the shared presets.
+          end: group.getAttribute("data-item-reveal-end") || (strong ? "bottom 60%" : "top 60%"),
           scrub: strong ? 0.6 : 0.5,
         },
       }

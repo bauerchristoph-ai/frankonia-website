@@ -26,6 +26,11 @@
   --color-blue-light: #3D9AD3;
   --color-blue-dark: #5287C9;
   --color-logo-black: #010101;
+  /* Accent red — NOT a brand colour; a single deliberate exception (client
+     2026-07-27) for the Pain Hook highlight marks ("schlechtes Licht" etc.),
+     where red reads as the "problem/pain" signal. Scoped to .pain-hook__mark;
+     don't reuse elsewhere without a reason. White text stays legible on it. */
+  --color-pain-red: #C62828;
 
   /* ---- Dark-theme site-wide (client decision, 2026-07-12) ----
      The whole site runs on --color-logo-black now, not white. This
@@ -67,7 +72,11 @@
   /* White at 0.65 alpha ≈ 7.4:1 against black (WCAG AA needs 4.5:1). */
   --color-text-muted: rgb(255 255 255 / 0.65);
   --color-accent: var(--color-blue-light);
-  --color-accent-strong: var(--color-blue-dark);
+  /* accent-strong now equals accent (both #3D9AD3) — client 2026-07-28 made
+     #3D9AD3 the single brand blue used at rest across the whole site; the
+     darker #5287C9 (blue-dark) is now reserved for the primary-button hover
+     and the handful of blue-on-white spots where #3D9AD3 fails contrast. */
+  --color-accent-strong: var(--color-blue-light);
   /* On a BLACK background both brand blues clear 4.5:1 at normal text
      size (blue-light ≈6.8:1, blue-dark ≈5.7:1) — the opposite of the old
      light-theme finding, where neither passed on white. Links can use the

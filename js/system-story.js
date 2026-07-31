@@ -1,31 +1,21 @@
 /*
-  system-story.js — "Our System" stacked-card interaction.
+  "Our System" card stack ("Less effort. More control.") — desktop + motion only.
 
-  Integrated 2026-07-23 from the sibling prototype ../frankonia-system-cards
-  (Codrops StickySections index8 stacking). Behaviour is the prototype's;
-  the wiring is adapted to Frankonia's architecture:
+  Mechanism: the whole panel (.system-story__stage) is ONE CSS `position: sticky`
+  element pinned by a tall .system-story__track (NO ScrollTrigger pin, which is
+  safe with Lenis). This scrubbed timeline raises cards 2..N into a staggered
+  peek-stack (the SAME entrance for every card), holds the full stack, and then
+  the track ends and the sticky stage releases as a SINGLE unit — so there is no
+  per-card "peel" at the end (the earlier per-card position:sticky version
+  released the last cards in reverse order, lifting the stack before card 6
+  settled; that's what this replaces).
 
-    - Self-initialising deferred IIFE (same pattern as sticky-story.js /
-      pain-hook-journey.js) — NOT a global that needs a separate call, and NO
-      new DOMContentLoaded (the <script defer> guarantees the DOM is ready).
-    - Reuses the site's SINGLE GSAP + ScrollTrigger and the SINGLE Lenis
-      instance from js/smooth-scroll.js. It does not load GSAP/ScrollTrigger,
-      create a Lenis, or start a second rAF loop — it only creates one
-      ScrollTrigger, which the existing lenis.on("scroll", ScrollTrigger.update)
-      wiring drives transparently.
-    - Enhancement is gated by gsap.matchMedia("(min-width:1024px) and
-      (prefers-reduced-motion:no-preference)"), exactly like sticky-story.js.
-      matchMedia auto-reverts the enhanced class, every gsap.set/tween and the
-      ScrollTrigger when the query stops matching — so resizing below 1024px or
-      turning on reduced motion cleanly restores the base vertical list with NO
-      stale transforms.
-    - NO ScrollTrigger pin — the stage is pinned purely by CSS position:sticky
-      (see system-story.css). The sticky stage is never transformed; only the
-      cards (and the intro title) move.
-
-  JS-only-ever-enhances: the six cards render as a readable vertical list from
-  raw HTML/CSS. This module only adds the sticky/stacked layer on top; no-JS,
-  mobile, or reduced-motion visitors keep the full static list.
+  Card layout (staggered tops, absolute) lives in the .system-story--enhanced
+  block in css/system-story.css. Reuses the page's single GSAP + ScrollTrigger
+  and the single Lenis (via js/smooth-scroll.js's ticker binding) — no extra
+  lib, RAF or DOMContentLoaded. matchMedia gates it to desktop + no-reduced-
+  motion and auto-reverts on exit, so mobile / reduced-motion / no-JS get the
+  plain static vertical list.
 */
 
 (function () {
@@ -43,139 +33,134 @@
 
   gsap.registerPlugin(ScrollTrigger);
 
-  var introTitle = story.querySelector(".system-story__intro-title");
-
-  // Read a numeric CSS custom property (px or unitless) with a fallback.
-  function cssNumber(styles, name, fallback) {
-    var raw = styles.getPropertyValue(name).trim();
-    if (!raw) return fallback;
-    var n = parseFloat(raw);
-    return isNaN(n) ? fallback : n;
-  }
-
   var mm = gsap.matchMedia();
 
   mm.add(
     "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
     function () {
-      // Motion values sourced from system-story.css tokens (read live).
-      var docStyles = getComputedStyle(document.documentElement);
-      var OFFSET = cssNumber(docStyles, "--sys-stack-offset", 26); // px per level
-      var SCALE_PREV = cssNumber(docStyles, "--sys-scale-prev", 0.96);
-      var SCALE_OLDER = cssNumber(docStyles, "--sys-scale-older", 0.92);
-      var PREV_OPACITY = cssNumber(docStyles, "--sys-prev-opacity", 0.72);
-      var BLUR_PREV = cssNumber(docStyles, "--sys-blur-prev", 1.5); // px
-      var BLUR_OLDER = cssNumber(docStyles, "--sys-blur-older", 4); // px
-      var TITLE_SCALE_START = cssNumber(docStyles, "--sys-title-scale-start", 1);
-
-      var OP_PREV = PREV_OPACITY; // 1 step back — stays clearly visible
-      var OP_OLDER = 0.34; // 2 steps back — faint but present
-      var OP_HIDDEN = 0; // 3+ steps back — removed from the stack
-      var BELOW_Y = 120; // yPercent for cards waiting below the viewport
-      var HOLD_UNITS = 0.44; // final readable hold (mirrors the CSS track maths)
-
-      // Switch on the enhanced (sticky/stacked) layout.
+      // Switch on the pinned sticky-stage layout (absolute, staggered cards).
       story.classList.add("system-story--enhanced");
 
-      // Explicit initial states: card 0 active/centred, the rest wait below.
-      cards.forEach(function (card, i) {
-        gsap.set(card, {
-          yPercent: i === 0 ? 0 : BELOW_Y,
-          y: 0,
-          scale: 1,
-          opacity: 1,
-          filter: "blur(0px)",
-          transformOrigin: "50% 0%",
-        });
+      // Cards enter ONE BY ONE, strictly in order 1 → 2 → 3 → 4 → 5 → 6 (client
+      // 2026-07-27). NOTHING is pre-placed — EVERY card (including card 1) starts
+      // hidden just below the stage, so arriving at the section shows an empty
+      // stage and then card 1 itself animates in on scroll, followed by 2..6.
+      // Each rises to its own CSS position: 1→left, 2→centre, 3→right (bottom
+      // row), then 4→over 1, 5→over 2, 6→over 3 (front row). One card per tween —
+      // the columns never mix.
+      // Each card's bullet list is revealed in a small stagger AFTER its own
+      // card settles, so the list "appears" like the other reveal lists across
+      // the site (client 2026-07-27). Handled inside THIS timeline — NOT the
+      // generic IntersectionObserver item-reveal — because the cards are
+      // pinned/transformed here, where a geometric observer fires at the wrong
+      // moment. JS-only-enhances: the hidden start state is set only here.
+      var cardPoints = cards.map(function (c) {
+        return Array.prototype.slice.call(
+          c.querySelectorAll(".system-story__points li")
+        );
       });
-      if (introTitle) {
-        gsap.set(introTitle, {
-          scale: TITLE_SCALE_START,
-          transformOrigin: "0% 50%",
-        });
-      }
 
-      // One scoped, scrubbed timeline. start/end map to the sticky stage's
-      // pin/release exactly (CSS sticky provides the pin — no ScrollTrigger pin).
+      gsap.set(cards, { yPercent: 160, opacity: 0, filter: "blur(10px)" });
+      cardPoints.forEach(function (items) {
+        if (items.length) gsap.set(items, { y: 10, opacity: 0 });
+      });
+
+      /* Holds are scroll with NOTHING moving on screen. Measured 2026-07-30:
+         with 0.3 + 1.0 they were ~620px of frozen screen out of ~3500px, which
+         is most of why this section read as "un scroll normal" — you scroll and
+         the page just sits there. Halved; enough to breathe, not enough to
+         feel stuck. */
+      var INTRO_HOLD = 0.15; // brief empty stage before card 1 rises in
+      var FINAL_HOLD = 0.5;  // full stack settled & fixed before release
+      /* Consecutive cards overlap, so something is always in motion instead of
+         six discrete one-at-a-time beats with dead air between them. */
+      var CARD_OVERLAP = 0.25;
+
+      // settleP[i] = scroll progress at which card i has finished entering.
+      // Used by onUpdate to mark a back-row card (0,1,2) as ".is-behind" once its
+      // front card (i+3) has settled on top — so only the active card shows its
+      // bullets, and behind cards read clearly behind (client 2026-07-29).
+      var settle = [];
+      var settleP = [];
+
       var tl = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
           trigger: story,
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.6,
+          /* 0.5 tracked the wheel almost 1:1, which is what makes a scrubbed
+             timeline feel mechanical. 1.1 gives the motion real inertia — it
+             glides on and settles after you stop — and matches the page's own
+             Lenis duration (1.2, js/smooth-scroll.js) so the section feels like
+             the rest of the site rather than a separate mechanism. */
+          scrub: 1.1,
+          onUpdate: function (self) {
+            var p = self.progress;
+            for (var b = 0; b < 3 && b + 3 < cards.length; b++) {
+              cards[b].classList.toggle("is-behind", settleP[b + 3] != null && p >= settleP[b + 3]);
+            }
+          },
         },
       });
 
-      if (introTitle) {
-        tl.to(introTitle, { scale: 1, duration: 1 }, 0);
-      }
+      // Brief empty hold, then raise cards 1..6 in sequence — each individually,
+      // same tween, so they arrive strictly in order and each settles into its
+      // column/layer.
+      tl.to({}, { duration: INTRO_HOLD });
 
-      // Each transition t moves focus from card t to card t+1 (one time-unit),
-      // restacking the previous cards by depth behind the new active card.
-      for (var t = 0; t < cards.length - 1; t++) {
-        var pos = t;
-        var incoming = cards[t + 1]; // rises into focus
-        var active = cards[t]; // recedes to depth 1
-        var prev = cards[t - 1] || null; // recedes to depth 2
-        var older = cards[t - 2] || null; // recedes to depth 3 (hidden)
-
-        tl.to(incoming, { yPercent: 0, duration: 1 }, pos);
-
+      for (var i = 0; i < cards.length; i++) {
         tl.to(
-          active,
+          cards[i],
           {
-            y: -OFFSET,
-            scale: SCALE_PREV,
-            opacity: OP_PREV,
-            filter: "blur(" + BLUR_PREV + "px)",
+            yPercent: 0,
+            opacity: 1,
+            filter: "blur(0px)",
             duration: 1,
+            /* power3.out under a SCRUB is deceptive: the ease maps scroll to
+               progress, so the card covered ~75% of its travel in the first
+               ~30% of its scroll segment and then crept. Six of those in a row
+               = lurch, stall, lurch, stall. power1.out keeps a decelerating
+               arrival but spreads the movement across the scroll it is given. */
+            ease: "power1.out",
           },
-          pos
+          i === 0 ? ">" : "-=" + CARD_OVERLAP
         );
-
-        if (prev) {
+        settle[i] = tl.duration(); // progress marker: card i has arrived
+        // The card's bullet list cascades in as the card is settling.
+        if (cardPoints[i].length) {
           tl.to(
-            prev,
-            {
-              y: -OFFSET * 2,
-              scale: SCALE_OLDER,
-              opacity: OP_OLDER,
-              filter: "blur(" + BLUR_OLDER + "px)",
-              duration: 1,
-            },
-            pos
-          );
-        }
-
-        if (older) {
-          tl.to(
-            older,
-            {
-              y: -OFFSET * 3,
-              scale: SCALE_OLDER - 0.03,
-              opacity: OP_HIDDEN,
-              filter: "blur(" + (BLUR_OLDER + 2) + "px)",
-              duration: 1,
-            },
-            pos
+            cardPoints[i],
+            { y: 0, opacity: 1, duration: 0.5, ease: "power2.out", stagger: 0.12 },
+            "<0.35"
           );
         }
       }
 
-      // Final readable hold on the last card before the stage releases.
-      tl.to({}, { duration: HOLD_UNITS });
+      // Final hold — nothing moves; the full stack stays fixed. When the track
+      // ends after this, the sticky stage un-sticks and the whole section
+      // scrolls away together (unit release, no peel).
+      tl.to({}, { duration: FINAL_HOLD });
 
-      // Recompute start/end once this layout is in place (layout is CSS-driven
-      // and fonts are system fonts, so nothing loads late — but a refresh keeps
-      // positions accurate alongside the page's other ScrollTriggers + Lenis).
+      // Now that the full timeline length is known, convert the settle markers to
+      // 0..1 scroll progress for the onUpdate above.
+      var totalDur = tl.duration();
+      settleP = settle.map(function (t) { return t / totalDur; });
+
+      // Track/stage geometry is CSS-driven; refresh keeps positions accurate
+      // alongside the page's other ScrollTriggers + Lenis.
       ScrollTrigger.refresh();
 
       // matchMedia cleanup: it auto-reverts the gsap.set/tweens and kills this
-      // ScrollTrigger; we only need to drop the enhancement class so the base
-      // list returns when the query stops matching.
+      // ScrollTrigger; we only drop the layout class and clear leftover
+      // transforms so the base vertical list returns.
       return function () {
         story.classList.remove("system-story--enhanced");
+        cards.forEach(function (c) { c.classList.remove("is-behind"); });
+        gsap.set(cards, { clearProps: "transform,opacity,filter" });
+        cardPoints.forEach(function (items) {
+          if (items.length) gsap.set(items, { clearProps: "transform,opacity" });
+        });
       };
     }
   );

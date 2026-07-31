@@ -74,4 +74,52 @@
     };
     requestAnimationFrame(raf);
   }
+
+  // --- Anchor-link handoff (bug fix 2026-07-25) ---
+  // While Lenis owns the scroll position, the browser's native hash scrolling
+  // doesn't work — so in-page "#..." links (and ad deep links like
+  // /#sicherheitsanalyse) never reached the form. Drive Lenis instead.
+  function scrollToHash(hash, immediate) {
+    if (!hash || hash === "#") return false;
+    var target;
+    try {
+      target = document.querySelector(hash);
+    } catch (e) {
+      return false; // malformed selector
+    }
+    if (!target) return false;
+    lenis.scrollTo(target, { immediate: !!immediate });
+    return true;
+  }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    var link = t && t.closest ? t.closest('a[href]') : null;
+    if (!link) return;
+    var url;
+    try {
+      url = new URL(link.href, window.location.href);
+    } catch (err) {
+      return;
+    }
+    // Only same-page hash links — real navigations (other pages) are untouched.
+    if (url.origin !== window.location.origin) return;
+    if (url.pathname !== window.location.pathname) return;
+    if (!url.hash || url.hash === "#") return;
+    if (scrollToHash(url.hash, false)) {
+      e.preventDefault();
+      history.pushState(null, "", url.hash);
+    }
+  });
+
+  // Deep link that lands with a #hash (e.g. an ad -> /#sicherheitsanalyse):
+  // the native jump (if any) happens before Lenis is ready and gets reset, so
+  // re-apply it once things are settled.
+  if (window.location.hash) {
+    window.addEventListener("load", function () {
+      setTimeout(function () {
+        scrollToHash(window.location.hash, true);
+      }, 80);
+    });
+  }
 })();

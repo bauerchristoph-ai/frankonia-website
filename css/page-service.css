@@ -57,7 +57,35 @@
 }
 
 .service-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
   margin-top: var(--space-6);
+}
+
+/* Clickable phone next to the CTA on service pages (client 2026-07-25,
+   section 13: a tel: link on every page). icon-phone is a FILLED icon, so
+   fill/stroke are set explicitly (same as .hero__phone .icon — the sprite's
+   group presentation attributes don't survive <use>). */
+.service-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 500;
+}
+.service-phone .icon {
+  width: 1.15em;
+  height: 1.15em;
+  fill: currentColor;
+  stroke: none;
+  color: var(--color-accent);
+}
+.service-phone:hover,
+.service-phone:focus-visible {
+  text-decoration: underline;
 }
 
 .service-hero__reassurance {
@@ -426,6 +454,10 @@
 }
 
 .service-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
   margin-top: var(--space-6);
 }
 

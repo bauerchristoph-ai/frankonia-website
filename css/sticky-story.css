@@ -1,291 +1,285 @@
 /* ==========================================================================
-   sticky-story.css — Trust "sticky story" (Codrops StickySections index9)
+   sticky-story.css — Trust band (metrics + client logos)
    ----------------------------------------------------------------------------
-   Integrated 2026-07-23 from the sibling prototype ../frankonia-sticky-story.
-   Behaviour/composition = the prototype; architecture/tokens = Frankonia.
+   REWRITTEN 2026-07-29 (client, biggest structural change so far). The previous
+   3-scene sticky "split screen" — a coverage-map + metrics half-split, then a
+   logos + value-cards half-split rising together — was collapsed into ONE plain,
+   full-width section:
 
-   Mechanism: three HALF-WIDTH (50vw) `position: sticky; top: 0` scenes in
-   NORMAL FLOW inside the black `.sticky-story` track. Scene 1 right, scene 2
-   left, scene 3 right (margin-left/right:auto). Each rises from below within
-   its own column and sticks; consecutive scenes are on opposite halves so
-   they never split-overlap, and scene 3 (higher z-index) covers scene 1 in
-   the right column. The empty half is the track's black background. No pin,
-   no artificial scroll distance, no exit animation — the track height is the
-   natural sum of the three 100svh scenes, so the next section follows through
-   the natural sticky release. GSAP adds ONLY an entrance parallax on each
-   scene's inner content (js/sticky-story.js).
+     1. A full-SCREEN (100svh) white band with the trust METRICS laid out
+        HORIZONTALLY across the width (was a vertical editorial list).
+     2. Directly below it, the client-logo MARQUEE (auto-scrolling as before),
+        full width.
 
-   Enhanced (sticky) layout is gated to >=1024px + no reduced-motion — the same
-   query js/sticky-story.js's gsap.matchMedia() uses. Below that it is normal
-   vertical flow (also the no-JS / reduced-motion fallback), scenes 1->2->3.
+   Removed entirely: the coverage-map backdrop + location pins, the 50vw sticky
+   half-panels, the GSAP entrance parallax, and the "What clients can expect"
+   value-cards scene. No sticky, no pin, no artificial scroll distance.
 
-   Prototype --sticky-story-* tokens are MAPPED onto Frankonia tokens here;
-   only genuinely component-specific values (scene z-index, content max-width)
-   stay namespaced. The prototype's global resets (*, html, body, img), its
-   placeholder + intro sections, and its chip-based logo marquee are NOT
-   ported: the intro is Frankonia's existing "Trusted across the region"
-   section, and scene 2 reuses Frankonia's real-logo .story-logos marquee.
-   On-light muted/border shades have no dark-theme token to map onto, so they
-   are explicit values (same documented exception as .review-card).
+   The .story-logos marquee itself still lives in page-home.css (unchanged); this
+   file only sets its surface + the white-artwork invert for the pale band.
+   Everything is plain, readable static flow with no JS / mobile / reduced motion
+   (the marquee has its own reduced-motion stop).
    ========================================================================== */
 
 :root {
-  /* --- mapped onto Frankonia tokens --- */
-  --sticky-story-black:      var(--color-bg);
-  --sticky-story-white:      var(--color-white);
-  --sticky-story-blue:       var(--color-blue-dark);   /* scene 2 surface + metric values */
-  --sticky-story-neutral:    #fafafa;                  /* scene 3 surface (documented light exception) */
-  --sticky-story-neutral-200: rgb(1 1 1 / 0.08);       /* card hairline on light */
-  --sticky-story-ink:        var(--color-logo-black);
-  --sticky-story-ink-muted:  rgb(1 1 1 / 0.6);         /* on-light muted (no dark-theme token fits) */
-  --sticky-story-on-blue:    var(--color-white);
-  --sticky-story-font:       var(--font-family-base);
+  --sticky-story-white:       var(--color-white);
+  --sticky-story-ink:         var(--color-logo-black);
+  --sticky-story-ink-muted:   rgb(1 1 1 / 0.6);   /* on-light muted (no dark-theme token fits) */
+  --sticky-story-hairline:    rgb(1 1 1 / 0.12);  /* divider on the white band */
+  --sticky-story-font:        var(--font-family-base);
 
-  --sticky-story-space-1:    var(--space-2);   /* 8px  */
-  --sticky-story-space-2:    var(--space-4);   /* 16px */
-  --sticky-story-space-3:    var(--space-5);   /* 24px */
-  --sticky-story-space-4:    var(--space-6);   /* 32px */
-  --sticky-story-space-5:    var(--space-7);   /* 48px */
-  --sticky-story-space-6:    var(--space-8);   /* 64px */
-
-  --sticky-story-radius:     var(--radius-lg);
-
-  /* --- component-specific (kept namespaced) --- */
-  --sticky-story-maxw:       34rem;
-  --sticky-story-z-1:        1;
-  --sticky-story-z-2:        2;
-  --sticky-story-z-3:        3;
+  --sticky-story-space-2:     var(--space-4);   /* 16px */
+  --sticky-story-space-3:     var(--space-5);   /* 24px */
+  --sticky-story-space-4:     var(--space-6);   /* 32px */
+  --sticky-story-space-5:     var(--space-7);   /* 48px */
+  --sticky-story-space-6:     var(--space-8);   /* 64px */
 }
 
-/* --------------------------------------------------------------------------
-   Track + scenes — BASE (normal flow / no-JS / mobile)
-   -------------------------------------------------------------------------- */
 .sticky-story {
   position: relative;
-  background: var(--sticky-story-black);
+  background: var(--color-bg);
   font-family: var(--sticky-story-font);
 }
 
 .sticky-story__scene {
   position: relative;
   width: 100%;
-  min-height: 70svh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: var(--sticky-story-space-6) var(--sticky-story-space-4);
-  overflow: hidden;
+  padding: var(--sticky-story-space-6) var(--container-padding);
 }
 
-.sticky-story__scene--metrics {
-  /* White at the top fading to FRANKONIA blue at the bottom (client
-     2026-07-23). Metrics rows sit in the white zone; the DEKRA certs at the
-     bottom land on the blue (their colours are lightened below to read). */
-  background: linear-gradient(180deg, var(--color-white) 62%, var(--color-blue-dark));
-  color: var(--sticky-story-ink);
-}
-.sticky-story__scene--logos {
-  /* Mirror of the metrics gradient (client 2026-07-23: "the other way
-     around") — FRANKONIA blue at the TOP fading to the dark gray at the
-     bottom. The non-blue end stays dark (not white) so the white logos +
-     title remain visible across the whole panel. */
-  background: linear-gradient(180deg, var(--color-blue-dark), var(--color-gray) 50%);
-  color: var(--sticky-story-on-blue);
-}
-.sticky-story__scene--cards {
-  /* Same white -> Frankonia-blue gradient as the metrics panel (client
-     2026-07-23). The value cards are opaque white, so they stay readable over
-     the blue foot. */
-  background: linear-gradient(180deg, var(--color-white) 62%, var(--color-blue-dark));
-  color: var(--sticky-story-ink);
-}
-
-/* Inner wrapper — the GSAP parallax target (static in flow mode). */
 .sticky-story__inner {
   width: 100%;
-  max-width: var(--sticky-story-maxw);
+  max-width: var(--container-max-width);
   margin: 0 auto;
 }
 
 .sticky-story__scene-title {
-  margin: 0 0 var(--sticky-story-space-4);
-  /* Same size as the "Trusted across the region" intro heading (main h2,
-     page-home.css) — client 2026-07-23. */
+  margin: 0;
+  text-align: center;
+  /* Same size as the sitewide "main h2" (page-home.css). */
   font-size: clamp(1.375rem, 0.4rem + 3.7vw, 3.75rem);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-tight);
   letter-spacing: -0.01em;
 }
 
-/* --- Scene 1: metrics — editorial rows + certs strip (client 2026-07-23) --- */
-/* Editorial rows: big value left, label right, thin full-width divider
-   between rows. NOT cards. */
+/* Lede under the metrics title (moved in from the removed dark intro,
+   client 2026-07-29) — centred, muted, capped for a readable line length. */
+.sticky-story__lede {
+  margin: var(--sticky-story-space-3) auto 0;
+  max-width: 46rem;
+  text-align: center;
+  color: var(--sticky-story-ink-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Scene 1 — METRICS: full-screen white band, metrics in a horizontal row
+   -------------------------------------------------------------------------- */
+.sticky-story__scene--metrics {
+  background: var(--color-white);
+  color: var(--sticky-story-ink);
+  /* The Hero→metrics pixel-seam band (200px / 120px mobile) sits over the top of
+     this scene, so reserve that height as top padding and top-align the content
+     — otherwise the black tiles overlap the "Vertraut in der ganzen Region"
+     title (client 2026-07-29). Content-sized height (no min-height) keeps the
+     logos band close below. */
+  justify-content: flex-start;
+  padding-top: calc(var(--sticky-story-space-6) + 200px);
+  /* Subtle, tighter separation to the organizations chapter below (client
+     2026-07-29 refine — was too airy). Combined with the logos scene's
+     padding-top: ~80-100px desktop / 56-72px tablet / ~56px mobile. */
+  padding-bottom: clamp(1.75rem, 3vw, 3rem);
+}
+@media (max-width: 767.98px) {
+  .sticky-story__scene--metrics {
+    padding-top: calc(var(--sticky-story-space-6) + 120px);
+  }
+}
+
+/* Base (mobile): a 2-up ruled grid — 2 + 2 + 1, the odd one out spanning the
+   full width so the block closes cleanly.
+   Was a single vertical column of five (2026-07-30): that ran ~475px for five
+   short numbers and read as a plain list rather than a designed trust band. Two
+   columns halve it to three rows and let the eye compare the figures. Hairlines
+   run per row (border-top) with a vertical rule between the columns, which is the
+   same ruled-not-carded language the ≥1024px row already uses. */
 .sticky-story__metrics {
   list-style: none;
   margin: var(--sticky-story-space-5) 0 0;
   padding: 0;
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .sticky-story__metric {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--sticky-story-space-4);
-  padding-block: var(--sticky-story-space-3);
-  border-top: 1px solid var(--sticky-story-neutral-200);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-1);
+  padding: var(--sticky-story-space-3) var(--space-2);
+  border-top: 1px solid var(--sticky-story-hairline);
 }
+.sticky-story__metric:nth-child(even) {
+  border-left: 1px solid var(--sticky-story-hairline);
+}
+/* 5 metrics in a 2-up grid leaves one over; span it rather than leaving a hole. */
 .sticky-story__metric:last-child {
-  border-bottom: 1px solid var(--sticky-story-neutral-200);
+  grid-column: 1 / -1;
+  border-bottom: 1px solid var(--sticky-story-hairline);
 }
+
+/* Tablet (>=768px): a balanced 3-column grid (3 + 2), no vertical dividers —
+   wrapping dividers read as noise, so they're desktop-only (client 2026-07-29
+   redesign). Desktop (>=1024px): a strict FIVE-column single row with short,
+   light vertical dividers between neighbours. Not cards, no per-metric bg. */
+@media (min-width: 768px) {
+  .sticky-story__metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--sticky-story-space-5) 0;
+    margin-top: var(--sticky-story-space-5);
+  }
+  .sticky-story__metric {
+    position: relative;
+    justify-content: center;
+    gap: var(--space-2);
+    padding-block: 0;
+    padding-inline: var(--sticky-story-space-4);
+    border-top: none;
+  }
+  /* Drop the phone grid's rules/span — 3-up needs neither. */
+  .sticky-story__metric:nth-child(even) {
+    border-left: none;
+  }
+  .sticky-story__metric:last-child {
+    grid-column: auto;
+    border-bottom: none;
+  }
+}
+@media (min-width: 1024px) {
+  .sticky-story__metrics {
+    grid-template-columns: repeat(5, 1fr);
+    margin-top: var(--sticky-story-space-5);
+  }
+  /* Short, light divider centred at the column boundary — not a full-height
+     border (client 2026-07-29: "shorten + lighten the dividers"). */
+  .sticky-story__metric + .sticky-story__metric::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 2.75rem;
+    background: rgb(1 1 1 / 0.09);
+  }
+}
+
 .sticky-story__metric-value {
-  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  /* A bit bigger (client 2026-07-29). Kept overflow-safe: the widest value
+     ("1.000.000+") still fits a 5-across row on wide screens, and the row wraps
+     rather than overflowing below that. */
+  font-size: clamp(2rem, 1.4rem + 2vw, 3rem);
   font-weight: var(--font-weight-regular);
   line-height: 1;
   letter-spacing: -0.02em;
   color: var(--sticky-story-ink);
   white-space: nowrap;
 }
+
+/* The 4.7 rating star — star.svg used as a mask so it takes the value's own
+   colour (currentColor) on the white band. */
+.sticky-story__metric-star {
+  display: inline-block;
+  width: 0.72em;
+  height: 0.72em;
+  margin-left: 0.22em;
+  vertical-align: -0.02em;
+  background-color: currentColor;
+  -webkit-mask: url(/assets/icons/star.svg) center / contain no-repeat;
+  mask: url(/assets/icons/star.svg) center / contain no-repeat;
+}
+
 .sticky-story__metric-label {
-  text-align: right;
+  text-align: center;
   font-size: 0.95rem;
   color: var(--sticky-story-ink-muted);
+  max-width: 18ch;
 }
 
-/* Certs strip (zone 3) — a thin divider, a subtle label, then the two DEKRA
-   seals shown small so they read as secondary to the metrics. Lives OUTSIDE
-   the parallax inner. Pushed to the panel bottom (margin-top:auto) so it
-   always lands on the blue foot of the gradient. Its divider + label are
-   LIGHT because they sit on the blue. */
-.sticky-story__certs {
-  margin-top: auto;
-  padding-top: var(--sticky-story-space-3);
-  border-top: 1px solid rgba(255, 255, 255, 0.35);
-  display: flex;
-  flex-direction: column;
-  gap: var(--sticky-story-space-2);
-}
-.sticky-story__certs-label {
-  margin: 0;
-  font-size: 0.7rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.85);
-}
-.sticky-story__certs-badges {
-  display: flex;
-  align-items: center;
-  gap: var(--sticky-story-space-3);
-}
-.sticky-story__cert {
-  height: 3.25rem;
-  width: auto;
-}
-
-/* --- Scene 2: logos ------------------------------------------------------- */
-/* Scene 2 reuses the existing real-logo marquee (.story-logos*, page-home.css).
-   Only the label colour needs setting for the blue surface — the scene-title
-   inherits the scene's white `color`. The .story-logos rows collapse to a
-   static grid below 1024px / under reduced motion (their own media queries),
-   which is exactly the mobile fallback we want here. */
-.sticky-story__scene--logos .story-logos {
-  /* Larger gap between the title and the logo rows (client 2026-07-23). */
-  margin-top: var(--sticky-story-space-6);
-}
-
-/* --- Scene 3: value cards ------------------------------------------------- */
-.sticky-story__cards {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--sticky-story-space-2);
-}
-.sticky-story__card {
-  padding: var(--sticky-story-space-3);
-  border-radius: var(--sticky-story-radius);
-  background: var(--sticky-story-white);
-  border: 1px solid var(--sticky-story-neutral-200);
-}
-.sticky-story__card-icon {
-  width: 2rem;
-  height: 2rem;
-  margin-bottom: var(--sticky-story-space-1);
-}
-.sticky-story__card-title {
-  margin: 0 0 0.35rem;
-  font-size: 1.05rem;
-  font-weight: var(--font-weight-bold);
-  color: var(--sticky-story-ink);
-}
-.sticky-story__card-text {
-  margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: var(--sticky-story-ink-muted);
-}
-
-/* --------------------------------------------------------------------------
-   ENHANCED — Demo 9 sticky half-panels (>=1024px + no reduced motion).
-   Same query as js/sticky-story.js's gsap.matchMedia().
-   -------------------------------------------------------------------------- */
-@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
-  /* New stacking context so scene z-indexes never paint over sibling
-     sections (the intro above / Pain Hook below). */
-  .sticky-story {
-    isolation: isolate;
+/* Phone: the values are white-space:nowrap, and the widest ("1.000.000+") at the
+   clamp's ~30px would overflow a half-width column, so the type steps down for
+   the 2-up grid. The 18ch label cap is also wider than the column, so it goes. */
+@media (max-width: 767.98px) {
+  .sticky-story__metric-value {
+    font-size: clamp(1.45rem, 1.1rem + 2vw, 1.85rem);
+    letter-spacing: -0.03em;
   }
-
-  .sticky-story__scene {
-    position: sticky;
-    top: 0;
-    width: 50vw;
-    height: 100svh;
-    min-height: 0;
-    /* Top-aligned content (client 2026-07-23: the scene titles must line up
-       across panels — was centred, so shorter/taller content put the titles
-       at different heights). Same top padding on every scene → titles align. */
-    justify-content: flex-start;
-    /* Clear the fixed header at the top; generous, controlled padding. */
-    padding: calc(var(--sticky-story-space-6) + 2rem) var(--sticky-story-space-6)
-      var(--sticky-story-space-6);
-    overflow: hidden;
-    will-change: transform;
-  }
-
-  /* Alternating sides: scene 1 right, scene 2 left, scene 3 right. */
-  .sticky-story__scene--right { margin-left: auto; }
-  .sticky-story__scene--left  { margin-right: auto; }
-
-  /* Increasing z-index: scene 3 covers scene 1 where they share the right
-     column; scene 2 (left) never overlaps them. */
-  .sticky-story__scene--1 { z-index: var(--sticky-story-z-1); }
-  .sticky-story__scene--2 { z-index: var(--sticky-story-z-2); }
-  /* Taller last scene (client 2026-07-23) so it stays pinned ~60svh longer and
-     reads comfortably before the track releases into Pain Hook. The extra
-     height is scene 3's own light surface (not empty black), so there's still
-     no gap — it just gives the final panel a proper hold. */
-  .sticky-story__scene--3 {
-    z-index: var(--sticky-story-z-3);
-    height: 160svh;
-  }
-
-  /* The inner content is vertically centred within the tall sticky scene. */
-  .sticky-story__inner {
+  .sticky-story__metric-label {
+    font-size: var(--font-size-xs);
+    line-height: 1.3;
     max-width: none;
   }
-
-  /* Logos panel: the marquee runs edge-to-edge (client 2026-07-23: no side
-     padding — logos start at the very panel edge). Drop the scene's inline
-     padding and re-apply it to just the heading so the title stays indented
-     while the rows bleed full-width. */
-  .sticky-story__scene--logos {
-    padding-inline: 0;
-  }
-  .sticky-story__scene--logos .sticky-story__scene-title {
-    padding-inline: var(--sticky-story-space-6);
-  }
 }
 
+/* Certification row + "Vertraut von führenden Organisationen" heading were
+   removed 2026-07-29 (client): the DEKRA badges, their label, and the logos
+   heading are gone — the logo strip now sits directly below the metrics as ONE
+   single section. The former .sticky-story__certs* / logos-title styles were
+   deleted with them (nothing else references those classes). */
+
 /* --------------------------------------------------------------------------
-   Reduced-motion: nothing extra needed — the enhanced layout is already
-   gated off above, so scenes render in normal flow. (The .story-logos
-   marquee has its own reduced-motion stop.)
+   LOGOS: one slow marquee strip, directly below the metrics (same white section)
    -------------------------------------------------------------------------- */
+.sticky-story__scene--logos {
+  /* Same white surface as the metrics above — one continuous section. White
+     logo artwork is inverted to dark below to stay visible on white. */
+  background: var(--color-white);
+  color: var(--color-logo-black);
+  /* The marquee bleeds edge-to-edge. */
+  padding-inline: 0;
+  padding-top: clamp(1.25rem, 2.5vw, 2.25rem);
+}
+/* Thin horizontal divider between the metrics and the logo strip (client
+   2026-07-29), aligned to the metrics content width — not full-bleed. */
+.sticky-story__scene--logos::before {
+  content: "";
+  display: block;
+  width: min(var(--container-max-width), calc(100% - var(--container-padding) * 2));
+  margin: 0 auto;
+  border-top: 1px solid var(--sticky-story-hairline);
+}
+/* The heading was removed (client 2026-07-29) — its style went with it. */
+/* The marquee reaches the real screen edge: drop the inner container's
+   max-width cap for this scene so .story-logos spans the full viewport. */
+.sticky-story__scene--logos .sticky-story__inner {
+  max-width: none;
+}
+/* Plain logo strip directly below the metrics (client 2026-07-29): no heading,
+   no band borders — just the single slow marquee with modest breathing room. */
+.sticky-story__scene--logos .story-logos {
+  margin-top: 0;
+  padding-block: clamp(1.5rem, 3vw, 2.5rem);
+}
+/* Client logos are white artwork (transparent PNGs) — inverted to dark so they
+   read on this pale surface. Scoped to this scene only; the same files stay
+   white everywhere else on the site. */
+.sticky-story__scene--logos .story-logos__logo {
+  filter: invert(1);
+}
+/* Optical-weight normalization (client 2026-07-29 refine): reduce very wide /
+   heavy marks, enlarge visually small ones — so the row reads evenly rather
+   than by raw height. Scoped to this band; the files stay untouched elsewhere. */
+.sticky-story__scene--logos .story-logos__logo[src*="db-netze"],
+.sticky-story__scene--logos .story-logos__logo[src*="brk"],
+.sticky-story__scene--logos .story-logos__logo[src*="liapor"] {
+  max-width: clamp(5.25rem, 7vw, 7rem);
+}
+.sticky-story__scene--logos .story-logos__logo[src*="stadtwerke-bamberg"],
+.sticky-story__scene--logos .story-logos__logo[src*="stadt-bamberg"],
+.sticky-story__scene--logos .story-logos__logo[src*="cleantech"] {
+  height: clamp(2.5rem, 1.4rem + 1.9vw, 3.5rem);
+}

@@ -60,14 +60,64 @@
    markup needed anymore; plain text content in the <a>/<button> is
    enough. */
 .btn--primary {
+  background-color: var(--color-blue-light);
+  color: var(--color-white);
+}
+
+/* Hover now darkens to blue-dark (#5287C9), not white (client 2026-07-28):
+   the resting fill became the lighter brand blue (#3D9AD3), and the darker
+   blue is now reserved as the hover/pressed state for every blue button. */
+.btn--primary:hover,
+.btn--primary:focus-visible {
   background-color: var(--color-blue-dark);
   color: var(--color-white);
 }
 
-.btn--primary:hover,
-.btn--primary:focus-visible {
-  background-color: var(--color-white);
-  color: var(--color-logo-black);
+/* ---- Animated "shine" sweep on every blue (primary) button ----
+   (client 2026-07-24) A soft diagonal light band crosses the button every few
+   seconds — adapted from a scroll-driven "gleam" demo to a TIME-based loop
+   (the buttons aren't all scroll-triggered). Clipped to the pill by overflow:
+   hidden; motion.css neutralises the animation under prefers-reduced-motion.
+   The streak is white, so it's visible over the resting blue fill and simply
+   disappears over the white hover state — no separate hover handling needed.
+   The nav CTA gets a faster cadence (below) since the header is always on
+   screen, not scrolled past like the in-page CTAs. */
+.btn--primary {
+  position: relative;
+  overflow: hidden;
+}
+.btn--primary::after {
+  content: "";
+  position: absolute;
+  top: -60%;
+  bottom: -60%;
+  left: 0;
+  width: 38%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgb(255 255 255 / 0.42) 50%,
+    transparent 100%
+  );
+  transform: translateX(-140%) rotate(8deg);
+  animation: btn-shine 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Nav CTA: sweeps more often — it's always visible in the header (client
+   2026-07-24). */
+.site-header .btn--primary::after {
+  animation-duration: 3s;
+}
+
+@keyframes btn-shine {
+  0%,
+  62% {
+    transform: translateX(-140%) rotate(8deg);
+  }
+  100% {
+    transform: translateX(340%) rotate(8deg);
+  }
 }
 
 /* ---- Button arrow (icon-arrow-diagonal) ----
@@ -470,7 +520,7 @@
   width: 2.5rem;
   height: 4px;
   border-radius: var(--radius-pill);
-  background: linear-gradient(90deg, var(--color-blue-light), var(--color-blue-dark));
+  background: linear-gradient(90deg, var(--color-blue-light), var(--color-blue-light));
 }
 
 /* Elongated hexagon accent shape. Currently unused in markup (see
