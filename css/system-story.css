@@ -285,21 +285,26 @@
 }
 .system-story__card.is-behind .system-story__img {
   filter: blur(2px) brightness(0.3) saturate(0.55);
-  transition: filter 0.4s var(--easing-standard, ease);
 }
-.system-story__card.is-behind .system-story__points { display: none; }
-/* Behind cards: a full-height dark wash (the active card's fades out by 62% to
-   leave the photo open — a behind card has nothing to show off, so it stays
-   dark top to bottom and the title sits on near-black). */
-.system-story__card.is-behind .system-story__body {
-  background: linear-gradient(to bottom, rgb(0 0 0 / 0.86) 0%, rgb(0 0 0 / 0.7) 45%, rgb(0 0 0 / 0.62) 100%);
+/* Was display:none, which also snapped — display is not animatable either.
+   Fading out keeps the same result (the bullets are absolutely positioned in the
+   body, so they reserve no space) and it eases with everything else. */
+.system-story__card.is-behind .system-story__points {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s var(--easing-premium, ease), visibility 0s linear 0.4s;
 }
+/* The behind wash itself is on .system-story__body::before (above) so it can
+   cross-fade; nothing to override on the body element itself anymore. */
 
 /* Real card image (client 2026-07-24) — fills the media box regardless of the
    box's flex-derived size; the box is position:relative so this anchors to it.
    Replaces the striped placeholder + visual-label on the cards that now have a
    supplied image. */
 .system-story__img {
+  /* On the base rule, not inside .is-behind — declared there it only existed
+     while the card WAS behind, so coming back to the front snapped. */
+  transition: filter 0.55s var(--easing-premium, ease);
   position: absolute;
   inset: 0;
   width: 100%;
@@ -390,6 +395,30 @@
     linear-gradient(to bottom, rgb(0 0 0 / 0) 42%, rgb(0 0 0 / 0.35) 62%, rgb(0 0 0 / 0.78) 100%);
 }
 
+/* The "behind" wash lives on its own layer that CROSS-FADES in, instead of the
+   .is-behind rule swapping the gradient above (fixed 2026-07-30 — client: "es un
+   corte, pasan a negro de golpe").
+   The reason it snapped: a linear-gradient is a background-IMAGE, and
+   background-image is not an interpolatable CSS property. No matter what
+   transition you put on it, it flips in one frame. Opacity is interpolatable, so
+   the fade has to be done by fading a second layer over the first. */
+.system-story__body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.86) 0%,
+    rgb(0 0 0 / 0.7) 45%,
+    rgb(0 0 0 / 0.62) 100%
+  );
+  transition: opacity 0.55s var(--easing-premium, ease);
+}
+.system-story__card.is-behind .system-story__body::before { opacity: 1; }
+
 .system-story__title {
   margin: 0;
   /* Sized so the longest title fits on ONE line inside the ~444px card body
@@ -431,6 +460,11 @@
   flex-direction: column;
   gap: 0.4rem;
   width: 100%;
+  opacity: 1;
+  visibility: visible;
+  /* visibility is stepped, so it's delayed on the way out and instant on the way
+     in — that keeps the list unclickable once faded without popping. */
+  transition: opacity 0.4s var(--easing-premium, ease), visibility 0s linear 0s;
 }
 .system-story__points li {
   display: flex;

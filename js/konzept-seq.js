@@ -39,17 +39,6 @@
   var L2 = root.querySelector('[data-kz-layer="2"]');
   var L3 = root.querySelector('[data-kz-layer="3"]');
 
-  // Smaller vertical travel so the cubes sit CLOSER together (client 2026-07-29
-   // — "un poco más pegados, como la foto"; was ±84).
-  var UP = -60, DOWN = 60;
-  var S_IN = 0.82, O_IN = 0.28;
-
-  function setActiveLabel(idx) {
-    layers.forEach(function (l) {
-      l.classList.toggle("is-active", String(idx) === l.getAttribute("data-kz-layer"));
-    });
-  }
-
   var mm = gsap.matchMedia();
 
   /* Split each stage title into per-character spans so the label can resolve in
@@ -93,17 +82,69 @@
     el.appendChild(frag);
   }
 
+  function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+
+  /* Tooltip reveal, shared by all three diagrams (2026-07-31).
+     Layer 1 always scrubbed its tips off scroll; layers 2 and 3 used to flip a
+     class and run CSS transition-delays, so their labels played on a timer once
+     the layer arrived instead of following the scroll. Same mechanism for all
+     three now: connector line draws first, then the text fades in, both mapped
+     onto scroll progress so they reverse cleanly.
+
+     TIP_LINE / TIP_TEXT are each tip's own slice of the range; STAGGER is the gap
+     between consecutive tips. Layer 1 keeps base 0.16 (its first tip is already
+     well timed) and only the stagger tightened, 0.26 -> 0.18, which is what pulls
+     tips 2 and 3 earlier without moving tip 1. */
+  var TIP_LINE = 0.13, TIP_TEXT = 0.08;
+
+  function prepTips(layer) {
+    var tips = Array.prototype.slice.call(layer.querySelectorAll(".kz-tip"));
+    tips.forEach(function (t, i) {
+      // Layer 3 carries no data-kz-seq, so fall back to DOM order.
+      t._seq = t.dataset.kzSeq != null && t.dataset.kzSeq !== "" ? +t.dataset.kzSeq : i;
+      t._link = t.querySelector(".kz-tip__link");
+      t._box = t.querySelector(".kz-tip__box");
+      t._dot = t.querySelector(".kz-tip__dot");
+      t._linkLen = t._link ? t._link.getTotalLength() : 0;
+      if (t._link) {
+        t._link.setAttribute("stroke-dasharray", t._linkLen);
+        t._link.setAttribute("stroke-dashoffset", t._linkLen);
+      }
+    });
+    /* opacity ONLY on the box — a GSAP `y` would set a CSS transform that
+       overrides the box's SVG transform="translate(x y)" and snap it to 0,0. */
+    return tips;
+  }
+
+  function paintTips(tips, p, base, stagger) {
+    tips.forEach(function (t) {
+      var s0 = base + t._seq * stagger;
+      var lineEnd = s0 + TIP_LINE, textEnd = lineEnd + TIP_TEXT;
+      var lp = clamp01((p - s0) / TIP_LINE);
+      var tp = clamp01((p - lineEnd) / TIP_TEXT);
+      if (t._link) t._link.setAttribute("stroke-dashoffset", t._linkLen * (1 - lp));
+      if (t._dot) gsap.set(t._dot, { opacity: lp > 0 ? 1 : 0 });
+      if (t._box) gsap.set(t._box, { opacity: tp });
+    });
+  }
+
+  function resetTips(tips) {
+    tips.forEach(function (t) {
+      if (t._link) { t._link.removeAttribute("stroke-dasharray"); t._link.removeAttribute("stroke-dashoffset"); }
+      if (t._box) gsap.set(t._box, { clearProps: "opacity" });
+      if (t._dot) gsap.set(t._dot, { clearProps: "opacity" });
+    });
+  }
+
   mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", function () {
     root.classList.add("konzept-seq--enhanced");
     root.querySelectorAll(".konzept-seq__ttl").forEach(splitTitle);
     ScrollTrigger.refresh();
 
-    // Layer positions: L1 centred/active, L2 + L3 waiting below. Cubes are
-    // ALWAYS THE SAME SIZE now (client 2026-07-29 — no scale-in/out, no exploded
-    // shrink); the smooth entrance is opacity + slide (yPercent) + blur only.
-    gsap.set(L1, { yPercent: 0, opacity: 1, filter: "blur(0px)" });
-    gsap.set(L2, { yPercent: DOWN, opacity: O_IN, filter: "blur(7px)" });
-    gsap.set(L3, { yPercent: DOWN * 1.4, opacity: 0.14, filter: "blur(9px)" });
+    /* No stacked/blurred start states anymore (client 2026-07-30). The three
+       stages are normal rows in the flow; each one's text reveals on arrival via
+       CSS (.is-active → .konzept-seq__label), with no blur and no transform on
+       the layer itself. */
 
     // ---- Layer 1 walkthrough (client 2026-07-29): as the section approaches,
     // the dotted route DRAWS progressively; checkpoints activate in sequence
@@ -116,7 +157,7 @@
     var reveal = L1.querySelector(".kz-reveal");
     var overlay = L1.querySelector(".kz-ov--walk");
     var cps = Array.prototype.slice.call(L1.querySelectorAll(".kz-cp"));
-    var tips = Array.prototype.slice.call(L1.querySelectorAll(".kz-tip"));
+    var tips = prepTips(L1);
     var walker = L1.querySelector("[data-kz-walker]");
     var routeLen = routePath ? routePath.getTotalLength() : 0;
     var revLen = reveal ? reveal.getTotalLength() : 0;
@@ -132,23 +173,9 @@
       }
       return best / routeLen;
     }
-    function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
     cps.forEach(function (c) {
       var dot = c.querySelector(".kz-cp__dot");
       c._frac = dot ? fracAt(+dot.getAttribute("cx"), +dot.getAttribute("cy")) : 0;
-    });
-    // Tooltips reveal in a fixed top→bottom sequence (data-kz-seq): each one's
-    // connector LINE draws first, then its text fades in.
-    tips.forEach(function (t) {
-      t._seq = +t.dataset.kzSeq || 0;
-      t._link = t.querySelector(".kz-tip__link");
-      t._box = t.querySelector(".kz-tip__box");
-      t._dot = t.querySelector(".kz-tip__dot");
-      t._linkLen = t._link ? t._link.getTotalLength() : 0;
-      if (t._link) {
-        t._link.setAttribute("stroke-dasharray", t._linkLen);
-        t._link.setAttribute("stroke-dashoffset", t._linkLen);
-      }
     });
 
     // Direction arrows created along the route (enhanced-only; removed on revert).
@@ -178,13 +205,27 @@
     }
     /* opacity ONLY on the box — a GSAP `y` would set a CSS transform that
        overrides the box's SVG transform="translate(x y)" and snap it to 0,0. */
-    gsap.set(tips.map(function (t) { return t._box; }).filter(Boolean), { opacity: 0 });
-    gsap.set(tips.map(function (t) { return t._dot; }).filter(Boolean), { opacity: 0 });
     gsap.set(arrows, { opacity: 0 });
     placeWalker(0);
 
+    /* Anchored to LAYER 1, not to `root` (fixed 2026-07-30).
+       `root` is the whole three-stage section, so its top crossed 92%->22% while
+       the intro block was still on screen: measured at 1440x813 the range ran
+       3353->3922px while layer 1 does not begin until 4229px. The walker finished
+       its entire path 307px BEFORE the diagram was visible — which is why a small
+       scroll appeared to move it so far.
+
+       Range is now tied to the diagram itself and is ~1.6x longer (569 -> 931px),
+       so the same path needs significantly more scrolling. No multiplier, no
+       duration, no second tween: progress maps 1:1 onto the path, and
+       placeWalker() writes the point directly, so it is linear by construction
+       (no ease) and reverses exactly on scroll-up.
+
+       scrub: true (was 0.6) — the icon must stop the instant scrolling stops.
+       Lenis already interpolates the scroll position, so this stays smooth
+       without adding lag. */
     ScrollTrigger.create({
-      trigger: root, start: "top 92%", end: "top 22%", scrub: 0.6, invalidateOnRefresh: true,
+      trigger: L1, start: "top 70%", end: "bottom 20%", scrub: true, invalidateOnRefresh: true,
       onUpdate: function (self) {
         var p = self.progress;
         if (reveal) reveal.setAttribute("stroke-dashoffset", revLen * (1 - p));
@@ -196,16 +237,7 @@
           c.classList.add(c._frac > p ? "is-upcoming" : (i === activeIdx ? "is-active" : "is-past"));
         });
         arrows.forEach(function (a) { gsap.set(a, { opacity: p >= a._frac ? 1 : 0 }); });
-        tips.forEach(function (t) {
-          var s = 0.16 + t._seq * 0.26;      // staggered start, top→bottom
-          var lineEnd = s + 0.13;            // line finishes drawing
-          var textEnd = lineEnd + 0.08;      // then the text fades in
-          var lp = clamp01((p - s) / (lineEnd - s));
-          var tp = clamp01((p - lineEnd) / (textEnd - lineEnd));
-          if (t._link) t._link.setAttribute("stroke-dashoffset", t._linkLen * (1 - lp));
-          if (t._dot) gsap.set(t._dot, { opacity: lp > 0 ? 1 : 0 });
-          if (t._box) gsap.set(t._box, { opacity: tp });
-        });
+        paintTips(tips, p, 0.16, 0.18);
         // Walker moves in LOCKSTEP with the route drawing (client 2026-07-29 —
         // "the line and the person have to go at the same time"): same progress
         // as the reveal above, so the figure sits at the tip of the line being
@@ -214,39 +246,60 @@
       },
     });
 
-    var tl = gsap.timeline({
-      defaults: { ease: "none" },
-      scrollTrigger: {
-        trigger: root,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 0.6,
-        invalidateOnRefresh: true,
-        onUpdate: function (self) {
-          var p = self.progress;
-          setActiveLabel(p < 0.34 ? 1 : p < 0.64 ? 2 : 3);
-        },
-      },
+    /* Each stage flags itself .is-active once it has scrolled into view — that one
+       class is what drives the text reveal, the character cascade, layer 2's
+       tooltips and layer 3's hardware groups (all in css/konzept-seq.css).
+
+       Replaces the pinned 3-stage timeline (removed 2026-07-30, client): the page
+       is no longer held while stages advance, so there is nothing to scrub. One
+       trigger per stage, fired once, `once: true` — the visitor scrolls normally
+       and controls where they are.
+
+       `setActiveLabel` is gone with it: it drove a single "current" stage, and now
+       all three can legitimately be active at the same time (they are just rows
+       on a page, and more than one is on screen at once). */
+    layers.forEach(function (layer) {
+      ScrollTrigger.create({
+        trigger: layer,
+        start: "top 78%",
+        once: true,
+        onEnter: function () { layer.classList.add("is-active"); },
+      });
     });
 
-    // Shorter, same-size flow (client 2026-07-29): one cube at a time, no scale,
-    // no exploded end — just slide + fade + blur, tighter spacing so the next
-    // cube is reached with less scroll.
-    // Phase 1 — brief hold on L1.
-    tl.to({}, { duration: 0.7 }, 0);
-    // Phase 2 — L1 rises + dims, L2 to centre.
-    tl.to(L1, { yPercent: UP, opacity: O_IN, filter: "blur(7px)", duration: 1.0 }, 0.7);
-    tl.to(L2, { yPercent: 0, opacity: 1, filter: "blur(0px)", duration: 1.0 }, 0.7);
-    // Phase 3 — L2 rises + dims, L3 to centre.
-    tl.to(L2, { yPercent: UP, opacity: O_IN, filter: "blur(7px)", duration: 1.0 }, 1.7);
-    tl.to(L3, { yPercent: 0, opacity: 1, filter: "blur(0px)", duration: 1.0 }, 1.7);
-    // Phase 4 — final hold on L3, then the section releases.
-    tl.to({}, { duration: 0.8 }, 2.7);
+    /* Layers 2 and 3: same scrubbed tooltip reveal as layer 1 (client 2026-07-31
+       — "que vayan apareciendo mientras escroleo"). They used to flip .is-active
+       and let CSS transition-delays play them on a timer, so the labels ran on
+       their own clock once the layer arrived instead of following the scroll.
+
+       Own trigger per layer, over the stretch where the diagram is actually on
+       screen. Base/stagger are set per layer so the last tip lands around 85-90%
+       of the range: layer 2 has 3 tips like layer 1, layer 3 has 5 and needs a
+       tighter gap to fit them all in. */
+    var tipRanges = [
+      { layer: L2, base: 0.16, stagger: 0.18 },
+      { layer: L3, base: 0.10, stagger: 0.10 },
+    ];
+    var extraTips = [];
+    tipRanges.forEach(function (cfg) {
+      if (!cfg.layer) return;
+      var t = prepTips(cfg.layer);
+      if (!t.length) return;
+      extraTips.push(t);
+      ScrollTrigger.create({
+        trigger: cfg.layer,
+        start: "top 72%",
+        end: "bottom 35%",
+        scrub: true,
+        invalidateOnRefresh: true,
+        onUpdate: function (self) { paintTips(t, self.progress, cfg.base, cfg.stagger); },
+      });
+    });
 
     return function cleanup() {
       root.classList.remove("konzept-seq--enhanced");
-      setActiveLabel(0);
-      [L1, L2, L3].forEach(function (l) { gsap.set(l, { clearProps: "transform,opacity,filter" }); });
+      layers.forEach(function (l) { l.classList.remove("is-active"); });
+      extraTips.forEach(resetTips);
       // Layer 1: undo the walkthrough enhancement so the static default returns.
       if (reveal) { reveal.removeAttribute("stroke-dasharray"); reveal.removeAttribute("stroke-dashoffset"); }
       cps.forEach(function (c) { c.classList.remove("is-active", "is-past", "is-upcoming"); });

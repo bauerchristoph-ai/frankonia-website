@@ -98,9 +98,8 @@
   }
 }
 
-/* Base (mobile): a 2-up ruled grid — 2 + 2 + 1, the odd one out spanning the
-   full width so the block closes cleanly.
-   Was a single vertical column of five (2026-07-30): that ran ~475px for five
+/* Base (mobile): a 2-up ruled grid, two rows of two.
+   Was a single vertical column (2026-07-30): that ran long for a handful of
    short numbers and read as a plain list rather than a designed trust band. Two
    columns halve it to three rows and let the eye compare the figures. Hairlines
    run per row (border-top) with a vertical rule between the columns, which is the
@@ -125,20 +124,22 @@
 .sticky-story__metric:nth-child(even) {
   border-left: 1px solid var(--sticky-story-hairline);
 }
-/* 5 metrics in a 2-up grid leaves one over; span it rather than leaving a hole. */
-.sticky-story__metric:last-child {
-  grid-column: 1 / -1;
+/* 4 metrics divide evenly 2-up, so nothing needs spanning anymore. The closing
+   rule goes under the LAST ROW (both of its items), not just the final one. */
+.sticky-story__metric:nth-last-child(-n + 2) {
   border-bottom: 1px solid var(--sticky-story-hairline);
 }
 
-/* Tablet (>=768px): a balanced 3-column grid (3 + 2), no vertical dividers —
-   wrapping dividers read as noise, so they're desktop-only (client 2026-07-29
-   redesign). Desktop (>=1024px): a strict FIVE-column single row with short,
+/* Tablet (>=768px): 2 + 2, no vertical dividers — wrapping dividers read as
+   noise, so they're desktop-only (client 2026-07-29 redesign).
+   Desktop (>=1024px): a single FOUR-column row with short,
    light vertical dividers between neighbours. Not cards, no per-metric bg. */
 @media (min-width: 768px) {
   .sticky-story__metrics {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    /* 2-up, not 3: four items across three columns leaves a stranded fourth on
+       its own row. Two rows of two reads as deliberate. */
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--sticky-story-space-5) 0;
     margin-top: var(--sticky-story-space-5);
   }
@@ -150,18 +151,17 @@
     padding-inline: var(--sticky-story-space-4);
     border-top: none;
   }
-  /* Drop the phone grid's rules/span — 3-up needs neither. */
+  /* Drop the phone grid's rules — the tablet layout is spaced, not ruled. */
   .sticky-story__metric:nth-child(even) {
     border-left: none;
   }
-  .sticky-story__metric:last-child {
-    grid-column: auto;
+  .sticky-story__metric:nth-last-child(-n + 2) {
     border-bottom: none;
   }
 }
 @media (min-width: 1024px) {
   .sticky-story__metrics {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     margin-top: var(--sticky-story-space-5);
   }
   /* Short, light divider centred at the column boundary — not a full-height
@@ -180,7 +180,7 @@
 
 .sticky-story__metric-value {
   /* A bit bigger (client 2026-07-29). Kept overflow-safe: the widest value
-     ("1.000.000+") still fits a 5-across row on wide screens, and the row wraps
+     ("1.000.000+") still fits a 4-across row on wide screens, and the row wraps
      rather than overflowing below that. */
   font-size: clamp(2rem, 1.4rem + 2vw, 3rem);
   font-weight: var(--font-weight-regular);

@@ -116,110 +116,123 @@
    ENHANCED — desktop + no-reduced-motion (class added by js/konzept-seq.js).
    Sticky stage, layers absolutely stacked, transformed by GSAP.
    ========================================================================== */
+/* ==========================================================================
+   ENHANCED — desktop + no-reduced-motion. RESTRUCTURED 2026-07-30 (client).
+
+   Was a PINNED sequence: one sticky 100svh stage, the three layers stacked on
+   top of each other absolutely, sliding/blurring in and out, with the page held
+   for 240vh while the stages advanced. That is gone.
+
+   Now it is plain document flow: the three stages are three normal rows, each an
+   alternating two-column band — text one side, cube the other, flipping on the
+   middle one. The visitor scrolls continuously and controls exactly where they
+   are; there is no stage that owns a screen and no blur entrance. The only
+   motion left is each stage revealing once as it comes into view.
+
+   `--enhanced` and `.is-active` are KEPT on purpose even though nothing is
+   pinned anymore: 60-odd rules further down this file gate the layer-2 tooltips
+   and the layer-3 hardware groups on `.is-active`, and dropping the class would
+   leave all of that permanently at opacity 0. `.is-active` now means "this stage
+   has scrolled into view" instead of "this is the current pinned stage".
+   ========================================================================== */
 .konzept-seq--enhanced {
-  /* Shorter scroll (client 2026-07-29 — was 320vh, then 220vh) so the cubes are
-     reached with less scrolling; no exploded end phase anymore. */
-  height: 165vh;
-  /* No section padding in the pinned mode — the 100svh stage owns the spacing;
-     the padding was leaving a big blank before the first block (client). */
-  padding-block: 0;
-  /* The exact left edge of the Konzept intro title ("Ihr individuelles
-     Sicherheitskonzept") so the diagram title lines up with it (client
-     2026-07-30): that title is in .konzept__grid, a .container (max-width
-     centred) PLUS padding-inline-start: var(--content-inset). So: the container's
-     centred left edge + --content-inset. */
-  --kz-content-left: calc(
-    max(0px, (100vw - var(--container-max-width)) / 2) + var(--content-inset)
-  );
-}
-.konzept-seq--enhanced .konzept-seq__stage {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  /* TWO HALVES (client 2026-07-30): title in the LEFT half, cube in the RIGHT
-     half — a 2-column grid, not both pushed to one side. */
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  overflow: hidden;
+  /* No forced height and no sticky stage — the section is as tall as its content.
+     Asymmetric on purpose: the gap to the intro block above ("Ihr individuelles
+     Sicherheitskonzept" + its three points) was only 64px, tighter than the 96px
+     BETWEEN stages — so the first stage read as glued to the intro instead of
+     starting a new movement (client 2026-07-30). The top now clears the
+     stage-to-stage rhythm; the bottom keeps the smaller value since the section
+     ends there. */
+  padding-top: var(--space-10);
+  padding-bottom: var(--space-8);
 }
 .konzept-seq--enhanced .konzept-seq__layers {
-  position: relative;
-  /* Cube in the RIGHT half, aligned to the START of it — its left edge sits at
-     the screen centre-line, so it reads as "more to the left" (client
-     2026-07-30) rather than centred deep in the right half. */
-  grid-column: 2;
-  justify-self: start;
-  width: min(42rem, 66vh);
-  height: min(42rem, 66vh);
-  gap: 0;
-  max-width: none;
-  padding: 0;
-  /* Override the base rule's margin-inline:auto (it would fight the grid). */
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  /* Generous but not screen-sized: the stages read as one continuous stretch of
+     page, not as three separate slides (client: "no es que el stage 1 está en
+     una pantalla y el 2 en otra, es un scrolleo continuo"). */
+  gap: var(--space-9);
+  max-width: var(--container-max-width);
+  margin-inline: auto;
+  padding-inline: var(--container-padding);
 }
+
+/* One stage = one two-column band. */
 .konzept-seq--enhanced .konzept-seq__layer {
-  position: absolute;
-  inset: 0;
-  display: block;
-  gap: 0;
-  will-change: transform, opacity;
-}
-.konzept-seq--enhanced .konzept-seq__diagram {
-  position: absolute;
-  inset: 0;
-}
-.konzept-seq--enhanced .konzept-seq__svg {
+  display: grid;
+  /* NOT 1fr 1fr: the diagram column has to hold the cube PLUS the annotation
+     labels, which live outside the cube's own 0-1079 viewBox (roughly 260 units
+     of overhang each side). The text column needs far less than half the page. */
+  grid-template-columns: 0.78fr 1.22fr;
+  align-items: center;
+  gap: var(--space-8);
   width: 100%;
-  height: 100%;
-  /* Let the tooltip labels sit OUTSIDE the cube's viewBox — in the empty space
-     to the left/right of the diagram (client 2026-07-30: "que se salgan del
-     cubo, tenemos espacio"). The stage's own overflow:hidden still clips at the
-     screen edges. Enhanced-only; base/mobile keeps the default clip. */
+}
+/* DOM order is diagram → label, so by default the label is placed second. Stages
+   1 and 3 want text LEFT, so the label is pulled to column 1. */
+.konzept-seq--enhanced .konzept-seq__label { grid-column: 1; grid-row: 1; }
+.konzept-seq--enhanced .konzept-seq__diagram { grid-column: 2; grid-row: 1; }
+/* Stage 2 mirrors it: cube left, text right (client). The COLUMN RATIO has to
+   mirror as well — swapping only the grid-column assignments handed the cube the
+   narrow text column and it came out 352px against the others' 551px. */
+.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="2"] {
+  grid-template-columns: 1.22fr 0.78fr;
+}
+.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="2"] .konzept-seq__label {
+  grid-column: 2;
+  /* Right-hand column: no left inset to line up with, so it starts at its own
+     column edge. */
+  margin-inline-start: 0;
+}
+.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="2"] .konzept-seq__diagram { grid-column: 1; }
+
+.konzept-seq--enhanced .konzept-seq__svg {
+  /* Deliberately narrower than its column, and centred: the remaining space each
+     side is what the annotation labels overflow into. At 100% the labels were
+     clipped at the viewport edges (measured 2026-07-30). */
+  width: 63%;
+  margin-inline: auto;
+  height: auto;
+  /* The tooltip labels sit OUTSIDE the cube's own viewBox, so the SVG has to be
+     allowed to overflow its column. Nothing clips it now that there is no
+     sticky stage — the section itself has no overflow:hidden (see .konzept-seq). */
   overflow: visible;
 }
-/* Label sits beside the active layer, alternating sides; hidden until active. */
+
+/* Text block. Reveals once as the stage arrives — a plain fade + short rise, NO
+   blur (client 2026-07-30: "sacame lo de que vienen con un efecto de blurriness,
+   hacelo todo sin blur como si fuese un scroll básico"). */
 .konzept-seq--enhanced .konzept-seq__label {
-  position: absolute;
-  top: 50%;
-  width: 22rem;
-  /* Smooth entrance like the site's other section titles/lists: fade + slight
-     slide-up + de-blur when the layer becomes active (client 2026-07-29). */
-  transform: translate(0, calc(-50% + 16px));
+  width: 100%;
+  max-width: 26rem;
+  text-align: left;
+  /* Line the stage titles up with "Ihr individuelles Sicherheitskonzept" above
+     them (client 2026-07-30). That intro sits in .konzept__grid, which is a
+     .container whose padding-inline-start is --content-inset (79.2px at 1440).
+     .konzept-seq__layers only carries --container-padding (24px), so the stage
+     titles started 55px further left. Adding the difference as a margin — rather
+     than putting --content-inset on .konzept-seq__layers — keeps the cubes and
+     their annotation labels exactly where they are; padding the whole block
+     would have narrowed the columns and eaten into stage 2's tooltip clearance.
+     Only the LEFT-column stages need it; stage 2's text sits on the right. */
+  margin-inline-start: calc(var(--content-inset) - var(--container-padding));
   opacity: 0;
-  filter: blur(6px);
-  transition: opacity 0.6s var(--easing-premium),
-    transform 0.6s var(--easing-premium),
-    filter 0.6s var(--easing-premium);
-  text-align: left;
-}
-/* ALL titles left-aligned at the site's standard content margin (client
-   2026-07-30). The label's containing block is the cube box, whose left edge is
-   the screen centre-line (grid col 2 start = 50vw); shifting left by 50vw and
-   back out to --kz-content-left lands the title exactly on the container edge,
-   matching the other left-aligned section titles. */
-.konzept-seq--enhanced .konzept-seq__label {
-  left: calc(var(--kz-content-left) - 50vw);
-  right: auto;
-  text-align: left;
+  transform: translateY(14px);
+  transition: opacity 0.7s var(--easing-premium), transform 0.7s var(--easing-premium);
 }
 .konzept-seq--enhanced .konzept-seq__layer.is-active .konzept-seq__label {
   opacity: 1;
-  transform: translate(0, -50%);
-  filter: blur(0px);
+  transform: none;
 }
 
 /* ---- Stage-label character reveal (client 2026-07-30) --------------------
    The same resolving-characters entrance the section headings get from
    js/title-reveal.js, applied to the three stage titles.
 
-   It canNOT reuse that script: title-reveal drives itself from a ScrollTrigger
-   on the heading, and all three of these labels sit at the SAME absolute
-   position inside a pinned stage — they never move, so one scroll position
-   would fire all three at once, long before layers 2 and 3 are on screen.
-   (js/title-reveal.js already documents hitting exactly this in system-story.)
-   So the cascade is driven by .is-active instead, which is the signal the
-   sequence already uses, and runs on CSS transitions — no second ScrollTrigger.
+   Driven by .is-active (the "this stage is in view" flag) rather than its own
+   ScrollTrigger, so the cascade stays in step with the stage's own entrance and
+   the section needs only one trigger per stage.
 
    The char spans are created only by js/konzept-seq.js, inside the enhanced
    branch, so these selectors match nothing for a no-JS visitor, a crawler, or
@@ -229,12 +242,11 @@
 .konzept-seq--enhanced .kz-char {
   display: inline-block;
   opacity: 0;
-  transform: translateY(10px) rotateX(18deg);
+  transform: translateY(8px);
   transition: opacity 0.5s var(--easing-premium), transform 0.5s var(--easing-premium);
   /* --i is the character's index, set by the splitter. */
   transition-delay: calc(var(--i, 0) * 0.018s);
 }
-.konzept-seq--enhanced .konzept-seq__ttl { perspective: 800px; }
 .konzept-seq--enhanced .konzept-seq__layer.is-active .kz-char {
   opacity: 1;
   transform: none;
@@ -361,24 +373,15 @@
    driven by .is-active (JS already toggles it). Scoped to Layer 2 so it never
    touches Layer 1's JS-driven tooltips. Default (non-enhanced / reduced-motion)
    is fully visible. */
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="2"] .kz-tip__link {
-  stroke-dasharray: 800;
-  stroke-dashoffset: 300;
-  transition: stroke-dashoffset 0.55s var(--easing-premium);
-}
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="2"] .kz-tip__dot,
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="2"] .kz-tip__box {
-  opacity: 0;
-  transition: opacity 0.4s var(--easing-premium);
-}
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="2"].is-active .kz-tip__link { stroke-dashoffset: 0; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="2"].is-active .kz-tip__dot { opacity: 1; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="2"].is-active .kz-tip__box { opacity: 1; transition-delay: 0.45s; }
+/* Stage 2 is the risk read-out, so its connectors are the warning red rather
+   than the blue the other two stages use (client 2026-07-30) — same --kz-risk
+   the warning triangles and their pulse rings already use, so the whole stage
+   speaks one colour. Deliberately NOT inside the --enhanced block: this is
+   colour, not motion, so it has to hold on mobile and with reduced motion too. */
+.konzept-seq__layer[data-kz-layer="2"] .kz-tip__link { stroke: var(--kz-risk); }
+.konzept-seq__layer[data-kz-layer="2"] .kz-tip__dot { fill: var(--kz-risk); }
+
 /* stagger the three by sequence */
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="2"].is-active .kz-tip[data-kz-seq="1"] .kz-tip__link { transition-delay: 0.3s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="2"].is-active .kz-tip[data-kz-seq="1"] .kz-tip__box { transition-delay: 0.75s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="2"].is-active .kz-tip[data-kz-seq="2"] .kz-tip__link { transition-delay: 0.6s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="2"].is-active .kz-tip[data-kz-seq="2"] .kz-tip__box { transition-delay: 1.05s; }
 
 /* Person silhouette (client-supplied Person.svg → #konzept-person). Pale
    blue-white, secondary. The symbol's path is currentColor. */
@@ -428,10 +431,13 @@
   stroke-width: 2.5;
   transform-box: fill-box;
   transform-origin: center;
-  animation: kz-ripple 3s linear infinite;
+  /* 2s, was 3s (client 2026-07-30: "que se muevan un poco más rápido, si no no
+     se percibe el movimiento"). The three delays stay evenly spread across the
+     cycle — a third apart — so the rings still read as one continuous wave. */
+  animation: kz-ripple 2s linear infinite;
 }
-.kz-warn__ring:nth-of-type(3) { animation-delay: 1s; }
-.kz-warn__ring:nth-of-type(4) { animation-delay: 2s; }
+.kz-warn__ring:nth-of-type(3) { animation-delay: 0.66s; }
+.kz-warn__ring:nth-of-type(4) { animation-delay: 1.33s; }
 /* Fade IN then out (was opacity 0.75 -> 0 with no fade-in and ease-out, which
    left the rings tiny then instantly fading = barely visible). Now each ring is
    clearly visible through most of its expansion, so the 3 read as a continuous
@@ -445,7 +451,9 @@
   fill: var(--kz-risk);
   transform-box: fill-box;
   transform-origin: center;
-  animation: kz-breathe 2.2s ease-in-out infinite;
+  /* 1.5s, was 2.2s. Its own declaration — the shared kz-breathe at 2.2s that
+     layers 1 and 3 use is untouched, only the risk markers speed up. */
+  animation: kz-breathe 1.5s ease-in-out infinite;
 }
 .kz-warn__stem { stroke: var(--kz-risk); stroke-width: 2; opacity: 0.55; }
 .kz-warn__tri { fill: none; stroke: var(--kz-risk); stroke-width: 3; stroke-linejoin: round; }
@@ -462,12 +470,16 @@
   stroke: none;
   transform-box: fill-box;
   transform-origin: center top;
-  animation: kz-light-sway 7s ease-in-out infinite;
+  /* 4s, was 7s. A +-4deg sweep over seven seconds is below the threshold where
+     you notice it is moving at all; at 4s with a slightly wider arc it reads as
+     a sweeping light without becoming restless. Negative delay keeps the two
+     cones out of phase (half a cycle apart) so they never swing in unison. */
+  animation: kz-light-sway 4s ease-in-out infinite;
 }
-.kz-light:nth-of-type(2) { animation-delay: -3.2s; }
+.kz-light:nth-of-type(2) { animation-delay: -2s; }
 @keyframes kz-light-sway {
-  0%, 100% { transform: rotate(-4deg); }
-  50%      { transform: rotate(4deg); }
+  0%, 100% { transform: rotate(-5.5deg); }
+  50%      { transform: rotate(5.5deg); }
 }
 
 /* ==========================================================================
@@ -518,10 +530,24 @@
    red, no pulse). Same inherited-property mechanism as .sc-firealarm above;
    stroke-width is in the symbol's 32-unit space, so 2 lands at ~2.2 diagram
    units at the 36-wide size used in Layer 3 — matching the other hardware. */
+/* Two-tone (client 2026-07-31: "blanco con azul"), matching how the rest of the
+   diagram reads — white hardware with a blue accent, same as the cameras' blue
+   top and the checkpoint's blue cap.
+
+   It has to be done with TWO inherited properties, because CSS cannot select
+   individual parts inside a <use> clone — only inherited values cross into the
+   shadow tree. So: `stroke` paints the housing (those paths carry no stroke of
+   their own and inherit it), while the five radiating flashes are marked
+   stroke="currentColor" in the symbol and pick up `color` instead. That keeps the
+   blue as a token here rather than a hex baked into the sprite. */
 .sc-alarm__icon {
   fill: none;
-  stroke: var(--color-blue-light);
-  stroke-width: 2;
+  stroke: #fff;
+  color: var(--color-blue-light);
+  /* Resolves in the symbol's own 22-unit viewBox (was 32 before the client's
+     2026-07-31 redraw), so this scaled with it to keep the same rendered
+     weight: 2 x 22/32 = 1.375. */
+  stroke-width: 1.375;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -583,36 +609,7 @@
 .konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .security-concept__links { opacity: 1; transition-delay: 2.15s; }
 
 /* Layer-3 tooltips: line draws first, then text fades — staggered by order. */
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"] .kz-tip__link {
-  stroke-dasharray: 800; stroke-dashoffset: 800;
-  transition: stroke-dashoffset 0.5s var(--easing-premium);
-}
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"] .kz-tip__dot,
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"] .kz-tip__box {
-  opacity: 0; transition: opacity 0.4s var(--easing-premium);
-}
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip__link { stroke-dashoffset: 0; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip__dot { opacity: 1; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip__box { opacity: 1; }
 /* stagger the 6 tips after the hardware/route (~1.65s base). */
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(1) .kz-tip__link { transition-delay: 1.65s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(1) .kz-tip__dot { transition-delay: 1.65s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(1) .kz-tip__box { transition-delay: 2.1s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(2) .kz-tip__link { transition-delay: 1.8s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(2) .kz-tip__dot { transition-delay: 1.8s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(2) .kz-tip__box { transition-delay: 2.25s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(3) .kz-tip__link { transition-delay: 1.95s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(3) .kz-tip__dot { transition-delay: 1.95s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(3) .kz-tip__box { transition-delay: 2.4s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(4) .kz-tip__link { transition-delay: 2.1s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(4) .kz-tip__dot { transition-delay: 2.1s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(4) .kz-tip__box { transition-delay: 2.55s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(5) .kz-tip__link { transition-delay: 2.25s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(5) .kz-tip__dot { transition-delay: 2.25s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(5) .kz-tip__box { transition-delay: 2.7s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(6) .kz-tip__link { transition-delay: 2.4s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(6) .kz-tip__dot { transition-delay: 2.4s; }
-.konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .kz-tip:nth-of-type(6) .kz-tip__box { transition-delay: 2.85s; }
 
 /* ==========================================================================
    Responsive

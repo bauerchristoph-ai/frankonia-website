@@ -2541,10 +2541,11 @@ main h2 {
     color var(--duration-fast) var(--easing-standard);
 }
 
-/* The one hover/active state now: a solid black fill with white text +
-   arrow, replacing the old blue-text/bold/underline treatment entirely
-   (client, 2026-07-21: "no me gusta el hover azul y bold... prefiero
-   fondo negro y tipografia blanca, la flecha y el texto"). */
+/* Solid black fill with white text + arrow (client 2026-07-21, restored
+   2026-07-31 after a brief spell in the CTA blue). Black also happens to be the
+   accessible choice here: white on --color-blue-light measured 3.11:1, under the
+   4.5:1 AA needs for text this size, and aria-pressed keeps the SELECTED row in
+   that state permanently rather than transiently. White on black is 21:1. */
 .outfits__name-btn:hover,
 .outfits__name-btn:focus-visible,
 .outfits__name-btn[aria-pressed="true"] {

@@ -171,7 +171,7 @@ function finalBlock(data) {
       const x = R(s[0]), y = R(s[1]);
       // the post never mirrors (it is real artwork) — only the waves subgroup does
       const w = x > 540 ? ' transform="scale(-1 1)"' : '';
-      return P + '  <g class="sc-sensor" transform="translate(' + x + ' ' + y + ')"><use class="sc-sensor__icon" href="#konzept-sensor" width="15" height="56" x="-7.5" y="-56"></use><g' + w + '><path class="sc-sensor__wave" d="M12 -46 a13 13 0 0 1 0 20"></path><path class="sc-sensor__wave" d="M19 -50 a20 20 0 0 1 0 28"></path></g></g>';
+      return P + '  <g class="sc-sensor" transform="translate(' + x + ' ' + y + ')"><use class="sc-sensor__icon" href="#konzept-sensor" width="16.3" height="56" x="-8.15" y="-56"></use><g' + w + '><path class="sc-sensor__wave" d="M12 -46 a13 13 0 0 1 0 20"></path><path class="sc-sensor__wave" d="M19 -50 a20 20 0 0 1 0 28"></path></g></g>';
     })
     .join("\n");
 
