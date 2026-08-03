@@ -1,61 +1,917 @@
-/* Contact page (/kontakt/) — small page-scoped stylesheet, linked directly in
-   pages/kontakt.html (same pattern as page-home.css). Reuses site tokens; adds
-   only the contact-detail list + the page H1 scale. */
+/* ==========================================================================
+   Contact page (/kontakt/)
+   ==========================================================================
+   Page-scoped stylesheet, linked directly in pages/kontakt.html after the
+   head-common include (same pattern as page-home.css / page-service.css) —
+   deliberately NOT part of the shared app.css bundle.
 
-.contact {
-  padding-block: calc(var(--space-9) + 2rem) var(--space-9);
+   Built 2026-07-31 from content-de/2026-07-27 Webtext 25 Kontakt.docx:
+   hero, contact tiles + 24/7 highlight, message form.
+
+   Restyled the same day (client): the page must read as part of the
+   homepage, not as its own thing. Three concrete instructions, and what
+   each one maps to here:
+
+     1. "los titulos tienen que ser como son en la homepage"
+        -> the H1 reuses page-home.css's `main h2` treatment verbatim
+           (clamp(1.375rem, 0.4rem + 3.7vw, 3.75rem), regular weight), and
+           the form section's H2 reuses .conversion__headline's smaller
+           clamp — which is the homepage's OWN answer for a heading that
+           shares its row with the form, not a deviation from it.
+     2. "el fondo de toda la seccion de kontakt tiene que ser blanco
+        (menos el footer que es siempre negro)"
+        -> white is set on <body class="page-contact">, so the header band
+           is white too and there's no black strip above the content. The
+           footer carries its own black background (site-chrome.css
+           .site-footer) and is untouched by this.
+     3. "fijate los margenes que tienen los titulos alineados a la
+        izquierda, ese es el margen que tiene que tener esta seccion"
+        -> --content-inset (tokens.css), the same editorial left inset the
+           homepage's left-aligned intros use, applied to every content
+           column on this page so they all start on one vertical line.
+
+     ...plus: the form must match the homepage's conversion form in style.
+        -> white card, soft shadow, hairline border, small uppercase labels,
+           underline-only fields, blue focus underline, pill submit — the
+           same values as .conversion__form-wrap / .conversion__form.
+
+   IMPORTANT — this page runs LIGHT on a dark-theme site. The tokens are
+   calibrated against black (see tokens.css), so the "on white" values here
+   are the same hardcoded rgb(59 73 86 / …) greys the homepage's own white
+   sections use (.faq, .references, .outfits, the conversion form), not new
+   colours. Two rules of thumb, both from tokens.css's contrast notes:
+     - blue-light (#3D9AD3) does NOT clear contrast on white. Every blue on
+       this page is --color-blue-dark (#5287C9).
+     - --color-focus-ring is white, i.e. invisible here — the ring is
+       overridden to blue-dark page-wide, including in the header/footer.
+
+   Mobile-first: base rules are the phone layout, min-width queries add the
+   wider ones, and a touch-target block at the end fixes anything landing
+   under 44px (same approach as the homepage's 2026-07-30 mobile pass).
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. Light page: background, chrome, focus
+   -------------------------------------------------------------------------- */
+
+/* On <body>, not on <main>: the sticky header sits above <main>, so painting
+   only <main> white would leave the header band on the body's black. The
+   footer sets its own background and is unaffected. */
+.page-contact {
+  background-color: var(--color-white);
+  color: var(--color-gray);
+  /* tokens.css sets color-scheme: dark on :root so native controls match the
+     dark site. On this page that made the consent checkbox render as a dark
+     filled square on white. Flipping the scheme for this page hands the
+     checkbox, scrollbars and autofill styling back to the light UI. */
+  color-scheme: light;
 }
 
-.contact h1 {
-  font-size: clamp(1.875rem, 1.3rem + 2.4vw, 3.25rem);
-  font-weight: var(--font-weight-regular);
-  line-height: var(--line-height-tight);
-  letter-spacing: -0.01em;
-  margin-top: var(--space-3);
+/* The white focus ring (--color-focus-ring) is invisible on this page.
+   Blue-dark clears the 3:1 non-text minimum on white (~3.4:1) AND on the
+   footer's black (~5.7:1), so one override covers the whole page. */
+.page-contact :focus-visible {
+  outline-color: var(--color-blue-dark);
 }
 
-.contact__lead {
-  margin-top: var(--space-4);
-  max-width: 40rem;
-  color: var(--color-text-muted);
+/* Same inversion, opposite direction: the shared skip-link is a white chip
+   for a black page, which would vanish here. */
+.page-contact .skip-link {
+  background-color: var(--color-logo-black);
+  color: var(--color-white);
 }
 
-.contact__details {
+/* Header readability without JS. [data-nav-force-dark] on <body> makes
+   initHeaderScrollTheme() add .site-header--dark, which recolours the logo
+   and nav — but if that script never runs, a white logo and white nav links
+   sit on a white page. These two rules are the same recolour applied from
+   CSS alone, so the header is legible either way (JS then only adds the
+   frosted backdrop). */
+.page-contact .site-header__logo img {
+  filter: brightness(0);
+}
+
+.page-contact .site-nav__list a,
+.page-contact .site-nav__caret,
+.page-contact .nav-toggle__bar,
+.page-contact .nav-toggle__bar::before,
+.page-contact .nav-toggle__bar::after {
+  color: var(--color-gray);
+}
+
+.page-contact .nav-toggle__bar,
+.page-contact .nav-toggle__bar::before,
+.page-contact .nav-toggle__bar::after {
+  background-color: var(--color-gray);
+}
+
+/* ---- Current-page nav item: underline, not a pill ----
+   Client 2026-07-31: "I want the hover effect to be blue underline, the same
+   blue as the CTA, no fill." site-chrome.css marks the current page with a
+   filled dark pill (a.site-nav__link[aria-current="page"]); this drops the
+   fill and the pill padding and gives the item the SAME blue underline the
+   nav already uses on hover — var(--color-accent-strong), which is
+   --color-blue-light, the exact fill colour of the "Angebot einholen" button.
+   So the current page simply reads as permanently hovered.
+
+   `a.site-nav__link[...]` with the .page-contact prefix, matching the
+   specificity-bump pattern the shared rule itself uses — a lower-specificity
+   selector loses to it regardless of source order.
+
+   Dropping the fill also removes the reason the previous version of this rule
+   forced the label white: with no dark pill behind it, the item takes the
+   same grey as its siblings on the white header, and the mobile-drawer
+   override further down still turns every nav link white inside the black
+   drawer. Nothing here is page-specific — see docs/page-conventions.md,
+   "Navegación", for moving it into site-chrome.css. */
+.page-contact a.site-nav__link[aria-current="page"] {
+  padding: var(--space-1) 0;
+  border-radius: 0;
+  background-color: transparent;
+  border-bottom-color: var(--color-accent-strong);
+}
+
+.page-contact a.site-nav__link[aria-current="page"]:hover,
+.page-contact a.site-nav__link[aria-current="page"]:focus-visible {
+  border-bottom-color: var(--color-accent-strong);
+}
+
+/* Below the desktop nav breakpoint (1400px, site-chrome.css) the nav is a
+   drop-down drawer with its own BLACK background — dark grey links inside it
+   would be unreadable. Only the ≥1400px inline nav actually sits on the white
+   header bar, so the recolour above is reverted for the drawer. */
+@media (max-width: 1399.98px) {
+  .page-contact .site-nav__list a,
+  .page-contact .site-nav__caret {
+    color: var(--color-text);
+  }
+}
+
+/* ---- Breadcrumbs ----
+   Two things at once: the shared component (components.css) is built for
+   white-on-black, and the client asked for a chevron trail instead of the
+   slash separators (2026-07-31, reference image: grey links, thin chevrons,
+   bold current page).
+
+   THIS IS MEANT TO BE SITE-WIDE. The proper home for the chevron is
+   components.css + the shared markup, which this page may not touch — see
+   docs/page-conventions.md, "Breadcrumbs", for exactly what to move there.
+   Until then, every new page repeats this block. */
+.page-contact .breadcrumbs__list {
+  gap: var(--space-3);
+  color: rgb(59 73 86 / 0.7);
+}
+
+/* No underline at rest (the reference has none) — safe here, unlike an inline
+   link in a sentence: these sit alone inside a <nav>, so they aren't
+   distinguished from surrounding text by colour alone (WCAG 1.4.1). The
+   underline comes back on hover/focus. */
+.page-contact .breadcrumbs__link {
+  color: rgb(59 73 86 / 0.7);
+  text-decoration: none;
+}
+
+.page-contact .breadcrumbs__link:hover,
+.page-contact .breadcrumbs__link:focus-visible {
+  color: var(--color-blue-dark);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.page-contact .breadcrumbs__current {
+  color: var(--color-logo-black);
+}
+
+.page-contact .breadcrumbs__sep {
+  display: inline-flex;
+  align-items: center;
+  color: rgb(59 73 86 / 0.45);
+}
+
+/* The sprite chevron points left; mirrored here instead of adding a second
+   symbol. Sized in em so it tracks the breadcrumb's own font-size. */
+.breadcrumbs__sep-icon {
+  width: 0.85em;
+  height: 0.85em;
+  transform: scaleX(-1);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The eyebrow's shared blue is calibrated for black (see components.css) and
+   is too light at this size on white — same fix, same value, as
+   .faq .section-eyebrow / .references .section-eyebrow on the homepage. */
+.page-contact .section-eyebrow {
+  color: var(--color-gray);
+}
+
+/* --------------------------------------------------------------------------
+   Editorial left inset
+   --------------------------------------------------------------------------
+   --content-inset is the homepage's alignment for left-aligned content
+   (tokens.css; used by .hero__content, .pain-hook__intro,
+   .services .section__intro, .outfits__intro, .konzept__grid). Applied to
+   every content column here so the badge, H1, tiles, highlight and form all
+   start on the same vertical line — which is what "el margen que tienen los
+   titulos alineados a la izquierda" means in practice. It is ADDITIONAL to
+   .container's padding; box-sizing: border-box (reset.css) keeps it inside
+   the max-width cap, so it can't cause horizontal overflow. Reduced on
+   mobile at the end of this file, exactly like the homepage does.
+
+   SYMMETRIC — both sides, not just the left (client 2026-07-31: "me hiciste
+   margen izquierdo pero derecho también tiene que haber el mismo margen").
+   This is now the fixed rule for every new page, recorded in
+   docs/page-conventions.md; use `padding-inline`, never
+   `padding-inline-start` alone. */
+.page-contact .breadcrumbs,
+.contact-main__grid {
+  padding-inline: var(--content-inset);
+}
+
+/* --------------------------------------------------------------------------
+   1. Layout: one section, two columns
+   --------------------------------------------------------------------------
+   Restructured 2026-08-03 (client brief). Before this the page ran
+   hero -> a full-width row of three cards -> the form in its own section far
+   below; nothing about the form was on screen when the page loaded. Now:
+
+     left  (40%): badge, H1, lede, the three contact rows, DEKRA, one link
+     right (60%): the form card, starting level with the badge
+
+   The grid areas are what make the mobile order work without `order`: the DOM
+   is intro -> form -> aside (the reading order the brief asks for on a phone),
+   and desktop places the aside back under the intro in the left column. */
+
+.contact-main {
+  /* Small top padding, large-ish bottom: the whole point is that the form is
+     inside the first viewport, so nothing decorative sits above it. */
+  padding-block: var(--space-5) var(--space-8);
+}
+
+.contact-main__grid {
   display: grid;
   gap: var(--space-6);
-  margin-top: var(--space-8);
+  grid-template-areas:
+    "intro"
+    "form"
+    "aside";
+}
+
+.contact-intro { grid-area: intro; }
+.contact-form-card { grid-area: form; }
+.contact-aside { grid-area: aside; }
+
+/* Two columns from 1024px. Below that both columns would be too narrow for a
+   form plus a contact row, so the page stacks — which also keeps the tablet
+   case comfortable rather than cramped. */
+@media (min-width: 1024px) {
+  .contact-main__grid {
+    /* 40 / 60 — inside the brief's 38–42% / 58–62%. minmax(0, …) so a long
+       unbreakable string in either column can't blow the track out. */
+    grid-template-columns: minmax(0, 40fr) minmax(0, 60fr);
+    grid-template-areas:
+      "intro form"
+      "aside form";
+    /* auto 1fr, not the default auto auto: the form spans both rows, so any
+       height it has beyond the intro would otherwise be split between the two
+       left-column rows and open a dead gap between the intro and the aside. */
+    grid-template-rows: auto 1fr;
+    /* Kept moderate on purpose: the gap sits between the two tracks, so a
+       wide one pushes the real 40/60 track split further from the brief's
+       38–42 / 58–62 of the row. At 3.5rem the measured split is 38.6 / 57.8. */
+    column-gap: clamp(2rem, 3vw, 3.5rem);
+    row-gap: var(--space-6);
+    align-items: start;
+  }
+}
+
+/* No sticky on the form card, deliberately. The card is ~830px tall at 1440px,
+   which is taller than the usable viewport under the header on a 900px screen,
+   so `position: sticky` would either never engage or clip the submit button
+   out of reach — the two failure modes the brief says to avoid. Normal flow. */
+
+/* --------------------------------------------------------------------------
+   2. Left column: intro
+   -------------------------------------------------------------------------- */
+
+.contact-intro > * {
   max-width: 34rem;
 }
 
+/* The intro block is context, not the headline act — the gap to the contact
+   list below is smaller than the gap between the two grid rows. */
+.contact-intro {
+  margin-bottom: calc(-1 * var(--space-2));
+}
+
+/* Not .badge from components.css: that one is `white-space: nowrap`, right for
+   a short certification chip and wrong for a sentence-length label that has to
+   wrap in a 40% column. Same visual language, just wrapping. */
+.contact-intro__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid rgb(59 73 86 / 0.25);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray);
+}
+
+/* The sprite's <symbol>s sit inside a <g> carrying the stroke presentation
+   attributes; a <use> clone inherits from ITS OWN ancestors, not from that
+   <g>, so stroke/fill are restated wherever an icon is used (same
+   belt-and-suspenders as .services__item-arrow in page-home.css). */
+.contact-intro__badge-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--color-blue-dark);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The homepage's `main h2` treatment (page-home.css) — fluid, regular weight —
+   with two adjustments for this page:
+     - floor raised to 2.25rem: that clamp bottoms out at 22px on a phone,
+       smaller than the form card's own title, which inverts the hierarchy;
+     - ceiling lowered on desktop (below). The page has two headings a column
+       apart, and the form is the primary action, so this one is deliberately
+       the smaller of the two: 36px here against the form title's 42px at
+       1440px. Same scale, same weight — just no longer competing. */
+.contact-intro h1 {
+  margin-top: var(--space-3);
+  font-size: clamp(2.25rem, 0.4rem + 3.7vw, 3.75rem);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+  color: var(--color-logo-black);
+}
+
+/* One line (client 2026-08-03). The 14ch measure that used to sit here is
+   what was breaking it in two — at these sizes the string is ~395px wide
+   against a ~495px column at 1440 and ~330px against ~352px at 1024, so it
+   fits on its own; nowrap only guarantees it stays that way if the copy ever
+   gets longer. Measured: one line at 1440 / 1280 / 1100 / 1024 / 768 / 430 /
+   390 / 375, two only at 320, where the column is 304px and the string needs
+   ~330px at this size. nowrap is deliberately NOT applied below 1024 — at
+   320 it would push the page into horizontal scroll instead of wrapping. */
+@media (min-width: 1024px) {
+  .contact-intro h1 {
+    font-size: clamp(1.875rem, 1.1rem + 1.2vw, 2.25rem);
+    max-width: none;
+    white-space: nowrap;
+  }
+}
+
+.contact-intro__lead {
+  margin-top: var(--space-3);
+  font-size: var(--font-size-base);
+  color: rgb(59 73 86 / 0.75);
+  /* At this measure the automatic hyphenation from base.css broke the last
+     line as "Be-ratung" — fine in a paragraph of body copy, wrong in a
+     two-line lead. overflow-wrap: break-word (sitewide) still guards overflow. */
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* ---- Intro load-in ----
+   The scroll reveals only fire on things that scroll INTO view; this block is
+   already on screen at first paint, so it gets a plain CSS cascade on load —
+   the role the homepage's hero-reveal.js plays there, minus the GSAP
+   dependency (that script is bound to .hero's markup and would no-op here).
+
+   Wrapped in a `no-preference` query rather than relying on motion.css's
+   global override: that override zeroes animation-DURATION but not
+   animation-DELAY, so with `backwards` fill a reduced-motion visitor would sit
+   looking at an invisible headline for the length of the delay. Gating the
+   cascade is the safe direction — it is an enhancement that simply never
+   starts, not a second reduced-motion block. */
+@media (prefers-reduced-motion: no-preference) {
+  .contact-intro > * {
+    animation: contact-intro-in var(--duration-slow) var(--easing-premium) backwards;
+  }
+
+  .contact-intro__badge { animation-delay: 60ms; }
+  .contact-intro h1 { animation-delay: 140ms; }
+  .contact-intro__lead { animation-delay: 220ms; }
+}
+
+@keyframes contact-intro-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. Left column: contact methods
+   --------------------------------------------------------------------------
+   A clean three-item LIST, not three cards (client 2026-08-03: they still read
+   as boxes). Rows share one hairline-divided block: no borders around each
+   item, no fill, no radius on the row itself — the only surface that ever
+   appears is a faint hover wash.
+
+   Each row is still one anchor, so the whole row is the tap target and the
+   arrow shows it acts. No inline padding on the row: the hover wash and the
+   phone's tint then line up exactly with the dividers and with the H1 above,
+   instead of bleeding a few pixels past both. */
+
+.contact-methods {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-5) 0 0;
+  border-top: 1px solid rgb(59 73 86 / 0.12);
+}
+
+.contact-methods li {
+  border-bottom: 1px solid rgb(59 73 86 / 0.12);
+}
+
+.contact-method {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+  padding-block: var(--space-3);
+  border-radius: var(--radius-sm);
+  color: inherit;
+  text-decoration: none;
+  transition: background-color var(--duration-base) var(--easing-standard);
+}
+
+.contact-method:hover {
+  background-color: rgb(59 73 86 / 0.045);
+}
+
+/* The row is the link, so the ring goes around the whole row. */
+.contact-method:focus-visible {
+  outline: 2px solid var(--color-blue-dark);
+  outline-offset: 2px;
+}
+
+/* Priority for the phone, kept deliberately faint (client: subtle, and NOT a
+   highlighted card): a 6% blue wash, no border, no shadow — it reads as one
+   tinted row inside the list. color-mix keeps it tied to the brand token
+   rather than hardcoding a fourth blue. */
+.contact-method--priority {
+  background-color: color-mix(in srgb, var(--color-blue-dark) 6%, transparent);
+}
+
+.contact-method--priority:hover {
+  background-color: color-mix(in srgb, var(--color-blue-dark) 11%, transparent);
+}
+
+/* Nudged down so it optically lines up with the label's cap height rather
+   than its line box — same offset on all three rows. */
+.contact-method__icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-top: 0.15rem;
+  fill: none;
+  stroke: var(--color-blue-dark);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.contact-method__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.contact-method__label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(59 73 86 / 0.7);
+}
+
+.contact-method__value {
+  font-size: var(--font-size-base);
+  line-height: 1.35;
+  font-style: normal;
+  color: var(--color-logo-black);
+  overflow-wrap: anywhere; /* info@frankonia-sicherheit.de in a 40% column */
+}
+
+.contact-method__text {
+  margin-top: 0.15rem;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: rgb(59 73 86 / 0.7);
+}
+
+.contact-method__action {
+  margin-top: 0.15rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-blue-dark);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* Same rest-↗ / hover-→ rotation as .btn__arrow and the Services list.
+   Centred on the row rather than pinned to the first line, and quieter than
+   the old version — this is a cue, not a button. */
+.contact-method__arrow {
+  width: 0.8rem;
+  height: 0.8rem;
+  align-self: center;
+  flex-shrink: 0;
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-blue-dark) 70%, transparent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition:
+    transform var(--duration-base) var(--easing-standard),
+    stroke var(--duration-fast) var(--easing-standard);
+}
+
+.contact-method:hover .contact-method__arrow,
+.contact-method:focus-visible .contact-method__arrow {
+  transform: rotate(45deg);
+  stroke: var(--color-blue-dark);
+}
+
+/* --------------------------------------------------------------------------
+   4. Left column: trust row + secondary link
+   -------------------------------------------------------------------------- */
+
+/* ---- DEKRA certification row ---- */
+/* Real DEKRA seals, used as supplied (never cropped or recoloured — see
+   CLAUDE.md). Source files are 399×600 portrait; height is fixed and width
+   left auto so the ratio can't drift. */
+.contact-cert {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  /* No border-top: the list above already ends in a divider, and two hairlines
+     a few pixels apart read as a mistake. */
+  margin-top: var(--space-4);
+}
+
+/* Smaller than before (was 3.5rem): this row supports the decision, it doesn't
+   compete with the phone block above it or the form beside it. */
+.contact-cert__seal {
+  height: 2.25rem;
+  width: auto;
+}
+
+.contact-cert__text {
+  font-size: var(--font-size-sm);
+  color: rgb(59 73 86 / 0.75);
+}
+
+/* ---- Secondary link ----
+   One link, not a list of three (client brief) — a quiet exit for someone who
+   isn't ready to write, deliberately not styled to compete with the submit
+   button beside it. */
+.contact-links {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-sm);
+}
+
+.contact-links a {
+  display: inline-block;
+  padding-block: var(--space-2);
+  color: var(--color-logo-black);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--easing-standard);
+}
+
+.contact-links a::after {
+  content: " →";
+  color: var(--color-blue-dark);
+}
+
+.contact-links a:hover,
+.contact-links a:focus-visible {
+  color: var(--color-blue-dark);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* ---- Form card ----
+   Same construction as the homepage's .conversion__form-wrap: a white card
+   floating on a white page, so a hairline border defines the edge and the
+   shadow carries the depth. Values copied from that rule, not re-invented. */
+.contact-form-card {
+  background-color: var(--color-white);
+  border: 1px solid rgb(1 1 1 / 0.06);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: clamp(1.75rem, 1.2rem + 2vw, 3rem);
+}
+
+/* Same clamp as .conversion__form-title — a form heading, not a section
+   title, and the left column's H2 is matched to it (see above). */
+.contact-form-card__title {
+  font-size: clamp(2rem, 1.6rem + 1.5vw, 2.625rem);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-heading);
+  color: var(--color-logo-black);
+}
+
+/* (The "Lieber direkt sprechen? …" line under the form is gone entirely —
+   client 2026-07-31. The card ends on the submit button. The phone is still
+   one tap away in the contact card above and in the footer.) */
+
+.contact-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
+
 @media (min-width: 640px) {
-  .contact__details {
+  .contact-form {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-.contact__detail-label {
-  font-size: var(--font-size-sm);
+.contact-form__field--full,
+.contact-form > .form-checkbox,
+.contact-form > .btn {
+  grid-column: 1 / -1;
+}
+
+/* ---- Editorial field treatment ----
+   The same minimal style as the homepage's conversion form: no filled
+   backgrounds, no rounded rectangles, thin bottom border only, small
+   uppercase labels, blue focus underline. Scoped under .contact-form so the
+   shared .form-field / .form-checkbox components (components.css) stay
+   untouched for every other page, exactly as .conversion__form does. */
+.contact-form .form-field__label {
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-regular);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-text-muted);
-  margin-bottom: var(--space-2);
+  color: rgb(59 73 86 / 0.75);
 }
 
-.contact__detail address {
-  font-style: normal;
-  line-height: var(--line-height-base);
+.contact-form .form-field__input,
+.contact-form .form-field__textarea {
+  padding: var(--space-2) 0;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid rgb(59 73 86 / 0.25);
+  border-radius: 0;
+  color: var(--color-gray);
 }
 
-.contact__detail a {
-  color: var(--color-link);
-  text-decoration: none;
+/* Short by default, grows with the text (client 2026-07-31: "less height…
+   unless the person writes a big thing, a bit bigger than the others but not
+   so tall"). Three parts:
+     - min-height 3.5rem — 56px, one step above the 43px single-line inputs,
+       so it still reads as "this one takes more text";
+     - field-sizing: content — the field tracks what's typed. Chromium-only
+       today; everywhere else the box simply stays at rows="2" + min-height,
+       which is the intended resting size anyway, so nothing breaks;
+     - max-height caps the growth so a long message scrolls inside the field
+       instead of pushing the consent row and the submit button off-screen.
+   resize: vertical stays, so anyone can still drag it larger by hand. */
+.contact-form .form-field__textarea {
+  min-height: 3.5rem;
+  max-height: 14rem;
+  field-sizing: content;
+  resize: vertical;
 }
 
-.contact__detail a:hover,
-.contact__detail a:focus-visible {
-  text-decoration: underline;
+.contact-form .form-field__input:hover,
+.contact-form .form-field__textarea:hover {
+  border-bottom-color: rgb(59 73 86 / 0.45);
 }
 
-.contact__cta {
-  margin-top: var(--space-8);
+/* Blue underline instead of the shared white ring — same as the homepage's
+   form, and correct for the same reason: on white, blue-dark is a clearly
+   visible indicator, whereas --color-focus-ring (white) is not. */
+.contact-form .form-field__input:focus-visible,
+.contact-form .form-field__textarea:focus-visible {
+  outline: none;
+  border-bottom-color: var(--color-blue-dark);
+  border-bottom-width: 2px;
+}
+
+.contact-form .form-field__hint {
+  color: rgb(59 73 86 / 0.6);
+}
+
+/* One line wherever it fits (client 2026-07-31) — the sentence itself was
+   shortened to the homepage's wording, which is what actually achieves that at
+   ≥1200px and in the single-column range below 1024px. Between those, and on a
+   phone, the form column is genuinely too narrow for a legal consent sentence
+   at a legible size, so it wraps: text-wrap: balance splits it into two even
+   lines instead of orphaning "zu. *" on its own, which is what read as broken.
+   Ignored by browsers without support — they just get the old wrap. */
+.contact-form .form-checkbox__label {
+  color: rgb(59 73 86 / 0.75);
+  text-wrap: balance;
+}
+
+.contact-form .form-checkbox__label a {
+  color: var(--color-blue-dark);
+}
+
+.contact-form .form-checkbox__input {
+  accent-color: var(--color-blue-dark);
+}
+
+/* Content-width pill, matching .conversion__submit — CSS Grid would
+   otherwise stretch a grid-column: 1 / -1 button across the whole form. */
+.contact-form__submit {
+  justify-self: start;
+  border-radius: var(--radius-pill);
+  margin-top: var(--space-2);
+}
+
+/* ---- Honeypot ----
+   Must be reachable by a naive bot and by nothing else: out of the layout,
+   out of the tab order (tabindex="-1" in the markup), out of the a11y tree
+   (aria-hidden on the wrapper). Not `display: none` — some bots skip fields
+   that are display-hidden, which defeats the point. */
+.contact-form__hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Pixel-seam before the footer
+   --------------------------------------------------------------------------
+   Client 2026-07-31: every page ends with the pixel dissolve into the footer.
+   The mechanism (js/pixel-transition.js) is shared and generic — it builds a
+   band of tiles inside any [data-pixel-seam] element and scrubs their opacity
+   against scroll. Only the CSS lives per page, because it sits in
+   page-home.css, which no other page loads. These rules are that file's
+   .pixel-seam block, trimmed to what one seam needs; keep them in sync if the
+   homepage's version changes.
+
+   The band sits INSIDE the section below the seam and the tiles are the colour
+   of the section ABOVE, so the dissolve reads as the outgoing section
+   pixelating away. Here that's white (this page) over black (the footer).
+
+   JS-only-ever-enhances: the div is empty in the markup, the script bails
+   under prefers-reduced-motion, and the footer's reserved padding is real
+   layout either way — so with no JS you get a slightly airier footer top and
+   nothing else. */
+
+.pixel-seam {
+  position: relative;
+  z-index: 2;
+  height: 0;
+  overflow: visible;
+}
+
+.pixel-seam__band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 200px;
+  display: grid;
+  /* Column/row counts and the shared tile size are set inline by
+     js/pixel-transition.js after measuring the band — the same pixel value on
+     both axes is what guarantees square cells at any viewport width. The
+     fallbacks only matter if that measurement fails. */
+  grid-template-columns: repeat(var(--pixel-cols, 10), var(--pixel-tile-size, 24px));
+  grid-template-rows: repeat(var(--pixel-rows, 3), var(--pixel-tile-size, 24px));
+  pointer-events: none;
+  /* Clips the partial last column: the script deliberately over-covers
+     (Math.ceil) so no bare strip is left, and without this the overshoot
+     escapes the viewport and gives the whole page horizontal scroll. */
+  overflow: hidden;
+}
+
+.pixel-seam__tile {
+  background-color: var(--pixel-tile-color, var(--color-bg));
+  opacity: 1;
+  transition: opacity 0.5s var(--easing-standard);
+}
+
+.pixel-seam__tile.is-revealed {
+  opacity: 0;
+}
+
+/* This page is pure white above the seam (--color-white), not the #FAFAFA of
+   the homepage's Uniforms section — using that here would read as a greyish
+   second white against the real white edge. */
+.pixel-seam--white {
+  --pixel-tile-color: var(--color-white);
+}
+
+/* The band lives in the footer's top, so the footer reserves its height as
+   extra padding and no footer content is ever covered. Scoped to the adjacent
+   sibling, so a page without a seam keeps the normal footer spacing. Keep in
+   sync with .pixel-seam__band's height above. */
+.pixel-seam + .site-footer {
+  padding-top: calc(var(--space-9) + 200px);
+}
+
+@media (max-width: 767.98px) {
+  .pixel-seam__band {
+    height: 120px;
+  }
+
+  .pixel-seam + .site-footer {
+    padding-top: calc(var(--space-9) + 120px);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Touch targets + micro-type on a phone
+   --------------------------------------------------------------------------
+   Collected at the end so these win over the component rules they adjust —
+   same structure as the block at the end of page-home.css. Everything below
+   is scoped to a max-width query, so none of it can affect the desktop
+   composition. */
+
+@media (max-width: 767.98px) {
+  /* --content-inset's 48px floor is too large for a phone; the homepage
+     drops to --space-2 at this same breakpoint (≈20–24px edge-to-text with
+     the container padding), so this page does too. */
+  .page-contact .breadcrumbs,
+  .contact-main__grid {
+    padding-inline: var(--space-2);
+  }
+
+  .contact-main {
+    padding-block: var(--space-4) var(--space-7);
+  }
+
+  /* Same list on a phone, one notch more room per row — still a list, not
+     three cards. The tap target is the whole row, far past 44px. */
+  .contact-method {
+    padding-block: var(--space-4);
+  }
+
+  /* 13px floor for small type on a phone, same as the homepage pass. */
+  .contact-method__text,
+  .contact-cert__text,
+  .contact-links a {
+    font-size: 0.8125rem;
+  }
+
+  .contact-method__label {
+    font-size: 0.75rem;
+  }
+
+  .contact-links a {
+    /* 44px total: 13px text (~18px line box) + 13px padding either side. */
+    padding-block: 0.8125rem;
+  }
+
+  .contact-form .form-field__label {
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+  }
+
+  /* 16px exactly — anything smaller and iOS Safari zooms the viewport on
+     focus, leaving the visitor zoomed in and scrolled sideways. */
+  .contact-form .form-field__input,
+  .contact-form .form-field__textarea {
+    font-size: 1rem;
+    min-height: 3rem;
+    padding-block: var(--space-3) var(--space-2);
+  }
+
+  /* Same idea on a phone, one notch up: the inputs are 48px here, so the
+     message field rests at 64px. */
+  .contact-form .form-field__textarea {
+    min-height: 4rem;
+  }
+
+  /* The consent box is the one field that legally has to be a deliberate
+     act — biggest control, padded row, so a near-miss still toggles it. */
+  .contact-form .form-checkbox {
+    padding-block: var(--space-2);
+  }
+
+  .contact-form .form-checkbox__input {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+
+  .contact-form__submit {
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .contact-cert {
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  /* The form is the primary action and comes first in the DOM, so the gap
+     under it separates it from the alternatives rather than from the intro. */
+  .contact-main__grid {
+    gap: var(--space-5);
+  }
 }
