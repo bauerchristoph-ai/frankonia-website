@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- Built 2026-08-03 from content-de/"2026-07-27 Webtext 29 Jobs.docx" (client
+     draft, Stand 24.07.2026, "Entwurf für Review (Dirk)"). Every visible line is
+     that document's copy, verbatim, in German — including the Du-Ansprache, which
+     the draft is explicit about keeping ("Du-Ansprache bleibt — Recruiting-
+     Kontext"). This is the one page on the site that does not say "Sie".
+
+     Written for this build, not supplied by the draft (all UI furniture, all
+     flagged where they appear):
+       - the section eyebrows (small uppercase labels), matching every other page;
+       - the two link labels in the closing "Weiterlesen" section;
+       - the form's field labels and the "PDF oder Word" hint on the CV upload.
+     The draft names the fields, not their labels.
+
+     NOT emitted: the draft asks for JobPosting schema "je offener Stelle,
+     gepflegt!". There is no vacancy list — no job titles, no datePosted, no
+     validThrough, no per-role location or salary — and Google requires those.
+     Writing them here would mean inventing open positions, so the graph below is
+     Organization + LocalBusiness + FAQPage + BreadcrumbList, and JobPosting waits
+     for real vacancies. See the comment above the JSON-LD.
+
+     Design language and effect stack: the homepage's, via css/page-service.css
+     (the page chassis — see that file's header and css/page-jobs.css for what is
+     reused from where). -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Jobs Bamberg: Voll-, Teilzeit &amp; Minijob – FRANKONIA</title>
+  <meta name="description" content="Sicherheitsdienst-Jobs bei FRANKONIA: übertarifliche Bezahlung, Dienstplan nach deinen Präferenzen, sicherer Arbeitgeber. Jetzt unverbindlich bewerben.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/jobs/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/jobs/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/jobs/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Security Jobs Bamberg: Voll-, Teilzeit &amp; Minijob – FRANKONIA">
+  <meta property="og:description" content="Sicherheitsdienst-Jobs bei FRANKONIA: übertarifliche Bezahlung, Dienstplan nach deinen Präferenzen, sicherer Arbeitgeber. Jetzt unverbindlich bewerben.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/jobs/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- Schema: Organization + LocalBusiness + FAQPage + BreadcrumbList.
+       ⚠️ NO JobPosting, deliberately — see the note at the top of this file. The
+       draft's own instruction ("je offener Stelle, gepflegt!") presumes a
+       maintained vacancy list; when it exists, each posting is one more node in
+       this @graph with a real title, datePosted, validThrough, jobLocation and
+       employmentType. A JobPosting with invented dates would be worse than none:
+       Google drops stale postings and penalises the domain's job markup.
+       The FAQPage below mirrors the five visible questions 1:1. -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "+49 951 964352-0",
+      "email": "info@frankonia-sicherheit.de",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Neuerbstraße 19",
+        "postalCode": "96052",
+        "addressLocality": "Bamberg",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "reviewCount": "97",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/jobs/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Kann ich ohne Erfahrung im Sicherheitsdienst anfangen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, als Quereinsteiger brauchst du die IHK-Unterrichtung oder Sachkundeprüfung nach § 34a GewO, und dabei unterstützen wir dich. Was das genau ist und wie schnell es geht, erklärt unser Ratgeber."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie viel verdient man bei FRANKONIA?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Übertariflich, der konkrete Satz hängt von Qualifikation und Einsatzart ab und wird im Kennenlerngespräch offen besprochen. Zuschläge für Nacht, Wochenende und Feiertage werden nach Tarif sauber abgerechnet."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Kann ich in Teilzeit, als Minijob oder im Nebenjob arbeiten?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja: Vollzeit, Teilzeit, Minijob oder Wochenend-Einsätze, zum Beispiel bei Veranstaltungen. Sag uns deine Verfügbarkeit, wir sagen dir ehrlich, was zusammenpasst."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wo werde ich eingesetzt?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Schwerpunkt ist der Raum Bamberg mit Einsätzen in ganz Franken, je nach Wohnort und Präferenz. Du arbeitest in der Regel an festen Objekten statt im ständigen Springer-Einsatz."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Muss ich eigene Ausrüstung mitbringen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nein — Dienstkleidung und Ausrüstung stellt FRANKONIA. Du kommst mit Qualifikation und Zuverlässigkeit, den Rest stellen wir."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Karriere",
+          "item": "https://frankonia-sicherheit.de/jobs/"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+  <!-- Shared components first, this page's own sheet last.
+       lead-form.css    the closing form (all 49 pages)
+       page-service.css the page chassis: the --content-inset rule on both sides,
+                        the oversized `main h2`, the breadcrumb chevron,
+                        .section--light, .service-hero*, .service-link,
+                        .service-related* and the whole .pixel-seam block. Those
+                        are docs/page-conventions.md's rules for every page; they
+                        live in that file only because /werkschutz/ was the first
+                        page to need them. -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-jobs.css">
+
+  <!-- Hero background photo — the page's LCP element: preloaded + eager +
+       fetchpriority, same as every other hero on the site.
+       imagesrcset/imagesizes REPEAT the <picture>'s own srcset/sizes verbatim.
+       That is not belt-and-braces, it is required: preloading one fixed URL made
+       the browser fetch that file and then load a different candidate for the
+       real <img>, i.e. two downloads and a wasted preload (measured here with the
+       previous hero photo). -->
+  <link rel="preload" as="image" type="image/webp"
+        imagesrcset="/assets/images/jobs-hero-768.webp 768w, /assets/images/jobs-hero-1280.webp 1280w, /assets/images/jobs-hero-1376.webp 1376w"
+        imagesizes="100vw">
+
+  <!-- Motion stack — docs/page-conventions.md §4.1, in the documented order. All
+       self-hosted, all defer, every one of them bails out under
+       prefers-reduced-motion and hides content only from inside itself, so a
+       no-JS visitor or a crawler gets this whole page, fully visible.
+       Not loaded: the homepage's bespoke section scripts and service-flow.js —
+       none of their markup exists here. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Chevron separators, not slashes — docs/page-conventions.md §3. The one
+         CSS rule for it comes from page-service.css; components.css still ships
+         the "/" version. Matches the BreadcrumbList JSON-LD above. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Karriere</span></li>
+      </ol>
+    </nav>
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- Draft: Recruiting-Hero, Du-Ansprache, badge → H1 → subline → 3 proof
+         points → Bewerbungs-CTA as an anchor to the form.
+         ⚠️ ONE CTA ONLY, no phone pill next to it — the draft is explicit:
+         "kein Telefon-CTA: Bewerbungen laufen über die Seite". That is the one
+         place this hero departs from the service-hero formula, and it is a
+         deliberate instruction, not an omission. The site-wide phone number is
+         still in the header, the footer and the WhatsApp button.
+         .hero__lead / .hero__reassurance / .hero__actions / .hero__trust class
+         names are intentional: js/hero-reveal.js animates exactly those blocks,
+         in that order, and this page reuses it with no per-page JS. -->
+    <!-- FULL-BLEED BACKGROUND PHOTO (client 2026-08-03: "el background va a ser
+         la foto esa" — HeroKarriere.png). This replaces the two-column
+         copy | portrait layout the hero had, so the copy column is now the whole
+         hero and the photo is behind it, the same model as the homepage hero.
+         alt="" + aria-hidden: it is decorative here. Nothing in it is information
+         the copy does not already carry, and a described photo behind a heading
+         is read out between the breadcrumb and the H1, which is noise.
+         Preloaded + eager + fetchpriority in <head> — this is the page's LCP
+         element. -->
+    <section class="service-hero jobs-hero" data-hero-reveal>
+      <div class="jobs-hero__bg" aria-hidden="true">
+        <picture>
+          <source srcset="/assets/images/jobs-hero-768.webp 768w, /assets/images/jobs-hero-1280.webp 1280w, /assets/images/jobs-hero-1376.webp 1376w" sizes="100vw" type="image/webp">
+          <img src="/assets/images/jobs-hero.jpg" alt="" width="1376" height="768" loading="eager" fetchpriority="high">
+        </picture>
+      </div>
+
+      <div class="container service-hero__grid jobs-hero__grid">
+        <div class="service-hero__content">
+          <!-- The draft's "Badge: Übertarifliche Bezahlung, festes Team statt
+               Springer-Dasein" chip is NOT here, deliberately. The client removed
+               the equivalent chip from the /werkschutz/ hero the same day, for a
+               reason that applies verbatim here: it was the third element on one
+               screen making the same claim, and it pushed the H1 down. Both halves
+               of this badge survive on the page — "übertarifliche Bezahlung" in the
+               subline and in the first tick, "festes Team statt Springer-Dasein" in
+               the Arbeitgeber section's fourth card ("Feste Objekte statt
+               Springer-Chaos"). Nothing factual left the page. The chip's CSS is
+               not kept here as a dead rule either (same call page-service.css made
+               when its own badge went); git has both. -->
+          <h1>Dein Job bei FRANKONIA: Sicherheit, auch für dich</h1>
+
+          <p class="hero__lead service-hero__lead">
+            Du sorgst für die Sicherheit anderer, wir sorgen für übertarifliche Bezahlung, planbare Dienste und einen erreichbaren Arbeitgeber.
+          </p>
+
+          <ul class="hero__reassurance service-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Garantiert übertarifliche Bezahlung
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Dienstplanung mit Rücksicht auf dein Privatleben
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Zukunftssicherer Job bei einem zertifizierten Arbeitgeber
+            </li>
+          </ul>
+
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="#bewerbung">Jetzt unverbindlich bewerben<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </div>
+
+          <!-- The two real DEKRA seals, no Google rating: this hero's third proof
+               point is "zertifizierter Arbeitgeber", and these are that claim's
+               evidence. The customer rating belongs on the B2B pages. Same
+               component and size as every other hero's trust band. -->
+          <div class="hero__trust service-hero__trust">
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+        <!-- The portrait photo column that used to sit here (the team-briefing
+             shot, system-reliable-teams.*) is gone with the switch to a
+             background hero — the file stays in the project, the homepage's
+             system story still uses it. -->
+      </div>
+    </section>
+
+    <!-- Section colours alternate black / white down the page with a pixel
+         dissolve at every colour change (client 2026-08-03) — the same mechanism
+         and look as the homepage. Tiles are always the colour of the section
+         ABOVE the seam, so the outgoing section is what pixelates away: no
+         modifier = black tiles (dark → light), .pixel-seam--white = white tiles
+         (light → dark). The band is built inside the section BELOW by
+         js/pixel-transition.js, and every section following a seam reserves its
+         height as extra padding-top (page-service.css), so tiles never cover
+         real content — with or without JS. -->
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 2. WARUM FRANKONIA ALS ARBEITGEBER ============ -->
+    <!-- Draft: H2 + 4 Karten, "spiegelt die Kunden-Pillars aus Arbeitnehmer-
+         Sicht". Each card's title is the draft's own bold lead-in (the text
+         before the colon) and the body is the rest of that line, verbatim —
+         not one word was rewritten or shortened in the 2026-08-03 redesign.
+
+         REDESIGNED 2026-08-03 (client): the four benefits were a row of text
+         columns on hairlines, which "feels too flat and corporate". They are now
+         vertical editorial cards — photo (4:3) → small blue line icon → title →
+         the same body copy — four across on desktop, two on tablet, one on a
+         phone, all four the same height and structure. Restrained on purpose per
+         the brief: a 1px hairline border, --radius-md, no shadow, no fill, no
+         gradient or overlay on the photos and no text over them.
+
+         The four photos are the client's own studio shoot (2022), named in the
+         brief per card, cropped from 3:2 to 4:3 and exported at 640/960w WebP +
+         a 960 JPEG fallback. Centre crop: checked one by one that every face,
+         the clipboard, the radio and the raised hand survive it.
+         One line icon each; #icon-euro was added to the sprite for the first
+         card (partials/icon-sprite.html), the other three already existed. -->
+    <section class="section section--light jobs-why" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <p class="section-eyebrow">Arbeitgeber</p>
+          <h2>Was bei uns anders läuft als bei vielen in der Branche</h2>
+        </div>
+
+        <!-- data-item-reveal (not data-reveal on the wrapper) so the four cards
+             cascade in as a set. The photos are real <img>s inside the revealed
+             element, which is why the reveal targets the whole card rather than
+             letting text-reveal.js animate the copy and leave the photo still. -->
+        <ul class="jobs-why__grid" data-item-reveal=".jobs-why__item" data-item-reveal-strong>
+          <li class="jobs-why__item">
+            <div class="jobs-why__media">
+              <picture>
+                <source srcset="/assets/images/jobs-why-bezahlung-640.webp 640w, /assets/images/jobs-why-bezahlung-960.webp 960w" sizes="(min-width: 1200px) 22vw, (min-width: 640px) 44vw, 90vw" type="image/webp">
+                <img src="/assets/images/jobs-why-bezahlung.jpg" alt="Drei FRANKONIA Mitarbeiter in Anzug und Krawatte" width="960" height="720" loading="lazy">
+              </picture>
+            </div>
+            <div class="jobs-why__body">
+              <svg class="icon jobs-why__icon" aria-hidden="true"><use href="#icon-euro"></use></svg>
+              <h3>Bezahlung, die ankommt</h3>
+              <p>Übertariflich, pünktlich, mit sauber abgerechneten Zuschlägen. Wir halten unsere Leute nicht mit Versprechen, sondern mit der Abrechnung.</p>
+            </div>
+          </li>
+          <li class="jobs-why__item">
+            <div class="jobs-why__media">
+              <picture>
+                <source srcset="/assets/images/jobs-why-dienstplan-640.webp 640w, /assets/images/jobs-why-dienstplan-960.webp 960w" sizes="(min-width: 1200px) 22vw, (min-width: 640px) 44vw, 90vw" type="image/webp">
+                <img src="/assets/images/jobs-why-dienstplan.jpg" alt="FRANKONIA Mitarbeiterin notiert die Dienstplanung im Gespräch mit einem Kollegen" width="960" height="720" loading="lazy">
+              </picture>
+            </div>
+            <div class="jobs-why__body">
+              <svg class="icon jobs-why__icon" aria-hidden="true"><use href="#icon-calendar"></use></svg>
+              <h3>Dienstplan mit Ansage</h3>
+              <p>Deine Präferenzen fließen in die Planung ein, deine Freizeit bleibt planbar. Deshalb bleiben unsere Teams lange.</p>
+            </div>
+          </li>
+          <li class="jobs-why__item">
+            <div class="jobs-why__media">
+              <picture>
+                <source srcset="/assets/images/jobs-why-erreichbar-640.webp 640w, /assets/images/jobs-why-erreichbar-960.webp 960w" sizes="(min-width: 1200px) 22vw, (min-width: 640px) 44vw, 90vw" type="image/webp">
+                <img src="/assets/images/jobs-why-erreichbar.jpg" alt="FRANKONIA Sicherheitsmitarbeiterin spricht ins Funkgerät und weist die Richtung" width="960" height="720" loading="lazy">
+              </picture>
+            </div>
+            <div class="jobs-why__body">
+              <svg class="icon jobs-why__icon" aria-hidden="true"><use href="#icon-clock"></use></svg>
+              <h3>Ein Arbeitgeber, den du erreichst</h3>
+              <p>Einsatzleitung 24/7, das gilt für Kunden und für dich. Probleme im Dienst? Ein Anruf, keine Warteschleife.</p>
+            </div>
+          </li>
+          <li class="jobs-why__item">
+            <div class="jobs-why__media">
+              <picture>
+                <source srcset="/assets/images/jobs-why-objekte-640.webp 640w, /assets/images/jobs-why-objekte-960.webp 960w" sizes="(min-width: 1200px) 22vw, (min-width: 640px) 44vw, 90vw" type="image/webp">
+                <img src="/assets/images/jobs-why-objekte.jpg" alt="Zwei FRANKONIA Mitarbeiter mit Schutzhelm und Checkliste an einem Objekt" width="960" height="720" loading="lazy">
+              </picture>
+            </div>
+            <div class="jobs-why__body">
+              <svg class="icon jobs-why__icon" aria-hidden="true"><use href="#icon-building"></use></svg>
+              <h3>Feste Objekte statt Springer-Chaos</h3>
+              <p>Du arbeitest in eingespielten Teams an festen Objekten, wirst nach Checkliste eingearbeitet, und weißt, was dich erwartet.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 3. WEN WIR SUCHEN (QUALIFIKATIONS-STUFEN) ============ -->
+    <!-- Draft: H2 + 5 Zielgruppen-Karten, "Struktur der alten Seite", je mit
+         Perspektive. Built as a LADDER rather than five equal cards: these are
+         not five parallel options, they are five rungs of the same §34a
+         qualification path, and someone reading this page is looking for the one
+         rung they are standing on. So each rung is numbered, sits on its own
+         hairline, and reads left (where you are) → right (what that opens up),
+         which is also the reading order on a phone once the columns stack.
+         All five titles and bodies are the draft's, verbatim. The only link in
+         the section is the draft's own Zubringer to the §34a Ratgeber, on the
+         Quereinsteiger rung where it belongs. -->
+    <section class="section jobs-levels">
+      <div class="container">
+        <div class="section__intro">
+          <p class="section-eyebrow">Einstieg</p>
+          <h2>Vom Quereinsteiger bis zur Meisterin: dein Einstieg bei FRANKONIA</h2>
+        </div>
+
+        <ol class="jobs-levels__list" data-item-reveal=".jobs-levels__item" data-item-reveal-strong>
+          <li class="jobs-levels__item">
+            <div class="jobs-levels__head">
+              <span class="jobs-levels__number" aria-hidden="true">01</span>
+              <h3>Quereinsteiger</h3>
+            </div>
+            <div class="jobs-levels__body">
+              <p>Du willst in die Sicherheitsbranche? Wir begleiten dich zur IHK-Unterrichtung und in deinen ersten Einsatz, bezahlt, geplant, mit festem Ansprechpartner.</p>
+              <!-- The draft's own internal link for this rung: "Was Unterrichtung,
+                   Sachkunde & Co. bedeuten: → /ratgeber/paragraph-34a-erklaert/".
+                   Real link to a confirmed URL (guidelines §2.2) that is not built
+                   yet — docs/build-checklist.md, Bloque 9. -->
+              <a class="service-link" href="/ratgeber/paragraph-34a-erklaert/">Was Unterrichtung, Sachkunde &amp; Co. bedeuten<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            </div>
+          </li>
+          <li class="jobs-levels__item">
+            <div class="jobs-levels__head">
+              <span class="jobs-levels__number" aria-hidden="true">02</span>
+              <h3>Sicherheitskräfte mit IHK-Unterrichtung (§ 34a)</h3>
+            </div>
+            <div class="jobs-levels__body">
+              <p>Du hast die Unterrichtung, aber noch keinen Arbeitgeber, der dich wertschätzt? Bei uns startest du zum Beispiel im Objektschutz, bei Veranstaltungen oder auf Baustellen, je nach Eignung auch in anderen Bereichen.</p>
+            </div>
+          </li>
+          <li class="jobs-levels__item">
+            <div class="jobs-levels__head">
+              <span class="jobs-levels__number" aria-hidden="true">03</span>
+              <h3>Sicherheitskräfte mit Sachkundeprüfung (§ 34a)</h3>
+            </div>
+            <div class="jobs-levels__body">
+              <p>Mit Sachkunde stehen dir die anspruchsvolleren Einsätze offen, unter anderem Detektei, Einlass und eigenverantwortliche Posten. Übertariflich vergütet.</p>
+            </div>
+          </li>
+          <li class="jobs-levels__item">
+            <div class="jobs-levels__head">
+              <span class="jobs-levels__number" aria-hidden="true">04</span>
+              <h3>Geprüfte Schutz- und Sicherheitskräfte (GSSK)</h3>
+            </div>
+            <div class="jobs-levels__body">
+              <p>Auf dich warten verantwortliche Positionen: Schichtführung, Objektverantwortung, Spezialeinsätze.</p>
+            </div>
+          </li>
+          <li class="jobs-levels__item">
+            <div class="jobs-levels__head">
+              <span class="jobs-levels__number" aria-hidden="true">05</span>
+              <h3>Fachkräfte &amp; Meister für Schutz und Sicherheit</h3>
+            </div>
+            <div class="jobs-levels__body">
+              <p>Einsatzleitung, Objektverantwortung, Konzeptarbeit, wachse mit einem Unternehmen, das selbst wächst.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 4. SO LÄUFT DEINE BEWERBUNG ============ -->
+    <!-- Draft: H2 + three numbered steps, each with its own title and body,
+         verbatim. Three columns on desktop, connected by one hairline through
+         the numbers so it reads as a sequence rather than three unrelated
+         blocks; stacked on a phone with the rule running down the side. -->
+    <section class="section section--light jobs-steps" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <p class="section-eyebrow">Bewerbung</p>
+          <h2>In drei Schritten zu deinem neuen Job</h2>
+        </div>
+
+        <ol class="jobs-steps__list" data-item-reveal=".jobs-steps__item" data-item-reveal-strong>
+          <li class="jobs-steps__item">
+            <span class="jobs-steps__number" aria-hidden="true">1</span>
+            <h3>Unverbindlich bewerben</h3>
+            <p>Kurzes Formular, kein Anschreiben-Roman. Lebenslauf hilft, ist aber kein Muss für das erste Gespräch.</p>
+          </li>
+          <li class="jobs-steps__item">
+            <span class="jobs-steps__number" aria-hidden="true">2</span>
+            <h3>Kennenlernen</h3>
+            <p>Wir melden uns zeitnah und laden dich zu uns ein, du lernst Team und Einsatzleitung kennen, wir klären deine Präferenzen.</p>
+          </li>
+          <li class="jobs-steps__item">
+            <span class="jobs-steps__number" aria-hidden="true">3</span>
+            <h3>Onboarding, das dich ankommen lässt</h3>
+            <p>Wir heißen dich im Team willkommen, arbeiten dich dokumentiert und Schritt für Schritt in dein Objekt ein und geben dir feste Ansprechpartner. Damit du dich vom ersten Dienst an sicher fühlst.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ 5. FAQ ============ -->
+    <!-- No seam between this section and the one above: both are white, so a
+         dissolve would be white over white. They are one chapter — how applying
+         works, then the questions someone has while deciding to apply — the same
+         call /referenzen/ makes for its results + quotes pair.
+         Shared accordion (components.css). All five questions and answers are
+         the draft's, verbatim, and mirror the FAQPage JSON-LD above 1:1. -->
+    <section class="section section--light jobs-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <p class="section-eyebrow">FAQ</p>
+          <h2>Deine Fragen zum Job bei FRANKONIA</h2>
+        </div>
+
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
+          <details class="faq-item">
+            <summary><h3>Kann ich ohne Erfahrung im Sicherheitsdienst anfangen?</h3></summary>
+            <!-- The draft's answer ends with its own Zubringer link; the words are
+                 unchanged, "unser Ratgeber" simply became the anchor, so the
+                 JSON-LD answer above is the same sentence. -->
+            <p class="faq-item__answer">Ja, als Quereinsteiger brauchst du die IHK-Unterrichtung oder Sachkundeprüfung nach § 34a GewO, und dabei unterstützen wir dich. Was das genau ist und wie schnell es geht, erklärt <a href="/ratgeber/paragraph-34a-erklaert/">unser Ratgeber</a>.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Wie viel verdient man bei FRANKONIA?</h3></summary>
+            <p class="faq-item__answer">Übertariflich, der konkrete Satz hängt von Qualifikation und Einsatzart ab und wird im Kennenlerngespräch offen besprochen. Zuschläge für Nacht, Wochenende und Feiertage werden nach Tarif sauber abgerechnet.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Kann ich in Teilzeit, als Minijob oder im Nebenjob arbeiten?</h3></summary>
+            <p class="faq-item__answer">Ja: Vollzeit, Teilzeit, Minijob oder Wochenend-Einsätze, zum Beispiel bei Veranstaltungen. Sag uns deine Verfügbarkeit, wir sagen dir ehrlich, was zusammenpasst.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Wo werde ich eingesetzt?</h3></summary>
+            <p class="faq-item__answer">Schwerpunkt ist der Raum Bamberg mit Einsätzen in ganz Franken, je nach Wohnort und Präferenz. Du arbeitest in der Regel an festen Objekten statt im ständigen Springer-Einsatz.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Muss ich eigene Ausrüstung mitbringen?</h3></summary>
+            <p class="faq-item__answer">Nein — Dienstkleidung und Ausrüstung stellt FRANKONIA. Du kommst mit Qualifikation und Zuverlässigkeit, den Rest stellen wir.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 6. BEWERBUNGSFORMULAR (PRIMARY ACTION) ============ -->
+    <!-- The shared lead-form section (css/lead-form.css) with this page's own
+         heading, lede and field ids (jb-*). Four differences from the B2B form,
+         all of them the draft's own field list:
+           - "Unternehmen" is gone (this is a job application, not a lead);
+           - a required Telefon plus a "Qualifikation" <select> whose five options
+             are the five rungs of section 3;
+           - an optional CV upload, hence enctype="multipart/form-data";
+           - NO "Lieber direkt sprechen?" phone line under the submit — same
+             instruction as the hero, "Bewerbungen laufen über die Seite".
+         The <select> and the file input needed the underline field style applied
+         to them (css/page-jobs.css); every other field is the shared component
+         untouched. The form still has no submission target sitewide: action="#"
+         plus native HTML5 validation (docs/build-checklist.md, Paso 4) — which
+         also means the CV upload currently goes nowhere. -->
+    <section id="bewerbung" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Bewirb dich jetzt — 100 % unverbindlich</h2>
+          <p class="conversion__intro-lede">Nach deiner Bewerbung melden wir uns zeitnah und laden dich zum Kennenlernen ein, unverbindlich für beide Seiten.</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <form class="conversion__form jobs-form" action="#" method="post" enctype="multipart/form-data">
+            <div class="form-field">
+              <label class="form-field__label" for="jb-name">Name *</label>
+              <input class="form-field__input" type="text" id="jb-name" name="name" autocomplete="name" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="jb-phone">Telefon *</label>
+              <input class="form-field__input" type="tel" id="jb-phone" name="phone" autocomplete="tel" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="jb-email">E-Mail *</label>
+              <input class="form-field__input" type="email" id="jb-email" name="email" autocomplete="email" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="jb-qualification">Qualifikation</label>
+              <!-- The draft's five options, in the same order and wording as the
+                   five rungs above. The empty first option is the resting state:
+                   without it the browser preselects "Quereinsteiger" and a
+                   qualified applicant who skips the field looks like a career
+                   changer. Not `required` — the draft does not mark it so. -->
+              <select class="form-field__select jobs-form__select" id="jb-qualification" name="qualification">
+                <option value="">Bitte auswählen</option>
+                <option value="quereinsteiger">Quereinsteiger</option>
+                <option value="unterrichtung">IHK-Unterrichtung (§ 34a)</option>
+                <option value="sachkunde">Sachkundeprüfung (§ 34a)</option>
+                <option value="gssk">Geprüfte Schutz- und Sicherheitskraft (GSSK)</option>
+                <option value="fachkraft-meister">Fachkraft / Meister für Schutz und Sicherheit</option>
+              </select>
+            </div>
+
+            <div class="form-field conversion__form-field--full">
+              <label class="form-field__label" for="jb-message">Nachricht</label>
+              <!-- rows="2" is load-bearing: a CSS min-height can only grow a
+                   textarea's box, never shrink it. docs/page-conventions.md §6. -->
+              <textarea class="form-field__textarea" id="jb-message" name="message" rows="2"></textarea>
+            </div>
+
+            <div class="form-field conversion__form-field--full">
+              <label class="form-field__label" for="jb-cv">Lebenslauf (optional)</label>
+              <input class="form-field__input jobs-form__file" type="file" id="jb-cv" name="cv" accept=".pdf,.doc,.docx" aria-describedby="jb-cv-hint">
+              <!-- Written for this build, not the draft: the draft says
+                   "Lebenslauf-Upload (optional)" and nothing about formats. The
+                   accept list and this hint are UI furniture — and the hint is
+                   what makes `accept` discoverable rather than a silent filter. -->
+              <p class="form-field__hint jobs-form__hint" id="jb-cv-hint">PDF oder Word. Kein Muss für das erste Gespräch.</p>
+            </div>
+
+            <!-- Honeypot (docs/page-conventions.md §6): out of the layout but NOT
+                 display:none, out of the tab order and out of the accessibility
+                 tree. -->
+            <div class="conversion__hp" aria-hidden="true">
+              <label for="jb-website">Website</label>
+              <input type="text" id="jb-website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+
+            <div class="form-checkbox">
+              <input class="form-checkbox__input" type="checkbox" id="jb-privacy" name="privacy" required>
+              <label class="form-checkbox__label" for="jb-privacy">
+                Ich habe die <a href="/datenschutz/">Datenschutzerklärung</a> gelesen und stimme zu. *
+              </label>
+            </div>
+
+            <button class="btn btn--primary conversion__submit" type="submit">
+              Jetzt unverbindlich bewerben
+              <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 7. WEITERLESEN ============ -->
+    <!-- The draft's own internal links for this page: the §34a Ratgeber, /ueber-uns/
+         and the eight migrated job articles (which live in /ratgeber/ with a
+         recruiting tag per F7, so the hub is the link). /referenzen/ is added
+         because it is live and it is the evidence behind "zukunftssicherer Job
+         bei einem zertifizierten Arbeitgeber" — the only link here not named in
+         the draft. Everything except /referenzen/ points at a confirmed URL from
+         guidelines §2.2 that is not built yet (docs/build-checklist.md). -->
+    <section class="section section--light jobs-related" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <p class="section-eyebrow">Weiterlesen</p>
+          <h2>Noch nicht sicher? Lies dich ein</h2>
+        </div>
+
+        <div class="service-related__cols">
+          <div class="service-related__col">
+            <h3 class="service-related__title">Wissen für den Einstieg</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/ratgeber/paragraph-34a-erklaert/">§ 34a: Unterrichtung und Sachkunde erklärt<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/ratgeber/">Alle Ratgeber-Artikel<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+
+          <div class="service-related__col">
+            <h3 class="service-related__title">FRANKONIA kennenlernen</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/ueber-uns/">Über FRANKONIA<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/referenzen/">Unsere Kunden und Ergebnisse<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/leistungen/">Wo du eingesetzt wirst: unsere Leistungen<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Pixel dissolve before the footer — mandatory on every page
+       (docs/page-conventions.md §4.4). The section above is white, so the tiles
+       are white; the footer reserves the band's height via
+       `.pixel-seam + .site-footer` (page-service.css). -->
+  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

@@ -58,6 +58,22 @@ strategically and optimize it carefully," not "remove all animation."
 
 ## Current phase
 
+> **Los valores del sistema visual — paleta, escala tipográfica, espaciado,
+> radios, sombras, movimiento y la tabla de contraste medida — están en
+> [docs/design-system.md](docs/design-system.md).** `css/tokens.css` sigue
+> siendo la fuente de verdad; ese doc es el mapa legible y el *cuándo usar
+> cada uno*. Una decisión nueva de color/tipografía se anota ahí en el mismo
+> commit.
+>
+> **Antes de escribir markup de una página nueva:
+> [docs/page-conventions.md](docs/page-conventions.md).** Es el "cómo se
+> construye una página" — márgenes (`--content-inset` en los dos lados), escala
+> de títulos, CTAs, breadcrumbs, el stack de efectos, el formulario compartido,
+> el pixel seam obligatorio antes del footer, los mínimos de teléfono, y la
+> plantilla de servicio completa (§8). **Leerlo primero, no después:** armando
+> `/werkschutz/` se salteó la mitad y hubo que volver atrás. Cada decisión nueva
+> que aplique a más de una página se agrega ahí en el mismo commit.
+>
 > **Tracker operativo: [docs/build-checklist.md](docs/build-checklist.md).**
 > Es la única lista de qué está hecho y qué falta, en las 49 páginas. Marcá lo
 > que termines **en el mismo commit** que el cambio. El *por qué* de cada
@@ -65,6 +81,1153 @@ strategically and optimize it carefully," not "remove all animation."
 >
 > El copy de las 49 páginas ESTÁ, en `content-de/` (49 `.docx`, con Title,
 > Meta-Description y H1 ya escritos). El contenido no es el bloqueo.
+
+**2026-08-03 — `/jobs/` built (`pages/jobs.html` → `/jobs/`), from the client's own
+draft. Fifth finished page, and the only recruiting page on the site — which is why
+it is also the only page that says "du".** Copy is
+`content-de/2026-07-27 Webtext 29 Jobs.docx` (Stand 24.07.2026, "Entwurf für Review
+(Dirk)"), verbatim, in German, including its own title (60 chars) and meta
+description (151). It closes a real 404: `/jobs/` has been linked from every page's
+footer since July, and the nav's "Karriere" item was an `href="#"` placeholder in
+both `partials/header-de.html` and `partials/header.html` — both now point at the
+real URL and carry `.site-nav__link`, so `initActiveNavLink()` can mark them.
+
+- **Du-Ansprache, deliberately, and only here.** The draft is explicit
+  ("Du-Ansprache bleibt — Recruiting-Kontext"). Every other page on the site says
+  "Sie". Don't "fix" this one for consistency; it is the client's instruction for
+  the recruiting context.
+- **Structure is the draft's own six sections, plus a seventh for its internal
+  links**: Hero ■ → Warum FRANKONIA als Arbeitgeber (4 cards) □ → Wen wir suchen
+  (5 Qualifikations-Stufen) ■ → So läuft deine Bewerbung (3 Schritte) □ → FAQ □ →
+  Bewerbungsformular ■ → Weiterlesen □ → footer. Six pixel seams, one per colour
+  change. **Bewerbung and FAQ are one white area with NO seam between them** — same
+  call as `/referenzen/`'s results + quotes pair: they are one chapter (how applying
+  works, then the questions you have while deciding), and a seam between two white
+  sections would dissolve white on white. That also means the parity works out with
+  the form panel, which is always dark.
+- **Reuses the chassis, adds almost nothing.** `css/page-jobs.css` is ~430 lines and
+  only holds this page's four blocks; everything structural comes from
+  `css/page-service.css` (the `--content-inset` rule on both sides, the oversized
+  `main h2`, the breadcrumb chevron, `.section--light`'s token re-declaration,
+  `.service-hero*`, `.service-link`, `.service-related*`, the whole `.pixel-seam`
+  block) and the form from `css/lead-form.css`. Motion stack is the documented one
+  (`docs/page-conventions.md` §4.1) with the hero opting into `hero-reveal.js` via
+  `data-hero-reveal` + the `.hero__lead`/`.hero__reassurance`/`.hero__actions`/
+  `.hero__trust` class names, so there is no per-page JS at all.
+- **The hero has no phone CTA and no badge, both on instruction, not by omission.**
+  The phone is the draft's own call ("kein Telefon-CTA: Bewerbungen laufen über die
+  Seite") — the number is still in the header, the footer and the WhatsApp button.
+  The badge ("Übertarifliche Bezahlung, festes Team statt Springer-Dasein") was
+  dropped to follow the client's same-day removal of the equivalent chip from
+  `/werkschutz/`'s hero, whose stated reason applies verbatim here: it was a third
+  element on one screen making the same claim, and it pushed the H1 down. Both
+  halves of that copy survive on the page (subline + first tick, and the fourth
+  Arbeitgeber card). Its CSS was not left behind as a dead rule.
+  The trust band is the two real DEKRA seals and no Google rating: the third hero
+  tick claims a "zertifizierter Arbeitgeber" and the seals are that claim's
+  evidence, while the customer rating belongs on the B2B pages.
+- **The hero is a FULL-BLEED BACKGROUND PHOTO, rebuilt the same day** (client: "el
+  background va a ser la foto esa", `HeroKarriere.png` from ~/Downloads — two
+  FRANKONIA guards on a Bamberg street beside the branded car). It started as the
+  service template's two-column copy | portrait layout with the homepage's
+  team-briefing shot; that column is gone and the copy column is now the whole
+  hero. `system-reliable-teams.*` stays in the project, the homepage still uses it.
+  - Exported to `assets/images/jobs-hero-{768,1280,1376}.webp` + a 1376 JPEG
+    fallback (82/171/193KB WebP, 221KB JPEG at q90/88). That is the same
+    documented-exception territory as the homepage hero (~222KB) — it is the LCP
+    element here, preloaded + eager + fetchpriority, with `imagesrcset`/
+    `imagesizes` repeating the `<picture>`'s own srcset/sizes so the preload and
+    the `<img>` pick the same candidate. **The source is only 1376×768**, so above
+    ~1400px it upscales; ask the client for the original if that shows.
+  - **Everything measured for this hero in the service template still applies and
+    is not overridden**: the H1's 52px clamp, the lede's 32rem measure, the 18px
+    ticks, the 2.75rem seals, `min-height: calc(100svh - 8rem)`. Only the layout
+    changed — `.jobs-hero__grid` is one column at every width and the content is
+    capped at 38rem so the copy does not stretch across the photo.
+  - **The photo deliberately does NOT bleed up behind the header**, unlike the
+    homepage's: on an interior page the breadcrumb sits between them
+    (docs/page-conventions.md §8.2), and pushing the image under a transparent
+    header would put the nav over a bright street scene. The header keeps the
+    page's own black.
+  - **Two washes, both on a pseudo-element and never on the `<img>`**: a left-side
+    fade on desktop (clearing to fully transparent at 62 %, so the guards and the
+    car stay untouched) plus a short bottom fade that blends the hero into the
+    black page below; on a phone the copy sits over the whole photo, so the wash
+    runs vertically instead, as a multi-stop ramp rather than a flat tint —
+    LIGHTEST at the top under the 34px H1 and heaviest under the 15px ticks. The
+    first attempt had that backwards (0.82 at the top easing to 0.72 mid-hero),
+    which both flattened the image and helped the wrong text. `object-position:
+    65% center` keeps the two guards in frame when `cover` crops hard on a phone.
+  - `background-color: var(--color-bg)` on the section: if the photo fails or
+    before it arrives, the hero is still black with white text, so the copy never
+    depends on the image.
+  - **Two dead selectors deleted in the same pass**, found while touching this
+    block: the phone rules `.jobs-hero__actions .btn` and `.jobs-hero__trust`
+    named classes that never existed in the markup (it carries the
+    `.service-hero__*` names), so they described behaviour they never produced —
+    page-service.css's own mobile rules were doing that work all along.
+- **"Wen wir suchen" is a ladder, not five cards.** The draft calls them "5
+  Zielgruppen-Karten", but they are five rungs of one §34a path (Quereinsteiger →
+  Unterrichtung → Sachkunde → GSSK → Fachkraft/Meister) and a visitor is looking
+  for the single rung they are standing on: five symmetric cards make that a
+  search, a numbered `<ol>` on hairlines makes it a scan. Left column = where you
+  are, right = what it opens up, which is also the phone reading order once it
+  stacks. The visible 01–05 are `aria-hidden` (the `<ol>` already numbers itself).
+  The section's one link is the draft's own §34a Zubringer, on the Quereinsteiger
+  rung.
+- **The application form is the shared lead form with a different field list**, per
+  the draft: no Firma (it is a person, not a company), a required Telefon, a
+  `Qualifikation` `<select>` whose five options are the five rungs above, an
+  optional CV upload (so the `<form>` carries `enctype="multipart/form-data"`), and
+  **no "Lieber direkt sprechen?" phone line under the submit** — same instruction as
+  the hero. Two field types the site had never styled: `components.css` styles
+  `.form-field__select` for dark surfaces and `lead-form.css` only re-styles
+  input/textarea, so both got the same underline treatment scoped under
+  `.jobs-form`, plus `color-scheme: light` on the form (tokens.css sets `dark` on
+  `:root`, which would have made the dropdown list and the file button dark inside a
+  white card). The native select caret is kept on purpose — replacing it means a
+  hardcoded chevron data-URI that cannot follow `currentColor`. All of that is now
+  written into `docs/page-conventions.md` §6, since the next form with a select
+  should not rediscover it.
+- **"Warum FRANKONIA als Arbeitgeber" was rebuilt as photo cards, same day**
+  (client: the row of text columns "feels too flat and corporate" for a recruiting
+  page). Each of the four benefits is now a vertical editorial card — photo (4:3) →
+  small blue line icon → title → **the same body copy, not one word rewritten or
+  shortened**. Four across from 1200px, two from 640px, one below that, all four
+  always the same height (grid `stretch` + `height: 100%`, no fixed heights
+  anywhere) and the same structure.
+  - Restrained per the brief, and that is what keeps it off the generic-SaaS-card
+    path: one hairline border, `--radius-md`, **no shadow, no fill** (the card is
+    the section's own white), no gradient or overlay on the photos and no text over
+    them. The only other line is the same hairline under each photo. Padding is
+    `--space-5` (24px), inside the brief's 24–28px and a real token.
+  - **Photos are the client's own 2022 studio shoot**, named per card in the brief
+    (`Frankonia_Sicherheitsdienst_02_05_22_063/156/040/137-a_prev.jpg` from
+    ~/Downloads), cropped 3:2 → 4:3 and exported as
+    `assets/images/jobs-why-{bezahlung,dienstplan,erreichbar,objekte}` at 640/960w
+    WebP plus a 960 JPEG fallback (9–30KB WebP, 32–58KB JPEG). The crop is CENTRED
+    and was checked photo by photo: every face, the clipboard, the radio and the
+    raised hand survive it. They are studio shots on white, which is why the frame
+    carries `--color-bg-subtle` — it reserves the space (no CLS) and the image
+    still reads as a photo panel against the white card.
+  - **Two breakpoints are measured, not conventional, and the comments in
+    page-jobs.css carry the numbers.** (1) The four-up row starts at **1200px, not
+    this project's usual 1024px**: the card's height comes from its copy, so
+    narrower columns mean a taller text block and a thinner photo — four columns at
+    1024px gave a 145px photo in a 508px card, a 28 % strip against the brief's
+    ~45–50 %. 1024–1199px stays two-up (62–68 %). (2) The single-column band is
+    capped at `30rem` and centred, because at a 639px viewport one column was 597px
+    wide and the photo 73 % of the card. Final shares: 47–68 % on phones, 47–51 %
+    at 640–768, 62–68 % at 1024–1199, 37 % → 50 % from 1200 → 1600, with **47 % at
+    1440**, the width this project measures at.
+  - **Known, documented trade-off:** in the 1200–1300 band the share sits a few
+    points under the target. Reaching 45 % there needs a square-to-portrait photo,
+    and the brief also asks for one shared 4:3 ratio; ratio consistency won. The
+    lever, if that ever flips, is `aspect-ratio` inside that media query — not a
+    different column count.
+  - Phones use 3:2 instead of 4:3 (the brief's "keep the image ratio controlled on
+    mobile"): a full-width 4:3 frame is 262px tall at 390px and ran the section to
+    nearly two screens. `object-fit: cover` just keeps a little less height of the
+    same centred crop, so no subject is lost and all four cards still share one
+    ratio.
+- **The FAQ uses the HOMEPAGE's treatment, not the shared one** (client, same day:
+  "que tenga el mismo diseño que la sección de FAQs en la homepage"). That look —
+  centred heading, two columns from 768px, filled pill cards with no border, and
+  the "+" glyph moved to the LEFT of each question — lives in `.faq` in
+  page-home.css, which no other page loads, so it is mirrored verbatim under
+  `.jobs-faq` in page-jobs.css: same radius, padding, 5%-grey fill, 64rem measure
+  and on-white answer alpha. **One decision in two page-scoped files now — keep
+  them in sync, same situation as the `main h2` clamp.** If a third page asks for
+  it, promote it to a `.faq--cards` modifier in components.css instead of copying
+  it a third time; that rule is written into docs/page-conventions.md §3, which now
+  documents both FAQ looks and when to use which.
+  Two deliberate differences from the homepage: this section keeps its eyebrow
+  (centred via the `justify-content` gotcha — every section on this page has one,
+  the homepage's FAQ has none), and it does NOT get the homepage's closing
+  `.faq__cta` button, because the application form is the very next section and
+  that would be the same action twice, 200px apart.
+- **Shared bug found and fixed while building this page** (`css/page-service.css`,
+  so it also fixes `/werkschutz/` and `/referenzen/`): `.service-link__arrow` and
+  `.service-related__arrow` computed to `fill: black; stroke: none`, because
+  `#icon-arrow-diagonal`'s fill/stroke live on the sprite's `<g id="icon-defs">`
+  wrapper and that does not survive `<use>`. Every one of those arrows was a filled
+  sliver — invisible on a dark section, a small black smudge on a light one. Both
+  rules now set `fill: none; stroke: currentColor`, the same belt-and-suspenders
+  `.btn__arrow` and `.services__item-arrow` already had for exactly this reason.
+- **One new sprite symbol**, `#icon-euro` (a euro coin) for the "Bezahlung, die
+  ankommt" card, on the same 24px grid and 1.5 stroke as the rest — in the sprite,
+  not inlined. The other three cards reuse `#icon-calendar`, `#icon-clock` and
+  `#icon-building`.
+- **Measured, not eyeballed** (Chrome headless + a fixed-width iframe under forced
+  `prefers-reduced-motion`, see "Measuring mobile"): no horizontal scroll at **320 /
+  360 / 390 / 430 / 768 / 1024 / 1440px** — 320 included, better than the homepage's
+  own known limit. Page height 10010px at 390, 7850px at 1440. Touch targets ≥44px
+  except three pre-existing shared cases, all identical on the other pages: the
+  breadcrumb link (16px), the FAQ `<summary>` (34–40px) and the deliberate 22px
+  consent checkbox. The FAQ answer's inline link needed `padding-block: 0.65rem` on
+  an `inline-block` to clear 44 (0.5rem measured 42). Also measured and fixed: the
+  hero preload originally named one fixed WebP, which made the browser fetch 751w
+  and then load 640w for the real `<img>` at DPR 1 — it now repeats the
+  `<picture>`'s own `srcset`/`sizes` via `imagesrcset`/`imagesizes`.
+- **Known gaps, all client-side:**
+  - **No `JobPosting` schema**, which the draft asks for "je offener Stelle,
+    gepflegt!". There is no vacancy list — no titles, no `datePosted`, no
+    `validThrough`, no per-role location — and Google requires those; inventing them
+    would be worse than emitting nothing (stale/incorrect job markup gets the domain
+    demoted). The graph is `Organization` + `LocalBusiness` + `FAQPage` +
+    `BreadcrumbList`, and the FAQ mirrors the visible five 1:1. When real vacancies
+    exist, each is one more node.
+  - **The form submits nowhere** (`action="#"`, native validation only), same as
+    every page — and here that includes the **CV upload**: the field validates and
+    goes nowhere until there is a backend. Checklist Paso 4.
+  - Four real internal links to pages not built yet
+    (`/ratgeber/paragraph-34a-erklaert/`, `/ratgeber/`, `/ueber-uns/`,
+    `/leistungen/`). `/referenzen/` is the one link in the closing section not named
+    in the draft — added because it is live and it is the evidence behind
+    "zukunftssicherer Job bei einem zertifizierten Arbeitgeber".
+  - Written for this build, not supplied: the section eyebrows, the two Weiterlesen
+    column titles and link labels, and the CV field's "PDF oder Word" hint (the
+    draft names the fields, not their labels).
+- **Not visually verified in a real browser** — standing caveat. Everything above is
+  headless measurement plus screenshots (which do confirm the hero, the light
+  sections' token flip, the ladder, the step rule, and the form's select + file
+  chip). The one thing a headless shot can't confirm is the header's light/dark
+  switch over this page's **four** white sections, since it needs real scroll
+  events: worth the `npm run dev` look.
+- **Built while another session was editing the same repo** — `css/page-service.css`
+  (the hero badge removal), `css/lead-form.css` and `docs/page-conventions.md` all
+  changed mid-build. That is why this entry documents the badge decision explicitly
+  rather than as a silent match; if two entries in this file ever disagree about the
+  service hero, the code wins and this file gets corrected.
+
+> **PARTIALLY REVERSED 2026-08-04 (client): the six CARDS are back to their
+> pre-2026-08-03 copy — short one-line titles + a 3-item bullet list each, not
+> the draft's long titles + two-sentence paragraph.** Client asked for both, in
+> two messages ("en qué momento me cambiaste los bullets… dejalos como estaban
+> antes", then "los títulos también… eran todos de una sola línea"). Restored
+> verbatim from git, not rewritten. **This means the homepage no longer carries
+> `Webtext 01 Homepage.docx` Sektion 4's per-card copy** — the H2, the eyebrow
+> and everything else in the entry below are unchanged and still the draft's.
+> Three CSS values came back with them, each having been changed *only* to fit
+> the long copy: `.system-story__title`'s cap (1.5rem → **1.7rem**), the card's
+> bottom readability gradient (back to `0 → 42%, 0.35 → 62%, 0.78 → 100%`), and
+> the `.system-story--enhanced .system-story__title` clamp, which was **deleted**
+> — it existed purely to keep a 54-character title at two lines. Measured after,
+> at 1440 in the real pinned state (CDP, real frames): all six titles are ONE
+> line at 27.2px, and at 390 the carousel is one line at 18.4px with no
+> **The stack geometry came back too, in a follow-up the same day** (client saw
+> the airier result: "las cards de arriba (4,5,6) estaban más pegadas a las
+> otras, quedó mucho espacio"). `--sys-stack-peek` 7.75rem → **5.75rem**, so the
+> visible peek strip is **76px** again instead of 108px, and
+> `--sys-stack-card-h` gained the same 2rem (`100svh - 23.75rem` →
+> `100svh - 21.75rem`) to hold the invariant. `--sys-stack-top` did NOT move —
+> 1.75rem of it belongs to the eyebrow, which is still on the page, which is why
+> the sum is 22rem and not the pre-August 22.25rem.
+> **The relationship, now written into the CSS itself** so it stops being
+> rediscovered: the back row sits at `top + 1rem` and the front row at
+> `top + peek`, so the visible strip is `peek - 1rem` and ONLY the peek controls
+> it; `card-h` is always `100svh - (sum - 0.25rem)`. Verified after the change at
+> 1024 / 1280 / 1440 / 1728: peek exactly 76px and the front row bottoming at
+> `100svh + 4px` at every one (at 1728 the 34rem cap takes over, as designed).
+> **One measured tight spot, checked visually and accepted:** below 1440 the
+> short titles still wrap to two lines (the base clamp maxes at 1.7rem while the
+> 28%-wide card keeps growing), and at 1152 the longest one's line-BOX overlaps
+> the front card by 2px. A crop at that width confirms no glyph is cut — it is
+> empty leading. Clearance is 1–30px at 1024 / 1280. This is the same geometry
+> the section shipped with before 2026-08-03, not a new risk.
+>
+> `.system-story__desc` is unused again (as it was before 2026-08-03). Its rule
+> and its `.is-behind` selector are kept, same reason the list rule was kept
+> through the paragraph pass — this section has now swapped formats twice.
+
+**2026-08-03 — homepage "Unser System" (`#our-system`, `.system-story`) now
+carries the client draft's own Sektion 4 copy, verbatim.** The stacked-card
+component itself is untouched in mechanism (desktop peek-stack + mobile swipe
+carousel, `js/system-story.js` / `js/system-carousel.js`); what changed is the
+content it holds and the geometry that content needs.
+
+- **Copy** is `content-de/2026-07-27 Webtext 01 Homepage.docx` Sektion 4 ("Die 6
+  Value-Pillars", Stand 24.07.2026): the H2 **"Weniger Aufwand, mehr Sicherheit,
+  durch ein klar definiertes System"** plus, per card, the draft's full title and
+  its two sentences. It replaces the shorter July titles + 3-bullet lists (git
+  has them) — same six points, same order, same photos, stated in full. The 6
+  draft items map 1:1 onto the 6 existing photos, no reordering.
+  `.system-story__points` → `.system-story__desc` in the markup; the CSS rule for
+  the list is deliberately kept (a card may carry one again), and `.is-behind`
+  now hides both.
+- **The section carries an eyebrow, "Unser System" — and it is the only one on
+  the homepage.** Not decoration: it is the destination label for the nav item of
+  the same name. Replacing the old H2 ("So funktioniert unser System.") with the
+  draft's took away the one thing on that screen that matched what the visitor
+  clicked, and the client reported exactly that — "me voy a la sección de la home
+  que dice Weniger Aufwand, mehr Sicherheit…". The draft's own kicker for this
+  section ("WARUM FRANKONIA") is still NOT used, for the same reason: it would
+  not match the nav label either.
+  `.system-story__eyebrow` already existed in the stylesheet but had never been
+  rendered, and its colour was wrong for the section it lives on —
+  `--sys-color-accent` is `--color-blue-light`, ~2.6:1 on white. It uses the
+  on-light `--sys-color-accent-ink` now, the same substitution the mobile counter
+  in this file already documents.
+  Still no CTA here: the draft doesn't ask for one in this section, and the
+  Sicherheitskonzept section directly above already ends on the primary CTA.
+- **Three geometry changes, each forced by a measurement, not taste** (Chrome
+  headless, the section rendered in its pinned state; see "Measuring mobile"):
+  - `--sys-stack-top` 16.5rem → **16.25rem** and `--sys-stack-peek` 5.75rem →
+    **7.75rem**. Two things move here and they are not independent: the SPLIT
+    between them sets how much of the behind card peeks out (76px → **108px**,
+    which is what a two-line title needs), and their SUM sets where the front row
+    starts, which `--sys-stack-card-h` subtracts from `100svh` so the front row
+    always bottoms out at `100svh + 4px`. The sum went 22.25rem → **24rem** when
+    the eyebrow was added, and `--sys-stack-card-h` went `100svh - 22rem` →
+    `100svh - 23.75rem` in the same edit. **Change one, change the other** — a
+    sum raised without the card height following clips the cards' bottom-anchored
+    copy off the fold.
+  - `.system-story__title` capped **1.7rem → 1.5rem**, and the enhanced layout
+    gets its own `clamp(1.15rem, 0.31rem + 1.32vw, 1.5rem)`. The base clamp hit
+    its cap at ~1000px and then stayed flat while the 28%-wide card kept growing,
+    so at 1024/1280 the longest title ("1. Begeisterte Besucher durch
+    professionelles Auftreten", 54 chars vs the old 28) ran to three lines and its
+    last line sat *under* the front card. Verified at 1024 / 1152 / 1280 / 1440 /
+    1728: worst title bottom 68–89px, all inside the 100px peek.
+  - The card's bottom readability gradient starts higher and ends darker
+    (`0 → 32%, 0.45 → 58%, 0.85 → 100%`). A five-line paragraph reaches further up
+    the photo than a 3-item bullet list did, and its first lines were landing at
+    ~0.3 opacity over the bright half of an image.
+- **H2 wrap**: `max-width: 30ch` + `text-wrap: balance` (both the base and the
+  enhanced copy of the rule). 20ch was fitted to the old 28-character heading; the
+  draft's 67-character one fell to four lines and ran into the card stack. It now
+  breaks at its own second comma. The intro's top padding went 7rem → 6rem →
+  **5.5rem** as the band gained first a second title line and then the eyebrow.
+  **5.5rem = 88px is the floor, not a round number**: the sticky header measures
+  80px and the stage is pinned at `top: 0`, so anything less puts the eyebrow
+  under it. Measured, not assumed.
+- **Measured, not eyeballed**: no horizontal scroll at 360 / 390 / 430 / 768 /
+  1024 / 1152 / 1280 / 1440 / 1728. The mobile carousel and the 768–1023 vertical
+  layout were both checked with real copy — title two lines, description four,
+  nothing clipped. The front cards' description bottom is `100svh − 28px` by
+  construction, so it cannot fall below the fold on a short viewport.
+- **`pages/en/index.html` was left alone** — it still holds the July English copy
+  for this section. The German homepage is the live one; per this file's own
+  content-language rule the English variant is not kept in lockstep string by
+  string.
+- **The "Unser System" nav item is GONE (client, end of the same day) — but the
+  work it forced is still in the code and still worth knowing.** It was the only
+  item in that nav that wasn't a page; it is removed from `header-de.html` and
+  `header-en.html`. The section keeps its `id="our-system"`, so `/#our-system`
+  remains a valid deep link (campaign, external link) and everything below still
+  applies to it. If the item ever comes back, treat it as a fresh request — it
+  needs either a real page or this anchor behaviour, not a one-line restore.
+  The three bugs it surfaced, in order, all client-reported the same day:
+  - `href="#"` — goes nowhere by definition. Became `/#our-system` (absolute path
+    + fragment; a bare `#id` in a shared partial only resolves on the page that
+    owns the id). `initActiveNavLink()` already skips any href with a `#`, so it
+    correctly never marked itself current.
+  - Clicking it then landed at the section's own top, which is `start: "top top"`
+    on a scrubbed timeline = progress 0 = the deliberately empty stage. Client:
+    "me lleva acá dentro de la home, wtf". Fixed with a **new generic hook** that
+    is still in place and available to any anchor:
+    `js/smooth-scroll.js`'s `scrollToHash()` now reads `data-scroll-offset` (px)
+    off the hash target and passes it to `lenis.scrollTo`. `js/system-story.js`
+    sets that attribute to the scroll position where the BACK ROW has finished
+    entering, computed from the live timeline (`settleP[2] × (st.end − st.start)`),
+    recomputed on every ScrollTrigger refresh, and **removed on matchMedia exit** —
+    so mobile, reduced motion and no-JS all keep landing on the element's own
+    top, which is right for the plain list/carousel. Any other anchor without the
+    attribute behaves exactly as before.
+  - **Verified in a real browser this time**, not by reasoning: a CDP-driven
+    headless Chrome (real frames, not `--virtual-time-budget`, which cannot
+    settle Lenis) clicked the actual nav link and read back scrollY 0 → 7796,
+    section top at −1715, card opacities `[1,1,1,0.44,0,0]`. The deep-link path
+    (arriving at `/#our-system` from another page) lands identically — that path
+    is the one that still matters now that the nav item is gone. Both candidate
+    landing points were rendered and compared before picking this one.
+    **One measuring lesson worth keeping**: the first click test used the URL
+    `/index.html`, where `location.pathname` doesn't match the link's `/`, so
+    smooth-scroll's click handler bailed and the browser did a full navigation —
+    the test passed while never exercising the click-intercept path at all. Test
+    same-page anchor behaviour from the URL the visitor actually has.
+- **Not verified in a real browser**, same standing caveat: the GSAP entrance now
+  eases in one paragraph per card instead of a bullet stagger (`js/system-story.js`
+  queries `.system-story__desc`), and that timing is worth one `npm run dev` look.
+
+**2026-08-03 — `/referenzen/` built (`pages/referenzen.html` → `/referenzen/`),
+from the client's own draft. Fourth finished page, and the first that is neither a
+service page nor `/kontakt/`.** Copy is
+`content-de/2026-07-27 Webtext 27 Referenzen.docx` (Stand 24.07.2026, "Entwurf für
+Review (Dirk)"), verbatim, in German — including the draft's own title (52 chars)
+and meta description (147). It closes a 404 that was already live: both
+`partials/header-de.html` and `partials/footer-de.html` have linked `/referenzen/`
+on every page for weeks.
+
+- **Structure is the draft's own six sections**, in its order: Hero → Ergebnis-
+  Kacheln → Kundenstimmen → Kundenlisten nach Bereich → Case Studies → Trust-
+  Abbinder + CTA. Section colours alternate with a pixel dissolve at each change
+  (hero ▪ Ergebnisse ▫ Kundenstimmen ▫ Kundenlisten ▪ Case Studies ▫ Formular ▪ →
+  footer), 5 seams counting the footer's.
+- **The big architectural result: `css/page-service.css` is the page CHASSIS, not
+  "the Werkschutz stylesheet."** This page links it and only adds ~300 lines of its
+  own (`css/page-referenzen.css`). What came from the chassis: the `--content-inset`
+  rule on both sides, the oversized regular-weight `main h2`, the breadcrumb
+  chevron, `.section--light` (which re-declares the tokens for a white section, so
+  every new block that consumes tokens got its light variant for free),
+  `.service-hero*`, `.service-link`, and the whole `.pixel-seam*` block with the
+  padding each following section reserves. Written up as §9.1 of
+  docs/page-conventions.md — the city and combo pages should do the same.
+- **`.testimonial*` extracted to `css/testimonials.css`** (shared), the same move
+  `lead-form.css` got earlier the same day and the one
+  docs/build-checklist.md asks for ("Resultados + testimonios… hay que sacarlo de
+  page-home.css"). The homepage links it *before* page-home.css; `.references*`
+  (the section, its white background, the result stats, the 3-up grid) stayed
+  behind, because that is the homepage's composition, not the card. One real
+  consequence of the move: `.testimonial__role` had a token value in the component
+  and an "on white" override further down page-home.css — there is one value now
+  (the override always won). Verified afterwards that every `.testimonial*` class
+  in the built homepage still resolves to a rule, and re-measured the homepage: no
+  horizontal scroll at 320/360/390/430/768/1024/1440.
+- **Content decisions, both deliberate:**
+  - **The three case studies were NOT written.** The draft's section 5 carries
+    `[ERGÄNZEN: Die drei Ergebnis-Kacheln … als Case Studies ausformulieren, siehe
+    Prüfkatalog F13]`. Writing Ausgangslage → Konzept → Ergebnis narratives for
+    three named real companies would be inventing facts about MORELO, the
+    Sozialstiftung and CleanTech. The section ships with the two Kundenstories the
+    draft does supply, verbatim, each linking to its (not yet built) story
+    subpage; the gap is flagged in the HTML and in the checklist.
+  - **Logos: only the eleven that are already online.** The draft names 36 clients
+    across three Bereiche and flags the Freigaben as open (F11 im Prüfkatalog).
+    The eleven with files in `assets/images/client-logos/` are the ones already
+    published in the homepage's own logo band, so this page adds no logo that
+    isn't already live; the other 25 appear as names. Every one of the 36 is real
+    HTML text — a logo image is not readable by a crawler or an answer engine.
+- **Schema follows the draft's explicit instruction**: `Organization` +
+  `LocalBusiness` + `BreadcrumbList`, with `aggregateRating` 4,7 / 97 (the one
+  client-confirmed figure, and it is displayed on the page). **No `Review` objects
+  for the three testimonials** — the draft says "Testimonials NICHT als
+  Review-Schema faken, nur echtes Widget".
+- **This page is also where the WCB / Deutscher Mittelstands-Bund membership
+  reappears** — CLAUDE.md has flagged its absence since the "Certified Quality"
+  section was removed 2026-07-17. It is the draft's own closing copy, next to the
+  two DEKRA seals, above the form. Closed for this page only; the homepage still
+  doesn't have it.
+- **Two real bugs, both caught in a screenshot, not by reasoning:**
+  - **Margin collapse through a zero padding.** Ergebnisse and Kundenstimmen are
+    two adjacent white sections with no seam between them (white tiles over white
+    is nothing), so the second got `padding-top: 0` to make them read as one area.
+    With no padding and no border, its first child's top margin (the
+    `.section-eyebrow`'s 16px) collapsed *out* of the section and rendered as a
+    16px band of the page's black background between the two whites — measured at
+    y=1395–1410 at 1440px. A small `padding-top` (`--space-4`) contains the
+    collapse; the visible gap is identical, just white. Now §9.2 of the
+    conventions doc.
+  - **A logo row sized by height alone is unbalanced.** DB Netze, BRK and Liapor
+    dominated and bayernhafen / Stadt Bamberg / STWB / MORELO / CleanTech were
+    unreadable. Fixed the way the homepage's own band already does it
+    (sticky-story.css): cap the wide wordmarks by `max-width` (which recomputes
+    the height on a replaced element, so nothing distorts) and give the compact
+    marks more height. The phone block has to restate both groups — `[src*="…"]`
+    outranks a bare class.
+- **Third bug, caught by the client in a screenshot the same day ("tiene que estar
+  todo centrado") — a specificity collision between the shared form and the
+  chassis, and it was ALSO wrong on `/werkschutz/`.** The form's intro block
+  carries both `.conversion__intro` and `.section__intro`, and page-service.css
+  styles the latter generically (`.section__intro { max-width: none }` +
+  `.section__intro > p { max-width: 42rem }`). A page's own stylesheet loads AFTER
+  lead-form.css, and `.section__intro > p` is (0,1,1) against the lede's single
+  class — so the cap and the auto margins both lost: the lede sat in a 672px box
+  hugging the LEFT edge of an intro as wide as its own heading. 360px off centre
+  here (long H2), 14px on /werkschutz/ (short H2), which is why it had gone
+  unnoticed. Fixed once, in `css/lead-form.css`, with (0,2,0) selectors
+  (`.conversion .conversion__intro`, `.conversion .conversion__intro-lede`) and
+  the homepage's own values — so every future page using the chassis + the shared
+  form gets it right with no per-page rule. Verified centred on all three pages
+  that have the form; the homepage's own rendering is unchanged. Written up as the
+  specificity caveat in docs/page-conventions.md §6.
+- **Measured, not eyeballed** (Chrome headless + a fixed-width iframe): no
+  horizontal scroll at **320 / 360 / 390 / 430 / 768 / 1024 / 1440px**, re-checked
+  on /werkschutz/ and the homepage after the lead-form fix. Page height 9558px at
+  390, 6787px at 1440. One capture with motion enabled confirms the hero
+  cascade completes and the first seam's black tiles sit in the reserved band.
+- **Same-day rework of section 4 (client): the roster is now ONE AUTO-SCROLLING ROW
+  PER BEREICH, logos instead of name pills** ("tiene que aparecer los logos de las
+  empresas y quiero una linea para cada uno y que vayan pasando como en la
+  homepage"). The hairline name pills AND the separate static logo row above them
+  are both gone — with a row per group, that static row showed the same marks
+  twice. Mechanism is the homepage's own marquee (`.ref-marquee*`, copied into
+  page-referenzen.css because page-home.css is not loaded here; keep the two in
+  sync): row clips + edge-masks, track animates `translateX(-50%)`, N identical
+  groups each carrying its own trailing gap. Pure CSS, pauses on hover.
+  - **9 new logos exported** from the client's new `assets/logos/` folder into
+    `assets/images/client-logos/` (cropped to the alpha bounding box, resized to
+    160px tall, same treatment as the existing ones — all 14 files were already
+    white artwork on transparent, so nothing needed recolouring). **Two of the
+    client's files are misnamed, and were mapped by looking at the artwork, not the
+    filename:** `Bayernwerk.png` actually contains the **Stadt Coburg** mark, and
+    `Coburg.png` is **Landkreis Coburg**. So there is still no Bayernwerk logo. The
+    other five files (ADAC, Cleantech, Liapor, Sozial, Stadt) are re-supplies of
+    logos already exported and already live on the homepage — deliberately NOT
+    re-exported, so nothing the homepage renders changed.
+  - **Four more logos, later the same day** (client): `aldi.png` → ALDI SÜD (row 1),
+    `Hallstadt.png` → Hallstadt and `Heltec.png` → HEITEC VOLLEYS (row 3), and
+    `Bayerishe.png`, which is **Bayerische Landessiedlung** — a Baustellenbewachung
+    client, NOT the Bayerische Bereitschaftspolizei in row 1, which still has no
+    logo. Third file in this folder whose name does not match its artwork, so keep
+    mapping these by looking at them. One content note: the draft spells that
+    client "Heltec Volley" and the logo reads "HEITEC VOLLEYS" (the real company is
+    HEITEC) — the logo replaces the text, so the draft's spelling no longer appears
+    on the page; the `alt` says HEITEC Volleys. **24 of 36 now have a logo.**
+  - **Three more, later still** (client): the REAL `bayernwerk.png` this time
+    (Baustellenbewachung), `Wirtschaftsclub.png` → Wirtschaftsclub Bamberg, and
+    `University Of Bamberg.png` → the Otto-Friedrich-Universität crest. Note the new
+    bayernwerk file REPLACED the old mislabeled one on disk (macOS is
+    case-insensitive: `bayernwerk.png` over `Bayernwerk.png`), so `assets/logos/` no
+    longer holds the Stadt Coburg source — already exported, nothing lost, but worth
+    knowing that folder is not an archive. **27 of 36 now have a logo.** Two of these
+    needed a THIRD size tier (`clamp(3.25rem … 4.25rem)`): the Universität crest is a
+    detailed round seal and the Wirtschaftsclub mark is small type under a
+    line-drawn skyline — both were an unreadable smudge at the compact tier, caught
+    in a screenshot. That tier sets the row height, so it is deliberately only those
+    two.
+  - **2026-08-04, client edits to the roster:** the two centred titles above lost
+    their eyebrows (see below), **Brose Bamberg and Bodo Freimuth Tiefbau were both
+    removed** from the client lists (they are in the draft's roster — removed on
+    instruction, worth confirming it was a Freigabe decision), and four more logos
+    landed: `Postler.png`, `SG.png` → the roster's "Dach & Solar SG", `Landkreis.png`
+    → **Landkreis Bamberg** (not Coburg), and `Bayerishe Bereitschaftspolizei.png`.
+    **34 companies now, 31 with a logo**; only Norma, Schöner Leben and nacht arena
+    are still text.
+    - The Bereitschaftspolizei star is the one file in this set that is **not a white
+      silhouette** — ~10% of it is a black panther. It still reads on the black
+      section because the panther sits INSIDE the white shield (verified by
+      compositing it on #010101 before using it), and it went into the big size tier
+      with the Universität crest since both are fine-detail crests.
+    - **Removing two companies broke two loops**, which is the rule from the build
+      above biting: Baustellenbewachung fell 38px short of filling the row and
+      Veranstaltungsschutz 15px. Fixed by raising the group counts (Baustelle 4 → 6,
+      Veranstaltung 2 → 4) — **and the count must be EVEN**, because half of an odd
+      number of groups is a half-group, so `-50%` would not land on a group boundary
+      and the row would jump. That rule is now in the CSS and in
+      docs/page-conventions.md §9.3. All three durations were re-derived from the new
+      measured track lengths; back to ~10px/s on all three rows.
+    - **Two titles centred, eyebrows removed** (client): Ergebnisse and
+      Kundenstimmen. Those eyebrows were UI furniture this build added, never copy
+      from the draft. The 16px `padding-top` that section had was trapping the
+      eyebrow's collapsing margin (see the seam note above); with the eyebrow gone
+      the first child is the h2 at margin 0, so nothing escapes — the padding stays
+      as the deliberate gap and its comment now says so, since `padding-top: 0` would
+      reopen the bug the day a child with a top margin returns.
+  - **27 of the 36 companies have a logo; the other 9 ride the same row as
+    their name set in type**, one step quieter than a real mark (0.62 white — at
+    0.72 a plain name read brighter than the logos beside it, which inverts the
+    hierarchy). No client is dropped from the list, and it is also what keeps the
+    5-company Baustellenbewachung row long enough to loop.
+  - **Two bugs found by measuring, both worth knowing:**
+    - **`minmax(0, 1fr)` + `min-width: 0` on the grid are load-bearing.** A grid
+      item's automatic minimum size is content-based and the track is 4.6–6.6k px
+      of max-content, so with an implicit `auto` column each row grew to its own
+      track's width and took the page with it: **5.290px of horizontal page scroll
+      at 1440px**, and every loop broken (row wider than half the track). The row's
+      own `overflow: hidden` does not help — the grid item has to be clamped too.
+    - **How many groups is arithmetic, not taste.** `-50%` shifts by HALF the
+      track, so the loop only stays seamless while that half still fills the row.
+      Two groups for the 21- and 10-company rows; the 5-company row needs FOUR.
+      Verified at 320/390/430/768/1024/1440: every row loops, ~8–10px/s on all
+      three (three different durations — a duration is not a speed, and half a
+      track is 3.3k px on the long row against 1.8k on the short ones).
+  - Reduced motion drops the marquee to static wrapped rows with **all 36
+    companies visible** — confirmed in a screenshot, including the `flex-shrink: 1`
+    the group needs there or it keeps its max-content width and gets clipped (the
+    bug the homepage's own band shipped with for a while).
+  - Re-measured after the rework: no horizontal scroll at 320/390/430/768/1024/
+    1440. Page height 6604px at 1440, 8652px at 390 — ~900px shorter than the pill
+    version, since three rows replace three wrapped blocks.
+- **One knock-on from a parallel change the same day:** `.service-hero__badge` /
+  `__badge-icon` were deleted from page-service.css when the client dropped the
+  certification chip from the service hero. This page's draft explicitly opens with
+  a Badge ("Über 300 Unternehmen und Einrichtungen vertrauen FRANKONIA"), so it
+  keeps it — but as `.ref-hero__badge` in its own stylesheet, with the deleted
+  rule's values, so it no longer depends on a chip the service template does not
+  want.
+- **Not verified in a real browser**, same standing caveat as every build this
+  phase: the header's light/dark switch over the three white sections depends on
+  real scroll events (`initHeaderScrollTheme`) and needs the `npm run dev` check.
+
+**2026-08-03 — `/werkschutz/` rebuilt for real: client copy, German, and the
+homepage's design language. This is Bloque 1 of
+[docs/build-checklist.md](docs/build-checklist.md) minus the two items only the
+client can close (real-phone check, template approval).** Client instruction
+was explicit: start designing this page, and *"aplicá los estilos de la web, o
+sea los CTAs, los titles, los efectos, todo"* — so the deliberate restraint the
+July version was built with is gone, on purpose. What changed:
+
+- **Copy** is `content-de/2026-07-27 Webtext 03 Werkschutz.docx` (client draft,
+  Stand 24.07.2026), verbatim, in German — page flipped to `lang="de"` /
+  `og:locale="de_DE"`, `header-de`/`footer-de` includes, real title (52 chars)
+  and meta description (156) from the draft. The English placeholder page and
+  its invented FAQ answers are gone.
+  **One block of copy on the page was written for this build, not supplied:**
+  the three "So läuft es oft" lines in section 3. The draft asks for that
+  section as a Gegenüberstellung but only gives the FRANKONIA side. Flagged
+  inline in the HTML too — review them with the copy.
+- **Structure follows the draft's own 9-Punkte-Struktur** (Hero → Risiko →
+  Vorteile → Leistungsumfang → Abgrenzung → Anwendungsfälle →
+  Sicherheitskonzept → Kosten → Trust/Ansprechpartner → FAQ → CTA → verwandte
+  Seiten). Every one of the 12 service drafts in `content-de/` uses that same
+  structure, which is why the CSS blocks are named generically.
+  The old sections (`.service-intro`/`__problems`/`__pillars`/`__process`/
+  `__trust`/`__areas`/`__reference`/`__cta`) were **deleted**, markup and CSS —
+  not left alongside. Git has them.
+- **Three blocks the checklist counts across many pages were built here first**,
+  generically: `.service-price*` (Kosten + Preis-Box, 27 pages),
+  `.service-konzept*` (compact Sicherheitskonzept, 11 — the homepage keeps the
+  big 3-cube exploded-view version), `.service-compare*` (the A-or-B service
+  comparison, 4 — two panels + a decision strip, NOT a table; see the 2026-08-03
+  redesign note below).
+  The table is a real `<table>` (genuine tabular data) that re-reads as stacked
+  blocks on a phone via a per-cell `data-label`, so it never needs horizontal
+  scroll.
+- **The lead form is now shared, not homepage-only**: `css/lead-form.css`,
+  extracted from `page-home.css` (~475 lines out, the documented-dead
+  black-left-panel rules dropped in the move). Both pages link it *before*
+  their own stylesheet; the homepage keeps only `.pixel-seam + .conversion`
+  (that dissolve band is a homepage effect). Verified after the move that every
+  `.conversion*` class in the built homepage still resolves to a rule.
+  It is the checklist's "formulario de cierre → las 49 páginas".
+- **Design language now matches the homepage**: the oversized regular-weight
+  `main h2` (same clamp — keep the two page-scoped copies in sync),
+  `.btn--primary` + diagonal arrow CTAs, the outline phone pill,
+  `.section-eyebrow` on every section, and the same motion stack — GSAP +
+  ScrollTrigger + Lenis with `hero-reveal` / `title-reveal` / `item-reveal` /
+  `text-reveal`. **This supersedes the old "service pages deliberately do NOT
+  reuse the oversized `main h2`" rule** in the Service-page template section
+  below and in `page-service.css`'s header.
+  `js/hero-reveal.js` and `js/text-reveal.js` each got a one-line
+  generalization (`[data-hero-reveal]`) so the service hero reuses them with no
+  per-page branch; the homepage selectors are untouched and still first.
+  Not loaded here: the homepage's bespoke section scripts (pain-hook journey,
+  system-story, konzept-seq, sticky-story, outfits, pixel-transition, coverage
+  map, social carousel) — none of their markup exists on this page.
+- **Assets**: MORELO and bayernhafen Bamberg (the two clients the draft names)
+  exported as white silhouettes into `assets/images/client-logos/`, same
+  treatment as the homepage's own client marks. Everything else reuses existing
+  files.
+- **Measured, not eyeballed** (Chrome headless + a fixed-width iframe, see
+  "Measuring mobile" below): no horizontal scroll at **320 / 360 / 390 / 430 /
+  768 / 1024 / 1440px** — 320 included, which is better than the homepage's own
+  known 320px limit. Page height 16501px at 390, 11523 at 1440. The homepage was
+  re-measured after the CSS extraction: no overflow at 390 or 1440 either.
+  Two real bugs were caught this way and fixed, both worth knowing:
+  - `.service-related__link`'s hover-bleed used a fixed `-1rem` inline margin
+    against a container padding that is only 12px at 390px → 4px of real page
+    scroll. Both sides are tied to `--container-padding` now.
+  - `overflow-wrap: break-word` (base.css) does **not** shrink an element's
+    min-content width, so one unbreakable compound
+    ("Fremdfirmen-Koordination") set a whole grid track's minimum and overflowed
+    by 25px at 360px. `overflow-wrap: anywhere` + `min-width: 0` on the grid
+    children is the fix — same trap the homepage's services list hit.
+  - Sitewide `hyphens: auto` (base.css, correct for prose) fired on nearly every
+    line of this page's column-set copy ("einfa-cher", "lau-fender",
+    "Fremd-firmen"). Disabled per block, deliberately NOT on the FAQ answers,
+    which are real running prose in a wide measure.
+- **Known gaps, not fixed unilaterally** — all client-side:
+  - the draft's hero asks for a **Pfortendienst/Werkstor** photo; the only
+    Werkschutz photo that exists is the portrait guard shot (820×1227, no
+    higher-res original anywhere), used in a two-column hero instead of a
+    full-bleed one for exactly that reason;
+  - no portrait of **Alexander Jäger** exists — his block is built to take one
+    (already its own column) and ships without a stock stand-in;
+  - the page carries **8+ real internal links to pages not built yet**
+    (`/leistungen/`, `/objektschutz/`, `/empfangsdienst/`,
+    `/sicherheitstechnik/`, `/sicherheitskonzept/`,
+    `/ratgeber/werkschutz-vs-objektschutz/`, `/werkschutz-nuernberg/`, the city
+    pages). Confirmed URLs from guidelines §2.2, just not live yet;
+  - the form still submits nowhere (`action="#"`, native validation only), same
+    as the homepage — checklist Paso 4;
+  - the price range **28–40 €/Std.** and the **"30 % Personalkosten
+    eingespart"** figure are the client's own draft copy, published as written;
+    both are now on a public page, so worth one explicit confirmation.
+- **Second pass, same day — the page had skipped half of
+  [docs/page-conventions.md](docs/page-conventions.md)**, which existed since
+  2026-07-31 and was not read before building. Client caught the most visible
+  one ("agregale el margen izquierdo y derecho que tiene la homepage") and asked
+  for the decisions to be written down so they don't have to be re-made on the
+  next service page. All four misses fixed, and §8 of that doc is now the
+  service-page template spec:
+  - **`--content-inset` on both sides** (§1) — one rule for the whole page
+    (`main > .breadcrumbs, main > section > .container`), as
+    `calc(var(--container-padding) + var(--content-inset))` because the inset
+    lands on the same element as `.container`'s own padding and would otherwise
+    replace it. Drops to `--space-2` on a phone. The form section stays out (it
+    is a centred card, same as the homepage).
+  - **Breadcrumbs with chevrons** (§3), not the `/` that components.css still
+    ships — markup + the one `.breadcrumbs__sep-icon` rule, repeated per page
+    until that moves to the shared file.
+  - **Pixel seam before the footer** (§4.4) — mandatory on every page since
+    2026-07-31. Default black tiles (the section above it is on the plain page
+    background) and the footer reserves the band height.
+  - **Form honeypot** (§6) — the rule moved into `css/lead-form.css` as
+    `.conversion__hp` so every page using the shared form inherits it; the
+    homepage form still needs the div itself, tracked in the checklist.
+  - The hero **H1 now uses the documented page-title clamp** instead of a
+    smaller one invented for this template — §2 exists precisely so every page's
+    title is the same size.
+- **Third pass, same day — sections alternate black/white with a pixel dissolve
+  at every boundary** (client: "alterná como en la homepage los colores... hero
+  negro, el de abajo blanco, el de abajo negro, y así, con transición de
+  píxeles"). Order: hero ■ Risiko □ Vorteile ■ Leistungsumfang □ Abgrenzung ■
+  Anwendungsfälle □ Konzept ■ Kosten □ Ansprechpartner ■ FAQ □ Formular ■
+  Verwandte □ → footer. 12 seams counting the footer's.
+  - The light side is one `.section--light` scope that **re-declares the tokens**
+    (`--color-text-muted`, `--color-border`, `--color-accent` → blue-dark,
+    `--color-focus-ring` → blue-dark, …) rather than restating colours per
+    block. Custom properties inherit, so every existing `.service-*` rule — and
+    any future one that consumes tokens instead of hardcoding a hex — gets the
+    light variant for free. Values are the documented "on white" set
+    (docs/page-conventions.md §5), not new ones.
+  - Four things tokens can't reach, all annotated in page-service.css: the
+    inline link's hairline and its hover (which went to white), the highlight
+    box border, the **client logos** (white silhouettes → `filter: invert(1)` on
+    a light section, same as the homepage's own pale logo band), and the
+    link-row hover, which inverts the other way.
+  - **Real bug caught in a screenshot, not by reasoning:** the dark price box
+    inside a now-light section was *inheriting* that section's dark grey text,
+    so its two tick labels were dark-on-dark and invisible. A dark panel has to
+    declare its own `color` — the box does now, same as the lead form's white
+    card does. Written into §8.2 of the conventions doc as a rule, not just
+    fixed here.
+  - Each light section carries `data-nav-theme="light"` so the sticky header
+    switches to its dark-text state behind it (`initHeaderScrollTheme`,
+    js/main.js) — the one part of this pass a headless screenshot can't confirm,
+    since it depends on real scroll events.
+  - Cost, measured: page height 11584 → 13784px at 1440 (11 extra seam
+    reservations at 200px). No horizontal scroll at 360 / 390 / 1440.
+- **Fourth pass, same day — the Leistungsumfang section is now a pinned image
+  mask reveal** (client, with a GSAP pen as reference: "para esta sección voy a
+  querer este efecto"). Left column = the six duties, one per screen; right
+  column = a stack of six photos held by CSS `position: sticky` while each one
+  clips away from the bottom (`clip-path: inset`) to expose the next, scrubbed to
+  scroll, plus a slow object-position drift. New `js/service-flow.js` +
+  `.service-flow*` in page-service.css.
+  - Four deliberate departures from the reference pen, all annotated in the code:
+    sticky instead of ScrollTrigger's `pin` (this project's pattern); it reuses
+    the page's single Lenis + GSAP ticker instead of the `new Lenis(...)` the pen
+    creates (two instances fight over the scroll); no animated page background
+    (this page's colour is the section alternation); and no per-step CTA — the
+    section keeps its one link, in the highlight box.
+  - **Three layouts, and the fallback is the base one**: the stacked/sticky
+    desktop layout is itself gated behind
+    `and (prefers-reduced-motion: no-preference)`, and `gsap.matchMedia()` uses
+    the identical condition. Without that, a reduced-motion desktop visitor would
+    see one photo with five hidden behind it. Verified in both states: mobile and
+    reduced-motion desktop both render six text+photo pairs in normal flow.
+  - The two group headings became a per-step phase label ("Im laufenden Betrieb"
+    / "Nachts, am Wochenende, an Feiertagen"), so each duty is its own `<h3>`.
+    Same words, same order.
+  - **Placeholder photos** (client: "las imágenes poné cualquiera y después yo
+    las cambio") — four reused from the homepage's system story and this page's
+    hero, two newly exported from previously-unused client photography
+    (`flow-alarmbedienung` from Cameras.png, `flow-kontrollgang` from lab.jpg).
+    Swapping them is a `<picture>` edit; the frame is a fixed ratio.
+  - Cost: 13784 → 17704px at 1440 (six screens of scroll for one section). It is
+    now the page's centrepiece section, which is the point.
+  - **Corrected same day, from a screenshot the client sent**: the sticky photo
+    column was centred at `top: 50%`, which put it straight over the section's
+    own H2 while that heading was still on screen. The client's fix was also the
+    better composition: **pin the heading too** ("quedamos ahí pausados con el
+    título fixed y mientras escroleamos solo cambia el texto y la imagen"). So
+    the `.section__intro` moved INSIDE `.service-flow` (its sticky containing
+    block is now the flow, so it releases at the flow's end rather than staying
+    pinned over the highlight box), the grid gained explicit
+    `"intro intro" / "steps media"` areas, and the photo column sticks BELOW the
+    heading instead of at the viewport centre. Three details that are structural,
+    not cosmetic: the pinned heading needs an opaque background
+    (`--flow-intro-bg`, following the section's own colour) because the step text
+    scrolls up behind it; `--flow-title-h` starts as a safe CSS constant and
+    js/service-flow.js replaces it with the heading's measured height on load and
+    on every ScrollTrigger refresh (the heading wraps to two lines on narrower
+    desktops, so a constant alone would leave the photo overlapping or a gap);
+    and each step's text is aligned to the PHOTO's centre, not the viewport's,
+    via `padding = 2 × top-offset + photo-height − viewport` — the pinned heading
+    means those two centres are no longer the same.
+- **Fifth pass, same day — the hero now matches the homepage hero element for
+  element** (client: "la hero de werkschutz tiene que ser igual a la hero de la
+  homepage en tamaño, la posición de los badges DEKRA, los tics azules... mismos
+  tamaños y demás"). Measured against the homepage at 1440px and corrected: H1
+  60px → **52px** (the homepage hero's own clamp — this is NOT the page-title
+  scale in docs/page-conventions.md §2, which is why that table now carries a
+  separate hero row), lede colour white 0.65 → **0.82** with the homepage's 32rem
+  measure and 1.5 line-height, blue ticks 15.75px → **18px** with
+  `stroke-width: 2.25` (a fixed 1.125rem, not an em that tracks the smaller hero
+  type), DEKRA seals 52px → **44px**, the trust row's desktop hairline removed
+  (the homepage only has one on a phone, where the seals also drop to 2rem), and
+  the action/reassurance/trust spacing set to the homepage's values.
+  - **"The same size" is not "the same pixel height."** The homepage hero is
+    912px and fills the viewport because its header is transparent over the photo
+    and there is no breadcrumb; here the solid header (80px) + breadcrumb (~48px)
+    take 8rem first, so copying 912px would have pushed the trust band below the
+    fold — the opposite of what the homepage does. The hero now fills the rest of
+    the first screen instead (`min-height: calc(100svh - 8rem)`, content centred),
+    with the photo sized by HEIGHT (`min(42rem, calc(100svh - 14rem))`) rather
+    than width, since the photo was what made the hero 878px tall.
+  - **Two real bugs caught by measuring, both worth remembering:** sizing the
+    photo with `width: auto` + `height` let the width come from the aspect-ratio
+    and ignore its grid column — 43px of real horizontal scroll at 1024px; and
+    `<picture>` is an inline element, so the `<img>`'s `height: 100%` resolved
+    against the picture's shrink-to-fit box instead of the frame, leaving the
+    photo 497px tall in a 676px frame with a dark strip beneath it. Both are now
+    fixed for the hero AND the flow frames, which share that markup shape.
+  - Known, accepted: at exactly 1024px the H1 wraps to four lines in the narrower
+    column and the trust band sits just below the fold. No overflow, and one flick
+    of scroll reaches it; not worth a bespoke breakpoint.
+- **Sixth pass, same day — "Werkschutz oder Objektschutz" rebuilt as a decision
+  tool** (client brief: the criteria table was "factually correct, but flat,
+  overly horizontal and too editorial… the UX does not guide them clearly toward
+  a decision"). Every approved fact and both links survive; nothing else on the
+  page was touched.
+  - The `<table>` is gone, **replaced rather than restyled, deliberately**: a
+    table's row/column semantics are exactly what made it read as data, and the
+    brief needs Werkschutz to carry more weight than Objektschutz on its own
+    page — which a symmetric table cannot express. The six criteria are still
+    real term/value pairs (a `<dl>` per panel, each pair wrapped so it can be a
+    row) but grouped BY SERVICE, which is how someone choosing actually reads
+    them.
+  - Two panels with identical structure (context label → title → one-line
+    explanation → three ruled criteria → action). Werkschutz gets the subtle
+    priority: blue top rule, blue-tinted hairline, a 3%-white fill. Objektschutz
+    stays neutral. No glow, no shadow, no scale.
+  - **Colour is never the only signal** (brief + WCAG 1.4.1): the context labels
+    ("Für laufende Betriebe" / "Für Gebäude und Gelände"), the titles, the
+    explanations and one line icon each carry the distinction. Two new sprite
+    symbols for that — `#icon-factory`, `#icon-building`, added to
+    partials/icon-sprite.html on the same 24px grid and 1.5 stroke as the rest,
+    not inlined at the call site.
+  - **New `.service-decision` strip** below the panels turns the section's ending
+    from a comparison into an action: the "not sure which one?" question plus the
+    free-assessment CTA, with the Ratgeber link as the quietest thing in it. The
+    two detached links that used to sit under the table are gone —
+    "Zum Objektschutz" now lives inside its own panel.
+  - The direct two-sentence answer is promoted above the longer approved
+    paragraph, which stays visible and crawlable but demoted (`--font-size-sm`,
+    muted) — GEO intact, hierarchy fixed.
+  - Two measured fixes on the way: the strip's two actions side by side left the
+    question column ~400px and broke the heading onto two lines with empty space
+    beside the button, so they stack now; and the strip's grid child could not
+    shrink below its longest word → 16px of horizontal page scroll at 360px, hence
+    `min-width: 0` on the strip's and the panels' grid children.
+  - **Trimmed immediately after, same day** (client: "es mucho texto el título más
+    el subtítulo más el texto"). The section was saying the same thing three
+    times: the draft's long paragraph restated the panels' own criteria almost
+    word for word, and each panel's explanation line restated its context label
+    plus its "Typisches Objekt" row. Both were REMOVED — markup and CSS, not left
+    as dead rules. What survives: one intro line under the H2, and per panel
+    label → title → three criteria → action. Where two pieces of copy overlapped,
+    the client's ORIGINAL approved comparison content (the draft's criteria) was
+    kept and the copy written for the redesign was dropped. Only "Logistikhalle"
+    left the page entirely; every other term in that paragraph still appears in
+    the panels. Section height 1686 → 1463px at 1440.
+- **Seventh pass, same day — the four Risiko cards now carry isometric line-art
+  illustrations** (client sent a reference card and asked whether they had to
+  supply the artwork: no — these are drawn here). Each card is now a numbered
+  header, the scene between two rules, and the caption; two-up on desktop instead
+  of four-up, because at 4 columns a card is ~290px and an isometric scene is
+  unreadable at that size.
+  - **Inline SVG, not image assets.** No extra requests, nothing to optimise, and
+    the line work follows the section's own colours: `.rz-line` is
+    `currentColor`, `.rz-accent` the brand blue, `.rz-guide` the dashed
+    construction guides. That is why the same four scenes work unchanged on this
+    page's white Risiko section AND would work on a dark one — which matters,
+    since the section colours alternate.
+  - **The geometry is generated, not hand-written.** A small script projects real
+    3D coordinates (one isometric projection; cuboids/planes/discs in world units)
+    and fits each viewBox to what was actually drawn. Hand-writing isometric path
+    data is exactly where this kind of drawing goes wrong, and the first pass
+    proved it — the scenes came out small and off-centre in their frames until the
+    fitted viewBox went in.
+  - Scenes: 01 a plant with both conveyors and a break between them (pause +
+    alert), 02 documents leaving an open door on a dashed trajectory, 03 a pallet
+    of crates going out through the gate to a van, 04 a shift record with three
+    ticked rows, one empty blue checkbox and an unsigned stamp ring. Scene 04 was
+    redrawn once: three stacked cuboids read as one solid white slab, so the two
+    lower records are suggested by their top faces only.
+  - All four share ONE art box — their fitted viewBoxes have different ratios
+    (1.33–1.60), so left to size themselves the cards got different art heights
+    and the captions stopped aligning across a row. **16:10 since 2026-08-03**
+    (client: "un poco menos de height"), down from 4:3, with the art padding
+    trimmed --space-5 → --space-4. Nothing is cropped: `preserveAspectRatio: meet`
+    scales each scene to fit, so a shorter box just draws them a little smaller.
+    Measured at 1440: card 669 → **586px**, section 2202 → 2036px.
+  - The four sprite icons that used to head these cards are gone: the
+    illustration is the visual now, and keeping both was two icons for one idea.
+  - Cost: page 17577 → 18696px at 1440. ~8.7KB of inline SVG total.
+- **Hero chip removed (client, same day).** The draft's "Badge: DEKRA-zertifiziert
+  nach DIN 77200-1 und ISO 9001" pill above the H1 is gone — markup and CSS, not
+  left as a dead rule. Nothing factual left the page: the two real DEKRA seals are
+  still in this hero's own trust row, and the certifications are stated in full in
+  the Ansprechpartner section and the FAQ, so the chip was the third place on one
+  screen making the same claim while pushing the H1 down. The hero now opens
+  directly on its H1, like the homepage's.
+- **Eighth pass, same day — the four Anwendungsfälle cards are now filled blue
+  with the CTA's gloss** (client: "que tengan el mismo estilo que el CTA, que sean
+  azules y brillosas, con el reflejo que tiene el CTA").
+  - **The fill is the CTA's own #3D9AD3, flat** — client decision, reaffirmed
+    after the trade-off was put to them ("tiene que ser el mismo azul del CTA").
+    First build used a deeper `color-mix` gradient to clear 4.5:1; that is now
+    reverted to the brand blue.
+    **Accepted contrast caveat, recorded not fixed:** white on #3D9AD3 is
+    3.11:1 — it clears the 3:1 minimum for UI components and large text but not
+    the 4.5:1 for normal body copy, and each card carries a paragraph. Same class
+    of exception the primary button already ships with (tokens.css), and the same
+    handling: documented, not overridden unilaterally. Everything mitigable
+    without changing the colour was done — every text on the card is SOLID white
+    (alpha tiers would push the paragraph below 3:1) and hierarchy comes from size
+    and weight instead. All four measured ratios, and the cheap way out if it is
+    ever revisited, are in docs/design-system.md §7.
+  - The gloss **reuses `@keyframes btn-shine`** (components.css) rather than
+    declaring a second identical animation, with a staggered `animation-delay` per
+    card. Two deliberate differences from the button: the band is 0.28 instead of
+    0.42, and it sits BEHIND the content (`z-index: 1` on the children) — on
+    paragraphs, a brighter band on top reads as glare over the words.
+  - **Bug caught in a screenshot:** the titles rendered near-black on the blue,
+    because this is a `.section--light` and `.section--light h3` (0,2,0) beat
+    `.service-cases__item h3` (0,1,1). Fixed by matching specificity, not with
+    `!important`.
+  - **Scoped to this one section, client's decision** — not extended to the
+    comparison panels or the risk cards (the isometric scenes use `currentColor`
+    and dashed guides, which stop reading as technical drawing on blue).
+  - Follow-on: the "4 industry photos" ask was **removed** from
+    docs/build-checklist.md — these cards no longer take a photo, so it would
+    have been the client paying for four photos nobody uses.
+- **Ninth pass, same day — the hero is a full-bleed background photo** (client
+  supplied HeroWerkschutz.png: "usá en todo el background la imagen"). The
+  two-column hero (copy | portrait photo) existed for exactly one reason, now
+  gone: the only Werkschutz photo in the project was portrait 820×1227, which a
+  background treatment would have cropped to a letterbox band. The new file is a
+  3:2 night shot of a patrol at an industrial site — an actual background image.
+  - `.service-hero__media` (the side frame) was removed, markup and CSS. What
+    replaces it: `.service-hero__bg` (absolute, inset 0, behind a z-index:1
+    content layer), the same structure as the homepage's `.hero__bg`, plus a
+    single-column `.service-hero__grid` and a 44rem cap on the content — without
+    the side column nothing else stopped the H1 and trust row from running the
+    full 1600px container.
+  - Exported 768 / 1280 / 1536w WebP + a 1536 JPEG fallback (source maxes at
+    1536, so it upscales slightly past that), 37–129KB WebP. The `<link
+    rel="preload">` now carries `imagesrcset`/`imagesizes` so the preload picks
+    the same variant the `<picture>` will.
+  - **Two washes, not one.** Desktop is a left-to-right gradient (0.88 → 0.10) so
+    the copy sits on darkness while the vehicle and the lit hall stay visible.
+    On a phone that does nothing useful: the copy spans the full width and lands
+    on the two brightest things in the frame — the guard's shirt and the white
+    vehicle — so the ≤767.98px block replaces it with a vertical wash. Measured
+    the backdrop behind the lede after the change: average luminance 37/255.
+    Exactly the call the homepage hero makes at the same breakpoint.
+  - Crop: `object-position: 55% 42%` on desktop (his head sits high in the frame),
+    `62% 45%` on a phone, where a 3:2 photo in a tall hero keeps only a narrow
+    vertical slice and the default centre would hold the empty road.
+  - One soft spot, not over-corrected: at 390px a couple of words in the lede
+    still cross the shirt highlight. Darkening further would start hiding the
+    photo the client asked to show.
+  - A service page whose photo is still portrait should keep the old two-column
+    hero — it is in git, not deleted from history.
+- **Tenth pass, same day — the Kosten section rebuilt as a balanced two-column
+  block** (client: "too much empty space, the pricing card feels detached from the
+  content, and the left column is too wide"). No copy or figure changed.
+  - It was a full-width intro with the factors and the card in a row underneath,
+    so the card started far below the heading. Now ONE grid for the whole section
+    with named areas: `"intro card" / "factors card" / "hint card"`, 55/45 columns,
+    the card `align-self: start` so its top is level with the intro's. Measured at
+    1440: columns 643/526px, gap 64px, card top === intro top, intro→factors 40px,
+    card padding 36px — all inside the brief's ranges.
+  - **The DOM order is the design, not a side effect.** The card sits between the
+    intro and the factors in the markup, which is exactly the order the brief
+    wants on a phone (price and CTA before the factor list) — done in the DOM
+    rather than with `order`, so tab order still matches the screen
+    (docs/page-conventions.md §7 warns about precisely that). It reads correctly
+    on desktop too: heading → intro → price → what moves it.
+  - Factors: ruled rows with a blue `+` as a `::before` (one repeated glyph does
+    not need five sprite nodes), `--space-5` vertical padding, and solid
+    `--color-gray` instead of the muted token — **9.24:1 on white against the
+    4.56:1** the 0.75-alpha muted grey was giving. That was the brief's
+    accessibility point and it is now measured.
+  - Card: `--radius-md` (not `lg`), no shadow, price at a 40–60px clamp with
+    "€/Std." baseline-aligned beside it via `align-items: baseline`, and the CTA
+    content-sized rather than stretched.
+  - **Two measured bugs on the way, both in the CTA:** `.btn` is
+    `white-space: nowrap`, so at 360px the label's min-content (~325px) exceeded
+    the card's 272px inner width → 9px of horizontal page scroll; and the fix I
+    reached for first (`align-self: stretch`) is a no-op in a block container, so
+    the button kept its content width and broke out past the card's right padding
+    while the left side still had it. It takes `width: 100%` +
+    `white-space: normal` on the phone breakpoint.
+- **Price card: glossy black, centred, short dash** (client 2026-08-03, three
+  asks in one message).
+  - **Black, with the button's gloss.** Was `--color-bg-elevated` (grey #3B4956),
+    now `--color-logo-black` plus a faint diagonal lightening of the fill, a 1px
+    inset highlight on the top edge, and **the button's own sweep** — reusing
+    `@keyframes btn-shine` from components.css rather than declaring a second
+    identical animation, the same way `.service-cases__item` does. Softer band
+    (0.22 vs the button's 0.42) and behind the content via `z-index`, so it
+    polishes the surface instead of washing over the price.
+    Side benefit worth recording: white text goes from **9.2:1 on the grey to
+    20.9:1 on the black**, and the old "no blue inside an elevated grey card"
+    constraint disappears with it, since every brand blue clears contrast against
+    black (tokens.css).
+  - **Vertically centred** (`align-self: center`), which REVERSES the
+    "align the top of the card with the start of the main content area" from the
+    same day's rebuild. Verified symmetric: 177px of column above the card, 177px
+    below.
+  - **En dash → hyphen** in the price: `28–40` → `28-40`. German typography wants
+    a Bis-Strich for a range and the client's draft used one, so this is their
+    explicit call on the glyph — flagged rather than silently "corrected" back.
+    It is the only character on the page that changed.
+- **FAQ: the homepage's card design, now a SHARED modifier** (client 2026-08-03:
+  "hacé las FAQs igual a las FAQs de la homepage, mismo diseño"). Two columns of
+  filled pills with the "+" on the left, instead of the bordered single column the
+  shared component ships.
+  - This was the **third** page to ask for that look, and page-jobs.css had left
+    the instruction for exactly this moment: it had mirrored the homepage's block
+    into its own file with a note saying "if a third page asks for this, that is
+    the moment to promote it to a modifier in components.css instead of copying it
+    again". So: new `.faq__list--cards` in components.css, and **both copies
+    deleted** — page-home.css's original and page-jobs.css's mirror. One design
+    decision, one place, three pages opting in with a class.
+  - Verified no regression by comparing computed styles across all three pages:
+    identical columns (504+504px), max-width, fill, radius, padding, border,
+    justify-content, answer colour, and `order: -1` on the glyph.
+  - **One real collision found by that comparison.** page-service.css has
+    `.section--light .faq-item summary::after { color: --color-logo-black }`,
+    written for the bordered default where the accent blue fails contrast on
+    white. Same specificity as the new card rule but loaded later, so it silently
+    won: the "+" came out #010101 on /jobs/ and /werkschutz/ against #3B4956 on
+    the homepage — the exact opposite of "same design everywhere". Scoped it with
+    `:not(.faq__list--cards)`; all three now measure rgb(59, 73, 86).
+  - Also worth recording: my first probe read `getComputedStyle(el, "::after")`
+    through a helper that dropped the second argument, so it reported the
+    summary's colour and hid this. The numbers only mean something if the probe
+    asks the right question.
+  - **Not changed:** the section header. The homepage's FAQ heading is centred
+    with no eyebrow; /werkschutz/ keeps its left-aligned heading and its "FAQ"
+    eyebrow, like every other section on that page. The ask was about the
+    accordion; say so if the whole header should follow too.
+- **"Verwandte Leistungen und Einsatzgebiete" refined** (client: the structure was
+  right but it read as a plain sitemap list). Same copy, same links, same two
+  groups — hierarchy, scale and interaction changed.
+  - Group titles: 12px regular → **20px bold** uppercase with a 2px blue rule
+    above each, so the two groups read as two blocks.
+    ⚠️ The title blue is DEEPER than `--color-accent`: in a light section that
+    token is blue-dark = 3.71:1 on white, which clears 3:1 for a graphic and for
+    large text but not the 4.5:1 for text at this size — 18–20px bold sits right
+    on the 18.66px large-text boundary, so relying on it would be relying on a
+    borderline number. The `color-mix` is 4.88:1 and reads as the same blue. The
+    2px rule keeps `--color-accent` (a graphic only needs 3:1).
+  - Rows: `--space-5` vertical padding (81px tall, from ~57), label 16 → 20px,
+    thin dividers kept, whole row is the anchor (7 links = 7 tab stops, verified).
+  - Arrows: 0.9em → **1.5rem**, blue, centred, and the hover is a 3px
+    `translate(3px, -3px)` instead of the old 45° rotation — the icon points
+    up-right, so it now travels the way it points (brief: "move it slightly to the
+    upper-right", 200–300ms; `--duration-base` is 250ms).
+  - Hover/focus: a light blue wash (`--color-accent-subtle`) + the text darkening
+    to black, replacing the full white/black inversion these rows had — the brief
+    asked for flat and lightweight, not a card.
+  - **Two cascade collisions found by measuring, not by looking:** the alternation
+    pass's `.section--light .service-related__link:hover` (0,2,0) beat the new
+    wash (0,1,1) and loaded later, so the inversion would have silently survived
+    the redesign; and `.section--light h3` (0,2,0) beat
+    `.service-related__title` (0,1,0), painting the group titles black —
+    measured rgb(1,1,1) where blue was intended. Both fixed by matching
+    specificity; no `!important`.
+  - Heading capped at **44rem, not 34**: at 34rem it broke into three lines at the
+    60px ceiling, which costs more vertical space than the full-width version it
+    was meant to tame. Its SIZE stays on the shared `main h2` clamp — §2 of the
+    conventions is that every section title is one size, and a closing navigation
+    block is not the place to open an exception.
+  - **Two "optional" items in the brief were deliberately skipped**, with reasons:
+    no vertical divider between the columns (the rows' hover wash bleeds
+    `--container-padding` past each column edge, so the right column's wash would
+    cross a centred divider every time it lit up), and no off-white section tint
+    (the section immediately above this one is the black form section, so there is
+    nothing to differentiate from).
+  - Tested at all eight widths the brief names — 320 / 375 / 390 / 430 / 768 /
+    1024 / 1280 / 1440: no horizontal scroll, titles and first rows aligned across
+    both columns, row heights consistent (81/82px).
+- **Hero proof points now match the homepage's**: three SHORT chips in one row
+  instead of three stacked sentences (client 2026-08-03: "los tics tienen que ser
+  iguales que la hero... más cortitos y en una sola línea"). Same layout, gaps,
+  type and 18px blue ticks as `.hero__reassurance` — verified side by side:
+  3 items, 1 row, 18px icons, rgb(61,154,211) on both pages.
+  - **Copy was shortened, and only by truncation.** Each chip is a literal
+    substring of the draft's own hero line — "Pfortendienst und Rundgänge",
+    "Technik-geschulte Kräfte", "24/7 direkt erreichbar" — so no concept and no
+    wording was invented. The detail that dropped out of the hero is still spelled
+    out in full in the Leistungsumfang and Ansprechpartner sections, so the page
+    loses nothing; this is the first time copy on this page was cut, and it was
+    the explicit ask.
+  - **Moved below the CTAs**, also matching the homepage. That is not only visual:
+    js/hero-reveal.js animates `.hero__lead → .hero__actions → .hero__reassurance
+    → .hero__trust` in that fixed order, and with the points above the actions the
+    cascade played out of sync with the reading order. The DOM now matches the
+    script.
+  - On a phone the row wraps to three lines, which is the homepage's own behaviour
+    at that width — the chips stay chips.
+- **FAQ question tracking fixed sitewide** (client: the werkschutz FAQ "tiene muy
+  poco letter spacing... quiero que todas las secciones de FAQs tengan la misma").
+  - Measured all three FAQ pages first: they were **already identical** on every
+    value — gap 16px, question 16px, padding 16/24, item height 72px — because the
+    shared `.faq__list--cards` promotion earlier the same day made them so. So the
+    difference was not between pages.
+  - What was real: base.css tightens EVERY heading by a flat `-1px`, requested for
+    display headings. At 48–60px that is about -2%; the FAQ question is **16px**,
+    where the same -1px is **-6%** and the letters visibly collide. That is what
+    "muy poco letter spacing" describes — the letters too close, not too far.
+  - Fixed in `.faq-item summary h3` (components.css), i.e. for **every FAQ on the
+    site** at once, which is the second half of the ask: `letter-spacing: normal`
+    plus `--line-height-base` instead of the 1.25 heading value, since that element
+    is already styled as body text (16px, regular weight). Verified: all three
+    pages now report `normal` / 25.6px, and item height is unchanged at 72px, so
+    no layout moved.
+  - Written into docs/design-system.md §2 as the general rule: a heading that is
+    styled as body copy takes body metrics — the -1px is for display sizes only.
+- **Ansprechpartner rebuilt: person first, certificates supporting** (client
+  brief). It was two parallel text columns of equal weight, which made the section
+  read as admin rather than as "here is your contact". Now two zones — a contact
+  block with a photo column, then a certification strip under a hairline.
+  - **The portrait is a RESERVED FRAME, by the client's own decision.** No photo of
+    Alexander Jäger exists in the project (checked the repo and the Desktop). The
+    only near-fit is `system-accountable-contact.jpg` — the homepage's "one
+    accountable contact" photo of an unidentified man in a suit — and at that size
+    beside his name and role, every visitor would read it as him. I asked instead
+    of choosing: the client picked the reserved 4:5 frame with a bracketed
+    "[Portrait Alexander Jäger folgt]" label. It holds the real space (no CLS, no
+    layout shift when the photo lands) and swapping it in is replacing one `<p>`
+    with a `<picture>`.
+  - **DOM order IS the mobile order the brief specifies** (eyebrow → heading →
+    photo → name → role → text → phone → email → certs); the desktop two-column
+    arrangement comes from grid areas on top of it, so tab order always matches
+    the screen. Same rule as the price block — never `order` for this.
+  - Contact details are now two real actions: the phone as an outline pill (the
+    hero's own secondary-action treatment, so they read as the same kind of thing)
+    and the mail as a quieter underlined action — the priority split the brief
+    asks for. Both keep `tel:`/`mailto:` and get hover + focus states.
+  - Certification strip: heading, badges at **8.5rem** (from 4.5rem — height only,
+    width auto, so the official DEKRA proportions are untouched), and the three
+    claims as short ruled lines with the standard name leading
+    (`DIN 77200-1` / `DIN EN ISO 9001` / `§ 34a GewO`). Every fact unchanged, just
+    split so the standard can carry the emphasis.
+  - **One copy change**, and it is the client's own supplied wording: the paragraph
+    drops "Ihr Werkschutz-Konzept erstellen erfahrene Sicherheitsexperten". Not
+    lost from the page — the Sicherheitskonzept section states it in full.
+  - New sprite symbol `#icon-mail`. The mail action was borrowing `#icon-contact`,
+    a person silhouette, which is the wrong glyph for an email address. Note the
+    two action icons need SEPARATE fill/stroke rules: icon-phone is a filled
+    symbol and icon-mail is a stroked one, and neither's presentation attributes
+    survive `<use>` — one shared rule renders the envelope as a black blob.
+  - Measured at 1440: columns 494/668px, photo frame 416x520 (4:5), badge 136px,
+    phone pill 58px tall. No horizontal scroll at 320 / 375 / 390 / 430 / 768 /
+    900 / 1024 / 1440.
+- **First real visual confirmation of the motion on this page**: one screenshot
+  taken WITHOUT forced reduced-motion shows the pixel band mid-dissolve at the
+  white→black boundary (jagged tile edge, exactly the homepage look), plus the
+  char title reveal and the text blur-in mid-flight. Everything else in this
+  build report is still Chrome-headless measurement under forced
+  `prefers-reduced-motion` — **the header's light/dark switch over the new white
+  sections has not been seen** and is worth the `npm run dev` check.
 
 **2026-07-30 — full mobile pass over the homepage (client brief: "make the
 entire homepage feel like it was originally designed for mobile, not simply
@@ -1358,10 +2521,18 @@ review:
   confirmed yet — do not wire these up without checking first); "Coverage
   Areas" also later removed. Nav links are now centered in the header row
   independent of the logo/CTA button (`.site-nav__list`, absolutely
-  positioned). The link matching the current page gets a filled pill via
+  positioned). The link matching the current page is marked via
   `aria-current="page"`, set at runtime by `initActiveNavLink()`
   (`js/main.js`) since the header partial has no per-page knowledge of
-  its own. Header CTA button is chunkier (`.btn--lg`) with a trailing
+  its own. **It used to draw a filled gray pill; since 2026-08-03 it is a
+  blue underline with no fill** (client: "este fill horrible... solo
+  underlined con el azul del CTA") — the same underline the nav already uses
+  on hover, so the current page reads as permanently hovered. On the frosted
+  light header the underline switches to `--color-blue-dark`, since #3D9AD3
+  on white is ≈2.6:1, under the 3:1 minimum for a UI boundary. See
+  `a.site-nav__link[aria-current="page"]` in site-chrome.css; the
+  page-scoped copy that /kontakt/ carried since 2026-07-31 was deleted in
+  the same change. Header CTA button is chunkier (`.btn--lg`) with a trailing
   arrow ("Request Analysis →"); this and every other `.btn` also got
   slightly narrower side padding sitewide (`components.css`).
 - **Hero**: phone number (`tel:+499519643520`) is back, styled as an
@@ -1489,6 +2660,12 @@ explicitly-requested exceptions to that).
   completely unfiltered.
 - **Nav label**: "Innovation" → "Our System" (`partials/header.html`) —
   text only, still an `href="#"` placeholder, no other nav item touched.
+  **Superseded twice on 2026-08-03**: the item was first wired to
+  `/#our-system` (the homepage section — there was never a page behind it), then
+  **removed from the nav entirely** at the client's request, in both headers
+  actually in use (`header-de.html` / `header-en.html`). The nav is now
+  Leistungen · Referenzen · Karriere · Kontakt, every one of them a real page.
+  Only the unused legacy `partials/header.html` still carries the bare `#`.
 - **Coverage Areas pin icon replaced**: the shared sprite's `icon-pin`
   (client reported it as "feo"/ugly in this specific spot) swapped for a
   client-supplied `assets/icons/icon-location.svg` (fixed white fill,
@@ -2074,6 +3251,10 @@ this project has no real customer photos to use instead.
 │   └── frankonia-developer-guidelines.md   client source of truth, not deployed
 ├── pages/
 │   ├── index.html                 homepage source
+│   ├── referenzen.html             /referenzen/ — built 2026-08-03 from the
+│   │                                 client's draft 27; first page to reuse
+│   │                                 page-service.css as a chassis rather than as
+│   │                                 a service template
 │   └── werkschutz.html             first service page, built 2026-07-15 as
 │                                     the reusable service-page template —
 │                                     see "Service-page template" below
@@ -2098,15 +3279,45 @@ this project has no real customer photos to use instead.
 │   │                              accordion — all now used by 2+ pages
 │   ├── site-chrome.css           header/nav/mobile-toggle/footer/whatsapp-button — shared
 │   ├── motion.css               prefers-reduced-motion override, .u-reveal
+│   ├── lead-form.css             the closing lead form (.conversion*) — SHARED,
+│   │                              extracted from page-home.css 2026-08-03 when
+│   │                              /werkschutz/ became the second page to need it
+│   │                              verbatim (the checklist has it on all 49
+│   │                              pages). Not in head-common: linked per page,
+│   │                              BEFORE that page's own stylesheet, so a
+│   │                              page-scoped rule can still override it. The
+│   │                              homepage kept only `.pixel-seam +
+│   │                              .conversion` (a homepage-only effect)
+│   ├── testimonials.css          the .testimonial card — SHARED, extracted from
+│   │                              page-home.css 2026-08-03 when /referenzen/
+│   │                              needed the identical component. Same rule as
+│   │                              lead-form.css: linked per page, BEFORE that
+│   │                              page's own stylesheet. The homepage kept every
+│   │                              `.references*` rule (the section, its white
+│   │                              background, the result stats, the 3-up grid) —
+│   │                              that is composition, not the card
+│   ├── page-referenzen.css       /referenzen/-only blocks (~300 lines): the
+│   │                              photo-less hero override, the result tiles, the
+│   │                              quotes grid, the client logo row + roster, the
+│   │                              case-study cards and the closing certs row.
+│   │                              Small because that page loads page-service.css
+│   │                              as its CHASSIS — see docs/page-conventions.md
+│   │                              §9.1
 │   ├── page-home.css             homepage-only sections, NOT in head-common —
 │   │                              linked directly in pages/index.html's own
-│   │                              <head>. Still owns the homepage-only "main h2"
-│   │                              oversized-heading treatment and .faq__intro's
-│   │                              forced one-line heading — deliberately not
-│   │                              promoted, see page-service.css's header
-│   │                              comment for why the service template doesn't
-│   │                              reuse either
-│   └── page-service.css          service-page template styles (currently only
+│   │                              <head>. Owns the "main h2" oversized-heading
+│   │                              clamp and .faq__intro's forced one-line
+│   │                              heading. page-service.css now carries its own
+│   │                              copy of the SAME h2 clamp (client 2026-08-03,
+│   │                              service pages match the homepage) — keep the
+│   │                              two in sync; they are one decision in two
+│   │                              page-scoped files
+│   └── page-service.css          service-page template styles + THE SHARED PAGE
+│                                   CHASSIS (--content-inset, `main h2`, breadcrumb
+│                                   chevron, .section--light, .service-hero*,
+│                                   .service-link, the whole .pixel-seam block) —
+│                                   /referenzen/ links it for exactly those, see
+│                                   docs/page-conventions.md §9.1. Originally only
 │                                   pages/werkschutz.html uses it, but every
 │                                   class is named generically — see
 │                                   "Service-page template" below) — linked
@@ -2306,56 +3517,61 @@ a page-scoped stylesheet instead of growing the shared files unboundedly.
 
 ## Service-page template
 
-`pages/werkschutz.html` (→ `/werkschutz/`) is the reusable template for
-all 10 service pages, built 2026-07-15 per guidelines §8 Step 2. **Do not
-build the other 9 until this one is explicitly reviewed and approved** —
-see "Current phase".
+`pages/werkschutz.html` (→ `/werkschutz/`) is the reusable template for all 12
+service pages. **Rebuilt 2026-08-03** against the client's real German copy and
+the homepage's design language — see the 2026-08-03 entry under "Current phase"
+for the full report, which this section now describes rather than the
+2026-07-15 English placeholder version. **Do not build the other 11 until this
+one is explicitly reviewed and approved.**
 
 **What's shared (lives in `components.css`, loaded on every page — a
 second service page needs zero new CSS for these):**
 `.section`/`.section--subtle`/`.section--inverse`/`.section__intro`,
-`.brand-bar`/`.hex`, `.breadcrumbs*`, `.review-card*`
+`.section-eyebrow`, `.brand-bar`/`.hex`, `.breadcrumbs*`, `.review-card*`
 (incl. `.review-card__stars-fill--94`, the one real confirmed rating),
 `.faq__list`/`.faq-item*`/`.faq__toggle-row`, `.btn*`, `.badge`, `.stat*`.
+Plus `css/lead-form.css` — the closing lead form, shared with the homepage
+since 2026-08-03; link it in the page `<head>` *before* `page-service.css`.
 
 **What's service-page-specific (lives in `css/page-service.css`, one file
 shared by all future service pages — a second service page still needs
 zero new CSS, just reuses these classes with different copy):**
-`.service-hero*`, `.service-intro*`, `.service-problems*`,
-`.service-scope*`, `.service-pillars*`, `.service-process*`,
-`.service-trust*`, `.service-areas*`, `.service-reference*`,
-`.service-cta*`. Every class is named `.service-*`, never
-`.werkschutz-*` — confirmed while building the first page that nothing
-in this file needed service-specific naming.
+`.service-hero*`, `.service-risk*`, `.service-contrast*`, `.service-scope*`,
+`.service-highlight*`, `.service-compare*`, `.service-cases*`,
+`.service-konzept*`, `.service-price*`, `.service-contact*`,
+`.service-related*`, `.service-link*`. Every class is named `.service-*`, never
+`.werkschutz-*`. Three of them exist in generic form specifically because
+[docs/build-checklist.md](docs/build-checklist.md) counts them beyond service
+pages: `.service-price*` (27 pages), `.service-konzept*` (11),
+`.service-compare*` (4, incl. `.service-panel*` / `.service-decision*`).
 
 **What's page-specific (only in `pages/werkschutz.html` itself, and
 must change for every new service page):** all visible copy, the H1/meta/
-canonical/OG tags, the hero image (`assets/images/<service>.webp/.jpg` —
-already exists for all 10, see "Folder architecture"), breadcrumb current-
-page text, the 6 problem/scope/pillar/process items' content (concepts
-are reusable, wording is not), city-link text (`<service> in <city>`),
-and the reference block (must stay placeholder until a real one exists
-per service — don't invent one to fill the template faster).
+canonical/OG tags, the JSON-LD (`Service` name/description/`offers` price
+range + the `FAQPage` entries, which must mirror the visible FAQ 1:1), the hero
+image (`assets/images/<service>.webp/.jpg` — already exists for all 10, see
+"Folder architecture"), breadcrumb current-page text, the form field ids
+(`wk-*` here — keep them unique per page), and the internal-link lists.
 
 **To build the second service page:** copy `pages/werkschutz.html` to
 `pages/<slug>.html` (slug per guidelines §2.2's confirmed URL map —
-`objektschutz`, `baustellenbewachung`, etc.), then update: `<title>`/
-meta description/canonical/og:* (service name + keyword), the breadcrumb
-current-page text, H1, every section's copy, and the hero `<img>` src/
-srcset/alt to that service's own `assets/images/<slug>.webp/.jpg` (already
-converted, see "Folder architecture"). Do not touch `css/page-service.css`
-or `components.css` unless a genuine cross-service layout problem shows
-up — if the *content* doesn't fit (e.g. a service needs 8 scope items
-instead of 6), that's still just more `.service-scope__item` blocks in
-the grid, not a CSS change.
+`objektschutz`, `baustellenbewachung`, etc.), then work through that service's
+own `content-de/*.docx` draft section by section. They all share this same
+9-Punkte-Struktur, so the sections map 1:1; what changes is copy, meta, the
+photo, the price range, and the links. Do not touch `css/page-service.css`,
+`css/lead-form.css` or `components.css` unless a genuine cross-service layout
+problem shows up — if the *content* doesn't fit (e.g. a service needs 8 scope
+items instead of 6), that's still just more list items, not a CSS change.
 
-**Deliberately not reused from the homepage:** the `main h2` oversized-
-heading treatment and the homepage's `.pillar-card`/`.services__index`/
-`.pain-hook` layouts — the client's build brief for this page explicitly
-asked for restrained heading sizes and section compositions that don't
-just repeat the homepage's card grids. See `page-service.css`'s header
-comment for the reasoning; don't "fix" service-page H2s to match the
-homepage's scale without a specific new request to do so.
+**The homepage's design language IS reused now** — oversized regular-weight
+`main h2`, blue arrow CTAs, section eyebrows, and the char/item/text scroll
+reveals (client instruction 2026-08-03). This reverses the original brief's
+"restrained headings, don't repeat the homepage" direction; the older note that
+used to sit here said the opposite. Still NOT reused: the homepage's bespoke
+section machines (`.pillar-card`/`.services__index`/`.pain-hook`/konzept cubes/
+sticky story) — a service page tells its story in the draft's own sections, and
+the compact `.service-konzept` block exists precisely so it doesn't have to
+pull in the 3-cube sequence.
 
 **Known bug fixed while building this page, relevant to every future
 page:** `partials/header.html`'s CTA used a bare `#sicherheitsanalyse`

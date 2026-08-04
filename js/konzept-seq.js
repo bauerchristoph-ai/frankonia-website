@@ -92,9 +92,17 @@
      onto scroll progress so they reverse cleanly.
 
      TIP_LINE / TIP_TEXT are each tip's own slice of the range; STAGGER is the gap
-     between consecutive tips. Layer 1 keeps base 0.16 (its first tip is already
-     well timed) and only the stagger tightened, 0.26 -> 0.18, which is what pulls
-     tips 2 and 3 earlier without moving tip 1. */
+     between consecutive tips.
+
+     BASE is the one lever for "they show up too late" (client 2026-08-03, "los
+     tooltips tienen que aparecer un poco antes, en desktop"): it is where the
+     first tip starts inside its layer's scroll range, and every later tip is
+     base + seq * stagger, so lowering it moves the whole set earlier without
+     changing the spacing between them. All three layers dropped ~0.10 in that
+     pass — see the call sites (layer 1 below, layers 2/3 in tipRanges).
+     The ScrollTrigger start/end values were deliberately NOT touched: layer 1's
+     range also drives the route drawing and the walking figure, which are
+     already timed against each other. */
   var TIP_LINE = 0.13, TIP_TEXT = 0.08;
 
   function prepTips(layer) {
@@ -237,7 +245,11 @@
           c.classList.add(c._frac > p ? "is-upcoming" : (i === activeIdx ? "is-active" : "is-past"));
         });
         arrows.forEach(function (a) { gsap.set(a, { opacity: p >= a._frac ? 1 : 0 }); });
-        paintTips(tips, p, 0.16, 0.18);
+        // base 0.16 -> 0.05 (client 2026-08-03, tooltips earlier). The tips no
+        // longer wait for the route to be well underway: the first one starts
+        // drawing its connector at 5% of the walkthrough. Stagger unchanged, so
+        // the last tip still lands around 60% of the range, well before the end.
+        paintTips(tips, p, 0.05, 0.18);
         // Walker moves in LOCKSTEP with the route drawing (client 2026-07-29 —
         // "the line and the person have to go at the same time"): same progress
         // as the reveal above, so the figure sits at the tip of the line being
@@ -273,12 +285,34 @@
        their own clock once the layer arrived instead of following the scroll.
 
        Own trigger per layer, over the stretch where the diagram is actually on
-       screen. Base/stagger are set per layer so the last tip lands around 85-90%
-       of the range: layer 2 has 3 tips like layer 1, layer 3 has 5 and needs a
-       tighter gap to fit them all in. */
+       screen. Base/stagger are set per layer so the whole set finishes around
+       60 % of the range: layer 2 has 3 tips like layer 1, layer 3 has SEVEN and
+       needs a much tighter gap to fit them all in.
+
+       Bases lowered 2026-08-03 with layer 1's (0.16 -> 0.05, 0.10 -> 0.03): the
+       client's note was about the tooltips in general, and leaving these two on
+       the old timing would have made the three diagrams behave differently.
+
+       ** STAGGER IS A FUNCTION OF THE TIP COUNT — retune it whenever a tip is
+       added or removed. ** The last tip completes at
+       base + (n-1) * stagger + TIP_LINE + TIP_TEXT, so adding a tip pushes the
+       whole tail later even though nothing about the timing changed. That is
+       exactly what happened on 2026-08-04: layer 3 went from 5 tips to 7 (the
+       new Brandmelder + Alarmanlage labels) and its 0.10 stagger, which had been
+       sized for 5, moved the last tip's completion from p=0.64 to p=0.84 —
+       measured at 1440px as 1031px into a 1227px range, 246px of extra scrolling
+       versus before. The client felt precisely that ("tengo que pasarme un poco
+       de escroleo para ver los últimos dos"). Stagger 0.10 -> 0.06 puts it back
+       at p=0.60 / 736px, i.e. slightly earlier than the 5-tip version ever was,
+       which is the "un poco más rápido" they asked for on top of the fix.
+       It also lines all three diagrams up: 0.60 / 0.62 / 0.62.
+       Kept as `stagger` rather than a computed "finish by p=0.6" because the gap
+       between tips is the thing being designed — the cascade still has to read
+       as a cascade. At 0.06 against a 0.21-long per-tip animation, 2-3 tips are
+       in flight at once; much below that they stop arriving one after another. */
     var tipRanges = [
-      { layer: L2, base: 0.16, stagger: 0.18 },
-      { layer: L3, base: 0.10, stagger: 0.10 },
+      { layer: L2, base: 0.05, stagger: 0.18 },
+      { layer: L3, base: 0.03, stagger: 0.06 },
     ];
     var extraTips = [];
     tipRanges.forEach(function (cfg) {
@@ -310,6 +344,142 @@
       });
       if (walker) walker.setAttribute("transform", "translate(560 590)");
       arrows.forEach(function (a) { if (a.parentNode) a.parentNode.removeChild(a); });
+    };
+  });
+
+  /* ==========================================================================
+     MOBILE / TABLET TOOLTIPS (client 2026-08-03)
+
+     The in-SVG .kz-tip boxes are laid out OUTSIDE the cube's 0 0 1079 1110
+     viewBox (x=-250 / x=1050) so the desktop split composition can use the space
+     beside the diagram. Below 1024px the SVG clips at its own box, which is why
+     css/konzept-seq.css hides them outright — un-hiding is not an option, they
+     have to be re-anchored.
+
+     So this branch rebuilds them as real HTML, over the diagram:
+       - POSITION comes from each tip's own anchor dot (cx/cy), expressed as a %
+         of the viewBox. The SVG is width:--kz-frame / height:auto with
+         preserveAspectRatio="xMidYMid meet", so its rendered box has exactly the
+         viewBox aspect and the mapping is exact at any width.
+       - COPY comes from the .konzept-seq__terms list, not from the SVG <text>
+         nodes: the list already holds each term as one clean name + one clean
+         description, while the SVG splits its sub-line into two/three manually
+         wrapped <text> elements. Matching is by label text, so a tip with no
+         term (or the reverse) is simply skipped instead of mispairing.
+       - ONE tip is visible at a time, indexed off the diagram's scroll progress —
+         3 (or 5) boxes at once over a ~350px cube is unreadable clutter, which is
+         the whole reason the desktop layout puts them outside the cube.
+
+     JS-only-ever-enhances, same contract as everything else here: every chip is
+     created at runtime, nothing in the HTML/CSS depends on it, and no-JS /
+     reduced-motion / a GSAP failure all leave the plain term list, which carries
+     the same words as crawlable text.
+     ========================================================================== */
+  var VB_W = 1079, VB_H = 1110;
+
+  function buildMobileTips(layer) {
+    var diagram = layer.querySelector(".konzept-seq__diagram");
+    var terms = Array.prototype.slice.call(layer.querySelectorAll(".konzept-seq__terms li"));
+    if (!diagram || !terms.length) return null;
+
+    // Label text -> anchor point, read off the SVG tips already in the markup.
+    var anchors = {};
+    Array.prototype.slice.call(layer.querySelectorAll(".kz-tip")).forEach(function (t) {
+      var label = t.querySelector(".kz-tip__label");
+      var dot = t.querySelector(".kz-tip__dot");
+      if (!label || !dot) return;
+      anchors[label.textContent.trim()] = {
+        x: +dot.getAttribute("cx") / VB_W,
+        y: +dot.getAttribute("cy") / VB_H,
+      };
+    });
+
+    var overlay = document.createElement("div");
+    overlay.className = "kz-mtips";
+    overlay.setAttribute("aria-hidden", "true");
+
+    var items = [];
+    terms.forEach(function (li) {
+      var nameEl = li.querySelector(".konzept-seq__term-name");
+      var subEl = li.querySelector(".konzept-seq__term-sub");
+      if (!nameEl) return;
+      var a = anchors[nameEl.textContent.trim()];
+      if (!a) return;
+
+      /* Which way the box opens, and how wide it may get: whichever side of the
+         anchor has more room, capped so a centred anchor can't produce a chip
+         that runs off the opposite edge. */
+      var left = a.x > 0.5;
+      var avail = (left ? a.x : 1 - a.x) * 100 - 3;
+
+      var chip = document.createElement("div");
+      chip.className = "kz-mtip" + (left ? " kz-mtip--left" : "");
+      chip.style.left = (a.x * 100).toFixed(2) + "%";
+      chip.style.top = (a.y * 100).toFixed(2) + "%";
+      chip.style.maxWidth = Math.min(avail, 54).toFixed(1) + "%";
+      chip.innerHTML =
+        '<span class="kz-mtip__dot"></span><span class="kz-mtip__line"></span>' +
+        '<span class="kz-mtip__body"><span class="kz-mtip__name"></span>' +
+        '<span class="kz-mtip__sub"></span></span>';
+      chip.querySelector(".kz-mtip__name").textContent = nameEl.textContent;
+      chip.querySelector(".kz-mtip__sub").textContent = subEl ? subEl.textContent : "";
+
+      overlay.appendChild(chip);
+      items.push({ chip: chip, li: li });
+    });
+
+    if (!items.length) return null;
+    diagram.appendChild(overlay);
+    /* Dims the resting term chips so the active one reads as the current one.
+       Set here, not in CSS, so the list only ever dims when the tooltips it is
+       tracking actually exist. */
+    var list = layer.querySelector(".konzept-seq__terms");
+    if (list) list.classList.add("is-synced");
+    return { overlay: overlay, items: items, list: list };
+  }
+
+  mm.add("(max-width: 1023.98px) and (prefers-reduced-motion: no-preference)", function () {
+    var built = [];
+
+    layers.forEach(function (layer) {
+      var b = buildMobileTips(layer);
+      if (!b) return;
+      built.push(b);
+
+      var n = b.items.length;
+      var current = -1;
+      function setActive(i) {
+        if (i === current) return;
+        current = i;
+        b.items.forEach(function (it, j) {
+          it.chip.classList.toggle("is-active", j === i);
+          it.li.classList.toggle("is-active", j === i);
+        });
+      }
+
+      /* Equal slice of the diagram's own pass through the viewport per tip. The
+         range is deliberately short of the section edges so the first tip is
+         already up once the cube is properly on screen and the last one is still
+         up as it leaves. */
+      ScrollTrigger.create({
+        trigger: b.overlay.parentNode,
+        start: "top 82%",
+        end: "bottom 25%",
+        invalidateOnRefresh: true,
+        onUpdate: function (self) {
+          var i = Math.floor(self.progress * n);
+          setActive(i < 0 ? 0 : i > n - 1 ? n - 1 : i);
+        },
+        onLeaveBack: function () { setActive(0); },
+      });
+    });
+
+    return function cleanup() {
+      built.forEach(function (b) {
+        b.items.forEach(function (it) { it.li.classList.remove("is-active"); });
+        if (b.list) b.list.classList.remove("is-synced");
+        if (b.overlay.parentNode) b.overlay.parentNode.removeChild(b.overlay);
+      });
     };
   });
 })();

@@ -1,0 +1,714 @@
+/*
+  /jobs/ — Karriere: Recruiting-Seite.
+  Built 2026-08-03 from content-de/"2026-07-27 Webtext 29 Jobs.docx"
+  (client draft, Stand 24.07.2026, Entwurf für Review/Dirk).
+
+  THIS FILE IS SMALL ON PURPOSE. The page loads, in this order:
+    css/lead-form.css      the closing form (shared since 2026-08-03)
+    css/page-service.css   the page chassis — see below
+    css/page-jobs.css
+  page-service.css is not "the Werkschutz stylesheet": it carries the pieces
+  docs/page-conventions.md defines for EVERY page, and they only live there
+  because that was the first page to need them —
+    · the --content-inset rule on both sides (§1),
+    · the oversized regular-weight `main h2` (§2),
+    · the breadcrumb chevron (§3),
+    · the whole .pixel-seam* block and the padding every following section
+      reserves for it (§4.4),
+    · .section--light, which re-declares the tokens for a white section (§8.2),
+    · .service-hero*, .service-link and .service-related*, reused here as-is.
+  Only what is genuinely specific to this page is below.
+
+  SECTION RHYTHM (dark ▪ / light ▫), with a pixel dissolve at each colour change:
+    Hero ▪ → Arbeitgeber ▫ → Einstieg ▪ → Bewerbung ▫ → FAQ ▫ → Formular ▪
+    → Weiterlesen ▫ → footer.
+  Bewerbung and FAQ are deliberately ONE white area with no seam between them:
+  they are the same chapter (how applying works, then the questions you have
+  while deciding to apply), the same call /referenzen/ makes for its results +
+  quotes pair. A seam between two white sections would dissolve white on white.
+
+  THE ONE THING THIS PAGE DOES DIFFERENTLY FROM EVERY OTHER: it says "du", not
+  "Sie", per the draft ("Du-Ansprache bleibt — Recruiting-Kontext"), and it has
+  NO phone CTA anywhere in its own content ("kein Telefon-CTA: Bewerbungen laufen
+  über die Seite"). Both are client instructions. If a future edit adds a phone
+  pill to this hero "for consistency", it is undoing a decision.
+*/
+
+/* ---- Hyphenation ---- */
+/* base.css sets hyphens: auto on p/li — right for running prose, wrong for the
+   short column-set copy this page is made of ("Sicherheits-branche",
+   "Objekt-verantwortung"). page-service.css turns it off for its own blocks;
+   these are this page's. docs/page-conventions.md §7. */
+.jobs-why__item p,
+.jobs-levels__body p,
+.jobs-steps__item p,
+.jobs-form__hint {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* ---- 1. Hero — foto de fondo a sangre ------------------------------------ */
+/* REBUILT 2026-08-03 (client: "el background va a ser la foto esa", HeroKarriere
+   .png). It was the service template's two-column hero (copy | portrait photo);
+   now the photo is the hero's background and the copy column is the whole hero —
+   the homepage's model, on a page that keeps the interior chrome (solid header +
+   breadcrumb above it).
+
+   Only the layout changes. Everything measured for this hero in the service
+   template still applies and is NOT overridden here: the H1's clamp (52px at
+   1440, the homepage hero's own), the lede's 32rem measure, the 18px blue ticks,
+   the 2.75rem DEKRA seals, and `min-height: calc(100svh - 8rem)` so the hero
+   fills the first screen below the 8rem of header + breadcrumb.
+
+   The photo does NOT bleed up behind the header, deliberately: on an interior
+   page the breadcrumb sits between them (docs/page-conventions.md §8.2), and
+   pushing the image under a transparent header would put the nav over a bright
+   street scene. The header stays over the page's own black.
+
+   No badge rule here either: the draft's hero chip was dropped for the same
+   reason the client dropped /werkschutz/'s (see the comment in pages/jobs.html),
+   and a dead rule is not kept waiting for it. */
+.jobs-hero {
+  /* .service-hero is `display: grid` from 1024px up; the background is absolutely
+     positioned, so it never becomes a grid item either way. */
+  position: relative;
+  /* If the photo fails to load, or before it arrives, the hero is still black
+     with white text on it — the copy never depends on the image. */
+  background-color: var(--color-bg);
+  overflow: hidden;
+}
+
+.jobs-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* Not `pointer-events: none` on the wrapper — it sits under the content's own
+     stacking context, and the wash below is what covers the whole box. */
+}
+
+/* <picture> is INLINE, so an <img> at height: 100% inside it would resolve
+   against the picture's shrink-to-fit box rather than the hero. Same trap as the
+   service hero's photo frame and the Arbeitgeber cards. */
+.jobs-hero__bg picture,
+.jobs-hero__bg img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.jobs-hero__bg img {
+  object-fit: cover;
+  /* The two guards sit at 51–84 % of the frame's width. At desktop widths the
+     image's 1.79 ratio is close to the hero's, so there is almost no crop; on a
+     phone `cover` crops hard horizontally, and this is what keeps them in frame
+     instead of showing the empty street on the left (which the wash covers
+     anyway). */
+  object-position: 65% center;
+}
+
+/* Readability wash — on a pseudo-element, never on the <img>, and never a flat
+   tint over the whole frame (that flattens the photo, the mistake the homepage
+   hero was corrected for twice). Two gradients:
+   (1) a left-side fade, because all the copy is on the left, clearing to fully
+       transparent at 62 % so the guards and the vehicle stay untouched;
+   (2) a short bottom fade, so the hero dissolves into the black page and the
+       pixel seam below it with no visible seam of its own.
+   No top fade is needed: the header does not sit over this photo. */
+.jobs-hero__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.94) 0%,
+      rgba(0, 0, 0, 0.78) 24%,
+      rgba(0, 0, 0, 0.4) 44%,
+      rgba(0, 0, 0, 0) 62%
+    ),
+    linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 18%);
+}
+
+/* The copy sits above the photo and its wash. z-index on the grid, not on each
+   block, so the hero's own reveal animations (js/hero-reveal.js writes inline
+   transforms here) never create a competing stacking context. */
+.jobs-hero__grid {
+  position: relative;
+  z-index: 1;
+  /* One column at every width now — the photo column is gone. This overrides
+     .service-hero__grid's 1.15fr / 0.85fr split from 1024px up. */
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Without a cap the lede and the ticks would run the full width of the photo and
+   the hero would read as a banner, not a first screen. 34rem matches the widest
+   block inside it (.service-hero__points' own measure), so nothing wraps
+   differently than it did in the two-column layout. */
+.jobs-hero .service-hero__content {
+  max-width: 38rem;
+}
+
+@media (min-width: 1024px) {
+  .jobs-hero__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- 2. Warum FRANKONIA als Arbeitgeber — tarjetas editoriales ----------- */
+/* REDESIGNED 2026-08-03 (client): this was four text columns on hairlines, the
+   site's usual "ruled, not carded" four-up, and it read "too flat and corporate"
+   for a recruiting page. Now each benefit is a vertical editorial card:
+   photo (4:3) → small blue line icon → title → the same body copy, unchanged.
+
+   The restraint is the brief's, and it is what keeps these from looking like
+   generic SaaS cards: ONE hairline border, --radius-md (not --radius-lg), NO
+   shadow, NO fill (the card is the section's own white), no gradient or overlay
+   on the photo and no text over it. The only other line in the card is the
+   divider under the photo, which is the same hairline again.
+
+   Equal height and identical structure across all four is structural, not
+   tuned: the grid stretches its items, `height: 100%` makes each card fill its
+   cell, and the body is a flex column so the photo block is always the same
+   fraction of the card. Photo ≈ 45–50 % of card height at desktop widths (276px
+   wide → 207px tall against a ~230px text block); it moves with the copy, since
+   nothing here is a fixed height. */
+.jobs-why__grid {
+  list-style: none;
+  display: grid;
+  gap: var(--space-6);
+  /* Generous separation from the heading, per the brief — a step more than the
+     --space-7 the text-column version used. */
+  margin-top: var(--space-8);
+}
+
+.jobs-why__item {
+  display: flex;
+  flex-direction: column;
+  /* With the grid's default `stretch`, this is what makes all four cards end on
+     the same line no matter which body copy runs longest. */
+  height: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  /* Clips the photo to the card's own radius, so the image needs no radius of
+     its own and the two can never disagree. */
+  overflow: hidden;
+  /* Grid children default to min-width: auto, so a long German compound
+     ("Springer-Chaos") could otherwise set a column's minimum. */
+  min-width: 0;
+}
+
+/* Same ratio for all four, per the brief. The photos are studio shots on white,
+   so the frame carries a faint tint: it reserves the space before the image
+   loads (no CLS — the ratio here plus width/height on the <img>) and keeps the
+   card from looking empty at that moment. */
+.jobs-why__media {
+  aspect-ratio: 4 / 3;
+  background-color: var(--color-bg-subtle);
+  /* The divider between photo and text — the section's own hairline, not a
+     second value. */
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* <picture> is an INLINE element, so an <img> with height: 100% inside it
+   resolves against the picture's shrink-to-fit box instead of the frame — the
+   measured bug that left the service hero's photo 497px tall in a 676px frame.
+   Any component that wraps its <img> in a <picture> for the WebP needs this. */
+.jobs-why__media picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.jobs-why__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* The crop is centred and was checked photo by photo: every face, the
+     clipboard, the radio and the raised hand stay inside it. */
+  object-fit: cover;
+}
+
+/* 24px internal padding (--space-5), inside the brief's 24–28px range and a real
+   token rather than a new value. */
+.jobs-why__body {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5);
+}
+
+.jobs-why__icon {
+  /* Small, per the brief — the text-column version used 1.75rem, where the icon
+     was the block's only visual anchor. Here the photo does that job. */
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-bottom: var(--space-4);
+  /* Blue: --color-accent is blue-dark inside .section--light (page-service.css
+     re-declares the tokens), which is the only blue that clears contrast on
+     white. */
+  color: var(--color-accent);
+  /* The sprite's fill/stroke live on its <g id="icon-defs"> wrapper, which does
+     NOT propagate through <use> — set explicitly or a stroke icon renders as a
+     solid black blob. Same fix as every other icon on the site. */
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Bold (base.css's own heading weight, unchanged) and clearly separated from the
+   body by a full --space-3. */
+.jobs-why__item h3 {
+  font-size: var(--font-size-md);
+  margin-bottom: var(--space-3);
+}
+
+.jobs-why__item p {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  /* The body default (1.6) rather than the tighter heading line-height — four
+     narrow columns of German need the comfortable measure. */
+  line-height: var(--line-height-base);
+}
+
+/* Two cards per row from 640px — tablet, and (see the 1200px note below) narrow
+   desktops too. */
+@media (min-width: 640px) {
+  .jobs-why__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+}
+
+/* One card per row below 640px, where the photo spans the whole column.
+   ⚠️ This block is scoped to 639.98px, NOT to the 767.98px phone breakpoint the
+   rest of this file uses: the phone block used to force a single column on this
+   grid, which silently beat the `min-width: 640px` rule above (same specificity,
+   later in the file) and pushed the two-up layout to 768px. Measured at 640px:
+   one column, 616px-tall cards, a 448px photo — 73 % of the card. The brief asks
+   for two per row on a medium screen, so the single-column override has to end
+   where the two-column one begins.
+   The ratio drops to 3:2 here for the same reason: at 390px a full-width 4:3
+   frame is 262px tall and the four cards run nearly two screens. 3:2 takes ~85px
+   off each card and only keeps a little less height of the same centred crop
+   (object-fit: cover), so no subject is lost — the brief's "keep the image ratio
+   controlled on mobile", and all four cards still share one ratio. */
+@media (max-width: 639.98px) {
+  .jobs-why__grid {
+    grid-template-columns: minmax(0, 1fr);
+    /* Measured cap, not decoration: at a 639px viewport a single column is 597px
+       wide, which made the photo 398px tall (73 % of the card) and set the body
+       copy on a measure far wider than the two-column layout ever uses. Capped
+       and centred, the widest phone/small-tablet card behaves like the others
+       (~60 %). Below ~520px the container is narrower than this anyway, so on a
+       real phone the cap does nothing. */
+    max-width: 30rem;
+    margin-inline: auto;
+  }
+
+  .jobs-why__media {
+    aspect-ratio: 3 / 2;
+  }
+}
+
+/* Four equal cards in one row — the brief's desktop layout.
+   **1200px, not this project's usual 1024px desktop breakpoint, and the reason is
+   measured.** The card's height is driven by its copy, not by the photo, so the
+   narrower the column the taller the text block and the smaller the photo's share
+   of the card. At 1024px with four columns each track is ~200px: the 4:3 photo is
+   145px tall against a 508px card — a 28 % strip, against the brief's ~45–50 %,
+   and it reads as a thumbnail rather than a photo. Measured shares with four
+   columns: 1024px → 28 %, 1280px → 39 %, 1440px → 47 %.
+   So 1024–1199px stays on the two-column layout (photo share 62–68 % there),
+   which is also what the brief calls a medium screen. From 1200px up the four-up
+   row lands in or near the target and keeps climbing with the viewport: 1200px →
+   37 %, 1280px → 39 %, **1440px → 47 %** (this project's reference width, and the
+   middle of the brief's 45–50 %), 1600px → 50 %.
+   The 1200–1300 band stays a few points under the target, and that is a
+   deliberate trade-off rather than an oversight: with ~240px columns the only way
+   to reach 45 % is a square-to-portrait photo, and the brief also asks for one
+   shared 4:3 ratio across the four cards. Ratio consistency won. If the target
+   share matters more at those widths than the ratio does, the lever is
+   `aspect-ratio` inside this query — not a different column count. */
+@media (min-width: 1200px) {
+  .jobs-why__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* ---- 3. Wen wir suchen — die Qualifikations-Leiter ----------------------- */
+/* A LADDER, not five equal cards. The draft calls them "5 Zielgruppen-Karten",
+   but they are five rungs of one §34a qualification path, and a visitor is
+   looking for the single rung they are standing on — five symmetric cards make
+   that a search, a numbered ladder makes it a scan. Each rung: number + title on
+   the left (where you are), what it opens up on the right.
+   Real <ol>: the order carries meaning here, unlike the four benefit items
+   above.
+   The numbers are aria-hidden decoration — the <ol> already numbers itself for
+   assistive tech, and the visible 01–05 must not be read twice. */
+.jobs-levels__list {
+  list-style: none;
+  display: grid;
+  gap: 0;
+  margin-top: var(--space-7);
+}
+
+.jobs-levels__item {
+  display: grid;
+  gap: var(--space-4);
+  padding-block: var(--space-6);
+  border-top: 1px solid var(--color-border);
+  /* Grid children default to min-width: auto, so an unbreakable German compound
+     ("Objektverantwortung") could set a track's minimum and push the row past
+     its share — the measured cause of real horizontal scroll elsewhere on this
+     site. */
+  min-width: 0;
+}
+
+.jobs-levels__item:last-child {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.jobs-levels__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+/* Same tabular treatment as the homepage's numbered services index: the digits
+   are a position marker, so they must not shift width between 01 and 05.
+   Client 2026-08-03: at the title's size, not the small label size it started at
+   — so the rung number reads as part of the title line rather than as a caption
+   beside it. It must stay in step with .jobs-levels__head h3 below, INCLUDING the
+   phone override (both step down to --font-size-md there); if only one of the two
+   changes, the number and the title stop sitting on the same line. */
+.jobs-levels__number {
+  flex-shrink: 0;
+  font-size: var(--font-size-lg);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+}
+
+.jobs-levels__head h3 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+  /* §34a titles contain long compounds and a hard-space-free "(§ 34a)"; in a
+     narrow column one of them can set the track minimum. */
+  overflow-wrap: anywhere;
+}
+
+.jobs-levels__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+/* White, not the muted grey the rest of the page uses for body copy (client
+   2026-08-03). --color-text, not a literal white: on this dark section it
+   resolves to white, and if this block ever lands on a light section
+   (.section--light re-declares the token) it becomes the near-black instead of
+   staying invisible. */
+.jobs-levels__body p {
+  color: var(--color-text);
+  max-width: 42rem;
+}
+
+@media (min-width: 900px) {
+  .jobs-levels__item {
+    /* The title column is the narrower one on purpose: it is what the visitor
+       scans down, and a fixed-ish left column keeps all five titles starting on
+       the same line so scanning is vertical, not diagonal. */
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: var(--space-8);
+    align-items: start;
+  }
+}
+
+/* ---- 4. So läuft deine Bewerbung ---------------------------------------- */
+/* Three steps, connected. The hairline above the numbers is one continuous rule
+   across the row on desktop (each item draws its own segment), which is what
+   makes three blocks read as a sequence; on a phone the rule runs down the left
+   side of the stack instead, for the same reason. No arrows, no chevrons — the
+   numbers and the rule already say "in this order". */
+.jobs-steps__list {
+  list-style: none;
+  display: grid;
+  gap: var(--space-7);
+  margin-top: var(--space-7);
+}
+
+.jobs-steps__item {
+  position: relative;
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+  min-width: 0;
+}
+
+/* The number sits ON the rule, half above it, so the rule reads as a track the
+   steps are placed on rather than a box each step is inside. */
+.jobs-steps__number {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-pill);
+  /* Its own background, because it covers the hairline it sits on: the section's
+     colour, declared here rather than inherited, so it stays correct if this
+     block is ever used on a dark section (where .section--light does not apply
+     and the override below never fires). */
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-accent);
+}
+
+.jobs-steps__item h3 {
+  font-size: var(--font-size-md);
+  margin-bottom: var(--space-3);
+}
+
+.jobs-steps__item p {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  max-width: 34rem;
+}
+
+@media (min-width: 768px) {
+  .jobs-steps__list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-7);
+  }
+}
+
+/* ---- 5. FAQ — el mismo diseño que el de la homepage --------------------- */
+/* Client 2026-08-03: "que tenga el mismo diseño que la sección de FAQs en la
+   homepage." The homepage's FAQ look (client reference image, 2026-07-20) is:
+   centred heading, and instead of the shared bordered single-column accordion,
+   two columns of FILLED PILL cards with the "+" glyph on the LEFT of the
+   question. Those rules live in `.faq` in page-home.css, which no other page
+   loads — so this is that block, mirrored, scoped to this page's own section.
+   Values are copied verbatim, not re-picked: radius, padding, the 5%-grey fill,
+   the 64rem measure, the two columns from 768px, the on-white answer alpha.
+   **Keep in sync with page-home.css's `.faq` block** — it is one design decision
+   living in two page-scoped files, the same situation as the `main h2` clamp
+   (docs/page-conventions.md §2). If a third page asks for this look, that is the
+   moment to promote it to a `.faq--cards` modifier in components.css instead of
+   copying it again.
+   Not copied: the homepage's `.faq__cta` (a closing button under the accordion).
+   Here the application form is the very next section, so a button pointing at it
+   from 200px above would be the same action twice. */
+.jobs-faq .section__intro {
+  /* Overrides the shared 42rem cap the same way page-home.css does, so the
+     heading is centred on the same axis as the (already auto-centred) list. */
+  max-width: none;
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* .section-eyebrow is `display: flex` (it has the blinking square), and a
+   parent's text-align cannot centre a flex container's own items — the same
+   gotcha already documented on the homepage's References/Trust-Metrics intros.
+   The homepage's FAQ has no eyebrow at all; this page's every section does, so
+   it stays and gets centred rather than becoming the one section without one. */
+.jobs-faq .section-eyebrow {
+  justify-content: center;
+}
+
+/* The card-style accordion that used to be mirrored here from page-home.css is
+   now the shared `.faq__list--cards` modifier in components.css (promoted
+   2026-08-03, exactly as the note here said it should be once a third page asked
+   for it — /werkschutz/ did). The markup opts in with that class; nothing about
+   the look changed. */
+
+/* ---- 6. Bewerbungsformular ---------------------------------------------- */
+/* Two field types the shared lead form has never needed before: a <select> and
+   a file input. components.css styles .form-field__select as a filled, bordered
+   control for this site's dark surfaces, and css/lead-form.css only re-styles
+   input/textarea — so without the rules below the select would render as a dark
+   box in the middle of a white card. Everything here is the SAME underline
+   treatment lead-form.css gives the text fields, applied to two more elements;
+   no new values. Scoped under .jobs-form so the shared components stay untouched
+   for every other page. */
+
+/* tokens.css sets `color-scheme: dark` on :root so native controls match the
+   site's dark theme. Inside this white card that is backwards — the select's own
+   dropdown list and the file button would come up dark-on-dark. Same fix
+   /kontakt/ uses for its light page (docs/page-conventions.md §5, point 4). */
+.jobs-form {
+  color-scheme: light;
+}
+
+.jobs-form .form-field__select,
+.jobs-form__file {
+  padding: var(--space-2) 0;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid rgb(59 73 86 / 0.25);
+  border-radius: 0;
+  color: var(--color-gray);
+}
+
+.jobs-form .form-field__select:hover,
+.jobs-form__file:hover {
+  border-bottom-color: rgb(59 73 86 / 0.45);
+}
+
+.jobs-form .form-field__select:focus-visible,
+.jobs-form__file:focus-visible {
+  outline: none;
+  border-bottom-color: var(--color-accent-strong);
+  border-bottom-width: 2px;
+}
+
+/* The native caret is kept (no appearance: none): replacing it means shipping a
+   chevron as a background-image data URI, i.e. a hardcoded colour outside
+   tokens.css that also cannot follow currentColor. With color-scheme: light
+   above, the platform caret is a grey glyph on white — which is exactly what a
+   custom one would have been. */
+
+/* The file input's own button is the one control here that cannot be an
+   underline: it has to look pressable. A quiet outline chip, the same shape
+   language as the hero's credential badge, so it reads as secondary to the blue
+   submit button below it. */
+.jobs-form__file::file-selector-button {
+  margin-right: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid rgb(59 73 86 / 0.3);
+  border-radius: var(--radius-pill);
+  background-color: transparent;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  color: var(--color-gray);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-base) var(--easing-standard),
+    border-color var(--duration-base) var(--easing-standard);
+}
+
+.jobs-form__file::file-selector-button:hover {
+  background-color: rgb(59 73 86 / 0.06);
+  border-color: rgb(59 73 86 / 0.5);
+}
+
+/* The shared .form-field__hint is sized for the site's dark surfaces; on the
+   white card it needs the documented on-white muted value, same as the labels
+   in lead-form.css. */
+.jobs-form__hint {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: rgb(59 73 86 / 0.75);
+}
+
+/* ---- Light-section overrides tokens can't reach ------------------------- */
+/* .section--light re-declares the colour tokens (page-service.css §8.2), so
+   everything above that consumes a token is already correct on white. The one
+   exception is a surface that declares its own background: the step number's
+   pill is --color-bg (black) so it can cover the hairline, and on a white
+   section that would be a black dot. Same class of trap as the price box
+   inheriting dark text on a light section — a panel with its own background
+   needs its own colour per surface. */
+.section--light .jobs-steps__number {
+  background-color: var(--color-white);
+}
+
+/* ---- Phone (built responsive, measured — docs/page-conventions.md §7) --- */
+@media (max-width: 767.98px) {
+  /* The hero's phone treatment comes from page-service.css: the padding, the
+     full-width wrapping CTA and the compact hairline trust band with 2rem seals
+     all key off .service-hero* / .service-hero__actions / .service-hero__trust,
+     which this hero's markup carries. Two rules here used to restate them
+     against `.jobs-hero__actions` / `.jobs-hero__trust` — classes that do not
+     exist in the markup, so they were dead selectors describing behaviour they
+     never produced. Deleted 2026-08-03 rather than renamed: page-service.css
+     already does exactly this. Only the background photo needs phone rules. */
+
+  /* The copy is stacked top-to-bottom over the full photo now, not sitting in a
+     left column, so the wash runs VERTICALLY here — a horizontal fade would
+     leave the ticks and the CTA over the bright pavement.
+     Shape follows the homepage's own mobile wash (client 2026-07-31: "add a
+     controlled dark gradient... avoid making the entire image uniformly black"):
+     a multi-stop ramp rather than a flat tint, LIGHTEST where the biggest type
+     is and heaviest under the smallest. The first attempt had it backwards —
+     0.82 at the top, under the 34px H1, easing to 0.72 mid-hero where the 15px
+     ticks are — which both flattened the photo and helped the wrong text.
+     Unlike the homepage this hero's copy starts at the very top, so the top
+     cannot stay light; it just does not need to be the darkest point. */
+  .jobs-hero__bg::after {
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.6) 0%,
+        rgba(0, 0, 0, 0.68) 28%,
+        rgba(0, 0, 0, 0.76) 52%,
+        rgba(0, 0, 0, 0.84) 76%,
+        rgba(0, 0, 0, 0.92) 100%
+      );
+  }
+
+  .jobs-steps__list,
+  .jobs-levels__list {
+    /* minmax(0, 1fr) rather than the implicit auto: a long compound in a
+       single-column grid still sets the track minimum otherwise. */
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .jobs-levels__item {
+    padding-block: var(--space-5);
+  }
+
+  /* The number tracks the title's size here too — they share one line, so a
+     step-down that only applied to one of them would break the alignment. */
+  .jobs-levels__head h3,
+  .jobs-levels__number {
+    font-size: var(--font-size-md);
+  }
+
+  /* 44px touch target for every link that is a row of its own (§7). The
+     .service-link and .service-related__link rules in page-service.css already
+     cover the two links this page has; the FAQ answer's inline link is inside a
+     sentence, so it gets padding on an inline-block instead — the hit area
+     grows, the sentence does not move. */
+  .faq-item__answer a {
+    display: inline-block;
+    /* 0.65rem, measured: 0.5rem gave a 42px box, just under the minimum. */
+    padding-block: 0.65rem;
+  }
+
+  /* 16px exactly on the two new controls: anything smaller makes iOS Safari zoom
+     the viewport on focus and leaves the visitor zoomed and scrolled sideways.
+     lead-form.css does this for input/textarea; these two are not in that
+     selector list. */
+  .jobs-form .form-field__select,
+  .jobs-form__file {
+    font-size: 1rem;
+    min-height: 3rem;
+    padding-block: var(--space-3) var(--space-2);
+  }
+
+  /* The file row is a label + a chip + a filename on one line — at 390px that
+     overflows, so the chip goes above the filename. */
+  .jobs-form__file {
+    /* `anywhere`, not base.css's break-word: a long file name is one
+       unbreakable token and break-word does not reduce an element's min-content
+       width, only `anywhere` does. */
+    overflow-wrap: anywhere;
+  }
+  .jobs-form__file::file-selector-button {
+    display: block;
+    margin-right: 0;
+    margin-bottom: var(--space-3);
+    min-height: 44px;
+  }
+}

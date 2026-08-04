@@ -3,8 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kontakt — FRANKONIA Sicherheitsdienst Bamberg</title>
-  <meta name="description" content="Kontaktieren Sie FRANKONIA Sicherheitsdienst in Bamberg: Telefon, E-Mail und kostenlose Sicherheitsanalyse. Antwort innerhalb von einem Werktag.">
+  <!-- Title/description are the draft's own strings, verbatim
+       (content-de/2026-07-27 Webtext 25 Kontakt.docx, "Seiten-Meta") —
+       54 and 150 characters, both inside the guidelines' 50–60 / 140–160
+       windows. Don't rewrite them without a new draft. -->
+  <title>Kontakt: 24/7 erreichbar – FRANKONIA Sicherheitsdienst</title>
+  <meta name="description" content="FRANKONIA Sicherheitsdienst Bamberg: 24/7 erreichbar unter +49 951 964352-0. Unverbindliches Angebot in einem Werktag, kostenfreie Beratung inklusive.">
   <link rel="canonical" href="https://frankonia-sicherheit.de/kontakt/">
   <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/kontakt/">
   <link rel="alternate" hreflang="en" href="https://frankonia-sicherheit.de/en/kontakt/">
@@ -12,8 +16,8 @@
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Kontakt — FRANKONIA Sicherheitsdienst Bamberg">
-  <meta property="og:description" content="Telefon, E-Mail und kostenlose Sicherheitsanalyse. Antwort innerhalb von einem Werktag.">
+  <meta property="og:title" content="Kontakt: 24/7 erreichbar – FRANKONIA Sicherheitsdienst">
+  <meta property="og:description" content="24/7 erreichbar unter +49 951 964352-0. Unverbindliches Angebot in einem Werktag, kostenfreie Beratung inklusive.">
   <meta property="og:url" content="https://frankonia-sicherheit.de/kontakt/">
   <meta property="og:locale" content="de_DE">
   <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
@@ -21,6 +25,27 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="robots" content="index,follow,max-image-preview:large">
 
+  <!-- LocalBusiness (full NAP + 24/7 opening hours + geo) and
+       BreadcrumbList are what the draft asks for; ContactPage is kept
+       from the previous version of this page since it costs nothing and
+       types the URL correctly.
+
+       NAP must stay byte-identical to the Impressum and the Google
+       Business Profile (draft's own requirement) — if the phone number,
+       street or legal name changes anywhere, it changes here too.
+
+       geo: real coordinates for Neuerbstraße 19, 96052 Bamberg, resolved
+       once from OpenStreetMap/Nominatim during this build (same
+       download-once-at-build-time pattern as the coverage boundaries,
+       never a runtime geocoding call). The OSM match is the building at
+       19 Neuerbstraße, Bamberg-Ost, PLZ 96052 — verified against the
+       address before it was written in here, not the first hit taken
+       blind.
+
+       "24/7 erreichbar" is modelled as Mo–So 00:00–23:59: the phone is
+       staffed around the clock, but the office is not an around-the-clock
+       walk-in location, so this deliberately does not claim
+       opens/closes 00:00 on a physical storefront. -->
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -52,13 +77,34 @@
         "addressRegion": "Bayern",
         "addressCountry": "DE"
       },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 49.9019037,
+        "longitude": 10.9067377
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "00:00",
+          "closes": "23:59"
+        }
+      ],
       "parentOrganization": { "@id": "https://frankonia-sicherheit.de/#organization" }
     },
     {
       "@type": "ContactPage",
       "@id": "https://frankonia-sicherheit.de/kontakt/#contactpage",
       "url": "https://frankonia-sicherheit.de/kontakt/",
-      "name": "Kontakt — FRANKONIA Sicherheitsdienst",
+      "name": "Kontakt: 24/7 erreichbar – FRANKONIA Sicherheitsdienst",
       "about": { "@id": "https://frankonia-sicherheit.de/#localbusiness" },
       "inLanguage": "de"
     },
@@ -75,56 +121,340 @@
 
   <!-- include: head-common -->
   <link rel="stylesheet" href="/css/page-contact.css">
+
+  <!-- ---- Motion stack (client 2026-07-31: this page must get the same
+       smooth scroll-in feel as the homepage) ----
+       All four scripts already exist and are generic — they are loaded here,
+       never modified. Load order matters and is guaranteed by document order
+       (every tag is defer):
+         gsap -> ScrollTrigger -> lenis -> smooth-scroll -> reveals.
+       Deliberately NOT loaded: js/hero-reveal.js (bound to the homepage's
+       .hero markup, it would no-op here) and every bespoke section script.
+       Each of these bails on prefers-reduced-motion and applies its hidden
+       start state only at runtime, so a no-JS visitor or a crawler sees the
+       full page — see docs/page-conventions.md. -->
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <!-- Per-character reveal for every <h2> in <main>. -->
+  <script src="/js/title-reveal.js" defer></script>
+  <!-- Staggered group reveal; opt-in per container via data-item-reveal. -->
+  <script src="/js/item-reveal.js" defer></script>
+  <!-- Gentle per-element reveal for the remaining body copy. Skips anything
+       inside [data-reveal] / [data-item-reveal], so the two never double up. -->
+  <script src="/js/text-reveal.js" defer></script>
+  <!-- Pixel-dissolve seam before the footer. Discovers every
+       [data-pixel-seam] element generically, so it needs no per-page changes;
+       the seam's own CSS is in page-contact.css. -->
+  <script src="/js/pixel-transition.js" defer></script>
+  <!-- Anfahrt map. Self-contained: it lazy-injects Leaflet's CSS/JS itself
+       (nothing is fetched until the map nears the viewport), so there are no
+       eager vendor tags here. See the file header for the no-iframe/no-cookie
+       reasoning. -->
+  <script src="/js/contact-map.js" defer></script>
 </head>
-<body>
+<!-- data-nav-force-dark: this page is white end to end (client 2026-07-31),
+     so the header's default transparent/white-text look would be invisible.
+     The attribute makes initHeaderScrollTheme() (js/main.js) hold the header
+     in its light state permanently — frosted wash, black logo, grey nav —
+     instead of toggling it per [data-nav-theme="light"] section like the
+     homepage does. If the script never runs, the header stays white-on-white:
+     the .page-contact fallback in page-contact.css covers that case with a
+     plain CSS filter on the logo and grey nav links, so the header is
+     readable with or without JS. -->
+<body class="page-contact" data-nav-force-dark>
   <!-- include: icon-sprite -->
   <!-- include: header-de -->
   <main id="main">
     <nav class="breadcrumbs container" aria-label="Breadcrumb">
       <ol class="breadcrumbs__list">
         <li><a class="breadcrumbs__link" href="/">Home</a></li>
-        <li class="breadcrumbs__sep" aria-hidden="true">/</li>
+        <!-- Chevron separator, not the shared component's "/" (client
+             2026-07-31, reference image). The sprite's #icon-chevron points
+             LEFT by default; page-contact.css mirrors it with scaleX(-1)
+             rather than adding a second symbol. Still aria-hidden — the
+             separator is decoration, the <ol> already conveys the order. -->
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
         <li><span class="breadcrumbs__current" aria-current="page">Kontakt</span></li>
       </ol>
     </nav>
 
-    <section class="section contact">
-      <div class="container">
-        <div class="section__intro">
-          <p class="section-eyebrow">Kontakt</p>
-          <h1>Sprechen Sie mit FRANKONIA</h1>
-          <p class="contact__lead">Rufen Sie an, schreiben Sie uns oder fordern Sie Ihre kostenlose Sicherheitsanalyse an — wir antworten innerhalb von einem Werktag.</p>
+    <!-- ============ CONTACT ============ -->
+    <!-- One section, two columns (client 2026-08-03): the page used to run
+         hero -> a full-width row of three cards -> the form in its own section
+         far below, so nothing about the form was visible on arrival. Now the
+         introduction and the alternative contact routes sit in the left
+         column and the form card sits in the right one, starting at the same
+         height as the badge — the form is inside the first viewport on a
+         normal desktop screen.
+
+         DOM ORDER IS intro -> form -> aside, which is the reading order the
+         brief asks for on a phone (badge, H1, copy, FORM, contact options,
+         DEKRA, link). Desktop puts the aside back under the intro with
+         grid-template-areas, so neither breakpoint needs `order` and the tab
+         order never disagrees with what's on screen. See
+         .contact-main__grid in page-contact.css.
+
+         The form does NOT submit anywhere yet — action="#" is the same
+         placeholder every other form on this site carries until the
+         submission endpoint is decided (see docs/build-checklist.md,
+         "El formulario no envía nada"). Native HTML5 validation only. -->
+    <section class="section contact-main" id="anfrage">
+      <div class="container contact-main__grid">
+
+        <!-- No data-reveal here: this is above the fold, so it gets a plain
+             CSS load-in instead (.contact-intro > *, page-contact.css) — the
+             same reasoning as the homepage's load-time hero cascade, minus the
+             GSAP dependency. -->
+        <div class="contact-intro">
+          <p class="contact-intro__badge">
+            <svg class="contact-intro__badge-icon" aria-hidden="true"><use href="#icon-clock"></use></svg>
+            Ihr fester Ansprechpartner — 24/7 erreichbar
+          </p>
+          <h1>Kontakt zu FRANKONIA</h1>
+          <p class="contact-intro__lead">Rufen Sie an oder schreiben Sie uns — Angebot innerhalb eines Werktages, Beratung kostenfrei.</p>
         </div>
 
-        <div class="contact__details">
-          <div class="contact__detail">
-            <p class="contact__detail-label">Adresse</p>
-            <address>
-              FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG<br>
-              Neuerbstraße 19<br>
-              96052 Bamberg
-            </address>
-          </div>
-          <div class="contact__detail">
-            <p class="contact__detail-label">Telefon</p>
-            <p><a href="tel:+499519643520">+49 951 964352-0</a></p>
-          </div>
-          <div class="contact__detail">
-            <p class="contact__detail-label">E-Mail</p>
-            <p><a href="mailto:info@frankonia-sicherheit.de">info@frankonia-sicherheit.de</a></p>
-          </div>
-          <div class="contact__detail">
-            <p class="contact__detail-label">Einsatzgebiet</p>
-            <p>Bamberg, Franken und Bayern — im Umkreis von rund 100&nbsp;km.</p>
-          </div>
+        <!-- The primary action. Wider column, white card, shadow — the
+             strongest object on the page. -->
+        <div class="contact-form-card" data-reveal>
+          <!-- <h2>, not <h3>: the H1 is the page title and this is the only
+               other real heading, so h1 -> h3 would skip a level.
+               data-no-title-reveal because the card already eases in as one
+               unit (data-reveal) — a per-character split on top of that reads
+               as two effects fighting. -->
+          <h2 class="contact-form-card__title" data-no-title-reveal>Ihre Nachricht an FRANKONIA</h2>
+
+          <form class="contact-form" action="#" method="post">
+            <div class="form-field">
+              <label class="form-field__label" for="kf-name">Name *</label>
+              <input class="form-field__input" type="text" id="kf-name" name="name" autocomplete="name" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="kf-company">Firma</label>
+              <input class="form-field__input" type="text" id="kf-company" name="company" autocomplete="organization">
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="kf-email">E-Mail *</label>
+              <input class="form-field__input" type="email" id="kf-email" name="email" autocomplete="email" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="kf-phone">Telefon</label>
+              <input class="form-field__input" type="tel" id="kf-phone" name="phone" autocomplete="tel">
+            </div>
+
+            <div class="form-field contact-form__field--full">
+              <label class="form-field__label" for="kf-message">Nachricht *</label>
+              <!-- rows="2", not 5: the field starts just a little taller than a
+                   single-line input and grows as the visitor types (see
+                   field-sizing in page-contact.css). `rows` is what sets the
+                   height in browsers without that support, so it has to be
+                   small here too — a CSS min-height alone can only make a
+                   5-row box taller, never shorter. -->
+              <textarea class="form-field__textarea" id="kf-message" name="message" rows="2" required></textarea>
+              <p class="form-field__hint" id="kf-message-hint">Objekt, Zeitraum, Standort — der Rest lässt sich im Gespräch klären.</p>
+            </div>
+
+            <!-- Honeypot (draft requirement). A real input that a human
+                 never sees or tabs to, and that a naive bot fills in:
+                 taken out of the layout and the a11y tree entirely by
+                 .contact-form__hp (page-contact.css), plus tabindex="-1"
+                 and autocomplete="off". Nothing checks it yet — that
+                 belongs to whatever backend eventually receives this
+                 form; the field just has to be present and named for
+                 that check to be possible. -->
+            <div class="contact-form__hp" aria-hidden="true">
+              <label for="kf-website">Bitte dieses Feld leer lassen</label>
+              <input type="text" id="kf-website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+
+            <div class="form-checkbox contact-form__field--full">
+              <input class="form-checkbox__input" type="checkbox" id="kf-privacy" name="privacy" required>
+              <label class="form-checkbox__label" for="kf-privacy">
+                <!-- Shortened 2026-07-31 (client: this has to fit on one
+                     line) to the exact sentence the homepage's lead form
+                     already uses — same consent, same privacy-policy link,
+                     and now one wording across the site instead of two. -->
+                Ich habe die <a href="/datenschutz/">Datenschutzerklärung</a> gelesen und stimme zu. *
+              </label>
+            </div>
+
+            <button class="btn btn--primary contact-form__submit" type="submit">
+              Nachricht senden
+              <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </button>
+          </form>
         </div>
 
-        <div class="contact__cta">
-          <a class="btn btn--primary" href="/#sicherheitsanalyse">Kostenlose Sicherheitsanalyse anfordern<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        <!-- Everything that supports the decision without competing with it:
+             the alternative ways to reach FRANKONIA, the certifications, and
+             one link out. Quieter than both columns above it. -->
+        <div class="contact-aside">
+          <!-- data-no-title-reveal: this heading only labels the group for
+               assistive tech and is visually hidden, so there is nothing to
+               animate. -->
+          <h2 class="visually-hidden" data-no-title-reveal>Kontaktmöglichkeiten</h2>
+
+          <!-- Compact stacked rows, not three big cards. Each row IS the
+               action — the whole row is one anchor, so the tap target is the
+               row rather than a line of text inside it. Nested links are
+               invalid, which is why the number and the e-mail are no longer
+               their own <a>. -->
+          <ul class="contact-methods" data-item-reveal=".contact-method">
+            <li>
+              <!-- Subtle priority for the phone (client brief): pale blue fill
+                   + a real border, because FRANKONIA answers around the clock
+                   and a call is the fastest route. Same component, one
+                   modifier — not a different-looking block. -->
+              <a class="contact-method contact-method--priority" href="tel:+499519643520">
+                <svg class="contact-method__icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+                <span class="contact-method__body">
+                  <span class="contact-method__label">Telefon</span>
+                  <span class="contact-method__value">+49 951 964352-0</span>
+                  <!-- Shortened 2026-08-03 (client): the first half of the
+                       draft's sentence ("Rund um die Uhr erreichbar, an 365
+                       Tagen im Jahr") repeats the hero badge two blocks above,
+                       so only the part nothing else on the page says is kept —
+                       the short-notice/urgent hook, which is what converts
+                       someone who needs a Brandwache tonight. Full sentence in
+                       content-de/2026-07-27 Webtext 25 Kontakt.docx, § 2. -->
+                  <span class="contact-method__text">Auch für kurzfristige und dringende Einsätze (z.&nbsp;B. Brandwache).</span>
+                </span>
+                <svg class="contact-method__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+
+            <li>
+              <a class="contact-method" href="mailto:info@frankonia-sicherheit.de">
+                <svg class="contact-method__icon" aria-hidden="true"><use href="#icon-contact"></use></svg>
+                <span class="contact-method__body">
+                  <span class="contact-method__label">E-Mail</span>
+                  <span class="contact-method__value">info@frankonia-sicherheit.de</span>
+                  <!-- One line, like the other two rows (client 2026-08-03).
+                       The draft's full sentence ("Antwort innerhalb eines
+                       Werktages, bei Angebotsanfragen inklusive kostenfreier
+                       Erstberatung") runs to two lines in this column and its
+                       second half repeats the lede's "Beratung kostenfrei",
+                       so this is its first clause, unchanged. Full wording in
+                       content-de/2026-07-27 Webtext 25 Kontakt.docx, § 2. -->
+                  <span class="contact-method__text">Antwort innerhalb eines Werktages.</span>
+                </span>
+                <svg class="contact-method__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+
+            <li>
+              <!-- The draft asks for "Route in Google Maps öffnen
+                   (2-Klick-Consent)". A plain outbound link, not a
+                   consent-gated embed: with no iframe on the page, nothing is
+                   requested from Google until the visitor clicks, which is
+                   what the two-click pattern exists to guarantee — and it
+                   needs no JS and no consent tooling (none exists on this site
+                   yet, see the checklist's open "Banner de cookies" item). -->
+              <a class="contact-method" href="https://www.google.com/maps/dir/?api=1&amp;destination=Neuerbstra%C3%9Fe+19%2C+96052+Bamberg" target="_blank" rel="noopener">
+                <svg class="contact-method__icon" aria-hidden="true"><use href="#icon-pin"></use></svg>
+                <span class="contact-method__body">
+                  <span class="contact-method__label">Adresse</span>
+                  <span class="contact-method__value">Neuerbstraße 19, 96052 Bamberg</span>
+                  <!-- This row's one line is the Maps label itself (client
+                       2026-08-03) — it is the only row whose destination isn't
+                       self-evident from the value, so the line does double
+                       duty as description and action cue. The draft's
+                       "Termine vor Ort gern nach Vereinbarung." now appears
+                       nowhere on the page; see the draft, § 2, if it is ever
+                       wanted back. -->
+                  <span class="contact-method__action">Route in Google Maps öffnen<span class="visually-hidden"> (öffnet in einem neuen Tab)</span></span>
+                </span>
+                <svg class="contact-method__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+          </ul>
+
+          <!-- data-reveal (one unit): the two seals are <img>, which
+               text-reveal.js doesn't touch — without this the caption would
+               ease in while the seals sat there already. -->
+          <div class="contact-cert" data-reveal>
+            <img class="contact-cert__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="contact-cert__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach DIN EN ISO 9001" width="399" height="600" loading="lazy">
+            <p class="contact-cert__text">DEKRA-zertifiziert nach DIN 77200-1 und ISO 9001</p>
+          </div>
+
+          <!-- One secondary link, not three (client brief). "Direkt ein
+               Angebot anfordern" (/angebot/) duplicates what the form beside
+               it does, and "So entsteht Ihr Sicherheitskonzept"
+               (/sicherheitskonzept/) pulls people away mid-conversion. Both
+               URLs are still asked for by the draft's "Interne Links" line —
+               flagged, not silently lost. -->
+          <p class="contact-links">
+            <a href="/leistungen/">Alle Leistungen im Überblick</a>
+          </p>
         </div>
       </div>
     </section>
+
+    <!-- ============ ANFAHRT ============ -->
+    <!-- Location map (client 2026-08-03: "a map of where is frankonia").
+         Leaflet + CARTO's free light basemap, NOT a Google Maps iframe: an
+         embed would load a third-party frame and set cookies on arrival, with
+         no consent tooling on this site yet. The two-click Google link in the
+         Adresse row above is untouched and is still how a visitor gets routed.
+
+         The lede's second half is the draft's own "Termine vor Ort gern nach
+         Vereinbarung." (content-de Webtext 25 Kontakt, § 2), which the
+         restructure on 2026-08-03 had dropped from the page — this is where it
+         belongs now.
+
+         data-lat/data-lng are the same coordinates as this page's
+         LocalBusiness JSON-LD `geo` block (geocoded once from Nominatim during
+         this build, never at runtime). Keep the two in sync if the address
+         ever changes. -->
+    <section class="section contact-location" aria-labelledby="anfahrt-title">
+      <div class="container">
+        <div class="section__intro contact-location__intro" data-reveal>
+          <h2 id="anfahrt-title">So finden Sie uns</h2>
+          <p>Unser Büro liegt in Bamberg-Ost, wenige Minuten von der A70 — Termine vor Ort gern nach Vereinbarung.</p>
+        </div>
+
+        <!-- The map div is NOT empty in the source: it carries the real
+             address and the Maps link as visible HTML. js/contact-map.js only
+             clears it once Leaflet has actually loaded, so no JS, a failed
+             request, or a crawler all get a readable address block here. -->
+        <div class="contact-location__map-wrap" data-reveal>
+          <div id="contact-map" class="contact-location__map" data-lat="49.9019037" data-lng="10.9067377" data-label="FRANKONIA Sicherheitsdienst">
+            <p class="contact-location__fallback">
+              FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG<br>
+              Neuerbstraße 19, 96052 Bamberg<br>
+              <a href="https://www.google.com/maps/dir/?api=1&amp;destination=Neuerbstra%C3%9Fe+19%2C+96052+Bamberg" target="_blank" rel="noopener">Route in Google Maps öffnen<span class="visually-hidden"> (öffnet in einem neuen Tab)</span></a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
+
+  <!-- Pixel-seam (page -> footer), client 2026-07-31: "always before the
+       footer I want the pixel effect". Same placement and same tile colour as
+       the homepage's FAQ -> footer seam: the div is a real sibling between
+       </main> and the footer, and the band it builds sits inside the footer's
+       top, so the tiles must match the section ABOVE (this page is white end
+       to end -> .pixel-seam--white) and dissolve over the footer's black.
+       The footer reserves the band's height as extra top padding via
+       `.pixel-seam + .site-footer` (page-contact.css), so the band never
+       covers real footer content.
+
+       Empty by default — js/pixel-transition.js appends the tiles at runtime
+       and bails entirely under prefers-reduced-motion, so with no JS the two
+       simply meet with nothing between them. -->
+  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
   <!-- include: footer-de -->
   <!-- include: whatsapp-button -->
 </body>

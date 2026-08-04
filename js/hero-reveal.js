@@ -31,9 +31,14 @@
 */
 
 (function initHeroReveal() {
-  const hero = document.querySelector(".hero");
+  // Two hero shapes now (2026-08-03): the homepage's full-bleed .hero, and the
+  // service-page template's two-column hero, which opts in with
+  // [data-hero-reveal] and reuses the same four inner block classes
+  // (.hero__lead / __actions / __reassurance / __trust) precisely so this
+  // script needs no per-page branch. Only ever one hero per page.
+  const hero = document.querySelector(".hero, [data-hero-reveal]");
   if (!hero || typeof gsap === "undefined") return;
-  const h1 = hero.querySelector(".hero__content h1");
+  const h1 = hero.querySelector(".hero__content h1, h1");
   if (!h1) return;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 

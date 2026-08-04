@@ -1,35 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
-<!-- lang="en" is TEMPORARY — same content-language rule as pages/index.html
-     (see CLAUDE.md "Content language"): 100% English placeholder copy
-     until the client supplies final German content for this page, then
-     translate the whole page in one pass and flip this + og:locale to
-     "de"/"de_DE". "Werkschutz" itself stays untranslated everywhere — it's
-     the service's proper-noun taxonomy name, not a phrase to translate,
-     same reasoning as the homepage Services list (see CLAUDE.md). Image
-     alt text on this page is the one deliberate exception: written in
-     German per this page's explicit brief (guidelines §2.8 + this page's
-     build brief both call for German alt text specifically) — see the
-     <img> below and the build report for why that's scoped narrower than
-     the rest of the page's language rule. -->
+<html lang="de">
+<!-- Rebuilt 2026-08-03 from content-de/"2026-07-27 Webtext 03 Werkschutz.docx"
+     (client draft, Stand 24.07.2026). Everything visible on this page is that
+     document's copy, verbatim, in German — this page is no longer the English
+     placeholder template of 2026-07-15. Two exceptions, both flagged inline
+     where they appear:
+       - the "so läuft es oft" column in section 3 (the draft asks for the
+         Gegenüberstellung layout but only supplies the FRANKONIA side);
+       - the section eyebrows (small uppercase labels), which are UI furniture
+         matching the homepage's own sections, not copy from the draft.
+     Design language: this page now follows the homepage (oversized section
+     titles, blue CTAs with the diagonal arrow, char/item/text scroll reveals,
+     Lenis smooth scroll) instead of the deliberately restrained treatment the
+     first version was built with — client instruction 2026-08-03 ("aplicá los
+     estilos de la web, o sea los CTAs, los titles, los efectos, todo"). -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- PLACEHOLDER meta — English structural copy, not finalized German SEO
-       copy (that requires client-approved keyword/benefit phrasing per
-       guidelines §2.3). Update in the German translation pass. -->
-  <title>Werkschutz — Industrial Site Security | FRANKONIA</title>
-  <meta name="description" content="FRANKONIA Werkschutz: certified industrial and company-site security with DIN 77200-1 personnel and one dedicated contact. Request your free security analysis.">
+  <title>Werkschutz Franken | Betriebsschutz 24/7 – FRANKONIA</title>
+  <meta name="description" content="Werkschutz für Industrie &amp; Produktion: Pfortendienst, Rundgänge, Anlagen-Bedienung durch technik-geschulte Kräfte. DEKRA-zertifiziert, Angebot in 1 Werktag.">
   <link rel="canonical" href="https://frankonia-sicherheit.de/werkschutz/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/werkschutz/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/werkschutz/">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Werkschutz — Industrial Site Security | FRANKONIA">
-  <meta property="og:description" content="Certified industrial and company-site security with DIN 77200-1 personnel and one dedicated contact.">
+  <meta property="og:title" content="Werkschutz Franken | Betriebsschutz 24/7 – FRANKONIA">
+  <meta property="og:description" content="Werkschutz für Industrie &amp; Produktion: Pfortendienst, Rundgänge, Anlagen-Bedienung durch technik-geschulte Kräfte. DEKRA-zertifiziert, Angebot in 1 Werktag.">
   <meta property="og:url" content="https://frankonia-sicherheit.de/werkschutz/">
-  <!-- Placeholder path — swap for a real 1200x630 social-share image before launch, same caveat as pages/index.html's og:image. -->
-  <meta property="og:image" content="https://frankonia-sicherheit.de/assets/images/og-werkschutz.jpg">
-  <meta property="og:locale" content="en_US">
+  <meta property="og:locale" content="de_DE">
   <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
 
   <!-- Twitter -->
@@ -40,7 +39,7 @@
 
   <!-- Hero image is above the fold and LCP-critical, same pattern as the
        homepage hero. -->
-  <link rel="preload" as="image" href="/assets/images/werkschutz.webp" type="image/webp">
+  <link rel="preload" as="image" href="/assets/images/hero-werkschutz-1536.webp" type="image/webp" imagesrcset="/assets/images/hero-werkschutz-768.webp 768w, /assets/images/hero-werkschutz-1280.webp 1280w, /assets/images/hero-werkschutz-1536.webp 1536w" imagesizes="100vw">
 
   <script type="application/ld+json">
 {
@@ -62,7 +61,6 @@
       "@type": "LocalBusiness",
       "@id": "https://frankonia-sicherheit.de/#localbusiness",
       "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
-      "image": "https://frankonia-sicherheit.de/assets/images/heroedit-1672.jpg",
       "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
       "url": "https://frankonia-sicherheit.de/",
       "telephone": "+49 951 964352-0",
@@ -76,102 +74,41 @@
         "addressRegion": "Bayern",
         "addressCountry": "DE"
       },
-      "areaServed": [
-        {
-          "@type": "City",
-          "name": "Bamberg"
-        },
-        {
-          "@type": "City",
-          "name": "Nürnberg"
-        },
-        {
-          "@type": "City",
-          "name": "Würzburg"
-        },
-        {
-          "@type": "City",
-          "name": "Erlangen"
-        },
-        {
-          "@type": "City",
-          "name": "Fürth"
-        },
-        {
-          "@type": "City",
-          "name": "Schweinfurt"
-        },
-        {
-          "@type": "City",
-          "name": "Bayreuth"
-        },
-        {
-          "@type": "City",
-          "name": "Coburg"
-        },
-        {
-          "@type": "City",
-          "name": "Ansbach"
-        },
-        {
-          "@type": "City",
-          "name": "Hof"
-        }
-      ],
       "parentOrganization": {
         "@id": "https://frankonia-sicherheit.de/#organization"
       }
     },
     {
       "@type": "Service",
+      "@id": "https://frankonia-sicherheit.de/werkschutz/#service",
       "name": "Werkschutz",
       "serviceType": "Werkschutz",
-      "description": "FRANKONIA Werkschutz: certified industrial and company-site security with DIN 77200-1 personnel and one dedicated contact. Request your free security analysis.",
+      "description": "Werkschutz für Industrie und Produktion in Franken: Pfortendienst, Zugangs- und Torkontrolle, Kontrollgänge, Bedienung von Brandmelde-, Einbruchmelde- und Zutrittsanlagen durch technik-geschulte, IHK-qualifizierte Kräfte.",
       "provider": {
         "@id": "https://frankonia-sicherheit.de/#localbusiness"
       },
       "areaServed": [
-        {
-          "@type": "City",
-          "name": "Bamberg"
-        },
-        {
-          "@type": "City",
-          "name": "Nürnberg"
-        },
-        {
-          "@type": "City",
-          "name": "Würzburg"
-        },
-        {
-          "@type": "City",
-          "name": "Erlangen"
-        },
-        {
-          "@type": "City",
-          "name": "Fürth"
-        },
-        {
-          "@type": "City",
-          "name": "Schweinfurt"
-        },
-        {
-          "@type": "City",
-          "name": "Bayreuth"
-        },
-        {
-          "@type": "City",
-          "name": "Coburg"
-        },
-        {
-          "@type": "City",
-          "name": "Ansbach"
-        },
-        {
-          "@type": "City",
-          "name": "Hof"
-        }
+        { "@type": "City", "name": "Bamberg" },
+        { "@type": "City", "name": "Nürnberg" },
+        { "@type": "City", "name": "Würzburg" },
+        { "@type": "City", "name": "Erlangen" },
+        { "@type": "City", "name": "Fürth" },
+        { "@type": "City", "name": "Schweinfurt" },
+        { "@type": "City", "name": "Bayreuth" },
+        { "@type": "City", "name": "Coburg" },
+        { "@type": "City", "name": "Ansbach" },
+        { "@type": "City", "name": "Hof" }
       ],
+      "offers": {
+        "@type": "Offer",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "priceCurrency": "EUR",
+          "minPrice": 28,
+          "maxPrice": 40,
+          "unitCode": "HUR"
+        }
+      },
       "url": "https://frankonia-sicherheit.de/werkschutz/"
     },
     {
@@ -180,13 +117,13 @@
         {
           "@type": "ListItem",
           "position": 1,
-          "name": "Home",
+          "name": "Startseite",
           "item": "https://frankonia-sicherheit.de/"
         },
         {
           "@type": "ListItem",
           "position": 2,
-          "name": "Services",
+          "name": "Leistungen",
           "item": "https://frankonia-sicherheit.de/leistungen/"
         },
         {
@@ -203,58 +140,42 @@
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "What is Werkschutz?",
+          "name": "Was kostet Werkschutz pro Stunde?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Werkschutz is on-site industrial security — a dedicated, certified team protecting a company's premises, personnel, and assets, typically with a fixed team rather than rotating patrol coverage."
+            "text": "Werkschutz kostet in der Regel zwischen 28 und 40 Euro pro Stunde, abhängig von Qualifikation, Einsatzzeiten (tarifliche Zuschläge) und Aufgabenumfang. Ein durchgehend besetzter 24/7-Posten wird individuell kalkuliert — Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
           }
         },
         {
           "@type": "Question",
-          "name": "Which tasks are included in Werkschutz?",
+          "name": "Welche Aufgaben hat der Werkschutz?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "A typical deployment covers access and visitor control, patrols, gatehouse duties, incident reporting, alarm response coordination, and documentation. Exact scope is confirmed per site during the security analysis."
+            "text": "Zu den klassischen Werkschutz-Aufgaben gehören Pfortendienst und Zugangskontrolle, Kontrollgänge durch Produktion und Lager, Bedienung von Brandmelde- und Alarmanlagen, Koordination von Fremdfirmen und Lieferverkehr sowie Notfall-Erstmaßnahmen. Der genaue Umfang wird im Sicherheitskonzept für Ihren Standort festgelegt."
           }
         },
         {
           "@type": "Question",
-          "name": "When does a company need Werkschutz?",
+          "name": "Können die Kräfte unsere Anlagen bedienen?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Typically once a site runs outside normal business hours, holds valuable equipment or materials, or needs consistent access control and documentation that informal or part-time coverage can't provide."
+            "text": "Ja. FRANKONIA Werkschutzkräfte sind technik-geschult und werden vor Einsatzbeginn nach Checkliste in Ihre Brandmelde-, Einbruchmelde- und Zutrittsanlagen eingearbeitet. Die Einarbeitung wird dokumentiert — Sie sehen jederzeit, wer für welche Anlage geschult ist."
           }
         },
         {
           "@type": "Question",
-          "name": "How quickly can Werkschutz start?",
+          "name": "Übernimmt FRANKONIA auch einzelne Schichten statt 24/7?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "For standard assignments, FRANKONIA can typically deploy certified Werkschutz personnel within 48–72 hours of an agreed security concept. Ask your contact person for current availability."
+            "text": "Ja. Vom reinen Nacht- und Wochenenddienst über Randzeiten-Besetzung bis zum durchgehenden Posten ist jedes Modell möglich, im Raum Bamberg auch kombiniert mit Revierdienst. Das wirtschaftlichste Modell ergibt sich aus der kostenfreien Begehung."
           }
         },
         {
           "@type": "Question",
-          "name": "Which qualifications does Werkschutz personnel have?",
+          "name": "Ist FRANKONIA für Werkschutz zertifiziert?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "All personnel are certified under DIN 77200-1, background-checked and trained under §34a GewO, and onboarded to your specific site before their first shift."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How is a Werkschutz deployment documented?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Through digital shift reports covering patrols, access activity, and any incidents — available for your review at any time, not just on request."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Is 24/7 Werkschutz coverage possible?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. Coverage scales from a single shift to full 24/7 site presence, and can change as your operational needs change."
+            "text": "Ja. FRANKONIA ist nach DIN 77200-1 für stationäre Sicherheitsdienstleistungen zertifiziert und seit 2016 nach ISO 9001, beides DEKRA-geprüft. Alle Kräfte sind mindestens IHK-qualifiziert nach § 34a GewO und werden regelmäßig geschult."
           }
         }
       ]
@@ -264,54 +185,153 @@
   </script>
 
   <!-- include: head-common -->
+  <!-- Shared lead-form section, then this page template's own styles (so a
+       service-page rule can override the shared form if it ever needs to). -->
+  <link rel="stylesheet" href="/css/lead-form.css">
   <link rel="stylesheet" href="/css/page-service.css">
+
+  <!-- Motion stack — the same self-hosted GSAP + ScrollTrigger + Lenis setup
+       the homepage uses (no CDN, see CLAUDE.md "Non-negotiable tech
+       constraints"), plus the four page-agnostic reveal scripts:
+         hero-reveal  — the hero's own load-time cascade (h1 word masks, then
+                        lead → actions → reassurance → trust)
+         title-reveal — per-character scrub reveal on every <h2> in <main>
+         item-reveal  — staggered entrance for lists/grids (data-item-reveal)
+         text-reveal  — gentle entrance for the remaining body copy
+       Deliberately NOT loaded here: the homepage's bespoke section scripts
+       (pain-hook-journey, system-story, konzept-seq, sticky-story, outfits,
+       pixel-transition, coverage map, social carousel) — none of their markup
+       exists on this page.
+       All defer, so document order is what guarantees the dependency order.
+       Every one of them bails out under prefers-reduced-motion and hides
+       content only from inside itself, so a no-JS visitor or a crawler gets
+       this whole page, fully visible. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <!-- Pixel-dissolve seam above the footer (mandatory per
+       docs/page-conventions.md §4.4). Generic: it discovers every
+       [data-pixel-seam] element, so no per-page JS. -->
+  <script src="/js/pixel-transition.js" defer></script>
+  <!-- Leistungsumfang: pinned image mask reveal (client 2026-08-03). Uses the
+       GSAP + ScrollTrigger + Lenis stack above; CSS position:sticky, no pin. -->
+  <script src="/js/service-flow.js" defer></script>
 </head>
 <body>
   <!-- include: icon-sprite -->
-  <!-- include: header -->
+  <!-- include: header-de -->
 
   <main id="main">
 
     <!-- ============ BREADCRUMBS ============ -->
-    <!-- Real <nav><ol>, shaped to accept BreadcrumbList JSON-LD later
-         without restructuring — no schema added yet (see CLAUDE.md
-         "Current phase"). /leistungen/ (the services hub this trail
-         points through) does not exist yet — see the build report. -->
+    <!-- /leistungen/ does not exist yet (docs/build-checklist.md, Bloque 7) —
+         the URL is the confirmed one from guidelines §2.2, the page is just not
+         built. Matches the BreadcrumbList JSON-LD above. -->
+    <!-- Chevron separators, not slashes — docs/page-conventions.md §3 (client
+         2026-07-31). components.css still has the "/" version, so the chevron
+         markup + its one CSS rule are repeated per page until that moves. -->
     <nav class="breadcrumbs container" aria-label="Breadcrumb">
       <ol class="breadcrumbs__list">
-        <li><a class="breadcrumbs__link" href="/">Home</a></li>
-        <li class="breadcrumbs__sep" aria-hidden="true">/</li>
-        <li><a class="breadcrumbs__link" href="/leistungen/">Services</a></li>
-        <li class="breadcrumbs__sep" aria-hidden="true">/</li>
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/leistungen/">Leistungen</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
         <li><span class="breadcrumbs__current" aria-current="page">Werkschutz</span></li>
       </ol>
     </nav>
 
-    <!-- ============ 1. SERVICE HERO ============ -->
-    <!-- Deliberately not another full-bleed homepage-style hero — a
-         contained two-column layout (text | real service photo), sized
-         to feel like "this specific service", not a second homepage
-         moment. See css/page-service.css header comment for the
-         reusable/service-specific split. -->
-    <section class="service-hero">
+    <!-- ============ 1. HERO ============ -->
+    <!-- Standard-Hero-Formel per the draft: H1 → subline → 3 proof points →
+         CTA + phone → Google rating.
+
+         FULL-BLEED BACKGROUND since 2026-08-03 (client: "para la imagen del hero
+         quiero que uses en todo el background la imagen HeroWerkschutz.png"). It
+         was a two-column hero (copy | portrait photo) for one reason only: the
+         single Werkschutz photo in the project was portrait (820×1227), which a
+         background treatment would have had to crop to a letterbox band. This new
+         one is a 3:2 night shot of a patrol at an industrial site, i.e. an actual
+         background image — so the side column is gone and the copy now sits over
+         the photo, the same composition as the homepage hero.
+         .hero__lead / .hero__actions / .hero__reassurance / .hero__trust class
+         names are intentional: js/hero-reveal.js animates exactly those four
+         blocks, in that order, and this page reuses it as-is. -->
+    <section class="service-hero" data-hero-reveal>
+      <!-- Decorative (alt="") — the photo says nothing the copy over it doesn't.
+           LCP element: preloaded in <head>, eager, high priority. Source maxes at
+           1536px wide, so it upscales slightly past that. -->
+      <div class="service-hero__bg" aria-hidden="true">
+        <picture>
+          <source type="image/webp" srcset="/assets/images/hero-werkschutz-768.webp 768w, /assets/images/hero-werkschutz-1280.webp 1280w, /assets/images/hero-werkschutz-1536.webp 1536w" sizes="100vw">
+          <img src="/assets/images/hero-werkschutz-1536.jpg" width="1536" height="1024" alt="" loading="eager" fetchpriority="high">
+        </picture>
+      </div>
+
       <div class="container service-hero__grid">
         <div class="service-hero__content">
-          <span class="brand-bar" aria-hidden="true"></span>
-          <h1>Werkschutz — Reliable Protection for Industrial Sites</h1>
-          <p class="service-hero__lead">
-            Certified security personnel, documented shift coverage, and one dedicated contact — protecting your industrial site or company premises around the clock.
+          <!-- The draft's "Badge: DEKRA-zertifiziert nach DIN 77200-1 und ISO
+               9001" chip used to open the hero and was REMOVED 2026-08-03 (client).
+               The claim itself is not lost: the two real DEKRA seals sit in this
+               hero's own trust row below, and the certifications are stated in
+               full text in the Ansprechpartner section and the FAQ. The chip was
+               the third place on one screen saying it, and it pushed the H1 down.
+               Same as the homepage hero, which opens directly with its H1. -->
+          <h1>Werkschutz für Industrie &amp; Produktion in Franken</h1>
+
+          <p class="hero__lead service-hero__lead">
+            Schützen Sie Ressourcen, Know-how und Mitarbeitende, mit technik-geschulten Kräften, die Ihren Betrieb repräsentieren statt aufzuhalten.
           </p>
 
-          <div class="service-hero__actions">
-            <a class="btn btn--primary" href="/#sicherheitsanalyse">Request Free Security Analysis</a>
-            <a class="service-phone" href="tel:+499519643520"><svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>+49 951 964352-0</a>
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn service-hero__phone" href="tel:+499519643520">
+              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              +49 951 964352-0
+            </a>
           </div>
-          <p class="service-hero__reassurance">Free · No obligation · Response within 1 business day</p>
 
-          <div class="service-hero__trust-row">
-            <img class="service-hero__cert-seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
-            <img class="service-hero__cert-seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
-            <div class="review-card">
+          <!-- Short chips in ONE row, exactly like the homepage hero's
+               .hero__reassurance (client 2026-08-03: "los tics tienen que ser
+               iguales que la hero... así más cortitos y en una sola línea").
+               The draft's three hero lines were full sentences, and each chip here
+               is a LITERAL substring of its own line — truncated, not reworded, so
+               no concept and no wording was invented:
+                 "Pfortendienst, Zugangskontrolle und Rundgänge im laufenden Betrieb"
+                 "Technik-geschulte Kräfte für Ihre Alarm-, Brandmelde- und Zutrittsanlagen"
+                 "Fester Ansprechpartner, 24/7 direkt erreichbar"
+               The dropped detail is not lost from the page: all three lines are
+               spelled out in full in the Leistungsumfang and Ansprechpartner
+               sections.
+               Placed AFTER the actions, again matching the homepage — which also
+               puts the DOM in the order js/hero-reveal.js animates
+               (lead → actions → reassurance → trust), so the cascade now plays in
+               the same order it reads. -->
+          <ul class="hero__reassurance service-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Pfortendienst und Rundgänge
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Technik-geschulte Kräfte
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              24/7 direkt erreichbar
+            </li>
+          </ul>
+
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
               <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
               <span class="review-card__stars">
                 <span class="review-card__stars-track" aria-hidden="true">
@@ -330,374 +350,850 @@
                 </span>
               </span>
               <span class="review-card__score">
-                <span class="review-card__value">4.7</span>
-                <span class="review-card__count">97 Reviews</span>
+                <span class="review-card__value">4,7</span>
+                <span class="review-card__count">97 Bewertungen</span>
               </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
             </div>
           </div>
         </div>
 
-        <div class="service-hero__media">
-          <picture>
-            <source srcset="/assets/images/werkschutz.webp" type="image/webp">
-            <img src="/assets/images/werkschutz.jpg" alt="FRANKONIA Sicherheitsmitarbeiter beim Werkschutz auf einem Industriegelände" width="820" height="1227" loading="eager" fetchpriority="high">
-          </picture>
-        </div>
       </div>
     </section>
 
-    <!-- ============ 2. SERVICE INTRODUCTION ============ -->
-    <!-- GEO pattern: question-phrased H2, direct answer in the first
-         sentence, short paragraphs. -->
-    <section class="section service-intro">
+    <!-- Section colours alternate black / white down the whole page, with a
+         pixel dissolve at every boundary (client 2026-08-03) — the same
+         mechanism and look as the homepage. Tiles are always the colour of the
+         section ABOVE the seam, so the outgoing section is what pixelates away:
+         no modifier = black tiles (dark -> light), .pixel-seam--white = white
+         tiles (light -> dark). The band is built inside the section BELOW by
+         js/pixel-transition.js, and every section that follows a seam reserves
+         its height as extra padding-top (see `.pixel-seam + .section` in
+         page-service.css), so tiles never cover real content — with or without
+         JS. -->
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 2. RISIKO ============ -->
+    <!-- Draft variation for this page: the risks are framed ECONOMICALLY
+         (Stillstand, Gewinnausfall, Haftung), not as classic burglary. -->
+    <section class="section section--light service-risk" data-nav-theme="light">
       <div class="container">
-        <div class="section__intro" data-reveal>
-          <h2>What is Werkschutz?</h2>
-          <p class="service-intro__lede">Werkschutz is on-site industrial security: a dedicated, certified team protecting a company's premises, personnel, and assets around the clock. It combines access control, patrols, and incident response tailored to industrial and manufacturing environments.</p>
+        <div class="section__intro service-risk__intro">
+          <p class="section-eyebrow">Risiko</p>
+          <h2>Was für Ihren Betrieb auf dem Spiel steht</h2>
+          <p class="service-risk__lede" data-reveal data-reveal-delay>Ein Produktions- oder Logistikstandort hat mehr zu verlieren als Material: Stillstand kostet pro Stunde oft mehr als ein ganzer Monat Werkschutz. Und die teuersten Vorfälle sind selten die spektakulären, sondern die, die niemand bemerkt hat.</p>
         </div>
 
-        <div class="service-intro__body">
-          <p>Werkschutz differs from general property protection mainly in scope: it's built around a single industrial or commercial site, typically staffed by a fixed, site-trained team rather than rotating patrol coverage. That consistency matters for sites with specific access rules, hazardous areas, or shift patterns that a rotating guard wouldn't already know.</p>
-          <p>FRANKONIA provides Werkschutz for manufacturing plants, logistics centers, and industrial campuses across Franconia and Bavaria, with personnel certified under DIN 77200-1.</p>
-        </div>
-      </div>
-    </section>
+        <!-- Isometric line-art per risk (client 2026-08-03, reference image: a
+             technical-drawing card with a numbered header and an isometric scene).
+             Drawn for this project as INLINE SVG — no raster assets to ship or
+             optimise, no extra requests, and the line work follows the section's
+             own colours: .rz-line is currentColor, .rz-accent the brand blue,
+             .rz-guide the dashed construction guides. So the same four scenes
+             work on a dark or a light section without a second set of files.
+             Geometry was generated from real 3D coordinates (one isometric
+             projection, cuboids/planes/discs in world units) rather than
+             hand-written path data, which is where isometric drawings usually go
+             wrong; each viewBox is fitted to what was actually drawn so a scene
+             fills its card. aria-hidden: every scene only restates the text
+             beside it, so it is decoration for assistive tech.
+             The four sprite icons that used to head these cards are gone — the
+             illustration is the visual now, and keeping both was two icons for
+             one idea. -->
+        <ul class="service-risk__grid" data-item-reveal=".service-risk__item" data-item-reveal-strong>
+          <li class="service-risk__item">
+            <p class="service-risk__num" aria-hidden="true">01</p>
+            <h3 class="service-risk__title">Betriebsunterbrechung</h3>
+            <figure class="service-risk__art">
+              <svg class="rz-art" viewBox="-162 -119 316 238" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path class="rz-guide" d="M0.0 -32.0 L72.7 10.0 L0.0 52.0 L-72.7 10.0 Z"/><path class="rz-guide" d="M-110.9 -60.0 L-38.1 -18.0 L-67.5 -1.0 L-140.3 -43.0 Z"/><path class="rz-guide" d="M58.9 38.0 L131.6 80.0 L102.2 97.0 L29.4 55.0 Z"/><path class="rz-line" d="M-109.1 -61.4 L-48.5 -26.4 L-69.3 -14.4 L-129.9 -49.4 Z"/><path class="rz-line" d="M-129.9 -49.4 L-69.3 -14.4 L-69.3 -8.0 L-129.9 -43.0 Z"/><path class="rz-line" d="M-48.5 -26.4 L-69.3 -14.4 L-69.3 -8.0 L-48.5 -20.0 Z"/><ellipse class="rz-line" cx="-121.2" cy="-41.2" rx="2.6" ry="1.5"/><ellipse class="rz-line" cx="-103.9" cy="-31.2" rx="2.6" ry="1.5"/><ellipse class="rz-line" cx="-86.6" cy="-21.2" rx="2.6" ry="1.5"/><path class="rz-line" d="M-103.1 -63.9 L-91.8 -57.4 L-103.1 -50.9 L-114.3 -57.4 Z"/><path class="rz-line" d="M-114.3 -57.4 L-103.1 -50.9 L-103.1 -37.9 L-114.3 -44.4 Z"/><path class="rz-line" d="M-91.8 -57.4 L-103.1 -50.9 L-103.1 -37.9 L-91.8 -44.4 Z"/><path class="rz-line" d="M-80.5 -50.9 L-69.3 -44.4 L-80.5 -37.9 L-91.8 -44.4 Z"/><path class="rz-line" d="M-91.8 -44.4 L-80.5 -37.9 L-80.5 -24.9 L-91.8 -31.4 Z"/><path class="rz-line" d="M-69.3 -44.4 L-80.5 -37.9 L-80.5 -24.9 L-69.3 -31.4 Z"/><path class="rz-line" d="M0.0 -74.0 L52.0 -44.0 L0.0 -14.0 L-52.0 -44.0 Z"/><path class="rz-line" d="M-52.0 -44.0 L0.0 -14.0 L0.0 38.0 L-52.0 8.0 Z"/><path class="rz-line" d="M52.0 -44.0 L0.0 -14.0 L0.0 38.0 L52.0 8.0 Z"/><path class="rz-line" d="M0.0 -97.0 L8.7 -92.0 L0.0 -87.0 L-8.7 -92.0 Z"/><path class="rz-line" d="M-8.7 -92.0 L0.0 -87.0 L0.0 -53.0 L-8.7 -58.0 Z"/><path class="rz-line" d="M8.7 -92.0 L0.0 -87.0 L0.0 -53.0 L8.7 -58.0 Z"/><path class="rz-line" d="M10.4 -62.0 L16.3 -58.6 L10.4 -55.2 L4.5 -58.6 Z"/><path class="rz-line" d="M4.5 -58.6 L10.4 -55.2 L10.4 -36.2 L4.5 -39.6 Z"/><path class="rz-line" d="M16.3 -58.6 L10.4 -55.2 L10.4 -36.2 L16.3 -39.6 Z"/><path class="rz-line" d="M5.2 -45.0 L11.1 -41.6 L5.2 -38.2 L-0.7 -41.6 Z"/><path class="rz-line" d="M-0.7 -41.6 L5.2 -38.2 L5.2 -24.2 L-0.7 -27.6 Z"/><path class="rz-line" d="M11.1 -41.6 L5.2 -38.2 L5.2 -24.2 L11.1 -27.6 Z"/><path class="rz-line" d="M-52.0 7.6 L-31.2 19.6 L-31.2 19.6 L-52.0 7.6 Z"/><path class="rz-line" d="M60.6 36.6 L121.2 71.6 L100.5 83.6 L39.8 48.6 Z"/><path class="rz-line" d="M39.8 48.6 L100.5 83.6 L100.5 90.0 L39.8 55.0 Z"/><path class="rz-line" d="M121.2 71.6 L100.5 83.6 L100.5 90.0 L121.2 78.0 Z"/><ellipse class="rz-line" cx="48.5" cy="56.8" rx="2.6" ry="1.5"/><ellipse class="rz-line" cx="65.8" cy="66.8" rx="2.6" ry="1.5"/><ellipse class="rz-line" cx="83.1" cy="76.8" rx="2.6" ry="1.5"/><path class="rz-line" d="M66.7 34.1 L77.9 40.6 L66.7 47.1 L55.4 40.6 Z"/><path class="rz-line" d="M55.4 40.6 L66.7 47.1 L66.7 60.1 L55.4 53.6 Z"/><path class="rz-line" d="M77.9 40.6 L66.7 47.1 L66.7 60.1 L77.9 53.6 Z"/><path class="rz-line" d="M89.2 47.1 L100.5 53.6 L89.2 60.1 L77.9 53.6 Z"/><path class="rz-line" d="M77.9 53.6 L89.2 60.1 L89.2 73.1 L77.9 66.6 Z"/><path class="rz-line" d="M100.5 53.6 L89.2 60.1 L89.2 73.1 L100.5 66.6 Z"/><path class="rz-accent" d="M32.9 4.0 l7 7 l-9 6 l8 7 l-7 6"/><path class="rz-accent" d="M46.8 -40.5 L63.8 -6.9 L29.8 -6.9 Z"/><path class="rz-accent" d="M46.8 -26.9 L46.8 -17.1"/><path class="rz-accent" d="M46.8 -12.2 l0 0.5"/><circle class="rz-accent" cx="-53.7" cy="32.0" r="15.0"/><path class="rz-accent" d="M-58.2 25.7 v12.6"/><path class="rz-accent" d="M-49.2 25.7 v12.6"/></svg>
+            </figure>
+            <p class="service-risk__text">Ein Einbruch in die Produktionshalle, ein Sabotageakt an einer Anlage, ein unentdeckter Wasserschaden am Wochenende, jede Unterbrechung kostet Produktionszeit, Liefertermine und Kundenvertrauen.</p>
+          </li>
 
-    <!-- ============ 3. CUSTOMER PROBLEMS / USE CASES ============ -->
-    <!-- Deliberately not the homepage Pain Hook layout (unboxed 4-col
-         icon grid) — a plain divided list instead, reusable as-is for
-         any other service's situations list. -->
-    <section class="section section--subtle service-problems">
-      <div class="container">
-        <div class="section__intro" data-reveal>
-          <h2>When Do Companies Need Werkschutz?</h2>
-          <p>Werkschutz becomes a priority once a site's size, hours, or risk profile outgrow informal or part-time coverage. Common situations include:</p>
-        </div>
+          <li class="service-risk__item">
+            <p class="service-risk__num" aria-hidden="true">02</p>
+            <h3 class="service-risk__title">Know-how-Abfluss</h3>
+            <figure class="service-risk__art">
+              <svg class="rz-art" viewBox="-91 -125 272 195" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path class="rz-guide" d="M0.0 -38.0 L69.3 2.0 L0.0 42.0 L-69.3 2.0 Z"/><path class="rz-guide" d="M110.9 -4.0 L155.9 22.0 L110.9 48.0 L65.8 22.0 Z"/><path class="rz-line" d="M0.0 -76.0 L55.4 -44.0 L0.0 -12.0 L-55.4 -44.0 Z"/><path class="rz-line" d="M-55.4 -44.0 L0.0 -12.0 L0.0 34.0 L-55.4 2.0 Z"/><path class="rz-line" d="M55.4 -44.0 L0.0 -12.0 L0.0 34.0 L55.4 2.0 Z"/><path class="rz-line" d="M-32.0 -11.5 l0 -30 l19 -11 l0 30 Z"/><path class="rz-guide" d="M-29.0 -15.5 l0 -24 l13 -8 l0 24 Z"/><path class="rz-line" d="M52.0 -15.0 l30 -16.5 l0 -27.6 l-30 16.5 Z"/><path class="rz-line" d="M57.4 -22.7 l18.0 -9.9"/><path class="rz-line" d="M57.4 -31.1 l18.0 -9.9"/><path class="rz-line" d="M88.3 -22.0 l30 -16.5 l0 -27.6 l-30 16.5 Z"/><path class="rz-line" d="M93.7 -29.7 l18.0 -9.9"/><path class="rz-line" d="M93.7 -38.1 l18.0 -9.9"/><path class="rz-accent" d="M124.7 -29.0 l30 -16.5 l0 -27.6 l-30 16.5 Z"/><path class="rz-accent" d="M130.1 -36.7 l18.0 -9.9"/><path class="rz-accent" d="M130.1 -45.1 l18.0 -9.9"/><path class="rz-guide" d="M34.6 -18.0 Q82.3 -86.0 129.9 -34.0"/><path class="rz-accent" d="M88.3 -100.5 L105.3 -66.9 L71.3 -66.9 Z"/><path class="rz-accent" d="M88.3 -86.9 L88.3 -77.1"/><path class="rz-accent" d="M88.3 -72.2 l0 0.5"/></svg>
+            </figure>
+            <p class="service-risk__text">Konstruktionsdaten, Rezepturen, Prototypen: Betriebsspionage passiert unspektakulär, über unkontrollierte Besucher, Fremdfirmen und offene Zugänge.</p>
+          </li>
 
-        <ul class="service-problems__list" data-reveal>
-          <li>
-            <h3>Industrial premises with valuable equipment or materials</h3>
-            <p>Machinery, raw materials, or inventory that would be costly to replace or dangerous if tampered with.</p>
+          <li class="service-risk__item">
+            <p class="service-risk__num" aria-hidden="true">03</p>
+            <h3 class="service-risk__title">Diebstahl im und um den Betrieb</h3>
+            <figure class="service-risk__art">
+              <svg class="rz-art" viewBox="-114 -74 264 182" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path class="rz-guide" d="M-39.8 -41.0 L12.1 -11.0 L-39.8 19.0 L-91.8 -11.0 Z"/><path class="rz-guide" d="M48.5 10.0 L128.2 56.0 L76.2 86.0 L-3.5 40.0 Z"/><path class="rz-line" d="M56.3 -5.5 L56.3 -39.5"/><path class="rz-line" d="M45.9 0.5 L45.9 -33.5"/><path class="rz-line" d="M35.5 6.5 L35.5 -27.5"/><path class="rz-line" d="M25.1 12.5 L25.1 -21.5"/><path class="rz-line" d="M14.7 18.5 L14.7 -15.5"/><path class="rz-line" d="M-16.5 36.5 L-16.5 2.5"/><path class="rz-line" d="M-26.8 42.5 L-26.8 8.5"/><path class="rz-line" d="M56.3 -39.5 L8.7 -12.0"/><path class="rz-guide" d="M56.3 -23.5 L8.7 4.0"/><path class="rz-line" d="M-13.0 0.5 L-28.6 9.5"/><path class="rz-guide" d="M-13.0 16.5 L-28.6 25.5"/><path class="rz-line" d="M-43.3 -40.6 L-8.7 -20.6 L-43.3 -0.6 L-77.9 -20.6 Z"/><path class="rz-line" d="M-77.9 -20.6 L-43.3 -0.6 L-43.3 5.0 L-77.9 -15.0 Z"/><path class="rz-line" d="M-8.7 -20.6 L-43.3 -0.6 L-43.3 5.0 L-8.7 -15.0 Z"/><path class="rz-line" d="M-43.3 -51.6 L-29.4 -43.6 L-43.3 -35.6 L-57.2 -43.6 Z"/><path class="rz-line" d="M-57.2 -43.6 L-43.3 -35.6 L-43.3 -19.6 L-57.2 -27.6 Z"/><path class="rz-line" d="M-29.4 -43.6 L-43.3 -35.6 L-43.3 -19.6 L-29.4 -27.6 Z"/><path class="rz-line" d="M-26.8 -42.1 L-13.0 -34.1 L-26.8 -26.1 L-40.7 -34.1 Z"/><path class="rz-line" d="M-40.7 -34.1 L-26.8 -26.1 L-26.8 -10.1 L-40.7 -18.1 Z"/><path class="rz-line" d="M-13.0 -34.1 L-26.8 -26.1 L-26.8 -10.1 L-13.0 -18.1 Z"/><path class="rz-line" d="M-59.8 -42.1 L-45.9 -34.1 L-59.8 -26.1 L-73.6 -34.1 Z"/><path class="rz-line" d="M-73.6 -34.1 L-59.8 -26.1 L-59.8 -10.1 L-73.6 -18.1 Z"/><path class="rz-line" d="M-45.9 -34.1 L-59.8 -26.1 L-59.8 -10.1 L-45.9 -18.1 Z"/><path class="rz-line" d="M43.3 2.6 L90.1 29.6 L64.1 44.6 L17.3 17.6 Z"/><path class="rz-line" d="M17.3 17.6 L64.1 44.6 L64.1 70.6 L17.3 43.6 Z"/><path class="rz-line" d="M90.1 29.6 L64.1 44.6 L64.1 70.6 L90.1 55.6 Z"/><path class="rz-line" d="M86.3 36.8 L102.7 46.3 L80.9 58.9 L64.4 49.4 Z"/><path class="rz-line" d="M64.4 49.4 L80.9 58.9 L80.9 77.9 L64.4 68.4 Z"/><path class="rz-line" d="M102.7 46.3 L80.9 58.9 L80.9 77.9 L102.7 65.3 Z"/><ellipse class="rz-line" cx="29.4" cy="50.6" rx="5.9" ry="3.4"/><ellipse class="rz-line" cx="64.1" cy="70.6" rx="5.9" ry="3.4"/><path class="rz-accent" d="M-33.8 -10.5 L21.7 21.5"/><path class="rz-accent" d="M10.7 20.4 L21.7 21.5 L15.2 12.6"/><path class="rz-accent" d="M-8.7 -4.5 L8.3 29.1 L-25.7 29.1 Z"/><path class="rz-accent" d="M-8.7 9.1 L-8.7 18.9"/><path class="rz-accent" d="M-8.7 23.8 l0 0.5"/></svg>
+            </figure>
+            <p class="service-risk__text">Werkzeuge, Metalle, Kraftstoff, IT, sowohl von außen als auch über unkontrollierten Lieferverkehr. Konsequente Torkontrolle senkt die Verluste messbar.</p>
           </li>
-          <li>
-            <h3>Production sites running outside normal business hours</h3>
-            <p>Night shifts, weekend operations, or fully unattended periods where the site still needs coverage.</p>
-          </li>
-          <li>
-            <h3>Access control for employees, contractors, and visitors</h3>
-            <p>A single site with multiple types of legitimate visitors needs a consistent, enforced entry process.</p>
-          </li>
-          <li>
-            <h3>Recurring unauthorized entry or trespassing incidents</h3>
-            <p>Sites that have already experienced break-ins, trespassing, or perimeter breaches.</p>
-          </li>
-          <li>
-            <h3>Incident prevention for high-risk or regulated processes</h3>
-            <p>Operations where a security or safety incident carries outsized financial or regulatory consequences.</p>
-          </li>
-          <li>
-            <h3>Documentation requirements for insurance or compliance audits</h3>
-            <p>Insurers or auditors requiring proof of consistent, documented site security.</p>
+
+          <li class="service-risk__item">
+            <p class="service-risk__num" aria-hidden="true">04</p>
+            <h3 class="service-risk__title">Haftung &amp; Auflagen</h3>
+            <figure class="service-risk__art">
+              <svg class="rz-art" viewBox="-119 -66 231 144" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path class="rz-guide" d="M-20.8 -44.0 L76.2 12.0 L-0.0 56.0 L-97.0 0.0 Z"/><path class="rz-guide" d="M-20.8 -22.4 L34.6 9.6 L-6.9 33.6 L-62.4 1.6 Z"/><path class="rz-guide" d="M-20.8 -28.2 L34.6 3.8 L-6.9 27.8 L-62.4 -4.2 Z"/><path class="rz-line" d="M-20.8 -34.4 L34.6 -2.4 L-6.9 21.6 L-62.4 -10.4 Z"/><path class="rz-line" d="M-62.4 -10.4 L-6.9 21.6 L-6.9 24.4 L-62.4 -7.6 Z"/><path class="rz-line" d="M34.6 -2.4 L-6.9 21.6 L-6.9 24.4 L34.6 0.4 Z"/><path class="rz-line" d="M-9.5 -17.9 L22.5 0.6"/><path class="rz-line" d="M-26.9 -24.9 l5 5 l9 -11"/><path class="rz-line" d="M-17.8 -13.1 L14.2 5.4"/><path class="rz-line" d="M-35.2 -20.1 l5 5 l9 -11"/><path class="rz-line" d="M-26.2 -8.3 L5.9 10.2"/><path class="rz-line" d="M-43.5 -15.3 l5 5 l9 -11"/><path class="rz-accent" d="M-34.5 -3.5 L-2.4 15.0"/><rect class="rz-accent" x="-51.9" y="-16.5" width="14" height="14" rx="2"/><ellipse class="rz-guide" cx="-17.3" cy="14.6" rx="26" ry="15"/><ellipse class="rz-guide" cx="-17.3" cy="14.6" rx="17" ry="10"/><path class="rz-accent" d="M72.7 -25.5 L89.7 8.1 L55.7 8.1 Z"/><path class="rz-accent" d="M72.7 -11.9 L72.7 -2.1"/><path class="rz-accent" d="M72.7 2.8 l0 0.5"/></svg>
+            </figure>
+            <p class="service-risk__text">Unbesetzte Brandmeldezentrale, fehlende Kontrollnachweise, ungesicherte Gefahrstoffe: Im Schadensfall fragt die Versicherung zuerst nach der Dokumentation.</p>
           </li>
         </ul>
+
+        <p class="service-risk__outro">Werkschutz heißt: Diese Risiken werden systematisch kontrolliert, dokumentiert und gemeldet, bevor daraus Schäden werden.</p>
       </div>
     </section>
 
-    <!-- ============ 4. WHAT THE SERVICE INCLUDES ============ -->
-    <!-- Structural placeholder scope — exact Werkschutz service content
-         still needs client confirmation, see build report. Scannable
-         list, not cards. -->
-    <section class="section service-scope">
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 3. VORTEILE (PAIN-AUFHÄNGER) ============ -->
+    <!-- H2 is the client's literal Pain statement. The draft asks for this
+         section as a Gegenüberstellung ("so läuft es oft / so läuft es bei
+         FRANKONIA") but only supplies the FRANKONIA side, so the three
+         left-hand lines below were WRITTEN FOR THIS BUILD, derived from the
+         draft's own Pain-Aufhänger ("Der Ansprechpartner ist kaum
+         erreichbar") and from what each FRANKONIA point answers. They are the
+         only invented sentences on this page — review them with the copy. -->
+    <section class="section service-contrast">
       <div class="container">
-        <div class="section__intro" data-reveal>
-          <h2>What Werkschutz Includes</h2>
-          <p>Exact scope is defined per site during the security analysis. A typical FRANKONIA Werkschutz deployment includes:</p>
+        <div class="section__intro">
+          <p class="section-eyebrow">Vorteile</p>
+          <h2>Der häufigste Grund, warum Betriebe ihren Werkschutz wechseln</h2>
+          <p data-reveal data-reveal-delay>Wenn die Nachtschicht ein Problem meldet und niemand ans Telefon geht, trägt Ihr Team das Risiko. Bei FRANKONIA erreichen Sie Ihren Einsatz- oder Bereichsleiter direkt, rund um die Uhr, ohne Zentrale, ohne Warteschleife.</p>
         </div>
 
-        <div class="service-scope__grid" data-reveal>
-          <div class="service-scope__item">
-            <h3>Access &amp; Visitor Control</h3>
-            <p>Checking credentials and logging entry for employees, contractors, and visitors at the site's access points.</p>
+        <div class="service-contrast__table" data-item-reveal=".service-contrast__row" data-item-reveal-strong>
+          <div class="service-contrast__head" aria-hidden="true">
+            <span class="service-contrast__head-cell service-contrast__head-cell--old">So läuft es oft</span>
+            <span class="service-contrast__head-cell service-contrast__head-cell--new">So läuft es bei FRANKONIA</span>
           </div>
-          <div class="service-scope__item">
-            <h3>Patrols</h3>
-            <p>Scheduled and randomized patrols across the premises, including perimeter and high-risk areas.</p>
-          </div>
-          <div class="service-scope__item">
-            <h3>Gatehouse Duties</h3>
-            <p>Staffing entry points, managing barriers, and coordinating deliveries or shift-change traffic.</p>
-          </div>
-          <div class="service-scope__item">
-            <h3>Incident Reporting</h3>
-            <p>Documenting irregularities, safety hazards, or security incidents as they're observed.</p>
-          </div>
-          <div class="service-scope__item">
-            <h3>Alarm Response Coordination</h3>
-            <p>First response to triggered alarms on-site, coordinated with your existing alarm system.</p>
-          </div>
-          <div class="service-scope__item">
-            <h3>Documentation</h3>
-            <p>Digital shift logs covering patrols, incidents, and access activity, available for review at any time.</p>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- ============ 5. THE FRANKONIA SYSTEM, APPLIED TO WERKSCHUTZ ============ -->
-    <!-- Service-detail interpretation of the six value pillars, not a
-         copy of the homepage's card-grid "Our System" section — a plain
-         list, applying each pillar specifically to Werkschutz. -->
-    <section class="section section--subtle service-pillars">
-      <div class="container">
-        <div class="section__intro" data-reveal>
-          <h2>The FRANKONIA Standard, Applied to Werkschutz</h2>
-          <p>The same six principles behind every FRANKONIA deployment, and what they mean specifically for your Werkschutz coverage.</p>
-        </div>
+          <div class="service-contrast__row">
+            <div class="service-contrast__cell service-contrast__cell--old">
+              <p>Die Nummer führt in eine Zentrale, der zuständige Disponent ist morgen wieder da.</p>
+            </div>
+            <div class="service-contrast__cell service-contrast__cell--new">
+              <h3>Ein fester Ansprechpartner</h3>
+              <p>Ihr Bereichsleiter kennt Ihren Betrieb, Ihre Schichtpläne und Ihre Besonderheiten. Änderungen, Verstärkung, Sonderfälle, ein Anruf genügt, mit garantierter Antwortzeit.</p>
+            </div>
+          </div>
 
-        <div class="service-pillars__grid" data-reveal>
-          <div class="service-pillars__item">
-            <h3>Reliability</h3>
-            <p>Your site is covered by a fixed, site-trained team — not rotating temporary staff who don't know your premises or procedures.</p>
+          <div class="service-contrast__row">
+            <div class="service-contrast__cell service-contrast__cell--old">
+              <p>Am Tor steht jede Woche ein anderes Gesicht, ausgewählt ohne Ihr Zutun.</p>
+            </div>
+            <div class="service-contrast__cell service-contrast__cell--new">
+              <h3>Professionelles Auftreten gegenüber Gästen, Kunden und Kollegen</h3>
+              <p>Ihre Werkschutzkräfte sind das erste Gesicht Ihres Betriebs, am Tor, am Empfang, beim Rundgang. Wir besetzen diese Position mit festen, geschulten Stammkräften, bei deren Auswahl Sie mitreden.</p>
+            </div>
           </div>
-          <div class="service-pillars__item">
-            <h3>Transparency</h3>
-            <p>Digital shift reports show exactly who patrolled your site, when, and what — if anything — was found.</p>
-          </div>
-          <div class="service-pillars__item">
-            <h3>Single Point of Contact</h3>
-            <p>One dedicated contact person coordinates your Werkschutz deployment — no call centers, no repeating your site's requirements.</p>
-          </div>
-          <div class="service-pillars__item">
-            <h3>Fast Response Times</h3>
-            <p>Standard Werkschutz deployment within 48–72 hours; on-site incidents are escalated through a defined response chain.</p>
-          </div>
-          <div class="service-pillars__item">
-            <h3>Certified Quality</h3>
-            <p>All Werkschutz personnel are certified under DIN 77200-1 and background-checked under §34a GewO before their first shift.</p>
-          </div>
-          <div class="service-pillars__item">
-            <h3>Flexible Scheduling</h3>
-            <p>Coverage scales from a single night shift to full 24/7 site presence as your operational needs change.</p>
+
+          <div class="service-contrast__row">
+            <div class="service-contrast__cell service-contrast__cell--old">
+              <p>Was in der Nachtschicht passiert ist, bleibt eine mündliche Auskunft ohne Nachweis.</p>
+            </div>
+            <div class="service-contrast__cell service-contrast__cell--new">
+              <h3>Nachweisbare Ergebnisse</h3>
+              <p>Digitales Wachbuch, Torbuch und regelmäßiger Report machen die Werkschutz-Leistung für Ihre Geschäftsführung sichtbar, inklusive Vorfallstatistik und Maßnahmenverfolgung.</p>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ============ 6. HOW THE ENGAGEMENT WORKS ============ -->
-    <!-- Structural placeholder process — confirm exact steps with client.
-         Plain numbered list, not a SaaS-style onboarding graphic. -->
-    <section class="section service-process">
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 4. LEISTUNGSUMFANG ============ -->
+    <section class="section section--light service-scope" data-nav-theme="light">
       <div class="container">
-        <div class="section__intro" data-reveal>
-          <h2>How a Werkschutz Engagement Works</h2>
-        </div>
+        <!-- Pinned image mask-reveal (client 2026-08-03, reference: a GSAP
+             "pinned image mask reveal on scroll" pen). Left column = the six
+             duties, one per screen; right column = a stack of six photos that
+             stays put while they scroll, each clipping away (clip-path inset
+             from the bottom) to reveal the next, plus a slow object-position
+             drift so the visible image is never static.
 
-        <ol class="service-process__list" data-reveal>
-          <li class="service-process__step">
-            <span class="service-process__number" aria-hidden="true">01</span>
-            <h3>Initial Security Analysis</h3>
-            <p>A free, focused conversation about your site, current setup, and risk areas.</p>
-          </li>
-          <li class="service-process__step">
-            <span class="service-process__number" aria-hidden="true">02</span>
-            <h3>Site &amp; Risk Assessment</h3>
-            <p>An on-site walkthrough to assess access points, shift patterns, and specific risk factors.</p>
-          </li>
-          <li class="service-process__step">
-            <span class="service-process__number" aria-hidden="true">03</span>
-            <h3>Security Concept</h3>
-            <p>A written proposal covering scope, staffing levels, and shift structure for your site.</p>
-          </li>
-          <li class="service-process__step">
-            <span class="service-process__number" aria-hidden="true">04</span>
-            <h3>Personnel &amp; Deployment Planning</h3>
-            <p>Matching certified personnel to your site and scheduling the shift structure you approved.</p>
-          </li>
-          <li class="service-process__step">
-            <span class="service-process__number" aria-hidden="true">05</span>
-            <h3>Start of Service</h3>
-            <p>Deployment begins on the agreed date, with your dedicated contact person as the single point of coordination.</p>
-          </li>
-          <li class="service-process__step">
-            <span class="service-process__number" aria-hidden="true">06</span>
-            <h3>Reporting &amp; Ongoing Optimization</h3>
-            <p>Regular shift reporting and periodic check-ins to adjust coverage as your site's needs change.</p>
-          </li>
-        </ol>
-      </div>
-    </section>
+             Differences from the reference, on purpose:
+             - CSS `position: sticky` instead of ScrollTrigger's `pin` — this
+               project's own pattern for every sticky section (see
+               js/system-story.js, js/konzept-seq.js).
+             - It reuses the page's single Lenis + GSAP ticker (set up by
+               js/smooth-scroll.js); the reference creates its own Lenis, which
+               would be a second instance. Never do that.
+             - No animated page background: this page already alternates
+               black/white per section and drives that with the pixel seams.
+             - No per-item link/pill: the section's one link is the highlight
+               box below. Six invented CTAs would be six exits from the page.
 
-    <!-- ============ 7. CERTIFICATIONS AND TRUST ============ -->
-    <!-- Contextual to the Werkschutz decision, not a repeat of the
-         homepage trust section — no invented employee/customer counts,
-         see CLAUDE.md on why those stay off pages until confirmed. -->
-    <section class="section section--inverse service-trust">
-      <div class="container">
-        <div class="section__intro" data-reveal>
-          <h2>Certified Werkschutz You Can Verify</h2>
-          <p>FRANKONIA's Werkschutz personnel are certified under DIN 77200-1 and DIN EN ISO 9001, with every deployment documented and auditable — not just a claim on a page.</p>
-        </div>
+             The two group headings ("Im laufenden Betrieb" / "Nachts, am
+             Wochenende, an Feiertagen") are now the phase label on each step
+             instead of two <h3>s over two lists — same words, same reading
+             order, and each duty gets to be its own <h3>.
 
-        <div class="service-trust__badges" data-reveal>
-          <img class="service-trust__cert-seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
-          <img class="service-trust__cert-seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
-          <div class="review-card">
-            <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
-            <span class="review-card__stars">
-              <span class="review-card__stars-track" aria-hidden="true">
-                <svg class="icon"><use href="#icon-star"></use></svg>
-                <svg class="icon"><use href="#icon-star"></use></svg>
-                <svg class="icon"><use href="#icon-star"></use></svg>
-                <svg class="icon"><use href="#icon-star"></use></svg>
-                <svg class="icon"><use href="#icon-star"></use></svg>
-              </span>
-              <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
-                <svg class="icon"><use href="#icon-star"></use></svg>
-                <svg class="icon"><use href="#icon-star"></use></svg>
-                <svg class="icon"><use href="#icon-star"></use></svg>
-                <svg class="icon"><use href="#icon-star"></use></svg>
-                <svg class="icon"><use href="#icon-star"></use></svg>
-              </span>
-            </span>
-            <span class="review-card__score">
-              <span class="review-card__value">4.7</span>
-              <span class="review-card__count">97 Reviews</span>
-            </span>
+             JS-only-ever-enhances: every step's text is real, visible HTML and
+             nothing here is hidden by CSS. The stacking/clipping only applies
+             from 1024px up AND only with motion allowed — below that, or under
+             prefers-reduced-motion, the same markup lays out as six
+             text+photo pairs in normal flow (see .service-flow in
+             page-service.css). Photos are decorative support for text that
+             already says everything, so a crawler loses nothing.
+
+             PHOTOS: four of the six are the client's real per-step photos as of
+             2026-08-03 (see the note on .service-flow__media below); steps 02 and
+             06 are still placeholders. The two stand-ins I had exported for this
+             section earlier (flow-alarmbedienung from Cameras.png,
+             flow-kontrollgang from lab.jpg) are superseded and no longer
+             referenced. -->
+        <div class="service-flow" data-service-flow>
+          <!-- The section heading lives INSIDE the flow (client 2026-08-03: "que
+               quede el título fixed arriba y que lo que se muevan sean solo los
+               textos de la izquierda y las imágenes"). Being a child of the flow
+               is what makes it stick for exactly the flow's scroll and let go at
+               its end, instead of staying pinned over the highlight box below. -->
+          <div class="section__intro service-flow__intro">
+            <p class="section-eyebrow">Leistungsumfang</p>
+            <h2>Das übernimmt der FRANKONIA Werkschutz</h2>
+          </div>
+
+          <div class="service-flow__steps">
+            <article class="service-flow__step">
+              <p class="service-flow__phase">Im laufenden Betrieb</p>
+              <h3>Pfortendienst &amp; Empfang</h3>
+              <p>Besucher-Management, Ausweiskontrolle, Koordination von Fremdfirmen und Lieferverkehr, freundlich und konsequent.</p>
+            </article>
+
+            <article class="service-flow__step">
+              <p class="service-flow__phase">Im laufenden Betrieb</p>
+              <h3>Zugangs- &amp; Torkontrolle</h3>
+              <p>Nur befugte Personen und Fahrzeuge auf dem Gelände; Kontrolle nach Ihren Vorgaben, dokumentiert.</p>
+            </article>
+
+            <article class="service-flow__step">
+              <p class="service-flow__phase">Im laufenden Betrieb</p>
+              <h3>Kontrollgänge in Produktion &amp; Lager</h3>
+              <p>Rundgänge nach Plan und stichprobenartig, mit Blick für Brandlasten, offene Zugänge und technische Auffälligkeiten.</p>
+            </article>
+
+            <article class="service-flow__step">
+              <p class="service-flow__phase">Nachts, am Wochenende, an Feiertagen</p>
+              <h3>Verschluss- &amp; Kontrollrunden</h3>
+              <p>Gebäude, Tore und Anlagen werden kontrolliert verschlossen und dokumentiert.</p>
+            </article>
+
+            <article class="service-flow__step">
+              <p class="service-flow__phase">Nachts, am Wochenende, an Feiertagen</p>
+              <h3>Alarm- &amp; Anlagenbedienung</h3>
+              <p>Technik-geschulte Kräfte bedienen Brandmelde-, Einbruchmelde- und Zutrittsanlagen sachgemäß und reagieren sofort.</p>
+            </article>
+
+            <article class="service-flow__step">
+              <p class="service-flow__phase">Nachts, am Wochenende, an Feiertagen</p>
+              <h3>Notfall-Erstmaßnahmen</h3>
+              <p>Definierte Meldeketten, Einweisung von Feuerwehr und Rettungsdiensten, Erstmaßnahmen nach Ihrem Notfallplan.</p>
+            </article>
+          </div>
+
+          <!-- DOM order matches the steps above (step 1's photo first). The
+               stacking order is the reverse — photo 1 on top, clipping away to
+               expose photo 2 — and that is set in CSS with nth-child z-indexes,
+               not by reordering the markup, so the mobile/reduced-motion
+               interleave stays a plain `order` on the natural sequence. -->
+          <!-- PHOTOS, state as of 2026-08-03. The client supplied four of the six
+               as "<n>. <Leistung>.png/.jpg" and they are wired to the step they
+               are named for, exported to WebP + JPEG in assets/images/
+               (flow-0<n>-*). Steps 02 and 06 are still placeholders — those two
+               files were not among the supplied set. Each one is marked below, so
+               the swap is a two-line edit when they arrive.
+               Note: the supplied "5. Alarm- & Anlagenbedienung" is the same photo
+               the homepage uses as system-operational-control, which step 02 used
+               to show here. It now sits at step 05 where the client put it, and
+               step 02's placeholder was changed so the same photo does not appear
+               twice in one scroll. -->
+          <div class="service-flow__media">
+            <!-- 01 — real, client-supplied. Also the closest thing in the project
+                 to the Pfortendienst/Werkstor shot the hero brief asks for. -->
+            <figure class="service-flow__frame">
+              <picture>
+                <source srcset="/assets/images/flow-01-pfortendienst.webp" type="image/webp">
+                <img src="/assets/images/flow-01-pfortendienst.jpg" alt="FRANKONIA Mitarbeiter am Pfortenhäuschen eines Betriebsgeländes" width="1000" height="1500" loading="lazy">
+              </picture>
+            </figure>
+
+            <!-- 02 — 🔴 PLACEHOLDER, "2. Zugangs- & Torkontrolle" not supplied. -->
+            <figure class="service-flow__frame">
+              <picture>
+                <source srcset="/assets/images/werkschutz.webp" type="image/webp">
+                <img src="/assets/images/werkschutz.jpg" alt="FRANKONIA Werkschutzkraft auf einem Industriegelände" width="820" height="1227" loading="lazy">
+              </picture>
+            </figure>
+
+            <!-- 03 — real, client-supplied. Worth a look before launch: the copy
+                 says "Rundgänge durch Produktion und Lager" and this photo is a
+                 patrol in a retail aisle. Used as named, not swapped. -->
+            <figure class="service-flow__frame">
+              <picture>
+                <source srcset="/assets/images/flow-03-kontrollgaenge.webp" type="image/webp">
+                <img src="/assets/images/flow-03-kontrollgaenge.jpg" alt="FRANKONIA Sicherheitskraft beim Kontrollgang zwischen den Regalen" width="1000" height="1500" loading="lazy">
+              </picture>
+            </figure>
+
+            <!-- 04 — real, client-supplied. -->
+            <figure class="service-flow__frame">
+              <picture>
+                <source srcset="/assets/images/flow-04-verschluss.webp" type="image/webp">
+                <img src="/assets/images/flow-04-verschluss.jpg" alt="FRANKONIA Einsatzfahrzeug bei der nächtlichen Verschluss- und Kontrollrunde" width="1200" height="1038" loading="lazy">
+              </picture>
+            </figure>
+
+            <!-- 05 — real, client-supplied. -->
+            <figure class="service-flow__frame">
+              <picture>
+                <source srcset="/assets/images/flow-05-alarmbedienung.webp" type="image/webp">
+                <!-- Exported at its native 751px: the supplied file is only
+                     751x941, so a 1000px export would just upscale it. -->
+                <img src="/assets/images/flow-05-alarmbedienung.jpg" alt="Sicherheitskraft bedient die Kamera- und Alarmtechnik an der Pforte" width="751" height="941" loading="lazy">
+              </picture>
+            </figure>
+
+            <!-- 06 — 🔴 PLACEHOLDER, "6. Notfall-Erstmaßnahmen" not supplied. -->
+            <figure class="service-flow__frame">
+              <picture>
+                <source srcset="/assets/images/system-reliable-teams-751.webp" type="image/webp">
+                <img src="/assets/images/system-reliable-teams.jpg" alt="Eingespieltes FRANKONIA Team bei der Schichtübergabe" width="751" height="941" loading="lazy">
+              </picture>
+            </figure>
           </div>
         </div>
 
-        <div class="service-trust__members">
-          <span class="service-trust__members-label">Member of</span>
-          <span>Wirtschaftsclub Bamberg (WCB) · Deutscher Mittelstands-Bund</span>
-        </div>
+        <!-- Highlight-Box (draft): the one cross-sell moment in this section. -->
+        <aside class="service-highlight" data-reveal>
+          <h3 class="service-highlight__title">Werkschutz + Technik aus einem Konzept</h3>
+          <p>Wo Videoüberwachung, Zutrittssysteme oder Alarmanlagen Personalstunden ersetzen können, planen wir sie in Ihr Sicherheitskonzept ein. Das senkt die laufenden Kosten, bei gleicher oder besserer Sicherheit.</p>
+          <a class="service-link" href="/sicherheitstechnik/">Zur Sicherheitstechnik<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        </aside>
       </div>
     </section>
 
-    <!-- ============ 8. OPERATIONAL AREAS / LOCAL SEO LINKS ============ -->
-    <!-- Links to the general city pages (guidelines §2.2's confirmed URL
-         map has no dedicated /werkschutz-{city}/ combo page — those combo
-         URLs are reserved for specific high-CPC pairings like
-         /brandwache-nuernberg/, and Werkschutz isn't one of the listed
-         examples). None of these city pages exist yet — see build report. -->
-    <section class="section section--subtle service-areas">
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 5. WERKSCHUTZ ODER OBJEKTSCHUTZ? ============ -->
+    <!-- REBUILT 2026-08-03 (client brief: "redesign into a more professional,
+         decision-oriented comparison experience... the current UX does not guide
+         them clearly toward a decision"). Was a three-column <table> of
+         criteria; now two comparable service panels plus a decision-support
+         strip that carries the conversion.
+
+         Every approved fact and both links are unchanged — the six criteria
+         values are the draft's, verbatim, only regrouped BY SERVICE instead of
+         by criterion, which is how someone choosing actually reads them.
+
+         Semantics: each panel is a <dl>, i.e. still real term/value pairs, so
+         nothing about the comparison depends on the visual grid. The old <table>
+         had to be abandoned rather than restyled: a table's own row/column
+         semantics are what made it read as data, and the brief asks for the
+         opposite (Werkschutz deliberately carries more weight than Objektschutz,
+         which a symmetric table cannot express).
+
+         GEO: the H2 is still the question a decision-maker types, and the direct
+         two-sentence answer is now the FIRST thing under it. The longer approved
+         paragraph is kept below it, quieter — visible, crawlable, not dominant. -->
+    <section class="section service-compare">
       <div class="container">
-        <div class="section__intro" data-reveal>
-          <h2>Werkschutz Across Franconia and Bavaria</h2>
-          <p>FRANKONIA provides Werkschutz within roughly 100 km of Bamberg, including:</p>
+        <div class="section__intro">
+          <p class="section-eyebrow">Abgrenzung</p>
+          <h2>Werkschutz oder Objektschutz, was braucht Ihr Betrieb?</h2>
+          <!-- The intro is ONE line on purpose (client 2026-08-03: "es mucho
+               texto el título más el subtítulo más el texto"). The draft's longer
+               paragraph used to sit here as supporting copy and was removed: it
+               restated the panels almost word for word — "Pfortendienst,
+               Fremdfirmen-Koordination, Anlagen-Bedienung, Schutz sensibler
+               Bereiche" are the Werkschutz panel's own criteria, and "Gebäude und
+               Gelände… vom Bürogebäude" are the Objektschutz panel's. So this is
+               a deduplication, not a content cut; the only word that left the
+               page with it is "Logistikhalle". -->
+          <p class="service-compare__answer" data-reveal data-reveal-delay>Werkschutz schützt laufende industrielle Prozesse. Objektschutz schützt Gebäude und Gelände.</p>
         </div>
 
-        <ul class="service-areas__list">
-          <li><a class="service-areas__link" href="/sicherheitsdienst-bamberg/">Werkschutz in Bamberg</a></li>
-          <li><a class="service-areas__link" href="/sicherheitsdienst-nuernberg/">Werkschutz in Nürnberg</a></li>
-          <li><a class="service-areas__link" href="/sicherheitsdienst-wuerzburg/">Werkschutz in Würzburg</a></li>
-          <li><a class="service-areas__link" href="/sicherheitsdienst-erlangen/">Werkschutz in Erlangen</a></li>
+        <div class="service-compare__panels" data-item-reveal=".service-panel">
+          <!-- Werkschutz carries the subtle priority: this is the Werkschutz
+               page. The distinction never rests on colour alone — the context
+               label, the title, the icon and the copy each state it. -->
+          <article class="service-panel service-panel--primary">
+            <p class="service-panel__label">
+              <svg class="icon service-panel__icon" aria-hidden="true"><use href="#icon-factory"></use></svg>
+              Für laufende Betriebe
+            </p>
+            <h3 class="service-panel__title">Werkschutz</h3>
+
+            <!-- No explanation line under the title (same client note about too
+                 much text). It said "Für Produktionsstandorte und Industrieanlagen
+                 mit laufendem Betrieb", which is the context label above plus the
+                 "Typisches Objekt" row below, said a third time. The criteria are
+                 kept over it because they are the client's original approved
+                 comparison content; the explanation was written for the redesign. -->
+            <dl class="service-panel__facts">
+              <div class="service-panel__fact">
+                <dt>Typisches Objekt</dt>
+                <dd>Produktionsstandort, Industrieanlage</dd>
+              </div>
+              <div class="service-panel__fact">
+                <dt>Kern-Aufgaben</dt>
+                <dd>Pforte, Torkontrolle, Rundgänge im Betrieb</dd>
+              </div>
+              <div class="service-panel__fact">
+                <dt>Besonderheit</dt>
+                <dd>Schutz sensibler Bereiche, Anlagen-Bedienung, Fremdfirmen</dd>
+              </div>
+            </dl>
+
+            <a class="btn btn--primary service-panel__cta" href="#anfrage">Werkschutz anfragen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </article>
+
+          <article class="service-panel service-panel--secondary">
+            <p class="service-panel__label">
+              <svg class="icon service-panel__icon" aria-hidden="true"><use href="#icon-building"></use></svg>
+              Für Gebäude und Gelände
+            </p>
+            <h3 class="service-panel__title">Objektschutz</h3>
+
+            <dl class="service-panel__facts">
+              <div class="service-panel__fact">
+                <dt>Typisches Objekt</dt>
+                <dd>Bürogebäude, Lager, Einrichtung</dd>
+              </div>
+              <div class="service-panel__fact">
+                <dt>Kern-Aufgaben</dt>
+                <dd>Bestreifung, Zugangskontrolle</dd>
+              </div>
+              <div class="service-panel__fact">
+                <dt>Besonderheit</dt>
+                <dd>Flexible Einsatzzeiten, Randzeiten-Schutz</dd>
+              </div>
+            </dl>
+
+            <!-- The Objektschutz link, moved in here from the detached row that
+                 used to sit under the table. /objektschutz/ is not built yet
+                 (guidelines §2.2 URL). Secondary treatment on purpose. -->
+            <a class="service-panel__cta service-panel__cta--quiet" href="/objektschutz/">Zum Objektschutz<svg class="icon service-panel__cta-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </article>
+        </div>
+
+        <!-- Decision support: the bridge from "which one?" to the form. This is
+             what makes the section end in an action instead of a comparison. -->
+        <aside class="service-decision" data-reveal>
+          <div class="service-decision__text">
+            <h3 class="service-decision__heading">Sie sind nicht sicher, welche Leistung passt?</h3>
+            <p>Wir prüfen Ihren Standort und empfehlen die passende Lösung — kostenfrei und unverbindlich.</p>
+          </div>
+          <div class="service-decision__actions">
+            <a class="btn btn--primary" href="#anfrage">Kostenfreie Einschätzung erhalten<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="service-link service-decision__link" href="/ratgeber/werkschutz-vs-objektschutz/">Ausführlicher Vergleich im Ratgeber<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 6. ANWENDUNGSFÄLLE ============ -->
+    <section class="section section--light service-cases" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <p class="section-eyebrow">Anwendungsfälle</p>
+          <h2>Für diese Betriebe arbeitet der FRANKONIA Werkschutz</h2>
+        </div>
+
+        <ul class="service-cases__grid" data-item-reveal=".service-cases__item" data-item-reveal-strong>
+          <li class="service-cases__item">
+            <span class="service-cases__number" aria-hidden="true">01</span>
+            <h3>Produktion &amp; Fertigung</h3>
+            <p>Mehrschicht-Betriebe mit Werkstor, Fremdfirmen und hohem Materialdurchsatz, der Klassiker für Pfortendienst plus Rundgänge.</p>
+          </li>
+          <li class="service-cases__item">
+            <span class="service-cases__number" aria-hidden="true">02</span>
+            <h3>Chemie, Energie &amp; sensible Anlagen</h3>
+            <p>Standorte mit besonderen Auflagen brauchen dokumentierte Kontrollen, geschulte Kräfte und saubere Meldeketten.</p>
+          </li>
+          <li class="service-cases__item">
+            <span class="service-cases__number" aria-hidden="true">03</span>
+            <h3>Mittelständische Werke &amp; Familienunternehmen</h3>
+            <p>Wenn kein eigener Werkschutz wirtschaftlich ist: FRANKONIA stellt die komplette Funktion, vom Konzept bis zur Nachtschicht.</p>
+          </li>
+          <li class="service-cases__item">
+            <span class="service-cases__number" aria-hidden="true">04</span>
+            <h3>Hafen- &amp; Logistikstandorte</h3>
+            <p>Als Partner des Bayernhafens Bamberg kennen wir die Abläufe von Umschlagstandorten: Lieferverkehr, Gefahrgut, weitläufige Areale.</p>
+          </li>
         </ul>
-        <p class="service-areas__note">Don't see your location? <a href="/einsatzgebiete/">Check our full coverage area</a> or request a security analysis to confirm.</p>
-      </div>
-    </section>
 
-    <!-- ============ 9. REFERENCE / CUSTOMER RESULT ============ -->
-    <!-- No real customer, quote, or result exists for Werkschutz yet —
-         every field below is a clearly labeled placeholder, not a
-         soft-real-sounding invention. Replace wholesale once the client
-         supplies an approved reference; don't edit around the edges. -->
-    <section class="section service-reference">
-      <div class="container">
-        <div class="section__intro" data-reveal>
-          <h2>A Recent Werkschutz Engagement</h2>
-          <p class="service-reference__disclaimer">Placeholder structure — awaiting a client-approved Werkschutz reference. No real customer, quote, or figure below.</p>
-        </div>
-
-        <div class="service-reference__card" data-reveal>
-          <dl class="service-reference__facts">
-            <div>
-              <dt>Industry</dt>
-              <dd>[Placeholder — e.g. manufacturing, logistics]</dd>
-            </div>
-            <div>
-              <dt>Challenge</dt>
-              <dd>[Placeholder — the customer's Werkschutz problem before FRANKONIA]</dd>
-            </div>
-            <div>
-              <dt>FRANKONIA Solution</dt>
-              <dd>[Placeholder — the Werkschutz setup FRANKONIA deployed]</dd>
-            </div>
-            <div>
-              <dt>Measurable Result</dt>
-              <dd>[Placeholder — a real, client-confirmed figure only]</dd>
-            </div>
-          </dl>
-          <blockquote class="service-reference__quote">
-            <p>[Placeholder testimonial quote — awaiting client-approved reference]</p>
-            <footer>— Placeholder, Job Title, Company</footer>
-          </blockquote>
+        <!-- Referenz-Abbinder (draft). The two logos are the real client marks
+             the copy names, exported as white silhouettes to match the
+             homepage's own client-logo treatment (assets/images/client-logos/).
+             No invented testimonial here — the draft says "Referenzen auf
+             Anfrage" and that is exactly what this says. -->
+        <div class="service-cases__proof" data-reveal>
+          <p class="service-cases__proof-text">Referenzen auf Anfrage, unter anderem vertrauen MORELO Reisemobile und der Bayernhafen Bamberg auf FRANKONIA.</p>
+          <div class="service-cases__logos">
+            <img class="service-cases__logo" src="/assets/images/client-logos/morelo.png" alt="MORELO Reisemobile Logo" width="128" height="160" loading="lazy">
+            <img class="service-cases__logo" src="/assets/images/client-logos/bayernhafen.png" alt="bayernhafen Bamberg Logo" width="374" height="160" loading="lazy">
+          </div>
         </div>
       </div>
     </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 7. INDIVIDUELLES SICHERHEITSKONZEPT ============ -->
+    <!-- The compact version of this block (the homepage has the big 3-cube
+         exploded-view sequence, css/konzept-seq.css) — it is deliberately text
+         + three ticks + one link, per the draft's "kompakter als auf
+         /objektschutz/". docs/build-checklist.md counts 11 pages needing this
+         compact variant, which is why it is a generic .service-konzept block. -->
+    <section class="section service-konzept">
+      <div class="container service-konzept__inner">
+        <div class="section__intro">
+          <p class="section-eyebrow">Sicherheitskonzept</p>
+          <h2>Erst das Sicherheitskonzept, dann der Stundensatz</h2>
+          <p data-reveal data-reveal-delay>Standard-Pakete gibt es bei FRANKONIA nicht. Vor dem Angebot steht die Begehung: Unsere Experten analysieren Tore, Zugänge, Schichtmodelle, Anlagen und Auflagen, und entwickeln ein Werkschutz-Konzept, das Personal und Technik wirtschaftlich kombiniert. Bei einem Großkunden hat ein neues Einsatzkonzept 30 % Personalkosten eingespart, bei gleicher Sicherheit.</p>
+        </div>
+
+        <ul class="service-konzept__list" data-item-reveal>
+          <li>
+            <svg class="icon service-konzept__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            Kostenfreie Begehung und Risiko-Analyse Ihres Standorts
+          </li>
+          <li>
+            <svg class="icon service-konzept__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            Schriftliches Konzept mit Besetzungsplan und Technik-Empfehlung
+          </li>
+          <li>
+            <svg class="icon service-konzept__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            Unverbindliches Angebot innerhalb eines Werktages
+          </li>
+        </ul>
+
+        <a class="service-link" href="/sicherheitskonzept/">So entsteht Ihr Sicherheitskonzept<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 8. KOSTEN ============ -->
+    <!-- The block docs/build-checklist.md counts on 27 pages, built here first
+         and named generically (.service-price*) so a city or combo page can
+         reuse it with different numbers and factors. GEO pattern again:
+         question H2, price in the first sentence, then what moves it. -->
+    <section class="section section--light service-price" data-nav-theme="light">
+      <!-- REBUILT 2026-08-03 (client): the intro was a full-width block with the
+           factors and the card in a row underneath, which left the card starting
+           far below the heading and a lot of empty white around both. Now ONE
+           two-column grid for the whole section (55/45), the card top-aligned
+           with the intro, and named grid areas so the card can sit in the right
+           column on desktop while staying between the intro and the factors in
+           the DOM.
+
+           That DOM order is the point, not a side effect: the brief wants the
+           price and CTA to come BEFORE the factors on a phone, and doing it in
+           the DOM rather than with `order` keeps the tab order matching what is
+           on screen (docs/page-conventions.md §7 — reordering visually with
+           `order` is the thing that rule warns about). It reads correctly on
+           desktop too: heading → intro → price → what moves it.
+
+           No copy or figure changed. -->
+      <div class="container service-price__layout">
+        <div class="section__intro service-price__intro">
+          <p class="section-eyebrow">Kosten</p>
+          <h2>Was kostet Werkschutz?</h2>
+          <p class="service-price__answer" data-reveal data-reveal-delay>Werkschutz kostet in der Regel zwischen 28 und 40 Euro pro Stunde, etwas mehr als einfacher Objektschutz, weil technik-geschulte und oft zusätzlich qualifizierte Kräfte eingesetzt werden. Die genaue Lage in der Spanne bestimmen:</p>
+        </div>
+
+        <!-- Preis-Box: the page's second conversion point. Real <p>/<a>, no
+             JS — the figures are the draft's own. -->
+        <aside class="service-price__box" data-reveal>
+          <p class="service-price__box-label">Ihre Preisspanne</p>
+          <!-- Short hyphen, not the en dash the draft's Preis-Box uses (client
+               2026-08-03). German typography would take a Bis-Strich (–) for a
+               range; this is the client's explicit call on the glyph, and it is
+               the only character that changed. -->
+          <p class="service-price__box-value">28-40 <span class="service-price__box-unit">€/Std.</span></p>
+          <p class="service-price__box-note">netto, je nach Qualifikation und Besetzung</p>
+          <ul class="service-price__box-list">
+            <li>
+              <svg class="icon service-price__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Kostenfreie Begehung
+            </li>
+            <li>
+              <svg class="icon service-price__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Angebot in 1 Werktag
+            </li>
+          </ul>
+          <a class="btn btn--primary service-price__cta" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        </aside>
+
+        <!-- The blue plus in front of each factor is a CSS ::before, not an icon
+             per row: five sprite <use>es would be five nodes for one repeated
+             glyph, and the list must not read as a spreadsheet. -->
+        <ul class="service-price__factors" data-item-reveal>
+          <li>Qualifikation (Basisschutz, Brandschutzhelfer, Ersthelfer, Anlagen-Schulungen)</li>
+          <li>Einsatzzeiten und tarifliche Zuschläge (Nacht, Wochenende, Feiertag)</li>
+          <li>Besetzung: durchgehender Pfortendienst, Randzeiten oder Kombination mit Revierdienst</li>
+          <li>Umfang der Zusatzaufgaben (Empfang, Post, Waage, Fremdfirmen-Koordination)</li>
+          <li>Technik-Kombination, die Personalstunden ersetzt</li>
+        </ul>
+
+        <p class="service-price__hint">
+          <svg class="icon service-price__hint-icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <span><strong>Hinweis:</strong> Ein 24/7-Werkschutzposten ist eine sechsstellige Jahresinvestition. Deshalb rechnet sich das Konzept vor dem Vertrag: Häufig lässt sich die gleiche Sicherheit mit intelligenterer Besetzung und Technik günstiger erreichen.</span>
+        </p>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 9. TRUST / ANSPRECHPARTNER ============ -->
+    <!-- REBUILT 2026-08-03 (client): the person and the certifications were two
+         parallel text columns of equal weight, which made the section read as
+         admin rather than as "here is your contact". Now two zones — a contact
+         block where the human is the subject, then a certification strip below it
+         that supports the decision instead of competing with it.
+
+         DOM order is the mobile order the brief asks for (eyebrow → heading →
+         photo → name → role → text → phone → email → certs), and the desktop
+         two-column arrangement comes from grid areas on top of it, so tab order
+         always matches what is on screen.
+
+         Every contact detail and every certification claim is unchanged. The one
+         copy change is in the paragraph: the client supplied the shorter wording
+         to cut text density. The clause it drops ("Ihr Werkschutz-Konzept
+         erstellen erfahrene Sicherheitsexperten") is not lost from the page — the
+         Sicherheitskonzept section says it in full. -->
+    <section class="section service-contact">
+      <div class="container service-contact__layout">
+        <div class="section__intro service-contact__intro">
+          <p class="section-eyebrow">Ansprechpartner</p>
+          <h2>Vom ersten Gespräch bis zur laufenden Schicht: feste Ansprechpartner</h2>
+        </div>
+
+        <!-- 🔴 RESERVED PORTRAIT FRAME — no photo of Alexander Jäger exists in
+             this project, and the client's decision (2026-08-03, asked directly)
+             is to keep the frame reserved rather than put another person's photo
+             next to his name: at that size, beside his name and role, any visitor
+             would read it as him. The frame holds the real 4:5 space so dropping
+             the portrait in later is a two-line edit and shifts no layout. Its
+             label is UI furniture, not client copy, and is deliberately bracketed
+             so it can never be mistaken for content. -->
+        <figure class="service-contact__portrait" data-reveal>
+          <p class="service-contact__portrait-note">
+            <svg class="icon" aria-hidden="true"><use href="#icon-contact"></use></svg>
+            [Portrait Alexander Jäger folgt]
+          </p>
+        </figure>
+
+        <div class="service-contact__person">
+          <p class="service-contact__name">Alexander Jäger</p>
+          <p class="service-contact__role">Vertriebsleiter und Sicherheitsbeauftragter</p>
+          <p class="service-contact__body">Alexander Jäger begleitet Sie von der ersten Anfrage bis zum Angebot. Im laufenden Betrieb ist Ihr Einsatzleiter rund um die Uhr erreichbar.</p>
+
+          <!-- Two real actions, not two text rows. The phone carries more weight
+               than the mail (brief) — it is the outline pill, the mail is the
+               quieter underlined action. -->
+          <div class="service-contact__actions">
+            <a class="service-contact__action service-contact__action--phone" href="tel:+4995196435270">
+              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              +49 951 964352-70
+            </a>
+            <a class="service-contact__action service-contact__action--mail" href="mailto:a.jaeger@frankonia-sicherheit.de">
+              <svg class="icon" aria-hidden="true"><use href="#icon-mail"></use></svg>
+              a.jaeger@frankonia-sicherheit.de
+            </a>
+          </div>
+        </div>
+
+        <!-- Certification strip: one wide panel under the contact block, set apart
+             by a hairline. Badges first, then the three short lines — the same
+             order on desktop (left/right) and on a phone (stacked). -->
+        <div class="service-contact__certs" data-reveal>
+          <h3 class="service-contact__certs-title">Dahinter steht ein zertifiziertes System</h3>
+
+          <div class="service-contact__seals">
+            <img class="service-contact__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="service-contact__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+          </div>
+
+          <ul class="service-contact__certs-list">
+            <li><strong>DIN 77200-1</strong><span>für stationäre Sicherheitsdienste</span></li>
+            <li><strong>DIN EN ISO 9001</strong><span>seit 2016, geprüft durch die DEKRA</span></li>
+            <li><strong>§ 34a GewO</strong><span>ausschließlich IHK-qualifizierte Kräfte</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
 
     <!-- ============ 10. FAQ ============ -->
-    <!-- Reuses the shared .faq__list/.faq-item accordion (components.css)
-         — no data-faq-extra/toggle here, all 7 questions show directly.
-         Question wording matches how a customer would actually ask, per
-         GEO guidance; answers open with the direct answer. -->
-    <section class="section service-faq">
+    <!-- Shared accordion (components.css). All five questions and answers are
+         the draft's, verbatim, and mirror the FAQPage JSON-LD above 1:1. -->
+    <section class="section section--light service-faq" data-nav-theme="light">
       <div class="container">
-        <div class="section__intro" data-reveal>
-          <h2>Frequently Asked Questions About Werkschutz</h2>
+        <div class="section__intro">
+          <p class="section-eyebrow">FAQ</p>
+          <h2>Werkschutz: die häufigsten Fragen</h2>
         </div>
 
-        <div class="faq__list">
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
           <details class="faq-item">
-            <summary><h3>What is Werkschutz?</h3></summary>
-            <p class="faq-item__answer">Werkschutz is on-site industrial security — a dedicated, certified team protecting a company's premises, personnel, and assets, typically with a fixed team rather than rotating patrol coverage.</p>
+            <summary><h3>Was kostet Werkschutz pro Stunde?</h3></summary>
+            <p class="faq-item__answer">Werkschutz kostet in der Regel zwischen 28 und 40 Euro pro Stunde, abhängig von Qualifikation, Einsatzzeiten (tarifliche Zuschläge) und Aufgabenumfang. Ein durchgehend besetzter 24/7-Posten wird individuell kalkuliert — Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
           </details>
           <details class="faq-item">
-            <summary><h3>Which tasks are included in Werkschutz?</h3></summary>
-            <p class="faq-item__answer">A typical deployment covers access and visitor control, patrols, gatehouse duties, incident reporting, alarm response coordination, and documentation. Exact scope is confirmed per site during the security analysis.</p>
+            <summary><h3>Welche Aufgaben hat der Werkschutz?</h3></summary>
+            <p class="faq-item__answer">Zu den klassischen Werkschutz-Aufgaben gehören Pfortendienst und Zugangskontrolle, Kontrollgänge durch Produktion und Lager, Bedienung von Brandmelde- und Alarmanlagen, Koordination von Fremdfirmen und Lieferverkehr sowie Notfall-Erstmaßnahmen. Der genaue Umfang wird im Sicherheitskonzept für Ihren Standort festgelegt.</p>
           </details>
           <details class="faq-item">
-            <summary><h3>When does a company need Werkschutz?</h3></summary>
-            <p class="faq-item__answer">Typically once a site runs outside normal business hours, holds valuable equipment or materials, or needs consistent access control and documentation that informal or part-time coverage can't provide.</p>
+            <summary><h3>Können die Kräfte unsere Anlagen bedienen?</h3></summary>
+            <p class="faq-item__answer">Ja. FRANKONIA Werkschutzkräfte sind technik-geschult und werden vor Einsatzbeginn nach Checkliste in Ihre Brandmelde-, Einbruchmelde- und Zutrittsanlagen eingearbeitet. Die Einarbeitung wird dokumentiert — Sie sehen jederzeit, wer für welche Anlage geschult ist.</p>
           </details>
           <details class="faq-item">
-            <summary><h3>How quickly can Werkschutz start?</h3></summary>
-            <p class="faq-item__answer">For standard assignments, FRANKONIA can typically deploy certified Werkschutz personnel within 48–72 hours of an agreed security concept. Ask your contact person for current availability.</p>
+            <summary><h3>Übernimmt FRANKONIA auch einzelne Schichten statt 24/7?</h3></summary>
+            <p class="faq-item__answer">Ja. Vom reinen Nacht- und Wochenenddienst über Randzeiten-Besetzung bis zum durchgehenden Posten ist jedes Modell möglich, im Raum Bamberg auch kombiniert mit Revierdienst. Das wirtschaftlichste Modell ergibt sich aus der kostenfreien Begehung.</p>
           </details>
           <details class="faq-item">
-            <summary><h3>Which qualifications does Werkschutz personnel have?</h3></summary>
-            <p class="faq-item__answer">All personnel are certified under DIN 77200-1, background-checked and trained under §34a GewO, and onboarded to your specific site before their first shift.</p>
-          </details>
-          <details class="faq-item">
-            <summary><h3>How is a Werkschutz deployment documented?</h3></summary>
-            <p class="faq-item__answer">Through digital shift reports covering patrols, access activity, and any incidents — available for your review at any time, not just on request.</p>
-          </details>
-          <details class="faq-item">
-            <summary><h3>Is 24/7 Werkschutz coverage possible?</h3></summary>
-            <p class="faq-item__answer">Yes. Coverage scales from a single shift to full 24/7 site presence, and can change as your operational needs change.</p>
+            <summary><h3>Ist FRANKONIA für Werkschutz zertifiziert?</h3></summary>
+            <p class="faq-item__answer">Ja. FRANKONIA ist nach DIN 77200-1 für stationäre Sicherheitsdienstleistungen zertifiziert und seit 2016 nach ISO 9001, beides DEKRA-geprüft. Alle Kräfte sind mindestens IHK-qualifiziert nach § 34a GewO und werden regelmäßig geschult.</p>
           </details>
         </div>
       </div>
     </section>
 
-    <!-- ============ 11. FINAL CONVERSION ============ -->
-    <!-- Links back to the homepage's existing form section rather than
-         duplicating the whole form — see build report for why. -->
-    <section class="section section--subtle service-cta">
-      <div class="container service-cta__content" data-reveal>
-        <span class="brand-bar" aria-hidden="true"></span>
-        <h2>Ready for a Werkschutz Security Analysis?</h2>
-        <p>A FRANKONIA security expert reviews your site's current setup — coverage gaps, access control, and risk areas — in a focused, free conversation. No sales pitch, no obligation.</p>
-        <div class="service-cta__actions">
-          <a class="btn btn--primary" href="/#sicherheitsanalyse">Request Free Security Analysis</a>
-          <a class="service-phone" href="tel:+499519643520"><svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>+49 951 964352-0</a>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 11. ABSCHLUSS-CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The shared lead-form section (css/lead-form.css, extracted from the
+         homepage 2026-08-03) — same markup contract, same field names, this
+         page's own heading/lede and its own field ids (wk-*). The form still
+         has no submission target sitewide: action="#" + native HTML5
+         validation only, same as the homepage (docs/build-checklist.md,
+         Paso 4 — "el formulario no envía nada"). The draft's separate form
+         title ("Ihre Werkschutz-Anfrage") is not a second heading here: the
+         section H2 already says it, and the element that used to carry an
+         in-card title was deleted from the shared component in July. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Jetzt Werkschutz anfragen — Angebot innerhalb eines Werktages</h2>
+          <p class="conversion__intro-lede">Beschreiben Sie kurz Ihren Standort und Ihre Schichtzeiten, unsere Sicherheitsexperten melden sich innerhalb eines Werktages mit Terminvorschlag für die kostenfreie Begehung.</p>
         </div>
-        <p class="service-cta__reassurance">Free · No obligation · Response within 1 business day. Prefer WhatsApp? Use the contact button in the bottom-right corner.</p>
+
+        <div class="conversion__form-wrap">
+          <form class="conversion__form" action="#" method="post">
+            <div class="form-field">
+              <label class="form-field__label" for="wk-name">Name *</label>
+              <input class="form-field__input" type="text" id="wk-name" name="name" autocomplete="name" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="wk-company">Unternehmen *</label>
+              <input class="form-field__input" type="text" id="wk-company" name="company" autocomplete="organization" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="wk-email">E-Mail *</label>
+              <input class="form-field__input" type="email" id="wk-email" name="email" autocomplete="email" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="wk-phone">Telefon *</label>
+              <input class="form-field__input" type="tel" id="wk-phone" name="phone" autocomplete="tel" required>
+            </div>
+
+            <div class="form-field conversion__form-field--full">
+              <label class="form-field__label" for="wk-message">Standort und Schichtzeiten</label>
+              <!-- rows="2" is load-bearing: a CSS min-height can only grow a
+                   textarea's box, never shrink it from the default 2-3 rows.
+                   See docs/page-conventions.md §6. -->
+              <textarea class="form-field__textarea" id="wk-message" name="message" rows="2"></textarea>
+            </div>
+
+            <!-- Honeypot (docs/page-conventions.md §6): out of the layout but
+                 NOT display:none (bots skip hidden fields), out of the tab order
+                 and out of the accessibility tree. Nothing reads it yet — the
+                 form has no backend — but it ships with the markup so it is
+                 already there when one exists. -->
+            <div class="conversion__hp" aria-hidden="true">
+              <label for="wk-website">Website</label>
+              <input type="text" id="wk-website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+
+            <div class="form-checkbox">
+              <input class="form-checkbox__input" type="checkbox" id="wk-privacy" name="privacy" required>
+              <label class="form-checkbox__label" for="wk-privacy">
+                Ich habe die <a href="/datenschutz/">Datenschutzerklärung</a> gelesen und stimme zu. *
+              </label>
+            </div>
+
+            <button class="btn btn--primary conversion__submit" type="submit">
+              Jetzt unverbindliches Angebot einholen
+              <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </button>
+          </form>
+
+          <p class="conversion__form-alt">Lieber direkt sprechen? <a href="tel:+499519643520">+49 951 964352-0</a></p>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 12. VERWANDTE SEITEN ============ -->
+    <!-- Internal linking per the draft's own list. None of these pages exist
+         yet except the homepage — the URLs are the confirmed ones from
+         guidelines §2.2 (see docs/build-checklist.md for the build order), so
+         these are real links to pages not built yet, not placeholders. -->
+    <section class="section section--light service-related" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <p class="section-eyebrow">Weiterlesen</p>
+          <h2>Verwandte Leistungen und Einsatzgebiete</h2>
+        </div>
+
+        <div class="service-related__cols">
+          <div class="service-related__col">
+            <h3 class="service-related__title">Verwandte Leistungen</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/objektschutz/">Objektschutz<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/empfangsdienst/">Empfangsdienst<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitstechnik/">Sicherheitstechnik<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+
+          <div class="service-related__col">
+            <h3 class="service-related__title">Werkschutz in Ihrer Region</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/werkschutz-nuernberg/">Werkschutz Nürnberg<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-nuernberg/">Sicherheitsdienst Nürnberg<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-schweinfurt/">Sicherheitsdienst Schweinfurt<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-bamberg/">Sicherheitsdienst Bamberg<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
 
   </main>
 
-  <!-- include: footer -->
+  <!-- Pixel-dissolve seam before the footer — mandatory on every page
+       (docs/page-conventions.md §4.4, client 2026-07-31). Empty div in the
+       markup; js/pixel-transition.js builds the tile band inside it at runtime
+       and the footer already reserves its height (see `.pixel-seam +
+       .site-footer` in page-service.css). No `--white` modifier here: the
+       section above the seam is white (.service-related), so the tiles are
+       white too — see the note on the first seam above. -->
+  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+  <!-- include: footer-de -->
   <!-- include: whatsapp-button -->
 </body>
 </html>

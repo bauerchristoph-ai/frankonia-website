@@ -164,10 +164,14 @@ function initServicePreview() {
 
   const source = preview.querySelector("[data-preview-source]");
   const img = preview.querySelector("[data-preview-img]");
-  const nameEl = preview.querySelector("[data-preview-name-el]");
-  const textEl = preview.querySelector("[data-preview-text-el]");
-  const link = preview.querySelector("[data-preview-link]");
-  if (!source || !img || !nameEl || !textEl || !link) return;
+  // The panel is the PHOTO only (client 2026-08-01) — the name/description/
+  // "Mehr erfahren" block under it was removed from the markup, so nothing here
+  // may reference it. This guard used to also require nameEl/textEl/link, which
+  // means leaving it in place would have made the whole preview silently return
+  // early and stop swapping images at all. The "Mehr erfahren" affordance now
+  // lives on each row instead, revealed on hover next to the arrow — it is
+  // static markup, so no JS drives it.
+  if (!source || !img) return;
 
   const prefersReducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
@@ -184,10 +188,6 @@ function initServicePreview() {
       source.srcset = webp;
       img.src = jpg;
       img.alt = "";
-      nameEl.textContent = item.dataset.previewName;
-      textEl.textContent = item.dataset.previewText;
-      link.textContent = document.documentElement.lang === "de" ? "Mehr erfahren →" : "Learn more →";
-      link.href = item.getAttribute("href");
     };
 
     if (prefersReducedMotion) {
@@ -211,32 +211,88 @@ function initServicePreview() {
 }
 
 /**
- * Collapses the homepage FAQ down to its first 5 questions behind a
- * "Read more" button. All 10 questions are real <details> elements in
- * the base HTML — this only ever adds [hidden] to the extra 5, the same
- * JS-applies-hiding principle as initNavToggle(), so a no-JS visitor or
- * a crawler (FAQPage schema depends on every question being present)
- * still sees the full list. The button itself is always in the markup,
- * same as the nav's hamburger toggle — harmless if JS never runs, since
- * there'd be nothing left to reveal anyway.
+ * Clamps a long FAQ to its first 5 questions ON A PHONE, behind a real
+ * disclosure button (client 2026-08-03 — eleven open-ended rows made the
+ * homepage's last section as long as the rest of the page).
+ *
+ * Rewritten 2026-08-03. It used to key off `data-faq-extra` attributes plus a
+ * `.faq__toggle` button authored in the markup, and it hid the extra questions
+ * at EVERY viewport. Neither the attribute nor the button existed on any page
+ * (grep), so the whole thing had been a no-op; the clamp is now derived from the
+ * item count and applied only below the mobile breakpoint, and the button is
+ * injected here — same pattern as initMobileSubmenu().
+ *
+ * Same JS-applies-hiding principle as initNavToggle(): every question is a real
+ * <details> in the base HTML and this function is the only thing that ever hides
+ * one. No JS, a script error, reduced motion, a crawler, or any viewport ≥768px
+ * all get the complete list — which matters more here than elsewhere, because
+ * the page's FAQPage schema declares all of them and must not describe content a
+ * visitor cannot reach.
+ *
+ * A page whose FAQ is already short (/werkschutz/, 5 questions) returns early:
+ * no clamp, no button.
  */
 function initFaqToggle() {
-  const extra = document.querySelectorAll(".faq-item[data-faq-extra]");
-  const toggle = document.querySelector(".faq__toggle");
-  if (!extra.length || !toggle) return;
+  const VISIBLE = 5; // keep in step with the :nth-child(n + 6) rule in components.css
+  const list = document.querySelector(".faq__list");
+  if (!list) return;
 
-  extra.forEach((item) => {
-    item.hidden = true;
+  const items = list.querySelectorAll(".faq-item");
+  if (items.length <= VISIBLE) return;
+
+  // Same breakpoint as the rest of this project's mobile work.
+  const mobile = window.matchMedia("(max-width: 767.98px)");
+
+  // Both homepages load this file; take the wording from the document.
+  const de = (document.documentElement.lang || "de").toLowerCase().startsWith("de");
+  const labels = de
+    ? { more: `Alle ${items.length} Fragen anzeigen`, less: "Weniger Fragen anzeigen" }
+    : { more: `Show all ${items.length} questions`, less: "Show fewer questions" };
+
+  const id = list.id || "faq-list";
+  list.id = id;
+
+  const row = document.createElement("div");
+  row.className = "faq__toggle-row";
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "faq__toggle";
+  btn.setAttribute("aria-controls", id);
+  row.appendChild(btn);
+
+  function setOpen(open) {
+    list.classList.toggle("is-clamped", !open);
+    btn.setAttribute("aria-expanded", String(open));
+    /* The button shows a bare "+" (client 2026-08-04), drawn by CSS and rotated
+       to an "×" while open — the same glyph and the same rotation the question
+       rows themselves use. So the label has to carry the meaning: an icon-only
+       control with no accessible name is just an unnamed button to a screen
+       reader, and "+" is not a name. */
+    btn.setAttribute("aria-label", open ? labels.less : labels.more);
+    /* The list's height just changed, and js/item-reveal.js measures a scrubbed
+       timeline against it — without this the newly shown questions can sit at
+       the start of that tween (invisible) until the next scroll. Guarded because
+       main.js is sitewide and does not depend on GSAP. */
+    if (typeof ScrollTrigger !== "undefined") ScrollTrigger.refresh();
+  }
+
+  btn.addEventListener("click", () => {
+    setOpen(btn.getAttribute("aria-expanded") !== "true");
   });
 
-  toggle.addEventListener("click", () => {
-    const isOpen = toggle.getAttribute("aria-expanded") === "true";
-    extra.forEach((item) => {
-      item.hidden = isOpen;
-    });
-    toggle.setAttribute("aria-expanded", String(!isOpen));
-    toggle.textContent = isOpen ? "Read more" : "Show less";
-  });
+  function apply() {
+    if (mobile.matches) {
+      if (!row.isConnected) list.after(row);
+      setOpen(false);
+    } else {
+      if (row.isConnected) row.remove();
+      list.classList.remove("is-clamped");
+      if (typeof ScrollTrigger !== "undefined") ScrollTrigger.refresh();
+    }
+  }
+
+  apply();
+  mobile.addEventListener("change", apply);
 }
 
 /**

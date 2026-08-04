@@ -1,0 +1,333 @@
+/*
+  Lead-form section (the free-analysis / "unverbindliche Anfrage" form) —
+  SHARED across page types, not homepage-only.
+
+  Extracted from page-home.css 2026-08-03, when /werkschutz/ became the second
+  page to need this section verbatim. It is the site's primary conversion action
+  and docs/build-checklist.md lists it as appearing on all 49 planned pages, so
+  it lives in its own stylesheet rather than being duplicated per page template.
+
+  Link it from a page's own <head> (after the head-common include, BEFORE that
+  page's own stylesheet, so a page-scoped rule can still override): see
+  pages/index.html and pages/werkschutz.html.
+
+  What stayed behind in page-home.css on purpose:
+    - `.pixel-seam + .conversion` (the homepage's dissolving-tile band reserves
+      top padding here) — that effect only exists on the homepage.
+  What was dropped in the move (not moved, deleted): the rules for the black
+  left panel removed 2026-07-28 — .conversion__panel--info / __info /
+  __headline / __lede / __visual* / __diag* / __micro* / __eyebrow--spacer.
+  page-home.css already flagged them as dead with no markup on either page
+  (js/conversion-visual.js, which drove the __visual SVG, is unused too and
+  bails on its own missing-element guard).
+
+  Markup contract (see either page for the real thing):
+    <section id="..." class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro"> h2 + .conversion__intro-lede
+        <div class="conversion__form-wrap">
+          <form class="conversion__form"> .form-field* / .form-checkbox /
+                                          .btn.btn--primary.conversion__submit
+          <p class="conversion__form-alt">
+  Field ids/names are per page (one form per page), not part of this file.
+*/
+
+.conversion {
+  scroll-margin-top: 5rem;
+  /* Dark section background (client 2026-07-29) — the white form sits on it as
+     a floating card. */
+  background-color: var(--color-bg);
+}
+
+/* Single centered form since 2026-07-28 (client removed the black left panel).
+   No more 2-column grid — the section is just the white form panel, and the
+   form-wrap is centered horizontally via align-items on the flex column. */
+.conversion__panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-8) var(--container-padding);
+}
+
+@media (min-width: 768px) {
+  .conversion__panel {
+    padding-block: var(--space-9);
+    padding-inline: clamp(2.5rem, 5vw, 5rem);
+  }
+}
+
+/* White form panel (brief: "warm white / very light neutral gray" — this
+   project's five-brand-color system, tokens.css, has no such hue and a
+   new one isn't being introduced for one section; --color-white is the
+   existing token every other "light mode" section already uses for the
+   same purpose). No card, no border, no shadow on the PANEL — the card
+   below is the white surface. */
+.conversion__panel--form {
+  /* Transparent — the section behind is black; the form-wrap is the white
+     card (client 2026-07-29, was a full white panel). */
+  background-color: transparent;
+  /* Top-aligned (client 2026-07-24) — was inheriting the base panel's
+     justify-content: center, which centred the form and left the heading and
+     the form at different heights. */
+  justify-content: flex-start;
+}
+
+.conversion__form-wrap {
+  width: 100%;
+  max-width: 38.75rem;
+  /* Lift the form into a floating card with a soft drop shadow (client
+     2026-07-29). White on a dark section, so a hairline border defines the
+     edge and the shadow carries the depth. */
+  background-color: var(--color-white);
+  /* Owns its own on-white text colour — the panel is transparent over the
+     black section, so a dark colour must not be inherited any higher up
+     (that made anything outside the card dark-on-black, ~2.8:1). */
+  color: var(--color-gray);
+  border: 1px solid rgb(1 1 1 / 0.06);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: clamp(1.75rem, 1.2rem + 2vw, 3rem);
+}
+
+/* Section intro, ABOVE the white card (client 2026-08-03: "que el título esté
+   afuera, en blanco... y del mismo tamaño que los otros títulos y centrado
+   arriba del form"). The h2 inherits the shared section-title scale; white
+   comes from the page default. */
+.conversion__intro {
+  text-align: center;
+  margin-inline: auto;
+  /* Wider than the shared .section__intro cap of 42rem (client 2026-08-03:
+     "dejámelo solo en una línea, no dos líneas"). Measured with the heading's
+     real computed font: "Ihre unverbindliche Anfrage" is 706px at the clamp's
+     60px ceiling, against 672px available — 34px short, so it broke to two
+     lines from 1440px up. 46rem = 736px leaves 30px of headroom.
+     Side effect, accepted: at the widest sizes the title is ~80px wider than
+     the 38.75rem card below it, so it overhangs by ~40px each side. Both are
+     centred, so it reads as an editorial title over a narrower form. */
+  max-width: 46rem;
+}
+
+.conversion__intro-lede {
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+}
+
+/* ⚠️ Both selectors below are (0,2,0) on purpose — they defend this centred
+   intro against the page chassis. Every page loads its own stylesheet AFTER
+   this file, and page-service.css (the chassis, used by /werkschutz/ and
+   /referenzen/) styles `.section__intro` generically:
+     .section__intro       { max-width: none; }      → killed the 46rem cap above
+     .section__intro > p   { max-width: 42rem; … }   → (0,1,1), so it beat
+                                                       .conversion__intro-lede
+   and this element carries BOTH classes. The result: the lede sat in a 672px box
+   with no auto margins, hugging the LEFT edge of an intro that was as wide as its
+   own heading — 360px off centre on /referenzen/, whose H2 is long (client
+   2026-08-03: "tiene que estar todo centrado"), and 14px off on /werkschutz/,
+   where the H2 is short enough that nobody noticed.
+   The values are the homepage's, where this always rendered correctly: the intro
+   caps at 46rem and the lede is capped by the intro, not by its own measure. */
+.conversion .conversion__intro {
+  max-width: 46rem;
+}
+
+.conversion .conversion__intro-lede {
+  max-width: none;
+  margin-inline: auto;
+  margin-top: var(--space-3);
+}
+
+/* Direct-call alternative under the form (client 2026-07-28). On the white
+   card, so an on-white muted shade + a FRANKONIA-blue phone link. */
+.conversion__form-alt {
+  margin-top: var(--space-4);
+  font-size: var(--font-size-sm);
+  color: rgb(59 73 86 / 0.75);
+}
+.conversion__form-alt a {
+  /* Kept blue-dark — #3D9AD3 on white is too low-contrast (client
+     2026-07-28). */
+  color: var(--color-blue-dark);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.conversion__form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  /* No top margin: the card's own padding is the whole spacing now that the
+     heading + lede live outside the card. */
+}
+
+@media (min-width: 640px) {
+  .conversion__form {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.conversion__form-field--full,
+.conversion__form .form-checkbox,
+.conversion__form > .btn {
+  grid-column: 1 / -1;
+}
+
+/* ---- Minimal editorial field style ---- */
+/* Scoped to .conversion__form only — the shared .form-field / .form-checkbox
+   components (components.css) are untouched for any other reuse. Brief: "no
+   filled backgrounds, no large rounded rectangles, thin bottom border only,
+   labels above in small uppercase, clear blue focus state, no exaggerated
+   radius." */
+.conversion__form .form-field__label {
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-regular);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  /* Same "on white" muted alpha used elsewhere for on-white body copy —
+     0.75, not 0.65. */
+  color: rgb(59 73 86 / 0.75);
+}
+
+.conversion__form .form-field__input,
+.conversion__form .form-field__textarea {
+  padding: var(--space-2) 0;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid rgb(59 73 86 / 0.25);
+  border-radius: 0;
+  color: var(--color-gray);
+}
+
+.conversion__form .form-field__textarea {
+  /* "Should not be excessively tall" (brief) — was 8.125rem. */
+  min-height: 4.5rem;
+  resize: vertical;
+}
+
+.conversion__form .form-field__input:hover,
+.conversion__form .form-field__textarea:hover {
+  border-bottom-color: rgb(59 73 86 / 0.45);
+}
+
+/* Blue focus state (brief) — the shared component's default focus ring is
+   tuned for this site's dark surfaces (white ring/border, see components.css);
+   this form sits on white, where --color-accent clears contrast on its own
+   merits, so an underline-colour change reads as the "clear focus state in
+   FRANKONIA blue" without needing an outline here. */
+.conversion__form .form-field__input:focus-visible,
+.conversion__form .form-field__textarea:focus-visible {
+  outline: none;
+  border-bottom-color: var(--color-accent-strong);
+  border-bottom-width: 2px;
+}
+
+.conversion__form .form-checkbox__label {
+  color: rgb(59 73 86 / 0.75);
+}
+
+.conversion__form .form-checkbox__label a {
+  color: var(--color-accent-strong);
+}
+
+/* ---- Honeypot ---- */
+/* docs/page-conventions.md §6. Must be reachable by a naive bot and by nothing
+   else: out of the layout, out of the tab order (tabindex="-1" in the markup),
+   out of the a11y tree (aria-hidden on the wrapper). NOT `display: none` — some
+   bots skip display-hidden fields, which defeats the point. Same rule as
+   /kontakt/'s own .contact-form__hp; it lives here now so every page using the
+   shared form inherits it. Nothing reads the field yet (no backend anywhere —
+   checklist Paso 4); the homepage's copy of this form still has no honeypot
+   field in its markup, which is tracked there too. */
+.conversion__hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ---- Compact submit button ---- */
+/* Overrides .btn's shared border-radius (components.css) and cancels the grid
+   item's default stretch (justify-self: stretch is CSS Grid's own default —
+   combined with grid-column: 1/-1 above, that's what made the old button
+   full-width) so it sizes to its own content, per "width based on content,
+   not full width." */
+.conversion__submit {
+  justify-self: start;
+  /* Match the nav CTA button's pill radius (client 2026-07-24). */
+  border-radius: var(--radius-pill);
+  margin-top: var(--space-2);
+}
+
+@media (min-width: 1024px) {
+  .conversion__panel {
+    padding-block: var(--space-9);
+  }
+}
+
+/* ---- Lead form on a phone (2026-07-30) -----------------------------------
+   This is the site's PRIMARY conversion action, so the mobile form gets the
+   generous end of every trade-off. Four real problems at 390px:
+     - 12px uppercase labels with 0.08em tracking, below the 13px floor that
+       pass set for legibility;
+     - 43px inputs, just under the 44px touch minimum, and iOS zooms the page
+       on focus for any input under 16px;
+     - an 18px consent checkbox — the smallest control on the page, on the one
+       field that legally must be deliberate;
+     - the lede hyphenating "Bau-stelle". */
+@media (max-width: 767.98px) {
+  .conversion__intro-lede {
+    -webkit-hyphens: none;
+    hyphens: none;
+  }
+  .conversion__form .form-field__label {
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+  }
+  .conversion__form .form-field__input,
+  .conversion__form .form-field__textarea {
+    /* 16px exactly: anything smaller makes iOS Safari zoom the viewport on
+       focus, which then leaves the user zoomed in and scrolled sideways. */
+    font-size: 1rem;
+    min-height: 3rem;
+    padding-block: var(--space-3) var(--space-2);
+  }
+  .conversion__form .form-field__textarea { min-height: 5.5rem; }
+
+  /* Bigger box AND a bigger hit area: the padding on the row means a near-miss
+     above or below the box still toggles it. */
+  .conversion__form .form-checkbox {
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+  }
+  .conversion__form .form-checkbox__input {
+    width: 1.375rem;
+    height: 1.375rem;
+    margin-top: 0;
+  }
+  .conversion__form .form-checkbox__label { line-height: 1.45; }
+
+  /* Content-width is right on desktop; on a phone the label is nearly the full
+     measure anyway, so a full-width button reads as intentional rather than
+     accidentally-almost-full and gives the largest possible target. */
+  .conversion__submit {
+    width: 100%;
+    justify-self: stretch;
+    justify-content: center;
+  }
+
+  /* Two INLINE links inside running sentences, 16px and 17px tall: the privacy
+     policy in the consent row, and the tap-to-call number under the submit
+     button. Neither can become a block without breaking its sentence, so they
+     get vertical padding instead — on an inline box that overflows the line
+     without changing line-height, so the hit area grows and the layout does not.
+     The phone number is a real conversion path on a phone; the privacy link is
+     legally required reading. Both earn the extra reach. */
+  .conversion__form .form-checkbox__label a,
+  .conversion__form-alt a {
+    padding-block: 0.6rem;
+    /* Without this the padded box is clipped to the line box in some engines. */
+    display: inline-block;
+  }
+  .conversion__form-alt a { font-size: 1rem; }
+}

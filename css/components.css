@@ -604,10 +604,23 @@
    the visual treatment). Overrides base.css's h3 default (bold,
    --font-size-xl) — matches .faq-item__answer's own size, which has no
    override and just inherits the body default, so question and answer
-   read as the same scale. */
+   read as the same scale.
+
+   letter-spacing and line-height are part of the same correction, added
+   2026-08-03 (client: the FAQ questions read cramped — "muy poco letter
+   spacing"). base.css tightens EVERY heading by a flat -1px, which was asked for
+   display headings: at 48–60px that is about -2% and reads as intentional, but
+   this question is 16px, where the same -1px is -6% and the letters visibly
+   collide. Since the element is styled as body text, it takes body-text metrics:
+   normal tracking and --line-height-base instead of the 1.25 heading value, which
+   also gives a wrapped two-line question room to breathe.
+   In components.css on purpose, so EVERY FAQ on the site gets it — client:
+   "todas las secciones de FAQs con la misma letter-spacing". */
 .faq-item summary h3 {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-regular);
+  letter-spacing: normal;
+  line-height: var(--line-height-base);
 }
 
 .faq-item summary::-webkit-details-marker {
@@ -632,15 +645,179 @@
   max-width: 42rem;
 }
 
-/* Optional "show first N, reveal the rest" pattern — initFaqToggle() in
-   main.js is the only thing that ever hides [data-faq-extra] items, and
-   only if both the toggle button and at least one such item exist on
-   the page (see the guard at the top of that function). A page with a
-   short FAQ (e.g. /werkschutz/'s 7 questions) can skip data-faq-extra
-   and this button entirely and just show every item — the function
-   no-ops harmlessly either way. */
+/* ---- Card-style FAQ: .faq__list--cards -----------------------------------
+   PROMOTED HERE 2026-08-03, when /werkschutz/ became the THIRD page to ask for
+   this look. It started as a homepage restyle (client 2026-07-20, reference
+   image): two columns of filled pills with the "+" on the LEFT of the question,
+   instead of the bordered single column above. /jobs/ then mirrored it into its
+   own stylesheet and left the note that a third request was the moment to make it
+   a shared modifier instead of copying it again — this is that.
+
+   Both copies (page-home.css `.faq`, page-jobs.css `.jobs-faq`) were deleted in
+   the same change, so the values live in exactly one place now.
+
+   CALIBRATED FOR A LIGHT SECTION. The fill, the answer's grey and the "+" are
+   the project's "on white" values (docs/design-system.md §5), because all three
+   pages that use it put their FAQ on a white section. On a dark section it would
+   need the dark variant of those three — the bordered default above is what a
+   dark FAQ should use until someone actually needs otherwise.
+
+   Opt in on the list, not the section: every page names its FAQ section
+   differently (.faq, .jobs-faq, .service-faq), the list is the thing being
+   restyled. */
+.faq__list--cards {
+  /* Wider than the shared 48rem because it is two columns; centring still comes
+     from .faq__list's own margin-inline: auto. */
+  max-width: 64rem;
+}
+
+@media (min-width: 768px) {
+  .faq__list--cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  /* Grid children default to min-width: auto, so one long German question can
+     push a column past its half. */
+  .faq__list--cards > * {
+    min-width: 0;
+  }
+}
+
+/* The pill: no border, bigger radius, tighter rows, 5% grey fill. This is what
+   makes it read as a card rather than the bordered default. */
+.faq__list--cards .faq-item {
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  background-color: rgb(59 73 86 / 0.05);
+}
+
+/* The shared default is space-between, which pushes the "+" to the far right,
+   opposite the question. flex-start + an explicit gap keeps them together on the
+   left, where the reordered glyph sits. */
+.faq__list--cards .faq-item summary {
+  justify-content: flex-start;
+  gap: var(--space-4);
+}
+
+/* `order: -1` moves the generated "+" visually BEFORE the question without
+   touching the real summary/h3 markup — DOM and reading order are unchanged, so
+   screen readers and keyboard users get exactly what they did before.
+   --color-gray, not the accent: at this glyph's fluid size, blue-dark on white
+   clears large text's 3:1 but not normal text's 4.5:1, and which threshold
+   applies is ambiguous — this sidesteps the question instead of relying on a
+   borderline number. */
+.faq__list--cards .faq-item summary::after {
+  order: -1;
+  color: var(--color-gray);
+}
+
+.faq__list--cards .faq-item__answer {
+  color: rgb(59 73 86 / 0.75);
+}
+
+/* "Show the first 5, reveal the rest" — MOBILE ONLY (client 2026-08-03: eleven
+   open-ended rows ran the homepage's last section as long as the rest of the
+   page). initFaqToggle() in main.js is the only thing that ever adds
+   `is-clamped`, and only below this breakpoint on a list with more than 5
+   questions, so no-JS, any viewport ≥768px, and a short FAQ (/werkschutz/, 5
+   questions) all render every item — see that function's own note on why that
+   matters for the FAQPage schema.
+
+   The media query is a deliberate belt-and-braces: the class is already
+   JS-gated, but scoping it means a class left behind by a future edit can never
+   hide questions on a desktop. Keep the 5 in step with VISIBLE in main.js. */
+@media (max-width: 767.98px) {
+  .faq__list.is-clamped .faq-item:nth-child(n + 6) {
+    display: none;
+  }
+}
+
+/* The row is injected, so it only exists where the clamp is active. */
 .faq__toggle-row {
   display: flex;
   justify-content: center;
   margin-top: var(--space-6);
+}
+
+/* A bare "+" in a circle (client 2026-08-04, replacing the "Alle 11 Fragen
+   anzeigen" text pill). The glyph and its rotate-to-× are exactly what the
+   question rows use (.faq-item summary::after above), so opening the extra
+   questions reads as the same gesture as opening one of them.
+
+   The accessible name therefore lives in aria-label, set by initFaqToggle() —
+   "+" is a glyph, not a name, and an icon-only button without one is announced
+   as an unnamed button.
+
+   `color: inherit` + a currentColor-derived border so it follows whichever
+   surface the FAQ sits on (the homepage's is white with dark type) instead of
+   hardcoding an on-light value — .btn--secondary could not be reused, its
+   --color-text is the dark theme's white and would be invisible there. */
+.faq__toggle {
+  /* Containing block for the two bars that draw the + (see below). */
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  font-family: inherit;
+  color: inherit;
+  background: none;
+  border: 1px solid currentColor;
+  border-color: color-mix(in srgb, currentColor 28%, transparent);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--easing-standard);
+}
+
+/* The "+" is DRAWN, not typed (2026-08-04 — client: "el más de las FAQs no está
+   centrado en el círculo"). It was `content: "+"` centred by flexbox, which
+   centres the glyph's BOX; the mark inside that box is not centred in it — a "+"
+   sits on the font's math axis, not on the box's middle, and its side bearings
+   are not symmetric either. Inside a 44px ring that offset is plainly visible.
+
+   Font metrics also cannot be corrected for once: --font-family-base is a system
+   stack (Helvetica Neue on Apple, Arial elsewhere, see tokens.css), so a nudge
+   tuned against one would be wrong on the other. Two bars positioned from the
+   button's own centre are exact on every platform.
+
+   Rotating both by 45°/135° turns the plus into an ×, the same gesture as
+   .faq-item[open] summary::after. */
+.faq__toggle::before,
+.faq__toggle::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.875rem;
+  height: 2px;
+  border-radius: 1px;
+  background-color: var(--color-accent-strong);
+  transform: translate(-50%, -50%);
+  transition: transform var(--duration-fast) var(--easing-standard);
+}
+
+.faq__toggle::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.faq__toggle[aria-expanded="true"]::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.faq__toggle[aria-expanded="true"]::after {
+  transform: translate(-50%, -50%) rotate(135deg);
+}
+
+.faq__toggle:hover {
+  border-color: color-mix(in srgb, currentColor 60%, transparent);
+}
+
+.faq__toggle:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
 }

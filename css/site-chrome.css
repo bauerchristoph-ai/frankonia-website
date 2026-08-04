@@ -107,13 +107,14 @@
   background-color: var(--color-gray);
 }
 
-/* Not addressed here, flagged for a follow-up visual check rather than
-   guessed at: the active-page pill (.site-nav__link[aria-current="page"],
-   still its own gray chip + white text) and the Services submenu panel
-   (.site-nav__submenu, its own always-dark floating panel) weren't part
-   of the behavior spec this was ported from and may want their own
-   light-mode treatment once this is actually seen scrolling on a real
-   page. */
+/* The active-page item needs no light-mode treatment of its own anymore: since
+   2026-08-03 it is just a blue underline with no fill (see
+   a.site-nav__link[aria-current="page"] below), so its label takes the same
+   --color-gray as its siblings here. Only the underline's own blue is swapped
+   for the on-white one, right after that rule.
+   Still flagged for a look on a real page: the Services submenu panel
+   (.site-nav__submenu) is its own always-dark floating panel and was not part
+   of the behaviour spec this light state was ported from. */
 
 .site-header__inner {
   position: relative;
@@ -122,6 +123,78 @@
   justify-content: space-between;
   gap: var(--space-4);
   padding-block: var(--space-4);
+}
+
+/* ---- Header entrance (client 2026-08-04) ------------------------------------
+   The hero's content cascades in on load (js/hero-reveal.js) while the header
+   just sat there fully painted, so the page read as "half of it is animating".
+   The logo, the nav items and the CTA now arrive with the same character, on
+   every page — this file is sitewide, and the header is the one thing every
+   page shares.
+
+   CSS, deliberately, NOT GSAP. Three reasons:
+   1. It is a plain fade + 8px rise; CLAUDE.md's "CSS-first" rule applies (GSAP
+      is the exception for what CSS genuinely can't do, and this isn't that).
+   2. It would otherwise need a new <script> tag on all six pages, since GSAP is
+      loaded per page AFTER the head-common include — a deferred shared script
+      would run before GSAP exists.
+   3. It survives a JS failure. The header is the site's navigation; making it
+      depend on a script to become visible is exactly the "never gate content
+      behind JS" trap this project has already fixed twice.
+
+   The animation only ever runs once, on load, and ends at the element's normal
+   painted state, so nothing here is a resting style.
+
+   NEVER animate transform on .site-nav__list itself — at >=1400px it is
+   absolutely positioned and centred with translate(-50%, -50%), which a
+   keyframe would clobber. Hence the <li> children. Same reason the CTA is
+   animated via its .site-nav__actions wrapper. */
+@keyframes site-chrome-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* What is actually VISIBLE in the header bar below 1400px is the logo and the
+   hamburger — the nav list and the CTA live inside the closed drawer. Animating
+   them here is not just pointless, it is wrong: a [hidden] drawer's children are
+   display:none, so their animation does not run on load, it runs the first time
+   the drawer OPENS. Measured: tapping the hamburger replayed the whole 220→500ms
+   cascade, so the last nav item and the CTA took ~0.9s to finish arriving on a
+   menu tap. Hence logo + toggle here, list + CTA only at the desktop breakpoint
+   below, where they are on screen at load like everything else. */
+.site-header__logo,
+.nav-toggle {
+  animation: site-chrome-in var(--duration-slow) var(--easing-premium) both;
+}
+.site-header__logo { animation-delay: 0.15s; }
+.nav-toggle        { animation-delay: 0.22s; }
+
+/* Left to right, roughly in step with the hero's own cascade: the logo leads and
+   the CTA lands at ~0.9s, while the hero's lead paragraph is still easing in. */
+@media (min-width: 1400px) {
+  .site-nav__list > li,
+  .site-nav__actions {
+    animation: site-chrome-in var(--duration-slow) var(--easing-premium) both;
+  }
+  .site-nav__list > li:nth-child(1) { animation-delay: 0.22s; }
+  .site-nav__list > li:nth-child(2) { animation-delay: 0.28s; }
+  .site-nav__list > li:nth-child(3) { animation-delay: 0.34s; }
+  .site-nav__list > li:nth-child(4) { animation-delay: 0.40s; }
+  .site-nav__list > li:nth-child(n + 5) { animation-delay: 0.46s; }
+  .site-nav__actions { animation-delay: 0.50s; }
+}
+
+/* motion.css's global reduced-motion block collapses animation-DURATION but not
+   animation-DELAY, and `both` holds the from-state through the delay — so
+   without this the nav would be invisible for half a second for exactly the
+   users who asked for no motion. Killed outright rather than shortened. */
+@media (prefers-reduced-motion: reduce) {
+  .site-header__logo,
+  .nav-toggle,
+  .site-nav__list > li,
+  .site-nav__actions {
+    animation: none;
+  }
 }
 
 .site-header__logo {
@@ -175,13 +248,30 @@
     background-color var(--duration-slower) var(--easing-standard);
 }
 
+/* left: 0 is load-bearing (fixed 2026-08-04 — client: "la línea del medio está
+   corrida"). All three bars are position:absolute with no inline offset, so each
+   one falls back to its STATIC position — and the middle bar and the two pseudos
+   resolve that differently:
+     - the bar is an abspos child of a flex container, so flexbox centres its
+       static position: left = (44 - 18) / 2 = 13px. Correct.
+     - the pseudos' containing block is the BAR, and their static position comes
+       from the inline formatting context inside it. A <button> is text-align:
+       center in the UA stylesheet and that inherits down, so a zero-width
+       hypothetical box centres at 18 / 2 = 9px — and each 18px bar was drawn
+       from there.
+   Net effect: the top and bottom bars sat 4px left of the middle one, which is
+   the offset in the screenshot. Pinning them to the bar's own content-box edge
+   makes all three share one left edge, and it also squares up the open X (both
+   strokes now rotate about the same centre). */
 .nav-toggle__bar::before {
   content: "";
+  left: 0;
   transform: translateY(-6px);
 }
 
 .nav-toggle__bar::after {
   content: "";
+  left: 0;
   transform: translateY(6px);
 }
 
@@ -239,38 +329,57 @@
   border-bottom-color: var(--color-accent-strong);
 }
 
-/* Active-page pill (client reference, 2026-07-17) — aria-current="page"
-   is set at runtime by initActiveNavLink() (main.js), never in the
-   static markup, since the header partial is shared byte-for-byte across
-   every page. `a.site-nav__link`, not just `.site-nav__link` — matches
-   the specificity-bump pattern already used above (see that rule's own
-   comment): a bare `.site-nav__link[aria-current="page"]` has the same
-   specificity as `.site-nav__list a` and would lose the
-   padding/background override depending on source order, so this pins
-   it to win outright. Only applies to top-level items (a.site-nav__link,
-   added 2026-07-17 to every plain nav link, not just Services) — never
-   matches inside .site-nav__submenu, which has its own hover treatment
-   already and no pill design was requested there.
+/* Current-page nav item: a BLUE UNDERLINE, no fill.
+   Client 2026-07-31 on /kontakt/ ("blue underline, the same blue as the CTA, no
+   fill"), repeated 2026-08-03 for the whole site ("este fill horrible... solo
+   underlined con el azul del CTA"). So the current page reads as permanently
+   hovered — the nav's own hover is that same blue underline.
+   This REPLACES the filled dark pill this rule used to draw (a gray
+   --color-bg-elevated chip + bold white label, client reference 2026-07-17).
+   The pill was already overridden page-by-page on /kontakt/; that scoped copy
+   in page-contact.css is gone now that the shared default is correct — see
+   docs/page-conventions.md §3, which had this move listed as pending.
 
-   Padding/border-radius live only on the [aria-current] state, not on
-   a.site-nav__link generally — matches the reference image (inactive
-   items are plain text, only the active one gets the pill), and, more
-   importantly, avoids widening every single item's hit area: this nav
-   row's fit at the 1400px breakpoint is already tight (see that media
-   query's own comment on the history of squeezing it in), and padding
-   on all ~4 top-level items instead of just the active one would have
-   added real width for no visual benefit most of the time. */
+   aria-current="page" is set at runtime by initActiveNavLink() (main.js), never
+   in the static markup, since the header partial is shared byte-for-byte across
+   every page.
+
+   `a.site-nav__link`, not just `.site-nav__link` — the specificity-bump pattern
+   used throughout this file: a bare `.site-nav__link[aria-current="page"]` ties
+   with `.site-nav__list a` and would lose depending on source order. Only
+   top-level items match; never anything inside .site-nav__submenu, which has
+   its own hover treatment.
+
+   No padding or background here on purpose. Beyond the client's ask, it keeps
+   every nav item the same width: this row's fit at the 1400px breakpoint is
+   already tight (see that media query's comment), and the old pill made the
+   active item wider than its siblings, so the row's total width changed from
+   page to page. It also needs no colour override — with no dark chip behind it
+   the label just takes the same colour as its siblings, which is what makes it
+   work on the dark header, on the frosted light header, and inside the black
+   mobile drawer without three separate rules. */
 a.site-nav__link[aria-current="page"] {
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-pill);
-  background-color: var(--color-bg-elevated);
-  border-bottom-color: transparent;
-  font-weight: var(--font-weight-bold);
+  border-bottom-color: var(--color-accent-strong);
 }
 
 a.site-nav__link[aria-current="page"]:hover,
 a.site-nav__link[aria-current="page"]:focus-visible {
-  border-bottom-color: transparent;
+  border-bottom-color: var(--color-accent-strong);
+}
+
+/* One exception to "the same blue as the CTA": on the frosted LIGHT header
+   (scrolled over a white section), #3D9AD3 against white is ≈2.6:1 — under the
+   3:1 WCAG minimum for a UI boundary, and this 2px rule is the only thing
+   marking the current page visually. --color-blue-dark (#5287C9, ≈3.7:1) is the
+   project's documented on-white blue for exactly this case (tokens.css /
+   docs/page-conventions.md §5). Same treatment for the hover underline, so the
+   whole nav stays consistent within that state. */
+.site-header--dark .site-nav__list a:hover,
+.site-header--dark .site-nav__list a:focus-visible,
+.site-header--dark a.site-nav__link[aria-current="page"],
+.site-header--dark a.site-nav__link[aria-current="page"]:hover,
+.site-header--dark a.site-nav__link[aria-current="page"]:focus-visible {
+  border-bottom-color: var(--color-blue-dark);
 }
 
 .site-nav__actions {
@@ -825,25 +934,13 @@ a.site-nav__link {
   font-size: var(--font-size-sm);
 }
 
-/* Oversized decorative FRANKONIA wordmark at the very bottom (client
-   2026-07-24, reference: a huge partially-clipped wordmark). Sized to span the
-   footer width and set flush to the bottom; the footer's `overflow: hidden` +
-   a negative bottom margin clip the lower part of the letters so it reads as
-   "not fully shown but legible, big". Gets the shared soft scroll fade-in via
-   data-reveal in the markup. Decorative (aria-hidden) — the real company name
-   is in the Contact column above. */
-.site-footer__wordmark {
-  margin-top: var(--space-7);
-  margin-bottom: -0.16em;
-  font-size: clamp(3.5rem, 20vw, 16rem);
-  font-weight: var(--font-weight-bold);
-  line-height: 1;
-  letter-spacing: -0.03em;
-  text-align: center;
-  white-space: nowrap;
-  color: var(--color-white);
-  user-select: none;
-}
+/* The oversized decorative FRANKONIA wordmark that used to close the footer
+   (.site-footer__wordmark, added 2026-07-24) was REMOVED 2026-08-03, client
+   request — rule deleted along with its markup in both footer partials rather
+   than left behind unused. Note the footer keeps `overflow: hidden`, which was
+   what clipped that wordmark's descenders; it is harmless on its own, but if
+   anything ever needs to visually break out of the footer's bottom edge, that
+   is the declaration to look at. */
 
 /* Four columns (Contact / Company / Legal / Social Media) distributed across
    the width from 640px up (client 2026-07-25 — Social Media added as its own
@@ -956,5 +1053,88 @@ a.site-nav__link {
   .site-nav__submenu-toggle:focus-visible {
     outline: 2px solid var(--color-focus-ring);
     outline-offset: 2px;
+  }
+}
+
+/* ==========================================================================
+   MOBILE HEADER GEOMETRY + WHATSAPP SIZE (2026-07-31, client brief)
+   --------------------------------------------------------------------------
+   Placed last so these win over the base component rules above without
+   needing !important or higher-specificity selectors.
+
+   What was actually measured at 390px before this block existed:
+     logo artwork left edge .... 12px from the screen edge
+     hero copy left edge ....... 20px   <- an 8px misalignment between the two
+                                          most prominent things on screen one
+     hamburger BOX right edge .. 12px (flush with the container padding)
+     hamburger ICON right edge . 23px   <- the box was flush, the icon was not
+     logo width ................ 177px = 45% of the row
+     bar stack ................. 22 x 14px (2px bars, 4px gaps)
+   The "not vertically aligned" part of the brief did NOT reproduce: the logo
+   image and the bar stack are both centred at y=38.0 in the 44px row. What
+   reads as misalignment is the horizontal inset mismatch plus the icon's very
+   wide 1.57:1 stack, both fixed below.
+   ========================================================================== */
+
+/* Scoped to where the hamburger actually EXISTS (it is replaced by the full nav
+   at 1400px, see the min-width: 1400px block above), so this can never reach the
+   desktop navigation. */
+@media (max-width: 1399.98px) {
+  .nav-toggle {
+    /* 44px target kept exactly as it was — only the drawn icon shrinks. */
+    --nav-toggle-target: 2.75rem;
+    /* 22px -> 18px. A compact, professional size next to a ~16px wordmark. */
+    --nav-toggle-icon: 1.125rem;
+    width: var(--nav-toggle-target);
+    height: var(--nav-toggle-target);
+    /* Optical, not box, alignment. The target centres the icon, so the icon sits
+       (44 - 18) / 2 = 13px inside its own box; flushing the BOX to the container
+       padding therefore left the visible icon 13px further in than the logo.
+       Pulling the box out by exactly that amount puts the icon's right edge on
+       the same inset as the logo's left edge, at any container padding — the
+       value is derived from the two properties above rather than hardcoded, so
+       it stays correct if either changes. The 44px target still ends ~7px clear
+       of the screen edge, so nothing is clipped or hard to hit. */
+    margin-inline-end: calc((var(--nav-toggle-icon) - var(--nav-toggle-target)) / 2);
+  }
+  .nav-toggle__bar,
+  .nav-toggle__bar::before,
+  .nav-toggle__bar::after {
+    width: var(--nav-toggle-icon);
+  }
+  /* All three bars were already equal in width and stroke, and the gaps were
+     already even at 4px — the imbalance is proportional: 22 x 14px is a 1.57:1
+     stack, which reads stretched. +/-5px around a 2px bar gives 3px gaps and a
+     12px stack on an 18px width (1.5:1), tightening the negative space so the
+     icon reads as deliberate. The [aria-expanded="true"] X-state rules above are
+     more specific, so the open state is untouched. */
+  .nav-toggle__bar::before { transform: translateY(-5px); }
+  .nav-toggle__bar::after  { transform: translateY(5px); }
+}
+
+@media (max-width: 767.98px) {
+  /* --container-padding bottoms out at 12px on a phone (clamp(0.75rem, 2vw,
+     1.5rem)), which is where the edge-hugging came from. Pinning the header row
+     to 20px matches the hero copy's own left edge below it, so the logo, the
+     headline and the CTA all share one alignment. Scoped to the header, so no
+     other section's container padding changes. Phone-only: from ~1000px up the
+     shared token already exceeds 20px and this would REDUCE it. */
+  .site-header__inner {
+    padding-inline: 1.25rem;
+  }
+  /* 18.4px tall x 177px wide was 45% of a 390px row for a 9.6:1 wordmark. One
+     step down to 16px puts it at 154px / 39% — still unmistakably the brand
+     anchor and still fully legible, without owning half the header. */
+  .site-header__logo img {
+    height: 1rem;
+  }
+
+  /* 56px put the floating button on visual par with the hero's own primary CTA.
+     48px still clears the 44px touch floor and reads as a persistent utility.
+     .hero__grid's bottom padding is derived from this same 3rem value plus its
+     --space-5 offset, so the button and the trust row cannot collide. */
+  .whatsapp-button {
+    width: 3rem;
+    height: 3rem;
   }
 }

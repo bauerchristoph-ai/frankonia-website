@@ -88,7 +88,20 @@
       return false; // malformed selector
     }
     if (!target) return false;
-    lenis.scrollTo(target, { immediate: !!immediate });
+    /* A target may advertise how far PAST its own top a jump should land, via
+       data-scroll-offset (px). Added 2026-08-03 for #our-system: that section's
+       scroll trigger starts at its own top, so landing there is timeline
+       progress 0 — an intentionally empty stage, which reads as a broken page to
+       someone who arrived by clicking the nav rather than by scrolling in.
+       Declarative on purpose: the section that has a pinned timeline is the only
+       thing that knows where "already showing something" is, and it sets the
+       attribute only while that timeline actually exists (js/system-story.js).
+       Anything without the attribute behaves exactly as before. */
+    var offset = parseFloat(target.getAttribute("data-scroll-offset"));
+    lenis.scrollTo(target, {
+      offset: isNaN(offset) ? 0 : offset,
+      immediate: !!immediate,
+    });
     return true;
   }
 

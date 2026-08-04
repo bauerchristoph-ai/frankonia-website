@@ -25,6 +25,18 @@
       <ul class="site-footer__list">
         <li><a href="https://www.instagram.com/frankonia_sicherheitsdienst/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
         <li><a href="https://www.linkedin.com/company/frankonia-sicherheit/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+        <!-- Added 2026-08-01 (client). Appended rather than sorted in: Instagram
+             leads deliberately (it's the profile the homepage's own reel section
+             links to).
+             NOTE: there are TWO footer partials — this German one (used by
+             pages/index.html + pages/kontakt.html) and partials/footer.html
+             (used by pages/werkschutz.html + pages/en/index.html). A social link
+             added to one and not the other silently ships on half the site;
+             that happened on this very change and was caught by counting the
+             compiled output, not by reading the source. Keep them in sync, and
+             mirror any profile into the Organization schema's sameAs array in
+             pages/index.html AND pages/en/index.html too. -->
+        <li><a href="https://www.facebook.com/FRANKONIASicherheit" target="_blank" rel="noopener noreferrer">Facebook</a></li>
       </ul>
     </div>
 
@@ -87,10 +99,10 @@
     <p>&copy; 2026 FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG</p>
   </div>
 
-  <!-- Oversized decorative wordmark, clipped at the footer's bottom edge
-       (client 2026-07-24). data-reveal gives it the same soft scroll fade-in
-       as the section titles/lists (initScrollReveal, js/main.js). aria-hidden:
-       the real company name is in the Contact column above, so this is purely
-       visual. Kept in sync with partials/footer.html. -->
-  <div class="site-footer__wordmark" aria-hidden="true" data-reveal>FRANKONIA</div>
+  <!-- The oversized decorative FRANKONIA wordmark that used to close the footer
+       (added 2026-07-24) was REMOVED 2026-08-03, client request. It was
+       aria-hidden decoration only — the real company name is in the Contact
+       column above — so nothing textual was lost. Same removal in
+       partials/footer.html; .site-footer__wordmark is gone from
+       site-chrome.css too. -->
 </footer>

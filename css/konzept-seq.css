@@ -608,8 +608,12 @@
 .konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .security-concept__cps { opacity: 1; transition-delay: 1.7s; }
 .konzept-seq--enhanced .konzept-seq__layer[data-kz-layer="3"].is-active .security-concept__links { opacity: 1; transition-delay: 2.15s; }
 
-/* Layer-3 tooltips: line draws first, then text fades — staggered by order. */
-/* stagger the 6 tips after the hardware/route (~1.65s base). */
+/* Layer-3 tooltips are NOT animated from here. They used to be (CSS
+   transition-delays off .is-active), but 2026-07-31 moved all three layers'
+   tooltips onto scroll-scrubbed progress in js/konzept-seq.js — see prepTips /
+   paintTips and the tipRanges base/stagger there. Two leftover comments claiming
+   this file staggered them (and naming a tip count that was never right) were
+   removed here 2026-08-04: they sent the next edit to the wrong file. */
 
 /* ==========================================================================
    Responsive
@@ -689,6 +693,25 @@
   .konzept-seq__terms { display: none; }
 }
 
+/* Reading order below the enhanced breakpoint (client 2026-08-03): the DOM is
+   diagram → label → terms, which on a phone puts a large abstract cube on screen
+   before anything says what it is — the visitor met "Schritt 1 / Rundgang vor
+   Ort" only after scrolling past the whole diagram. Desktop is unaffected: the
+   enhanced grid places .konzept-seq__label / .konzept-seq__diagram by explicit
+   grid-column/grid-row, so it never depended on DOM order in the first place.
+   Order is used rather than moving the markup because the terms list must stay
+   BELOW the diagram (it annotates it) while the label goes above it — one of the
+   two has to be reordered either way. */
+@media (max-width: 1023.98px) {
+  .konzept-seq__label { order: 1; }
+  .konzept-seq__diagram { order: 2; }
+  .konzept-seq__terms {
+    order: 3;
+    /* The layer's own flex `gap` already separates it from the diagram. */
+    margin-top: 0;
+  }
+}
+
 /* Tablet: smaller frame, tighter spacing (sequence still runs if enhanced). */
 @media (max-width: 1023.98px) {
   .konzept-seq { --kz-frame: min(26rem, 84vw); }
@@ -700,6 +723,123 @@
   .konzept-seq { --kz-frame: 90vw; padding-block: var(--space-8); }
   .konzept-seq__layers { gap: var(--space-7); padding-inline: var(--space-3); }
   .konzept-seq__label { max-width: none; }
+}
+
+/* ==========================================================================
+   Mobile tooltips (client 2026-08-03) — the HTML stand-in for the in-SVG
+   .kz-tip boxes, which cannot render below 1024px (they are laid out outside
+   the cube's viewBox; see the Responsive note above).
+
+   Built entirely by js/konzept-seq.js at runtime, anchored on each tip's own
+   dot, ONE visible at a time. Nothing here is ever visible without that script:
+   no .kz-mtips element exists in the HTML, so no-JS / reduced-motion / a GSAP
+   failure all fall back to the .konzept-seq__terms list, which carries the same
+   words as real text.
+   ========================================================================== */
+@media (max-width: 1023.98px) {
+  .konzept-seq__diagram { position: relative; }
+
+  /* Same box as the SVG itself: it is width:--kz-frame, height:auto with
+     preserveAspectRatio="xMidYMid meet", so its rendered box is exactly the
+     viewBox aspect — the chips' percentage coordinates land on the drawing. */
+  .kz-mtips {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: var(--kz-frame);
+    aspect-ratio: 1079 / 1110;
+    pointer-events: none;
+  }
+
+  .kz-mtip {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    /* The dot (10px, first child) has to sit ON the anchor, not beside it. */
+    transform: translate(-5px, -50%);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s var(--easing-premium), visibility 0.35s;
+  }
+  /* Anchors past the halfway line open leftwards so the box stays on the cube.
+     Right edge on the anchor, and row-reverse puts the dot back on that edge. */
+  .kz-mtip--left {
+    flex-direction: row-reverse;
+    transform: translate(calc(-100% + 5px), -50%);
+    text-align: right;
+  }
+  .kz-mtip.is-active { opacity: 1; visibility: visible; }
+
+  .kz-mtip__dot {
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--kz-route-color);
+    box-shadow: 0 0 0 4px rgb(61 154 211 / 0.18), 0 0 10px rgb(61 154 211 / 0.75);
+  }
+  .kz-mtip__line {
+    flex: none;
+    width: 14px;
+    height: 1px;
+    background: rgb(255 255 255 / 0.45);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.3s var(--easing-premium);
+  }
+  .kz-mtip--left .kz-mtip__line { transform-origin: right center; }
+  .kz-mtip.is-active .kz-mtip__line { transform: none; }
+
+  /* Its own surface: the connector and text cross the cube's own hairlines, and
+     white-on-drawing is legible but restless. Same navy as the section. */
+  .kz-mtip__body {
+    padding: 5px 9px;
+    border-radius: var(--radius-sm);
+    background: rgb(0 9 31 / 0.82);
+    border: 1px solid rgb(255 255 255 / 0.1);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.3s var(--easing-premium), transform 0.3s var(--easing-premium);
+  }
+  .kz-mtip--left .kz-mtip__body { transform: translateX(6px); }
+  .kz-mtip.is-active .kz-mtip__body {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.1s;
+  }
+  .kz-mtip__name {
+    display: block;
+    color: #fff;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .kz-mtip__sub {
+    display: block;
+    margin-top: 1px;
+    color: rgb(255 255 255 / 0.68);
+    font-size: 0.6875rem;
+    line-height: 1.3;
+  }
+
+  /* Layer 2 is the risk diagnosis — its dots are red in the SVG too. */
+  .konzept-seq__layer[data-kz-layer="2"] .kz-mtip__dot {
+    background: var(--kz-risk);
+    box-shadow: 0 0 0 4px rgb(255 91 82 / 0.18), 0 0 10px rgb(255 91 82 / 0.75);
+  }
+
+  /* The term chip below the cube tracks whichever tooltip is currently up, so
+     the list reads as the diagram's legend rather than a separate block.
+     `.is-synced` is added by the script and is what dims the resting state — the
+     list must not sit at 45% opacity for anyone who never gets the tooltips.
+     Only COLOR changes: the phone layout is a wrapped row of nowrap chips, so
+     changing weight on the active one would reflow the whole row on every step. */
+  .konzept-seq__term-name {
+    transition: color 0.3s var(--easing-premium);
+  }
+  .konzept-seq__terms.is-synced .konzept-seq__term-name { color: rgb(255 255 255 / 0.45); }
+  .konzept-seq__terms.is-synced li.is-active .konzept-seq__term-name { color: #fff; }
 }
 
 /* Reduced motion: nothing to add — enhanced is JS/matchMedia-gated off, so the

@@ -55,7 +55,8 @@
       },
       "sameAs": [
         "https://www.instagram.com/frankonia_sicherheitsdienst/",
-        "https://www.linkedin.com/company/frankonia-sicherheit/"
+        "https://www.linkedin.com/company/frankonia-sicherheit/",
+        "https://www.facebook.com/FRANKONIASicherheit"
       ]
     },
     {
@@ -237,10 +238,24 @@
   </script>
 
   <!-- include: head-common -->
+  <!-- Shared lead-form section (extracted from page-home.css 2026-08-03 —
+       /werkschutz/ needs it verbatim and it belongs on all 49 planned pages).
+       Linked BEFORE page-home.css so homepage-specific rules (the pixel-seam
+       padding) still win. -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <!-- Shared testimonial card (extracted from page-home.css 2026-08-03 —
+       /referenzen/ needs the identical component). Same rule: linked BEFORE
+       page-home.css so a homepage-specific rule could still override it. -->
+  <link rel="stylesheet" href="/css/testimonials.css">
   <link rel="stylesheet" href="/css/page-home.css">
   <link rel="stylesheet" href="/css/system-story.css">
   <link rel="stylesheet" href="/css/sticky-story.css">
   <link rel="stylesheet" href="/css/konzept-seq.css">
+  <!-- The mobile swipe strip shared by three sections on this page (Unser System
+       cards, Social reel, References testimonials). Linked LAST on purpose — see
+       that file's header: it has to outrank the desktop display/align rules those
+       sections set with single-class selectors. -->
+  <link rel="stylesheet" href="/css/swipe-carousel.css">
   <!-- Page-specific module, not in main.js (see js/outfits.js header
        comment) — same reasoning as page-home.css being linked here
        directly rather than folded into the shared head-common bundle. -->
@@ -292,6 +307,17 @@
   <script src="/js/sticky-story.js" defer></script>
   <script src="/js/pain-hook-journey.js" defer></script>
   <script src="/js/system-story.js" defer></script>
+  <!-- MOBILE swipe-strip controls (counter, progress line, keyboard) for every
+       [data-swipe-carousel] on the page — <768px only. Deliberately NOT part of
+       system-story.js/social-carousel.js: those are the desktop GSAP/3D
+       sequences and return early without their dependencies, while the strips
+       are native CSS scroll-snap that must keep working regardless. -->
+  <script src="/js/swipe-carousel.js" defer></script>
+  <!-- Einsatzgebiete city picker: collapses the eleven pills behind one
+       trigger below 768px. No dependency on Leaflet or coverage-map.js —
+       see that file's header for why this is a disclosure over the real
+       city links rather than a <select>. -->
+  <script src="/js/coverage-select.js" defer></script>
   <!-- Sicherheitskonzept exploded-view sequence. Needs GSAP + ScrollTrigger
        (above) and rides the single Lenis loop from smooth-scroll.js; CSS
        position:sticky, no ScrollTrigger pin. -->
@@ -324,6 +350,9 @@
        only when the map nears the viewport, instead of ~41K gzip of Leaflet on
        every visit. The city pills stay real <a> links, usable with no JS. -->
   <script src="/js/coverage-lazy.js" defer></script>
+  <!-- 3D ring carousel for the social reel (client 2026-08-03). Own tag, same
+       pattern as the other page-specific motion scripts. -->
+  <script src="/js/social-carousel.js" defer></script>
 </head>
 <body>
   <!-- include: icon-sprite -->
@@ -523,15 +552,15 @@
           <p class="sticky-story__lede" data-reveal>Langfristige Sicherheitspartnerschaften auf Basis von Zuverlässigkeit, Beständigkeit und messbarer Leistung.</p>
           <ul class="sticky-story__metrics">
           <li class="sticky-story__metric">
-            <span class="sticky-story__metric-value"><span data-count-to="300" data-suffix="+">300+</span></span>
+            <span class="sticky-story__metric-value"><span data-count-to="300">300</span><span class="sticky-story__metric-plus">+</span></span>
             <span class="sticky-story__metric-label">Unternehmen und Einrichtungen</span>
           </li>
           <li class="sticky-story__metric">
-            <span class="sticky-story__metric-value"><span data-count-to="1000000" data-suffix="+">1.000.000+</span></span>
+            <span class="sticky-story__metric-value"><span data-count-to="1000000">1.000.000</span><span class="sticky-story__metric-plus">+</span></span>
             <span class="sticky-story__metric-label">Geleistete Einsatzstunden</span>
           </li>
           <li class="sticky-story__metric">
-            <span class="sticky-story__metric-value"><span data-count-to="10" data-suffix="+">10+</span></span>
+            <span class="sticky-story__metric-value"><span data-count-to="10">10</span><span class="sticky-story__metric-plus">+</span></span>
             <span class="sticky-story__metric-label">Jahre im Sicherheitsgewerbe</span>
           </li>
           <li class="sticky-story__metric">
@@ -548,10 +577,26 @@
       <div class="sticky-story__scene sticky-story__scene--logos">
         <div class="sticky-story__inner">
           <!-- ONE single slow marquee row (client 2026-07-29 redesign — was two
-               opposite-direction rows). 8 strongest logos; group 2 is an
-               aria-hidden duplicate so translateX(-50%) loops seamlessly. Pause
-               on hover + edge mask + reduced-motion/mobile static wrap in
-               page-home.css. -->
+               opposite-direction rows). 8 strongest logos in FOUR identical
+               groups — groups 2-4 are aria-hidden duplicates. Pause on hover +
+               edge mask + reduced-motion/mobile static wrap in page-home.css.
+
+               HOW MANY GROUPS IS ARITHMETIC, NOT TASTE (client 2026-08-04: "no
+               pueden terminar de pasar, tiene que ser un loop infinito"). The
+               track shifts left by exactly ONE group width and restarts, so the
+               row only stays full while the groups still to the right of the
+               viewport cover it: N >= rowWidth / groupWidth + 1. It shipped with
+               TWO, which needs row <= group — false here, because this band is
+               FULL-BLEED (row width == viewport width) while a group's width is
+               clamped against vw and stops growing at ~1183px. Measured gap at
+               the loop's end: 83px at 1024, 316px at 1440, 349px at 1512, 738px
+               at 1920. Four groups cover a row up to 3 x 1183 = ~3549px, i.e.
+               every real desktop including a 6K XDR at DPR 2 (3008 CSS px).
+               If a logo is ever added or removed, re-measure — and keep the
+               keyframe's translateX at -(100/N)%, which is what makes the shift
+               one group wide regardless of N (see page-home.css).
+               /referenzen/'s rows do NOT have this bug: they sit in a capped
+               container (row maxes at 1360px), so their group counts still hold. -->
           <div class="story-logos">
               <div class="story-logos__row">
                 <div class="story-logos__track">
@@ -575,6 +620,26 @@
                     <img class="story-logos__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="" loading="lazy">
                     <img class="story-logos__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
                   </div>
+                  <div class="story-logos__group" aria-hidden="true">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
+                  </div>
+                  <div class="story-logos__group" aria-hidden="true">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                    <img class="story-logos__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
+                  </div>
                 </div>
               </div>
               </div>
@@ -583,10 +648,12 @@
     </section>
 
     <!-- Pixel-seam: white trust band -> dark Pain Hook (client 2026-07-29).
-         White tiles (--pixel-seam--white = #FFFFFF, matching the trust band)
-         dissolve over Pain Hook's dark top. Band sits in Pain Hook's top; its
-         extra padding-top is reserved via `.pixel-seam + .pain-hook`
-         (page-home.css). Built by js/pixel-transition.js. -->
+         White tiles (.pixel-seam--white = #FFFFFF, matching the trust band,
+         which ends on white again since the fade-to-blue was removed
+         2026-08-04) dissolving over Pain Hook's dark top. Band sits in Pain
+         Hook's top; its extra padding-top is reserved via
+         `.pixel-seam + .pain-hook` (page-home.css). Built by
+         js/pixel-transition.js. -->
     <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
 
     <!-- ============ 2. PAIN HOOK ============ -->
@@ -852,20 +919,32 @@
                         <stop offset="0%" stop-color="#ff5b52" stop-opacity="0.3"></stop>
                         <stop offset="100%" stop-color="#ff5b52" stop-opacity="0"></stop>
                       </radialGradient>
-                      <linearGradient id="kz-light-0" gradientUnits="userSpaceOnUse" x1="496" y1="381" x2="577" y2="463">
+                      <linearGradient id="kz-light-0" gradientUnits="userSpaceOnUse" x1="504" y1="378" x2="608" y2="476">
                         <stop offset="0%" stop-color="#ff5b52" stop-opacity="0.7"></stop>
                         <stop offset="55%" stop-color="#ff5b52" stop-opacity="0.22"></stop>
                         <stop offset="100%" stop-color="#ff5b52" stop-opacity="0"></stop>
                       </linearGradient>
-                      <linearGradient id="kz-light-1" gradientUnits="userSpaceOnUse" x1="364" y1="700" x2="281" y2="778">
+                      <linearGradient id="kz-light-1" gradientUnits="userSpaceOnUse" x1="354" y1="692" x2="242" y2="793">
+                        <stop offset="0%" stop-color="#ff5b52" stop-opacity="0.7"></stop>
+                        <stop offset="55%" stop-color="#ff5b52" stop-opacity="0.22"></stop>
+                        <stop offset="100%" stop-color="#ff5b52" stop-opacity="0"></stop>
+                      </linearGradient>
+                      <linearGradient id="kz-light-2" gradientUnits="userSpaceOnUse" x1="775" y1="700" x2="602" y2="597">
+                        <stop offset="0%" stop-color="#ff5b52" stop-opacity="0.7"></stop>
+                        <stop offset="55%" stop-color="#ff5b52" stop-opacity="0.22"></stop>
+                        <stop offset="100%" stop-color="#ff5b52" stop-opacity="0"></stop>
+                      </linearGradient>
+                      <linearGradient id="kz-light-3" gradientUnits="userSpaceOnUse" x1="736" y1="485" x2="631" y2="554">
                         <stop offset="0%" stop-color="#ff5b52" stop-opacity="0.7"></stop>
                         <stop offset="55%" stop-color="#ff5b52" stop-opacity="0.22"></stop>
                         <stop offset="100%" stop-color="#ff5b52" stop-opacity="0"></stop>
                       </linearGradient>
                     </defs>
-                    <path class="kz-light" d="M496 381 L549 491 L605 435 Z" fill="url(#kz-light-0)"></path>
-                    <path class="kz-light" d="M364 700 L254 750 L308 806 Z" fill="url(#kz-light-1)"></path>
-                    <g class="kz-warn" data-kz-warn transform="translate(320 600)">
+                    <path class="kz-light" d="M504 378 L575 511 L641 441 Z" fill="url(#kz-light-0)"></path>
+                    <path class="kz-light" d="M354 692 L208 755 L276 831 Z" fill="url(#kz-light-1)"></path>
+                    <path class="kz-light" d="M775 700 L637 538 L567 656 Z" fill="url(#kz-light-2)"></path>
+                    <path class="kz-light" d="M736 485 L608 518 L654 590 Z" fill="url(#kz-light-3)"></path>
+                    <g class="kz-warn" data-kz-warn transform="translate(291 586)">
                       <ellipse class="kz-warn__glow" rx="72" ry="38"></ellipse>
                       <ellipse class="kz-warn__ring" rx="34" ry="17"></ellipse>
                       <ellipse class="kz-warn__ring" rx="34" ry="17"></ellipse>
@@ -878,7 +957,7 @@
                         <rect class="kz-warn__bang" x="-2.4" y="10" width="4.8" height="4.8"></rect>
                       </g>
                     </g>
-                    <g class="kz-warn" data-kz-warn transform="translate(806 586)">
+                    <g class="kz-warn" data-kz-warn transform="translate(821 602)">
                       <ellipse class="kz-warn__glow" rx="72" ry="38"></ellipse>
                       <ellipse class="kz-warn__ring" rx="34" ry="17"></ellipse>
                       <ellipse class="kz-warn__ring" rx="34" ry="17"></ellipse>
@@ -891,7 +970,7 @@
                         <rect class="kz-warn__bang" x="-2.4" y="10" width="4.8" height="4.8"></rect>
                       </g>
                     </g>
-                    <g class="kz-warn" data-kz-warn transform="translate(560 770)">
+                    <g class="kz-warn" data-kz-warn transform="translate(502 712)">
                       <ellipse class="kz-warn__glow" rx="72" ry="38"></ellipse>
                       <ellipse class="kz-warn__ring" rx="34" ry="17"></ellipse>
                       <ellipse class="kz-warn__ring" rx="34" ry="17"></ellipse>
@@ -910,10 +989,18 @@
                          Revealed (line-draws-then-text, staggered) when Layer 2 is
                          active; default visible under reduced-motion. -->
                     <g class="kz-tips" data-kz-tips>
+                      <!-- Moved 80 units right and 80 up (client 2026-08-03).
+                           The connector could not just be translated with it: its
+                           diagonal is shallow (191 x per 290 y), so raising the
+                           corner along the SAME slope would have pushed it left of
+                           the new text edge and inverted the horizontal run. The
+                           diagonal is steeper now (122 over 370) and the corner
+                           moved right, which keeps an ~80-unit horizontal run into
+                           the text with the same ~45-unit gap every other tip has. -->
                       <g class="kz-tip" data-kz-seq="0">
-                        <path class="kz-tip__link" d="M 301 595 L 109.9 305 Q 100 290 82 290 L -9 290"></path>
+                        <path class="kz-tip__link" d="M 301 595 L 179 225 Q 169 210 151 210 L 71 210"></path>
                         <circle class="kz-tip__dot" cx="301" cy="595" r="6"></circle>
-                        <g class="kz-tip__box" transform="translate(-320 300)">
+                        <g class="kz-tip__box" transform="translate(-240 220)">
                           <rect class="kz-tip__bg" x="0" y="-46" width="266" height="150" rx="10"></rect>
                           <text class="kz-tip__label" x="18" y="-2">Schwachstelle</text>
                           <text class="kz-tip__sub" x="18" y="43">Ungesicherter</text>
@@ -930,10 +1017,16 @@
                           <text class="kz-tip__sub" x="18" y="80">Kameraabdeckung</text>
                         </g>
                       </g>
+                      <!-- Indented 80 units further right than "Schwachstelle"
+                           above (client 2026-08-03) — deliberately NOT flush with
+                           it, so don't "align" the two back to the same x. The
+                           connector's horizontal run was shortened by the same 80
+                           (it ended at x -11, now 69) so it still meets the text
+                           block's right edge with the same gap. -->
                       <g class="kz-tip" data-kz-seq="2">
-                        <path class="kz-tip__link" d="M 508 708 L 240.7 977.2 Q 228 990 210 990 L -11 990"></path>
+                        <path class="kz-tip__link" d="M 508 708 L 240.7 977.2 Q 228 990 210 990 L 69 990"></path>
                         <circle class="kz-tip__dot" cx="508" cy="708" r="6"></circle>
-                        <g class="kz-tip__box" transform="translate(-320 1000)">
+                        <g class="kz-tip__box" transform="translate(-240 1000)">
                           <rect class="kz-tip__bg" x="0" y="-46" width="290" height="150" rx="10"></rect>
                           <text class="kz-tip__label" x="18" y="-2">Blinder Winkel</text>
                           <text class="kz-tip__sub" x="18" y="43">Eingeschränkte Sicht</text>
@@ -1066,29 +1159,108 @@
                          this group. -->
                     <g class="security-concept__tooltips">
                       <g class="kz-tip">
-                        <path class="kz-tip__link" d="M 360 432 L 163 242.5 Q 150 230 132 230 L 7 230"></path>
-                        <circle class="kz-tip__dot" cx="360" cy="432" r="6"></circle>
+                        <!-- Anchored ON the lower-left camera (client 2026-08-04: the dot was
+                             floating in the courtyard between two cameras, pointing at
+                             neither). (276 466) is that camera's upper-left corner — the
+                             artwork is 46x37 centred on (290 476), so the leader exits the
+                             corner up-left without crossing the camera itself. -->
+                        <path class="kz-tip__link" d="M 276 466 L 157.5 244.1 Q 150 230 132 230 L 7 230"></path>
+                        <circle class="kz-tip__dot" cx="276" cy="466" r="6"></circle>
                         <g class="kz-tip__box" transform="translate(-250 240)"><text class="kz-tip__label" x="0" y="-2">Kameras</text><text class="kz-tip__sub" x="0" y="41">360° Überwachung</text></g>
                       </g>
+                      <!-- The three right-hand labels below were moved OFF the cube's outline
+                           (client 2026-08-04: "que los textos no se choquen con el diagrama").
+                           Measured, not estimated: the cube's right VERTICAL edge sits at
+                           x = 1077.9 and exists only for y 318..780 (scanned off a render, and
+                           the base's own `M1079 325 L539 646` corroborates the top corner). The
+                           right labels start at x = 1050 — i.e. 28 units INSIDE that edge — so
+                           every label whose text block falls in that y-band gets a white line
+                           through its first characters. That is exactly the three the client
+                           named, and Wachpersonal (block 924..1003, below the edge's end) is
+                           the one they didn't. Two of the three escape the band vertically,
+                           the one that can't escapes sideways:
+                           - Außenpatrouille UP to y=240 (from 300). Above the cube's top-right
+                             corner. It also has to clear the SLANTED top edge, which reaches
+                             x=1050 at y=302 — hence the block bottom at 288, with the edge
+                             24 units to its left. Same height as Kameras opposite it.
+                           - Sensoren RIGHT to x=1105 (from 1050), 27 units clear of the edge.
+                             It sits mid-band, where no vertical move can help. This is the one
+                             label indented from the other three; if the ragged column edge
+                             matters more than the gap, the fix is moving ALL four to 1105 — but
+                             then Außenpatrouille's own width reaches x=1406, which leaves only
+                             ~19px to the viewport edge at 1440 (measured: usable room ends at
+                             x≈1447), so it was left where it is.
+                           - Brandmelder DOWN to y=838 (from 770). Below the edge's end at 780,
+                             where the outline slopes away down-left: at the block's top (807)
+                             it is already at x=1026, 24 units clear. 838 is not arbitrary — it
+                             is the middle of the only gap available, between the corner at 780
+                             and Wachpersonal's block at 924. -->
                       <g class="kz-tip">
-                        <path class="kz-tip__link" d="M 688 436 L 959.5 299.9 Q 972 290 988 290 L 1034 290"></path>
+                        <path class="kz-tip__link" d="M 688 436 L 959 239.4 Q 972 230 988 230 L 1034 230"></path>
                         <circle class="kz-tip__dot" cx="688" cy="436" r="6"></circle>
-                        <g class="kz-tip__box" transform="translate(1050 300)"><text class="kz-tip__label" x="0" y="-2">Außenpatrouille</text><text class="kz-tip__sub" x="0" y="41">Optimierte Route</text></g>
+                        <g class="kz-tip__box" transform="translate(1050 240)"><text class="kz-tip__label" x="0" y="-2">Außenpatrouille</text><text class="kz-tip__sub" x="0" y="41">Optimierte Route</text></g>
                       </g>
                       <g class="kz-tip">
-                        <path class="kz-tip__link" d="M 950 566 L 961.2 578.2 Q 972 590 988 590 L 1034 590"></path>
+                        <path class="kz-tip__link" d="M 950 566 L 1011.7 585.2 Q 1027 590 1043 590 L 1089 590"></path>
                         <circle class="kz-tip__dot" cx="950" cy="566" r="6"></circle>
-                        <g class="kz-tip__box" transform="translate(1050 600)"><text class="kz-tip__label" x="0" y="-2">Sensoren</text><text class="kz-tip__sub" x="0" y="41">Perimeterschutz</text></g>
+                        <g class="kz-tip__box" transform="translate(1105 600)"><text class="kz-tip__label" x="0" y="-2">Sensoren</text><text class="kz-tip__sub" x="0" y="41">Perimeterschutz</text></g>
+                      </g>
+                      <!-- Brandmelder + Alarmanlage (client 2026-08-04): the two devices in the
+                           middle of the plan (#konzept-firealarm at 622 582, #konzept-alarm at
+                           495 729) were the only drawn elements with no label. Both leaders were
+                           routed away from artwork, not just aimed at the nearest free slot:
+                           - RIGHT for the smoke detector. The mirror-image left route crosses
+                             coverage cone 2 (290 476 / 363 627 / 439 551) — measured, not
+                             guessed. Dot on the detector's top-right corner (643 572) rather
+                             than its centre so the diagonal clears cone 4's vertex at (657 601)
+                             by 21 units instead of 2.
+                           - LEFT for the alarm. Dot at (458 724), on the outer pulse ring's left
+                             edge (r=38 around 495 729), so the line leaves the ring instead of
+                             starting inside the bell. It passes 32+ units below the lower-left
+                             camera at (294 679).
+                           Label x=1034 / x=6 follow the shared rule: the horizontal segment stops
+                           16 units short of the text block (right) or 16 past its widest line
+                           (left) — Alarmanlage measures 240.1 units at 40px/600, so -250 + 240.1
+                           + 16 = 6. "Brandmelder" was chosen over "Brandmeldeanlage" for width:
+                           the latter reaches x=1409, past the 1351 the widest existing right
+                           label (Außenpatrouille) sits at, and the SVG only has ~317 units of
+                           side room to overflow into (.konzept-seq__svg is width: 63%). -->
+                      <g class="kz-tip">
+                        <path class="kz-tip__link" d="M 643 572 L 959.4 818.2 Q 972 828 988 828 L 1034 828"></path>
+                        <circle class="kz-tip__dot" cx="643" cy="572" r="6"></circle>
+                        <g class="kz-tip__box" transform="translate(1050 838)"><text class="kz-tip__label" x="0" y="-2">Brandmelder</text><text class="kz-tip__sub" x="0" y="41">Frühwarnung</text></g>
                       </g>
                       <g class="kz-tip">
-                        <path class="kz-tip__link" d="M 420 852 L 227 918.2 Q 210 924 192 924 L 73 924"></path>
+                        <path class="kz-tip__link" d="M 458 724 L 166 739.2 Q 150 740 132 740 L 6 740"></path>
+                        <circle class="kz-tip__dot" cx="458" cy="724" r="6"></circle>
+                        <g class="kz-tip__box" transform="translate(-250 750)"><text class="kz-tip__label" x="0" y="-2">Alarmanlage</text><text class="kz-tip__sub" x="0" y="41">Einbruchmeldung</text></g>
+                      </g>
+                      <!-- Both bottom labels dropped 2026-08-04 (client: "están muy pegadas a
+                           las de arriba"). The crowding was a knock-on of the two labels added
+                           earlier the same day, and the numbers say so: adding Alarmanlage made
+                           the left column three labels deep, leaving Zutrittskontrolle only 96
+                           units under it, and moving Brandmelder down cut Wachpersonal's gap
+                           from 91 units to 29 — by far the tightest pair in the diagram.
+                           Zutrittskontrolle 934 -> 990 (gap 96 -> 162), Wachpersonal 955 -> 1050
+                           (gap 29 -> 134), so the two bottom rows now breathe like the rest.
+                           Both stay INSIDE the SVG's own 0..1110 viewBox (blocks end at 1038 and
+                           1098), which is the real ceiling here: the labels are only visible at
+                           all because the enhanced SVG is allowed to overflow, so keeping them
+                           in the box means nothing can clip and no new overflow is introduced.
+                           Neither hits the cube: at these heights the bottom-left edge has moved
+                           right to x 312-449 (Zutrittskontrolle ends at x=57) and the
+                           bottom-right edge left to x 526-663 (Wachpersonal starts at x=1050).
+                           Each leader keeps its own apex X (210 / 972) so only the elbow's
+                           height changed, not the shape. -->
+                      <g class="kz-tip">
+                        <path class="kz-tip__link" d="M 420 852 L 223.7 971.7 Q 210 980 192 980 L 73 980"></path>
                         <circle class="kz-tip__dot" cx="420" cy="852" r="6"></circle>
-                        <g class="kz-tip__box" transform="translate(-250 934)"><text class="kz-tip__label" x="0" y="-2">Zutrittskontrolle</text><text class="kz-tip__sub" x="0" y="41">Gate &amp; ID-System</text></g>
+                        <g class="kz-tip__box" transform="translate(-250 990)"><text class="kz-tip__label" x="0" y="-2">Zutrittskontrolle</text><text class="kz-tip__sub" x="0" y="41">Gate &amp; ID-System</text></g>
                       </g>
                       <g class="kz-tip">
-                        <path class="kz-tip__link" d="M 705 902 L 958.6 942.7 Q 972 945 988 945 L 1034 945"></path>
+                        <path class="kz-tip__link" d="M 705 902 L 957.8 1032.6 Q 972 1040 988 1040 L 1034 1040"></path>
                         <circle class="kz-tip__dot" cx="705" cy="902" r="6"></circle>
-                        <g class="kz-tip__box" transform="translate(1050 955)"><text class="kz-tip__label" x="0" y="-2">Wachpersonal</text><text class="kz-tip__sub" x="0" y="41">Feste Positionen</text></g>
+                        <g class="kz-tip__box" transform="translate(1050 1050)"><text class="kz-tip__label" x="0" y="-2">Wachpersonal</text><text class="kz-tip__sub" x="0" y="41">Feste Positionen</text></g>
                       </g>
                     </g>
                   </g>
@@ -1103,6 +1275,8 @@
                   <li><span class="konzept-seq__term-name">Kameras</span><span class="konzept-seq__term-sub">360° Überwachung</span></li>
                   <li><span class="konzept-seq__term-name">Außenpatrouille</span><span class="konzept-seq__term-sub">Optimierte Route</span></li>
                   <li><span class="konzept-seq__term-name">Sensoren</span><span class="konzept-seq__term-sub">Perimeterschutz</span></li>
+                  <li><span class="konzept-seq__term-name">Brandmelder</span><span class="konzept-seq__term-sub">Frühwarnung</span></li>
+                  <li><span class="konzept-seq__term-name">Alarmanlage</span><span class="konzept-seq__term-sub">Einbruchmeldung</span></li>
                   <li><span class="konzept-seq__term-name">Zutrittskontrolle</span><span class="konzept-seq__term-sub">Gate &amp; ID-System</span></li>
                   <li><span class="konzept-seq__term-name">Wachpersonal</span><span class="konzept-seq__term-sub">Feste Positionen</span></li>
                 </ul>
@@ -1125,9 +1299,16 @@
     <!-- Stacked-card "Our System" component (integrated 2026-07-23 from the
          sibling prototype ../frankonia-system-cards, Codrops StickySections
          index8). Replaces the previous .system panel layout IN PLACE: same
-         position, same #our-system nav anchor, same client-approved copy —
-         each of the six panels' title / description / bullet points is
-         preserved verbatim and maps to one .system-story__card. Interaction
+         position, same #our-system nav anchor.
+         COPY (2026-08-03): now the client draft's own Sektion 4 ("Die 6
+         Value-Pillars", content-de/…Webtext 01 Homepage.docx, Stand 24.07.2026)
+         VERBATIM — the H2 plus, per card, the draft's full title and its two
+         sentences. This replaces the shorter July titles + 3-bullet lists that
+         used to sit here (git has them); same six points, same order, same
+         photos — the draft simply states each one in full, which is also what
+         an answer engine can extract. The draft's kicker "WARUM FRANKONIA" is
+         deliberately NOT rendered: no section on this homepage carries an
+         eyebrow anymore. Interaction
          in js/system-story.js (CSS position:sticky, NO ScrollTrigger pin,
          reuses the site's single GSAP/ScrollTrigger + Lenis); styles in
          css/system-story.css. Renders as a readable vertical list with no JS
@@ -1139,10 +1320,21 @@
         <div class="system-story__stage">
 
           <header class="system-story__intro">
-            <h2 class="system-story__intro-title">So funktioniert unser System.</h2>
+            <!-- The eyebrow is what makes this section findable from the nav
+                 (client 2026-08-03: clicking "Unser System" landed on a section
+                 whose only label was "Weniger Aufwand, mehr Sicherheit…" — the
+                 right place, with nothing on it saying so). Until this build the
+                 H2 itself read "So funktioniert unser System." and carried that
+                 job; the draft's H2 replaced it, so the label moved here.
+                 This is the ONE eyebrow on the homepage — it is a destination
+                 label for a nav target, not decoration, which is why the draft's
+                 own kicker for this section ("WARUM FRANKONIA") is still not
+                 used: it would not match what the visitor clicked. -->
+            <p class="system-story__eyebrow">Unser System</p>
+            <h2 class="system-story__intro-title">Weniger Aufwand, mehr Sicherheit, durch ein klar definiertes System</h2>
           </header>
 
-          <div class="system-story__stack" data-system-stack>
+          <div class="system-story__stack" data-system-stack data-swipe-carousel data-swipe-label="Sechs Karten zu unserem System, horizontal scrollbar">
 
             <article class="system-story__card" data-system-card>
               <div class="system-story__card-inner">
@@ -1285,6 +1477,7 @@
                 <img class="services__thumb" src="/assets/images/services-thumb/werkschutz.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">01</span>
                 <span class="services__item-name">Werkschutz</span>
+                <span class="services__item-more" aria-hidden="true">Mehr erfahren</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
               </a>
             </li>
@@ -1297,6 +1490,7 @@
                 <img class="services__thumb" src="/assets/images/services-thumb/objektschutz.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">02</span>
                 <span class="services__item-name">Objektschutz</span>
+                <span class="services__item-more" aria-hidden="true">Mehr erfahren</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
               </a>
             </li>
@@ -1309,6 +1503,7 @@
                 <img class="services__thumb" src="/assets/images/services-thumb/baustellenbewachung.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">03</span>
                 <span class="services__item-name">Baustellenbewachung</span>
+                <span class="services__item-more" aria-hidden="true">Mehr erfahren</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
               </a>
             </li>
@@ -1321,6 +1516,7 @@
                 <img class="services__thumb" src="/assets/images/services-thumb/brandwache.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">04</span>
                 <span class="services__item-name">Brandwache</span>
+                <span class="services__item-more" aria-hidden="true">Mehr erfahren</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
               </a>
             </li>
@@ -1333,6 +1529,7 @@
                 <img class="services__thumb" src="/assets/images/services-thumb/revier-schliessdienst.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">05</span>
                 <span class="services__item-name">Revier- &amp; Schließdienst</span>
+                <span class="services__item-more" aria-hidden="true">Mehr erfahren</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
               </a>
             </li>
@@ -1345,6 +1542,7 @@
                 <img class="services__thumb" src="/assets/images/services-thumb/empfangsdienst.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">06</span>
                 <span class="services__item-name">Empfangsdienst</span>
+                <span class="services__item-more" aria-hidden="true">Mehr erfahren</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
               </a>
             </li>
@@ -1357,6 +1555,7 @@
                 <img class="services__thumb" src="/assets/images/services-thumb/veranstaltungsschutz.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">07</span>
                 <span class="services__item-name">Veranstaltungsschutz</span>
+                <span class="services__item-more" aria-hidden="true">Mehr erfahren</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
               </a>
             </li>
@@ -1369,6 +1568,7 @@
                 <img class="services__thumb" src="/assets/images/services-thumb/kaufhausdetektei.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">08</span>
                 <span class="services__item-name">Kaufhausdetektei</span>
+                <span class="services__item-more" aria-hidden="true">Mehr erfahren</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
               </a>
             </li>
@@ -1381,6 +1581,7 @@
                 <img class="services__thumb" src="/assets/images/services-thumb/sicherheitstechnik.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">09</span>
                 <span class="services__item-name">Sicherheitstechnik</span>
+                <span class="services__item-more" aria-hidden="true">Mehr erfahren</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
               </a>
             </li>
@@ -1393,6 +1594,7 @@
                 <img class="services__thumb" src="/assets/images/services-thumb/interventionsdienst.webp" width="128" height="96" alt="" loading="lazy" decoding="async">
                 <span class="services__item-number" aria-hidden="true">10</span>
                 <span class="services__item-name">Interventionsdienst</span>
+                <span class="services__item-more" aria-hidden="true">Mehr erfahren</span>
                 <svg class="services__item-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
               </a>
             </li>
@@ -1410,11 +1612,6 @@
                 <source data-preview-source srcset="/assets/images/werkschutz.webp" type="image/webp">
                 <img data-preview-img src="/assets/images/werkschutz.jpg" alt="" width="820" height="1227" loading="lazy">
               </picture>
-            </div>
-            <div class="services__preview-body">
-              <h3 class="services__preview-name" data-preview-name-el>Werkschutz</h3>
-              <p class="services__preview-text" data-preview-text-el>Pfortendienst, Rundgänge und Anlagen-Bedienung für Industrie und Produktion.</p>
-              <a class="services__preview-link" data-preview-link href="/werkschutz/">Mehr erfahren →</a>
             </div>
           </div>
         </div>
@@ -1651,7 +1848,7 @@
           <p class="social__lede" data-reveal data-reveal-delay>Echte Momente aus dem Einsatz, geteilt auf unseren Social-Media-Kanälen.</p>
         </div>
 
-        <div class="social__grid" data-reveal>
+        <div class="social__grid" data-social-carousel data-swipe-carousel data-swipe-label="Videos aus dem Einsatz, horizontal scrollbar" data-reveal>
           <div class="social__item">
             <div class="social__placeholder">
               <img class="social__cover" src="/assets/images/social-werkschutz.jpg" width="480" height="850" alt="FRANKONIA Werkschutz: Leitstelle mit Kameraüberwachung" loading="lazy">
@@ -1676,7 +1873,14 @@
         </div>
 
         <div class="social__cta">
-          <a class="btn btn--primary" href="https://www.instagram.com/frankonia_sicherheitsdienst/" target="_blank" rel="noopener noreferrer">Folgen Sie uns auf Instagram<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          <!-- Secondary CTA (client 2026-08-01): white outline, no fill, white
+               text. Reuses the existing .btn--secondary variant (components.css)
+               rather than a new one-off — it already ships transparent-fill +
+               white text and had no usage anywhere on the site until now. The
+               only difference the client asked for, a SOLID white border instead
+               of the variant's 42%-alpha one, is scoped to .social__cta in
+               page-home.css so the shared component keeps its own calibration. -->
+          <a class="btn btn--secondary" href="https://www.instagram.com/frankonia_sicherheitsdienst/" target="_blank" rel="noopener noreferrer">Folgen Sie uns auf Instagram<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
         </div>
       </div>
     </section>
@@ -1762,7 +1966,7 @@
              data-drag-scroll/tabindex/role dropped along with the old
              horizontal-scroll interaction — a plain masonry needs none
              of that. -->
-        <div class="references__testimonials" data-item-reveal=".testimonial">
+        <div class="references__testimonials" data-swipe-carousel data-swipe-label="Kundenstimmen, horizontal scrollbar" data-item-reveal=".testimonial">
           <blockquote class="testimonial">
             <header class="testimonial__header">
               <div class="testimonial__person">
@@ -1860,9 +2064,18 @@
          js/conversion-visual.js are left in place but unused. -->
     <section id="sicherheitsanalyse" class="conversion">
       <div class="conversion__panel conversion__panel--form" data-reveal>
+        <!-- Title + lede moved OUT of the white card (client 2026-08-03) so the
+             card holds only the form. Promoted h3 -> h2 at the same time: this is
+             the section's own heading and it was the only one in the section, i.e.
+             a skipped level. As an h2 it also picks up the shared "main h2" scale
+             the client asked for and the same char reveal js/title-reveal.js gives
+             every other section title, with no per-page wiring. -->
+        <div class="section__intro conversion__intro" data-reveal>
+          <h2>Ihre unverbindliche Anfrage</h2>
+          <p class="conversion__intro-lede">Beschreiben Sie kurz Ihr Objekt, Ihre Baustelle oder Ihr Event.</p>
+        </div>
+
         <div class="conversion__form-wrap">
-          <h3 class="conversion__form-title">Ihre unverbindliche Anfrage</h3>
-          <p class="conversion__form-lede">Beschreiben Sie kurz Ihr Objekt, Ihre Baustelle oder Ihr Event.</p>
 
           <!-- Same fields, names, types, autocomplete, required attributes
                and action="#"/method="post" placeholder as before — no
@@ -2011,7 +2224,7 @@
              (see the section comment above) is intentionally NOT part of
              this 6+5 split — it's prepended as its own first item so the
              footer-matching count/order of real city links is untouched. -->
-        <div class="coverage__rows" data-reveal>
+        <div class="coverage__rows" data-coverage-rows data-coverage-label="Einsatzgebiet" data-reveal>
           <ul class="coverage__list">
             <li><button type="button" class="coverage__pill coverage__pill--all" data-coverage-city="all" aria-pressed="true">Alle</button></li>
             <li><a class="coverage__pill" data-coverage-city="bamberg" href="/sicherheitsdienst-bamberg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Bamberg</a></li>
@@ -2044,7 +2257,7 @@
           <h2>Antworten auf die wichtigsten Fragen</h2>
         </div>
 
-        <div class="faq__list" data-item-reveal=".faq-item" data-item-reveal-strong>
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
           <details class="faq-item">
             <summary><h3>Was kostet ein Sicherheitsdienst pro Stunde?</h3></summary>
             <p class="faq-item__answer">Ein professioneller Sicherheitsdienst kostet in der Regel zwischen 25 und 40 Euro pro Stunde, abhängig von Qualifikation der Kräfte, Einsatzzeit (Nacht-, Wochenend- und Feiertagszuschläge) und Auftragsumfang. Sie erhalten von FRANKONIA ein transparentes, unverbindliches Angebot innerhalb eines Werktages, die Beratung vorab ist kostenfrei.</p>
@@ -2089,6 +2302,15 @@
             <summary><h3>Bekomme ich Nachweise über die geleistete Arbeit?</h3></summary>
             <p class="faq-item__answer">Ja. Digitales Wachbuch, Wächterkontrollsystem und ein regelmäßiger Report dokumentieren jeden Rundgang und jeden Vorfall, als Nachweis für Sie, Ihre Geschäftsführung und Ihre Versicherung.</p>
           </details>
+        </div>
+
+        <!-- Closing CTA under the FAQ (client 2026-08-03) — the last chance on
+             the page to reach the form. Same primary button, same label and
+             same target (#sicherheitsanalyse) as every other conversion CTA on
+             this page; centred to match .faq__intro and the centred .faq__list
+             above it. -->
+        <div class="faq__cta" data-reveal>
+          <a class="btn btn--primary btn--lg" href="#sicherheitsanalyse">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
         </div>
       </div>
     </section>

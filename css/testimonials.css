@@ -1,0 +1,124 @@
+/*
+  Customer testimonial card — SHARED.
+
+  Extracted from css/page-home.css on 2026-08-03, when /referenzen/ became the
+  second page to need this component verbatim (docs/build-checklist.md lists
+  "Resultados + testimonios" as reused by Referenzen, the service pages and the
+  city pages). Same move, same reason, as css/lead-form.css a few hours earlier:
+  a component two pages use is not a homepage component.
+
+  Not in head-common — linked per page, BEFORE that page's own stylesheet, so a
+  page-scoped rule can still override it.
+
+  WHAT MOVED AND WHAT DIDN'T: only `.testimonial*` (the card itself) is here.
+  The homepage's `.references*` rules — the section wrapper, its white
+  background, the result stats and the grid that lays the three cards out — stay
+  in page-home.css, because they are that section's composition, not the card.
+  Each page brings its own container/grid.
+
+  COLOURS ARE "ON WHITE" (docs/page-conventions.md §5): both current usages sit
+  on a light surface (the homepage's `.references`, /referenzen/'s
+  `.section--light`). One consequence of the move: `.testimonial__role` used to
+  read `var(--color-text-muted)` and then be overridden further down page-home.css
+  to the on-white value — there is only the on-white value now, since the
+  override always won. If this card is ever needed on a dark section, add a
+  variant here rather than re-declaring colours at the call site.
+*/
+
+/* break-inside/inline-block are gone: this was a CSS-columns masonry card until
+   2026-07-28. Flex column + height: 100% is what lets the star rating sit at
+   the card's bottom edge while the quote absorbs the free space, so a row of
+   cards reads as uniform regardless of quote length.
+   Filled card, --radius-md (was --radius-lg): "moderate rounded corners",
+   client brief 2026-07-21, the same less-soft direction taken elsewhere on the
+   site. */
+.testimonial {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  background-color: rgb(59 73 86 / 0.04);
+  text-align: left;
+}
+
+.testimonial__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.testimonial__person {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Real client-supplied photos (2026-07-20) — was a flat-colour circle while no
+   photos existed. object-fit: cover crops each one to a circle regardless of its
+   own aspect ratio (all three originals are landscape). Fixed width/height, not
+   em-based, so every avatar is identical regardless of the card's font-size
+   context; the background colour is a fallback fill so there is no flash of an
+   empty white circle while the image loads. */
+.testimonial__avatar {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background-color: var(--color-accent-subtle);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* Black, not the section's body grey (client request 2026-07-21). */
+.testimonial__name {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  color: var(--color-logo-black);
+}
+
+/* The on-white muted value, directly — see the note in this file's header about
+   the token version this replaced. */
+.testimonial__role {
+  color: rgb(59 73 86 / 0.75);
+  font-size: var(--font-size-sm);
+}
+
+/* Top-right, alone (client 2026-07-20: the stars moved below the quote). Reuses
+   assets/icons/google-icon.png — these are Google reviews, and that file is
+   already in the project for the hero's compact review card. */
+.testimonial__google {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* #F5B400 is the documented "on white" gold exception .review-card already uses
+   (components.css / CLAUDE.md), reused here rather than adding a second gold. */
+.testimonial__stars {
+  display: block;
+  margin-top: var(--space-4);
+  color: #F5B400;
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.1em;
+}
+
+/* Italic is the one deliberately non-token property here (client reference);
+   every colour and space value still comes from the shared scale. `flex: 1`
+   pushes the rating to the card's bottom edge in a stretched grid row. */
+.testimonial__quote {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+  font-style: italic;
+  flex: 1 1 auto;
+}
+
+/* One step down on the narrowest viewport (client 2026-07-21), matching the
+   same pattern used elsewhere rather than inventing new numbers. */
+@media (max-width: 639.98px) {
+  .testimonial {
+    padding: var(--space-4);
+    border-radius: var(--radius-sm);
+  }
+}

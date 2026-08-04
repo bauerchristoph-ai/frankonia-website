@@ -50,6 +50,7 @@
     "[data-konzept-seq]",
     ".pain-hook",
     ".hero",
+    "[data-hero-reveal]",
     ".story-logos",
     ".site-header",
     ".site-footer",

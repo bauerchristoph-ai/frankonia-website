@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- Built 2026-08-03 from content-de/"2026-07-27 Webtext 27 Referenzen.docx"
+     (client draft, Stand 24.07.2026, "Entwurf für Review (Dirk)"). Every visible
+     line is that document's copy, verbatim, in German. Three exceptions, all
+     flagged inline where they appear:
+       - the section eyebrows (small uppercase labels), UI furniture matching the
+         homepage's own sections, not copy from the draft;
+       - the two "Fall lesen" link labels;
+       - the group headings in section 4 are the draft's own Bereich names.
+     NOT written for this build: the draft's section 5 carries an explicit
+     [ERGÄNZEN] for three case studies (the 25.000 € / 30 % / 20 % results
+     written out as Ausgangslage → Konzept → Ergebnis, "siehe Prüfkatalog F13").
+     That copy does not exist yet and was not invented here — the section ships
+     with the two Kundenstories the draft does supply. See the comment on that
+     section.
+     Design language and effect stack: the homepage's, via css/page-service.css
+     (see that file's header and this page's own stylesheet for what is reused
+     from where). -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Referenzen: Kunden, Ergebnisse &amp; Stimmen – FRANKONIA</title>
+  <meta name="description" content="FRANKONIA Referenzen: über 300 Unternehmen und Einrichtungen vertrauen uns, von ADAC bis Stadtwerke Bamberg. Echte Ergebnisse, echte Kundenstimmen.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/referenzen/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/referenzen/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/referenzen/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Referenzen: Kunden, Ergebnisse &amp; Stimmen – FRANKONIA">
+  <meta property="og:description" content="FRANKONIA Referenzen: über 300 Unternehmen und Einrichtungen vertrauen uns, von ADAC bis Stadtwerke Bamberg. Echte Ergebnisse, echte Kundenstimmen.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/referenzen/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- Schema per the draft: BreadcrumbList + the real aggregate rating.
+       The draft is explicit that the three testimonials must NOT be emitted as
+       Review objects ("Testimonials NICHT als Review-Schema faken, nur echtes
+       Widget"), so there are none here — the only rating in this graph is the
+       4,7 / 97 Google score, which is the one client-confirmed figure on the
+       site and is displayed on this page. -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "+49 951 964352-0",
+      "email": "info@frankonia-sicherheit.de",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Neuerbstraße 19",
+        "postalCode": "96052",
+        "addressLocality": "Bamberg",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "reviewCount": "97",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Referenzen",
+          "item": "https://frankonia-sicherheit.de/referenzen/"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+  <!-- Shared components first, this page's own sheet last.
+       lead-form.css    the closing form (all 49 pages)
+       testimonials.css the .testimonial card (homepage + this page)
+       page-service.css the page chassis: the --content-inset rule, the oversized
+                        `main h2`, the breadcrumb chevron, .section--light,
+                        .service-hero*, .service-link and the whole .pixel-seam
+                        block. Those are docs/page-conventions.md's rules for
+                        every page; they live in that file only because
+                        /werkschutz/ was the first page to need them. -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/testimonials.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-referenzen.css">
+
+  <!-- Motion stack — docs/page-conventions.md §4.1, in the documented order. All
+       self-hosted, all defer, every one of them bails out under
+       prefers-reduced-motion and hides content only from inside itself, so a
+       no-JS visitor or a crawler gets this whole page, fully visible.
+       Not loaded: the homepage's bespoke section scripts and service-flow.js —
+       none of their markup exists here. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Chevron separators, not slashes — docs/page-conventions.md §3. The one
+         CSS rule for it comes from page-service.css; components.css still ships
+         the "/" version. Matches the BreadcrumbList JSON-LD above. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Referenzen</span></li>
+      </ol>
+    </nav>
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- Draft: Badge → H1 → Subline → CTA primär + CTA sekundär (Telefon) →
+         Google-Widget. No image is specified and none exists for this page, so
+         this is the service hero with a single content column (see
+         .ref-hero in css/page-referenzen.css).
+         .hero__lead / .hero__actions / .hero__trust class names are deliberate:
+         js/hero-reveal.js animates exactly those blocks, in that order. -->
+    <section class="service-hero ref-hero" data-hero-reveal>
+      <div class="container service-hero__grid ref-hero__grid">
+        <div class="service-hero__content ref-hero__content">
+          <!-- The draft opens this hero with a Badge ("Über 300 Unternehmen und
+               Einrichtungen vertrauen FRANKONIA"), so it stays — but it owns its
+               own style now: the shared `.service-hero__badge` rules were deleted
+               from page-service.css on 2026-08-03 when the client dropped the
+               certification chip from the service hero. Same values, local. -->
+          <p class="ref-hero__badge">
+            <svg class="icon ref-hero__badge-icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+            Über 300 Unternehmen und Einrichtungen vertrauen FRANKONIA
+          </p>
+
+          <h1>Unsere Kunden und ihre Ergebnisse</h1>
+
+          <p class="hero__lead service-hero__lead ref-hero__lead">
+            Echtes Vertrauen entsteht nicht durch Versprechen, sondern durch Beweise: echte Kunden, messbare Ergebnisse, ehrliche Stimmen.
+          </p>
+
+          <div class="hero__actions service-hero__actions ref-hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn service-hero__phone" href="tel:+499519643520">
+              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              +49 951 964352-0
+            </a>
+          </div>
+
+          <!-- The draft's "Google-Widget": the real 4,7 / 97 rating, the one
+               client-confirmed figure on this site. Same component as the
+               homepage and /werkschutz/ heroes. -->
+          <div class="hero__trust service-hero__trust ref-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">4,7</span>
+                <span class="review-card__count">97 Bewertungen</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pixel dissolve at every colour change (client 2026-08-03, same mechanism
+         and look as the homepage). Tiles are always the colour of the section
+         ABOVE the seam, so the outgoing section pixelates away: no modifier =
+         black tiles (dark → light), .pixel-seam--white = white tiles
+         (light → dark). The band is built inside the section BELOW by
+         js/pixel-transition.js, and every section following a seam reserves its
+         height as extra padding (page-service.css), so tiles never cover real
+         content — with or without JS. -->
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 2. ERGEBNIS-KACHELN ============ -->
+    <!-- The three figures are the client's own, already published on the
+         homepage. The draft's instruction for this section is that each tile is
+         read together with that customer's quote (MORELO → Crispens,
+         Sozialstiftung → Schleier, CleanTech → Keller): the company is named on
+         the tile, and section 3 runs the three quotes in the same order.
+         "Wie die Ergebnisse entstanden sind, steht in den Case Studies weiter
+         unten" — hence the link at the end of this section. -->
+    <section class="section section--light" data-nav-theme="light">
+      <div class="container">
+        <!-- Centred, no eyebrow (client 2026-08-04). The eyebrow was UI furniture
+             this build added, not copy from the draft, so removing it loses
+             nothing the client wrote. -->
+        <div class="section__intro ref-intro--center">
+          <h2>Echte Ergebnisse unserer Kunden</h2>
+        </div>
+
+        <ul class="ref-results" data-item-reveal=".stat" data-item-reveal-strong>
+          <li class="stat">
+            <span class="stat__value">25.000 €</span>
+            <span class="stat__label">
+              <span class="ref-results__label">jährliche Einsparungen durch ein maßgeschneidertes Sicherheitskonzept</span>
+              <span class="ref-results__client">MORELO Reisemobile</span>
+            </span>
+          </li>
+          <li class="stat">
+            <span class="stat__value">30 %</span>
+            <span class="stat__label">
+              <span class="ref-results__label">Personal-Einsparung beim Großkunden durch ein neues Einsatzkonzept</span>
+              <span class="ref-results__client">Sozialstiftung Bamberg</span>
+            </span>
+          </li>
+          <li class="stat">
+            <span class="stat__value">20 %</span>
+            <span class="stat__label">
+              <span class="ref-results__label">Kostenersparnis bei gleichbleibender Sicherheit durch Schichtsystem-Optimierung</span>
+              <span class="ref-results__client">CleanTech Innovation Park</span>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ 3. KUNDENSTIMMEN ============ -->
+    <!-- No seam between this section and the one above: both are white, so a
+         dissolve would be white over white. They are one chapter — the number,
+         then the customer behind it — exactly as the homepage keeps its results
+         and quotes inside one white section.
+         All three testimonials are real, client-supplied names, companies and
+         quotes (2026-07-20), verbatim, and the photos are the client's own —
+         two of the three are institutional building photos rather than
+         headshots, used as supplied. Same content as the homepage. -->
+    <section class="section section--light ref-quotes" data-nav-theme="light">
+      <div class="container">
+        <!-- Centred, no eyebrow (client 2026-08-04) — same pair as the section
+             above; the two read as one white chapter. -->
+        <div class="section__intro ref-intro--center">
+          <h2>Das sagen unsere Kunden</h2>
+        </div>
+
+        <div class="ref-quotes__grid" data-item-reveal=".testimonial" data-item-reveal-strong>
+          <blockquote class="testimonial">
+            <header class="testimonial__header">
+              <div class="testimonial__person">
+                <img class="testimonial__avatar" src="/assets/images/testimonial-robert-crispens.jpg" width="240" height="240" alt="Robert Crispens" loading="lazy">
+                <div>
+                  <p class="testimonial__name">Robert Crispens</p>
+                  <p class="testimonial__role">Geschäftsführer, MORELO Reisemobile</p>
+                </div>
+              </div>
+              <img class="testimonial__google" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+            </header>
+            <p class="testimonial__quote">„Ich bin froh, mit FRANKONIA einen zuverlässigen Partner aus der Region gefunden zu haben: In puncto Sicherheit werden alle Leistungen persönlich auf unsere individuellen Bedürfnisse zugeschnitten. Es ist sehr beruhigend zu wissen, dass wir stets auf Qualität sowie professionelles Auftreten der Sicherheitskräfte vertrauen können.“</p>
+            <span class="testimonial__stars" role="img" aria-label="5 von 5 Sternen">★★★★★</span>
+          </blockquote>
+          <blockquote class="testimonial">
+            <header class="testimonial__header">
+              <div class="testimonial__person">
+                <img class="testimonial__avatar" src="/assets/images/testimonial-hermann-schleier.jpg" width="240" height="240" alt="Hermann Schleier" loading="lazy">
+                <div>
+                  <p class="testimonial__name">Hermann Schleier</p>
+                  <p class="testimonial__role">Geschäftsleitung, Sozialstiftung Bamberg</p>
+                </div>
+              </div>
+              <img class="testimonial__google" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+            </header>
+            <p class="testimonial__quote">„Während der Corona-Zeit haben wir einen professionellen Sicherheitsdienst für unsere Kliniken sowie Impf- und Testzentren benötigt. Mit FRANKONIA haben wir einen 100 % zuverlässigen Partner gefunden. Die Sicherheitskräfte haben uns bei den Zutrittskontrollen entlastet und es hat mich beeindruckt, wie all unsere Anforderungen sowie Änderungswünsche flexibel erfüllt wurden!“</p>
+            <span class="testimonial__stars" role="img" aria-label="5 von 5 Sternen">★★★★★</span>
+          </blockquote>
+          <blockquote class="testimonial">
+            <header class="testimonial__header">
+              <div class="testimonial__person">
+                <img class="testimonial__avatar" src="/assets/images/testimonial-peter-keller.jpg" width="240" height="240" alt="Peter Keller" loading="lazy">
+                <div>
+                  <p class="testimonial__name">Peter Keller</p>
+                  <p class="testimonial__role">Geschäftsführer, CleanTech Innovation Park</p>
+                </div>
+              </div>
+              <img class="testimonial__google" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+            </header>
+            <p class="testimonial__quote">„Im Cleantech Innovation Park entsteht ein lebendiger Treffpunkt für den Austausch von Wirtschaft und Forschung. Da sich unsere Infrastruktur mit der Zeit enorm weiterentwickeln wird, werden sich auch die Anforderungen an die Sicherheit des Geländes sowie der Gebäude verändern und spezifischer gestalten. Mit FRANKONIA haben wir einen zuverlässigen Partner an unserer Seite.“</p>
+            <span class="testimonial__stars" role="img" aria-label="5 von 5 Sternen">★★★★★</span>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 4. KUNDENLISTEN NACH BEREICH ============ -->
+    <!-- The roster from the old Referenzen page, as the draft supplies it: three
+         Bereich groups, in the draft's own order — 34 of the 36 companies it
+         lists: Brose Bamberg and Bodo Freimuth Tiefbau were both removed on the
+         client's instruction 2026-08-04.
+         ONE AUTO-SCROLLING ROW PER BEREICH (client 2026-08-03: "tiene que
+         aparecer los logos de las empresas y quiero una linea para cada uno y que
+         vayan pasando como en la homepage") — the same CSS marquee mechanism as
+         the homepage's own client-logo band, copied into page-referenzen.css
+         because page-home.css is not loaded here. The name pills that used to be
+         here, and the separate static logo row above them, are both gone: the
+         rows now carry the logos, so a standalone row would have shown the same
+         marks twice.
+         ⚠️ 31 of the 34 have a logo file; the other 3 ride the same row as their
+         company NAME set in type, so no client is dropped from the list and the
+         short Baustellenbewachung row still has enough items to loop. Swapping a
+         name for a logo later is one <span> → one <img>.
+         ⚠️ LOGO-FREIGABEN ARE STILL OPEN (draft: "F11 im Prüfkatalog"). If one
+         comes back negative, turn that <img> back into a <span> with the name.
+         Every company is real HTML text either way — a logo carries its name in
+         `alt`, which is what a crawler and an answer engine read. -->
+    <section class="section ref-clients">
+      <div class="container">
+        <div class="section__intro">
+          <p class="section-eyebrow">Kunden</p>
+          <h2>Diese Unternehmen und Einrichtungen zählen auf FRANKONIA</h2>
+        </div>
+
+        <ul class="ref-clients__groups">
+          <li class="ref-clients__group">
+            <h3 class="ref-clients__group-title">Werk- und Objektschutz</h3>
+            <!-- 21 companies: one group is already far wider than the row, so two groups is all the loop needs. -->
+            <div class="ref-marquee ref-marquee--objektschutz">
+              <div class="ref-marquee__track">
+                <div class="ref-marquee__group">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/universitaet-bamberg.png" width="160" height="160" alt="Otto-Friedrich-Universität Bamberg Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="Sozialstiftung Bamberg Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="Stadt Bamberg Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/landkreis-bamberg.png" width="150" height="160" alt="Landkreis Bamberg Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="Stadtwerke Bamberg Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayernhafen.png" width="374" height="160" alt="Bayernhafen Bamberg Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayerische-bereitschaftspolizei.png" width="160" height="160" alt="Bayerische Bereitschaftspolizei Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/morelo.png" width="128" height="160" alt="MORELO Reisemobile Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="CleanTech Innovation Park Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="DB Netze Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="ADAC Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/aldi-sued.png" width="124" height="160" alt="ALDI SÜD Logo" loading="lazy">
+                  <span class="ref-marquee__name">Norma</span>
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="BRK Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="Liapor Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/schuh-muecke.png" width="593" height="160" alt="Schuh Mücke Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="Bürgerspitalstiftung Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/gkg.png" width="532" height="160" alt="GKG Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/gnc-tcs.png" width="627" height="160" alt="GNC TCS Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/dach-solar-sg.png" width="304" height="160" alt="SG Solar- &amp; Elektrotechnik Logo" loading="lazy">
+                  <span class="ref-marquee__name">Schöner Leben</span>
+                </div>
+                <div class="ref-marquee__group" aria-hidden="true">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/universitaet-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" width="150" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/stadt-bamberg.png" width="173" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/landkreis-bamberg.png" width="150" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/stadtwerke-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayernhafen.png" width="374" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayerische-bereitschaftspolizei.png" width="160" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/morelo.png" width="128" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/cleantech.png" width="190" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/db-netze.png" width="628" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/adac.png" width="160" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/aldi-sued.png" width="124" height="160" alt="" loading="lazy">
+                  <span class="ref-marquee__name">Norma</span>
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/brk.png" width="536" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/liapor.png" width="439" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/schuh-muecke.png" width="593" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/buergerspital-bamberg.png" width="128" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/gkg.png" width="532" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/gnc-tcs.png" width="627" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/dach-solar-sg.png" width="304" height="160" alt="" loading="lazy">
+                  <span class="ref-marquee__name">Schöner Leben</span>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="ref-clients__group">
+            <h3 class="ref-clients__group-title">Baustellenbewachung</h3>
+            <!-- Only 5 companies: FOUR groups, not two. translateX(-50%) shifts by half the track, so the loop is seamless as long as HALF the track still fills the row — one 5-item group does not, two do. -->
+            <div class="ref-marquee ref-marquee--baustelle">
+              <div class="ref-marquee__track">
+                <div class="ref-marquee__group">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayernwerk.png" width="983" height="160" alt="Bayernwerk Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayerische-landessiedlung.png" width="622" height="160" alt="Bayerische Landessiedlung Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/ibis-bamberg.png" width="160" height="160" alt="ibis Bamberg Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/postler.png" width="205" height="160" alt="Postler Logo" loading="lazy">
+                </div>
+                <div class="ref-marquee__group" aria-hidden="true">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayernwerk.png" width="983" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayerische-landessiedlung.png" width="622" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/ibis-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/postler.png" width="205" height="160" alt="" loading="lazy">
+                </div>
+                <div class="ref-marquee__group" aria-hidden="true">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayernwerk.png" width="983" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayerische-landessiedlung.png" width="622" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/ibis-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/postler.png" width="205" height="160" alt="" loading="lazy">
+                </div>
+                <div class="ref-marquee__group" aria-hidden="true">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayernwerk.png" width="983" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayerische-landessiedlung.png" width="622" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/ibis-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/postler.png" width="205" height="160" alt="" loading="lazy">
+                </div>
+                <div class="ref-marquee__group" aria-hidden="true">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayernwerk.png" width="983" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayerische-landessiedlung.png" width="622" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/ibis-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/postler.png" width="205" height="160" alt="" loading="lazy">
+                </div>
+                <div class="ref-marquee__group" aria-hidden="true">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayernwerk.png" width="983" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bayerische-landessiedlung.png" width="622" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/ibis-bamberg.png" width="160" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/postler.png" width="205" height="160" alt="" loading="lazy">
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="ref-clients__group">
+            <h3 class="ref-clients__group-title">Veranstaltungsschutz</h3>
+            <!-- 10 companies: one group fills the row, so two groups is enough. -->
+            <div class="ref-marquee ref-marquee--veranstaltung">
+              <div class="ref-marquee__track">
+                <div class="ref-marquee__group">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bbc-coburg.png" width="160" height="160" alt="BBC Coburg Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/stadt-coburg.png" width="168" height="160" alt="Stadt Coburg Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/landkreis-coburg.png" width="136" height="160" alt="Landkreis Coburg Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/heitec-volleys.png" width="193" height="160" alt="HEITEC Volleys Logo" loading="lazy">
+                  <span class="ref-marquee__name">nacht arena</span>
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/mazani.png" width="486" height="160" alt="Mazani Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/luitpold.png" width="400" height="160" alt="Luitpold Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/hallstadt.png" width="557" height="160" alt="Hallstadt Logo" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/wirtschaftsclub-bamberg.png" width="320" height="160" alt="Wirtschaftsclub Bamberg Logo" loading="lazy">
+                </div>
+                <div class="ref-marquee__group" aria-hidden="true">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bbc-coburg.png" width="160" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/stadt-coburg.png" width="168" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/landkreis-coburg.png" width="136" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/heitec-volleys.png" width="193" height="160" alt="" loading="lazy">
+                  <span class="ref-marquee__name">nacht arena</span>
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/mazani.png" width="486" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/luitpold.png" width="400" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/hallstadt.png" width="557" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/wirtschaftsclub-bamberg.png" width="320" height="160" alt="" loading="lazy">
+                </div>
+                <div class="ref-marquee__group" aria-hidden="true">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bbc-coburg.png" width="160" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/stadt-coburg.png" width="168" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/landkreis-coburg.png" width="136" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/heitec-volleys.png" width="193" height="160" alt="" loading="lazy">
+                  <span class="ref-marquee__name">nacht arena</span>
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/mazani.png" width="486" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/luitpold.png" width="400" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/hallstadt.png" width="557" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/wirtschaftsclub-bamberg.png" width="320" height="160" alt="" loading="lazy">
+                </div>
+                <div class="ref-marquee__group" aria-hidden="true">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/bbc-coburg.png" width="160" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/stadt-coburg.png" width="168" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/landkreis-coburg.png" width="136" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/heitec-volleys.png" width="193" height="160" alt="" loading="lazy">
+                  <span class="ref-marquee__name">nacht arena</span>
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/mazani.png" width="486" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/luitpold.png" width="400" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/hallstadt.png" width="557" height="160" alt="" loading="lazy">
+                  <img class="ref-marquee__logo" src="/assets/images/client-logos/wirtschaftsclub-bamberg.png" width="320" height="160" alt="" loading="lazy">
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <!-- The draft's internal links for this page: /leistungen/ and the
+             Bamberg/Coburg city pages as Referenz-Bezüge (the roster is heavily
+             Bamberg and Coburg). Real links to confirmed URLs from guidelines
+             §2.2 — /leistungen/ and both city pages are in the build queue
+             (docs/build-checklist.md, Bloques 4/5/7), not built yet. -->
+        <div class="ref-clients__links">
+          <a class="service-link" href="/leistungen/">Alle Leistungen im Überblick<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          <a class="service-link" href="/sicherheitsdienst-bamberg/">Sicherheitsdienst Bamberg<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          <a class="service-link" href="/sicherheitsdienst-coburg/">Sicherheitsdienst Coburg<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 5. CASE STUDIES ============ -->
+    <!-- ⚠️ INCOMPLETE BY DESIGN — the draft's own gap, not an omission here.
+         Its section 5 reads: "[ERGÄNZEN: Die drei Ergebnis-Kacheln (25.000 €
+         MORELO, 30 % Sozialstiftung, 20 % CleanTech) als Case Studies
+         ausformulieren, siehe Prüfkatalog F13]". That copy — each result written
+         out as Ausgangslage → Konzept → Ergebnis — does not exist yet, and
+         writing three customer project narratives here would mean inventing
+         facts about named real companies. Not done.
+         What ships: the two Kundenstories the draft DOES supply, verbatim, each
+         linking to its migrated story subpage. When the three case studies
+         arrive they are three more <li class="ref-case"> in the same grid; the
+         only markup decision left is whether each also gets its own subpage. -->
+    <section class="section section--light ref-cases" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <p class="section-eyebrow">Case Studies</p>
+          <h2>Case Studies: So sind diese Ergebnisse entstanden</h2>
+          <p class="ref-cases__note" data-reveal data-reveal-delay>Hinter jeder Zahl steht ein Projekt: Ausgangslage, Konzept, Ergebnis. Zum Schutz unserer Kunden veröffentlichen wir Details teils anonymisiert.</p>
+        </div>
+
+        <ul class="ref-cases__grid" data-item-reveal=".ref-case" data-item-reveal-strong>
+          <li class="ref-case">
+            <p class="ref-case__eyebrow">Fall 1</p>
+            <h3>Wie gefährlich fehlende Sicherheitsmaßnahmen sind</h3>
+            <p>„Bei uns wurde noch nie etwas gestohlen“, bis zum ersten Vorfall. Warum dieser Kunde Firmensicherheit heute nicht mehr als Kostenfaktor sieht.</p>
+            <a class="service-link" href="/referenzen/fall-fehlende-sicherheitsmassnahmen/">Fall lesen<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </li>
+          <li class="ref-case">
+            <p class="ref-case__eyebrow">Fall 2</p>
+            <h3>Preiswert und trotzdem zuverlässig</h3>
+            <p>Wie ein Kunde für sein neues Projekt einen Sicherheitsdienst fand, der beides ist, und sich wieder auf sein Kerngeschäft konzentrieren konnte.</p>
+            <a class="service-link" href="/referenzen/fall-preiswert-zuverlaessig/">Fall lesen<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 6. TRUST-ABBINDER + CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The draft makes the closing trust statement and the form ONE section, so
+         the certification proof sits above the form card rather than becoming a
+         seventh section. Its copy is the draft's, split into the two things it
+         actually says: the credentials (seals + memberships) and the offer (the
+         lede). This is also the first time the WCB / Deutscher Mittelstands-Bund
+         membership appears anywhere on the site since the old "Certified
+         Quality" section was removed — CLAUDE.md flags that as a gap against
+         guidelines §5, and this closes it for this page only.
+         The form has no submission target sitewide: action="#" + native HTML5
+         validation, same as every other page (docs/build-checklist.md, Paso 4). -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Der erste Schritt zu solchen Ergebnissen kostet nichts</h2>
+          <p class="conversion__intro-lede">Starten Sie mit dem kostenfreien Sicherheitskonzept inklusive Begehung, Ihr unverbindliches Angebot folgt innerhalb eines Werktages.</p>
+        </div>
+
+        <div class="ref-cta__certs" data-reveal>
+          <div class="ref-cta__seals">
+            <img class="ref-cta__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="ref-cta__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+          </div>
+          <p class="ref-cta__memberships">Zertifiziert nach DIN 77200-1 und ISO 9001 (DEKRA-geprüft), Mitglied im Wirtschaftsclub Bamberg und im Deutschen Mittelstands-Bund.</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <!-- Field ids are prefixed rf- so they stay unique per page
+               (docs/page-conventions.md §6). -->
+          <form class="conversion__form" action="#" method="post">
+            <div class="form-field">
+              <label class="form-field__label" for="rf-name">Name *</label>
+              <input class="form-field__input" type="text" id="rf-name" name="name" autocomplete="name" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="rf-company">Unternehmen *</label>
+              <input class="form-field__input" type="text" id="rf-company" name="company" autocomplete="organization" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="rf-email">E-Mail *</label>
+              <input class="form-field__input" type="email" id="rf-email" name="email" autocomplete="email" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="rf-phone">Telefon *</label>
+              <input class="form-field__input" type="tel" id="rf-phone" name="phone" autocomplete="tel" required>
+            </div>
+
+            <div class="form-field conversion__form-field--full">
+              <label class="form-field__label" for="rf-message">Ihr Objekt und Ihre Anforderung</label>
+              <!-- rows="2" is load-bearing: a CSS min-height can only grow a
+                   textarea's box, never shrink it. docs/page-conventions.md §6. -->
+              <textarea class="form-field__textarea" id="rf-message" name="message" rows="2"></textarea>
+            </div>
+
+            <!-- Honeypot (§6): out of the layout but NOT display:none, out of the
+                 tab order and out of the accessibility tree. -->
+            <div class="conversion__hp" aria-hidden="true">
+              <label for="rf-website">Website</label>
+              <input type="text" id="rf-website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+
+            <div class="form-checkbox">
+              <input class="form-checkbox__input" type="checkbox" id="rf-privacy" name="privacy" required>
+              <label class="form-checkbox__label" for="rf-privacy">
+                Ich habe die <a href="/datenschutz/">Datenschutzerklärung</a> gelesen und stimme zu. *
+              </label>
+            </div>
+
+            <button class="btn btn--primary conversion__submit" type="submit">
+              Jetzt unverbindliches Angebot einholen
+              <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </button>
+          </form>
+
+          <p class="conversion__form-alt">Lieber direkt sprechen? <a href="tel:+499519643520">+49 951 964352-0</a></p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Pixel dissolve before the footer — mandatory on every page
+       (docs/page-conventions.md §4.4). The section above is the dark form panel,
+       so the tiles are the default black; the footer reserves the band's height
+       via `.pixel-seam + .site-footer` (page-service.css). -->
+  <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

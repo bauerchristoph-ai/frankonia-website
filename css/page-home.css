@@ -77,8 +77,24 @@ main h2 {
   /* Reduced a bit 2026-07-21 (client: "un poco más chicos") — was
      clamp(1.5rem, 0.35rem + 4.6vw, 4.5rem). Same scale is mirrored on
      .trust-metrics__cards-heading below (an <h3> deliberately styled to
-     match this) — keep the two in sync. */
-  font-size: clamp(1.375rem, 0.4rem + 3.7vw, 3.75rem);
+     match this) — keep the two in sync.
+
+     THE FLOOR IS THE MOBILE SIZE — 2026-08-04, client: "los títulos de mobile
+     tienen que ser más grandes, están minis". It was 1.375rem (22px), and the
+     fluid term only overtakes it at ~649px, so EVERY phone got the floor: a
+     22px section title against 16px body copy, a ratio of 1.4 that reads as
+     emphasised body text rather than a heading. 2rem (32px) is 2× the body and
+     matches what page-contact.css already does on the same curve (it floors at
+     2.25rem).
+
+     Only the floor moved, on purpose: the fluid term and the cap are the
+     approved desktop curve, and the new floor stops binding at ~692px, so
+     everything from tablet up is byte-for-byte the size it was.
+
+     Copied verbatim in system-story.css (--sys-fs-intro-title + the enhanced
+     intro title), page-service.css and sticky-story.css — one decision in four
+     page-scoped files, keep them in step. */
+  font-size: clamp(2rem, 0.4rem + 3.7vw, 3.75rem);
   font-weight: var(--font-weight-regular);
 }
 
@@ -238,16 +254,27 @@ main h2 {
   }
   /* The content is now over the FULL photo, not over black, so the readability
      wash runs vertically (text is stacked top-to-bottom on a phone, not in a
-     left column) and is kept as light as legibility allows so the image reads.
-     Body text over the darkest stops measures well above 4.5:1. */
+     left column).
+     REWORKED 2026-07-31 (client: "add a controlled dark gradient... avoid making
+     the entire image uniformly black"). The previous ramp ran 0.72 -> 0.58 ->
+     0.66 -> 0.88: a narrow 0.58-0.88 band, i.e. near-uniformly dark top to
+     bottom, which flattened the photo everywhere and still darkened the top —
+     where there is no text at all — hardest of the upper half.
+     This one is keyed to where the content actually sits. With the copy
+     bottom-anchored it occupies roughly 28-84% of the hero's height, so the top
+     quarter stays light enough to read as a photograph and the wash ramps in
+     just ahead of the H1, holding strongest under the paragraph, buttons and
+     trust row. Six stops rather than four so the ramp has no visible edge. */
   .hero__bg::after {
     background:
       linear-gradient(
         to bottom,
-        rgba(0, 0, 0, 0.72) 0%,
-        rgba(0, 0, 0, 0.58) 42%,
-        rgba(0, 0, 0, 0.66) 72%,
-        rgba(0, 0, 0, 0.88) 100%
+        rgba(0, 0, 0, 0.25) 0%,
+        rgba(0, 0, 0, 0.34) 22%,
+        rgba(0, 0, 0, 0.58) 34%,
+        rgba(0, 0, 0, 0.74) 50%,
+        rgba(0, 0, 0, 0.84) 70%,
+        rgba(0, 0, 0, 0.94) 100%
       ),
       /* keeps the transparent header's logo/nav legible over a bright top edge */
       linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) var(--hero-header-overlap));
@@ -294,9 +321,23 @@ main h2 {
   .hero__content,
   .pain-hook__intro,
   .services .section__intro,
-  .outfits__intro,
-  .konzept__grid {
+  .outfits__intro {
     padding-inline-start: var(--space-2);
+  }
+  /* .konzept__grid is deliberately NOT in the list above, because it is the only
+     one of the five that IS the .container rather than a child of one (see
+     pages/index.html: `<div class="container konzept__grid">`). For the other
+     four the inset ADDS to the container's own padding — 12 + 8 = 20px. Here the
+     longhand lands on the same element and REPLACES it, so the section came out
+     at 8px: 12px further LEFT than every other section, the exact opposite of the
+     indent this rule exists to create. Measured at 390px before this fix:
+     konzept 8 vs pain-hook / services / outfits / hero H1 all at 20.
+     Adding the container padding back in reproduces the intended 20px.
+     NOTE: the same defect is still live at ≥768px on the base rule further up
+     (konzept 56 vs 77 at 1024px, 79 vs 103 at 1440px) — left alone here because
+     this pass is scoped to mobile. */
+  .konzept__grid {
+    padding-inline-start: calc(var(--container-padding) + var(--space-2));
   }
 }
 
@@ -502,65 +543,188 @@ main h2 {
    to tighten or the fold pushes the CTA off-screen. Targets: H1 + lead + both
    CTAs + the reassurance row all above 760px on a 390x844 device. */
 @media (max-width: 767.98px) {
+  /* Fill the screen (client 2026-07-31: "la idea es que ocupe toda la pantalla").
+     The hero was sized purely by its content — the photo is absolutely positioned
+     here, so it contributes no height — which left it at ~67% of the viewport and
+     started the next section on the same screen.
+     The +--hero-header-overlap matters: .hero carries a negative margin-top of
+     that same amount to slide under the transparent header, so a plain 100svh
+     would end one header-height ABOVE the fold and still show the next section. */
+  .hero {
+    /* Measured, not assumed: .site-header is position:STICKY, so it occupies
+       76px of flow (a 44px row from .nav-toggle's touch-target min-height plus
+       2 x --space-4 padding). .hero's negative margin-top of
+       --hero-header-overlap therefore starts it at 76 - 96 = -20px, NOT at -96.
+       A plain `100svh + overlap` overshot the fold by exactly that 76px and cut
+       the trust row off the bottom of the screen. */
+    --hero-header-h: calc(2.75rem + var(--space-4) * 2);
+    min-height: calc(100svh + var(--hero-header-overlap) - var(--hero-header-h));
+  }
   .hero__grid {
     /* Asymmetric on purpose here (unlike desktop, where symmetry is what
        centres the text): the top still has to clear the transparent header,
-       but a matching bottom pad only added dead space under the trust row. */
-    padding-block: calc(var(--hero-header-overlap) + var(--space-3)) var(--space-7);
+       but a matching bottom pad only added dead space under the trust row.
+       align-self: end now has a real effect (the row is taller than the content),
+       so the copy settles toward the bottom. The slack it leaves therefore lands
+       at the TOP, showing the photograph, rather than as blank space under the
+       trust row — and when the content is taller than the row (short phones)
+       there is no slack to distribute, so nothing is ever pushed off-screen.
+       Bottom padding is expressed from the floating WhatsApp button's own
+       geometry (3rem tall, --space-5 off the bottom edge — see .whatsapp-button
+       in site-chrome.css) plus a gap, so the button can never land on the DEKRA
+       seals. Hardcoding a number here silently broke the moment the button was
+       resized. */
+    padding-block: calc(var(--hero-header-overlap) + var(--space-3))
+      calc(3rem + var(--space-5) + var(--space-3));
     align-self: end;
   }
   .hero__content h1 {
     /* The shared clamp bottoms out at 2rem, which at 390px wrapped the headline
-       to three lines and pushed everything down. */
-    font-size: clamp(1.75rem, 1.35rem + 2.6vw, 2.25rem);
-    line-height: 1.14;
+       to three lines and pushed everything down. Stepped down again 2026-07-31
+       (client: "slightly reduce the font size if needed... prevent it from
+       occupying too much vertical space") — ~29.7px at 390px, was ~31.7px. */
+    font-size: clamp(1.6875rem, 1.28rem + 2.35vw, 2.125rem);
+    line-height: 1.16;
     letter-spacing: -0.015em;
+    /* This size step is also what fixed the orphan line (client: "avoid awkward
+       single-word lines"). At the previous ~31.7px the breaks measured
+       "Sicherheitsdienst für" / "Bamberg, Franken &" / "Bayern" — two full lines
+       then one stranded word; at ~29.7px they measure "Sicherheitsdienst" /
+       "für Bamberg," / "Franken & Bayern", verified at 320/375/390px, and two
+       even lines at 430px.
+       NOTE: text-wrap: balance is NOT what fixed it and is deliberately not
+       re-declared here — base.css:49 already applies it to every heading
+       site-wide, so it was already active while the orphan was happening. */
   }
   .hero__lead {
+    /* Tight to the H1 on purpose — headline + paragraph are ONE message group,
+       and the next gap (to the CTA) is the big one. That contrast is what gives
+       the column a hierarchy instead of five evenly-spaced blocks. */
     margin-top: var(--space-4);
-    font-size: var(--font-size-base);
-    /* 32rem is wider than any phone, so the cap did nothing; a ch measure keeps
-       the line length readable as the viewport grows toward the breakpoint. */
-    max-width: 38ch;
+    /* Client: "reduce its visual width slightly". 34ch was measured at 340px on
+       a 358px column — only 5% narrower, i.e. no visible change; ch resolves to
+       ~10px in this stack, not the ~8.9px an 0.556em advance would suggest, so
+       the value has to be picked against the measurement rather than the theory.
+       31ch measures ~310px, a visible 13% inset that keeps the paragraph's
+       ragged right clear of the CTA's edge below it. */
+    max-width: 31ch;
+    line-height: 1.55;
+    /* Dropped from 0.82 so it reads clearly under the H1 rather than beside it
+       in weight. Still ~13:1 against the wash behind it. */
+    color: rgb(255 255 255 / 0.76);
   }
   .hero__actions {
+    /* Explicit column, not a wrapping row: the primary is full-width and the
+       phone is not, so they must not share a line. align-items decides the
+       phone's width (it shrinks to content), while the primary overrides it. */
+    flex-direction: column;
+    align-items: flex-start;
     gap: var(--space-3);
-    margin-top: var(--space-5);
+    /* The one deliberately large gap in the column — it separates the message
+       group above from the action group below. */
+    margin-top: var(--space-6);
   }
-  /* Both CTAs full-width and stacked: side by side they each fell under the
-     44px-wide-enough-to-aim threshold, and a half-width primary CTA reads as
-     secondary. Primary stays first in the DOM, so it stays first in the stack. */
-  .hero__actions .btn,
-  .hero__phone {
+  /* Primary stays the strongest interactive element: full width, and the only
+     filled surface in the column. 3rem is the accessible sweet spot for a
+     primary action (44px is the floor, not the target) — deliberately NOT
+     reduced further. */
+  .hero__actions .btn--primary {
     width: 100%;
     justify-content: center;
+    min-height: 3rem;
+  }
+  /* Compact secondary action (client: "do not make it another large full-width
+     button... reduce the width so it wraps around the content"). Was a
+     full-width 358x48 outline pill directly under a full-width 358x48 blue one,
+     which read as two equal primaries. Now it sizes to its own content (~190px)
+     and steps down in height and type, while keeping the 44px touch floor. */
+  .hero__phone {
+    width: auto;
+    min-height: 2.75rem;
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--font-size-sm);
   }
   .hero__reassurance {
-    /* Was a wrapping flex row, which at 390px broke 1 + 2 and left a ragged gap
-       mid-row. A 2-column grid gives a deliberate 2 + 1 block instead, and the
-       third item spans both columns so it reads as the end of the list. */
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-2) var(--space-3);
+    /* One vertical list of three rows (client 2026-07-31). Was a 2-column grid
+       with the third item spanning — which put two short items on one row and a
+       full-width one below, so the group read as a 2+1 block rather than a list.
+       Height is a wash (~73px vs ~85px) because each row is now single-line. */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+    /* Belongs to the action group above, so a smaller gap than the CTA's own. */
     margin-top: var(--space-5);
-    font-size: var(--font-size-xs);
+    /* Explicit value, NOT var(--font-size-xs) — that token does not exist in
+       tokens.css, so the declaration it replaced was an invalid-at-computed-value
+       no-op that silently inherited 1rem. The scale bottoms out at
+       --font-size-sm; this sits one step below it, which no token covers. */
+    font-size: 0.8125rem;
   }
-  .hero__reassurance-item:last-child { grid-column: 1 / -1; }
-  .hero__reassurance-icon { width: 1rem; height: 1rem; }
+  .hero__reassurance-item {
+    /* flex-start + a non-shrinking icon keeps every row's icon on the same left
+       edge and the same distance from its text, including if a label ever wraps
+       (center would float the icon to the middle of a two-line row). */
+    align-items: flex-start;
+    gap: var(--space-2);
+    line-height: 1.45;
+  }
+  .hero__reassurance-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    flex-shrink: 0;
+    /* Optically centres a 14px icon on the first line of 13px/1.45 text. */
+    margin-top: 0.18em;
+  }
   .hero__trust {
-    gap: var(--space-3) var(--space-4);
-    margin-top: var(--space-5);
+    /* Set apart as its own compact band (client: "one compact trust row or trust
+       block below the benefits"), via a hairline rather than a card — same
+       restraint the desktop row uses. The gap before it is the second-largest in
+       the column, so trust reads as supporting, not as part of the CTA group. */
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 1px solid rgb(255 255 255 / 0.14);
+    gap: var(--space-3);
   }
-  /* The seals were 2.75rem beside a full-height rating pill, which read as an
-     afterthought; matching them to the pill's height balances the row. */
-  .hero__badge { height: 2.25rem; }
+  /* The rating pill measured 273px of a 358px row, leaving the two seals to
+     squeeze into the remaining 85px — the row only just fitted at 390px and
+     wrapped below it. Tightening the pill's own padding and star size brings the
+     whole row inside 360px without enlarging anything. */
+  .hero__rating .review-card--sm {
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-2);
+  }
+  .hero__rating .review-card--sm .review-card__logo {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  .hero__rating .review-card--sm .review-card__stars .icon {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+  /* Matching the (now shorter) rating pill's height balances the row. */
+  .hero__badge { height: 2rem; }
 }
 
-/* Very narrow phones (≤360px): the reassurance labels are long German
-   compounds that cramp in two columns at this width. */
-@media (max-width: 360px) {
-  .hero__reassurance { grid-template-columns: 1fr; }
-  .hero__reassurance-item:last-child { grid-column: auto; }
+/* Very narrow phones (≤360px) — fixes a real horizontal overflow, not a polish
+   tweak. `.btn` carries `white-space: nowrap` (components.css), so the primary
+   CTA's min-content width is its whole label: "Unverbindliches Angebot einholen"
+   plus the arrow, gap and 2 x --space-5 padding measured 325px. A flex/grid item
+   cannot shrink below min-content, so at 320px that 325px propagated all the way
+   out and made the entire hero — photo included — 357px wide inside a 320px
+   viewport: a 37px document-level horizontal scroll. Trimming the side padding
+   and stepping the label down one size brings it to ~278px, inside the 288px
+   available at 320px, with the label still on one line.
+   Not fixed by letting it wrap: a two-line primary CTA reads as a broken button,
+   and nowrap is deliberate on the shared component. Scoped below 360px because
+   at 360px the untouched button already fits (328px available vs 325px needed).
+   This was a documented accepted limit before now; the client's brief asks for
+   320px specifically, so it is a real target. */
+@media (max-width: 359.98px) {
+  .hero__actions .btn--primary {
+    padding-inline: var(--space-3);
+    font-size: var(--font-size-sm);
+  }
 }
 
 /* The hero bouncing scroll-cue chevron (.hero__scroll-cue /
@@ -962,24 +1126,68 @@ main h2 {
   flex-shrink: 0;
 }
 
+/* -(100 / number of groups)% — i.e. exactly ONE group's width, whatever N is.
+   FOUR groups since 2026-08-04 (the loop was running out of logos and leaving an
+   empty row; see the full measurement on the markup in pages/index.html), so
+   -25%. Keep this tied to the group count: at -50% with four groups the track
+   would jump back two groups early and visibly stutter.
+   Note this also keeps the SPEED fixed — one group's width is the same distance
+   whether it is 50 % of a 2-group track or 25 % of a 4-group one, so the 90s
+   below (and the 65s mobile override) still mean the same ~11-13 px/s they were
+   tuned for. Changing N never requires retiming. */
 @keyframes story-logos-scroll {
-  to { transform: translateX(-50%); }
+  to { transform: translateX(-25%); }
 }
 
-/* Static fallback: mobile (<1024px) and reduced-motion — no marquee, wrap
-   each row into a centred static grid with every logo shown. Hides the
-   duplicate loop group so no logo appears twice. */
+/* The mobile/tablet (<1024px) static block that used to sit here was REMOVED
+   2026-07-31 (client: "the logos are not moving in the mobile"). It set
+   `animation: none` plus a wrap-into-a-centred-grid fallback — but that fallback
+   never actually worked, and it was hiding real content, not just motion:
+   `.story-logos__group` carries `flex-shrink: 0`, so as a flex item of the track
+   it stayed at its full 725px max-content width inside a 390px row and the row's
+   own `overflow: hidden` simply cut it off. Measured at 390px: 3 of the 8 client
+   logos visible, the other 5 clipped off both edges (db-netze and adac entirely
+   off the left, cleantech / stadtwerke-bamberg / sozialstiftung-bamberg off the
+   right). Deleting the block restores the marquee below 1024px, which fixes both
+   at once — a track wider than its clipping row is exactly what the marquee is
+   built to be.
+   Only `prefers-reduced-motion` keeps a static treatment now, below. */
+
+/* The loop duration is a duration, not a speed: translateX(-50%) covers one
+   group's width, and the logos are clamped against vw, so a group measures
+   ~725px on a phone against ~999px on a desktop. Left at the shared 90s the
+   phone would crawl at 8.1 px/s against the desktop's 11.1 px/s — visibly
+   slower, and slow enough to read as static at a glance, which is the thing
+   being fixed. 65s keeps the same ~11 px/s the desktop marquee actually moves
+   at, so the pace feels identical rather than merely being the same number. */
 @media (max-width: 1023.98px) {
-  .story-logos__row { -webkit-mask-image: none; mask-image: none; }
-  .story-logos__track { animation: none; width: 100%; flex-wrap: wrap; justify-content: center; }
-  .story-logos__group:nth-child(2) { display: none; }
-  .story-logos__group { flex-wrap: wrap; justify-content: center; padding-right: 0; row-gap: clamp(2rem, 4vw, 3rem); }
+  .story-logos__track {
+    animation-duration: 65s;
+  }
 }
+
 @media (prefers-reduced-motion: reduce) {
   .story-logos__row { -webkit-mask-image: none; mask-image: none; }
   .story-logos__track { animation: none; width: 100%; flex-wrap: wrap; justify-content: center; }
-  .story-logos__group:nth-child(2) { display: none; }
+  /* n+2, not 2: there are FOUR groups since 2026-08-04, and the static grid must
+     show the eight real logos once — not once plus three aria-hidden repeats. */
+  .story-logos__group:nth-child(n+2) { display: none; }
   .story-logos__group { flex-wrap: wrap; justify-content: center; padding-right: 0; row-gap: clamp(2rem, 4vw, 3rem); }
+}
+
+/* Same clipping bug as the deleted block above, still live on the ONE path that
+   legitimately keeps a static grid. The rule right above wraps the TRACK, but
+   `flex-shrink: 0` on the group (see .story-logos__group) means the group itself
+   never shrinks to the track's width, so its children never get a narrower box
+   to wrap inside — they just overflow and get clipped. Only reachable where the
+   row is narrower than a group (~<768px), which is why it goes unnoticed on a
+   reduced-motion desktop. Scoped to that range rather than added to the block
+   above so the desktop reduced-motion layout is left exactly as it is. */
+@media (prefers-reduced-motion: reduce) and (max-width: 1023.98px) {
+  .story-logos__group {
+    flex-shrink: 1;
+    min-width: 0;
+  }
 }
 
 /* .trust-metrics__photo (a contained, capped-width <picture> below the
@@ -1013,7 +1221,7 @@ main h2 {
   text-align: center;
   /* Kept identical to `main h2` above (reduced 2026-07-21, client: "un
      poco más chicos") — keep the two clamps in sync. */
-  font-size: clamp(1.375rem, 0.4rem + 3.7vw, 3.75rem);
+  font-size: clamp(2rem, 0.4rem + 3.7vw, 3.75rem);
   font-weight: var(--font-weight-regular);
   color: var(--color-white);
 }
@@ -1047,7 +1255,34 @@ main h2 {
 }
 
 .pain-hook__intro {
-  max-width: 34rem;
+  /* Widened 34rem -> 38.5rem (client 2026-08-01: "Herausforderungen tiene que
+     estar en el mismo renglón"). The heading was breaking MID-WORD from 1280px
+     up — "Kennen Sie diese / Herausfor / derungen?" — with no hyphen.
+
+     Not a typography bug, a sizing one, and exactly the case CLAUDE.md warns
+     about: this column was measured against the old English copy ("Facing these
+     challenges?"), and the German compound that replaced it is far longer.
+     Measured, not extrapolated — a first pass scaled the word's width from its
+     22px size and got ~502px, which was wrong by 30px because the heading
+     carries letter-spacing: -1px, a FIXED offset that stops mattering as the
+     type grows. Rendered with the heading's real computed font at the clamp's
+     60px ceiling, "Herausforderungen?" is 532.1px wide. The old 34rem minus
+     --content-inset (up to 96px) left 448px, so the column was ~84px short.
+
+     Two things hid the cause: overflow-wrap: break-word (base.css) is a sitewide
+     safety net that breaks any overlong word without a hyphen, and
+     title-reveal.js wraps each character in its own inline-block, so the word
+     wrapper shrink-to-fits to the column and re-wraps its characters internally.
+     Both produce the same hyphen-less mid-word break, so it read as a text
+     defect rather than a column that was too narrow.
+
+     40rem (640px) minus the widest --content-inset (96px, reached at ~1728px+)
+     leaves 544px — 12px clear of the word's 532.1px, the tightest case. Still
+     narrower than the shared .section__intro default of 42rem, so the editorial
+     measure this override exists for is preserved. Below ~1100px the cap never
+     binds (the viewport is narrower than it), so mobile and tablet are
+     unchanged. */
+  max-width: 40rem;
   text-align: left;
 }
 
@@ -1758,16 +1993,22 @@ main h2 {
    not two icons swapping. Duration bumped to --duration-base (was
    --duration-fast) so the rotation itself reads as smooth rather than
    snapping — client asked specifically for "smooth rotation." */
-/* Always visible now (client request 2026-07-20: "tiene que ser blanca
-   y despues pasar a negra" — was opacity: 0 at rest, only fading in on
-   hover). White at rest, readable against this row's black background;
-   flips to black on hover along with the rest of the row's white-fill
-   inversion (see .services__item:hover below) — the rotation + slight
-   slide stay as the "movement" on top of that color change. */
+/* Always visible (client 2026-07-20: was opacity: 0 at rest, only fading in on
+   hover). SUPERSEDES that same request's "tiene que ser blanca y despues pasar a
+   negra": client 2026-08-03 asked for the arrow to be the CTA blue permanently,
+   so it no longer participates in the row's white-fill inversion at all — the
+   rotation and slide are now the whole hover movement.
+
+   Contrast, measured against both row states: --color-accent (#3D9AD3) is
+   6.72:1 on the resting black row and 3.11:1 on the white hover fill. Both clear
+   the 3:1 minimum that applies to icons, so the arrow itself is fine in either
+   state. The text label beside it (.services__item-more) is the one that does
+   NOT clear 4.5:1 on white — flagged to the client, same accepted trade-off
+   CLAUDE.md already records for the services submenu's blue hover text. */
 .services__item-arrow {
   flex-shrink: 0;
   font-size: var(--font-size-lg);
-  color: var(--color-white);
+  color: var(--color-accent);
   /* Explicit CSS stroke, on top of icon-sprite.html's own
      stroke="currentColor" presentation attribute — belt-and-suspenders
      for an earlier report that the arrow wasn't rendering at all. A real
@@ -1892,7 +2133,9 @@ main h2 {
 .services__item:focus-visible .services__item-arrow,
 .services__item.is-active .services__item-arrow {
   transform: translateX(0) rotate(45deg);
-  color: var(--color-text-inverse);
+  /* No colour change here any more — the arrow stays --color-accent through both
+     states (client 2026-08-03). It used to flip to --color-text-inverse with the
+     rest of the row. */
 }
 
 /* Outline recolored to black: this state now always coincides with the
@@ -1956,40 +2199,28 @@ main h2 {
   opacity: 0;
 }
 
-.services__preview-body {
-  padding-top: var(--space-5);
-}
-
-.services__preview-name {
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-regular);
-  margin-bottom: var(--space-3);
-}
-
-.services__preview-text {
-  /* Hidden in the right panel now (client 2026-07-28): the description moved
-     into the list, expanding under each service name on hover — reading it here
-     next to the image was uncomfortable. The element stays in the DOM (the
-     preview JS still writes to it harmlessly); the image + name + link remain. */
+/* Hidden by default at EVERY width; the min-width: 1024px block below is the
+   only thing that ever shows it. Without this base rule the span rendered as
+   plain visible text on phones — the opacity:0 resting state lives inside that
+   media query, so below it there was nothing hiding the label at all and every
+   row read "Werkschutz Mehr erfahren". Caught by measuring the computed opacity
+   at 390px (it was 1), not by reading the rule. */
+.services__item-more {
   display: none;
 }
 
-.services__preview-link {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  color: var(--color-accent);
-  text-decoration: none;
-  border-bottom: 2px solid transparent;
-  transition: border-color var(--duration-fast) var(--easing-standard),
-    gap var(--duration-fast) var(--easing-standard);
-}
+/* The preview panel is the PHOTO only (client 2026-08-01: "sacame esos dos
+   textos debajo de la foto, que sea solo la foto"). The .services__preview-body
+   block under the image — heading, description and the "Mehr erfahren" link —
+   was deleted from the markup of BOTH pages/index.html and pages/en/index.html,
+   and its four rules were deleted here with it rather than hidden, per this
+   project's "if unused, delete completely" convention.
+   js/main.js's initServicePreview() had to change too: its guard required those
+   three elements, so leaving it alone would have made the function return early
+   and the image swap stop working entirely.
+   The "Mehr erfahren" affordance did not disappear — it moved onto each row,
+   see .services__item-more in the min-width: 1024px block below. */
 
-.services__preview-link:hover,
-.services__preview-link:focus-visible {
-  border-bottom-color: var(--color-accent);
-  gap: var(--space-2);
-}
 
 /* No longer a fixed 50/50 (client follow-up 2026-07-15, superseding the
    true-half fix below in file history) — the list now fills whatever
@@ -2012,6 +2243,62 @@ main h2 {
     display: block;
     position: sticky;
     top: calc(var(--space-6) + 5rem);
+  }
+
+  /* "Mehr erfahren" on the row itself, on the arrow's own line, revealed on
+     hover (client 2026-08-01) — this is where the link that used to sit under
+     the preview photo went.
+     Scoped to this breakpoint because it is a HOVER affordance and this is the
+     range where the preview panel itself lives; below 1024px the rows are
+     compact cards with a permanently visible arrow (touch has no hover), and a
+     label there would only crowd them.
+     Reveal is opacity ONLY, never display/width: the span keeps its box at rest,
+     so .services__item-name's flex: 1 has already given up that width and the
+     arrow sits at its final x. Animating it in any way that changes layout would
+     shove the arrow sideways on every hover — and with ten stacked rows that
+     reads as the list twitching. The small slide is a transform, which is
+     compositor-only and cannot reflow either.
+     No colour of its own: it inherits the row's, so it flips white -> black with
+     the rest of the white-fill inversion (see .services__item:hover above).
+     aria-hidden in the markup — the link's accessible name stays the service
+     name rather than becoming "Werkschutz Mehr erfahren". */
+  .services__item-more {
+    display: block;
+    flex-shrink: 0;
+    font-size: var(--font-size-sm);
+    letter-spacing: 0.01em;
+    /* Blue in BOTH row states now (client 2026-08-03), so it no longer inherits
+       the row's white -> black inversion. See the contrast note on
+       .services__item-arrow below — this label is the part of that change that
+       lands under 4.5:1 on the white hover fill. */
+    color: var(--color-accent);
+    /* .services__item's own gap is --space-5 (24px) between every child, which
+       left the label reading as its own item rather than as the arrow's caption
+       (client: "más pegado a la flecha, un poco"). A negative end margin shortens
+       only THIS gap to 12px; using the flex gap would have pulled the number and
+       name closer too. */
+    margin-inline-end: calc(-1 * var(--space-3));
+    opacity: 0;
+    transform: translateX(var(--space-2));
+    transition: opacity var(--duration-base) var(--easing-standard),
+      transform var(--duration-base) var(--easing-standard);
+  }
+
+  .services__item:hover .services__item-more,
+  .services__item:focus-visible .services__item-more,
+  .services__item.is-active .services__item-more {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The label is decoration on a link that is already fully labelled, so under
+   reduced motion it simply appears rather than sliding. It is never the only
+   way to reach the service — the whole row is the link. */
+@media (prefers-reduced-motion: reduce) {
+  .services__item-more {
+    transition: none;
+    transform: none;
   }
 }
 
@@ -2467,58 +2754,6 @@ main h2 {
    .outfits__layout's own grid so all four can be ordered independently; the
    picker is nested inside the intro, so grid order on the layout alone could not
    reach it. */
-@media (max-width: 767.98px) {
-  .outfits__layout {
-    gap: var(--space-5);
-    /* .outfits__intro carried the editorial inset; with display:contents it has
-       no box left to hold padding, so the inset moves up to the layout. */
-    padding-inline-start: var(--space-2);
-  }
-  .outfits__intro {
-    display: contents;
-  }
-  .outfits__intro h2 { order: 1; }
-  .outfits__intro > p { order: 2; }
-  .outfits__viewer { order: 3; }
-  .outfits__names { order: 4; }
-
-  /* The stage is pulled up 4rem on desktop to close the gap left by the photos'
-     transparent headroom. With the toggle now the first thing in the reordered
-     viewer, that overlap would swallow it. */
-  .outfits__stage { margin-top: -1.5rem; }
-
-  /* Touch targets. The toggle measured 29px tall and the picker rows ~40px. */
-  .outfits__view-btn {
-    min-height: 2.75rem;
-    padding-inline: var(--space-4);
-    font-size: var(--font-size-sm);
-  }
-  .outfits__name-btn {
-    min-height: 3rem;
-    font-size: var(--font-size-base);
-  }
-  /* The hover-revealed use-case line can't be reached by a finger, so on touch it
-     shows for the SELECTED outfit only (aria-pressed already drives that above)
-     and wraps under the name instead of fighting it for one nowrap row. */
-  .outfits__name-btn[aria-pressed="true"] {
-    flex-wrap: wrap;
-    white-space: normal;
-    padding-block: var(--space-3);
-  }
-  .outfits__name-btn[aria-pressed="true"] .outfits__name-detail {
-    flex-basis: 100%;
-    font-size: var(--font-size-xs);
-    line-height: 1.35;
-  }
-  /* Arrows sit over the photo's transparent margins; a touch bigger and darker so
-     they're findable without hover. */
-  .outfits__arrow {
-    width: 3rem;
-    height: 3rem;
-    color: rgb(59 73 86 / 0.75);
-  }
-}
-
 /* Same shared sprite symbol as .services__item-arrow (client request,
    2026-07-21: "the same arrow that we use in our services") — drawn
    pointing up-right (↗) at rest, rotating to a straight right arrow (→)
@@ -2563,6 +2798,166 @@ main h2 {
 .outfits__name-btn:focus-visible {
   outline: 2px solid var(--color-white);
   outline-offset: -2px;
+}
+
+/* ---- Outfit viewer on a phone -------------------------------------------
+   Desktop order is: intro copy + name picker, then the viewer beside it. Stacked
+   on a phone that put the seven-item picker ABOVE the image, so tapping "Polo" at
+   the top of the list changed a photo ~350px further down — off-screen, i.e. a
+   control with no visible result. The image comes first here and the picker sits
+   directly under it, so every tap's effect is in view.
+
+   `display: contents` on .outfits__intro lifts the heading, lede and picker into
+   .outfits__layout's own grid so all four can be ordered independently; the
+   picker is nested inside the intro, so grid order on the layout alone could not
+   reach it.
+
+   PICKER IS PILLS HERE, NOT A LIST (client 2026-08-03: "solo botones, onda pills
+   para clickear y que cambie el outfit, no hover ni nada"). The full-width ruled
+   rows, the ↗ arrow and the hover state are all gone below 768px — a finger has
+   no hover, and on touch :hover latches after a tap, which made the last-tapped
+   row look selected alongside the real selection. Only [aria-pressed] marks the
+   active pill now.
+
+   MUST come after the .outfits__name-btn hover/[aria-pressed]/:focus-visible
+   rules above: a media query carries no extra specificity, so declared earlier
+   (as this block was until 2026-08-03) those later plain rules would win and the
+   hover fill would come back. */
+@media (max-width: 767.98px) {
+  .outfits__layout {
+    gap: var(--space-5);
+  }
+  .outfits__intro {
+    display: contents;
+  }
+  /* Centred on a phone (client 2026-08-04): the heading and the lede, matching
+     the pill row and the character above them, so the whole section reads on one
+     axis instead of a left-aligned column of text over a centred image.
+
+     The editorial `padding-inline-start: var(--space-2)` this block used to
+     carry is GONE, not overridden per child — that inset is a left-aligned
+     device (it exists so desktop's text column starts inboard of the container),
+     and with centred content it only pushed the optical centre 8px off. Removing
+     it is also why .outfits__names no longer needs the negative margin that used
+     to compensate for it. */
+  .outfits__intro h2,
+  .outfits__intro > p {
+    text-align: center;
+  }
+  /* The lede is a grid item with its own max-width: 34rem, so it needs centring
+     in its track as well as its text centred. It does not bind at phone widths
+     today (34rem is 544px), but it will on a wide tablet in this range.
+
+     hyphens off: base.css sets hyphens:auto on p for prose, which was fine while
+     this lede was flush-left, but centring it made "am bes-ten" appear — and
+     hyphenation only earns its keep against a flush edge. Same call, same
+     reasoning as .references' own mobile block. The overflow guard that
+     hyphens:auto is really there for is covered sitewide by overflow-wrap. */
+  .outfits__intro > p {
+    margin-inline: auto;
+    -webkit-hyphens: none;
+    hyphens: none;
+  }
+  /* Order on a phone (client 2026-08-04): heading, lede, the OUTFIT PILLS, the
+     character, then the pose toggle last — "las pills arriba del hombre y el
+     toggle de la pose abajo". Reading order now matches the decision order: pick
+     the garment, see it, then optionally change the angle.
+     The pills and the viewer are swapped by `order` alone; inside the viewer the
+     toggle and the stage are already siblings of one flex column, so they get
+     their own order too (this supersedes the 2026-07-28 "toggle above the image"
+     arrangement, which put it on top so it wouldn't be scrolled past). */
+  .outfits__intro h2 { order: 1; }
+  .outfits__intro > p { order: 2; }
+  .outfits__names { order: 3; }
+  .outfits__viewer { order: 4; }
+  .outfits__stage { order: 1; }
+  .outfits__views { order: 2; }
+
+  /* No negative pull here, unlike desktop's -4rem (which closes the gap left by
+     the photos' transparent headroom). The element above the stage is now the
+     pill row, and .outfits__stage is position:relative — so it paints ABOVE the
+     non-positioned pills regardless of DOM order, and any overlap would put the
+     photo's invisible transparent top over the last row of pills and swallow
+     taps there. A slightly looser gap is worth more than a dead control. */
+  .outfits__stage { margin-top: 0; }
+
+  /* Touch target. The toggle measured 29px tall. */
+  .outfits__view-btn {
+    min-height: 2.75rem;
+    padding-inline: var(--space-4);
+    font-size: var(--font-size-sm);
+  }
+
+  /* A wrapped row of pills instead of a stacked column of rows, centred under
+     the character (client 2026-08-04) — the base rule's `align-items: stretch`
+     is what left them flush to the start edge once the direction flipped to a
+     row, so both axes are set here. No compensating margin anymore: the layout's
+     editorial inset was removed above, so this row's centre is the section's
+     centre. */
+  .outfits__names {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+
+  .outfits__name-btn {
+    width: auto;
+    min-height: 2.75rem;            /* 44px touch target */
+    padding: 0.5rem var(--space-4);
+    margin-inline: 0;               /* no fill-bleed: a pill ends where it ends */
+    border: 1px solid rgb(59 73 86 / 0.28);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-sm);
+  }
+  /* The list treatment's ruled divider has to be re-stated, not dropped: it is
+     `.outfits__name-btn + .outfits__name-btn` (0,2,0), so it outranks the pill's
+     own `border` shorthand above no matter which comes later, and every pill but
+     the first would otherwise keep a 0.15-alpha top edge against 0.28 sides. */
+  .outfits__name-btn + .outfits__name-btn { border-top: 1px solid rgb(59 73 86 / 0.28); }
+  /* The ↗ arrow is the list rows' affordance; a pill doesn't need it. */
+  .outfits__name-arrow { display: none; }
+
+  /* No hover state at all on touch — only the selected pill is filled. */
+  .outfits__name-btn:hover:not([aria-pressed="true"]) {
+    background-color: transparent;
+    color: var(--color-logo-black);
+  }
+  .outfits__name-btn[aria-pressed="true"] {
+    border-color: var(--color-logo-black);
+  }
+
+  /* The hover-revealed use-case line ("→ Für gut sichtbare Außen- und
+     Streifeneinsätze") does not show on a phone: a pill is the label, and the
+     line cannot live inside one without destroying the shape.
+
+     DO NOT retry parking it under the row with position:absolute — it was tried
+     2026-08-03 and cannot work. `.outfits__names` carries
+     data-item-reveal=".outfits__name-btn", so js/item-reveal.js leaves an inline
+     `transform` and `filter: blur(0px)` on every pill, and either of those makes
+     the pill itself the containing block for any absolutely positioned
+     descendant regardless of its `position` — so the line stayed trapped in a
+     ~120px box and spilled across the neighbouring pills. Getting it under the
+     row means moving it out of the button in the markup (or having
+     js/outfits.js write the active outfit's `context` into an element of its
+     own), not CSS.
+
+     The copy stays in the DOM either way — this only hides it visually below
+     768px; desktop is unchanged, where it reveals on hover and stays open for
+     the selected row. */
+  .outfits__name-detail {
+    display: none;
+  }
+
+  /* Arrows sit over the photo's transparent margins; a touch bigger and darker so
+     they're findable without hover. */
+  .outfits__arrow {
+    width: 3rem;
+    height: 3rem;
+    color: rgb(59 73 86 / 0.75);
+  }
 }
 
 @media (min-width: 1024px) {
@@ -2773,6 +3168,27 @@ main h2 {
   gap: var(--space-5);
 }
 
+/* On a phone the three testimonials are a swipe strip, not a stack (client
+   2026-08-04: "que sean iguales que la de las 6 cards" — one card in frame, drag
+   right for the rest). Three long quotes stacked ran the section past 1500px.
+   Mechanics come from css/swipe-carousel.css via `data-swipe-carousel`; the two
+   rules here are this section's own:
+     - the bleed, because the strip sits in a padded .container;
+     - stretch, because these cards have a visible surface and unequal quote
+       lengths would otherwise leave the shorter ones ragged against the taller.
+   `display: grid` above still applies at this width but is overridden by the
+   shared display: flex — the grid-template-columns line is simply inert here. */
+@media (max-width: 767.98px) {
+  .references {
+    --swipe-bleed: calc(-1 * var(--container-padding));
+  }
+  /* Two-level: swipe-carousel.css loads last, so a single-class rule here would
+     lose to its `align-items: start`. */
+  .references .references__testimonials {
+    align-items: stretch;
+  }
+}
+
 /* Three equal columns, one testimonial each, side by side (client 2026-07-28,
    replacing the earlier asymmetric 2-column layout). Cards auto-place 1/2/3;
    equal-height rows (grid's default stretch) make them read as uniform, more
@@ -2783,135 +3199,15 @@ main h2 {
   }
 }
 
-/* break-inside: avoid keeps a card from being split across the column
-   break; display: inline-block (required for break-inside to work in
-   multi-column layouts) + width: 100% makes each card still behave like
-   a full-width block within its column. Rounded, filled card (client
-   reference) — replaces the old horizontal strip's hairline-divider,
-   no-background treatment entirely, not just a tweak of it.
-
-   Compacted 2026-07-21 (see .references__testimonials' own comment,
-   just above, for the full brief) — margin-bottom and padding both
-   tightened from --space-6 (32px) to --space-5 (24px), matching the
-   brief's own "vertical gap between cards: ~20-28px" and "moderate...
-   not excessive padding." border-radius stepped down from --radius-lg
-   (16px) to --radius-md (8px) — "moderate rounded corners," same
-   less-soft direction this project has taken elsewhere (e.g.
-   .pillar-card's own radius reduction) when a brief asks for a less
-   rounded, more editorial look. */
-.testimonial {
-  /* Flex column now (was inline-block for the old multi-column masonry) so the
-     rating can sit at the card's bottom edge — which fills the tall right card
-     cleanly when it stretches across two rows. Grid gap handles spacing (no
-     more margin-bottom). */
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: var(--space-5);
-  border-radius: var(--radius-md);
-  background-color: rgb(59 73 86 / 0.04);
-  text-align: left;
-}
-
-
-.testimonial__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-4);
-  margin-bottom: var(--space-4);
-}
-
-.testimonial__person {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-/* Real client-supplied photos, 2026-07-20 — was a plain flat-color
-   circle (this project had no real photos of these 3 customers at the
-   time; see CLAUDE.md for that decision's full history). Now an <img>,
-   not a <span> — object-fit: cover crops each one to a circle regardless
-   of its own source aspect ratio (all 3 originals are landscape).
-   Fixed width/height, not em-based, so every avatar is exactly the same
-   size regardless of the card's own font-size context; background-color
-   kept as a fallback fill so there's no flash of empty white circle
-   while each image loads. */
-.testimonial__avatar {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 50%;
-  background-color: var(--color-accent-subtle);
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-/* Black, not grey (client request 2026-07-21) — was inheriting
-   .references' own color: var(--color-gray), same as this section's
-   body copy. Same reasoning as .references__intro h2 above. */
-.testimonial__name {
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-sm);
-  color: var(--color-logo-black);
-}
-
-.testimonial__role {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-}
-
-/* Top-right, alone (client request 2026-07-20: stars moved below the
-   quote instead — was paired with the Google icon here in a
-   .testimonial__badge column, now removed; see .testimonial__stars
-   below). Replaces the Twitter/X icon in the reference image — reuses
-   assets/icons/google-icon.png, already in this project for the hero's
-   compact review card, since these are Google reviews. */
-.testimonial__google {
-  width: 1.25rem;
-  height: 1.25rem;
-  flex-shrink: 0;
-}
-
-/* Moved below the quote 2026-07-20 (client correction) — was paired with
-   the Google icon top-right. #F5B400 is the same documented "on white"
-   gold exception .review-card already uses (components.css/CLAUDE.md),
-   reused here rather than introducing a second gold value. */
-.testimonial__stars {
-  display: block;
-  /* Tightened 2026-07-21 (brief: "reduce spacing throughout") — was
-     --space-5 (24px). */
-  margin-top: var(--space-4);
-  color: #F5B400;
-  font-size: var(--font-size-sm);
-  letter-spacing: 0.1em;
-}
-
-/* Italic (client reference) — the one deliberately non-token style
-   property here; every color/spacing value still comes from the shared
-   scale. Size reduced 2026-07-20 (client request: "make this text
-   smaller") — was --font-size-md. */
-.testimonial__quote {
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-base);
-  font-style: italic;
-  /* Grow to absorb the tall right card's extra height, so the star rating
-     (which keeps its own margin-top gap) is pushed to the card's bottom edge.
-     No effect on the content-height left cards (no free space to absorb). */
-  flex: 1 1 auto;
-}
-
-/* Mobile (added 2026-07-21, brief: "reduce border radius and internal
-   padding slightly" on mobile) — one step down from the already-reduced
-   desktop/tablet values above (--space-5/--radius-md), matching the
-   same "one step smaller on the narrowest viewport" pattern already
-   used elsewhere on this page rather than introducing new arbitrary
-   numbers. */
-@media (max-width: 639.98px) {
-  .testimonial {
-    padding: var(--space-4);
-    border-radius: var(--radius-sm);
-  }
-}
+/* The card itself (.testimonial / __header / __person / __avatar / __name /
+   __role / __google / __stars / __quote, and its mobile step-down) MOVED OUT
+   2026-08-03 to css/testimonials.css — /referenzen/ needed the identical
+   component, so it stopped being a homepage component. Same move, same reason,
+   as css/lead-form.css earlier the same day. pages/index.html links that file
+   BEFORE this one, so anything here can still override it.
+   What stayed: everything `.references*` above and below — the section's white
+   background, the result stats, the quotes heading and the 3-up grid that lays
+   the cards out. That is this section's composition, not the card. */
 
 /* ---- White background (client reference 2026-07-15, "white mode" —
    same treatment as .outfits above; the old .pillars section used to be
@@ -2948,12 +3244,9 @@ main h2 {
   color: var(--color-logo-black);
 }
 
-/* The old border-inline-end override that used to live here is gone —
-   .testimonial has no border to color anymore since the 2026-07-20
-   masonry restyle (filled card instead of a hairline divider). */
-.testimonial__role {
-  color: rgb(59 73 86 / 0.75);
-}
+/* The `.testimonial__role` on-white override that used to live here moved into
+   css/testimonials.css 2026-08-03 — it is now that component's only value for
+   this property (it always won here anyway), not an override. */
 
 /* ---- Social media (client request, 2026-07-17) ----
    "Story reel" format adapted from a client-supplied reference (a travel
@@ -3129,6 +3422,7 @@ main h2 {
 .konzept__point:last-child {
   border-bottom: 1px solid rgb(255 255 255 / 0.2);
 }
+
 .konzept__tick {
   flex-shrink: 0;
   /* A bit bigger than the hero's 1.125rem (client 2026-07-28). */
@@ -3137,13 +3431,74 @@ main h2 {
   margin-top: 0.1em;
   /* icon-check is a STROKE icon — fill/stroke must be set explicitly (the
      sprite's presentation attrs don't propagate through <use>; same fix as
-     .hero__reassurance-icon). White here, on the blue band. */
-  color: var(--color-white);
+     .hero__reassurance-icon).
+     Blue, same as the hero's own check icons (client 2026-08-03: "tendrían que
+     ser celestes y de la misma forma que los tics de la hero"). Was white.
+     NOTE — a stray `}` used to sit right above this rule, with nothing open for
+     it to close. A top-level `}` is a CSS parse error, and the parser's recovery
+     swallows the NEXT rule, so this entire block was silently dropped: the ticks
+     fell back to the SVG default (fill black, no stroke) and rendered as a solid
+     black wedge on a near-black band. Only the mobile size override below
+     survived, which is why they still had the right dimensions. */
+  color: var(--color-accent);
   fill: none;
   stroke: currentColor;
   stroke-width: 2.25;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+/* Mobile hierarchy fix (client 2026-08-01: "en esta sección está más chico el
+   título que el resto").
+   The H2 is not actually smaller — every H2 on the page measures 22px at 390px,
+   this one included. The problem is the checklist underneath it: --font-size-lg
+   bottoms out at 21px while the shared "main h2" clamp bottoms out at 22px, so
+   on a phone the two collapse onto each other — a 0.95 ratio, where every other
+   section on the page sits at 0.73 (22px heading over 16px body). The heading
+   loses its authority by comparison rather than by its own size.
+   Stepping the list to --font-size-md gives 18px: still a clear step ABOVE this
+   section's own 16px lede, so the proof points keep their emphasis, but a real
+   step below the heading (0.82). Desktop is untouched — there the ratio is
+   already 0.42 (25px over 59.7px) and the list is meant to be large. */
+@media (max-width: 767.98px) {
+  .konzept__point {
+    font-size: var(--font-size-md);
+    /* base.css sets hyphens: auto on every li. Correct for prose, wrong for a
+       three-item claim list: it was breaking "Technik" into "Tech-nik" and
+       reading as a typo rather than typesetting. Same call already made for
+       .services__item-name and the References descriptions. The German
+       compounds here all carry a real hyphen or are short enough to fit, and
+       overflow-wrap: break-word (base.css) is still the safety net. */
+    hyphens: none;
+  }
+  /* Sized against 21px text; follows the type down so the tick doesn't outweigh
+     the line it marks. */
+  .konzept__tick {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  /* 48px between the CTA block and the list read as a void on a phone, where the
+     two stack instead of sitting side by side as they do from 900px up. */
+  .konzept__grid {
+    gap: var(--space-6);
+  }
+}
+
+/* Same root cause as the hero's own ≤360px rule: `.btn` carries
+   `white-space: nowrap` (components.css), so this CTA's min-content width is its
+   whole label — 325px for "Unverbindliches Angebot einholen" plus arrow, gap and
+   2 x --space-5 padding — and a flex item cannot shrink below that, so it pushed
+   the document to 333px inside a 320px viewport. This section was the LAST
+   remaining source of horizontal scroll on the page at 320px.
+   Note the alignment fix above made it worse before it made it better: moving the
+   grid from 8px to its correct 20px inset cost another 12px of room, taking the
+   overflow from 13px to 25px. Both are the same underlying problem and both are
+   resolved here. Same treatment as the hero so the two CTAs stay consistent. */
+@media (max-width: 359.98px) {
+  .konzept__actions .btn--primary {
+    padding-inline: var(--space-3);
+    font-size: var(--font-size-sm);
+  }
 }
 
 /* Full-bleed tech diagram + a centred white down-arrow bridging into "unser
@@ -3187,6 +3542,89 @@ main h2 {
    the row. */
 .social__item--featured {
   width: 14.5rem;
+}
+
+/* ==========================================================================
+   3D RING CAROUSEL (client 2026-08-03) — see js/social-carousel.js for the
+   geometry and for why Swiper is not used.
+   --------------------------------------------------------------------------
+   Everything here is behind .is-carousel, which ONLY that script ever adds. The
+   plain flex row above stays the truth for no-JS, reduced-motion, crawlers and
+   phones, so the three reels are never positioned in 3D by CSS alone.
+   ========================================================================== */
+@media (min-width: 768px) {
+  .social__grid.is-carousel {
+    /* The row becomes a stage: items are absolutely positioned on the ring, so
+       flex has nothing left to lay out. */
+    display: block;
+    position: relative;
+    /* Height must be reserved explicitly now that the children are out of flow.
+       Sized for the FRONT card, which is the tallest: --social-card-w at 9:16
+       plus the caption row. Because the ring is pulled back by its own radius
+       (see the script), the front card renders at exactly 1:1 scale, so this
+       number is stable and does not shift when the radius is tuned. */
+    min-height: calc(var(--social-card-w) * 16 / 9 + 3rem);
+    /* A long perspective keeps the receding cards from distorting; a short one
+       fisheyes them. */
+    perspective: 1400px;
+    transform-style: preserve-3d;
+    cursor: grab;
+    /* Vertical scrolling still belongs to the page — only horizontal drag is
+       ours, which is what makes this usable on a touchpad and on touch. */
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .social__grid.is-carousel.is-dragging {
+    cursor: grabbing;
+  }
+  .social__grid.is-carousel:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: var(--space-3);
+    border-radius: var(--radius-md);
+  }
+
+  /* Tunable from CSS, read by the script — so the composition can change per
+     breakpoint without touching JS.
+       --social-radius  ring radius in px
+       --social-step    degrees between neighbouring cards
+       --social-drag    px of horizontal drag that advances one slot */
+  .social__grid.is-carousel {
+    --social-card-w: 15rem;
+    --social-radius: 300;
+    --social-step: 52;
+    --social-drag: 260;
+  }
+
+  .social__grid.is-carousel .social__item,
+  .social__grid.is-carousel .social__item--featured {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: var(--social-card-w);
+    /* The --featured size bump is dropped on purpose: on the ring the centre
+       card is emphasised by being nearer the camera, so a second, permanent
+       size difference would fight it as the cards cycle. */
+    margin-left: calc(var(--social-card-w) / -2);
+    /* transform is written by the script every frame; the transition is what
+       makes a released drag settle onto the nearest slot instead of snapping. */
+    transition: transform 0.55s var(--easing-premium),
+      opacity 0.55s var(--easing-premium);
+    will-change: transform;
+  }
+  /* No transition while the finger is down — the cards must track the pointer
+     exactly, not lag half a second behind it. */
+  .social__grid.is-carousel.is-dragging .social__item {
+    transition: none;
+  }
+
+  /* Wider ring where there is room for it. */
+  @media (min-width: 1200px) {
+    .social__grid.is-carousel {
+      --social-card-w: 17rem;
+      --social-radius: 360;
+    }
+  }
 }
 
 /* Was a plain flat-color rectangle (no real social content existed yet)
@@ -3259,46 +3697,63 @@ main h2 {
   margin-top: var(--space-8);
 }
 
-/* ---- Social reel on a phone (2026-07-30) ---------------------------------
-   Three 9:16 cards side by side inside 390px gave each ~85px of width — a
-   vertical video thumbnail too small to make out, with hyphenated captions under
-   it. The previous fix shrank them further (6rem below 400px) because the only
-   alternatives considered were "fit three across" or "wrap 2 + 1".
+/* Secondary CTA for the Instagram reel only (client 2026-08-01: "borde de color
+   blanco y sin fill y con el texto blanco").
+   The shared .btn--secondary (components.css) already gives the transparent fill
+   and white text; its border is --color-border-strong, white at 42% alpha,
+   deliberately calibrated to ~3.7:1 on black (see tokens.css). The client asked
+   for a solid white border here, so the override is scoped to this one section
+   rather than retuning that token — the variant is currently unused anywhere
+   else, but changing a shared component's calibration for one placement is how
+   it stops being reusable. Measured on the composited pixels rather than the
+   declared colours — .social carries a 3%-white tint, so the surface behind the
+   button is rgb(8,8,8), not pure black — solid white lands at 20:1, well past
+   the 3:1 non-text minimum and the 4.5:1 text one.
+   Hover is the variant's own designed behaviour (border + text to the brand
+   blue, ~6.8:1 on black) — left as-is since it was not part of the brief. */
+.social__cta .btn--secondary {
+  border-color: var(--color-white);
+}
 
-   Third option, and the right one for a reel of vertical videos: a snap-scrolling
-   strip. Each card gets 62% of the viewport, so one is fully in frame with the
-   next peeking — the affordance that says "swipe" — at a size where the footage
-   is actually legible. This is a contained scroller, not page-level horizontal
-   scroll: .social__grid clips itself, so the document never scrolls sideways.
+/* ---- Social reel on a phone ----------------------------------------------
+   Three 9:16 cards side by side inside 390px gave each ~85px of width — a
+   vertical video thumbnail too small to make out.
+
+   It has been a snap-scrolling strip since 2026-07-30; on 2026-08-04 the client
+   asked for it to be the SAME strip as the six "Unser System" cards ("hacé como
+   hicimos con las cards de Unser System"), so the mechanics, the counter and the
+   progress line now all come from css/swipe-carousel.css via
+   `data-swipe-carousel` on .social__grid — this block only carries what is
+   specific to a reel of vertical videos. The old local copy of the scroller
+   (62%-wide cards, centre snap, its own overflow rules) is gone, not left
+   alongside.
+
    The featured card loses its width bump here; at one-card-per-view there is no
    row for it to stand out from. */
 @media (max-width: 767.98px) {
-  .social__grid {
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: var(--space-3);
-    margin-top: var(--space-6);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    /* Full-bleed strip: cancel the container's inline padding so the first card
-       starts at the content edge and cards can scroll past the screen edge,
-       instead of the strip ending in a hard 12px gutter. */
-    margin-inline: calc(-1 * var(--container-padding));
-    padding-inline: var(--container-padding);
-    /* Room for the focus ring on the play links, which would otherwise be
-       clipped by overflow-x. */
-    padding-block: 2px;
+  .social {
+    /* The strip lives inside a padded .container, so it has to bleed out of that
+       padding before the shared 4vw edge applies — otherwise the cards start
+       ~28px in and the last one cannot reach its snap position. */
+    --swipe-bleed: calc(-1 * var(--container-padding));
   }
-  .social__grid::-webkit-scrollbar { display: none; }
 
+  /* Two-level: swipe-carousel.css loads last and zeroes margin-block, so a
+     single-class rule here would lose. */
+  .social .social__grid {
+    margin-top: var(--space-6);
+  }
+
+  /* 86vw of a 390px phone is 335px; at the placeholder's own 9/16 that would run
+     596px before the caption, i.e. most of the screen for one card. The media box
+     is capped and its image already uses object-fit: cover, so the crop is the
+     only thing that changes. */
   .social__item,
   .social__item--featured {
-    flex: 0 0 62%;
-    width: auto;
-    scroll-snap-align: center;
+    width: var(--swipe-card);
+  }
+  .social__placeholder {
+    max-height: 58svh;
   }
 
   .social__caption {
@@ -3344,460 +3799,20 @@ main h2 {
 }
 
 /* ---- Free security analysis (primary conversion) ---- */
-/* Redesigned 2026-07-20 — full editorial split-screen replacing the
-   2026-07-15 boxed form-card layout entirely (that version's rationale
-   is now moot; see git history if it's ever needed). Client brief:
-   black editorial panel (left) / white form panel (right), ~50/50,
-   both full viewport height on desktop, no outer container, no card
-   around the form — "the vertical split itself defines the
-   composition." Mobile-first: base rules are the stacked single-column
-   fallback, the min-width: 768px block switches on the side-by-side
-   split (this section's own breakpoint, chosen because 768px is where
-   there's realistically enough width for two full-height columns without
-   either one feeling cramped — every other breakpoint on this page is
-   768/1024, so this isn't a new number, just applied to a layout that
-   didn't exist before). */
-
-.conversion {
-  scroll-margin-top: 5rem;
-  /* Dark section background (client 2026-07-29) — the white form sits on it as
-     a floating card. */
-  background-color: var(--color-bg);
-}
-/* Reserve the pixel-seam band (References white -> this dark section) at the
-   top, so the dissolving tiles land in empty black space above the form card,
-   never over it. Keep in sync with .pixel-seam__band height. */
+/* MOVED 2026-08-03 to css/lead-form.css — /werkschutz/ became the second page
+   to need this section verbatim, and docs/build-checklist.md has it on all 49
+   planned pages, so it is no longer a homepage-scoped block. pages/index.html
+   links css/lead-form.css BEFORE this file, so anything homepage-specific can
+   still override it here.
+   Only the seam interaction below stays: the pixel-dissolve band is a
+   homepage-only effect (js/pixel-transition.js), so its reserved padding has
+   no business in the shared file. */
 .pixel-seam + .conversion {
   padding-top: 200px;
 }
 @media (max-width: 767.98px) {
   .pixel-seam + .conversion {
     padding-top: 120px;
-  }
-}
-
-/* Single centered form since 2026-07-28 (client removed the black left panel).
-   No more 2-column grid — the section is just the white form panel, and the
-   form-wrap is centered horizontally via align-items on the flex column. */
-.conversion__panel {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: var(--space-8) var(--container-padding);
-}
-
-@media (min-width: 768px) {
-  .conversion__panel {
-    padding-block: var(--space-9);
-    padding-inline: clamp(2.5rem, 5vw, 5rem);
-  }
-}
-
-/* Black panel — already the page's default --color-bg/--color-text, no
-   override needed for those. justify-content: space-between spreads
-   intro / visual / microcopy across the panel's full height instead of
-   bunching them at center, per the brief's "abstract visual in the
-   lower half... microcopy at the bottom" structure. */
-.conversion__panel--info {
-  justify-content: space-between;
-  gap: var(--space-7);
-}
-
-.conversion__info {
-  max-width: 26rem;
-}
-
-/* Standardized to the shared section-title size (client request,
-   2026-07-22 — see .pain-hook__intro h2's note). The earlier deliberately-
-   "quietest heading" clamp was removed so this matches every other section
-   title (inherits `main h2`). max-width still caps its line length, and
-   overflow-wrap (base.css) still handles long German words. Note:
-   .conversion__form-title below keeps its own separate 32–42px size — it's
-   a form heading (h3), not a section title, so it's intentionally left. */
-.conversion__headline {
-  /* Same size as the form heading on the right (client 2026-07-24: both
-     titles the same size) — matches .conversion__form-title's clamp instead
-     of inheriting the larger "main h2". */
-  font-size: clamp(2rem, 1.6rem + 1.5vw, 2.625rem);
-  font-weight: var(--font-weight-regular);
-  max-width: 25rem;
-  /* No top margin, so it starts at the same y as the form title on the right
-     (client 2026-07-27 — titles must align across the split). */
-  margin-top: 0;
-}
-
-.conversion__lede {
-  max-width: 26rem;
-  margin-top: var(--space-4);
-  color: var(--color-text-muted);
-}
-
-/* ---- Abstract visual system ---- */
-
-.conversion__visual {
-  position: relative;
-  width: 100%;
-  /* Bigger + centred in the panel (client 2026-07-26) — heading/lede stay
-     left-aligned above it. */
-  max-width: 36rem;
-  margin-inline: auto;
-}
-
-.conversion__visual-svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-
-/* Diagnostic-flow visual (client brief 2026-07-26) — thin routed lines, tiny
-   square nodes, restrained FRANKONIA-blue accents on the black panel. Static by
-   default in the markup; js/conversion-visual.js applies the hidden start state
-   and animates the reveal ONCE on enter (desktop + no-reduced-motion), reusing
-   the page's existing GSAP/ScrollTrigger. No CSS @keyframes — the whole reveal
-   is GSAP-driven, so a no-JS / reduced-motion / mobile visitor just sees the
-   finished diagram. */
-.conversion__diag-line,
-.conversion__diag-frag {
-  fill: none;
-  stroke: var(--color-border-strong);
-  stroke-width: 1.25;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.conversion__diag-node {
-  fill: var(--color-border-strong);
-}
-
-/* The two restrained blue accents: the central diagnostic node and the final
-   endpoint (priority finding → resolved next step). */
-.conversion__diag-node--blue {
-  fill: var(--color-accent);
-}
-
-
-/* Tiny, uppercase, widely spaced, low-contrast (brief: "should not
-   become a prominent infographic") — a plain row under the graphic
-   rather than positioned to point at individual coordinates, which
-   would need per-label JS measurement for something this subtle. */
-.conversion__visual-labels {
-  display: flex;
-  justify-content: space-between;
-  margin-top: var(--space-3);
-  font-size: 0.6875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--color-white);
-}
-
-/* Thin underline under each label that wipes in left-to-right with the reveal
-   (client 2026-07-26). Underlined by default — so no-JS / reduced-motion /
-   mobile show it statically; js/conversion-visual.js adds .is-pending to hide
-   it at setup, then removes it at the labels step so it draws in. */
-.conversion__visual-labels span {
-  position: relative;
-}
-.conversion__visual-labels span::after {
-  content: "";
-  display: block;
-  height: 1px;
-  margin-top: 5px;
-  /* Thin FRANKONIA-blue hairline (client 2026-07-26). 1px is the thinnest a
-     CSS block reliably renders; scaleY trims it a touch finer on retina. */
-  background: var(--color-accent);
-  transform: scaleX(1) scaleY(0.6);
-  transform-origin: left;
-  transition: transform 0.6s var(--easing-premium);
-}
-.conversion__visual-labels.is-pending span::after {
-  transform: scaleX(0) scaleY(0.6);
-}
-
-/* "Almost like footer information inside the panel" (brief) — quiet,
-   bottom-anchored via the parent's justify-content: space-between. */
-.conversion__micro {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  font-size: var(--font-size-sm);
-}
-
-/* "20 minutes · Free · No obligation" is now three items, each led by a small
-   blue check (client 2026-07-24), replacing the middot separators. */
-.conversion__micro-main {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1) var(--space-4);
-}
-.conversion__micro-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4em;
-}
-.conversion__micro-tick {
-  width: 0.95em;
-  height: 0.95em;
-  flex-shrink: 0;
-  /* icon-check is a STROKE icon whose fill/stroke live on the sprite's
-     <g id="icon-defs"> wrapper, which does NOT propagate through <use>; must
-     set fill/stroke/stroke-width EXPLICITLY or it renders a solid black tick
-     (same fix as .hero__reassurance-icon). color drives the blue. */
-  color: var(--color-accent);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.conversion__micro-sub {
-  color: var(--color-text-muted);
-}
-
-/* White form panel (brief: "warm white / very light neutral gray" — this
-   project's five-brand-color system, tokens.css, has no such hue and a
-   new one isn't being introduced for one section; --color-white is the
-   existing token every other "light mode" section on this page already
-   uses for the same purpose — References/Outfits/FAQ, see page-home.css).
-   No card, no border, no shadow — the form sits directly on the panel,
-   per the brief. */
-.conversion__panel--form {
-  /* Transparent now — the section behind is black; the form-wrap is the white
-     card (client 2026-07-29, was a full white panel). */
-  background-color: transparent;
-  color: var(--color-gray);
-  /* Top-aligned like the info panel (client 2026-07-24) so both headings sit
-     on the same line — was inheriting the base panel's justify-content:center,
-     which centred the form and left the two titles at different heights. */
-  justify-content: flex-start;
-}
-
-.conversion__form-wrap {
-  width: 100%;
-  max-width: 38.75rem;
-  /* Lift the form into a floating card with a soft drop shadow (client
-     2026-07-29). White on the white panel, so a hairline border defines the
-     edge and the shadow carries the depth. */
-  background-color: var(--color-white);
-  border: 1px solid rgb(1 1 1 / 0.06);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  padding: clamp(1.75rem, 1.2rem + 2vw, 3rem);
-}
-
-/* Dedicated size (brief: "32-42px"), NOT "main h2"/.conversion__headline's
-   own restrained clamp — this is the more prominent of the two headings
-   on this page now that the black panel's is deliberately quiet, so it
-   gets its own, slightly larger, independent scale. */
-.conversion__form-title {
-  font-size: clamp(2rem, 1.6rem + 1.5vw, 2.625rem);
-  font-weight: var(--font-weight-regular);
-}
-
-/* Invisible eyebrow above the form heading (client 2026-07-24) — mirrors the
-   left panel's real "Free Security Analysis" eyebrow so its height + margin
-   push the form heading down to EXACTLY the same line as the left headline.
-   Only reserves space on the split desktop layout; hidden entirely when the
-   panels stack. */
-.conversion__eyebrow--spacer {
-  visibility: hidden;
-}
-@media (max-width: 767.98px) {
-  .conversion__eyebrow--spacer {
-    display: none;
-  }
-}
-
-.conversion__form-lede {
-  margin-top: var(--space-3);
-  color: rgb(59 73 86 / 0.75);
-}
-
-/* Direct-call alternative under the form (client 2026-07-28). On the white form
-   panel, so an on-white muted shade + a FRANKONIA-blue phone link. */
-.conversion__form-alt {
-  margin-top: var(--space-4);
-  font-size: var(--font-size-sm);
-  color: rgb(59 73 86 / 0.75);
-}
-.conversion__form-alt a {
-  /* Kept blue-dark — link on the white right panel of the conversion
-     split; #3D9AD3 on white is too low-contrast (client 2026-07-28). */
-  color: var(--color-blue-dark);
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.conversion__form {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-6);
-  margin-top: var(--space-8);
-}
-
-@media (min-width: 640px) {
-  .conversion__form {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.conversion__form-field--full,
-.conversion__form .form-checkbox,
-.conversion__form > .btn {
-  grid-column: 1 / -1;
-}
-
-/* ---- Minimal editorial field style ---- */
-/* Scoped to .conversion__form only, per this brief — the shared
-   .form-field / .form-checkbox components (components.css) are untouched
-   for any future reuse elsewhere. Brief: "no filled backgrounds, no
-   large rounded rectangles, thin bottom border only, labels above in
-   small uppercase, clear blue focus state, no exaggerated radius." */
-.conversion__form .form-field__label {
-  font-size: 0.75rem;
-  font-weight: var(--font-weight-regular);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  /* Same "on white" muted alpha as .testimonial__role/.references__lede
-     elsewhere in this file, not a one-off value — 0.75, not 0.65. */
-  color: rgb(59 73 86 / 0.75);
-}
-
-.conversion__form .form-field__input,
-.conversion__form .form-field__textarea {
-  padding: var(--space-2) 0;
-  background-color: transparent;
-  border: none;
-  border-bottom: 1px solid rgb(59 73 86 / 0.25);
-  border-radius: 0;
-  color: var(--color-gray);
-}
-
-.conversion__form .form-field__textarea {
-  /* "Should not be excessively tall" (brief) — was 8.125rem. */
-  min-height: 4.5rem;
-  resize: vertical;
-}
-
-.conversion__form .form-field__input:hover,
-.conversion__form .form-field__textarea:hover {
-  border-bottom-color: rgb(59 73 86 / 0.45);
-}
-
-/* Blue focus state (brief) — the shared component's default focus ring
-   is tuned for this site's dark surfaces (white ring/border, see
-   components.css's own comment on why); this form sits on white, where
-   --color-accent already clears contrast on its own merits, so a plain
-   underline-color change reads as the "clear focus state in FRANKONIA
-   blue" the brief asks for without needing an outline at all here. */
-.conversion__form .form-field__input:focus-visible,
-.conversion__form .form-field__textarea:focus-visible {
-  outline: none;
-  border-bottom-color: var(--color-accent-strong);
-  border-bottom-width: 2px;
-}
-
-.conversion__form .form-checkbox__label {
-  color: rgb(59 73 86 / 0.75);
-}
-
-.conversion__form .form-checkbox__label a {
-  color: var(--color-accent-strong);
-}
-
-/* ---- Lead form on a phone (2026-07-30) -----------------------------------
-   This is the site's PRIMARY conversion action, so the mobile form gets the
-   generous end of every trade-off. Four real problems at 390px:
-     - 12px uppercase labels with 0.08em tracking, below the 13px floor this pass
-       set for legibility;
-     - 43px inputs, just under the 44px touch minimum, and iOS zooms the page on
-       focus for any input under 16px;
-     - an 18px consent checkbox — the smallest control on the page, on the one
-       field that legally must be deliberate;
-     - the lede hyphenating "Bau-stelle". */
-@media (max-width: 767.98px) {
-  .conversion__form-lede {
-    -webkit-hyphens: none;
-    hyphens: none;
-  }
-  .conversion__form .form-field__label {
-    font-size: 0.8125rem;
-    letter-spacing: 0.06em;
-  }
-  .conversion__form .form-field__input,
-  .conversion__form .form-field__textarea {
-    /* 16px exactly: anything smaller makes iOS Safari zoom the viewport on focus,
-       which then leaves the user zoomed in and scrolled sideways. */
-    font-size: 1rem;
-    min-height: 3rem;
-    padding-block: var(--space-3) var(--space-2);
-  }
-  .conversion__form .form-field__textarea { min-height: 5.5rem; }
-
-  /* Bigger box AND a bigger hit area: the padding on the row means a near-miss
-     above or below the box still toggles it. */
-  .conversion__form .form-checkbox {
-    gap: var(--space-3);
-    padding-block: var(--space-2);
-  }
-  .conversion__form .form-checkbox__input {
-    width: 1.375rem;
-    height: 1.375rem;
-    margin-top: 0;
-  }
-  .conversion__form .form-checkbox__label { line-height: 1.45; }
-
-  /* Content-width is right on desktop; on a phone the label is nearly the full
-     measure anyway, so a full-width button reads as intentional rather than
-     accidentally-almost-full and gives the largest possible target. */
-  .conversion__submit {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-/* ---- Compact submit button ---- */
-/* Overrides .btn's shared border-radius: var(--radius-pill) (components.css)
-   down to something small (brief: "small corner radius or square edges"),
-   and cancels the grid item's default stretch (justify-self: stretch is
-   CSS Grid's own default — combined with grid-column: 1/-1 above, that's
-   what made the old button full-width) so it sizes to its own content
-   instead, per "width based on content, not full width." */
-.conversion__submit {
-  justify-self: start;
-  /* Match the nav CTA button's pill radius (client 2026-07-24) — was
-     --radius-sm. */
-  border-radius: var(--radius-pill);
-  margin-top: var(--space-2);
-}
-
-@media (min-width: 1024px) {
-  .conversion__panel {
-    padding-block: var(--space-9);
-  }
-}
-
-/* ---- Mobile (below 768px) ---- */
-/* Brief: "left panel should not use 100vh on mobile... keep the abstract
-   visual but simplify and reduce its height... submit button can become
-   full width." No media query needed for the stacked single-column
-   layout itself (.conversion has no display:grid until 768px, so it's
-   already a plain block stack by default) — only these three
-   adjustments are mobile-specific. */
-@media (max-width: 767.98px) {
-  .conversion__visual {
-    max-width: 20rem;
-  }
-
-  .conversion__visual-labels {
-    font-size: 0.625rem;
-  }
-
-  .conversion__submit {
-    justify-self: stretch;
-    width: 100%;
   }
 }
 
@@ -4094,61 +4109,26 @@ main h2 {
   color: var(--color-logo-black);
 }
 
-/* Restyled 2026-07-20 (client reference image) — two columns instead of
-   one, replacing .faq-item's border-only look with a filled pill (no
-   border), plus-icon moved to the left of the question instead of the
-   right, shorter/more compact row height, bigger radius. This whole
-   block only ever loads on the homepage (page-home.css isn't linked on
-   /werkschutz/ — see CLAUDE.md's build architecture), so none of these
-   overrides touch that page's dark-theme FAQ, which keeps the shared
-   component's original bordered/single-column look from components.css.
-   Two columns from 768px up; single column below that stays the
-   mobile-first default (no media query needed for that half — it's
-   just never overridden). */
-.faq__list {
-  max-width: 64rem;
+/* The card-style FAQ this section introduced (2026-07-20, client reference
+   image: two columns of filled pills with the "+" on the left) MOVED to
+   components.css 2026-08-03 as `.faq__list--cards`, when /werkschutz/ became the
+   third page to ask for it — /jobs/ had already mirrored it. The markup opts in
+   with that class; only the homepage-specific pieces are left below. */
+
+/* Closing CTA below the accordion (client 2026-08-03). Centred on the same
+   axis as .faq__list/.faq__intro. Full-width button on a phone, matching the
+   hero's own mobile treatment of the same CTA (.hero__actions). */
+.faq__cta {
+  margin-top: var(--space-8);
+  display: flex;
+  justify-content: center;
 }
 
-@media (min-width: 768px) {
-  .faq__list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-4);
+@media (max-width: 639.98px) {
+  .faq__cta .btn {
+    width: 100%;
+    justify-content: center;
   }
-}
-
-.faq-item {
-  border: none;
-  border-radius: var(--radius-lg);
-  padding: var(--space-4) var(--space-5);
-  background-color: rgb(59 73 86 / 0.05);
-}
-
-/* space-between (shared default) pushed the "+" to the far right, which
-   is what put it opposite the question text — flex-start + an explicit
-   gap keeps icon and question close together on the left instead. */
-.faq-item summary {
-  justify-content: flex-start;
-  gap: var(--space-4);
-}
-
-.faq-item__answer {
-  color: rgb(59 73 86 / 0.75);
-}
-
-/* order: -1 visually moves the "+" before the question (a generated
-   ::after normally renders last in flow) without touching the real
-   summary/h3 markup or its DOM/reading order — screen readers and
-   keyboard navigation see the exact same content either way, only the
-   visual position changes.
-   Dark instead of --color-accent-strong (blue-dark) — at this "+"
-   glyph's size the blue clears large-text's 3:1 but not normal text's
-   4.5:1 against white, and it's ambiguous which threshold applies at
-   the smaller end of .faq-item summary's fluid sizing, so this sidesteps
-   the question entirely rather than relying on a borderline number. */
-.faq-item summary::after {
-  order: -1;
-  color: var(--color-gray);
 }
 
 .faq__toggle {
@@ -4324,6 +4304,14 @@ main h2 {
   --pixel-tile-color: var(--color-white);
 }
 
+/* (2026-08-03 added .pixel-seam--accent here, brand-blue tiles, for the one seam
+   whose section above ended on the trust band's fade-to-blue. That gradient was
+   removed 2026-08-04 (client), so the trust band ends on white again and its
+   seam is back to .pixel-seam--white. The modifier is deleted rather than left
+   behind: every seam variant on this site exists to name one real section edge,
+   and a colour with no edge behind it is the exact thing that makes the next
+   person pick the wrong one.) */
+
 /* Seams whose OUTGOING (above) section is .section--subtle: its rendered
    background is ~#090909 (--color-bg-subtle = 3% white over the near-black
    page), NOT the plain --color-bg #010101. So the tiles must be that same
@@ -4422,6 +4410,106 @@ main h2 {
     padding-inline: var(--space-4);
   }
 
+  /* Every pill the same type and the same box (client 2026-08-03: "los botones
+     tienen que estar iguales de tamaño, onda de tipografía y de height"). The
+     --all toggle is --font-weight-bold (800) against the cities' 400, which read
+     as a heavier, bigger button even though both measure exactly 44px. The
+     distinction it needs is carried by colour alone here — blue border at rest,
+     blue fill while it is the active view. Desktop keeps the bold. */
+  .coverage__pill--all {
+    font-weight: var(--font-weight-regular);
+  }
+
+  /* ---- City picker as a dropdown (client 2026-08-04) ---------------------
+     Eleven pills wrapped to four rows and took more height than the map above
+     them. One trigger showing the current area, and the eleven entries as a
+     LIST behind it.
+
+     Built by js/coverage-select.js: `.is-collapsed` is the only thing that ever
+     hides the entries and only that script adds it, so no JS / ≥768px still
+     renders the full pill rows (see that file's header for why this is a
+     disclosure over the existing links rather than a <select>). */
+  .coverage__rows.is-collapsed {
+    display: none;
+  }
+
+  .coverage__select {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    width: min(20rem, 100%);
+    min-height: 2.75rem;
+    margin: var(--space-7) auto 0;
+    padding: var(--space-2) var(--space-4);
+    font-family: inherit;
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    background: none;
+    /* Same 1.5px blue hairline the pills use, so the control reads as the same
+       family — it IS the pill row, collapsed. */
+    border: 1.5px solid rgb(61 154 211 / 0.4);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--easing-standard);
+  }
+  .coverage__select[aria-expanded="true"],
+  .coverage__select:hover {
+    border-color: var(--color-blue-light);
+  }
+  .coverage__select:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+  .coverage__select-caret {
+    width: 0.7rem;
+    height: 0.7rem;
+    /* #icon-chevron is an open stroke path pointing LEFT; filled it renders as a
+       black wedge (same handling as .site-nav__caret). Rotated to point down,
+       then to point up while the list is open. */
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    color: var(--color-blue-light);
+    transform: rotate(-90deg);
+    transition: transform var(--duration-fast) var(--easing-standard);
+  }
+  .coverage__select[aria-expanded="true"] .coverage__select-caret {
+    transform: rotate(90deg);
+  }
+
+  /* Open: a list, not a wrapped pill grid — that is the point of the change.
+     The two <ul>s (the footer-matching 6 + 5 split) stack into one continuous
+     column of full-width rows with hairline separators. */
+  .coverage__rows {
+    gap: 0;
+    margin-top: var(--space-4);
+    align-items: stretch;
+  }
+  .coverage__list {
+    flex-direction: column;
+    gap: 0;
+  }
+  .coverage__pill {
+    /* Rows, not pills: no border ring, one shared bottom hairline, full width so
+       the whole row is the target. */
+    width: 100%;
+    justify-content: flex-start;
+    border: 0;
+    border-bottom: 1px solid rgb(61 154 211 / 0.22);
+    border-radius: 0;
+    padding-inline: var(--space-3);
+  }
+  /* The blue "Alle" ring would be the only bordered row in the list. */
+  .coverage__pill--all {
+    border-color: rgb(61 154 211 / 0.22);
+  }
+  /* The active row is marked by its fill (see .coverage__pill.is-active above),
+     which needs to reach the row's edges here. */
+  .coverage__rows .coverage__list:last-child .coverage__pill:last-child {
+    border-bottom: 0;
+  }
+
   /* 11px uppercase with 0.08em tracking, on a translucent panel over map tiles —
      the smallest text on the page in the least legible place. */
   .coverage__overlay-label {
@@ -4429,18 +4517,6 @@ main h2 {
     letter-spacing: 0.06em;
   }
 
-  /* Two INLINE links inside running sentences, 16px and 17px tall: the privacy
-     policy in the consent row, and the tap-to-call number under the submit
-     button. Neither can become a block without breaking its sentence, so they
-     get vertical padding instead — on an inline box that overflows the line
-     without changing line-height, so the hit area grows and the layout does not.
-     The phone number is a real conversion path on a phone; the privacy link is
-     legally required reading. Both earn the extra reach. */
-  .conversion__form .form-checkbox__label a,
-  .conversion__form-alt a {
-    padding-block: 0.6rem;
-    /* Without this the padded box is clipped to the line box in some engines. */
-    display: inline-block;
-  }
-  .conversion__form-alt a { font-size: 1rem; }
+  /* The lead form's own two inline-link touch targets moved to
+     css/lead-form.css with the rest of that section (2026-08-03). */
 }

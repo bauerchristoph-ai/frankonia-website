@@ -59,7 +59,7 @@
   margin: 0;
   text-align: center;
   /* Same size as the sitewide "main h2" (page-home.css). */
-  font-size: clamp(1.375rem, 0.4rem + 3.7vw, 3.75rem);
+  font-size: clamp(2rem, 0.4rem + 3.7vw, 3.75rem);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-tight);
   letter-spacing: -0.01em;
@@ -190,15 +190,51 @@
   white-space: nowrap;
 }
 
-/* The 4.7 rating star — star.svg used as a mask so it takes the value's own
-   colour (currentColor) on the white band. */
+/* ---- The only two spots of colour in this band (client 2026-08-03: "esta muy
+   black and white... capaz el + y la estrella?") ----
+   Deliberately the suffix and the star only: the numbers themselves stay black,
+   so the colour reads as accent, not as a recolour of the data.
+
+   The "+" is a real, separate <span> in the markup rather than the counter's
+   own data-suffix — js/sticky-story.js rewrites the counted element's
+   textContent on every animation frame, which would wipe any span nested
+   inside it. It is NOT aria-hidden: "300+" and "300" are different claims, so
+   the character has to stay in the accessible name.
+
+   Both are --color-accent (blue-light, #3D9AD3) — client 2026-08-03 asked for
+   the star in celeste, and two near-identical blues sitting in the same row
+   would read as an accident, so the "+" moved with it (it was blue-dark for one
+   revision). On white that blue gives ~3.1:1, under the 4.5:1 body-text
+   threshold but over the 3:1 one that applies here: the "+" renders at
+   32–48px (large text by definition) and the star is a graphical object. Do
+   NOT reuse this blue for small text on this band — see tokens.css. */
+.sticky-story__metric-plus {
+  color: var(--color-accent);
+  /* Space between the number and the "+" (client 2026-08-03). A margin, not a
+     literal space or &nbsp; in the markup: the DOM text stays "300+" with no
+     whitespace, so the accessible name is unchanged and a screen reader still
+     reads "300 plus", not "300, plus". 0.2em ≈ a word space at this font's
+     metrics and scales with the value's own clamp. The parent is
+     white-space: nowrap, so it can never wrap at this gap. */
+  margin-left: 0.2em;
+}
+
+/* The 4.7 rating star — star.svg used as a mask, so the colour is set here.
+   Brand blue, not the Google gold (#F5B400) that .review-card and Referenzen
+   use for their own stars: client 2026-08-03, "la quiero celeste". Those two
+   stay gold — this band is now the one place on the site where a rating star
+   is blue. */
+/* Sized in em, so it tracks the metric value's own clamp at every width instead
+   of needing a second breakpoint. 0.72em → 0.62em (client 2026-08-04, "un
+   poquito más chiquita"); the margin follows it down so the gap does not grow
+   relative to the glyph. */
 .sticky-story__metric-star {
   display: inline-block;
-  width: 0.72em;
-  height: 0.72em;
-  margin-left: 0.22em;
-  vertical-align: -0.02em;
-  background-color: currentColor;
+  width: 0.62em;
+  height: 0.62em;
+  margin-left: 0.2em;
+  vertical-align: 0.02em;
+  background-color: var(--color-accent);
   -webkit-mask: url(/assets/icons/star.svg) center / contain no-repeat;
   mask: url(/assets/icons/star.svg) center / contain no-repeat;
 }
@@ -236,7 +272,13 @@
    -------------------------------------------------------------------------- */
 .sticky-story__scene--logos {
   /* Same white surface as the metrics above — one continuous section. White
-     logo artwork is inverted to dark below to stay visible on white. */
+     logo artwork is inverted to dark below to stay visible on white.
+     (2026-08-03 this ended on a fade to the brand blue, plus a --logos-fade
+     padding-bottom to reserve the band. Removed 2026-08-04, client. Two things
+     had to come back with it, because they only existed to serve the fade: the
+     reserved padding, and the seam below this section, whose tiles were switched
+     to --color-accent to match the blue edge and are white again — a seam's
+     tiles must always be the colour the section above actually ENDS on.) */
   background: var(--color-white);
   color: var(--color-logo-black);
   /* The marquee bleeds edge-to-edge. */

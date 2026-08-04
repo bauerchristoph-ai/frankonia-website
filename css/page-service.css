@@ -1,459 +1,1743 @@
 /*
-  Service-page template styles. Page-scoped per CLAUDE.md convention —
-  linked from pages/werkschutz.html after the head-common include, same
+  Service-page template styles. Page-scoped per CLAUDE.md convention — linked
+  from pages/werkschutz.html after the head-common + lead-form includes, same
   pattern as page-home.css on the homepage.
 
-  REUSE MODEL FOR THE NEXT 9 SERVICE PAGES:
-  - Every class below is named `.service-*`, not `.werkschutz-*` — it's
-    the template, not a one-off. To build the next service page (e.g.
-    Objektschutz): copy pages/werkschutz.html to pages/objektschutz.html,
-    swap the service name/copy/URLs/image throughout, keep this same
-    stylesheet linked, and reuse every `.service-*` class as-is. Nothing
-    in this file should need to change per service.
-  - Sections that are genuinely sitewide (not just service-page-wide) —
-    .section rhythm, .brand-bar/.hex, .breadcrumbs, .faq__list/.faq-item,
-    .review-card — live in components.css instead, so city pages and any
-    future page type can reuse them too without depending on this file.
-  - Deliberately NOT reused from page-home.css: the oversized `main h2`
-    treatment (3–6rem headings). Service-page H2s intentionally stay at
-    base.css's default h2 size — see the brief this page was built
-    against ("do not create oversized headings everywhere"). If a future
-    service page wants a different heading scale, that's a page-service.css
-    change (affecting all service pages consistently), not a per-page hack.
+  REBUILT 2026-08-03 against the client's real copy structure. The July version
+  of this file was written for the English placeholder page and its 9 sections
+  (.service-intro / __problems / __pillars / __process / __trust / __areas /
+  __reference / __cta). Those sections no longer exist on any page — the 12
+  service drafts in content-de/ all follow the same "9-Punkte-Struktur"
+  (Hero → Risiko → Vorteile → Leistungsumfang → Abgrenzung → Anwendungsfälle →
+  Sicherheitskonzept → Kosten → Trust/Ansprechpartner → FAQ → CTA), so the
+  blocks below are that structure instead. The old rules were deleted, not kept
+  alongside; git has them.
+
+  DESIGN LANGUAGE (client 2026-08-03: "aplicá los estilos de la web, o sea los
+  CTAs, los titles, los efectos, todo"): this template now matches the homepage
+  instead of deliberately departing from it —
+    - the oversized regular-weight section title (`main h2`), previously
+      homepage-only and explicitly excluded here;
+    - blue .btn--primary CTAs with the diagonal arrow, and the outline phone
+      pill next to them;
+    - .section-eyebrow above every section heading;
+    - the same scroll motion: per-character title reveal, staggered
+      item-reveal on every list/grid, general text-reveal, Lenis smooth
+      scroll (all page-agnostic scripts, wired up in the page <head>).
+  This supersedes the old note here (and in CLAUDE.md) that service pages keep
+  restrained headings and their own compositions.
+
+  REUSE MODEL FOR THE NEXT 11 SERVICE PAGES: every class is `.service-*`, never
+  `.werkschutz-*`. To build the next one, copy pages/werkschutz.html, swap copy/
+  meta/URLs/photo, keep this stylesheet — nothing here should need to change per
+  service. Three blocks were built generically on purpose because the checklist
+  counts them across many pages: .service-price* (27 pages), .service-konzept*
+  (11), .service-compare* (4).
+
+  Genuinely sitewide pieces stay in components.css (.section rhythm,
+  .section__intro, .section-eyebrow, .breadcrumbs, .faq__list/.faq-item,
+  .review-card, .btn*, .badge) and the lead form in css/lead-form.css.
 */
 
-/* ---- Service hero ---- */
-/* Contained two-column layout (text | real service photo), not another
-   full-bleed homepage-style hero — this is a secondary/service-specific
-   hero, sized accordingly. */
+/* ---- Editorial inset: the page's left/right margin ---- */
+/* docs/page-conventions.md §1 — the shared rule for every page: content sits on
+   --content-inset (tokens.css, 48→96px) on BOTH sides, on top of .container's
+   own padding. It is what makes a page line up with the homepage instead of
+   running to the edge of the viewport. This page missed it on the first build
+   (client 2026-08-03: "agregale el margen izquierdo y derecho que tiene la
+   homepage").
+   Applied to the .container of every section rather than to each block, so
+   every column on the page — breadcrumb, hero, grids, table, price box, related
+   links — starts on the same vertical line. Overriding .container's own
+   padding-inline with a calc() that ADDS the inset is what keeps it additive;
+   box-sizing: border-box (reset.css) keeps it inside --container-max-width, so
+   it can never cause horizontal scroll.
+   The lead-form section is deliberately NOT in here: it has no .container (it
+   is a centred card in a full-bleed panel, css/lead-form.css) and it is centred
+   on the homepage too. */
+main > .breadcrumbs,
+main > section > .container {
+  padding-inline: calc(var(--container-padding) + var(--content-inset));
+}
+
+/* ---- Section titles ---- */
+/* Same oversized, regular-weight treatment as the homepage (page-home.css
+   `main h2`) — keep the two clamps in sync; they are one design decision
+   expressed in two page-scoped files, not two independent values. Scoped to
+   `main h2` for the same reason as there: the footer's column headings are
+   real <h2>s too, but live outside <main>. */
+main h2 {
+  font-size: clamp(2rem, 0.4rem + 3.7vw, 3.75rem);
+  font-weight: var(--font-weight-regular);
+}
+
+/* The shared .section__intro caps at 42rem, which is right for a lede but too
+   narrow for these oversized headings — the heading gets the full column and
+   only the paragraph under it is measure-capped. */
+.section__intro {
+  max-width: none;
+}
+.section__intro > p {
+  max-width: 42rem;
+  margin-top: var(--space-4);
+}
+
+/* The FAQ is the one centred intro on this page (client 2026-08-03). Every other
+   section heading stays left on the editorial inset, but the FAQ list below this
+   one is a centred two-column grid (.faq__list--cards, max-width 64rem with
+   margin-inline: auto), so a left-aligned heading sat off-axis from its own
+   content. Same composition the homepage FAQ already uses.
+   The eyebrow needs its own rule: .section-eyebrow is display: flex for the
+   icon+text pair, and a parent's text-align does not move flex children. This
+   catches people out every time — it is already documented on the homepage's
+   .trust-metrics__intro and .references__intro. */
+.service-faq .section__intro {
+  text-align: center;
+}
+.service-faq .section-eyebrow {
+  justify-content: center;
+}
+
+/* ---- Hyphenation ---- */
+/* base.css sets hyphens: auto on every p/li so a long German compound can never
+   overflow a narrow measure. On this page it fires on almost every line —
+   "einfa-cher", "lau-fender Produktion", "Fremd-firmen", "Tech-nik" — because
+   the copy is set in 4-up columns, ~34rem ledes and a card grid rather than one
+   wide prose column. Six hyphenated line-ends in a row reads as broken text,
+   not typesetting, and the actual overflow guard (overflow-wrap: break-word,
+   also base.css) is already in place sitewide. Same call the homepage made for
+   References/Social/the form lede — here it applies to the whole template.
+   Deliberately NOT a blanket `main { hyphens: none }`: the FAQ answers are real
+   running prose in a wide measure, where auto-hyphenation still earns its
+   keep. */
+.service-hero__lead,
+.service-hero__point,
+.section__intro > p,
+.service-risk__text,
+.service-risk__outro,
+.service-contrast__cell p,
+.service-scope__list li,
+.service-highlight > p,
+.service-compare__answer,
+.service-panel__fact dd,
+.service-decision__text > p,
+.service-cases__item p,
+.service-cases__proof-text,
+.service-konzept__list li,
+.service-price__factors li,
+.service-price__hint,
+.service-contact__body,
+.service-contact__certs-list li {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* ---- Breadcrumb separator: chevron, not a slash ---- */
+/* docs/page-conventions.md §3 — client decision 2026-07-31. components.css
+   still ships the older "/" version, so until that moves, every page repeats
+   this one rule. The sprite's #icon-chevron points left; it is mirrored rather
+   than adding a second symbol. */
+.breadcrumbs__sep-icon {
+  width: 0.85em;
+  height: 0.85em;
+  transform: scaleX(-1);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---- Shared inline "read on" link ---- */
+/* One link treatment for every cross-link in the page's body (highlight box,
+   comparison, Sicherheitskonzept). Same up-right-arrow-rotates-to-straight
+   mechanism as the homepage's services list. */
+.service-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--color-accent);
+  /* The hairline is the affordance, so the link is never colour-only. */
+  border-bottom: 1px solid rgb(61 154 211 / 0.4);
+  padding-bottom: 2px;
+}
+
+.service-link__arrow {
+  width: 0.85em;
+  height: 0.85em;
+  /* MEASURED BUG, fixed 2026-08-03 while building /jobs/: without these two the
+     arrow computed to `fill: black; stroke: none`. #icon-arrow-diagonal is three
+     stroke segments, and its fill/stroke live on the sprite's <g id="icon-defs">
+     wrapper, which does NOT survive <use> — so the arrow was a filled sliver:
+     invisible on a dark section, a small black smudge on a light one. Same
+     belt-and-suspenders as .btn__arrow and .services__item-arrow, which both set
+     stroke explicitly for exactly this reason. Affects /werkschutz/ and
+     /referenzen/ too — that is why the fix is here and not scoped to one page. */
+  fill: none;
+  stroke: currentColor;
+  transition: transform var(--duration-base) var(--easing-premium);
+}
+
+.service-link:hover,
+.service-link:focus-visible {
+  color: var(--color-white);
+  border-bottom-color: var(--color-white);
+}
+
+.service-link:hover .service-link__arrow,
+.service-link:focus-visible .service-link__arrow {
+  transform: rotate(45deg);
+}
+
+/* ---- 1. Service hero ---- */
+/* FULL-BLEED BACKGROUND PHOTO with the copy over it — the homepage hero's
+   composition (client 2026-08-03). It was a two-column hero for one concrete
+   reason, now gone: the only Werkschutz photo in the project was portrait
+   (820×1227), which a background treatment would have cropped to a letterbox
+   band. The client supplied a 3:2 night shot, so the side column was removed.
+   A service page whose photo is still portrait should keep the old two-column
+   variant — see git history rather than forcing this one.
+   The .hero__* class names on the inner blocks are deliberate:
+   js/hero-reveal.js animates exactly .hero__lead / .hero__actions /
+   .hero__reassurance / .hero__trust, in that order, and this page reuses that
+   script unchanged. */
 
 .service-hero {
+  position: relative;
+  /* Clips the background photo to the section — it is absolutely positioned and
+     `cover` will otherwise paint past the bottom edge on short viewports. */
+  overflow: hidden;
   padding-block: var(--space-8) var(--space-9);
 }
 
+.service-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* <picture> is inline, so an <img> at height: 100% would resolve against its
+   shrink-to-fit box instead of this one (the measured bug from the old
+   two-column hero). */
+.service-hero__bg picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.service-hero__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The subject (guard + vehicle) sits centre-right and his head is high in the
+     frame, so the crop holds a little above centre. */
+  object-position: 55% 42%;
+}
+
+/* Readability wash: dark at the left where the copy is, clearing to nothing on
+   the right so the vehicle and the lit hall stay visible. Same idea and same
+   restraint as the homepage hero's own gradient — a wash, not a flat scrim, and
+   nothing else on top of the photo. The second, vertical layer keeps the bottom
+   edge from cutting hard into the next section. */
+.service-hero__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(
+      to right,
+      rgb(1 1 1 / 0.88) 0%,
+      rgb(1 1 1 / 0.72) 34%,
+      rgb(1 1 1 / 0.32) 66%,
+      rgb(1 1 1 / 0.1) 100%
+    ),
+    linear-gradient(to bottom, rgb(1 1 1 / 0.45) 0%, rgb(1 1 1 / 0) 22%, rgb(1 1 1 / 0.35) 100%);
+}
+
+/* Above the photo. Single column now — the copy no longer shares the row. */
 .service-hero__grid {
+  position: relative;
+  z-index: 1;
   display: grid;
   gap: var(--space-8);
   align-items: center;
 }
 
-.service-hero__content .brand-bar {
-  display: block;
-  margin-bottom: var(--space-4);
+/* Its own measure, the way .hero__content has one on the homepage: without the
+   side column there is nothing else to stop the H1 and the trust row from
+   running the full 1600px container. */
+.service-hero__content {
+  max-width: 44rem;
 }
 
-/* Regular weight, same reasoning as the homepage hero H1 — size stays at
-   base.css's default (--font-size-3xl, 2.25–3.06rem), deliberately well
-   below the homepage hero's 2.5–4rem, since this hero shares the page
-   with a photo and isn't meant to be the biggest thing on the site. */
+/* .service-hero__badge / __badge-icon — the "DEKRA-zertifiziert nach DIN 77200-1
+   und ISO 9001" chip above the H1 — were REMOVED 2026-08-03 (client), together
+   with their markup rather than left as dead rules. The hero opens on its H1 now,
+   same as the homepage's. The certification claim still lives in this hero's
+   trust row (the two real DEKRA seals), in the Ansprechpartner section and in the
+   FAQ, so nothing factual left the page. */
+
+/* The HOMEPAGE HERO's clamp, verbatim (client 2026-08-03: "la hero de werkschutz
+   tiene que ser igual a la hero de la homepage en tamaño... mismos tamaños y
+   demás"). 52px at 1440px, measured against the homepage's own 52px.
+   This is deliberately NOT the page-title scale in docs/page-conventions.md §2
+   (2.25→3.75rem, which rendered 60px here): that row is for a title in a normal
+   section, and a hero H1 sharing its row with a photo has its own answer on the
+   homepage. §2 now carries both rows — see it before changing this. */
 .service-hero h1 {
+  font-size: clamp(2rem, 1.6rem + 2.2vw, 3.25rem);
   font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
 }
 
+/* Same values as .hero__lead on the homepage: size, colour, measure and
+   line-height (client parity request 2026-08-03). The 0.82 white is brighter
+   than the sitewide --color-text-muted (0.65) because a hero lede sits on a
+   photo/dark band and is the second thing read, not supporting copy. */
 .service-hero__lead {
-  margin-top: var(--space-4);
-  max-width: 34rem;
-  color: var(--color-text-muted);
+  margin-top: var(--space-5);
+  max-width: 32rem;
+  font-size: var(--font-size-md);
+  color: rgb(255 255 255 / 0.82);
+  line-height: 1.5;
 }
 
+/* The three hero proof points (draft: three lines under the subline). Stacked,
+   not a wrapping row like the homepage's short "Free · No obligation" trio —
+   these are full sentences. */
+/* ONE wrapping row of short chips — .hero__reassurance's own layout, values and
+   all (client 2026-08-03: the ticks must match the homepage hero's). It used to
+   be a stacked list because the draft's three lines were full sentences; those
+   are now truncated to chips in the markup, so the row works. */
+.service-hero__points {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-5);
+  margin-top: var(--space-5);
+  padding: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-white);
+}
+
+.service-hero__point {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* icon-check is a STROKE icon whose fill/stroke live on the sprite's
+   <g id="icon-defs"> wrapper, which does NOT propagate through <use> — set
+   them explicitly or it renders as a solid black tick. Same fix as the
+   homepage's .hero__reassurance-icon. */
+.service-hero__point-icon,
+.service-scope__tick,
+.service-konzept__tick,
+.service-price__tick {
+  flex-shrink: 0;
+  width: 1.05em;
+  height: 1.05em;
+  margin-top: 0.25em;
+  color: var(--color-accent);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The hero's ticks are the homepage's ticks, exactly: 18px (a fixed 1.125rem,
+   not an em that tracks the smaller hero type), stroke-width 2.25, blue-light.
+   Client 2026-08-03: "los tics azules tienen que ser iguales a los de la home".
+   Measured before: 15.75px vs the homepage's 18px. */
+.service-hero__point-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  /* No margin-top: the row is centre-aligned now, so the optical nudge a
+     top-aligned multi-line item needed would push the tick off centre. */
+  margin-top: 0;
+  color: var(--color-blue-light);
+  stroke-width: 2.25;
+}
+
+/* Same gap and rhythm as .hero__actions on the homepage. */
 .service-hero__actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3) var(--space-5);
+  gap: var(--space-5);
   margin-top: var(--space-6);
 }
 
-/* Clickable phone next to the CTA on service pages (client 2026-07-25,
-   section 13: a tel: link on every page). icon-phone is a FILLED icon, so
-   fill/stroke are set explicitly (same as .hero__phone .icon — the sprite's
-   group presentation attributes don't survive <use>). */
-.service-phone {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5em;
-  color: var(--color-text);
-  text-decoration: none;
-  font-weight: 500;
+/* Outline phone pill — same treatment as the homepage hero's secondary action
+   (.hero__phone), so the primary/secondary relationship reads identically on
+   both. icon-phone is a FILLED icon, hence the explicit fill/stroke. */
+.service-hero__phone {
+  background-color: transparent;
+  border-color: rgb(255 255 255 / 0.35);
+  color: rgb(255 255 255 / 0.85);
 }
-.service-phone .icon {
-  width: 1.15em;
-  height: 1.15em;
+
+.service-hero__phone .icon {
   fill: currentColor;
   stroke: none;
-  color: var(--color-accent);
-}
-.service-phone:hover,
-.service-phone:focus-visible {
-  text-decoration: underline;
 }
 
-.service-hero__reassurance {
-  margin-top: var(--space-3);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
+.service-hero__phone:hover,
+.service-hero__phone:focus-visible {
+  background-color: rgb(255 255 255 / 0.08);
 }
 
-.service-hero__trust-row {
+/* Trust band: rating pill then the two DEKRA seals, exactly as the homepage
+   hero's own .hero__trust / .hero__badges / .hero__badge — same order, same
+   gaps, same seal height, and NO hairline above it on desktop (the homepage's
+   desktop row has none; it only gets one on a phone, see the mobile block).
+   Client 2026-08-03: "la posición de los badges DEKRA... mismos tamaños". The
+   seals measured 52px here against the homepage's 44px. */
+.service-hero__trust {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-4) var(--space-5);
   margin-top: var(--space-6);
 }
 
-.service-hero__cert-seal {
-  height: 3.5rem;
+.service-hero__badges {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.service-hero__seal {
+  height: 2.75rem;
   width: auto;
 }
 
-/* Contained, not full-bleed — aspect-ratio matches the real image
-   (820×1227) exactly, so there's no layout shift and no crop/distortion
-   (object-fit: contain, not cover, per the brief's explicit "do not
-   distort the person/site image" requirement). max-width keeps a
-   portrait photo from reading as oversized next to the text column, same
-   reasoning as the homepage outfit viewer's image frame. */
-.service-hero__media {
-  width: 100%;
-  max-width: 22rem;
-  margin-inline: auto;
-  aspect-ratio: 820 / 1227;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background-color: var(--color-bg-elevated);
-}
+/* .service-hero__media — the old side-photo frame — was REMOVED 2026-08-03 with
+   its markup when the hero became a full-bleed background (see the top of this
+   section). Its <picture> display:block fix lives on below, because the flow
+   frames need the same one.
 
-.service-hero__media img {
+   <picture> is an INLINE element, so an <img> with height: 100% inside it
+   resolves against the picture's own shrink-to-fit box, not the frame — at
+   1024px that left a photo 497px tall in a 676px frame, i.e. a dark empty strip
+   under it (caught in a screenshot). Every component here that wraps its <img>
+   in a <picture> for the WebP source needs this. */
+.service-flow__frame picture {
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
 }
 
 @media (min-width: 1024px) {
+  /* Fills the rest of the first screen, with the content centred in it — the
+     equivalent of the homepage hero, which is 912px and fills the viewport
+     because its header is transparent over the photo and there is no breadcrumb
+     above it. Here the solid header (80px) plus the breadcrumb row (~48px) take
+     8rem before the hero starts, so "the same size" means the same FIRST SCREEN,
+     not the same pixel height — matching 912px literally would push the trust
+     band below the fold, which is the opposite of what the homepage does.
+     min-height, not height: if the copy ever grows past it, the hero grows too
+     rather than overflowing. */
+  .service-hero {
+    min-height: calc(100svh - 8rem);
+    /* Tighter than the base 4rem/6rem: the photo needs the vertical room more
+       than the section padding does, and this is what lets the whole hero —
+       trust band included — land inside the first screen. */
+    padding-block: var(--space-7);
+    display: grid;
+    align-content: center;
+  }
+
+  /* One column: the copy is the only thing in the grid now, the photo is behind
+     it. The two-column rule and the photo's own height sizing went with the side
+     column. */
   .service-hero__grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
-/* ---- Service introduction ("Was ist X?") ---- */
+/* ---- 2. Risiko ---- */
+/* Four unboxed items on hairlines (not cards): the same "ruled, not carded"
+   language the homepage uses for its metric rows, which keeps a four-up grid
+   from reading as a pricing table. */
 
-.service-intro__lede {
+.service-risk__lede {
   margin-top: var(--space-4);
+}
+
+/* Illustrated risk cards (client 2026-08-03, reference: a technical-drawing card
+   — numbered header, isometric scene, caption). Two-up on desktop rather than the
+   previous four-up: at 4 columns each card is ~290px and the isometric scenes are
+   unreadable at that size. The illustration is the reason this section exists
+   now, so it gets the width. */
+.service-risk__grid {
+  list-style: none;
+  display: grid;
+  gap: var(--space-5);
+}
+
+/* A framed card, matching .service-panel's language in the section below — one
+   hairline box, one radius, no shadow. The internal rules are what give it the
+   drawing-sheet feel: a rule under the header and one above the caption. */
+.service-risk__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "num title"
+    "art art"
+    "text text";
+  align-items: center;
+  gap: 0 var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+/* The boxed number from the reference. Tabular so 01–04 are the same width. */
+.service-risk__num {
+  grid-area: num;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-accent);
+}
+
+.service-risk__title {
+  grid-area: title;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.service-risk__art {
+  grid-area: art;
+  margin: var(--space-5) 0 0;
+  /* Trimmed from --space-5 (client 2026-08-03: the cards want a little less
+     height) — 16px of air is still enough to keep the scene off the two rules. */
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* One fixed box for all four scenes. Each SVG's viewBox is fitted to its own
+   drawing, so their aspect ratios differ (1.33 to 1.60) — left to size
+   themselves, the four cards got different art heights and their captions
+   stopped lining up across the row. A shared box with the default
+   preserveAspectRatio centres each scene inside it instead.
+   16:10, down from 4:3 (client 2026-08-03: "un poco menos de height"). Nothing is
+   cropped — `meet` scales each scene to fit, so a shorter box just draws them a
+   little smaller. 1.6 is also the widest scene's own ratio, so that one now fills
+   the box exactly and the other three letterbox by a few pixels. */
+.rz-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 16 / 10;
+}
+
+/* The three line weights the scenes are drawn with. currentColor for the object
+   itself means the same SVG works on a dark or a light section; only the accent
+   and the guide are declared, and the accent follows the section's token. */
+.rz-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.rz-accent {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.rz-guide {
+  fill: none;
+  stroke: var(--color-border-strong);
+  stroke-width: 1;
+  stroke-dasharray: 5 6;
+}
+
+.service-risk__text {
+  grid-area: text;
+  margin-top: var(--space-5);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* The draft's Abbinder — one summarising line, set apart and a step larger
+   than the card copy so it reads as the section's conclusion. */
+.service-risk__outro {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+  max-width: 46rem;
   font-size: var(--font-size-md);
 }
 
-.service-intro__body {
+@media (min-width: 900px) {
+  .service-risk__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+
+  .service-risk__item {
+    padding: var(--space-6);
+  }
+}
+
+/* ---- 3. Vorteile (Gegenüberstellung) ---- */
+/* "So läuft es oft" / "So läuft es bei FRANKONIA". Two columns on desktop with
+   a shared header row; on a phone each row becomes a small stack where the
+   "oft" side is visually receded (dimmed, struck-through-feeling by contrast
+   alone, no line-through — that would hurt readability) and the FRANKONIA side
+   carries the blue rule. The header row is aria-hidden and each row's meaning
+   also survives without it: the FRANKONIA cell has the real <h3>. */
+
+.service-contrast__table {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  max-width: 42rem;
-  color: var(--color-text-muted);
-}
-
-/* ---- Customer problems / use cases ---- */
-/* A divided list (hairline top borders), not the homepage's unboxed
-   icon+title+text Pain Hook grid — reusable as-is for any other
-   service's situations list; only the copy changes per service. */
-
-.service-problems__list {
-  list-style: none;
-  display: grid;
   gap: var(--space-6);
-  margin-top: var(--space-2);
 }
 
-.service-problems__list li {
-  padding-top: var(--space-4);
+.service-contrast__head {
+  display: none;
+}
+
+.service-contrast__row {
+  display: grid;
+  gap: var(--space-4);
+  padding-top: var(--space-5);
   border-top: 1px solid var(--color-border);
 }
 
-.service-problems__list h3 {
+.service-contrast__cell--old {
+  color: rgb(255 255 255 / 0.45);
+  font-size: var(--font-size-sm);
+}
+
+.service-contrast__cell--new {
+  padding-left: var(--space-5);
+  border-left: 2px solid var(--color-accent);
+}
+
+.service-contrast__cell--new h3 {
   font-size: var(--font-size-md);
   margin-bottom: var(--space-2);
 }
 
-.service-problems__list p {
+.service-contrast__cell--new p {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
 }
 
-@media (min-width: 768px) {
-  .service-problems__list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-6) var(--space-7);
+@media (min-width: 900px) {
+  .service-contrast__head {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: var(--space-7);
+  }
+
+  .service-contrast__head-cell {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgb(255 255 255 / 0.45);
+  }
+
+  .service-contrast__head-cell--new {
+    color: var(--color-accent);
+  }
+
+  .service-contrast__row {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: var(--space-7);
+    align-items: start;
   }
 }
 
-/* ---- What the service includes ---- */
-/* Plain grid, no dividers/cards — visually distinct from the problems
-   list above and the pillars list below, per the brief's "vary section
-   compositions" direction. */
+/* ---- 4. Leistungsumfang — pinned image mask reveal --------------------------
+   Client 2026-08-03 (reference: a GSAP "pinned image mask reveal on scroll"
+   pen). Left: the six duties, one per screen. Right: a stack of six photos that
+   stays put while the text scrolls, each clipping away from the bottom to
+   expose the next one. js/service-flow.js drives the clip; this file owns the
+   layout and the fallback.
 
-.service-scope__grid {
+   THREE LAYOUTS, and the fallback is the base one — that ordering is the whole
+   safety contract:
+     1. base (mobile, no-JS, prefers-reduced-motion): one column, six
+        text + photo pairs in normal flow, everything visible.
+     2. ≥1024px: two columns, the media column sticky-centred, photos stacked.
+     3. the clip animation, applied only by JS on top of (2).
+   So nothing here ever depends on the script to be readable. The reduced-motion
+   query below deliberately RESTORES layout 1 at desktop widths, because a stack
+   of six absolutely-positioned photos would otherwise show only the first one
+   when the script that reveals the rest is not allowed to run. */
+
+.service-flow {
   display: grid;
-  gap: var(--space-6);
-  margin-top: var(--space-2);
+  gap: var(--space-7);
+
+  /* Sticky geometry for the desktop layout, in one place.
+     --flow-top: clears the sticky site header (80px measured at 1440px) with a
+       little air. A generous constant, same approach as --hero-header-overlap.
+     --flow-title-h: how much room the pinned heading takes. The value here is a
+       safe default (the heading is 106px at 1440px, more when it wraps);
+       js/service-flow.js overwrites it with the real measured height and keeps
+       it in sync on resize, so the photo never lands under the title. */
+  --flow-top: 5.5rem;
+  --flow-title-h: 8rem;
+  /* Extra breathing room between the pinned heading and the photo (client
+     2026-08-03: "bajame un poco la imagen"). Kept as its own variable rather
+     than folded into the offsets below, because three rules need the same
+     number — the photo's sticky top, the photo's height, and the alignment
+     padding on each step — and they must never drift apart. */
+  --flow-media-drop: 2.5rem;
+  --flow-media-top: calc(var(--flow-top) + var(--flow-title-h) + var(--flow-media-drop));
 }
 
-.service-scope__item h3 {
-  font-size: var(--font-size-md);
-  margin-bottom: var(--space-2);
+/* Steps and media are two flat wrappers on desktop, but `display: contents` in
+   the base layout so their children can interleave as one column (step, photo,
+   step, photo …) with a plain `order`. */
+.service-flow__steps,
+.service-flow__media {
+  display: contents;
 }
 
-.service-scope__item p {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+/* The flow's own grid gap spaces the heading from the first step; .section__intro
+   also carries a margin-bottom, which would double it. */
+.service-flow__intro {
+  margin-bottom: 0;
 }
 
-@media (min-width: 768px) {
-  .service-scope__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-6) var(--space-7);
-  }
+.service-flow__step {
+  max-width: 34rem;
 }
 
-@media (min-width: 1024px) {
-  .service-scope__grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-/* ---- Six value pillars, applied to this service ---- */
-/* A left-border-accented list, not the homepage's .pillar-card grid —
-   a genuinely different composition, per the brief's explicit "do not
-   simply copy the homepage Our System section". */
-
-.service-pillars__grid {
-  display: grid;
-  gap: var(--space-6);
-  margin-top: var(--space-2);
-}
-
-.service-pillars__item {
-  padding-left: var(--space-4);
-  /* Blue-dark on --color-bg-subtle (near-black, not the elevated gray)
-     clears the same contrast this section's background always clears —
-     see the tokens.css caveat: the fail case is elevated GRAY, not
-     bg-subtle, which is black with a 3% white wash. Safe here. */
-  border-left: 2px solid var(--color-accent-strong);
-}
-
-.service-pillars__item h3 {
-  font-size: var(--font-size-md);
-  margin-bottom: var(--space-2);
-}
-
-.service-pillars__item p {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-}
-
-@media (min-width: 768px) {
-  .service-pillars__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-6) var(--space-7);
-  }
-}
-
-@media (min-width: 1024px) {
-  .service-pillars__grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-/* ---- How the engagement works (process) ---- */
-/* A numbered list, not a SaaS-style onboarding graphic — plain type,
-   grid-positioned so the number sits beside its step's title+text
-   without extra wrapper markup. */
-
-.service-process__list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-  margin-top: var(--space-2);
-  max-width: 42rem;
-}
-
-.service-process__step {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  grid-template-rows: auto auto;
-  column-gap: var(--space-4);
-  row-gap: var(--space-1);
-}
-
-.service-process__number {
-  grid-column: 1;
-  grid-row: 1 / 3;
-  align-self: start;
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-accent-strong);
-  font-variant-numeric: tabular-nums;
-}
-
-.service-process__step h3 {
-  grid-column: 2;
-  grid-row: 1;
-  font-size: var(--font-size-md);
-}
-
-.service-process__step p {
-  grid-column: 2;
-  grid-row: 2;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-}
-
-/* ---- Certifications and trust (contextual) ---- */
-/* Same badge/review-card primitives as the homepage trust section (real,
-   shared certification assets), but no invented employee/customer-count
-   metrics and no full-bleed background photo — a lighter, contextual
-   version, not a duplicate. */
-
-.service-trust__badges {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-5);
-  margin-top: var(--space-6);
-}
-
-.service-trust__cert-seal {
-  height: 5rem;
-  width: auto;
-}
-
-.service-trust__members {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-3);
-  margin-top: var(--space-7);
-  padding-top: var(--space-6);
-  border-top: 1px solid rgb(255 255 255 / 0.22);
-  font-size: var(--font-size-sm);
-  color: rgb(255 255 255 / 0.65);
-}
-
-.service-trust__members-label {
+/* The phase label ("Im laufenden Betrieb" / "Nachts, am Wochenende, an
+   Feiertagen") replaces what used to be two <h3> group headings over two
+   lists — same words, now stated on each step, so the reader always knows
+   which half of the day they are in. */
+.service-flow__phase {
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: var(--font-weight-bold);
-  color: rgb(255 255 255 / 0.5);
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+  margin-bottom: var(--space-3);
 }
 
-/* ---- Operational areas / local SEO links ---- */
+.service-flow__step h3 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-regular);
+}
 
-.service-areas__list {
-  list-style: none;
+.service-flow__step > p:last-child {
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+}
+
+.service-flow__frame {
+  margin: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: var(--color-bg-subtle);
+  aspect-ratio: 3 / 2;
+  /* Caps the photo in the in-flow layouts. On a phone this never applies (the
+     column is narrower), but the same base layout is what a desktop visitor
+     with prefers-reduced-motion gets, and there a full 1440px-wide photo would
+     dwarf its own caption. */
+  max-width: 40rem;
+}
+
+.service-flow__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The JS drifts object-position between 40% and 60%; this is the resting
+     value for every state where the JS does not run. */
+  object-position: 50% 50%;
+}
+
+/* Interleave: heading, step 1, photo 1, step 2, photo 2 … Both wrappers are
+   `display: contents`, so all thirteen children are siblings in one grid and
+   `order` is enough — no JS, no duplicated markup. The heading keeps order 0
+   (the default) so it stays first. */
+.service-flow__step:nth-child(1) { order: 1; }
+.service-flow__media > :nth-child(1) { order: 2; }
+.service-flow__step:nth-child(2) { order: 3; }
+.service-flow__media > :nth-child(2) { order: 4; }
+.service-flow__step:nth-child(3) { order: 5; }
+.service-flow__media > :nth-child(3) { order: 6; }
+.service-flow__step:nth-child(4) { order: 7; }
+.service-flow__media > :nth-child(4) { order: 8; }
+.service-flow__step:nth-child(5) { order: 9; }
+.service-flow__media > :nth-child(5) { order: 10; }
+.service-flow__step:nth-child(6) { order: 11; }
+.service-flow__media > :nth-child(6) { order: 12; }
+
+/* ---- Desktop: pinned heading + sticky media column + stacked photos ---- */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  /* Explicit areas: the heading spans both columns in its own row, so its real
+     height reserves space in the grid and the two columns start below it. */
+  .service-flow {
+    /* Not 1fr/1fr: the photo column is the wider one, so the photo starts
+       further left (client 2026-08-03: "un poco más para la izquierda").
+       Done with the column ratio rather than a negative margin or a translate,
+       so the photo can never overlap the text column at 1024px — where the text
+       already fills its own half. The text is capped at 30rem anyway, so the
+       narrower column costs it nothing. */
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    grid-template-areas:
+      "intro intro"
+      "steps media";
+    column-gap: clamp(3rem, 5vw, 6rem);
+    row-gap: 0;
+    align-items: start;
+    /* The photo band's height: fills the space under the pinned heading, capped
+       so it never runs past the fold. Declared HERE, on the parent, not on
+       .service-flow__media — custom properties inherit down, not sideways, and
+       .service-flow__step needs this same number to align its text with the
+       photo's centre. One value, two users. */
+    --flow-media-h: min(28rem, calc(100svh - var(--flow-media-top) - 5rem));
+  }
+
+  /* Back to being real boxes so the two columns exist at all, and the `order`
+     values above stop applying (they only matter between siblings). */
+  .service-flow__steps,
+  .service-flow__media {
+    display: block;
+  }
+
+  .service-flow__steps { grid-area: steps; }
+  .service-flow__media { grid-area: media; }
+
+  /* The pinned heading (client 2026-08-03). Sticky inside the flow, so it holds
+     for exactly this section's scroll and releases at its end.
+     The opaque background is load-bearing, not decoration: the step text scrolls
+     up and would otherwise cross the heading. --flow-intro-bg follows the
+     section's own colour (see .section--light), so the same rule works on a dark
+     section without a second declaration. The bottom padding is what keeps a
+     rising line of text from touching the heading's baseline. */
+  .service-flow__intro {
+    grid-area: intro;
+    position: sticky;
+    top: var(--flow-top);
+    z-index: 3;
+    margin-bottom: 0;
+    padding-bottom: var(--space-6);
+    background-color: var(--flow-intro-bg, var(--color-bg));
+  }
+
+  /* One screen per duty — the scroll distance the reveal is scrubbed against.
+     svh, not vh, so browser chrome can't change it mid-scroll.
+
+     The padding-top exists to line each step's text up with the CENTRE OF THE
+     PHOTO, not the centre of the viewport (the pinned heading pushes the photo
+     down, so those two are not the same). With align-content: center the content
+     sits at `viewport/2 + padding/2`, and the photo's centre is at
+     `top-offset + photo-height/2`, so equating them gives:
+         padding = 2 × top-offset + photo-height − viewport
+     which is what the calc below is. max() keeps it from going negative on
+     short viewports, where the photo already fills the band. */
+  .service-flow__step {
+    min-height: 78svh;
+    display: grid;
+    align-content: center;
+    max-width: 30rem;
+    padding-top: max(
+      0px,
+      calc(2 * var(--flow-media-top) + var(--flow-media-h) - 100svh)
+    );
+  }
+
+  /* Native sticky, no ScrollTrigger pin — same approach as every other sticky
+     section on this site. It sticks BELOW the heading (top offset = heading
+     space), which is what stops the photo from covering the title — the bug in
+     the first version of this section. The height must be explicit: the frames
+     inside are absolutely positioned, so the column would collapse to zero. */
+  .service-flow__media {
+    position: sticky;
+    top: var(--flow-media-top);
+    height: var(--flow-media-h);
+  }
+
+  .service-flow__frame {
+    position: absolute;
+    inset: 0;
+    aspect-ratio: auto;
+    /* The stack fills the sticky column; the in-flow cap above must not clamp
+       it here. */
+    max-width: none;
+  }
+
+  /* Photo 1 on top, photo 6 at the bottom of the stack: each one clips away to
+     expose the next. Written out rather than set from JS so the correct static
+     state (photo 1 visible) exists before any script runs. */
+  .service-flow__media > :nth-child(1) { z-index: 6; }
+  .service-flow__media > :nth-child(2) { z-index: 5; }
+  .service-flow__media > :nth-child(3) { z-index: 4; }
+  .service-flow__media > :nth-child(4) { z-index: 3; }
+  .service-flow__media > :nth-child(5) { z-index: 2; }
+  .service-flow__media > :nth-child(6) { z-index: 1; }
+}
+
+/* ---- Highlight box (cross-sell moment) ---- */
+/* One per page at most. A blue-tinted panel on the black page — the tint is
+   --color-accent-subtle, which is the token built for exactly this ("a visible
+   chip against black"), so the box lifts without becoming an elevated gray
+   surface where blue text would fail contrast (see tokens.css caveat). */
+.service-highlight {
+  margin-top: var(--space-8);
+  padding: var(--space-6);
+  border: 1px solid rgb(61 154 211 / 0.35);
+  border-radius: var(--radius-md);
+  background-color: var(--color-accent-subtle);
+  max-width: 46rem;
+}
+
+.service-highlight__title {
+  font-size: var(--font-size-md);
+  margin-bottom: var(--space-3);
+}
+
+.service-highlight > p {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-5);
+}
+
+/* ---- 5. Abgrenzung — two service panels + decision support -----------------
+   Client brief 2026-08-03: turn this into "a decision-oriented comparison
+   experience"; the old three-column criteria table was correct but flat and
+   ended without an action.
+
+   REPLACES a real <table>, and that was the right call to make deliberately: a
+   table's row/column semantics are exactly what made it read as data, and the
+   brief needs the opposite — Werkschutz must carry more weight than Objektschutz
+   on its own page, which a symmetric table cannot express. The criteria are
+   still real term/value pairs (a <dl> per panel), just grouped BY SERVICE, which
+   is how someone choosing between two services reads them.
+
+   The distinction never rests on colour alone (brief + WCAG 1.4.1): each panel
+   states it in its context label, its title, its intro copy and its icon. */
+
+/* CENTRED SECTION (client 2026-08-03: "hacé toda la sección centrada, las cards
+   centradas y el título y el texto"). Scoped to .service-compare — every other
+   section on this page stays left-aligned on the editorial inset.
+   .section-eyebrow needs the explicit justify-content because it is a flex row
+   (its blinking square + the label), which a parent's text-align cannot move —
+   the same gotcha the homepage documents on its own centred sections. */
+.service-compare .section__intro {
+  max-width: 52rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.service-compare .section-eyebrow {
+  justify-content: center;
+}
+
+/* The direct two-sentence answer. No font-size of its own any more (client:
+   "hacelo con tipografía más chiquita, como texto normal de la página") — it was
+   --font-size-lg, i.e. 21–25px, which read as a second heading. Now it inherits
+   the page's body size like any other paragraph, and only the position under the
+   H2 gives it its weight. */
+.service-compare__answer {
+  max-width: 36rem;
+  margin-inline: auto;
+}
+
+/* .service-compare__note (the draft's longer paragraph, demoted) and
+   .service-panel__intro (a one-line explanation under each panel title) both
+   existed here until 2026-08-03 and were REMOVED with their markup, not left as
+   dead rules — client: too much text, and both restated copy that the panels'
+   own labels and criteria already carry. See the comments in
+   pages/werkschutz.html at each spot. */
+
+/* Centred as a block, with the section header (client request). The panels' own
+   contents stay LEFT-aligned: these are label/value pairs, and centring a column
+   of them is measurably slower to scan — the eye loses the shared left edge it
+   compares along. Centred header + left-aligned card content is the same pattern
+   the homepage's own centred sections use. */
+.service-compare__panels {
+  display: grid;
+  gap: var(--space-5);
+  max-width: 68rem;
+  margin-inline: auto;
+}
+
+/* Both panels share one structure so the eye can compare row by row: label →
+   title → one-line intro → three criteria → action. Only the emphasis differs.
+   `align-content: start` + the facts list's own `margin-top: auto` keep the two
+   CTAs on the same baseline even though the copy lengths differ. */
+.service-panel {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
-  margin-top: var(--space-2);
-  max-width: 30rem;
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
 }
 
-.service-areas__link {
-  display: block;
-  padding-block: var(--space-3);
-  border-bottom: 1px solid var(--color-border);
-  font-weight: var(--font-weight-bold);
-  text-decoration: none;
+/* Werkschutz: the subtle priority. A blue top rule and a barely-lighter fill —
+   no glow, no shadow, no scale (brief: "restrained... no excessive glow"). */
+.service-panel--primary {
+  background-color: var(--color-bg-subtle);
+  border-color: rgb(61 154 211 / 0.35);
+  border-top: 2px solid var(--color-accent);
 }
 
-.service-areas__link:hover {
+/* Objektschutz: neutral. Same box, no fill, plain hairline. */
+.service-panel--secondary {
+  background-color: transparent;
+}
+
+.service-panel__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.service-panel--primary .service-panel__label {
   color: var(--color-accent);
 }
 
-.service-areas__note {
+/* The one icon per service the brief allows — line only, at label size, so it
+   reads as part of the label rather than as a decorative badge. */
+.service-panel__icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.service-panel__title {
+  margin-top: var(--space-4);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-regular);
+}
+
+/* Compact dividers, not a card grid: one hairline per criterion. The <dl> is
+   wrapped per pair (<div><dt><dd></div>) so each row is one flex line — a bare
+   dt/dd sequence cannot be laid out as rows without extra wrappers. */
+.service-panel__facts {
+  /* Follows the title directly now that the explanation line is gone. */
+  margin: var(--space-5) 0 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.service-panel__fact {
+  display: grid;
+  gap: var(--space-1);
+  padding-block: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.service-panel__fact dt {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgb(255 255 255 / 0.5);
+}
+
+.service-panel__fact dd {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+/* margin-top: auto pins the action to the panel's bottom, so both CTAs align
+   even when one panel's copy wraps to an extra line. */
+.service-panel__cta {
+  margin-top: auto;
+  align-self: start;
+}
+
+.service-panel .service-panel__cta {
   margin-top: var(--space-6);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
 }
 
-/* ---- Reference / customer result ---- */
-/* Every value in here is a bracketed placeholder (see the HTML) — this
-   is scaffolding for a real case study, not real content dressed up to
-   look like one. Replace wholesale once the client supplies an approved
-   reference. */
-
-.service-reference__disclaimer {
-  margin-top: var(--space-3);
-  font-size: var(--font-size-sm);
-  font-style: italic;
-  color: var(--color-text-muted);
+/* The quiet twin of the primary CTA: a real link, not a second blue button —
+   one primary per screen (docs/page-conventions.md §3). */
+.service-panel__cta--quiet {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid var(--color-border-strong);
+  padding-bottom: 2px;
 }
 
-.service-reference__card {
+.service-panel__cta-arrow {
+  width: 0.85em;
+  height: 0.85em;
+  transition: transform var(--duration-base) var(--easing-premium);
+}
+
+.service-panel__cta--quiet:hover,
+.service-panel__cta--quiet:focus-visible {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+.service-panel__cta--quiet:hover .service-panel__cta-arrow,
+.service-panel__cta--quiet:focus-visible .service-panel__cta-arrow {
+  transform: rotate(45deg);
+}
+
+/* ---- Decision support strip ---- */
+/* Connects the comparison to the conversion (brief). One row on desktop: the
+   question on the left, the action on the right. Blue-tinted like the highlight
+   box, so it reads as the same kind of "this is the next step" surface rather
+   than a third service panel. */
+.service-decision {
+  display: grid;
+  gap: var(--space-5);
+  max-width: 68rem;
+  /* Same centred block as the panels above it, so the three stacked elements of
+     this section share one vertical axis. */
+  margin-inline: auto;
+  margin-top: var(--space-7);
+  padding: var(--space-6);
+  border: 1px solid rgb(61 154 211 / 0.3);
+  border-radius: var(--radius-md);
+  background-color: var(--color-accent-subtle);
+}
+
+.service-decision__heading {
+  font-size: var(--font-size-md);
+}
+
+.service-decision__text > p {
+  margin-top: var(--space-2);
+  max-width: 40rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.service-decision__actions {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-7);
-  padding: var(--space-7);
-  background-color: var(--color-bg-elevated);
-  border-radius: var(--radius-lg);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-6);
 }
 
-.service-reference__facts {
+/* The Ratgeber link keeps its place in the section but as the quietest thing in
+   it (brief: "a quieter text link... inside the decision-support area"). */
+.service-decision__link {
+  font-size: var(--font-size-sm);
+}
+
+@media (min-width: 900px) {
+  .service-compare__panels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+
+  .service-panel {
+    padding: var(--space-7);
+  }
+
+  .service-decision {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-7);
+    padding: var(--space-6) var(--space-7);
+  }
+
+  /* The two actions stack rather than sitting side by side. Measured: as one row
+     they took ~635px of the strip, which left the question column ~400px and
+     broke both the heading and the copy onto extra lines while empty space sat
+     beside the CTA. Stacked, the actions column is just the button's width and
+     the question gets ~715px — one line, as intended. */
+  .service-decision__actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+}
+
+/* ---- 6. Anwendungsfälle ---- */
+/* Numbered items, same oversized-number-beside-title idea as the homepage's
+   services index — the number is decoration (aria-hidden), the <h3> carries
+   the meaning. */
+
+.service-cases__grid {
+  list-style: none;
   display: grid;
   gap: var(--space-5);
 }
 
-.service-reference__facts dt {
+/* Glossy blue cards with the CTA's own light sweep (client 2026-08-03: "que
+   tengan el mismo estilo que el CTA, que sean azules y brillosas, con el reflejo
+   que tiene el CTA").
+
+   The fill is EXACTLY the CTA's --color-blue-light (#3D9AD3), flat, like
+   .btn--primary — client decision, reaffirmed after the contrast trade-off below
+   was raised ("tiene que ser el mismo azul del CTA").
+
+   ⚠️ ACCEPTED CONTRAST CAVEAT, same class of exception the primary button already
+   carries in tokens.css. Measured white on each candidate:
+       #3D9AD3 (the CTA fill, used here)   3.11:1
+       #5287C9 (its hover)                 3.71:1
+       blue-dark 85% + black  #4673AB      4.88:1
+       blue-dark 70% + black  #3A5F8D      6.56:1
+   3.11 clears the 3:1 minimum for UI components and large text, but NOT the 4.5:1
+   for normal-size body copy — and these cards carry a paragraph each. It is the
+   client's approved brand blue and the same number already shipped on every
+   primary button, so it is recorded as a known caveat, not "fixed" unilaterally.
+   Everything mitigable without changing the colour has been done: every text on
+   the card is SOLID white (no alpha tiers — those would push the paragraph below
+   3:1), and hierarchy comes from size/weight instead. If this is ever revisited,
+   the cheap fix is a deeper fill (the two mixes above) or larger/bolder card
+   copy, not a different blue. */
+.service-cases__item {
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-6);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  background-color: var(--color-blue-light);
+  /* The gloss: a soft drop shadow plus a 1px highlight along the top edge, which
+     is what makes a flat fill read as a lit surface. */
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgb(255 255 255 / 0.28);
+}
+
+/* The CTA's sweep, reusing its @keyframes btn-shine (components.css) rather than
+   declaring a second identical animation. Two deliberate differences from the
+   button: the band is softer (0.28 vs 0.42 — on a card it crosses paragraphs,
+   not a four-word label, and a bright flash over copy reads as glare), and it
+   sits BEHIND the content (see the z-index on the children below), so it polishes
+   the surface instead of washing over the text.
+   prefers-reduced-motion is handled globally in motion.css — nothing to add. */
+.service-cases__item::after {
+  content: "";
+  position: absolute;
+  top: -60%;
+  bottom: -60%;
+  left: 0;
+  width: 38%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgb(255 255 255 / 0.28) 50%,
+    transparent 100%
+  );
+  transform: translateX(-140%) rotate(8deg);
+  animation: btn-shine 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Staggered so the four don't flash in unison — the reflection reads as moving
+   across the row. */
+.service-cases__item:nth-child(2)::after { animation-delay: 0.6s; }
+.service-cases__item:nth-child(3)::after { animation-delay: 1.2s; }
+.service-cases__item:nth-child(4)::after { animation-delay: 1.8s; }
+
+/* Above the sweep. */
+.service-cases__number,
+.service-cases__item h3,
+.service-cases__item p {
+  position: relative;
+  z-index: 1;
+}
+
+.service-cases__number {
+  display: block;
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-lg);
+  /* Solid white, not an alpha tier: on #3D9AD3 white is already only 3.11:1, so
+     any transparency drops it further. The number reads as secondary through its
+     size and position, not through opacity. */
+  color: var(--color-white);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The second selector is not redundant: this section is a LIGHT one, and
+   `.section--light h3` is (0,2,0) — it beat the plain `.service-cases__item h3`
+   (0,1,1) and painted these titles near-black on the blue fill (caught in a
+   screenshot). Matching its specificity is the fix; !important is not needed. */
+.service-cases__item h3,
+.section--light .service-cases__item h3 {
+  font-size: var(--font-size-md);
+  margin-bottom: var(--space-3);
+  color: var(--color-white);
+}
+
+.service-cases__item p {
+  /* Solid white for the same reason as the number above, and explicitly NOT
+     --color-text-muted: in this light section that token is a dark grey (see
+     .section--light), which would be near-invisible on blue. */
+  color: var(--color-white);
   font-size: var(--font-size-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: rgb(255 255 255 / 0.6);
-  margin-bottom: var(--space-1);
 }
 
-.service-reference__facts dd {
-  margin: 0;
-}
-
-.service-reference__quote {
+/* Referenz-Abbinder: one sentence + the two real client marks. The logos are
+   white artwork on transparent PNGs, same files/treatment as the homepage's
+   client-logo marquee. */
+.service-cases__proof {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5) var(--space-8);
+  margin-top: var(--space-8);
   padding-top: var(--space-6);
-  border-top: 1px solid rgb(255 255 255 / 0.16);
-  font-style: italic;
+  border-top: 1px solid var(--color-border);
 }
 
-.service-reference__quote footer {
-  margin-top: var(--space-3);
-  font-style: normal;
+.service-cases__proof-text {
+  flex: 1 1 22rem;
+  color: var(--color-text-muted);
   font-size: var(--font-size-sm);
-  color: rgb(255 255 255 / 0.65);
 }
 
-@media (min-width: 768px) {
-  .service-reference__facts {
+.service-cases__logos {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+/* Cap height AND width so a wide wordmark (bayernhafen) and a compact mark
+   (MORELO) occupy a similar visual footprint — same reasoning as the
+   homepage's own logo row. */
+.service-cases__logo {
+  height: clamp(1.75rem, 1.2rem + 1.4vw, 2.5rem);
+  max-width: 8.5rem;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.85;
+}
+
+@media (min-width: 640px) {
+  .service-cases__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-6);
   }
 }
 
-/* FAQ section reuses .section__intro/.faq__list/.faq-item as-is (no
-   page-service.css overrides needed) — unlike the homepage's forced
-   one-line FAQ heading, this page's H2s all stay at one consistent,
-   unforced scale. */
-
-/* ---- Final conversion ---- */
-
-.service-cta__content {
-  max-width: 38rem;
+@media (min-width: 1024px) {
+  .service-cases__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
-.service-cta__content .brand-bar {
-  display: block;
-  margin-bottom: var(--space-4);
+/* ---- 7. Sicherheitskonzept (compact) ---- */
+/* The compact counterpart to the homepage's big exploded-view cube sequence
+   (css/konzept-seq.css): text, three ticks, one link. 11 pages need this
+   version per docs/build-checklist.md. */
+
+/* NOT a max-width on the .container element itself: this class shares its
+   element with .container, whose auto inline margins would then CENTRE the
+   whole block (measured — the eyebrow sat ~325px in at 1440px, out of line with
+   every other section on the page). Cap the children instead, so the section
+   keeps the page's single left alignment. */
+.service-konzept__list,
+.service-konzept .section__intro > p {
+  max-width: 46rem;
 }
 
-.service-cta__content > p {
+.service-konzept__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-7);
+}
+
+.service-konzept__list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--font-size-md);
+}
+
+/* ---- 8. Kosten — two-column pricing block -----------------------------------
+   The most-reused new block on the site (27 pages), rebuilt 2026-08-03 (client):
+   "too much empty space, the pricing card feels detached from the content, and
+   the left column is too wide."
+
+   ONE grid for the whole section instead of a full-width intro with a row
+   underneath. Named areas do the work: the card sits in the right column, top-
+   aligned with the intro, while staying between the intro and the factors in the
+   DOM — which is the order a phone needs (price and CTA before the factor list)
+   without resorting to `order`, so the tab order still matches the screen. */
+
+.service-price__layout {
+  display: grid;
+  /* Mobile: one column, and the areas are what put the card second. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "intro"
+    "card"
+    "factors"
+    "hint";
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.service-price__intro   { grid-area: intro; }
+.service-price__box     { grid-area: card; }
+.service-price__factors { grid-area: factors; }
+.service-price__hint    { grid-area: hint; }
+
+/* The shared .section__intro carries a --space-8 bottom margin for sections whose
+   content sits underneath it. Here the grid gap owns that spacing. */
+.service-price__intro {
+  margin-bottom: 0;
+}
+
+/* Tighter to the heading than the shared --space-4 (brief: "reduce the space
+   between the heading and paragraph"). */
+.service-price__answer {
+  margin-top: var(--space-3);
+}
+
+/* ---- The factors ---- */
+/* Ruled rows with a blue plus, not a boxed card each and not a bare list. The
+   plus is a ::before rather than five sprite <use>es: one repeated glyph does not
+   need five nodes. */
+.service-price__factors {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.service-price__factors li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  /* A step more air than the --space-4 rows had (brief). */
+  padding-block: var(--space-5);
+  border-top: 1px solid var(--color-border);
+  /* Darker than --color-text-muted, which resolves to rgb(59 73 86 / 0.75) in a
+     light section — about 4.9:1 on white. Solid --color-gray is 9.2:1 (measured;
+     docs/design-system.md §7), which is what the brief asks for. */
+  color: var(--color-gray);
+  font-size: var(--font-size-sm);
+}
+
+.service-price__factors li::before {
+  content: "+";
+  /* Blue-dark inside .section--light — the only brand blue that clears contrast
+     on white. --color-accent resolves to it there (see .section--light). */
+  color: var(--color-accent);
+  font-size: var(--font-size-md);
+  line-height: 1.1;
+}
+
+.service-price__factors li:last-child {
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ---- The price card ---- */
+/* GLOSSY BLACK since 2026-08-03 (client: "hacémela card negra brillosa, o sea con
+   el mismo efecto del botón pero negra"). It was --color-bg-elevated (grey
+   #3B4956); black is both what was asked for and better on this white section —
+   white text goes from 8.9:1 on the grey to 20.4:1 on the black, and the old
+   "no blue inside an elevated grey card" constraint disappears with it, since
+   every brand blue clears contrast against black (tokens.css).
+
+   The gloss is three things, none of them a heavy shadow: a faint diagonal
+   lightening of the fill, a 1px highlight on the top edge, and the BUTTON'S OWN
+   sweep — @keyframes btn-shine from components.css, reused rather than
+   redeclared, the same way .service-cases__item does it. */
+.service-price__box {
+  position: relative;
+  /* Clips the sweep to the card's radius. */
+  overflow: hidden;
+  /* 24px on a phone, 36px from 640px up — the brief's 36–40px desktop range,
+     built from tokens rather than a new value. */
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  background-color: var(--color-logo-black);
+  background-image: linear-gradient(
+    155deg,
+    rgb(255 255 255 / 0.07) 0%,
+    rgb(255 255 255 / 0.02) 45%,
+    rgb(255 255 255 / 0) 70%
+  );
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgb(255 255 255 / 0.16);
+  /* The box OWNS its text colour instead of inheriting it. It is a dark surface
+     whatever section it sits in, and this template alternates dark/light — in a
+     light section it was inheriting rgb(59 73 86 / 0.85), i.e. dark grey on dark
+     grey, which made the two tick labels invisible (caught in a screenshot, not
+     by reasoning). Same principle as the lead form's white card. */
+  color: rgb(255 255 255 / 0.85);
+}
+
+/* The button's sweep. Softer than on the button (0.22 vs 0.42) because it crosses
+   a whole card, and BEHIND the content (see the z-index below) so it polishes the
+   surface instead of washing over the price. motion.css neutralises it under
+   prefers-reduced-motion — nothing to add here. */
+.service-price__box::after {
+  content: "";
+  position: absolute;
+  top: -60%;
+  bottom: -60%;
+  left: 0;
+  width: 38%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgb(255 255 255 / 0.22) 50%,
+    transparent 100%
+  );
+  transform: translateX(-140%) rotate(8deg);
+  animation: btn-shine 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Above the sweep. */
+.service-price__box > * {
+  position: relative;
+  z-index: 1;
+}
+
+.service-price__box-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgb(255 255 255 / 0.6);
+}
+
+/* The strongest thing in the card, per the brief. baseline alignment is what
+   keeps "€/Std." sitting on the price's baseline instead of centred against a
+   ~56px number. */
+.service-price__box-value {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  font-size: clamp(2.5rem, 1.7rem + 3vw, 3.75rem);
+  line-height: 1;
+  color: var(--color-white);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.service-price__box-unit {
+  font-size: 0.3em;
+  letter-spacing: 0.02em;
+  color: rgb(255 255 255 / 0.75);
+}
+
+.service-price__box-note {
+  margin-top: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: rgb(255 255 255 / 0.7);
+}
+
+.service-price__box-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid rgb(255 255 255 / 0.2);
+  font-size: var(--font-size-sm);
+}
+
+.service-price__box-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+/* White, not accent blue — this tick sits on the elevated grey box. */
+.service-price__box-list .service-price__tick {
+  color: var(--color-white);
+}
+
+/* Sized to its own label, not stretched edge to edge (brief). It keeps .btn's
+   shared padding and its hover/focus states, so there is no new button variant
+   here. */
+/* .btn is inline-flex, so it is content-sized here with no extra rule — which is
+   what the brief asks for ("fit the content naturally and not feel stretched edge
+   to edge"). No align-self: the card is a plain block container, where it would
+   be a no-op. */
+.service-price__cta {
+  margin-top: var(--space-6);
+}
+
+/* The draft's "Hinweis" — a caution, so it is set apart from the factors and
+   led by the alert icon, but kept as plain body copy rather than a coloured
+   warning panel (the only non-brand hue on this site is scoped to the
+   homepage's pain marks). */
+.service-price__hint {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  max-width: 46rem;
   margin-top: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.service-price__hint-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+  margin-top: 0.2em;
+  color: var(--color-accent);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+.service-price__hint strong {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+@media (min-width: 640px) {
+  .service-price__box {
+    /* 36px — the brief's 36–40px, and a real token. */
+    padding: 2.25rem;
+  }
+}
+
+/* Tablet: two columns as soon as there is room for them, with a smaller gap and
+   a narrower card than the desktop split gives (brief). */
+@media (min-width: 900px) {
+  .service-price__layout {
+    grid-template-columns: minmax(0, 55fr) minmax(0, 45fr);
+    grid-template-areas:
+      "intro   card"
+      "factors card"
+      "hint    card";
+    column-gap: clamp(3rem, 4.5vw, 5rem);
+    row-gap: var(--space-6);
+  }
+
+  /* Vertically centred against the left column (client 2026-08-03). This
+     REVERSES the earlier "align the top of the card with the start of the main
+     content area" from the same day: the card spans all three rows of the left
+     column and now centres in them rather than sitting at the top. */
+  .service-price__box {
+    align-self: center;
+  }
+
+  /* 40–48px between the intro and the list, per the brief — the row-gap covers
+     32px of it, this adds the rest. */
+  .service-price__factors {
+    margin-top: var(--space-2);
+  }
+}
+
+@media (min-width: 1200px) {
+  .service-price__layout {
+    /* 64–80px between the columns at the widths this page is reviewed at. */
+    column-gap: var(--space-8);
+  }
+}
+
+/* ---- 9. Trust / Ansprechpartner — person first, certificates supporting ------
+   Rebuilt 2026-08-03 (client): the person and the certifications used to be two
+   parallel text columns of equal weight. Now two zones — the contact block, then
+   a certification strip under it.
+
+   The grid areas are what let the DOM stay in the mobile reading order the brief
+   specifies (eyebrow → heading → photo → name → role → text → actions → certs)
+   while desktop puts the photo in a left column beside the text. Tab order
+   therefore always matches the screen, which is the rule reordering with `order`
+   would break (docs/page-conventions.md §7). */
+
+.service-contact__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "intro"
+    "photo"
+    "person"
+    "certs";
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.service-contact__intro   { grid-area: intro; margin-bottom: 0; }
+.service-contact__portrait { grid-area: photo; }
+.service-contact__person  { grid-area: person; }
+.service-contact__certs   { grid-area: certs; }
+
+/* ---- The reserved portrait frame ----
+   4:5, so the real space is held and dropping the photo in later shifts nothing
+   (no CLS either). It is a frame, not a broken image: hairline border, the
+   section's own subtle fill, and a bracketed label that cannot be mistaken for
+   content. Replace the whole <p> with a <picture> when the portrait arrives. */
+.service-contact__portrait {
+  margin: 0;
+  aspect-ratio: 4 / 5;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-subtle);
+}
+
+.service-contact__portrait-note {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+  font-size: var(--font-size-sm);
   color: var(--color-text-muted);
 }
 
-.service-cta__actions {
+.service-contact__portrait-note .icon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--color-accent);
+  fill: currentColor;
+  stroke: none;
+}
+
+/* ---- The person ---- */
+/* Name is the loudest thing after the section heading — the hierarchy the brief
+   asks for is photo → heading → name → role → actions. */
+.service-contact__name {
+  font-size: var(--font-size-xl);
+}
+
+.service-contact__role {
+  margin-top: var(--space-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-accent);
+}
+
+.service-contact__body {
+  margin-top: var(--space-4);
+  max-width: 34rem;
+  color: var(--color-text-muted);
+}
+
+/* ---- The two contact actions ---- */
+/* Real actions rather than text rows, and sized to their own content — not
+   full-width buttons (brief). */
+.service-contact__actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -461,8 +1745,704 @@
   margin-top: var(--space-6);
 }
 
-.service-cta__reassurance {
-  margin-top: var(--space-3);
+.service-contact__action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  color: var(--color-text);
+  transition:
+    background-color var(--duration-base) var(--easing-standard),
+    border-color var(--duration-base) var(--easing-standard),
+    color var(--duration-base) var(--easing-standard);
+}
+
+/* icon-phone is a FILLED symbol, icon-mail is a STROKE one, and neither's
+   presentation attributes survive <use> — so each gets its own explicit pair or
+   the phone renders as an outline and the envelope as a black blob. */
+.service-contact__action .icon {
+  width: 1.15em;
+  height: 1.15em;
+  flex-shrink: 0;
+  color: var(--color-accent);
+}
+
+.service-contact__action--phone .icon {
+  fill: currentColor;
+  stroke: none;
+}
+
+.service-contact__action--mail .icon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* The phone gets the priority (brief): a real pill, the same outline treatment as
+   the hero's secondary action, so the two read as the same kind of thing. */
+.service-contact__action--phone {
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-md);
+}
+
+.service-contact__action--phone:hover,
+.service-contact__action--phone:focus-visible {
+  border-color: var(--color-accent);
+  background-color: rgb(255 255 255 / 0.06);
+}
+
+/* The mail is the quieter one: no pill, a hairline that lights up. Long address,
+   so it is allowed to break rather than set a minimum width nothing can shrink
+   below. */
+.service-contact__action--mail {
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--color-border);
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.service-contact__action--mail:hover,
+.service-contact__action--mail:focus-visible {
+  color: var(--color-text);
+  border-bottom-color: var(--color-accent);
+}
+
+/* ---- The certification strip ---- */
+/* Set apart by a hairline and its own top padding rather than a card — the
+   section stays flat, and the strip reads as supporting the block above it. */
+.service-contact__certs {
+  display: grid;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+  padding-top: var(--space-7);
+  border-top: 1px solid var(--color-border);
+}
+
+.service-contact__certs-title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+}
+
+/* Significantly larger than the 4.5rem they were (brief), proportions untouched —
+   height only, width auto. */
+.service-contact__seals {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.service-contact__seal {
+  /* 8.5rem = 136px, up from the 4.5rem (72px) they were. Height only, width auto,
+     so the official DEKRA proportions are untouched — they may be scaled, never
+     cropped or distorted. Sized to read clearly beside the three lines without
+     out-weighing the contact block above (brief). */
+  height: 8.5rem;
+  width: auto;
+}
+
+/* Short lines: the standard name is the emphasis, the rest is muted supporting
+   text. Same three facts, same wording, just split so the standard can lead. */
+.service-contact__certs-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.service-contact__certs-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+}
+
+.service-contact__certs-list li:last-child {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.service-contact__certs-list strong {
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.service-contact__certs-list span {
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 900px) {
+  /* Photo in a left column beside the text; the certification strip spans both.
+     0.85/1.15 rather than equal halves: the right column carries the heading, the
+     name, the paragraph and both actions, so it needs the width — and a 4:5 photo
+     at half of a 1232px container would be ~600x750, taller than the text beside
+     it and the biggest thing in the section, which is not the hierarchy asked
+     for. */
+  .service-contact__layout {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    grid-template-areas:
+      "photo intro"
+      "photo person"
+      "certs certs";
+    column-gap: clamp(var(--space-7), 5vw, var(--space-9));
+  }
+
+  /* Caps the frame so it stays a portrait beside the text rather than a poster. */
+  .service-contact__portrait {
+    max-width: 26rem;
+  }
+
+  /* Badges on one side, the three lines on the other (brief). Badges first, which
+     is also their order on a phone. */
+  .service-contact__certs {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "title title"
+      "seals lines";
+    column-gap: var(--space-9);
+    align-items: center;
+  }
+
+  .service-contact__certs-title { grid-area: title; }
+  .service-contact__seals { grid-area: seals; }
+  .service-contact__certs-list { grid-area: lines; }
+}
+
+/* ---- 10. FAQ ---- */
+/* Reuses .faq__list/.faq-item from components.css as-is. No page-service
+   override: unlike the homepage's forced one-line FAQ heading, this page's H2s
+   all wrap normally at one consistent scale. */
+
+/* ---- 12. Verwandte Seiten — end-of-page navigation --------------------------
+   Refined 2026-08-03 (client): the structure was right but read as a plain
+   sitemap list. Same content, same links, same two groups — the changes are
+   hierarchy, row scale, arrow scale and the interaction.
+
+   What it is: a premium continuation block, so the two group titles carry a blue
+   accent rule and real weight, the rows are tall enough to be a navigation
+   target rather than a text line, and the hover is a light blue wash instead of
+   the full white/black inversion it had (brief: "flat, elegant and lightweight",
+   not a card). */
+
+/* Narrower than the shared cap so the heading breaks into two controlled lines
+   instead of running the full column, and less air under it than
+   .section__intro's own --space-8 (brief: "reduce excessive empty space").
+   44rem, not 34: measured, 34rem broke it into THREE lines at the clamp's 60px
+   ceiling, which costs more vertical space than the wide version it was meant to
+   tame. 44rem gives "Verwandte Leistungen und / Einsatzgebiete".
+   The SIZE stays on the shared `main h2` clamp on purpose — docs/page-conventions
+   §2 is that every section title on the site is one size, and a closing
+   navigation block is not the place to start an exception. */
+.service-related .section__intro {
+  max-width: 44rem;
+  margin-bottom: var(--space-7);
+}
+
+.service-related__cols {
+  display: grid;
+  gap: var(--space-8);
+}
+
+/* The group titles: noticeably bigger than the 0.75rem eyebrow-sized label they
+   were, bold, still uppercase (that is this site's label idiom), with a 2px blue
+   rule above each one so the two groups read as two blocks.
+
+   ⚠️ The blue is DEEPER than --color-accent on purpose. In a light section that
+   token is blue-dark (#5287C9) = 3.71:1 on white, which clears the 3:1 for a
+   graphic and for large text but NOT the 4.5:1 for text this size — an 18–20px
+   bold uppercase heading sits right on the 18.66px large-text boundary, so
+   relying on it would be relying on a borderline number. The mix is 4.88:1 and
+   still unmistakably the same brand blue (docs/design-system.md §7). The 2px
+   RULE keeps --color-accent: a graphic element only needs 3:1. */
+/* The second selector is not redundant: this section is a LIGHT one, and
+   `.section--light h3` is (0,2,0) — it beat the plain `.service-related__title`
+   (0,1,0) and painted these titles black instead of blue (measured:
+   rgb(1,1,1)). Matching its specificity is the fix; the same collision the
+   Anwendungsfälle card titles hit. */
+.service-related__title,
+.section--light .service-related__title {
+  padding-top: var(--space-4);
+  margin-bottom: var(--space-5);
+  border-top: 2px solid var(--color-accent);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, var(--color-logo-black));
+}
+
+.service-related__list {
+  list-style: none;
+}
+
+/* The whole row is the anchor — a real <a> per link, so keyboard and screen
+   readers get exactly one target per destination and the hit area is the row,
+   not the words. */
+.service-related__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  /* Taller rows and a larger label than the base (brief). */
+  padding: var(--space-5) var(--container-padding);
+  /* Compensating negative inline margin, so the hover tint bleeds past the
+     text's own edge without shifting where the text aligns — same pattern as
+     the homepage's outfit-name list. It bleeds by exactly --container-padding,
+     NOT a fixed step: with a fixed 16px the bleed exceeded the container's own
+     padding on small screens (12px at 390px) and produced 4px of real
+     horizontal page scroll — measured, not theoretical. Tying both sides to
+     the same token makes that impossible at any width. */
+  margin-inline: calc(-1 * var(--container-padding));
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-md);
+  color: var(--color-text);
+  text-decoration: none;
+  transition:
+    background-color var(--duration-base) var(--easing-standard),
+    color var(--duration-base) var(--easing-standard);
+}
+
+.service-related__list li:last-child .service-related__link {
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Significantly larger than the 0.9em slivers they were, and centred in the row
+   by the flex alignment above. */
+.service-related__arrow {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  color: var(--color-accent);
+  /* Same measured bug and same fix as .service-link__arrow above — see the note
+     there. Without these the row arrows were filled slivers, i.e. absent. */
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  /* 250ms (--duration-base), inside the brief's 200–300ms. */
+  transition:
+    transform var(--duration-base) var(--easing-premium),
+    color var(--duration-base) var(--easing-standard);
+}
+
+/* A light blue wash, not the white/black inversion this had — the brief asks for
+   flat and lightweight. --color-accent-subtle is already the on-white blue tint
+   in a light section (see .section--light), so this is a token, not a new value.
+   The text colour on hover is set per theme: see the .section--light pair further
+   down, which is where the "darker on hover" values live. Every instance of this
+   block today sits on a light section; on a dark one the wash still works and the
+   text simply keeps --color-text. */
+.service-related__link:hover,
+.service-related__link:focus-visible {
+  background-color: var(--color-accent-subtle);
+  color: var(--color-logo-black);
+}
+
+/* The icon is drawn pointing up-right, so it travels the way it points — a 3px
+   nudge, not a rotation (brief: "move the arrow slightly to the upper-right...
+   keep the animation subtle"). */
+.service-related__link:hover .service-related__arrow,
+.service-related__link:focus-visible .service-related__arrow {
+  transform: translate(3px, -3px);
+}
+
+@media (min-width: 768px) {
+  .service-related__cols {
+    /* Equal columns, and a step more room between them (brief). */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(var(--space-8), 7vw, var(--space-10));
+  }
+}
+
+/* No vertical divider between the columns, and that is a decision rather than an
+   omission: the rows' hover tint deliberately bleeds --container-padding past
+   each column's edge, so the right column's wash would cross a centred divider
+   by ~24px every time it lit up. The two blue rules above the titles already
+   separate the groups, which is what the divider was optional for. */
+
+/* ---- Alternating dark / light sections ------------------------------------
+   Client 2026-08-03: the page alternates black and white section by section,
+   starting with a black hero, with a pixel dissolve at every boundary — the
+   same rhythm as the homepage.
+
+   Implemented by RE-DECLARING THE TOKENS on the light section rather than by
+   restating every colour in every block. All the `.service-*` rules above
+   consume `var(--color-text-muted)` / `var(--color-border)` /
+   `var(--color-accent)`, and custom properties inherit — so one scope flips the
+   whole subtree, and a future block gets the light variant for free as long as
+   it also consumes tokens instead of hardcoding a colour.
+
+   Values are the documented "on white" set (docs/page-conventions.md §5), not
+   new ones: #3D9AD3 does not clear contrast on white, so every blue inside a
+   light section becomes --color-blue-dark; the white focus ring would be
+   invisible, so it becomes blue-dark too.
+
+   `data-nav-theme="light"` on each of these sections (markup) is what makes the
+   sticky header switch to its dark-text state while one is behind it —
+   initHeaderScrollTheme(), js/main.js. */
+
+.section--light {
+  background-color: var(--color-white);
+  /* Body copy colour for the whole subtree. Set as a real `color` (not only a
+     token) because most elements inherit it from <body> rather than reading
+     --color-text themselves. */
+  color: rgb(59 73 86 / 0.85);
+
+  --color-text: var(--color-logo-black);
+  --color-text-muted: rgb(59 73 86 / 0.75);
+  --color-border: rgb(59 73 86 / 0.14);
+  --color-border-strong: rgb(59 73 86 / 0.3);
+  --color-bg-subtle: rgb(59 73 86 / 0.04);
+  --color-accent: var(--color-blue-dark);
+  --color-accent-strong: var(--color-blue-dark);
+  --color-accent-subtle: rgb(82 135 201 / 0.08);
+  --color-focus-ring: var(--color-blue-dark);
+  /* The pinned flow heading paints over scrolling text, so it needs this
+     section's own background — see .service-flow__intro. */
+  --flow-intro-bg: var(--color-white);
+}
+
+/* Headings inherit the section's body colour, so they need the darker value
+   explicitly — same call the homepage makes on its own light sections
+   (.faq__intro h2 / .outfits__intro h2). */
+.section--light h2,
+.section--light h3 {
+  color: var(--color-logo-black);
+}
+
+/* The shared eyebrow's blue is calibrated for black and reads too light at
+   0.75rem on white — grey instead, same fix as .faq .section-eyebrow on the
+   homepage and /kontakt/'s. */
+.section--light .section-eyebrow {
+  color: var(--color-gray);
+}
+
+/* Hardcoded values that tokens can't reach, one per block: */
+
+/* The hairline under an inline link, and its hover — the dark-section version
+   goes to white, which would vanish here. */
+.section--light .service-link {
+  border-bottom-color: rgb(82 135 201 / 0.45);
+}
+.section--light .service-link:hover,
+.section--light .service-link:focus-visible {
+  color: var(--color-logo-black);
+  border-bottom-color: var(--color-logo-black);
+}
+
+.section--light .service-highlight,
+.section--light .service-decision {
+  border-color: rgb(82 135 201 / 0.3);
+}
+
+/* Two white-alpha values in the comparison panels that tokens can't reach: the
+   criterion labels, and the Werkschutz panel's own lighter fill (a 3% white wash
+   is invisible on white). This section is dark today — these exist so the block
+   survives if a future service page's black/white alternation lands it on a
+   light section. */
+.section--light .service-panel__fact dt {
+  color: rgb(59 73 86 / 0.6);
+}
+
+.section--light .service-panel--primary {
+  background-color: rgb(82 135 201 / 0.06);
+  border-color: rgb(82 135 201 / 0.35);
+}
+
+/* Client logos are WHITE artwork on transparent PNGs (assets/images/
+   client-logos/) — invisible on a white section. Inverted to dark, exactly as
+   the homepage's own pale logo band does it (sticky-story.css). The files stay
+   white everywhere else. */
+.section--light .service-cases__logo {
+  filter: invert(1);
+}
+
+/* The related-links rows: the light section's own text colours. The base rule
+   further up is theme-agnostic (--color-text + the blue wash on hover); these two
+   are what make the row DARKEN on hover the way the brief asks, which needs
+   values that only mean something on white.
+   This REPLACES the black/white inversion these rows had — it had higher
+   specificity than the new wash and loaded later, so it won and the wash never
+   showed (caught by reading the cascade, before it reached a screenshot). */
+.section--light .service-related__link {
+  color: var(--color-gray);
+}
+
+.section--light .service-related__link:hover,
+.section--light .service-related__link:focus-visible {
+  color: var(--color-logo-black);
+}
+
+/* The FAQ "+" glyph on the BORDERED default: blue-dark on white clears large
+   text's 3:1 but not normal text's 4.5:1, and at this glyph's fluid size it is
+   ambiguous which threshold applies — black sidesteps the question instead of
+   relying on a borderline number.
+   :not(.faq__list--cards) is load-bearing: the card variant (components.css)
+   ships its own dark "+" in --color-gray, and this rule has the same specificity
+   but loads later, so without the exclusion it silently won and the glyph came
+   out #010101 here against #3B4956 on the homepage — measured, and the opposite
+   of the "same design on every page" this variant exists for. */
+.section--light .faq__list:not(.faq__list--cards) .faq-item summary::after {
+  color: var(--color-logo-black);
+}
+
+/* The price box stays a DARK elevated surface inside its light section (it is
+   the page's one lifted panel, and its own white-alpha type/ticks are already
+   correct for that). Nothing to override — noted so it doesn't look like an
+   omission. */
+
+/* ---- Pixel seam at every section boundary + before the footer -------------
+   docs/page-conventions.md §4.4, client 2026-07-31: every page ends with the
+   pixel dissolve just above the footer. js/pixel-transition.js is generic (it
+   discovers every [data-pixel-seam]); only the CSS has to be repeated, because
+   the original lives in page-home.css, which no other page loads. These are
+   that file's rules trimmed to what one seam needs — keep them in sync if the
+   homepage's version changes.
+
+   Tile colour = the background of the section ABOVE the seam, so the outgoing
+   section is what pixelates away: the default (--color-bg, black) on a
+   dark -> light boundary, `.pixel-seam--white` on a light -> dark one. With the
+   alternation above, that means the two modifiers simply take turns down the
+   page (see the markup).
+
+   JS-only-ever-enhances: the div is empty in the markup, the script bails under
+   prefers-reduced-motion, and the footer's reserved padding is real layout
+   either way — with no JS you get a slightly airier footer top, nothing else. */
+
+.pixel-seam {
+  position: relative;
+  z-index: 2;
+  height: 0;
+  overflow: visible;
+}
+
+.pixel-seam__band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 200px;
+  display: grid;
+  /* Column/row counts and the shared tile size are set inline by
+     js/pixel-transition.js after measuring the band — the same pixel value on
+     both axes is what guarantees square cells at any viewport width. The
+     fallbacks only matter if that measurement fails. */
+  grid-template-columns: repeat(var(--pixel-cols, 10), var(--pixel-tile-size, 24px));
+  grid-template-rows: repeat(var(--pixel-rows, 3), var(--pixel-tile-size, 24px));
+  pointer-events: none;
+  /* Clips the partial last column: the script deliberately over-covers
+     (Math.ceil) so no bare strip is left, and without this the overshoot
+     escapes the viewport and gives the whole page horizontal scroll. */
+  overflow: hidden;
+}
+
+.pixel-seam__tile {
+  background-color: var(--pixel-tile-color, var(--color-bg));
+  opacity: 1;
+  transition: opacity 0.5s var(--easing-standard);
+}
+
+.pixel-seam__tile.is-revealed {
+  opacity: 0;
+}
+
+/* White tiles, for a light -> dark boundary. Pure --color-white, matching the
+   light sections above exactly: #FAFAFA here would read as a greyish second
+   white against a real white edge (the mistake the homepage already made once). */
+.pixel-seam--white {
+  --pixel-tile-color: var(--color-white);
+}
+
+/* Every element that FOLLOWS a seam reserves the band's height as extra
+   padding, so the covered zone always lands in empty space and no real content
+   is ever underneath a tile — with or without JS, since this is real layout.
+   Keep all three in sync with .pixel-seam__band's height above.
+   The form section is `.conversion`, not `.section`, and its padding lives on
+   its inner panel — hence its own rule. */
+.pixel-seam + .section {
+  padding-top: calc(var(--space-9) + 200px);
+}
+
+.pixel-seam + .conversion {
+  padding-top: 200px;
+}
+
+.pixel-seam + .site-footer {
+  padding-top: calc(var(--space-9) + 200px);
+}
+
+@media (max-width: 767.98px) {
+  .pixel-seam__band {
+    height: 120px;
+  }
+
+  .pixel-seam + .section {
+    padding-top: calc(var(--space-9) + 120px);
+  }
+
+  .pixel-seam + .conversion {
+    padding-top: 120px;
+  }
+
+  .pixel-seam + .site-footer {
+    padding-top: calc(var(--space-9) + 120px);
+  }
+}
+
+/* ---- Phone pass (built responsive from the start, 2026-08-03) -------------
+   The homepage's mobile pass had to be retrofitted section by section; this
+   template is measured at 390px as it is built instead (see CLAUDE.md
+   "Measuring mobile" for the harness). Everything above is mobile-first, so
+   only these adjustments are phone-specific. */
+@media (max-width: 767.98px) {
+  /* --content-inset's 48px floor is too large for a phone; the homepage and
+     /kontakt/ both drop to --space-2 at this breakpoint (≈20–24px edge-to-text
+     with the container padding), so this template does too. Same additive
+     calc() as the base rule, for the same reason. */
+  main > .breadcrumbs,
+  main > section > .container {
+    padding-inline: calc(var(--container-padding) + var(--space-2));
+  }
+
+  .service-hero {
+    padding-block: var(--space-6) var(--space-8);
+  }
+
+  /* A 3:2 photo cropped to a phone's tall hero keeps only a narrow vertical
+     slice, so the crop moves right to hold the guard and the vehicle rather than
+     the empty road on the left. Same tuning the homepage hero does on a phone. */
+  .service-hero__bg img {
+    object-position: 62% 45%;
+  }
+
+  /* The desktop wash is a LEFT-side gradient, which works because the copy sits
+     in the left half. On a phone the copy spans the full width and lands right on
+     the two brightest things in the frame — the guard's shirt and the white
+     vehicle — so a horizontal gradient leaves the lede at roughly white-on-light-
+     grey. Replaced with a vertical wash, same call the homepage hero makes at this
+     breakpoint. */
+  .service-hero__bg::after {
+    background-image: linear-gradient(
+      to bottom,
+      rgb(1 1 1 / 0.82) 0%,
+      rgb(1 1 1 / 0.74) 45%,
+      rgb(1 1 1 / 0.86) 100%
+    );
+  }
+
+  /* Both hero CTAs full width and stacked: at 390px the blue pill plus the
+     phone pill do not fit one row, and a wrapped row leaves a ragged gap. */
+  .service-hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+  .service-hero__actions .btn {
+    width: 100%;
+    /* .btn sets white-space: nowrap; the German CTA label needs to wrap at
+       this width rather than overflow. */
+    white-space: normal;
+  }
+
+  /* On a phone the homepage sets the trust row apart as its own compact band
+     (hairline, not a card) and drops the seals to 2rem to match the shorter
+     rating pill. Same values here. */
+  .service-hero__trust {
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 1px solid rgb(255 255 255 / 0.14);
+    gap: var(--space-3);
+  }
+
+  .service-hero__seal {
+    height: 2rem;
+  }
+
+  /* German compounds in a narrow measure: base.css sets hyphens:auto on p/li,
+     which is right for running copy but fires on nearly every line of these
+     short, centred-ish blocks ("Pforten-dienst", "Kontroll-gänge"). The real
+     overflow guard is overflow-wrap: break-word, already sitewide. */
+  .service-hero__point,
+  .service-scope__list li,
+  .service-konzept__list li,
+  .service-price__factors li,
+  .service-contact__certs-list li {
+    -webkit-hyphens: none;
+    hyphens: none;
+    /* `anywhere`, not base.css's `break-word`: these items sit in flex/grid
+       containers, whose automatic minimum size is the content's min-content
+       width — and break-word does NOT reduce that, so one unbreakable German
+       compound ("Fremdfirmen-Koordination") set the whole column's minimum and
+       produced 25px of real horizontal page scroll at 360px. `anywhere` is the
+       one value that also shrinks min-content. Same fix as the homepage's
+       services list. */
+    overflow-wrap: anywhere;
+  }
+
+  /* Grid/flex children default to min-width: auto, which lets a long word push
+     the track wider than its share. The decision strip is the measured case:
+     16px of horizontal page scroll at 360px, because its text column could not
+     shrink below the longest word (this pass also turns hyphenation off for that
+     paragraph, which is what removed the last break opportunity). */
+  .service-price__layout > *,
+  .service-contact__layout > *,
+  .service-scope__groups > *,
+  .service-decision > *,
+  .service-compare__panels > * {
+    min-width: 0;
+  }
+
+  .service-decision__text,
+  .service-decision__heading {
+    overflow-wrap: anywhere;
+  }
+
+  .service-konzept__list li,
+  .service-highlight > p {
+    font-size: var(--font-size-sm);
+  }
+
+  /* 44px minimum touch target for every link that is a row of its own. The two
+     inline links inside sentences are handled by the lead form's own rule
+     (css/lead-form.css). */
+  .service-related__link {
+    min-height: 44px;
+  }
+  /* .service-contact__links no longer exists — the contact rows became
+     .service-contact__action, and the phone pill is already past 44px from its own
+     padding; the mail action gets it here. */
+  .service-contact__action--mail,
+  .service-link {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+  }
+
+  /* .service-price__box's own base padding is already --space-5 (24px, the
+     brief's phone value) and the 640px query steps it to 36px — nothing to
+     restate here. */
+  .service-highlight {
+    padding: var(--space-5);
+  }
+
+  /* .btn is white-space: nowrap, so this label's min-content width is the whole
+     string plus the arrow and 2x --space-5 of padding: ~325px against the 272px
+     the card's inner width gives at 360px, i.e. 9px of real horizontal page
+     scroll (measured). Letting it wrap and taking the full card width is the same
+     fix the hero CTAs use at this breakpoint — and on a phone a full-width button
+     reads as intentional rather than as a button that nearly fits. */
+  .service-price__cta {
+    /* width, not align-self: the card is a block container, so align-self does
+       nothing there — measured, the button kept its content width and broke out
+       past the card's right padding while the left side still had it. */
+    width: 100%;
+    justify-content: center;
+    white-space: normal;
+  }
 }

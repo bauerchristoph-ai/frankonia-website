@@ -133,6 +133,26 @@
     },
   };
 
+  // ---- Coverage region (client 2026-08-03) ----
+  // A soft area behind the city polygons, so the map says "we cover this whole
+  // region", not just "we cover these ten dots".
+  //
+  // First built as an L.circle of 100 km around Bamberg. Replaced the same day
+  // at the client's request — "que no sea un círculo, que sea más irregular
+  // como si fuese un país en el mapa" — with the REAL administrative outline of
+  // Franconia: Ober-, Mittel- and Unterfranken, the three Regierungsbezirke.
+  // That is a genuine border rather than a drawn shape, it reads as a region on
+  // a map, and it matches the copy this section already carries ("In ganz
+  // Franken und Bayern"). All ten coverage cities fall inside it — verified by
+  // point-in-polygon against this exact file, not assumed.
+  //
+  // The file was fetched ONCE from Nominatim during this build (same rule as
+  // the city boundaries: never at runtime) and heavily simplified before being
+  // committed — 2.2 MB raw → 8 KB, via Douglas-Peucker at ~1.3 km tolerance
+  // plus 3-decimal coordinates. It is a background wash at zoom 8–9, so that
+  // precision is far more than it needs; do not re-export it at full detail.
+  const REGION_BOUNDARY_URL = "/assets/data/coverage-boundaries/franken.geojson";
+
   const map = L.map(mapEl, {
     // Scroll-wheel zoom is off on purpose — an embedded map that hijacks
     // page scroll on hover is a common source of visitor frustration;
@@ -230,6 +250,34 @@
       });
   }
 
+  // The Franconia outline. Cached in its own variable rather than in
+  // boundaryCache, which is keyed by city id — this is not a city.
+  //
+  // NEVER REJECTS. The region is a decorative wash: if it 404s or the network
+  // drops, the ten city boundaries — the real content of this map — still have
+  // to draw. So a failure resolves to null and drawAllBoundaries() simply omits
+  // the layer, instead of taking the whole "All" view down with it.
+  let regionGeojson = null;
+  let regionRequested = false;
+  function loadRegion() {
+    if (regionRequested) return Promise.resolve(regionGeojson);
+    regionRequested = true;
+    return fetch(REGION_BOUNDARY_URL)
+      .then((res) => {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
+      .then((geojson) => {
+        regionGeojson = geojson;
+        return geojson;
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.warn("Coverage region unavailable:", err);
+        return null;
+      });
+  }
+
   // Fetches every real city's boundary in parallel (each still goes
   // through loadBoundary()/boundaryCache above, so re-selecting "All"
   // after visiting individual cities — or a second time at all — never
@@ -292,7 +340,40 @@
       })
     );
 
-    currentBoundaryLayer = L.featureGroup(layers).addTo(map);
+    // The region outline goes FIRST in the group so it paints underneath the
+    // city polygons (Leaflet's SVG renderer draws in add order) — the cities
+    // have to stay the sharpest thing on the map. Same brand blue at a third of
+    // their fill opacity and a dashed hairline, so it reads as "the area we
+    // serve" rather than as one more city.
+    //
+    // interactive: false is not cosmetic: this shape covers every marker in
+    // Franconia, and without it the shape would swallow their clicks.
+    //
+    // regionGeojson can be null — see loadRegion(): a failed fetch must not
+    // take the ten city boundaries down with it, so the region is optional and
+    // the map simply renders without the wash.
+    //
+    // Only the "All" view builds it, and it lives inside the same featureGroup,
+    // so selecting a single city removes it along with the rest. That is what
+    // we want: zoomed into one city its edge is off-screen and the fill would
+    // just tint the whole viewport for no reason.
+    const regionLayer = regionGeojson
+      ? L.geoJSON(regionGeojson, {
+          style: {
+            color: "#3D9AD3",
+            weight: 1,
+            opacity: 0.5,
+            dashArray: "6 6",
+            fillColor: "#3D9AD3",
+            fillOpacity: 0.04,
+          },
+          interactive: false,
+        })
+      : null;
+
+    currentBoundaryLayer = L.featureGroup(
+      (regionLayer ? [regionLayer] : []).concat(layers)
+    ).addTo(map);
 
     const bounds = currentBoundaryLayer.getBounds();
     if (!bounds.isValid()) return;
@@ -302,6 +383,10 @@
     // margin around the 10 boundaries pulls them in closer without
     // risking clipping any of them; the padding value only pads the
     // computed bounds, it can't hide part of a polygon.
+    // Since 2026-08-03 the radius ring is in this group too, so it is the ring
+    // — wider than the city spread — that sets the bounds. The view is
+    // therefore a little further out than before, on purpose: the whole
+    // circle has to be in frame for it to communicate anything.
     if (reducedMotion) {
       map.fitBounds(bounds, { padding: [12, 12], animate: false, maxZoom: ALL_MAX_ZOOM });
     } else {
@@ -317,11 +402,14 @@
     if (overlayCityEl) overlayCityEl.textContent = document.documentElement.lang === "de" ? "Alle Städte" : "All Cities";
     mapEl.classList.add("is-loading");
 
-    loadAllBoundaries()
-      .then((entries) => {
+    // The region rides along in the same wait, so the wash and the city
+    // outlines appear together instead of the region popping in late. It can
+    // never reject (see loadRegion), so it cannot break this chain.
+    Promise.all([loadAllBoundaries(), loadRegion()])
+      .then((results) => {
         if (requestId !== activeRequestId) return; // a newer click already won
         mapEl.classList.remove("is-loading");
-        drawAllBoundaries(entries);
+        drawAllBoundaries(results[0]);
       })
       .catch((err) => {
         if (requestId !== activeRequestId) return;

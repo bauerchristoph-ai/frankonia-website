@@ -66,7 +66,7 @@
      so "Less Effort. More Control." reads the same size as e.g. "Our Services"
      (client 2026-07-26). Was --font-size-3xl (maxed ~3.06rem, visibly smaller
      than main h2's 3.75rem). Keep in sync with `main h2`. */
-  --sys-fs-intro-title:        clamp(1.375rem, 0.4rem + 3.7vw, 3.75rem);
+  --sys-fs-intro-title:        clamp(2rem, 0.4rem + 3.7vw, 3.75rem);
   --sys-fs-desc:               var(--font-size-base);
   --sys-fs-point:              var(--font-size-sm);
   --sys-fs-visual-label:       var(--font-size-sm);
@@ -118,8 +118,26 @@
      stays visible above the current one. All knobs — tune freely after a
      visual check; they trade off "how many titles peek" vs "how much of the
      active card fits" (6 tall cards is a tight vertical budget). */
-  --sys-stack-top:             16.5rem;   /* cards sit just below the (header-cleared) 2-line title (client 2026-07-27); +1.5rem 2026-07-29 to follow the title's extra top padding */
-  --sys-stack-peek:            5.75rem;   /* downward offset of the front (active) card vs the one behind — bumped 2026-07-29 for clearer separation so the behind card's title strip never touches the active card's content */
+  /* HOW THE TWO ROWS SIT (read this before touching either value):
+       back row  top = --sys-stack-top + 1rem
+       front row top = --sys-stack-top + --sys-stack-peek
+     so the VISIBLE peek strip — the sliver of the behind card above the front
+     one — is (peek - 1rem), and only --sys-stack-peek controls it.
+     --sys-stack-top places the pair as a whole under the intro band.
+     The SUM of the two is what --sys-stack-card-h subtracts from 100svh, so the
+     front row always bottoms out at 100svh + 4px. Change one, change the other.
+     */
+  /* --sys-stack-top was raised to clear the "Unser System" eyebrow added above
+     the H2 on 2026-08-03; that part still holds and is why the sum is not back
+     to the pre-August 22.25rem.
+     --sys-stack-peek went 5.75rem → 7.75rem in that same pass, purely to show
+     the client draft's TWO-LINE titles (a 76px strip cut them in half). Back to
+     5.75rem on 2026-08-04: the titles are one line again and the client read the
+     extra 32px as a gap ("quedó mucho espacio, tienen que estar un poco más
+     arriba"). Visible strip is 76px again — the value the one-line design was
+     fitted to. Sum 24rem → 22rem, so card-h gained the same 2rem below. */
+  --sys-stack-top:             16.25rem;  /* places both rows under the eyebrow + H2 band */
+  --sys-stack-peek:            5.75rem;   /* front row's drop vs the back row — minus 1rem, this IS the visible peek strip (76px) */
   --sys-stack-gap:             8svh;      /* (legacy) */
   --sys-stack-card-w:          min(92vw, 760px);
   --sys-stack-img-aspect:      16 / 7;    /* image (bottom of card) shape */
@@ -128,7 +146,11 @@
      Clamped so it also fits shorter viewports. */
   /* A touch less tall (client 2026-07-27) so the full title shows and the image
      — a fixed 48% of this height — covers ~half the card with little empty gap. */
-  --sys-stack-card-h:          min(34rem, calc(100svh - 22rem));
+  /* Kept in lockstep with --sys-stack-top + --sys-stack-peek (22rem): this is
+     what makes the front row bottom out at 100svh + 4px on every viewport
+     height, so the card's bottom-anchored copy can never fall below the fold.
+     Change one, change the other — it is always (sum - 0.25rem). */
+  --sys-stack-card-h:          min(34rem, calc(100svh - 21.75rem));
   /* Room AFTER the last card so card 6 can fully reach its stacked position and
      hold there. It must be LARGER than a card's height (~55-60svh) — otherwise
      the stack's bottom edge clips card 6 before it settles, and the last card
@@ -163,34 +185,19 @@
   padding-top: var(--space-9);
 }
 
+/* MOBILE — the six cards are a horizontal swipe carousel below 768px, NOT a
+   vertical stack. See section 4 at the bottom of this file for the whole block;
+   only the section/intro rhythm lives here. (Superseded 2026-08-03: the
+   "52svh stacked cards" pass of 2026-07-30 that used to sit here.) */
 @media (max-width: 767.98px) {
   .system-story {
     padding-top: var(--space-9);
+    /* The stack's own padding-bottom used to close the section; the carousel
+       strip has none (it would sit inside the scroller), so the section owns it
+       now — and it must not depend on the injected progress line existing. */
+    padding-bottom: var(--sys-space-8);
   }
-
-  /* MOBILE (2026-07-30) — six stacked cards at the desktop 70svh ran the section
-     to ~4000px, nearly five phone screens for one section, and 70svh cards left
-     the reader scrolling a single card at a time with no sense of the sequence.
-     52svh keeps each card comfortably image-led while showing the top of the next
-     one, which is what makes a stack read as a stack. Saves ~900px.
-     aspect-ratio is dropped: with an explicit height it only fought the width and
-     never resolved to anything on a phone. */
-  .system-story {
-    --sys-card-width: min(100%, 34rem);
-    --sys-card-height: 52svh;
-  }
-  .system-story__card { aspect-ratio: auto; }
-  .system-story__cards { gap: var(--sys-space-4); }
-  /* Tighter internal padding — 28px all round on a ~350px card is a lot of the
-     card spent on air. */
-  .system-story__body { padding: var(--sys-space-5) var(--sys-space-4); }
   .system-story__intro { padding: var(--sys-space-6) var(--sys-space-4) var(--sys-space-4); }
-}
-
-/* Short phones (SE-class): 52svh of a 667px viewport is only ~347px, which the
-   title + three bullets start to crowd. Give it a floor. */
-@media (max-width: 767.98px) and (max-height: 700px) {
-  .system-story { --sys-card-height: 22rem; }
 }
 
 .system-story__track { position: relative; }
@@ -203,13 +210,18 @@
   text-align: center;
 }
 
+/* First rendered 2026-08-03 — this rule pre-dated the markup that uses it, and
+   its colour was wrong for the section it lives on: --sys-color-accent is
+   --color-blue-light, ~2.6:1 on white, under the 4.5:1 minimum for small text.
+   The on-light blue this file already defines for exactly this case is the
+   right one (same substitution as the mobile counter). */
 .system-story__eyebrow {
-  margin: 0 0 var(--sys-space-3);
+  margin: 0 0 var(--sys-space-2);
   font-size: var(--sys-fs-eyebrow);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   font-weight: var(--sys-fw-medium);
-  color: var(--sys-color-accent);
+  color: var(--sys-color-accent-ink);
 }
 
 .system-story__intro-title {
@@ -223,6 +235,10 @@
      (--font-family-base via --sys-font). */
   font-weight: var(--sys-fw-regular);
   color: var(--sys-color-ink);
+  /* Same reason as the enhanced copy of this rule: the draft's H2 is 67 chars,
+     so on a phone it is three lines and `balance` keeps them even instead of
+     leaving a two-word last line. */
+  text-wrap: balance;
 }
 
 .system-story__lede {
@@ -287,9 +303,13 @@
   filter: blur(2px) brightness(0.3) saturate(0.55);
 }
 /* Was display:none, which also snapped — display is not animatable either.
-   Fading out keeps the same result (the bullets are absolutely positioned in the
-   body, so they reserve no space) and it eases with everything else. */
-.system-story__card.is-behind .system-story__points {
+   Fading out keeps the same result (the copy sits inside the absolutely
+   positioned body, so it reserves no space) and it eases with everything else.
+   .system-story__desc is listed alongside .__points because the card's body copy
+   became a paragraph on 2026-08-03; the list selector is kept so the rule still
+   holds if a card ever carries a list again. */
+.system-story__card.is-behind .system-story__points,
+.system-story__card.is-behind .system-story__desc {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.4s var(--easing-premium, ease), visibility 0s linear 0.4s;
@@ -391,7 +411,11 @@
     linear-gradient(to bottom, rgb(0 0 0 / 0.8) 0%, rgb(0 0 0 / 0.42) 20%, rgb(0 0 0 / 0) 44%),
     /* Bottom: a stronger, LOCALIZED readability zone behind the bullets (client
        2026-07-29) — transparent through the middle, darkening toward the bottom,
-       darkest behind the list. Not a uniform dark wash. */
+       darkest behind the list. Not a uniform dark wash.
+       (Raised to 32/58/100 at 0.45/0.85 on 2026-08-03 for the draft's five-line
+       paragraph; back to these stops 2026-08-04 with the 3-item list, which
+       reaches far less of the way up the photo and does not need the extra
+       darkening — it only cost visible image.) */
     linear-gradient(to bottom, rgb(0 0 0 / 0) 42%, rgb(0 0 0 / 0.35) 62%, rgb(0 0 0 / 0.78) 100%);
 }
 
@@ -430,6 +454,12 @@
   /* Reduced (client 2026-07-27) so the (now shorter) titles fit on ONE line in
      the narrower 3-column cards — German compound words are long. Nudged up a
      touch 2026-07-29 (client: "un poquito más grandes"). */
+  /* Capped 1.7rem -> 1.5rem on 2026-08-03 for the client draft's own long
+     titles, then RESTORED to 1.7rem 2026-08-04 (client: the titles go back to
+     the short one-line set they were before that pass). The cap is only
+     load-bearing while a title can wrap — the longest one now is
+     "3. Zuverlässige Teams" (21 chars), which is one line at 1.7rem across the
+     whole enhanced range. Re-measure if a longer title is ever introduced. */
   font-size: clamp(1.35rem, 1.1rem + 0.7vw, 1.7rem);
   line-height: var(--sys-lh-tight);
   letter-spacing: -0.01em;
@@ -437,15 +467,21 @@
   color: #fff;
 }
 
+/* The card's body copy — since 2026-08-03 this is the client draft's own two
+   sentences per card, and it replaced the 3-bullet list. It therefore sits
+   OVER the photo (the bullets' old spot), not on a light panel: the
+   --sys-color-ink-soft it used to carry was a leftover from the white-panel
+   card and would have been dark-grey on a dark photo. */
 .system-story__desc {
   margin: 0;
-  /* Same size as the white list items below (client 2026-07-27) — was
-     --sys-fs-desc (1rem), now matches --sys-fs-point. */
   font-size: var(--sys-fs-point);
-  line-height: var(--sys-lh-normal);
-  color: var(--sys-color-ink-soft);
-  /* Full body width — no early wrap (client 2026-07-27; was max-width: 46ch). */
-  /* No mid-word hyphenation ("informa-tion") — override base.css's hyphens:auto. */
+  line-height: 1.45;
+  color: rgb(255 255 255 / 0.92);
+  /* A paragraph over a photo is the hardest thing on this card to read; a
+     measure keeps the lines short even though the body is full-width. */
+  max-width: 34ch;
+  /* No mid-word hyphenation ("Sicherheits-montur") — override base.css's
+     hyphens:auto, which fires on nearly every line of German column copy. */
   -webkit-hyphens: none;
   hyphens: none;
 }
@@ -559,16 +595,31 @@
      which was cutting off the title's first line (client 2026-07-27). Bumped a
      bit 2026-07-29 (client: "más padding top, un poco más") — --sys-stack-top
      was raised by the same amount so the title-to-cards gap stays the same. */
-  padding: 7rem var(--sys-space-6) var(--sys-space-4);
+  /* 5.5rem = 88px, against a measured 80px sticky header — the eyebrow is the
+     first thing in this band now, so this is the floor, not a round number.
+     (7rem while the title was one short line; 6rem when the draft's two-line H2
+     replaced it; 5.5rem once the eyebrow was added above it.) */
+  padding: 5.5rem var(--sys-space-6) var(--sys-space-4);
   pointer-events: none;
 }
+/* The intro is a flex column here with its own gap, so the eyebrow's margin
+   would stack on top of it. The base (non-enhanced) intro is not flex and still
+   needs the margin — hence the override rather than a changed base value. */
+.system-story--enhanced .system-story__eyebrow { margin-bottom: 0; }
 .system-story--enhanced .system-story__intro-title {
   /* Same size as the homepage's standard section title ("main h2"). Keep in
      sync with main h2. Centred now, not left-aligned. */
-  font-size: clamp(1.375rem, 0.4rem + 3.7vw, 3.75rem);
+  font-size: clamp(2rem, 0.4rem + 3.7vw, 3.75rem);
   line-height: 1.05;
   text-align: center;
-  max-width: 20ch;
+  /* 20ch was cut for "So funktioniert unser System." (28 chars → 2 lines). The
+     client draft's own H2 is 67 chars, which at 20ch fell to FOUR lines and ran
+     straight into the card stack (--sys-stack-top only clears two). 30ch breaks
+     it at its second comma — "Weniger Aufwand, mehr Sicherheit," /
+     "durch ein klar definiertes System" — and `balance` keeps the two lines
+     even instead of leaving a short widow if the copy is ever edited. */
+  max-width: 30ch;
+  text-wrap: balance;
   margin-inline: auto;
   transform-origin: 50% 50%;
 }
@@ -609,6 +660,13 @@
   transform-origin: 50% 50%;
   backface-visibility: hidden;
 }
+
+/* (2026-08-03 added a narrower card-fitted title clamp here — ~18.5px at 1024
+   rising to 24px — because the client draft's 54-character titles ran to three
+   lines in a 28%-wide card and the last line hid under the front card. Removed
+   2026-08-04 with those titles: the short set is one line at the base clamp at
+   every enhanced width, so a second clamp would only have shrunk them for no
+   reason. Reinstate it, measured, if long titles ever come back.) */
 
 .system-story--enhanced .system-story__card-inner {
   /* Downward drop shadow + a soft shadow ABOVE the top edge, so each front card
@@ -717,3 +775,110 @@
 /* (The per-card position:sticky block was removed 2026-07-27 — it peeled at the
    end. The pinned sticky-STAGE version above (.system-story--enhanced) handles
    the desktop layout + peek-stack now, releasing the whole stack as one unit.) */
+
+/* ---------------------------------------------------------------------------
+   4. MOBILE CAROUSEL  (<= 767.98px, client 2026-08-03)
+
+   Six full-bleed image cards stacked vertically ran ~3100px on a phone — five
+   screens of the same shape, repeated. The same six cards are now one horizontal
+   swipe strip: one card in frame with the next peeking.
+
+   THE STRIP MECHANICS LIVE IN css/swipe-carousel.css — they were extracted there
+   2026-08-04, when the Social reel and the References testimonials were asked to
+   work the same way. `data-swipe-carousel` on .system-story__stack (see
+   pages/index.html) is what turns them on; what stays here is only what is
+   specific to THESE cards. Retune the strip itself (card width, edge, gap) in
+   that file or via its --swipe-* variables, not by re-adding overflow rules here.
+
+   DESKTOP IS UNTOUCHED: every selector here is inside this media query, and the
+   pinned peek-stack (.system-story--enhanced, >=1024px) never sees it. These
+   selectors are two-level (.system-story .system-story__x) on purpose — they
+   have to outrank the `max-width: 1023.98px` de-enhance block above, which is
+   also two-level and also matches phone widths.
+   --------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+  /* Width/snap come from [data-swipe-carousel] > *; this is the card's SHAPE.
+     A controlled 4/5 instead of the source images' very tall portrait: ~419px on
+     a 390px phone, roughly one third of what the old stack spent per card.
+     max-height keeps a short-and-wide viewport from ever handing one card the
+     whole screen. */
+  .system-story .system-story__card {
+    height: auto;
+    aspect-ratio: 4 / 5;
+    max-height: 68svh;
+  }
+  .system-story .system-story__card-inner {
+    box-shadow: 0 12px 30px -20px rgb(1 1 1 / 0.55);
+  }
+
+  /* Title strong but not oversized; bullets clearly a step below it. */
+  .system-story .system-story__title {
+    font-size: clamp(1.1rem, 0.92rem + 0.95vw, 1.4rem);
+  }
+  .system-story .system-story__body {
+    padding: var(--sys-space-5) var(--sys-space-4);
+  }
+  .system-story .system-story__points {
+    gap: 0.35rem;
+    /* Short measure: full-width lines over a photo are the hardest thing to
+       read on this card. */
+    max-width: 32ch;
+  }
+  /* Same reasoning for the paragraph that replaced the bullets (2026-08-03);
+     the desktop 34ch would otherwise run the full width of an 86vw card. */
+  .system-story .system-story__desc {
+    max-width: 32ch;
+  }
+
+  /* The "01 / 06" counter and the progress line are .swipe-bar / .swipe-progress
+     now (css/swipe-carousel.css) — one appearance shared by all three strips on
+     this page, instead of a .system-story__c* copy per section. */
+
+  /* ---- PINNED mode (client 2026-08-04): the section holds while the vertical
+     gesture spends itself on the six cards. `.system-story--pinned` is added by
+     js/system-story.js only, and only with motion allowed — see that branch's
+     comment for the whole rationale, including why this is sticky-over-a-track
+     rather than an intercepted gesture.
+
+     Two-level selectors beat [data-swipe-carousel] (0,1,0) in
+     css/swipe-carousel.css no matter which file loads last, which is what lets
+     this switch the strip from a native scroller to a scripted one. */
+  .system-story--pinned .system-story__track {
+    /* height comes from JS: one viewport + the strip's own scroll width. */
+    position: relative;
+  }
+
+  .system-story--pinned .system-story__stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* The stage is the frame the cards slide through; nothing may spill out of
+       it while the section is held. */
+    overflow: hidden;
+  }
+
+  .system-story--pinned .system-story__stack {
+    /* The vertical gesture is the only input now: the finger and the scrub would
+       otherwise write scrollLeft on the same frames and fight. Still
+       programmatically scrollable — overflow:hidden only removes the USER's
+       direct scrolling, which is the point. */
+    overflow-x: hidden;
+    /* Mandatory snap against a scrubbed scrollLeft oscillates: the scrub sets a
+       position mid-card, snap drags it to the nearest edge, the next frame sets
+       it back. The scroll position is driven, so it needs no snapping. */
+    scroll-snap-type: none;
+  }
+
+  /* The whole composition — title, counter, card, progress line — has to fit the
+     100svh stage, so the card gives up some height here (68svh would leave the
+     progress line off-screen on a 667px phone). */
+  .system-story--pinned .system-story__card {
+    max-height: 52svh;
+  }
+  .system-story--pinned .system-story__intro {
+    padding-block: var(--sys-space-4) var(--sys-space-3);
+  }
+}

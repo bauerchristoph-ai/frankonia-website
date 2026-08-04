@@ -1,0 +1,614 @@
+/*
+  /referenzen/ — Referenzen: Kunden, Ergebnisse und Stimmen.
+  Built 2026-08-03 from content-de/"2026-07-27 Webtext 27 Referenzen.docx"
+  (client draft, Stand 24.07.2026, Entwurf für Review/Dirk).
+
+  THIS FILE IS SMALL ON PURPOSE. The page loads, in this order:
+    css/lead-form.css      the closing form (shared since 2026-08-03)
+    css/testimonials.css   the .testimonial card (shared since 2026-08-03)
+    css/page-service.css   the page chassis — see below
+    css/page-referenzen.css
+  page-service.css is not "the Werkschutz stylesheet": it carries the pieces
+  docs/page-conventions.md defines for EVERY page, and they only live there
+  because that was the first page to need them —
+    · the --content-inset rule on both sides (§1),
+    · the oversized regular-weight `main h2` (§2),
+    · the breadcrumb chevron (§3),
+    · the whole .pixel-seam* block and the padding every following section
+      reserves for it (§4.4),
+    · .section--light, which re-declares the tokens for a white section (§8.2),
+    · .service-hero* and .service-link, reused here as-is.
+  docs/build-checklist.md already plans for the city and combo pages to reuse it
+  the same way. Only what is genuinely specific to this page is below.
+
+  SECTION RHYTHM (dark ▪ / light ▫), with a pixel dissolve at each colour change:
+    Hero ▪ → Ergebnisse ▫ → Kundenstimmen ▫ → Kundenlisten ▪ → Case Studies ▫
+    → Trust + Formular ▪ → footer.
+  Ergebnisse and Kundenstimmen are deliberately ONE white area with no seam
+  between them: they are the same chapter (a number and the quote from the
+  customer behind it), exactly as the homepage keeps its results and quotes
+  inside one white .references section. A seam between two white sections would
+  dissolve white over white, i.e. nothing.
+*/
+
+/* ---- Hyphenation ---- */
+/* base.css sets hyphens: auto on p/li — right for running prose, wrong for the
+   short column-set copy this page is made of ("Sicherheits-konzept",
+   "Einspa-rungen"). page-service.css turns it off for its own blocks; these are
+   this page's. docs/page-conventions.md §7. */
+.ref-hero__lead,
+.ref-results__label,
+.ref-marquee__name,
+.ref-case p,
+.ref-cta__memberships {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* ---- 1. Hero ------------------------------------------------------------- */
+/* The service hero, minus the photo column: the draft asks for badge → H1 →
+   subline → CTA + phone → Google widget and specifies no image, and there is no
+   Referenzen photograph in the project. So this is a single content column, and
+   the hero is sized by its own content instead of by a portrait photo's height
+   (the reason .service-hero forces a full first screen at ≥1024px — with no
+   photo that rule would leave a screen-tall band of empty black under the CTA).
+   Everything inside keeps the .hero__* class names, so js/hero-reveal.js
+   animates lead → actions → trust with no per-page JS. */
+.ref-hero__grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.ref-hero__content {
+  max-width: 54rem;
+}
+
+@media (min-width: 1024px) {
+  .ref-hero {
+    /* Comfortable, not full-screen — see above. Overrides .service-hero's own
+       min-height: calc(100svh - 8rem). */
+    min-height: 0;
+    padding-block: var(--space-8) var(--space-9);
+  }
+
+  .ref-hero__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* The draft's hero Badge. It used to lean on `.service-hero__badge` in the
+   chassis, but those rules were deleted 2026-08-03 when the client dropped the
+   certification chip from the service hero — so the values live here now,
+   unchanged from that rule, and this page no longer depends on a chip the service
+   template does not want. Unlike that one, this badge is a full sentence, so it
+   has to wrap rather than run off a narrow viewport. */
+.ref-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 100%;
+  margin-bottom: var(--space-5);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-bg-subtle);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-align: left;
+}
+
+/* icon-check/icon-shield-check are STROKE icons whose fill/stroke live on the
+   sprite's <g id="icon-defs">, which does NOT propagate through <use> — set them
+   explicitly or it renders as a solid black shape. */
+.ref-hero__badge-icon {
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+  color: var(--color-accent);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+.ref-hero__lead {
+  max-width: 38rem;
+}
+
+/* ---- Centred section intro (Ergebnisse + Kundenstimmen) ------------------ */
+/* Client 2026-08-04: those two titles are centred and their eyebrows are gone.
+   The eyebrows were UI furniture this build added to match the homepage's
+   sections, never copy from the draft, so nothing the client wrote was lost —
+   and the two white sections now open on the heading alone.
+   Only the intro is centred, not the section: the tiles below already centre
+   themselves and the quote cards stay left-aligned inside their own boxes.
+   `.section__intro` is `max-width: none` from the chassis, so the heading has the
+   full column to centre in; `text-wrap: balance` (base.css) keeps the two lines
+   even. The remaining two sections (Kunden, Case Studies) keep their eyebrows and
+   their left alignment — the client scoped this to these two. */
+.ref-intro--center {
+  text-align: center;
+}
+
+/* ---- 2. Ergebnis-Kacheln ------------------------------------------------- */
+/* The same treatment as the homepage's own result stats (.references__results,
+   page-home.css): the shared .stat component, big blue-dark numbers, thin
+   vertical dividers instead of boxed cards. Values are large text (2.5–4.5rem),
+   which needs 3:1 against white, not 4.5:1 — blue-dark clears that comfortably
+   (docs/design-system.md). */
+.ref-results {
+  list-style: none;
+  display: grid;
+  gap: var(--space-6);
+  margin-top: var(--space-7);
+}
+
+.ref-results .stat {
+  align-items: center;
+  text-align: center;
+}
+
+.ref-results .stat__value {
+  font-size: clamp(2.5rem, 1.6rem + 3.5vw, 4.5rem);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-accent-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.ref-results__label {
+  display: block;
+  color: rgb(59 73 86 / 0.75);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+}
+
+/* The customer behind the number. The draft's own instruction for this section
+   is that every tile is read together with that customer's quote ("MORELO →
+   Crispens, Sozialstiftung → Schleier, CleanTech → Keller"), so the company name
+   is the tile's own line — and the three quotes below run in the same order. */
+.ref-results__client {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-logo-black);
+}
+
+@media (min-width: 768px) {
+  .ref-results {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+
+  .ref-results li {
+    padding-inline: var(--space-6);
+    border-inline-start: 1px solid rgb(59 73 86 / 0.2);
+    /* Grid children default to min-width: auto, so "Sicherheitskonzept" could
+       set a track's minimum and push the row past its share. */
+    min-width: 0;
+  }
+
+  .ref-results li:first-child {
+    border-inline-start: none;
+  }
+}
+
+/* ---- 3. Kundenstimmen ---------------------------------------------------- */
+/* No seam above this section (see the rhythm note at the top of this file), so
+   it also does not carry the seam's reserved padding — the two white sections
+   read as one area, and the top padding here is just the gap between the numbers
+   and the quotes. */
+/* A small gap, and a guard. ⚠️ Do NOT set this to 0: with no padding and no
+   border, the first child's top margin collapses THROUGH the section and lands
+   OUTSIDE it — i.e. as a band of the page's black background between two white
+   sections. That was measured as a 16px dark band at 1440px (the eyebrow's own
+   margin) before the eyebrow was removed on 2026-08-04; today's first child is the
+   h2, whose margin is 0, so nothing is escaping right now — but the moment any
+   child with a top margin comes back, `padding-top: 0` would reopen it. */
+.ref-quotes {
+  padding-top: var(--space-4);
+}
+
+.ref-quotes__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
+
+/* Three equal columns, one quote each — the same layout the homepage settled on
+   (client 2026-07-28). Grid's default stretch makes them equal height, and the
+   card's own flex column pushes each rating to the bottom edge. */
+@media (min-width: 768px) {
+  .ref-quotes__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .ref-quotes__grid > * {
+    min-width: 0;
+  }
+}
+
+/* ---- 4. Kundenlisten nach Bereich --------------------------------------- */
+/* ONE auto-scrolling row per Bereich (client 2026-08-03: "quiero una linea para
+   cada uno y que vayan pasando como en la homepage"). This replaced two things
+   that used to be here: the hairline name pills, and a separate static row of
+   logos above them — the rows carry the logos now, so a standalone row would
+   have shown the same marks twice.
+
+   MECHANISM — the homepage's own client-logo marquee, copied because page-home.css
+   is not loaded here (keep the two in sync if that one changes):
+   the row clips and edge-masks, the track animates `translateX(-50%)`, and the
+   track holds N IDENTICAL groups. Each group carries a trailing gap
+   (padding-right) so the shift lands exactly on the next group with no jump.
+   Pure CSS — no JS, so there is nothing to fail.
+
+   ⚠️ HOW MANY GROUPS — two rules, both learned the hard way:
+   1. `-50%` shifts by HALF THE TRACK, so the loop is only seamless while half the
+      track still fills the row. Today: Werk-/Objektschutz has 21 items and one
+      group already overflows the row → 2 groups. Baustellenbewachung is down to 4
+      items → 6 groups. Veranstaltungsschutz is 9 → 4 groups. Get it wrong and a
+      blank gap sweeps through the row (measured: 38px short on Baustellenbewachung
+      and 15px on Veranstaltungsschutz the moment two companies were removed).
+   2. The count must be EVEN. Half of an odd number of groups is a half-group, so
+      the shift would not land on a group boundary and the row would visibly jump.
+      3 groups is never the answer; 4 or 6 is.
+   Both rules mean the counts are not decoration: removing or adding a single
+   company can invalidate them, so re-measure after any roster change.
+
+   The section is dark, which is what these files need: they are white artwork on
+   transparent PNGs, so no filter here (the light sections of /werkschutz/ invert
+   the same files). */
+
+/* ⚠️ `minmax(0, 1fr)` and `min-width: 0` are both load-bearing, not tidiness.
+   A grid item's automatic minimum size is content-based, and the marquee track is
+   4.6–6.6k px of max-content — so with an implicit `auto` column the row grew to
+   the width of its own track and took the whole page with it. Measured before the
+   fix: 5.3k px of horizontal page scroll at 1440px, and every row's loop broken
+   because the row was wider than half the track. Same trap as the German
+   compounds elsewhere on the site, at a different scale. */
+.ref-clients__groups {
+  list-style: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-8);
+  margin-top: var(--space-7);
+}
+
+.ref-clients__group {
+  min-width: 0;
+}
+
+.ref-clients__group-title {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: var(--space-5);
+}
+
+.ref-marquee {
+  overflow: hidden;
+  /* Soft edge fade so a mark dissolves before the column edge instead of being
+     chopped by it. Also the reason the row can sit inside .container without the
+     clip reading as a hard cut. */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
+}
+
+.ref-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: ref-marquee-scroll var(--ref-marquee-duration, 200s) linear infinite;
+}
+
+/* Pausing on hover is the only interaction: it lets someone actually read a mark
+   they recognised instead of chasing it. */
+.ref-marquee:hover .ref-marquee__track {
+  animation-play-state: paused;
+}
+
+.ref-marquee__group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: clamp(2.25rem, 3.5vw, 4rem);
+  padding-right: clamp(2.25rem, 3.5vw, 4rem);
+}
+
+@keyframes ref-marquee-scroll {
+  to { transform: translateX(-50%); }
+}
+
+/* The three rows move at the SAME SPEED, which means three different durations:
+   the duration covers half the track, and half a track is ~3700px on the
+   21-company row against ~1800px on the two short ones. One shared duration would
+   make the long row visibly crawl. ~11px/s, the pace the homepage marquee
+   actually moves at. The middle row runs in reverse so the three do not read as
+   one block sliding sideways, and the two 1800px rows differ slightly so they
+   never sync up. */
+.ref-marquee--objektschutz  { --ref-marquee-duration: 270s; }
+.ref-marquee--baustelle     { --ref-marquee-duration: 180s; }
+.ref-marquee--veranstaltung { --ref-marquee-duration: 245s; }
+
+.ref-marquee--baustelle .ref-marquee__track {
+  animation-direction: reverse;
+}
+
+/* Logos: normalised optically, not by raw height — sized by height alone the wide
+   wordmarks (DB NETZE, Mücke, GNC TCS) dominate and the compact marks (MORELO,
+   Stadt Bamberg, Landkreis Coburg) are unreadable. Cap the wide ones by WIDTH
+   (a max-width on a replaced element recomputes the height, so nothing distorts)
+   and give the compact ones more height. object-fit: contain keeps every one
+   undistorted whichever limit it hits. Same pass the homepage's band needed. */
+.ref-marquee__logo {
+  height: clamp(2rem, 1rem + 1.5vw, 2.75rem);
+  max-width: clamp(7rem, 11vw, 9.5rem);
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.ref-marquee__logo[src*="morelo"],
+.ref-marquee__logo[src*="stadt-bamberg"],
+.ref-marquee__logo[src*="stadt-coburg"],
+.ref-marquee__logo[src*="landkreis-coburg"],
+.ref-marquee__logo[src*="stadtwerke-bamberg"],
+.ref-marquee__logo[src*="sozialstiftung-bamberg"],
+.ref-marquee__logo[src*="buergerspital-bamberg"],
+.ref-marquee__logo[src*="bbc-coburg"],
+.ref-marquee__logo[src*="ibis-bamberg"],
+.ref-marquee__logo[src*="aldi-sued"],
+.ref-marquee__logo[src*="heitec-volleys"],
+.ref-marquee__logo[src*="landkreis-bamberg"],
+.ref-marquee__logo[src*="dach-solar-sg"],
+.ref-marquee__logo[src*="postler"],
+.ref-marquee__logo[src*="cleantech"] {
+  height: clamp(2.75rem, 1.4rem + 1.9vw, 3.5rem);
+}
+
+/* A third tier, for two marks that are not just compact but FINE: the
+   Otto-Friedrich-Universität crest (a detailed round seal) and the
+   Wirtschaftsclub Bamberg wordmark (small type under a line-drawn skyline). Both
+   rendered as an unreadable smudge at the tier above — checked in a screenshot.
+   This sets the row's height, so it is deliberately only these two. */
+.ref-marquee__logo[src*="universitaet-bamberg"],
+.ref-marquee__logo[src*="bayerische-bereitschaftspolizei"],
+.ref-marquee__logo[src*="wirtschaftsclub-bamberg"] {
+  height: clamp(3.25rem, 1.8rem + 2vw, 4.25rem);
+}
+
+/* 3 of the 34 companies have no logo file yet, so they ride the same row as
+   their NAME set in type. Deliberately not a pill and not a heading — a wordmark
+   among wordmarks, one step quieter than a real mark so the logos still lead the
+   row. When a logo arrives it is one <span> → one <img>, nothing else. */
+.ref-marquee__name {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  /* Held back to 0.62: at 0.72 a plain name read BRIGHTER than the real marks
+     beside it (checked in a screenshot), which inverts the hierarchy — the logos
+     are the proof, the names are the companies still waiting for one. */
+  color: rgb(255 255 255 / 0.62);
+}
+
+/* Reduced motion: no marquee. The rows become static wrapped blocks with every
+   company visible — which is also what a no-CSS-animation browser gets, since
+   nothing here is hidden by default. Only the first group is kept; the duplicates
+   exist purely to make the loop seamless. */
+@media (prefers-reduced-motion: reduce) {
+  .ref-marquee {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .ref-marquee__track {
+    animation: none;
+    width: 100%;
+  }
+
+  .ref-marquee__group:not(:first-child) {
+    display: none;
+  }
+
+  /* flex-shrink: 0 on the group is what the marquee needs and what breaks a
+     static wrap: the group keeps its full max-content width inside a narrower row
+     and the row's own overflow: hidden simply cuts it off. The homepage shipped
+     exactly that bug for a while (3 of 8 logos visible at 390px). */
+  .ref-marquee__group {
+    flex-wrap: wrap;
+    flex-shrink: 1;
+    min-width: 0;
+    justify-content: flex-start;
+    padding-right: 0;
+    row-gap: var(--space-5);
+  }
+}
+
+.ref-clients__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
+  margin-top: var(--space-8);
+}
+
+/* ---- 5. Case Studies ---------------------------------------------------- */
+.ref-cases__note {
+  max-width: 42rem;
+  margin-top: var(--space-4);
+  color: var(--color-text-muted);
+}
+
+.ref-cases__grid {
+  list-style: none;
+  display: grid;
+  gap: var(--space-7);
+  margin-top: var(--space-7);
+}
+
+/* Ruled, not carded — the same rule the rest of the site follows (only the price
+   box on a service page is a filled surface). */
+.ref-case {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+.ref-case__eyebrow {
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.ref-case h3 {
+  font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+}
+
+.ref-case p {
+  color: var(--color-text-muted);
+  /* Pushes the link to the card's bottom edge so both links line up even when
+     one summary runs a line longer. */
+  flex: 1 1 auto;
+}
+
+.ref-case .service-link {
+  margin-top: var(--space-2);
+}
+
+@media (min-width: 900px) {
+  .ref-cases__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---- 6. Trust-Abbinder + Formular -------------------------------------- */
+/* The draft makes the closing trust statement and the form ONE section, so the
+   certification proof sits above the form card inside the shared
+   .conversion__panel--form column (css/lead-form.css) rather than becoming a
+   seventh section of its own. Nothing was added below the submit button —
+   docs/page-conventions.md §6. */
+/* The panel is a centred flex COLUMN, so this needs its own width to line up
+   with the form card above/below it instead of shrinking to its content — same
+   max-width as .conversion__form-wrap. */
+.ref-cta__certs {
+  width: 100%;
+  max-width: 38.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-7);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.ref-cta__seals {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.ref-cta__seal {
+  height: 2.75rem;
+  width: auto;
+}
+
+.ref-cta__memberships {
+  max-width: 26rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ---- Phone (built responsive, measured — docs/page-conventions.md §7) --- */
+@media (max-width: 767.98px) {
+  .ref-hero {
+    padding-block: var(--space-6) var(--space-8);
+  }
+
+  /* Both hero CTAs full width and stacked: at 390px the blue pill and the phone
+     pill do not fit one row, and .btn is white-space: nowrap. Same values as the
+     service hero's own mobile rule, which only targets .service-hero__actions. */
+  .ref-hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+  .ref-hero__actions .btn {
+    width: 100%;
+    white-space: normal;
+  }
+
+  .ref-hero__trust {
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 1px solid rgb(255 255 255 / 0.14);
+    gap: var(--space-3);
+  }
+
+  /* One step down on a phone. Both groups have to be restated: the optical
+     normalisation above uses an attribute selector, so a bare `.ref-marquee__logo`
+     here would lose on specificity. */
+  .ref-marquee__logo {
+    height: 1.75rem;
+    max-width: 5.5rem;
+  }
+
+  .ref-marquee__logo[src*="morelo"],
+  .ref-marquee__logo[src*="stadt-bamberg"],
+  .ref-marquee__logo[src*="stadt-coburg"],
+  .ref-marquee__logo[src*="landkreis-coburg"],
+  .ref-marquee__logo[src*="stadtwerke-bamberg"],
+  .ref-marquee__logo[src*="sozialstiftung-bamberg"],
+  .ref-marquee__logo[src*="buergerspital-bamberg"],
+  .ref-marquee__logo[src*="bbc-coburg"],
+  .ref-marquee__logo[src*="ibis-bamberg"],
+  .ref-marquee__logo[src*="aldi-sued"],
+  .ref-marquee__logo[src*="heitec-volleys"],
+  .ref-marquee__logo[src*="landkreis-bamberg"],
+  .ref-marquee__logo[src*="dach-solar-sg"],
+  .ref-marquee__logo[src*="postler"],
+  .ref-marquee__logo[src*="cleantech"] {
+    height: 2.25rem;
+  }
+
+  .ref-marquee__logo[src*="universitaet-bamberg"],
+  .ref-marquee__logo[src*="bayerische-bereitschaftspolizei"],
+  .ref-marquee__logo[src*="wirtschaftsclub-bamberg"] {
+    height: 2.75rem;
+  }
+
+  .ref-marquee__name {
+    font-size: var(--font-size-sm);
+  }
+
+  /* A duration is not a speed: the groups are clamped against vw, so every track
+     is narrower on a phone and the same duration would crawl. Roughly halved to
+     hold the ~11px/s pace — the same correction the homepage's marquee needed
+     below 1024px. */
+  .ref-marquee--objektschutz  { --ref-marquee-duration: 190s; }
+  .ref-marquee--baustelle     { --ref-marquee-duration: 115s; }
+  .ref-marquee--veranstaltung { --ref-marquee-duration: 175s; }
+
+  .ref-results,
+  .ref-quotes__grid,
+  .ref-cases__grid {
+    /* Same min-width: 0 guard as the desktop grids above, for the single-column
+       case. */
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* 44px touch target for every link that is a row of its own (§7). */
+  .ref-clients__links .service-link,
+  .ref-case .service-link {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+  }
+}
