@@ -193,8 +193,8 @@
          normal desktop screen.
 
          DOM ORDER IS intro -> form -> aside, which is the reading order the
-         brief asks for on a phone (badge, H1, copy, FORM, contact options,
-         DEKRA, link). Desktop puts the aside back under the intro with
+         brief asks for on a phone (badge, H1, copy, FORM, contact options).
+         Desktop puts the aside back under the intro with
          grid-template-areas, so neither breakpoint needs `order` and the tab
          order never disagrees with what's on screen. See
          .contact-main__grid in page-contact.css.
@@ -210,11 +210,14 @@
              CSS load-in instead (.contact-intro > *, page-contact.css) — the
              same reasoning as the homepage's load-time hero cascade, minus the
              GSAP dependency. -->
+        <!-- The "Ihr fester Ansprechpartner — 24/7 erreichbar" pill that used to
+             open this column was removed 2026-08-06 (client): the page said 24/7
+             twice, here and in the Highlight-Box further down, and the client
+             chose to keep the lower one. Nothing factual left the page — the box
+             states it in full, and the <title>/meta/LocalBusiness opening hours
+             are untouched. The pill's CSS went with it rather than being left as
+             a dead rule; git has it. -->
         <div class="contact-intro">
-          <p class="contact-intro__badge">
-            <svg class="contact-intro__badge-icon" aria-hidden="true"><use href="#icon-clock"></use></svg>
-            Ihr fester Ansprechpartner — 24/7 erreichbar
-          </p>
           <h1>Kontakt zu FRANKONIA</h1>
           <p class="contact-intro__lead">Rufen Sie an oder schreiben Sie uns — Angebot innerhalb eines Werktages, Beratung kostenfrei.</p>
         </div>
@@ -222,12 +225,20 @@
         <!-- The primary action. Wider column, white card, shadow — the
              strongest object on the page. -->
         <div class="contact-form-card" data-reveal>
-          <!-- <h2>, not <h3>: the H1 is the page title and this is the only
-               other real heading, so h1 -> h3 would skip a level.
+          <!-- Webtext 25 §3 has TWO headings here and the page only ever
+               rendered the second one: an H2 for the section ("Schreiben Sie
+               uns, …") and a "Formulartitel" for the form itself ("Ihre
+               Nachricht an FRANKONIA"). Both are restored 2026-08-05 — the H2
+               as this block's heading, the Formulartitel demoted to <h3> right
+               above the fields, which is also the correct nesting (h1 page →
+               h2 block → h3 form).
                data-no-title-reveal because the card already eases in as one
                unit (data-reveal) — a per-character split on top of that reads
                as two effects fighting. -->
-          <h2 class="contact-form-card__title" data-no-title-reveal>Ihre Nachricht an FRANKONIA</h2>
+          <h2 class="contact-form-card__title" data-no-title-reveal>Schreiben Sie uns, wir melden uns innerhalb eines Werktages</h2>
+          <p class="contact-form-card__lede">Beschreiben Sie kurz Ihr Anliegen: Objekt, Zeitraum, Standort. Alles Weitere klären unsere Sicherheitsexperten mit Ihnen persönlich, kostenfrei und unverbindlich.</p>
+
+          <h3 class="contact-form-card__form-title">Ihre Nachricht an FRANKONIA</h3>
 
           <form class="contact-form" action="#" method="post">
             <div class="form-field">
@@ -258,8 +269,15 @@
                    height in browsers without that support, so it has to be
                    small here too — a CSS min-height alone can only make a
                    5-row box taller, never shorter. -->
+              <!-- The hint that used to sit here ("Objekt, Zeitraum, Standort —
+                   der Rest lässt sich im Gespräch klären.") was written for this
+                   build, not supplied, and it duplicated the doc's own lede now
+                   restored above the form — which says the same three words and
+                   then some. Removed rather than reworded, so the card states it
+                   once. Its id was dead wiring anyway: nothing on the page
+                   carried an aria-describedby pointing at it, so it was never
+                   announced. -->
               <textarea class="form-field__textarea" id="kf-message" name="message" rows="2" required></textarea>
-              <p class="form-field__hint" id="kf-message-hint">Objekt, Zeitraum, Standort — der Rest lässt sich im Gespräch klären.</p>
             </div>
 
             <!-- Honeypot (draft requirement). A real input that a human
@@ -293,9 +311,8 @@
           </form>
         </div>
 
-        <!-- Everything that supports the decision without competing with it:
-             the alternative ways to reach FRANKONIA, the certifications, and
-             one link out. Quieter than both columns above it. -->
+        <!-- The alternative ways to reach FRANKONIA, and since 2026-08-04
+             nothing else: a supporting utility column, not a second pitch. -->
         <div class="contact-aside">
           <!-- data-no-title-reveal: this heading only labels the group for
                assistive tech and is visually hidden, so there is nothing to
@@ -320,8 +337,11 @@
                   <span class="contact-method__value">+49 951 964352-0</span>
                   <!-- Shortened 2026-08-03 (client): the first half of the
                        draft's sentence ("Rund um die Uhr erreichbar, an 365
-                       Tagen im Jahr") repeats the hero badge two blocks above,
-                       so only the part nothing else on the page says is kept —
+                       Tagen im Jahr") repeats the 24/7 claim the Highlight-Box
+                       below this list already makes (it used to point at the
+                       hero badge, removed 2026-08-06 — the reason still holds,
+                       just against a different block), so only the part nothing
+                       else on the page says is kept —
                        the short-notice/urgent hook, which is what converts
                        someone who needs a Brandwache tonight. Full sentence in
                        content-de/2026-07-27 Webtext 25 Kontakt.docx, § 2. -->
@@ -377,24 +397,44 @@
             </li>
           </ul>
 
-          <!-- data-reveal (one unit): the two seals are <img>, which
-               text-reveal.js doesn't touch — without this the caption would
-               ease in while the seals sat there already. -->
-          <div class="contact-cert" data-reveal>
-            <img class="contact-cert__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
-            <img class="contact-cert__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach DIN EN ISO 9001" width="399" height="600" loading="lazy">
-            <p class="contact-cert__text">DEKRA-zertifiziert nach DIN 77200-1 und ISO 9001</p>
+          <!-- Highlight-Box from Webtext 25 §2 ("Aufbau: 3 Kacheln (Telefon,
+               E-Mail, Adresse) + Highlight-Box"). It had never been built — the
+               three Kacheln were, the box was simply missed, so this is a real
+               gap being closed 2026-08-05, not a reversal of anything.
+
+               The doc gives it as one sentence with an em dash in the middle;
+               the dash is the structural break, so the first clause is the
+               heading and the rest is the paragraph. Joining the two back with
+               " — " reproduces the doc line character for character (verified).
+
+               <h3>, not <h2>: it sits inside the .contact-aside group whose own
+               (visually hidden) h2 labels it, so an h2 here would compete with
+               the form block's heading for the same level.
+
+               Colours are the prescribed "on white" set for this light page
+               (docs/page-conventions.md §5): 5%-grey tile, black title,
+               0.75-grey body, and blue-dark for the accent rule — #3D9AD3 does
+               not pass contrast on white. -->
+          <div class="contact-highlight">
+            <h3 class="contact-highlight__title">24/7 erreichbar, weil Sicherheit keinen Feierabend kennt</h3>
+            <p class="contact-highlight__text">Einsatz- und Bereichsleiter sind als direkte Ansprechpartner rund um die Uhr für Sie da: keine Warteschleifen, keine Weiterleitungen.</p>
           </div>
 
-          <!-- One secondary link, not three (client brief). "Direkt ein
-               Angebot anfordern" (/angebot/) duplicates what the form beside
-               it does, and "So entsteht Ihr Sicherheitskonzept"
-               (/sicherheitskonzept/) pulls people away mid-conversion. Both
-               URLs are still asked for by the draft's "Interne Links" line —
-               flagged, not silently lost. -->
-          <p class="contact-links">
-            <a href="/leistungen/">Alle Leistungen im Überblick</a>
-          </p>
+          <!-- REMOVED 2026-08-04 (client brief: the left column "combines
+               introductory content, three contact methods, DEKRA certifications
+               and a secondary services CTA" and competes with the form):
+               - the DEKRA row (both seals + "DEKRA-zertifiziert nach DIN 77200-1
+                 und ISO 9001"). ⚠️ That takes the certification claim OFF this
+                 page entirely — it appeared nowhere else on /kontakt/. It is
+                 still on /werkschutz/ (hero trust band, Ansprechpartner strip,
+                 FAQ), on /referenzen/ and on /jobs/, and the guidelines' §5
+                 minimum is about the homepage, so no rule is broken — but it is a
+                 trust element leaving a page, flagged in the checklist.
+               - the "Alle Leistungen im Überblick" link to /leistungen/. The
+                 draft's "Interne Links" line asks for /leistungen/,
+                 /angebot/ and /sicherheitskonzept/ from this page; none of the
+                 three is linked from here now. Also flagged.
+               Their CSS was deleted, not left dead. -->
         </div>
       </div>
     </section>

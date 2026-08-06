@@ -145,9 +145,14 @@
   color: rgb(59 73 86 / 0.75);
 }
 .conversion__form-alt a {
-  /* Kept blue-dark — #3D9AD3 on white is too low-contrast (client
-     2026-07-28). */
-  color: var(--color-blue-dark);
+  /* MEASURED 2026-08-05: plain blue-dark on this white card is 3.71:1 at 16px,
+     which fails the 4.5:1 for normal text (it only clears the 3:1 non-text
+     minimum). blue-light was worse still at 3.11:1 — that is what the
+     2026-07-28 note was reacting to; it moved in the right direction but not
+     far enough. The deeper mix docs/page-conventions.md §5 prescribes for blue
+     content on a light surface measures 4.88:1 and reads as the same blue —
+     the one .service-related__title and the pain-hook mark already use. */
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
   font-weight: 500;
   white-space: nowrap;
 }
@@ -225,8 +230,14 @@
   color: rgb(59 73 86 / 0.75);
 }
 
+/* The privacy-policy link inside the consent sentence. MEASURED 2026-08-05:
+   --color-accent-strong resolves to blue-light (#3D9AD3), which on this white
+   card is 3.11:1 at 14.8px — a WCAG 1.4.3 failure on the primary conversion
+   element, and washed out enough that the client read the word as MISSING
+   ("Ich habe die gelesen und stimme zu.", Change Request 2.6). The markup was
+   always correct; only the colour was. Same 4.88:1 mix as the phone link above. */
 .conversion__form .form-checkbox__label a {
-  color: var(--color-accent-strong);
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
 }
 
 /* ---- Honeypot ---- */
@@ -325,7 +336,10 @@
      legally required reading. Both earn the extra reach. */
   .conversion__form .form-checkbox__label a,
   .conversion__form-alt a {
-    padding-block: 0.6rem;
+    /* 0.75rem, not 0.6: measured on /werkschutz/ at 390px the privacy link came
+       out 40px with 0.6rem — a 14.1px font gives a ~21px line box, so it needs
+       ~11.5px a side to clear 44. 0.75rem lands it at 45px. */
+    padding-block: 0.75rem;
     /* Without this the padded box is clipped to the line box in some engines. */
     display: inline-block;
   }

@@ -8,10 +8,13 @@
 
      Written for this build, not supplied by the draft (all UI furniture, all
      flagged where they appear):
-       - the section eyebrows (small uppercase labels), matching every other page;
        - the two link labels in the closing "Weiterlesen" section;
        - the form's field labels and the "PDF oder Word" hint on the CV upload.
      The draft names the fields, not their labels.
+     NO SECTION EYEBROWS: the five small uppercase labels (ARBEITGEBER, EINSTIEG,
+     BEWERBUNG, FAQ, WEITERLESEN) were removed 2026-08-05 (client: "saca todos los
+     eyebrows"). Every section now opens on its H2. They were UI furniture, not
+     copy, so nothing the client wrote left the page.
 
      NOT emitted: the draft asks for JobPosting schema "je offener Stelle,
      gepflegt!". There is no vacancy list — no job titles, no datePosted, no
@@ -26,7 +29,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Security Jobs Bamberg: Voll-, Teilzeit &amp; Minijob – FRANKONIA</title>
+  <title>Security Jobs Bamberg &amp; Umland: auch Minijob – FRANKONIA</title>
   <meta name="description" content="Sicherheitsdienst-Jobs bei FRANKONIA: übertarifliche Bezahlung, Dienstplan nach deinen Präferenzen, sicherer Arbeitgeber. Jetzt unverbindlich bewerben.">
   <link rel="canonical" href="https://frankonia-sicherheit.de/jobs/">
   <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/jobs/">
@@ -178,6 +181,15 @@
   <link rel="stylesheet" href="/css/lead-form.css">
   <link rel="stylesheet" href="/css/page-service.css">
   <link rel="stylesheet" href="/css/page-jobs.css">
+  <!-- The shared mobile swipe strip (extracted 2026-08-04 from the homepage's
+       "Unser System" cards, now also driving its Social reel and References
+       testimonials). Used here by the four Arbeitgeber cards below 768px.
+       Linked LAST on purpose — see that file's header: a media query carries no
+       extra specificity, so it has to outrank the single-class desktop rules
+       page-jobs.css sets on the same container. Consequence respected in
+       page-jobs.css: every per-section override of it is two-level
+       (`.jobs-why .jobs-why__grid`). -->
+  <link rel="stylesheet" href="/css/swipe-carousel.css">
 
   <!-- Hero background photo — the page's LCP element: preloaded + eager +
        fetchpriority, same as every other hero on the site.
@@ -206,8 +218,21 @@
   <script src="/js/item-reveal.js" defer></script>
   <script src="/js/text-reveal.js" defer></script>
   <script src="/js/pixel-transition.js" defer></script>
+  <!-- Counter, progress line and keyboard stepping for the swipe strip above —
+       below 768px only. The strip itself is pure CSS (overflow-x + scroll snap)
+       and swipes with this file absent or broken. -->
+  <script src="/js/swipe-carousel.js" defer></script>
+  <!-- The three-step sequence in "In drei Schritten zu deinem neuen Job": one
+       ordered timeline (number, drawn connector, number, …) instead of the shared
+       item cascade. Page-specific, like js/service-flow.js on /werkschutz/ — after
+       GSAP/ScrollTrigger, which it guards for anyway. -->
+  <script src="/js/jobs-steps.js" defer></script>
 </head>
-<body>
+<!-- page-jobs: the hook for this page's own mobile rhythm (the pixel seams and
+     section padding are shared rules in page-service.css, so tightening them for
+     a phone has to be scoped to this page and not to every page that loads it).
+     Same pattern as /kontakt/'s own body class. -->
+<body class="page-jobs">
   <!-- include: icon-sprite -->
   <!-- include: header-de -->
 
@@ -274,6 +299,10 @@
             Du sorgst für die Sicherheit anderer, wir sorgen für übertarifliche Bezahlung, planbare Dienste und einen erreichbaren Arbeitgeber.
           </p>
 
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="#bewerbung">Jetzt unverbindlich bewerben<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </div>
+
           <ul class="hero__reassurance service-hero__points">
             <li class="service-hero__point">
               <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
@@ -289,15 +318,40 @@
             </li>
           </ul>
 
-          <div class="hero__actions service-hero__actions">
-            <a class="btn btn--primary" href="#bewerbung">Jetzt unverbindlich bewerben<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
-          </div>
-
-          <!-- The two real DEKRA seals, no Google rating: this hero's third proof
-               point is "zertifizierter Arbeitgeber", and these are that claim's
-               evidence. The customer rating belongs on the B2B pages. Same
-               component and size as every other hero's trust band. -->
+          <!-- The homepage hero's trust band, element for element (client
+               2026-08-05: "los DEKRA badges como en la hero de la home"): the
+               Google rating pill first, the two real DEKRA seals beside it, same
+               component, same 44px seals, same gaps. It shipped as seals-only on
+               the reasoning that a customer rating belongs on the B2B pages — the
+               client wants the homepage's band here, and 4,7 / 97 is the one
+               client-confirmed number on the site, so it is not a stretch for a
+               recruiting page either ("zertifizierter Arbeitgeber" is this hero's
+               third tick). -->
           <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">4,7</span>
+                <span class="review-card__count">97 Bewertungen</span>
+              </span>
+            </div>
+
             <div class="service-hero__badges">
               <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
               <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
@@ -345,15 +399,24 @@
     <section class="section section--light jobs-why" data-nav-theme="light">
       <div class="container">
         <div class="section__intro">
-          <p class="section-eyebrow">Arbeitgeber</p>
           <h2>Was bei uns anders läuft als bei vielen in der Branche</h2>
         </div>
 
         <!-- data-item-reveal (not data-reveal on the wrapper) so the four cards
              cascade in as a set. The photos are real <img>s inside the revealed
              element, which is why the reveal targets the whole card rather than
-             letting text-reveal.js animate the copy and leave the photo still. -->
-        <ul class="jobs-why__grid" data-item-reveal=".jobs-why__item" data-item-reveal-strong>
+             letting text-reveal.js animate the copy and leave the photo still.
+
+             data-swipe-carousel: below 768px these four become the shared
+             "one card, a peek of the next" swipe strip (css/swipe-carousel.css),
+             the same mechanism as the homepage's System cards, Social reel and
+             testimonials. Stacked vertically they ran 2462px — nearly three
+             phone screens for one section. All four stay real DOM either way, so
+             nothing is hidden from a crawler; the strip is pure CSS scroll-snap
+             and works with the JS absent. -->
+        <ul class="jobs-why__grid" data-swipe-carousel
+            data-swipe-label="Vier Gründe für FRANKONIA als Arbeitgeber, horizontal scrollbar"
+            data-item-reveal=".jobs-why__item" data-item-reveal-strong>
           <li class="jobs-why__item">
             <div class="jobs-why__media">
               <picture>
@@ -426,7 +489,6 @@
     <section class="section jobs-levels">
       <div class="container">
         <div class="section__intro">
-          <p class="section-eyebrow">Einstieg</p>
           <h2>Vom Quereinsteiger bis zur Meisterin: dein Einstieg bei FRANKONIA</h2>
         </div>
 
@@ -495,11 +557,20 @@
     <section class="section section--light jobs-steps" data-nav-theme="light">
       <div class="container">
         <div class="section__intro">
-          <p class="section-eyebrow">Bewerbung</p>
           <h2>In drei Schritten zu deinem neuen Job</h2>
         </div>
 
-        <ol class="jobs-steps__list" data-item-reveal=".jobs-steps__item" data-item-reveal-strong>
+        <!-- data-steps-sequence hands this list to js/jobs-steps.js, which plays
+             it as one ordered timeline (client 2026-08-05): number 1 lands, the
+             connector draws towards 2, 2 lands, draws, 3 lands, then all the copy
+             rises in underneath.
+             The generic hooks are deliberately OFF: data-item-reveal is gone (it
+             cascaded the three steps as cards, which is what this replaces) and
+             data-no-text-reveal stops text-reveal.js from also animating the h3/p
+             — text-reveal only skips a subtree automatically when it sits inside
+             [data-reveal]/[data-item-reveal], and neither is here anymore. Two
+             timelines on one element is what makes a reveal look broken. -->
+        <ol class="jobs-steps__list" data-steps-sequence data-no-text-reveal>
           <li class="jobs-steps__item">
             <span class="jobs-steps__number" aria-hidden="true">1</span>
             <h3>Unverbindlich bewerben</h3>
@@ -529,7 +600,6 @@
     <section class="section section--light jobs-faq" data-nav-theme="light">
       <div class="container">
         <div class="section__intro">
-          <p class="section-eyebrow">FAQ</p>
           <h2>Deine Fragen zum Job bei FRANKONIA</h2>
         </div>
 
@@ -673,7 +743,6 @@
     <section class="section section--light jobs-related" data-nav-theme="light">
       <div class="container">
         <div class="section__intro">
-          <p class="section-eyebrow">Weiterlesen</p>
           <h2>Noch nicht sicher? Lies dich ein</h2>
         </div>
 

@@ -348,6 +348,7 @@ reescribe.
 | Hero | entrada al cargar, no al scrollear | `data-hero-reveal` (ver 4.1) o CSS propio |
 | Pixel seam | disolución de píxeles entre secciones y antes del footer | `<div data-pixel-seam>` |
 | Imagen fija con máscara | columna de fotos que se queda quieta y cada una se despeja para dejar ver la siguiente | `data-service-flow` + `service-flow.js` |
+| Tira que se desliza (solo teléfono) | una card a la vez con la siguiente asomando, en vez de N apiladas | `data-swipe-carousel` + `swipe-carousel.css/js` (ver §7.1) |
 
 ### 4.1 Qué se carga y en qué orden
 
@@ -717,7 +718,11 @@ Qué va en cada lado, y qué NO:
 ## 7. Teléfono
 
 No es una fase aparte: cada bloque se construye responsive cuando se
-construye. Mínimos, todos verificados con medición y no a ojo:
+construye. Pero "responsive" no alcanza: una fila de tarjetas apilada **entra**
+en un teléfono y aun así puede ser mala. Antes de dar una página por lista,
+medí cuántas pantallas mide y de dónde salen (§7.2).
+
+Mínimos, todos verificados con medición y no a ojo:
 
 - **Cero scroll horizontal** en 360 / 390 / 430 / 768 / 1024 / 1440px:
   `documentElement.scrollWidth === innerWidth`.
@@ -750,7 +755,73 @@ construye. Mínimos, todos verificados con medición y no a ojo:
   contra un padding de container que a 390px son 12px da 4px de scroll
   horizontal. Medido también.
 
-### Cómo medir (dos trampas que cuestan tiempo)
+### 7.1 Una fila de tarjetas en un teléfono: la tira que se desliza
+
+**No la apiles: es la tira compartida.** `css/swipe-carousel.css` +
+`js/swipe-carousel.js` (extraídas el 2026-08-04 de las 6 cards de "Unser
+System", hoy también en el reel de Social, los testimonios de Referenzen y las
+4 cards de Arbeitgeber de `/jobs/`): una card a la vez con el borde de la
+siguiente asomando, scroll-snap nativo, abajo de 768px y nada más.
+
+```html
+<ul class="mi-grid" data-swipe-carousel
+    data-swipe-label="Cuatro razones …, horizontal scrollbar">
+```
+
+- Los **hijos directos** son las cards. El contrato es ese atributo, nada más.
+- **La tira es CSS puro** (overflow-x + scroll-snap): desliza sin JS. El script
+  solo agrega el contador "01 / 04", la línea de progreso y las flechas del
+  teclado.
+- Las perillas van en la **sección**, no en la tira (el contador y la línea son
+  *hermanos* de la tira y las custom properties heredan hacia abajo):
+  `--swipe-card` (86vw), `--swipe-edge` (4vw), `--swipe-gap` (3vw) y
+  `--swipe-bleed`. Ese último es el que hay que acertar: si la tira vive dentro
+  de un `.container` con padding **y** el `--content-inset` de §1, tiene que
+  escapar de los dos —
+  `calc(-1 * (var(--container-padding) + var(--space-2)))` — o la primera card
+  arranca 32px adentro y la última nunca llega a su posición de snap.
+- **Cargá la hoja última**, después de la hoja de la página, y acordate de que
+  entonces cualquier override propio tiene que ser de **dos niveles**
+  (`.jobs-why .jobs-why__grid`, no `.jobs-why__grid`).
+- ⚠️ **Trampa medida:** si tus cards usan `height: 100%` para igualarse en el
+  grid de desktop, en la tira eso las **rompe** (medido: 448/426/426/426). Un
+  alto porcentual contra un contenedor flex de alto automático se resuelve antes
+  de que `align-items: stretch` pueda actuar. En la tira: `height: auto` +
+  `align-items: stretch` de dos niveles.
+- El scroll horizontal queda **contenido** en la tira; el documento nunca
+  scrollea de lado. Verificalo con `strip.scrollWidth > strip.clientWidth` y
+  `documentElement.scrollWidth === innerWidth` en la misma medición.
+
+### 7.2 El ritmo de la página también es responsive
+
+Los seams de píxeles y el padding de sección son valores de desktop. En
+`/jobs/`, medido a 390px: **1.560px de padding vacío** — cada sección después de
+un seam reserva `--space-9 + 120px` (216px) arriba más 96px abajo, y eso cinco
+veces es un cuarto de pantalla en blanco antes de cada título, cinco veces.
+
+Se ajusta con una clase en el `<body>` (`.page-jobs`, igual que `/kontakt/`),
+porque las reglas que se pisan viven en `page-service.css` y las cargan todas
+las páginas:
+
+```css
+@media (max-width: 767.98px) {
+  .page-jobs .pixel-seam__band        { height: 80px; }
+  .page-jobs .section                 { padding-block: var(--space-8); }
+  .page-jobs .pixel-seam + .section   { padding-top: calc(var(--space-8) + 80px); }
+  .page-jobs .pixel-seam + .conversion{ padding-top: 80px; }
+  .page-jobs .pixel-seam + .site-footer { padding-top: calc(var(--space-8) + 80px); }
+}
+```
+
+⚠️ **El alto de la banda y la reserva tienen que ser iguales.**
+`js/pixel-transition.js` mide la banda que le dan y la llena de tiles: si la
+reserva es menor que la banda, los tiles tapan contenido real. 80px todavía da
+~3 filas de tiles de 24px, que es lo que tiene la home en teléfono.
+
+Resultado en `/jobs/`: 11.287px → 9.146px a 390px (13,4 → 10,8 pantallas), sin
+tocar una palabra de copy.
+
+### 7.3 Cómo medir (dos trampas que cuestan tiempo)
 
 1. Chrome fuerza un viewport mínimo de ~500px. `--window-size=390` te da una
    **captura** de 390px de un **layout** de 500px. Meté la página en un
@@ -758,7 +829,26 @@ construye. Mínimos, todos verificados con medición y no a ojo:
 2. Con `--virtual-time-budget` el scroll no se asienta: Lenis maneja la
    posición, ScrollTrigger necesita eventos reales y las transiciones se
    congelan a mitad de camino. Para una foto honesta, forzá
-   `--force-prefers-reduced-motion`.
+   `--force-prefers-reduced-motion`. Sin ese flag las capturas salen con el
+   contenido a `opacity: 0` (los reveals no dispararon) y los seams a medio
+   disolver.
+3. **Para verificar una animación atada al scroll, no la mires: leela.**
+   `window.scrollTo()` no hace nada acá — Lenis es el dueño de la posición, así
+   que hay que moverla por donde la mueve un wheel de verdad, y después leer el
+   progreso que el trigger mapeó:
+
+   ```js
+   w.__lenis.scrollTo(px, { immediate: true });   // no window.scrollTo
+   w.ScrollTrigger.update();                       // lo que hace el handler de Lenis
+   var st = w.ScrollTrigger.getAll().find(s => s.trigger === miElemento);
+   st.progress;            // 0..1 mapeado desde el scroll
+   st.animation.progress(st.progress).pause();     // el scrub es temporal: seekealo
+   ```
+
+   Con eso se puede tabular el estado a 0 / 25 / 50 / 75 / 100 % del rango y ver
+   si la secuencia pasa en el orden que se pidió, en vez de deducirlo de una
+   captura. Así se encontró que el círculo azul de `/jobs/` estaba blanco: el
+   estilo computado lo decía, la captura (con la animación sin disparar) no.
 
 ---
 
@@ -793,6 +883,20 @@ Las secciones 5, 7 y 8 son genéricas a propósito porque
 27 páginas, Konzept 11, tabla comparativa 4.
 
 ### 8.2 Decisiones fijas de este tipo de página
+
+- **Sin eyebrows** (cliente 2026-08-04). `/werkschutz/` tenía uno arriba de cada
+  una de sus 10 secciones — Risiko, Vorteile, Leistungsumfang, Abgrenzung,
+  Anwendungsfälle, Sicherheitskonzept, Kosten, Ansprechpartner, FAQ, Weiterlesen —
+  y salieron todos. **Era mobiliario de UI que agregó este build, no copy de
+  ningún draft**, así que no se perdió nada aprobado. Una página de servicio nueva
+  arranca sin ellos: el H2 es el primer elemento de cada sección.
+  El componente `.section-eyebrow` y su variante `.section--light` siguen en
+  `page-service.css` porque `/referenzen/` y `/jobs/` cargan esa hoja como chasis
+  y las dos todavía los usan — no las borres desde una página de servicio.
+  ⚠️ Las dos reglas que le daban `justify-content: center` al eyebrow en las
+  secciones centradas (`.service-faq`, `.service-compare`) se fueron con ellos.
+  Si un eyebrow vuelve a una sección centrada, **esa regla tiene que volver
+  también**: es un flex row y el `text-align` del padre no lo mueve (§ más abajo).
 
 - **Los colores alternan negro / blanco sección por sección**, arrancando con el
   hero en negro, y en **cada** borde hay una transición de píxeles (cliente
@@ -1099,6 +1203,62 @@ Las secciones 5, 7 y 8 son genéricas a propósito porque
   corto de keyword.
 - Los links internos apuntan a las URLs confirmadas de la guía §2.2 aunque la
   página todavía no exista. Son links reales, no placeholders.
+
+### 8.3b El Leistungsumfang es scrollytelling 50/50 (2026-08-04)
+
+Pedido del cliente, **solo desktop y tablet grande**; el móvil queda como estaba.
+Mitad izquierda: el título más las 6 duties, que se revelan una por paso de
+scroll y **se acumulan** (la que ya pasó sigue legible). Mitad derecha: un panel
+sticky de imagen a sangre contra el borde del viewport, que hace crossfade a la
+foto de la duty activa. `js/service-flow.js` + el bloque
+`@media (min-width: 1152px)` de `page-service.css`.
+
+Seis cosas que se midieron y que la próxima página de servicio no debería
+re-descubrir:
+
+1. **Para que el panel sea la mitad exacta del viewport, el bloque tiene que
+   salir de `.container`.** Es hijo directo del `<section>` y re-crea la geometría
+   del container como padding propio (`--flow-page-lead`: centrado + padding +
+   `--content-inset`). Medido: el borde izquierdo del texto coincide al píxel con
+   el de las otras secciones en 320 / 360 / 390 / 430 / 768 / 1024 / 1151.
+   ⚠️ Un porcentaje dentro de una custom property se resuelve contra el elemento
+   que la **usa**, así que `--flow-page-lead` solo puede consumirla `.service-flow`
+   (cuyo ancho es el de la sección). En el desktop se usa como **track de grid**,
+   no como padding: con padding, el `50%` de la columna de la foto pasa a ser
+   "la mitad de lo que sobra".
+2. **Una columna sticky solo aguanta mientras su borde inferior está dentro del
+   contenedor**, así que la distancia de scroll útil es `alto − banda`, no `alto`.
+   Sin ese término las 6 duties se repartían 3068px en 1440x900 (511px = 57vh,
+   abajo del piso del brief) y el panel se iba mientras la duty 06 seguía activa.
+   `min-height: calc(6 * --flow-step-scroll + --flow-h)` → 635px por duty, 71vh.
+3. **Las dos columnas necesitan el mismo alto** (`--flow-h`) o se liberan en
+   momentos distintos: la más corta se va scrolleando hacia arriba mientras la
+   foto sigue pinneada.
+4. **La lista se maqueta una sola vez y solo cambia `opacity`/`transform`.** Las
+   duties futuras siguen ocupando su lugar, así que la lista tiene su alto final
+   desde el primer frame: cero layout shift y nada que re-medir. Revelar con
+   `display`/`height` haría saltar la lista en cada paso.
+5. **Cuánto entra en una pantalla es el límite de todo el diseño, y se mide.**
+   Cada línea de texto que le agregás a un item se multiplica por 6. Con el copy
+   aprobado, título + 6 duties necesitan 533–621px según el ancho, y entran
+   completas desde **1440x900**; abajo de eso se ven 4–5 de 6 y
+   `js/service-flow.js` desplaza la lista lo justo para que la duty **activa**
+   esté siempre entera, con el borde superior difuminado. Dos números que muestran
+   la escala del efecto: el `max-width: 42ch` de la descripción costaba ~330px de
+   lista, y la etiqueta de categoría por item costaba 138px. Por eso el breakpoint
+   es **1152px y no los 1024 de siempre**.
+6. **Todo el split va detrás de `.service-flow--stepped`, que solo agrega el JS.**
+   No es cosmético: la lista vive en una columna recortada de alto de viewport, así
+   que sin script la duty 06 quedaba cortada. Con la clase, sin JS / con
+   `prefers-reduced-motion` / abajo de 1152px cae al layout base — 6 pares de
+   texto + foto en flujo normal, todo visible. Verificado con la ejecución de
+   scripts desactivada: 6 duties y 6 fotos en `opacity: 1`.
+
+Una excepción declarada: el H2 de esa sección **no** usa el clamp compartido de
+§2 (llega a 40px, no a 60). Es el único título del sitio que tiene que compartir
+pantalla con todo el contenido de su propia sección; a 60px solo el título se iba
+a tres líneas y el bloque pedía 1260px contra los 820px de un 1440x900. En móvil
+mantiene el clamp compartido.
 
 ### 8.4 Para armar la siguiente
 

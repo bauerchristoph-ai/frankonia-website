@@ -87,7 +87,13 @@
       boundaryUrl: "/assets/data/coverage-boundaries/bamberg.geojson",
     },
     nuremberg: {
-      name: "Nuremberg",
+      // German spelling, on instruction (Change Request 1.4, 2026-08-04) — this
+      // string is user-visible twice: the marker's title tooltip and the map
+      // overlay's city line. The object KEY stays `nuremberg` because it is also
+      // the data-coverage-city value and the geojson filename; only the label
+      // changed. Consistent with this project's rule that city proper nouns keep
+      // their German spelling even in English contexts (Würzburg, Fürth).
+      name: "Nürnberg",
       center: [49.4521, 11.0767],
       boundaryUrl: "/assets/data/coverage-boundaries/nuremberg.geojson",
     },
@@ -125,6 +131,17 @@
       name: "Ansbach",
       center: [49.3004, 10.5719],
       boundaryUrl: "/assets/data/coverage-boundaries/ansbach.geojson",
+    },
+    // Added 2026-08-05 (Change Request 2.1). Boundary fetched once from
+    // Nominatim, same one-off process as the original ten: the CITY polygon
+    // ("Forchheim, Landkreis Forchheim, Bayern, 91301"), explicitly not the
+    // surrounding "Landkreis Forchheim", which Nominatim also returns and which
+    // is a different administrative area. Centre is [lat, lon] for Leaflet —
+    // the .geojson keeps GeoJSON's own [lon, lat] order, untouched.
+    forchheim: {
+      name: "Forchheim",
+      center: [49.7123, 11.0664],
+      boundaryUrl: "/assets/data/coverage-boundaries/forchheim.geojson",
     },
     hof: {
       name: "Hof",

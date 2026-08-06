@@ -148,7 +148,7 @@
           "name": "Was kostet ein Sicherheitsdienst pro Stunde?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Ein professioneller Sicherheitsdienst kostet in der Regel zwischen 25 und 40 Euro pro Stunde, abhängig von Qualifikation der Kräfte, Einsatzzeit (Nacht-, Wochenend- und Feiertagszuschläge) und Auftragsumfang. Sie erhalten von FRANKONIA ein transparentes, unverbindliches Angebot innerhalb eines Werktages, die Beratung vorab ist kostenfrei."
+            "text": "Ein professioneller Sicherheitsdienst kostet in der Regel zwischen 26 und 32 Euro pro Stunde, zuzüglich tariflicher Zuschläge für Nacht, Wochenende und Feiertage. Wo Ihr Auftrag in der Spanne liegt, bestimmen Qualifikation, Leistungsumfang und Startzeitraum — dafür bekommen Sie ein durchdachtes System mit digitalen Nachweisen statt bloßer Stunden. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
           }
         },
         {
@@ -180,7 +180,7 @@
           "name": "In welchen Regionen ist FRANKONIA im Einsatz?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Von Bamberg aus im Umkreis von rund 100 Kilometern: unter anderem in Nürnberg, Würzburg, Erlangen, Fürth, Bayreuth, Schweinfurt und Coburg. Kurzfristige Einsätze organisiert die rund um die Uhr erreichbare Einsatzleitung."
+            "text": "Von Bamberg aus im Umkreis von rund 100 Kilometern: unter anderem in Nürnberg, Würzburg, Erlangen, Fürth, Bayreuth, Schweinfurt, Coburg, Forchheim und Ansbach, dazu Orte wie Hof, Kronach, Kulmbach, Lichtenfels und Schwandorf. Kurzfristige Einsätze organisiert die rund um die Uhr erreichbare Einsatzleitung."
           }
         },
         {
@@ -212,7 +212,7 @@
           "name": "Übernimmt FRANKONIA auch kurzfristige Einsätze?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Ja, zum Beispiel Brandwachen bei Ausfall einer Brandmeldeanlage, kurzfristige Baustellenbewachung oder Verstärkung bei Veranstaltungen. Mit eigener Einsatzleitung und einem festen Mitarbeiterstamm sind schnelle Starts nach Absprache möglich, rufen Sie bei dringendem Bedarf direkt an: +49 951 964352-0."
+            "text": "Ja, zum Beispiel Brandwachen bei Ausfall einer Brandmeldeanlage, kurzfristige Baustellenbewachung oder Verstärkung bei Veranstaltungen. Mit eigener Einsatzleitung und einem festen Mitarbeiterstamm sind schnelle Starts nach Absprache möglich — rufen Sie bei dringendem Bedarf direkt an: +49 951 964352-0."
           }
         },
         {
@@ -548,8 +548,13 @@
 
       <div class="sticky-story__scene sticky-story__scene--metrics">
         <div class="sticky-story__inner">
-          <h2 class="sticky-story__scene-title">Vertraut in der ganzen Region</h2>
-          <p class="sticky-story__lede" data-reveal>Langfristige Sicherheitspartnerschaften auf Basis von Zuverlässigkeit, Beständigkeit und messbarer Leistung.</p>
+          <!-- H2 + Subline are Webtext 01 Sektion 2's own, verbatim (Stand
+               04.08.2026). The doc still CALLS this section "Trust-Leiste
+               'Vertraut in der ganzen Region'" — that is the section's name in
+               the doc, taken from what this heading used to say; the line it
+               specifies as `H2:` is the one below. -->
+          <h2 class="sticky-story__scene-title">Über 300 Unternehmen vertrauen unserem Sicherheitsdienst</h2>
+          <p class="sticky-story__lede" data-reveal>Langfristige Sicherheitspartnerschaften in Bamberg, Nürnberg und ganz Franken — auf Basis von Zuverlässigkeit und messbarer Leistung.</p>
           <ul class="sticky-story__metrics">
           <li class="sticky-story__metric">
             <span class="sticky-story__metric-value"><span data-count-to="300">300</span><span class="sticky-story__metric-plus">+</span></span>
@@ -822,7 +827,12 @@
            ScrollTrigger + Lenis; gsap.matchMedia desktop + no-reduced-motion).
            Static, fully readable with no JS / mobile / reduced-motion. Overlay
            coordinates are a first pass in the base's 0 0 1079 1110 space. -->
-      <div class="konzept-seq" data-konzept-seq aria-label="Sicherheitsanalyse in drei Schritten">
+      <!-- Label renamed 2026-08-05 (Change Request 2.4 + Webtext 01 Sektion 4):
+           "Sicherheitsanalyse" has been retired brand-wide. The #sicherheitsanalyse
+           ANCHOR is deliberately left alone — Chris confirmed the id can stay, and
+           it is referenced by the CTA in all three header partials and on every
+           page, plus any live Ads URL. -->
+      <div class="konzept-seq" data-konzept-seq aria-label="Ihr Sicherheitskonzept in drei Schritten">
         <!-- include: konzept-base -->
         <div class="konzept-seq__stage">
           <div class="konzept-seq__layers">
@@ -1376,8 +1386,8 @@
                 <div class="system-story__body">
                   <h3 class="system-story__title"><span class="system-story__num">3.</span> Zuverlässige Teams</h3>
                   <ul class="system-story__points">
-                  <li>Gemeinsam definierte Einarbeitung</li>
-                  <li>Professionelle Einarbeitung durch einen Vorgesetzten</li>
+                  <li>Gemeinsam definierter Einarbeitungsplan</li>
+                  <li>Persönliche Einweisung durch Vorgesetzte</li>
                   <li>Kommunikations- und Verhaltensschulung</li>
                   </ul>
                 </div>
@@ -1426,6 +1436,7 @@
                   <ul class="system-story__points">
                   <li>Ursachenbehebung bei Beschwerden</li>
                   <li>Direkter Feedback-Prozess mit FRANKONIA</li>
+                  <li>Aktives Feedback-Einholen bei Gästen und Mitarbeitenden</li>
                   </ul>
                 </div>
               </div>
@@ -2193,7 +2204,7 @@
         <!-- Reveal decoupled (client 2026-07-29): lede eases in after the title. -->
         <div class="section__intro coverage__intro">
           <h2>Von Bamberg aus in Franken und ganz Bayern im Einsatz</h2>
-          <p class="coverage__lede" data-reveal data-reveal-delay>Im Umkreis von rund 100 Kilometern um Bamberg für Sie im Einsatz, in ganz Franken und Bayern — überall mit demselben Standard und digitalen Nachweisen.</p>
+          <p class="coverage__lede" data-reveal data-reveal-delay>Im Umkreis von rund 100 Kilometern um Bamberg für Sie im Einsatz, in Franken und ganz Bayern — überall mit demselben Standard, zertifizierten Prozessen und digitalen Nachweisen.</p>
         </div>
 
         <div class="coverage__map-wrap" data-reveal>
@@ -2228,7 +2239,7 @@
           <ul class="coverage__list">
             <li><button type="button" class="coverage__pill coverage__pill--all" data-coverage-city="all" aria-pressed="true">Alle</button></li>
             <li><a class="coverage__pill" data-coverage-city="bamberg" href="/sicherheitsdienst-bamberg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Bamberg</a></li>
-            <li><a class="coverage__pill" data-coverage-city="nuremberg" href="/sicherheitsdienst-nuernberg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Nuremberg</a></li>
+            <li><a class="coverage__pill" data-coverage-city="nuremberg" href="/sicherheitsdienst-nuernberg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Nürnberg</a></li>
             <li><a class="coverage__pill" data-coverage-city="wuerzburg" href="/sicherheitsdienst-wuerzburg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Würzburg</a></li>
             <li><a class="coverage__pill" data-coverage-city="erlangen" href="/sicherheitsdienst-erlangen/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Erlangen</a></li>
             <li><a class="coverage__pill" data-coverage-city="fuerth" href="/sicherheitsdienst-fuerth/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Fürth</a></li>
@@ -2238,8 +2249,80 @@
             <li><a class="coverage__pill" data-coverage-city="bayreuth" href="/sicherheitsdienst-bayreuth/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Bayreuth</a></li>
             <li><a class="coverage__pill" data-coverage-city="coburg" href="/sicherheitsdienst-coburg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Coburg</a></li>
             <li><a class="coverage__pill" data-coverage-city="ansbach" href="/sicherheitsdienst-ansbach/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Ansbach</a></li>
-            <li><a class="coverage__pill" data-coverage-city="hof" href="/sicherheitsdienst-hof/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Hof</a></li>
+            <!-- Forchheim ADDED 2026-08-05 (Change Request 2.1 + Webtext 01
+                 Sektion 11, "Forchheim (ergänzen!)"). Its city page is Webtext 21
+                 and is not built yet, so this link joins the other nine in
+                 pointing at a planned page — unlike Hof below, Forchheim IS in
+                 the client's 49-page set, which is the whole distinction. Its
+                 boundary was fetched once from Nominatim into
+                 assets/data/coverage-boundaries/forchheim.geojson (the city
+                 polygon, deliberately NOT "Landkreis Forchheim"). -->
+            <li><a class="coverage__pill" data-coverage-city="forchheim" href="/sicherheitsdienst-forchheim/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Forchheim</a></li>
           </ul>
+
+          <!-- Nennungen ohne Link (Webtext 01 Sektion 11 + Change Request 1.3).
+               Hof MOVED here from the linked list: it was pointing at
+               /sicherheitsdienst-hof/, which is not in the 49-page set, so that
+               was a linked 404 in production ("Do not ship a linked 404" — 2.2,
+               and Chris's own resolution: "Hof is part of our service area but
+               has no city page so it contains no link"). Kronach, Kulmbach,
+               Lichtenfels and Schwandorf are new mentions, same status.
+               Real crawlable text, so the local signal is intact without
+               promising a page that does not exist. Kept a plain <p>, not pills:
+               a pill reads as tappable, and none of these are. -->
+          <p class="coverage__mentions">
+            Außerdem im Einsatz in Hof, Kronach, Kulmbach, Lichtenfels und Schwandorf.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 6.6 SICHERHEIT, WIE WIR SIE VERSTEHEN ============
+         Sektion 12 of "2026-08-04 Webtext 01 Homepage.docx" (NEW in copy v2),
+         placed exactly where the doc puts it: "NEUE Sektion unter den
+         Einsatzgebieten, vor dem FAQ".
+
+         It is an SEO/philosophy block — the doc's own note calls it "textlastig
+         (SEO)" and says it exists to pick up the secondary keywords wachdienst
+         (880) and wachschutz (480), name the cities in running prose, and state
+         the philosophy. So it is deliberately plain, crawlable prose: three H3 +
+         paragraph pairs under one H2, no cards, no imagery, no motion of its
+         own beyond the shared primitives.
+
+         DARK section, and there is NO pixel-seam between it and Coverage above:
+         both sit on the plain page background, and a band of black tiles over
+         black is invisible (docs/page-conventions.md §9.2). The existing seam
+         below still belongs to the white FAQ section, whose padding-top reserves
+         its band — that pairing is untouched.
+
+         Note the H2 is the doc's own "Ihr Sicherheitsdienst für Franken…";
+         "Sicherheit, wie wir sie verstehen" is the section's NAME in the brief,
+         not a heading to render.
+
+         No inline links: the paragraphs mention Objektschutz, Baustellen-
+         bewachung, Brandwache, Kaufhausdetektei and § 34a, and of those only
+         /werkschutz/ exists today. The doc specifies no links here, and linking
+         one term while the rest 404 would be worse than linking none — worth
+         revisiting as a real internal-linking win once the service pages ship. -->
+    <section class="section philosophy" aria-labelledby="philosophy-title">
+      <div class="container">
+        <div class="section__intro philosophy__intro" data-reveal>
+          <h2 id="philosophy-title">Ihr Sicherheitsdienst für Franken: Qualität, Innovation, Verantwortung</h2>
+        </div>
+
+        <div class="philosophy__grid" data-item-reveal=".philosophy__item">
+          <article class="philosophy__item">
+            <h3 class="philosophy__item-title">Wachdienst, Wachschutz, Werkschutz — oder Sicherheitsdienst?</h3>
+            <p class="philosophy__item-text">Die Begriffe meinen im Kern dasselbe: die gewerbliche Bewachung von Objekten, Werten und Menschen nach § 34a GewO. „Wachdienst" und „Wachschutz" stehen meist für klassische Bewachung und Kontrollgänge, „Werkschutz" für den Schutz laufender Industriebetriebe, „Sicherheitsdienst" ist der Oberbegriff — von der Brandwache über die Baustellenbewachung bis zur Kaufhausdetektei. Entscheidend ist nicht der Name, sondern Qualifikation, Zertifizierung und ein System, auf das Sie sich verlassen können.</p>
+          </article>
+          <article class="philosophy__item">
+            <h3 class="philosophy__item-title">Ein Einsatzgebiet, ein Standard</h3>
+            <p class="philosophy__item-text">Ob Objektschutz in Bamberg, Werkschutz im Großraum Nürnberg, Baustellenbewachung in Würzburg oder Brandwache in Erlangen und Fürth: FRANKONIA arbeitet überall mit denselben zertifizierten Prozessen (DIN 77200-1, ISO 9001, DEKRA-geprüft). Auch in Schweinfurt, Bayreuth, Coburg, Forchheim und Ansbach sind wir im Einsatz — und darüber hinaus in Hof, Kronach, Kulmbach, Lichtenfels oder Schwandorf. Ihre Kräfte arbeiten fest vor Ort im Objekt, koordiniert von einer Einsatzleitung, die Sie rund um die Uhr direkt erreichen.</p>
+          </article>
+          <article class="philosophy__item">
+            <h3 class="philosophy__item-title">Innovativ, langfristig, auf Ihrer Seite</h3>
+            <p class="philosophy__item-text">Wir sehen Sicherheit anders als viele in der Branche: nicht als verkaufte Stunden, sondern als System, das laufend besser wird. Digitale Nachweise statt Behauptungen, ein kostenfreies Sicherheitskonzept, das mit unserer KI-gestützten Software auch Einsparpotenziale findet, und Bestandskundenpflege, die so weit geht, dass wir eigene Stunden reduzieren, wenn es für Sie die richtige Entscheidung ist. Kunden haben so bis zu 30 % Kosten gespart — bei gleichbleibender Sicherheit.</p>
+          </article>
         </div>
       </div>
     </section>
@@ -2260,7 +2343,7 @@
         <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
           <details class="faq-item">
             <summary><h3>Was kostet ein Sicherheitsdienst pro Stunde?</h3></summary>
-            <p class="faq-item__answer">Ein professioneller Sicherheitsdienst kostet in der Regel zwischen 25 und 40 Euro pro Stunde, abhängig von Qualifikation der Kräfte, Einsatzzeit (Nacht-, Wochenend- und Feiertagszuschläge) und Auftragsumfang. Sie erhalten von FRANKONIA ein transparentes, unverbindliches Angebot innerhalb eines Werktages, die Beratung vorab ist kostenfrei.</p>
+            <p class="faq-item__answer">Ein professioneller Sicherheitsdienst kostet in der Regel zwischen 26 und 32 Euro pro Stunde, zuzüglich tariflicher Zuschläge für Nacht, Wochenende und Feiertage. Wo Ihr Auftrag in der Spanne liegt, bestimmen Qualifikation, Leistungsumfang und Startzeitraum — dafür bekommen Sie ein durchdachtes System mit digitalen Nachweisen statt bloßer Stunden. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
           </details>
           <details class="faq-item">
             <summary><h3>Ist FRANKONIA offiziell zertifiziert?</h3></summary>
@@ -2276,7 +2359,7 @@
           </details>
           <details class="faq-item">
             <summary><h3>In welchen Regionen ist FRANKONIA im Einsatz?</h3></summary>
-            <p class="faq-item__answer">Von Bamberg aus im Umkreis von rund 100 Kilometern: unter anderem in Nürnberg, Würzburg, Erlangen, Fürth, Bayreuth, Schweinfurt und Coburg. Kurzfristige Einsätze organisiert die rund um die Uhr erreichbare Einsatzleitung.</p>
+            <p class="faq-item__answer">Von Bamberg aus im Umkreis von rund 100 Kilometern: unter anderem in Nürnberg, Würzburg, Erlangen, Fürth, Bayreuth, Schweinfurt, Coburg, Forchheim und Ansbach, dazu Orte wie Hof, Kronach, Kulmbach, Lichtenfels und Schwandorf. Kurzfristige Einsätze organisiert die rund um die Uhr erreichbare Einsatzleitung.</p>
           </details>
           <details class="faq-item">
             <summary><h3>Wie schnell erhalte ich ein Angebot?</h3></summary>
@@ -2292,7 +2375,7 @@
           </details>
           <details class="faq-item">
             <summary><h3>Übernimmt FRANKONIA auch kurzfristige Einsätze?</h3></summary>
-            <p class="faq-item__answer">Ja, zum Beispiel Brandwachen bei Ausfall einer Brandmeldeanlage, kurzfristige Baustellenbewachung oder Verstärkung bei Veranstaltungen. Mit eigener Einsatzleitung und einem festen Mitarbeiterstamm sind schnelle Starts nach Absprache möglich, rufen Sie bei dringendem Bedarf direkt an: +49 951 964352-0.</p>
+            <p class="faq-item__answer">Ja, zum Beispiel Brandwachen bei Ausfall einer Brandmeldeanlage, kurzfristige Baustellenbewachung oder Verstärkung bei Veranstaltungen. Mit eigener Einsatzleitung und einem festen Mitarbeiterstamm sind schnelle Starts nach Absprache möglich — rufen Sie bei dringendem Bedarf direkt an: +49 951 964352-0.</p>
           </details>
           <details class="faq-item">
             <summary><h3>Wie stellt FRANKONIA professionelles Auftreten sicher?</h3></summary>

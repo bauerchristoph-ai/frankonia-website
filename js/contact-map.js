@@ -10,8 +10,10 @@
   link in the contact list beside this map is unchanged and still the way a
   visitor actually gets routed.
 
-  Light basemap ("Positron"), not the homepage's "Dark Matter": this page is
-  white end to end.
+  Full-colour basemap ("Voyager"), not the homepage's "Dark Matter" and not the
+  greyscale "Positron" this shipped with: a location map's job is to let someone
+  orient themselves, which needs the real street/park/water colouring. It is
+  still a light style, so it sits correctly on this white page.
 
   Lazy, same reasoning as js/coverage-lazy.js — Leaflet is ~41K gzip and this
   map sits below the fold, so nothing is fetched until it nears the viewport.
@@ -60,18 +62,46 @@
     // definitely put a map in its place.
     el.innerHTML = "";
 
+    // On a phone this map is a STATIC locator, by design (mobile pass
+    // 2026-08-04). Leaflet's `dragging` defaults to true, and on a touch device
+    // that means a one-finger drag inside a full-width, 300px-tall box pans the
+    // map instead of scrolling the page — a scroll trap sitting in the middle of
+    // the reading flow, and the exact class of thing this project's own
+    // performance rules forbid ("no scroll hijacking", CLAUDE.md).
+    //
+    // Everything gesture-driven is therefore off below L.Browser.mobile, not
+    // just dragging: leaving pinch-zoom or the +/- buttons on would let someone
+    // zoom into a map they then cannot pan, which is worse than a fixed view.
+    // Nothing is lost — a phone visitor who wants to move around a map wants
+    // turn-by-turn, and the "Route in Google Maps öffnen" row hands them off to
+    // the native app, which is a better answer than a 300px viewport.
+    //
+    // Desktop is unchanged: drag-panning and the +/- control still work there,
+    // and scrollWheelZoom stays off for the same reason it is off on the
+    // homepage map — a wheel over an embed should scroll the page.
+    var touch = L.Browser.mobile;
+
     var map = L.map(el, {
-      // Off on purpose, same as the homepage map: an embedded map that
-      // swallows page scroll on hover is a common source of frustration.
-      // Drag-panning and the +/- control still work.
       scrollWheelZoom: false,
+      dragging: !touch,
+      touchZoom: !touch,
+      doubleClickZoom: !touch,
+      zoomControl: !touch,
+      // No arrow-key panning where there is no panning, and it also keeps the
+      // container out of the tab order: a tab stop that does nothing is a dead
+      // end for a keyboard user.
+      keyboard: !touch,
     }).setView([lat, lng], ZOOM);
 
-    // CARTO "Positron" (light). Free and keyless, same as the dark variant the
-    // homepage uses; the tiles are rendered from OpenStreetMap data, so the
-    // attribution credits both — required by CARTO's own terms.
+    // CARTO "Voyager" — a full-colour street map (green parks, blue water,
+    // yellow/white road hierarchy, POI labels), client request 2026-08-04:
+    // "Positron" was the greyscale variant and read as a wireframe rather than
+    // as a map you orient yourself on. Same provider, same free/keyless terms
+    // and the same @2x support as the light and dark variants, so nothing about
+    // the approval, the attribution or the retina behaviour changes — only the
+    // style path (`rastertiles/voyager/` instead of `light_all/`).
     // {r} resolves to "@2x" only on high-DPI screens, empty otherwise.
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
       maxZoom: 19,
       subdomains: "abcd",
       detectRetina: true,
@@ -95,8 +125,14 @@
       .addTo(map)
       .bindTooltip(label, {
         permanent: true,
-        direction: "right",
-        offset: [12, 0],
+        // The label sits BESIDE the dot on desktop and ABOVE it on a phone.
+        // Not a style preference: the chip is ~200px of nowrap text, the marker
+        // is centred, and the map is only 374px wide at 390px — so "right"
+        // ran the label straight off the map's right edge and it rendered
+        // clipped mid-word (caught in a screenshot, mobile pass 2026-08-04).
+        // Centred above the dot, the same chip fits with room on both sides.
+        direction: touch ? "top" : "right",
+        offset: touch ? [0, -8] : [12, 0],
         className: "contact-marker__label",
       });
   }

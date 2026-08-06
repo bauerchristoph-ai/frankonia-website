@@ -214,8 +214,15 @@
    hero -> a full-width row of three cards -> the form in its own section far
    below; nothing about the form was on screen when the page loaded. Now:
 
-     left  (40%): badge, H1, lede, the three contact rows, DEKRA, one link
+     left  (40%): badge, H1, lede, the three contact rows — and nothing else
+                  since 2026-08-04 (see below)
      right (60%): the form card, starting level with the badge
+
+   SIMPLIFIED 2026-08-04 (client brief): the left column also carried the DEKRA
+   certification row and an "Alle Leistungen im Überblick" link, which made it
+   compete with the form instead of supporting it. Both are gone, markup and CSS.
+   Measured after: the left column is 255px tall against the form card's 613px, so
+   the form is unambiguously the dominant object.
 
    The grid areas are what make the mobile order work without `order`: the DOM
    is intro -> form -> aside (the reading order the brief asks for on a phone),
@@ -283,34 +290,10 @@
   margin-bottom: calc(-1 * var(--space-2));
 }
 
-/* Not .badge from components.css: that one is `white-space: nowrap`, right for
-   a short certification chip and wrong for a sentence-length label that has to
-   wrap in a 40% column. Same visual language, just wrapping. */
-.contact-intro__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  border: 1px solid rgb(59 73 86 / 0.25);
-  border-radius: var(--radius-pill);
-  font-size: var(--font-size-sm);
-  color: var(--color-gray);
-}
-
-/* The sprite's <symbol>s sit inside a <g> carrying the stroke presentation
-   attributes; a <use> clone inherits from ITS OWN ancestors, not from that
-   <g>, so stroke/fill are restated wherever an icon is used (same
-   belt-and-suspenders as .services__item-arrow in page-home.css). */
-.contact-intro__badge-icon {
-  width: 1.125rem;
-  height: 1.125rem;
-  flex-shrink: 0;
-  fill: none;
-  stroke: var(--color-blue-dark);
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
+/* .contact-intro__badge / __badge-icon lived here until 2026-08-06 — the
+   "24/7 erreichbar" pill above the H1, removed at the client's request because
+   the Highlight-Box further down the same column already says it. Deleted
+   rather than kept as dead rules; git has them if the pill ever comes back. */
 
 /* The homepage's `main h2` treatment (page-home.css) — fluid, regular weight —
    with two adjustments for this page:
@@ -321,7 +304,11 @@
        the smaller of the two: 36px here against the form title's 42px at
        1440px. Same scale, same weight — just no longer competing. */
 .contact-intro h1 {
-  margin-top: var(--space-3);
+  /* No top margin: it existed only as the gap under the removed badge, and
+     .contact-intro is a grid item, so a child's top margin does not collapse
+     out of it — left in place it would push the H1 12px below the top edge of
+     the form card it is supposed to line up with. */
+  margin-top: 0;
   font-size: clamp(2.25rem, 0.4rem + 3.7vw, 3.75rem);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-tight);
@@ -372,9 +359,12 @@
     animation: contact-intro-in var(--duration-slow) var(--easing-premium) backwards;
   }
 
-  .contact-intro__badge { animation-delay: 60ms; }
-  .contact-intro h1 { animation-delay: 140ms; }
-  .contact-intro__lead { animation-delay: 220ms; }
+  /* Two beats, not three: the badge that used to open the cascade at 60ms is
+     gone (2026-08-06), so the H1 takes the first slot rather than starting on
+     what was the second one — otherwise the column would sit empty for 140ms
+     before anything arrives. */
+  .contact-intro h1 { animation-delay: 60ms; }
+  .contact-intro__lead { animation-delay: 140ms; }
 }
 
 @keyframes contact-intro-in {
@@ -397,10 +387,15 @@
    phone's tint then line up exactly with the dividers and with the H1 above,
    instead of bleeding a few pixels past both. */
 
+/* margin-top: 0 — the grid's own row-gap already separates this list from the
+   lede above it, and stacking a margin on top of that measured 48px between the
+   paragraph and the first row (client 2026-08-04: "reduce the vertical gap
+   between the paragraph and the contact list"). On a phone the same zero works:
+   there the gap above this list is the one under the form card. */
 .contact-methods {
   list-style: none;
   padding: 0;
-  margin: var(--space-5) 0 0;
+  margin: 0;
   border-top: 1px solid rgb(59 73 86 / 0.12);
 }
 
@@ -413,7 +408,11 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: start;
   gap: var(--space-3);
-  padding-block: var(--space-3);
+  /* 10px, trimmed from --space-3 (12px) on the same pass. The row's height comes
+     from its three lines of type, not its padding, so this is as far as it goes
+     without the rows starting to touch: measured 88px → 84px, still double the
+     44px tap minimum. */
+  padding-block: 0.625rem;
   border-radius: var(--radius-sm);
   color: inherit;
   text-decoration: none;
@@ -477,14 +476,14 @@
 }
 
 .contact-method__text {
-  margin-top: 0.15rem;
+  margin-top: 0.1rem;
   font-size: var(--font-size-sm);
   line-height: 1.5;
   color: rgb(59 73 86 / 0.7);
 }
 
 .contact-method__action {
-  margin-top: 0.15rem;
+  margin-top: 0.1rem;
   font-size: var(--font-size-sm);
   color: var(--color-blue-dark);
   text-decoration: underline;
@@ -492,15 +491,27 @@
 }
 
 /* Same rest-↗ / hover-→ rotation as .btn__arrow and the Services list.
-   Centred on the row rather than pinned to the first line, and quieter than
-   the old version — this is a cue, not a button. */
+   Centred on the row rather than pinned to the first line.
+
+   1.5rem, up from 0.8rem (client 2026-08-04: "no se ven casi"). Same size, and
+   the same complaint, as /werkschutz/'s closing link rows — see
+   .service-related__arrow in page-service.css, which went 0.9em → 1.5rem for
+   exactly this reason. It is also the sprite's native grid: the symbol is drawn
+   on 24px at stroke 1.5, so at 24px rendered the line lands at its intended
+   weight instead of a hairline.
+
+   The stroke went from a 70%-alpha blue to the solid token in the same pass.
+   That alpha computed to ≈2.4:1 on white — under the 3:1 WCAG 1.4.1 minimum for
+   a meaningful graphic — and was half of why these read as invisible; blue-dark
+   solid is 3.7:1. Being a cue rather than a button is now carried by size and
+   position, not by fading it out. */
 .contact-method__arrow {
-  width: 0.8rem;
-  height: 0.8rem;
+  width: 1.5rem;
+  height: 1.5rem;
   align-self: center;
   flex-shrink: 0;
   fill: none;
-  stroke: color-mix(in srgb, var(--color-blue-dark) 70%, transparent);
+  stroke: var(--color-blue-dark);
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -515,62 +526,110 @@
   stroke: var(--color-blue-dark);
 }
 
+/* Supporting copy was rgb(59 73 86 / 0.7), which composites to (118,128,137) on
+   white = 4.02:1 — under the 4.5:1 AA minimum for text at 15px (and at the 13px
+   this drops to on a phone). 0.8 measures 5.28:1 and is still unmistakably
+   quieter than the black value beside it, so the hierarchy the brief asks for is
+   unaffected. Deliberately NOT scoped to the desktop block below: a contrast
+   floor is not a breakpoint refinement.
+
+   .contact-method__action keeps --color-blue-dark (3.71:1) — that is this
+   project's documented sitewide link colour on white (tokens.css), and changing
+   it here alone would make one link on the page a different blue than the rest. */
+.contact-method__label,
+.contact-method__text {
+  color: rgb(59 73 86 / 0.8);
+}
+
 /* --------------------------------------------------------------------------
-   4. Left column: trust row + secondary link
-   -------------------------------------------------------------------------- */
+   3b. Left column: desktop + wide-tablet refinement (client brief 2026-08-05)
+   --------------------------------------------------------------------------
+   The problem, measured at 1440px before any of this: the form card runs
+   162 → 775 (613px) while the left column ran 161 → 622 (461px), leaving
+   153px of empty white below the last contact row. The two-column structure was
+   right; the left side simply stopped too early and read as the weaker half.
 
-/* ---- DEKRA certification row ---- */
-/* Real DEKRA seals, used as supplied (never cropped or recoloured — see
-   CLAUDE.md). Source files are 399×600 portrait; height is fixed and width
-   left auto so the ratio can't drift. */
-.contact-cert {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  /* No border-top: the list above already ends in a divider, and two hairlines
-     a few pixels apart read as a mistake. */
-  margin-top: var(--space-4);
-}
+   The 153px is recovered from SPACING AND HIERARCHY, never from filler — the
+   brief is explicit about that, and it is also why there is no min-height, no
+   spacer element and no `justify-content: space-between` anywhere in here. The
+   four sources, roughly: taller rows (+84), larger values (+21), real air
+   between the three lines of each row (+30), a wider gap under the lede (+16).
 
-/* Smaller than before (was 3.5rem): this row supports the decision, it doesn't
-   compete with the phone block above it or the form beside it. */
-.contact-cert__seal {
-  height: 2.25rem;
-  width: auto;
-}
+   min-width: 768px, so it covers desktop AND wide tablet while the phone block
+   further down keeps its own compact scale. The two never overlap.
 
-.contact-cert__text {
-  font-size: var(--font-size-sm);
-  color: rgb(59 73 86 / 0.75);
-}
+   Nothing here touches the form card, and no copy changed. */
+@media (min-width: 768px) {
+  /* 24px, inside the brief's 20–28px, from 10px. Applied to all three rows
+     equally: "distribute the rows more evenly" is about a consistent rhythm, not
+     about forcing three unequal copy blocks to the same pixel height — that
+     would need exactly the blank filler the brief rules out. The rows stay a
+     list: no radius per row, no fill, no shadow, and the hairline separators
+     still run the full column width. */
+  .contact-method {
+    padding-block: var(--space-5);
+  }
 
-/* ---- Secondary link ----
-   One link, not a list of three (client brief) — a quiet exit for someone who
-   isn't ready to write, deliberately not styled to compete with the submit
-   button beside it. */
-.contact-links {
-  margin-top: var(--space-2);
-  font-size: var(--font-size-sm);
-}
+  /* Real air between label / value / supporting line, which is what makes a
+     three-line row read as a hierarchy rather than as three stacked strings.
+     The body is a flex column, so one `gap` does the label→value step and the
+     margins below add the second, larger step. */
+  .contact-method__body {
+    gap: var(--space-1);
+  }
 
-.contact-links a {
-  display: inline-block;
-  padding-block: var(--space-2);
-  color: var(--color-logo-black);
-  text-decoration: none;
-  transition: color var(--duration-fast) var(--easing-standard);
-}
+  .contact-method__text {
+    margin-top: var(--space-1);
+  }
 
-.contact-links a::after {
-  content: " →";
-  color: var(--color-blue-dark);
-}
+  /* One notch more than the supporting sentences: this is the Maps link, an
+     action rather than a description, so it needs to detach from the address
+     line above it. */
+  .contact-method__action {
+    margin-top: var(--space-2);
+  }
 
-.contact-links a:hover,
-.contact-links a:focus-visible {
-  color: var(--color-blue-dark);
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+  /* 19–20px across this range, up from 16px — the brief's 20–24px band, using
+     the existing --font-size-md token rather than a new literal.
+
+     REGULAR weight, reverted from 500 the next day (client: "que no sean tan
+     bold el número, el mail y el address, un poco menos bold"). There is no
+     intermediate step available to soften it instead: this page's stack is
+     "Helvetica Neue" → Arial, which offers Regular (400) and Medium (500) and
+     nothing between, and a value like 450 resolves UP to Medium under CSS font
+     matching rather than splitting the difference. So 400 is the next step down.
+
+     The hierarchy does not depend on the weight and never did — it is carried by
+     SIZE and colour: 20px (22px for the phone) solid black against 15px muted
+     supporting copy and an 11px uppercase label. Measured after the change: the
+     rows keep their heights, so nothing about the column balance moved. */
+  .contact-method__value {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.3;
+  }
+
+  /* The phone stays the strongest row: one step above the other two values,
+     which is the whole difference — not a bigger box, not a button. Its pale
+     blue fill is unchanged, and it is still not the only signal (the row also
+     leads with the phone icon and the "Telefon" label). */
+  .contact-method--priority .contact-method__value {
+    font-size: 1.375rem;
+  }
+
+  /* A little more breathing room under the phone number specifically, per the
+     brief — its supporting sentence is the longest of the three. */
+  .contact-method--priority .contact-method__text {
+    margin-top: var(--space-2);
+  }
+
+  /* Was a NEGATIVE 8px, which pulled the list up toward the lede. Positive 8px
+     on top of the grid's 32px row-gap gives 40px under the supporting
+     paragraph — the intro reads as its own block and the list gets the vertical
+     room the brief asks for, without a gap that looks like a mistake. */
+  .contact-intro {
+    margin-bottom: var(--space-2);
+  }
 }
 
 /* ---- Form card ----
@@ -592,6 +651,67 @@
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-heading);
   color: var(--color-logo-black);
+}
+
+/* Webtext 25 §3's own intro line, restored 2026-08-05. Secondary text on this
+   light page is the prescribed rgb(59 73 86 / 0.75) (page-conventions §5).
+
+   NO measure cap (client 2026-08-05: "está todo apretado a la izquierda"). The
+   44ch that used to sit here resolved to 391px inside a 647px card — 60% of the
+   width, so the sentence broke into four short lines with a third of the card
+   empty beside it, while the H2, the form title and every field above and below
+   it run the full 647px. One element pulling in from a shared left edge reads
+   as a mistake, not as a measure.
+
+   Nothing is lost on readability: the card's inner width is ~647px ≈ 72ch at
+   this size, still inside the comfortable 45–75ch range, and it cannot grow
+   past that because .container caps at 1440px (layout.css) — so this is a
+   bounded full-width, not an unbounded one. */
+.contact-form-card__lede {
+  margin-top: var(--space-3);
+  color: rgb(59 73 86 / 0.75);
+  line-height: var(--line-height-base);
+}
+
+/* The doc's "Formulartitel" — subordinate to the block's H2 above, so it is
+   sized as a label rather than a heading, and takes body letter-spacing: the
+   -1px base.css applies to headings is calibrated for display sizes and reads
+   as collision here (same call as the FAQ question, design-system §2). */
+.contact-form-card__form-title {
+  margin-top: var(--space-7);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: normal;
+  line-height: var(--line-height-heading);
+  color: var(--color-logo-black);
+}
+
+/* Highlight-Box (Webtext 25 §2). Sits under the three contact rows in the aside
+   column. A tile, not a card: 5%-grey fill and no border, per §5's "Card / tile"
+   row — the three rows above already carry borders and a fourth bordered object
+   would read as a fourth contact method rather than as a statement about them.
+   The blue left rule is what marks it as the emphasis, and blue-dark is the only
+   blue that passes on white. */
+.contact-highlight {
+  margin-top: var(--space-6);
+  padding: var(--space-5);
+  background-color: rgb(59 73 86 / 0.05);
+  border-radius: var(--radius-lg);
+  border-inline-start: 3px solid var(--color-blue-dark);
+}
+
+.contact-highlight__title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: normal;
+  line-height: var(--line-height-heading);
+  color: var(--color-logo-black);
+}
+
+.contact-highlight__text {
+  margin-top: var(--space-2);
+  color: rgb(59 73 86 / 0.75);
+  line-height: var(--line-height-base);
 }
 
 /* (The "Lieber direkt sprechen? …" line under the form is gone entirely —
@@ -690,8 +810,10 @@
   text-wrap: balance;
 }
 
+/* 3.71:1 on this white card at 14.8px — fails the 4.5:1 for normal text. Same
+   deeper mix as lead-form.css's own consent link (4.88:1); see the note there. */
 .contact-form .form-checkbox__label a {
-  color: var(--color-blue-dark);
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
 }
 
 .contact-form .form-checkbox__input {
@@ -829,20 +951,16 @@
     padding-block: var(--space-4);
   }
 
+
+
   /* 13px floor for small type on a phone, same as the homepage pass. */
   .contact-method__text,
-  .contact-cert__text,
-  .contact-links a {
+  .contact-method__action {
     font-size: 0.8125rem;
   }
 
   .contact-method__label {
     font-size: 0.75rem;
-  }
-
-  .contact-links a {
-    /* 44px total: 13px text (~18px line box) + 13px padding either side. */
-    padding-block: 0.8125rem;
   }
 
   .contact-form .form-field__label {
@@ -876,14 +994,24 @@
     height: 1.375rem;
   }
 
+  /* The privacy-policy link measured 16px tall — the one real sub-44px target
+     on this page that isn't a documented shared case. It sits INSIDE a
+     sentence, so it gets vertical padding on an inline-block rather than a
+     bigger box: the hit area grows, the consent line doesn't move. Same
+     technique, same reason, as the homepage's own consent row (page-home.css,
+     2026-07-30 mobile pass).
+
+     Still short of 44px on purpose — going further would start pushing the
+     two lines of the sentence apart. 42px is the same value the homepage
+     accepted here. */
+  .contact-form .form-checkbox__label a {
+    display: inline-block;
+    padding-block: 0.65rem;
+  }
+
   .contact-form__submit {
     justify-self: stretch;
     width: 100%;
-  }
-
-  .contact-cert {
-    flex-wrap: wrap;
-    gap: var(--space-3);
   }
 
   /* The form is the primary action and comes first in the DOM, so the gap
@@ -891,6 +1019,38 @@
   .contact-main__grid {
     gap: var(--space-5);
   }
+
+  /* ---- Compacting the form card (mobile pass 2026-08-04) ----
+     Measured at 390px before touching anything: the card was 884px tall, i.e.
+     MORE than one 844px screen, which pushed the submit button to y=1144 and
+     the three contact rows — including the phone number — to y=1229. On desktop
+     that problem does not exist, because the contact list sits in the other
+     column and is visible on arrival; the single-column stack is what buries
+     it. So the card's height is the lever, and it comes from three places:
+
+       - the 24px gap between six field rows,
+       - the card's own 28px inner padding (the clamp's floor),
+       - and nothing else worth cutting: the fields are already at their
+         44px+ touch heights and the 16px input size is the iOS-zoom floor.
+
+     Nothing is removed and no field gets smaller — only the air between them.
+     A phone shows one field at a time anyway, so 16px between rows still reads
+     as separate rows; 24px was a desktop rhythm applied to a narrow column. */
+  .contact-form {
+    gap: var(--space-4);
+    margin-top: var(--space-5);
+  }
+
+  .contact-form-card {
+    padding: var(--space-5);
+  }
+
+  /* NOTE: the phone override for .contact-location h2 is NOT here, it is at the
+     very end of this file. This block's own header says it is "collected at the
+     end so these win over the component rules they adjust" — but the Anfahrt
+     section was appended AFTER it (2026-08-03), so that invariant no longer
+     holds for anything .contact-location owns. Same specificity, later rule
+     wins, and a font-size set here is silently ignored. */
 }
 
 /* --------------------------------------------------------------------------
@@ -1007,8 +1167,59 @@
   font-family: var(--font-family-base);
 }
 
+/* Colour boost on the TILE PANE only (client 2026-08-04: the map still read as
+   white). CARTO's "Voyager" style is genuinely colour but pitched pale on
+   purpose, so at this zoom the parks and the road hierarchy barely separate
+   from the buildings. Saturating the pane is the cheap, reversible lever — it
+   keeps the approved keyless provider, the @2x tiles and the attribution
+   exactly as they are, instead of switching to a heavier basemap.
+
+   Scoped to .leaflet-tile-pane, NOT the container: a filter on the container
+   would also hit the marker dot, the white tooltip chip and the attribution
+   link, and a filter creates a new stacking context, which is why it belongs
+   on the pane Leaflet already isolates for the tiles. */
+.contact-location__map .leaflet-tile-pane {
+  filter: saturate(1.75) contrast(1.04);
+}
+
 @media (max-width: 767.98px) {
   .contact-location__map-wrap {
     height: 300px;
+  }
+
+  /* ---- Heading hierarchy, phone only (mobile pass 2026-08-04) ----
+     Both `main h2`-scale headings on this page bottom out at the same clamp
+     floor on a phone, so "So finden Sie uns" — a wayfinding subsection —
+     measured 36px: LARGER than the form card's own title (32px) and exactly as
+     large as the H1. That inverts the hierarchy the desktop layout is careful
+     to get right; .contact-intro h1's comment above lowers its ceiling for the
+     same reason at the other end of the scale.
+
+     It lives down here, not in the touch-target block, because that block sits
+     BEFORE this section in the file and loses the cascade at equal specificity.
+
+     Scoped to the phone: at ≥768px this heading is back on the shared clamp, so
+     "every section title is one size" (docs/page-conventions.md §2) still holds
+     wherever the comparison is actually visible. */
+  .contact-location h2 {
+    font-size: 1.75rem;
+  }
+
+  /* The no-JS fallback's Maps link is the only action in that box when Leaflet
+     fails, and it measured 26px. Padding on an inline-block, same as the
+     consent link — the block is centred text, so a taller line box is fine. */
+  .contact-location__fallback a {
+    display: inline-block;
+    padding-block: 0.6rem;
+  }
+
+  /* Measured 145px of empty white between the last contact row and this
+     heading: .contact-main's 48px bottom padding plus this section's own
+     .section top padding stack up, and on a 390px screen that reads as the page
+     having ended rather than as a section break. 80px still separates the two
+     chapters clearly at this width. The bottom padding is left alone — the
+     pixel seam into the footer needs its reserved band below. */
+  .contact-location {
+    padding-top: var(--space-6);
   }
 }

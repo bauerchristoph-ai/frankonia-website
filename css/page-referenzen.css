@@ -46,20 +46,75 @@
 }
 
 /* ---- 1. Hero ------------------------------------------------------------- */
-/* The service hero, minus the photo column: the draft asks for badge → H1 →
-   subline → CTA + phone → Google widget and specifies no image, and there is no
-   Referenzen photograph in the project. So this is a single content column, and
-   the hero is sized by its own content instead of by a portrait photo's height
-   (the reason .service-hero forces a full first screen at ≥1024px — with no
-   photo that rule would leave a screen-tall band of empty black under the CTA).
-   Everything inside keeps the .hero__* class names, so js/hero-reveal.js
-   animates lead → actions → trust with no per-page JS. */
+/* REBUILT 2026-08-05 (client, reference: the old WordPress Referenzen hero — a
+   centred team photo with the title centred just below it). A single CENTRED
+   column: photo → H1 → subline, and nothing else. The CTA, the phone pill and the
+   Google rating card were removed on instruction, and the draft's Badge with them
+   (see the markup comment for what that means and how to restore it).
+   `.ref-hero__badge` / `__badge-icon`, `.ref-hero__actions` and `.ref-hero__trust`
+   were DELETED here rather than left as dead rules — git has them, and this file
+   is the only place they existed.
+   The hero is sized by its own content: .service-hero forces a full first screen
+   at ≥1024px because of its portrait service photo, which would leave a
+   screen-tall band of empty black under a short centred block. */
 .ref-hero__grid {
   grid-template-columns: minmax(0, 1fr);
 }
 
+/* The column is as wide as the PHOTO wants to be; the two text blocks cap
+   themselves below, so making the picture bigger never stretches the measure of
+   the heading or the lede. */
 .ref-hero__content {
-  max-width: 54rem;
+  max-width: 62rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* 46rem is what keeps the title on two balanced lines ("Unsere Kunden / und ihre
+   Ergebnisse"). Without its own cap it would follow the wider column above and
+   run onto one very long line. */
+.ref-hero h1 {
+  max-width: 46rem;
+  margin-inline: auto;
+}
+
+/* The team cutout above the title. MUCH larger since 2026-08-05 (client): 56rem
+   against the 34rem it launched with — ~64% of the column at 1440px, which is the
+   proportion the client's reference hero has. The source is 1729px wide, so at
+   896px displayed it is still ~1.9x, i.e. retina-sharp.
+   `aspect-ratio` matches the real export (1729×1073) so the row is reserved before
+   the image decodes — no layout shift on the LCP element. <picture> is INLINE, so
+   it needs display: block or the <img> inside measures against a shrink-to-fit box
+   (the trap already documented for the service hero and the flow frames). */
+.ref-hero__media {
+  width: 100%;
+  max-width: 56rem;
+  /* The bottom margin is what pushes the text down (client: "the text a bit more
+     down"). It reads larger than 64px because the mask below fades the photo out
+     before its box ends. */
+  margin: 0 auto var(--space-8);
+  aspect-ratio: 1729 / 1073;
+}
+
+.ref-hero__media picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ref-hero__media img {
+  width: 100%;
+  height: 100%;
+  /* `contain`, not `cover`: this is a cutout of three people, so cropping it would
+     cut someone in half. */
+  object-fit: contain;
+  /* The cutout's bottom is a straight crop through their legs, and against pure
+     black that reads as a hard horizontal line — measured: the trousers end at
+     rgb(27 26 31) and the next row is rgb(1 1 1). Fading the last quarter lets
+     them dissolve into the section instead of being sliced. Starts at 74% so no
+     face or torso is touched. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
 }
 
 @media (min-width: 1024px) {
@@ -75,55 +130,25 @@
   }
 }
 
-/* The draft's hero Badge. It used to lean on `.service-hero__badge` in the
-   chassis, but those rules were deleted 2026-08-03 when the client dropped the
-   certification chip from the service hero — so the values live here now,
-   unchanged from that rule, and this page no longer depends on a chip the service
-   template does not want. Unlike that one, this badge is a full sentence, so it
-   has to wrap rather than run off a narrow viewport. */
-.ref-hero__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  max-width: 100%;
-  margin-bottom: var(--space-5);
-  padding: var(--space-2) var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
-  background-color: var(--color-bg-subtle);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  text-align: left;
-}
-
-/* icon-check/icon-shield-check are STROKE icons whose fill/stroke live on the
-   sprite's <g id="icon-defs">, which does NOT propagate through <use> — set them
-   explicitly or it renders as a solid black shape. */
-.ref-hero__badge-icon {
-  width: 1.1em;
-  height: 1.1em;
-  flex-shrink: 0;
-  color: var(--color-accent);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-}
-
+/* The lede keeps its own, tighter measure — a centred paragraph needs a shorter
+   line than the heading above it or the two read as one block of text. */
 .ref-hero__lead {
   max-width: 38rem;
+  margin-inline: auto;
 }
 
-/* ---- Centred section intro (Ergebnisse + Kundenstimmen) ------------------ */
-/* Client 2026-08-04: those two titles are centred and their eyebrows are gone.
-   The eyebrows were UI furniture this build added to match the homepage's
-   sections, never copy from the draft, so nothing the client wrote was lost —
-   and the two white sections now open on the heading alone.
-   Only the intro is centred, not the section: the tiles below already centre
-   themselves and the quote cards stay left-aligned inside their own boxes.
+/* ---- Centred section intro ----------------------------------------------- */
+/* Client 2026-08-04 (Ergebnisse + Kundenstimmen) and 2026-08-05 (Kunden): these
+   titles are centred. **No section on this page has an eyebrow any more** — they
+   were UI furniture this build added to match the homepage's sections, never copy
+   from the draft, so nothing the client wrote was lost.
+   Only the intro is centred, not the section: the result tiles already centre
+   themselves, the quote cards keep their left-aligned text, and the logo rows stay
+   left-anchored under a centred heading.
    `.section__intro` is `max-width: none` from the chassis, so the heading has the
-   full column to centre in; `text-wrap: balance` (base.css) keeps the two lines
-   even. The remaining two sections (Kunden, Case Studies) keep their eyebrows and
-   their left alignment — the client scoped this to these two. */
+   full column to centre in; `text-wrap: balance` (base.css) keeps the lines even.
+   The Case Studies heading is the one that is still LEFT-aligned — the client
+   centred the other three by name and did not include it. */
 .ref-intro--center {
   text-align: center;
 }
@@ -160,16 +185,73 @@
   line-height: var(--line-height-base);
 }
 
-/* The customer behind the number. The draft's own instruction for this section
-   is that every tile is read together with that customer's quote ("MORELO →
-   Crispens, Sozialstiftung → Schleier, CleanTech → Keller"), so the company name
-   is the tile's own line — and the three quotes below run in the same order. */
-.ref-results__client {
-  display: block;
+/* `.ref-results__client` (the named customer under each figure) was DELETED
+   2026-08-05, markup and rule. Webtext 27 (Stand 04.08.2026) makes these tiles
+   anonymous — "bewusst anonymisiert und NICHT den Testimonial-Kunden
+   zugeordnet" — so the tile no longer has a company line to style. Git has the
+   rule if the attribution ever comes back. */
+
+/* Each tile is now a link to its case study. The whole tile is the anchor, so
+   this is a block-level link that owns the tile's own centred layout; `.stat`
+   above sets the centring and this just has to not fight it.
+   No card, no fill, no shadow: this section is three figures on white and the
+   affordance is the "Zur Case Study" row plus the hover, matching how
+   `.service-link` behaves on the chassis rather than inventing a card here. */
+.ref-results__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--radius-sm);
+  padding-block: var(--space-3);
+  transition: transform var(--duration-base) var(--easing-premium);
+}
+
+.ref-results__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   margin-top: var(--space-2);
   font-size: var(--font-size-sm);
   font-weight: 500;
-  color: var(--color-logo-black);
+  /* On white, and this is small text, so it needs the full 4.5:1 — the plain
+     blue-dark token only reaches 3.71:1 here. Same deeper mix
+     docs/page-conventions.md §5 prescribes for blue *content* on a light
+     section (measured 4.88:1), the one `.service-related__title` uses. */
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+  /* Hairline under the label, drawn on the text only. */
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 2px;
+}
+
+/* The sprite's own fill/stroke live on its <g id="icon-defs"> wrapper and do
+   NOT survive <use>, so every arrow has to declare them (same trap that made
+   every .service-link__arrow a filled black sliver). */
+.ref-results__arrow {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  transition: transform var(--duration-base) var(--easing-premium);
+}
+
+/* The icon points up-right, so it travels the way it points. */
+.ref-results__link:hover .ref-results__arrow,
+.ref-results__link:focus-visible .ref-results__arrow {
+  transform: translate(3px, -3px);
+}
+
+.ref-results__link:hover {
+  transform: translateY(-2px);
+}
+
+.ref-results__link:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-blue-dark) 85%, black);
+  outline-offset: 4px;
 }
 
 @media (min-width: 768px) {
@@ -425,9 +507,13 @@
   }
 }
 
+/* Centred (client 2026-08-05), matching this section's centred heading. The logo
+   rows above stay left-anchored — a marquee has to start at an edge — so these
+   three links are what closes the section back on the centre axis. */
 .ref-clients__links {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: var(--space-4) var(--space-6);
   margin-top: var(--space-8);
 }
@@ -481,9 +567,18 @@
   margin-top: var(--space-2);
 }
 
-@media (min-width: 900px) {
+/* THREE columns since 2026-08-05, not two. This grid held the draft's two
+   Kundenstories; it now holds the three case studies, and at two columns the
+   third card sat alone on a second row. Three across also matches the three
+   result tiles at the top of this page, so the number the visitor reads up there
+   and the card they click down here line up one-to-one.
+   The break is 1024px rather than the result tiles' own 768: these cards carry a
+   three-line paragraph, and three of those in a 768px viewport gives ~230px
+   columns. Below 1024 they stack — deliberately not 2+1, which would reopen the
+   orphan this change exists to fix. */
+@media (min-width: 1024px) {
   .ref-cases__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -532,25 +627,9 @@
     padding-block: var(--space-6) var(--space-8);
   }
 
-  /* Both hero CTAs full width and stacked: at 390px the blue pill and the phone
-     pill do not fit one row, and .btn is white-space: nowrap. Same values as the
-     service hero's own mobile rule, which only targets .service-hero__actions. */
-  .ref-hero__actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-3);
-  }
-  .ref-hero__actions .btn {
-    width: 100%;
-    white-space: normal;
-  }
-
-  .ref-hero__trust {
-    margin-top: var(--space-6);
-    padding-top: var(--space-4);
-    border-top: 1px solid rgb(255 255 255 / 0.14);
-    gap: var(--space-3);
-  }
+  /* The stacked-CTA and trust-row rules that were here went out with the markup
+     they styled (client 2026-08-05) — this hero is photo + two lines of centred
+     text now, so there is nothing to stack. */
 
   /* One step down on a phone. Both groups have to be restated: the optical
      normalisation above uses an attribute selector, so a bare `.ref-marquee__logo`

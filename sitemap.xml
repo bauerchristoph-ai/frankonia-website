@@ -49,4 +49,25 @@
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
+  <!-- Case studies (Webtexte 50-52), built 2026-08-05. Lower priority and
+       yearly changefreq than the service/landing pages: they are dated editorial
+       pieces, not pages that get reworked. -->
+  <url>
+    <loc>https://frankonia-sicherheit.de/referenzen/case-study-sicherheitstechnik/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/referenzen/case-study-sicherheitskonzept/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/referenzen/case-study-schichtsystem/</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
 </urlset>

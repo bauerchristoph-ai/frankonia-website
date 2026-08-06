@@ -3954,6 +3954,21 @@ main h2 {
   margin-top: var(--space-7);
 }
 
+/* Nennungen ohne Link (Webtext 01 Sektion 11 / Change Request 1.3): service-area
+   places that have no city page. Deliberately NOT pills — a pill reads as
+   tappable and these are plain text. One step quieter than the chips beside them
+   so the hierarchy says "also here, no page yet", and centred to sit under the
+   two centred chip rows. 0.75 white is 7.4:1 on this section's black, so it is
+   still comfortably readable body text, not a footnote. */
+.coverage__mentions {
+  margin-top: var(--space-3);
+  max-width: 44rem;
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: rgb(255 255 255 / 0.75);
+  line-height: var(--line-height-base);
+}
+
 .coverage__list {
   list-style: none;
   display: flex;
@@ -4084,6 +4099,76 @@ main h2 {
    .faq specifically so werkschutz's FAQ is untouched. Hardcoded "on
    white" values again, same rgb(59 73 86 / ...) pattern used elsewhere
    in this file. */
+/* ---- Sicherheit, wie wir sie verstehen (Sektion 12, copy v2) ----
+   SEO/philosophy block between Einsatzgebiete and the FAQ. The doc calls it
+   "textlastig (SEO)", so this is deliberately the plainest section on the page:
+   no cards, no fills, no imagery, no bespoke motion — just a centred H2 over
+   three H3 + paragraph pairs, using the shared reveal primitives.
+
+   Sits on the plain page background, like .coverage directly above it, which is
+   why there is no pixel-seam between the two (docs/page-conventions.md §9.2 —
+   black tiles over black are invisible). The seam below still pairs with the
+   white .faq section.
+
+   No --content-inset here: this section is centre-composed like its neighbours
+   (.coverage, .faq, .social, .references), and the homepage deliberately keeps
+   the editorial left inset off its centred intros — it would fight
+   margin-inline: auto (see the note on .pain-hook__intro's inset block above). */
+.philosophy__intro {
+  max-width: 46rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.philosophy__grid {
+  display: grid;
+  gap: var(--space-7);
+  margin-top: var(--space-8);
+}
+
+/* Three columns only where a column is still a comfortable measure. The
+   paragraphs are 478-520 characters each, so at 1024px three tracks would be
+   ~300px and each paragraph would run past 20 lines — a wall, which is the
+   opposite of what a scannable SEO block should be. Measured before choosing:
+   at 1200px+ a track is ~370px, about 11 lines per paragraph. */
+@media (min-width: 1200px) {
+  .philosophy__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-8);
+  }
+}
+
+/* Below that, two columns from tablet up keeps it from being one long column,
+   with the third item wrapping to its own row. */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  .philosophy__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-8);
+  }
+}
+
+.philosophy__item-title {
+  /* A sub-heading inside a section, so it takes body-ish metrics rather than the
+     display letter-spacing base.css applies to headings — same reasoning as the
+     FAQ question (docs/design-system.md §2): the -1px tracking is calibrated for
+     48px+ display sizes and reads as collision at this size. */
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-heading);
+  letter-spacing: normal;
+  margin-bottom: var(--space-3);
+}
+
+.philosophy__item-text {
+  /* 0.78 rather than --color-text-muted's 0.65: this is the longest continuous
+     prose on the homepage, and the muted token is calibrated for short labels.
+     0.78 on the page background measures ~13:1. */
+  color: rgb(255 255 255 / 0.78);
+  line-height: var(--line-height-base);
+  /* German compounds in a ~370px track; the sitewide hyphens: auto (base.css)
+     is correct for running prose exactly like this, so it stays on. */
+}
+
 .faq {
   background-color: var(--color-white);
   color: var(--color-gray);

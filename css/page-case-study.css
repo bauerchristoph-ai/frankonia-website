@@ -1,0 +1,343 @@
+/* =============================================================================
+   CASE STUDY — /referenzen/case-study-*/
+   Built 2026-08-05 from NewVersionCopiesFrankonia/"2026-08-04 Webtext 50/51/52".
+   Shared by all THREE case studies: the client's three documents have an
+   identical shape (Hero + Ergebnis-Kachel → article sections → Sicherheitskonzept
+   pitch + CTA), which is why every class here is generic `.cs-*` and nothing is
+   named after a single study. A fourth case study needs copy, not CSS.
+
+   This file is deliberately small. `css/page-service.css` is the CHASSIS
+   (docs/page-conventions.md §9.1) and already provides, for free:
+     - the `--content-inset` rule on BOTH sides, for `main > .breadcrumbs` and
+       `main > section > .container`                                        (§1)
+     - the oversized regular-weight `main h2`                               (§2)
+     - the breadcrumb chevron                                              (§3)
+     - `.section--light`, which RE-DECLARES the tokens for a white section, so
+       every rule below that consumes a token gets its light variant free  (§5)
+     - `.service-hero*`, `.service-link*`, `.service-related*`
+     - the whole `.pixel-seam*` block + the padding the next block reserves (§4.4)
+   None of that is re-copied here. Only this page type's own blocks are.
+
+   PAGE COLOUR ORDER (3 seams):
+     hero ■ → article □ → pitch + CTA ■ → footer
+   Every H2 of the article body lives inside ONE white section on purpose: they
+   are chapters of one story, and a seam between two whites would dissolve white
+   on white (§9.2, same call /referenzen/ and /jobs/ already make).
+   ========================================================================== */
+
+/* German compounds in narrow measures. `hyphens: auto` (base.css) is right for
+   running prose but wrong for a lede, a stat label or a short list item, where
+   it reads as a typo (§7). The article's own <p> are deliberately NOT in this
+   list — those ARE running prose in a wide measure. */
+.cs-hero__lead,
+.cs-result__label,
+.cs-outcome li,
+.cs-figure__caption,
+.cs-related__label {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* ---- 1. Hero ------------------------------------------------------------- */
+/* No photo: the client's own note for all three documents is "Bilder: neutrale
+   Motive … werden geliefert", so nothing is invented here. That means the
+   service template's two-column grid and its `min-height: calc(100svh - 8rem)`
+   both have to be overridden — that min-height exists to hold a portrait photo
+   and without one it leaves a screen of empty black under the CTA (§9.1). */
+.cs-hero .service-hero__grid {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 1024px) {
+  .cs-hero {
+    min-height: 0;
+  }
+}
+
+/* The copy column is capped rather than run to the container's full 1600px:
+   an H1 and a subline across that width stop reading as an article opening. */
+.cs-hero__inner {
+  max-width: 46rem;
+}
+
+/* Badge "Case Study · Anonymisiert". The word "Anonymisiert" is load-bearing
+   editorial content, not decoration — every one of these studies describes a
+   real client project with the client removed, and the reader is told that
+   up front rather than in a footnote. */
+.cs-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.4rem 0.85rem;
+  margin-bottom: var(--space-4);
+  border: 1px solid rgb(255 255 255 / 0.25);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.82);
+}
+
+.cs-hero__badge-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+/* Hero H1: the homepage hero's own clamp, which §2 makes mandatory for ANY
+   hero on the site — /werkschutz/ used the section scale for a while and came
+   out 60px against the homepage's 52px. */
+.cs-hero__inner h1 {
+  font-size: clamp(2rem, 1.6rem + 2.2vw, 3.25rem);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.1;
+  margin-bottom: var(--space-4);
+}
+
+/* Named `.hero__lead` in the markup as well, so js/hero-reveal.js drives the
+   entrance with no per-page JS (§4.1). This rule only sets the measure. */
+.cs-hero__inner .hero__lead {
+  max-width: 34rem;
+  font-size: var(--font-size-lg);
+  line-height: 1.5;
+  color: rgb(255 255 255 / 0.82);
+}
+
+/* ---- 2. Ergebnis-Kachel (in the hero) ------------------------------------ */
+/* The three-item result strip each document opens with. Ruled, not carded:
+   the same "hairlines, not boxes" language the homepage metrics row uses, so
+   the hero stays one composition instead of a hero plus a widget. */
+.cs-results {
+  list-style: none;
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-7);
+  padding-top: var(--space-5);
+  border-top: 1px solid rgb(255 255 255 / 0.18);
+}
+
+.cs-result__label {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+  color: rgb(255 255 255 / 0.82);
+}
+
+.cs-result__tick {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  /* The sprite's fill/stroke live on its <g id="icon-defs"> wrapper and do NOT
+     survive <use> — every icon on this site has to declare them or it renders
+     as a filled black sliver. */
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2.25;
+}
+
+@media (min-width: 700px) {
+  .cs-results {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+}
+
+/* ---- 3. Article body ----------------------------------------------------- */
+/* One white section holding every H2 of the story. The measure is the point:
+   these are 3-4 sentence paragraphs of real prose and they get a reading
+   measure, not the container's width. */
+.cs-article {
+  max-width: 44rem;
+}
+
+/* Section titles inside the article step DOWN from the shared `main h2` clamp.
+   Declared exception to §2, and the reason is structural rather than cosmetic:
+   an article has five or six H2s a screen apart, and at the 60px section scale
+   each one reads as a new page rather than the next chapter. The page still has
+   exactly one H1 at the hero scale, so the hierarchy is intact.
+   ⚠️ This is the THIRD declared exception to §2 (after /werkschutz/'s Vorteile
+   at 48px and its Leistungsumfang at 40px). §2 should be revisited rather than
+   a fourth exception being added. */
+.cs-article h2 {
+  font-size: clamp(1.5rem, 1.2rem + 1.1vw, 2.125rem);
+  line-height: 1.2;
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-4);
+}
+
+.cs-article > *:first-child {
+  margin-top: 0;
+}
+
+.cs-article p {
+  font-size: var(--font-size-md);
+  line-height: 1.65;
+  margin-bottom: var(--space-4);
+}
+
+/* ---- 4. Image placeholder ------------------------------------------------ */
+/* The three documents each name their intended shots ("Begehungssituation am
+   Werkstor", "Schichtübergabe / Objekt bei Nacht"), and Chris's change-request
+   list says the images are still coming. So these are RESERVED FRAMES carrying
+   the document's own description, exactly like /werkschutz/'s reserved Jäger
+   portrait: the frame holds the real space, so dropping a <picture> in later
+   causes no layout shift, and nothing is invented in the meantime. */
+.cs-figure {
+  margin: var(--space-6) 0 var(--space-7);
+}
+
+.cs-figure__frame {
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-subtle);
+}
+
+.cs-figure__caption {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* ---- 5. Outcome list ----------------------------------------------------- */
+/* The "Das Ergebnis" bullets. Ruled rows with a blue tick, and the first
+   phrase of each is emphasised in the markup, because in all three documents
+   the bullet is written as "claim — explanation". */
+.cs-outcome {
+  list-style: none;
+  margin: var(--space-5) 0 var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.cs-outcome li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
+
+.cs-outcome__tick {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  fill: none;
+  /* On white this needs the deeper mix, not --color-accent: blue-light is
+     ~2.6:1 here. A tick is a graphic and only needs 3:1, but it sits directly
+     beside 4.5:1 text and a paler blue reads as a different, weaker element. */
+  stroke: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+  stroke-width: 2.25;
+}
+
+.cs-outcome strong {
+  font-weight: 500;
+  color: var(--color-logo-black);
+}
+
+/* ---- 6. Pitch + CTA ------------------------------------------------------ */
+/* Closing dark section: the Sicherheitskonzept pitch every document ends on,
+   its CTA, and the two "Weiterführend" links. */
+.cs-pitch__inner {
+  max-width: 44rem;
+}
+
+.cs-pitch p {
+  font-size: var(--font-size-md);
+  line-height: 1.65;
+  color: rgb(255 255 255 / 0.82);
+  margin-bottom: var(--space-6);
+}
+
+.cs-pitch__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* Two quiet onward links under the CTA. Row-level hairline, arrow travelling
+   up-right the way the icon points — the same behaviour `.service-related__link`
+   has on the chassis, at a smaller scale because there are only two of them. */
+.cs-related {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+  margin-top: var(--space-7);
+  padding-top: var(--space-5);
+  border-top: 1px solid rgb(255 255 255 / 0.18);
+}
+
+.cs-related__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  font-size: var(--font-size-sm);
+  color: rgb(255 255 255 / 0.82);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color var(--duration-base) var(--easing-standard),
+              border-color var(--duration-base) var(--easing-standard);
+}
+
+.cs-related__arrow {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  transition: transform var(--duration-base) var(--easing-premium);
+}
+
+.cs-related__link:hover,
+.cs-related__link:focus-visible {
+  color: var(--color-white);
+  border-bottom-color: var(--color-accent);
+}
+
+.cs-related__link:hover .cs-related__arrow,
+.cs-related__link:focus-visible .cs-related__arrow {
+  transform: translate(3px, -3px);
+}
+
+/* ---- 7. Phone ------------------------------------------------------------ */
+/* §7: the editorial inset drops on a phone, the CTA goes full width, and the
+   article's own rhythm tightens. Nothing here changes the desktop composition. */
+@media (max-width: 767.98px) {
+  .cs-hero__inner h1 {
+    font-size: clamp(1.75rem, 1.3rem + 3.2vw, 2.25rem);
+  }
+
+  .cs-article h2 {
+    margin-top: var(--space-7);
+  }
+
+  .cs-pitch__actions .btn {
+    width: 100%;
+    /* .btn is white-space: nowrap, and this label's min-content exceeds a
+       360px column — the exact trap the price card's CTA hit at 320px. */
+    white-space: normal;
+  }
+
+  .cs-related {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+}

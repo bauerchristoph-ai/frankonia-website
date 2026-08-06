@@ -15,10 +15,14 @@ Ya pasó dos veces que las notas del proyecto decían algo distinto del código.
 La homepage está lista en desktop y mobile. Falta verla en un teléfono de
 verdad (todo se probó con un navegador automatizado, no con la mano).
 
-De 49 páginas hay 5 terminadas (homepage, Kontakt, Werkschutz, Referenzen, Jobs) —
-Werkschutz espera aprobación como plantilla, Referenzen espera el copy de las
-tres case studies que su propio draft marca como `[ERGÄNZEN]`, y Jobs espera la
-lista real de vacantes para poder emitir el schema `JobPosting`.
+De 52 páginas hay 8 terminadas (homepage, Kontakt, Werkschutz, Referenzen, Jobs
+y las **3 case studies**) — Werkschutz espera aprobación como plantilla y Jobs
+espera la lista real de vacantes para poder emitir el schema `JobPosting`.
+
+**El total pasó de 49 a 52 páginas el 2026-08-05**: el copy v2
+(`NewVersionCopiesFrankonia/`) agrega los Webtexte 50–52, las tres case studies
+anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
+arrastraba desde el 2026-08-03 **está cerrado**.
 
 - [ ] Ver la homepage en un teléfono real
 - [ ] 🔴 Subir `content-de/` a git — son los 49 textos y **no están guardados**
@@ -74,6 +78,16 @@ el hub de Leistungen. Hoy es page-scoped; si una segunda página lo necesita, se
 saca a un archivo compartido como se hizo con `lead-form.css` y
 `testimonials.css`. Los dos breakpoints están **medidos** (la fila de 4 arranca a
 1200px, no a 1024) — leé el comentario en `css/page-jobs.css` antes de moverlos.
+En teléfono esas 4 cards **no se apilan**: son la tira compartida
+(`data-swipe-carousel`, [page-conventions.md](page-conventions.md) §7.1), igual
+que las 6 cards de la home. Cualquier fila de N tarjetas nueva debería hacer lo
+mismo.
+
+**Pasada de mobile de `/jobs/` (2026-08-04):** 11.287px → 9.146px a 390px
+(13,4 → 10,8 pantallas) sin recortar una palabra. De dónde salió: la tira que se
+desliza en Arbeitgeber (2.462 → 981px), el ritmo de seams/padding propio de la
+página (§7.2), los 3 pasos como riel vertical y el ajuste de la escalera y los
+links. El detalle está en CLAUDE.md.
 
 ### Se reusa de Kontakt
 `js/contact-map.js` + `.contact-location*` (page-contact.css) — mapa de
@@ -92,7 +106,7 @@ cambiando solo esos dos números.
 | ~~**Tabla comparativa**~~ | 4 | ✅ hecho (`.service-compare*`) |
 | **Layout de artículo** | 4 | blog |
 | ~~**Formulario de postulación**~~ | 1 | ✅ hecho en Jobs (`.jobs-form`, selector de cualificación + subir CV) |
-| ~~**Case studies**~~ | 1 | ✅ hecho en Referenzen (`.ref-case*`) — falta el texto de las 3 🔴 |
+| ~~**Case studies**~~ | 1 | ✅ hecho en Referenzen (`.ref-case*`) · **las 3 páginas están construidas** (2026-08-05, Webtexte 50–52, `css/page-case-study.css`) — solo faltan las fotos |
 
 **Sobre mobile:** no es una fase aparte. La homepage costó porque cada sección
 era única. Si cada bloque se construye responsive **cuando se construye**, las
@@ -120,10 +134,17 @@ reveals de scroll, Lenis).
       4:5 reservado y etiquetado; entra cambiando un `<p>` por un `<picture>`.
       Decisión del cliente: marco vacío antes que la foto de otra persona al lado
       de su nombre.
-- [ ] 🔴 Cambiar las 6 fotos placeholder del Leistungsumfang por las reales
-      (hoy son 4 reusadas de la home + 2 exportadas de fotos sin uso)
+- [ ] 🔴 Faltan **2 de las 6 fotos** del Leistungsumfang: "2. Zugangs- &
+      Torkontrolle" y "6. Notfall-Erstmaßnahmen" (hoy placeholders; las otras 4
+      son las que mandó el cliente). Marcadas inline en el HTML.
       *No hacen falta fotos de industria para Anwendungsfälle: esas 4 tarjetas
       son cards azules sin foto desde el 2026-08-03.*
+- [ ] 🟡 **Pedir esas fotos más grandes que las anteriores.** Desde el rediseño
+      del 2026-08-04 esa sección es un panel de media pantalla: 720x820 px a
+      1440, o sea ~1440x1640 en una pantalla Retina. Los archivos actuales miden
+      751-1200 px de ancho, así que en Retina hay upscaling. Sirve igual a DPR 1
+      y no vale re-exportar lo que ya está (no hay original más grande), pero
+      cualquier foto nueva conviene pedirla de **1600 px de ancho o más**.
 - [ ] 🔴 Confirmar publicar 28–40 €/h y el "30 % ahorro en personal"
 - [ ] Revisar las 3 líneas de "So läuft es oft" (las escribimos nosotros: el
       draft pide la contraposición pero solo da el lado FRANKONIA)
@@ -153,6 +174,39 @@ revisar con Chris:
       "Werkschutz anfragen" / "Zur Sicherheitstechnik".
 - [ ] El "Formulartitel: Ihre Werkschutz-Anfrage" del draft no se renderiza: el H2
       de la sección ya lo dice (ver el comentario en pages/werkschutz.html).
+- [ ] 🟡 **2026-08-04, `/kontakt/`: dos cosas salieron de la columna izquierda**
+      (pedido del cliente, para que no compita con el formulario).
+      - **DEKRA ya no aparece en `/kontakt/`**: se quitaron los dos sellos y
+        "DEKRA-zertifiziert nach DIN 77200-1 und ISO 9001", y no estaban en ningún
+        otro lugar de esa página. Sigue en `/werkschutz/`, `/referenzen/`, `/jobs/`
+        y la homepage, y el mínimo de la guía §5 es sobre la homepage — así que no
+        se rompe ninguna regla, pero es un elemento de confianza que sale de una
+        página. Los archivos de los sellos siguen en uso, no se borraron.
+      - **Ningún link interno sale de `/kontakt/` ahora.** La línea "Interne Links"
+        del draft pide `/leistungen/`, `/angebot/` y `/sicherheitskonzept/` desde
+        esta página; los tres estaban ya reducidos a uno y ese uno también se fue.
+- [ ] 🟡 **2026-08-05, se quitó la Highlight-Box del Leistungsumfang** (pedido del
+      cliente). Era la caja del draft "Werkschutz + Technik aus einem Konzept", con
+      su párrafo y su link `Zur Sicherheitstechnik`. **Es copy aprobado que sale de
+      la página** y es el único lugar donde el argumento estaba desarrollado: que la
+      técnica puede reemplazar horas de personal y por eso baja el costo corriente.
+      Lo que queda es más flaco — "Technik-geschulte Kräfte" en el hero, la duty 05,
+      "Technik-Empfehlung" en el Sicherheitskonzept, y un factor de cinco palabras en
+      Kosten ("Technik-Kombination, die Personalstunden ersetzt"). **Confirmar con
+      Chris.** No se pierde navegación: `/sicherheitstechnik/` sigue enlazado desde
+      "Verwandte Leistungen" al cierre.
+- [ ] 🟡 **2026-08-04, tres palabras nuevas en la sección Vorteile:** los tópicos
+      "Erreichbarkeit", "Stammpersonal" y "Nachweisbarkeit" salen del brief de
+      rediseño del cliente, **no** del draft de Chris. Son etiquetas de categoría
+      (nombran el contraste que la copy aprobada ya hace), no afirmaciones nuevas —
+      pero son texto nuevo en la página. **Confirmar con Chris.**
+- [ ] **2026-08-04, pedido del cliente:** en el Leistungsumfang se quitaron las
+      dos etiquetas de grupo del draft como label por item ("Im laufenden Betrieb"
+      / "Nachts, am Wochenende, an Feiertagen"): cada duty es solo título + texto.
+      Es copy aprobado que sale de la sección — **confirmar con Chris**. Ningún
+      dato se pierde de la página: la cobertura de noche / fin de semana /
+      feriados sigue dicha en la FAQ, en los factores de Kosten y en
+      Anwendungsfälle (verificado antes de borrar).
 
 *Al terminar esto quedaron resueltos los 3 bloques nuevos más usados + el
 formulario compartido.*

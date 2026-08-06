@@ -308,6 +308,20 @@ que las 4 tarjetas de Anwendungsfälle de `/werkschutz/`
 **blanco puro**, y queda anotado como el mismo tipo de caveat conocido que ya
 carga el botón primario — no como algo a "arreglar" por cuenta propia.
 
+**Segunda vez, mismo criterio (2026-08-05):** el item activo del Leistungsumfang de
+`/werkschutz/` (`.service-flow__step.is-active`) también va con `#3D9AD3` y texto
+blanco puro. Se construyó primero con `#4673AB` (4,88:1) y el cliente pidió
+explícitamente el azul del CTA. Mismo caveat, misma mitigación: **texto blanco
+sólido** (un nivel de alpha lo bajaría de 3:1) y jerarquía por tamaño y peso.
+
+⚠️ **Dos trampas al escribir "el azul del CTA":**
+1. Es **`--color-blue-light`**. `.btn--primary` (components.css) usa ese token desde
+   el 2026-07-28; `--color-blue-dark` es su estado hover. La tabla de colores de
+   CLAUDE.md decía lo contrario hasta el 2026-08-05 — corregida.
+2. En una sección clara **no sirve `--color-accent`**: `.section--light` re-declara
+   ese token a blue-dark, así que daría `#5287C9` (3,71:1) en vez del azul del CTA.
+   Hay que nombrar `--color-blue-light` directo.
+
 Dos cosas que sí son regla:
 
 - **Blanco puro, sin niveles de alpha.** Sobre `#3D9AD3` el blanco ya está en

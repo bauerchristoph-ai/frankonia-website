@@ -123,9 +123,14 @@
     linear-gradient(
       90deg,
       rgba(0, 0, 0, 0.94) 0%,
-      rgba(0, 0, 0, 0.78) 24%,
-      rgba(0, 0, 0, 0.4) 44%,
-      rgba(0, 0, 0, 0) 62%
+      rgba(0, 0, 0, 0.78) 28%,
+      rgba(0, 0, 0, 0.4) 50%,
+      /* Clears at 66%: the copy column is 44rem, so at 1440px the content ends at
+         ~56% of the width and the wash is fully clear just past it. It was briefly
+         pushed to 80% for the one-row tick layout, whose 1072px row reached 81% of
+         the viewport; with the ticks stacked as a list that width is gone and so is
+         the reason to veil the guards. The photo keeps its right two-thirds. */
+      rgba(0, 0, 0, 0) 66%
     ),
     linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 18%);
 }
@@ -141,11 +146,38 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
-/* Without a cap the lede and the ticks would run the full width of the photo and
-   the hero would read as a banner, not a first screen. 34rem matches the widest
-   block inside it (.service-hero__points' own measure), so nothing wraps
-   differently than it did in the two-column layout. */
+/* The homepage hero's own column width. It went to 67rem for one pass, to fit the
+   three ticks in a single row (they measure 1066px at this type size, against the
+   homepage's short chips at 625px) — the client saw it and chose a stacked list
+   instead, so the column came back down. */
 .jobs-hero .service-hero__content {
+  max-width: 44rem;
+}
+
+/* ---- The three proof points: a LIST, not a row -------------------------- */
+/* Client 2026-08-05, after seeing both: "mejor los tics ponelos en una lista en
+   vez de una línea".
+   page-service.css makes .service-hero__points a wrapping ROW (the homepage hero's
+   format, applied to the service template), so this is a page-scoped override, not
+   a change to the shared rule — /werkschutz/'s three ticks are short and read well
+   in a row. Here they are the draft's full sentences (up to 404px each), and in a
+   row they either need a 1066px column or wrap into a ragged two-line block; as a
+   list each one is a line you can scan.
+   align-items: flex-start, because the shared rule centres its items for the row
+   layout — in a column that would centre them horizontally. */
+.jobs-hero .service-hero__points {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+/* The H1 keeps its own, narrower measure. Without this it would take the full
+   54rem and rebreak — the two-line balance in the client's own reference
+   screenshot ("Dein Job bei FRANKONIA:" / "Sicherheit, auch für dich") is the
+   composition being matched, and it comes from a ~38rem measure. The lede already
+   caps itself at 32rem (page-service.css), so the three blocks are deliberately
+   three widths: title 38, lede 32, tick row 54. */
+.jobs-hero h1 {
   max-width: 38rem;
 }
 
@@ -272,45 +304,23 @@
   line-height: var(--line-height-base);
 }
 
-/* Two cards per row from 640px — tablet, and (see the 1200px note below) narrow
-   desktops too. */
-@media (min-width: 640px) {
+/* Two cards per row from 768px — tablet, and (see the 1200px note below) narrow
+   desktops too. 768px, not 640px, because below it the four cards are the shared
+   swipe strip (see the mobile block at the end of this file), and the strip's own
+   breakpoint is 767.98px. */
+@media (min-width: 768px) {
   .jobs-why__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-6);
   }
 }
 
-/* One card per row below 640px, where the photo spans the whole column.
-   ⚠️ This block is scoped to 639.98px, NOT to the 767.98px phone breakpoint the
-   rest of this file uses: the phone block used to force a single column on this
-   grid, which silently beat the `min-width: 640px` rule above (same specificity,
-   later in the file) and pushed the two-up layout to 768px. Measured at 640px:
-   one column, 616px-tall cards, a 448px photo — 73 % of the card. The brief asks
-   for two per row on a medium screen, so the single-column override has to end
-   where the two-column one begins.
-   The ratio drops to 3:2 here for the same reason: at 390px a full-width 4:3
-   frame is 262px tall and the four cards run nearly two screens. 3:2 takes ~85px
-   off each card and only keeps a little less height of the same centred crop
-   (object-fit: cover), so no subject is lost — the brief's "keep the image ratio
-   controlled on mobile", and all four cards still share one ratio. */
-@media (max-width: 639.98px) {
-  .jobs-why__grid {
-    grid-template-columns: minmax(0, 1fr);
-    /* Measured cap, not decoration: at a 639px viewport a single column is 597px
-       wide, which made the photo 398px tall (73 % of the card) and set the body
-       copy on a measure far wider than the two-column layout ever uses. Capped
-       and centred, the widest phone/small-tablet card behaves like the others
-       (~60 %). Below ~520px the container is narrower than this anyway, so on a
-       real phone the cap does nothing. */
-    max-width: 30rem;
-    margin-inline: auto;
-  }
-
-  .jobs-why__media {
-    aspect-ratio: 3 / 2;
-  }
-}
+/* Below 768px the four cards become the shared swipe strip — the knobs and the
+   two-level overrides live in the mobile block at the end of this file, next to
+   the rest of the phone pass. Nothing about the card's own anatomy changes there:
+   photo → icon → title → copy, same 4:3 frame, same padding.
+   (The single-column + 3:2 rules that used to sit here are gone with it. Stacked,
+   the four cards ran 1919px of a 2462px section; the strip is one card tall.) */
 
 /* Four equal cards in one row — the brief's desktop layout.
    **1200px, not this project's usual 1024px desktop breakpoint, and the reason is
@@ -431,11 +441,16 @@
 }
 
 /* ---- 4. So läuft deine Bewerbung ---------------------------------------- */
-/* Three steps, connected. The hairline above the numbers is one continuous rule
-   across the row on desktop (each item draws its own segment), which is what
-   makes three blocks read as a sequence; on a phone the rule runs down the left
-   side of the stack instead, for the same reason. No arrows, no chevrons — the
-   numbers and the rule already say "in this order". */
+/* Three steps, connected, and CENTRED (client 2026-08-05: "centrame esta
+   sección"). It was left-aligned with each number sitting on a rule that ran
+   rightwards from it — which also left a rule hanging off the third step with
+   nothing after it. Now the heading is centred, the three numbers sit on one
+   centred line joined by a hairline between them, and each step's copy is centred
+   under its own number.
+   The connector is still drawn per step (`:not(:last-child)`), so it only ever
+   exists BETWEEN two numbers: no segment trails off the last one, and nothing
+   needs to know the row's width. No arrows, no chevrons — the numbers and the
+   line already say "in this order". */
 .jobs-steps__list {
   list-style: none;
   display: grid;
@@ -444,34 +459,66 @@
 }
 
 .jobs-steps__item {
+  /* The containing block for the connector segment below. */
   position: relative;
-  padding-top: var(--space-6);
-  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
   min-width: 0;
 }
 
-/* The number sits ON the rule, half above it, so the rule reads as a track the
-   steps are placed on rather than a box each step is inside. */
+/* Filled brand blue with a white numeral and the CTA's own shine sweep (client
+   2026-08-05: "los números son fondo azul (como el CTA […]) y el número
+   blanco"). --color-blue-light is the resting fill of every blue button on the
+   site since 2026-07-28, so this marker reads as the same family as the page's
+   CTAs without being one.
+   ⚠️ Contrast, measured and accepted: white on #3D9AD3 is 3,1:1 — it clears the
+   3:1 for UI components and large text but not the 4,5:1 for normal text. That is
+   the documented, client-approved brand-button caveat
+   (docs/page-conventions.md §3), and it is a weaker issue here than on a button:
+   this glyph is `aria-hidden` decoration that repeats the `<ol>`'s own numbering,
+   so no information depends on reading it. Do not "fix" it by inventing a darker
+   blue — the whole point is that it matches the CTA.
+   The blue also still covers the connector hairline it sits on, which is why the
+   marker needs its own background at all. */
 .jobs-steps__number {
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   width: 2.25rem;
   height: 2.25rem;
   border-radius: var(--radius-pill);
-  /* Its own background, because it covers the hairline it sits on: the section's
-     colour, declared here rather than inherited, so it stays correct if this
-     block is ever used on a dark section (where .section--light does not apply
-     and the override below never fires). */
-  background-color: var(--color-bg);
-  border: 1px solid var(--color-border);
+  background-color: var(--color-blue-light);
+  color: var(--color-white);
   font-size: var(--font-size-sm);
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
-  color: var(--color-accent);
+  /* Clips the shine band below to the circle. */
+  position: relative;
+  overflow: hidden;
+}
+
+/* The same animated shine as .btn--primary, reusing its own @keyframes from
+   components.css (loaded on every page) rather than a second copy of the
+   geometry: a soft light band crossing every 5s, clipped to the pill.
+   motion.css already neutralises it under prefers-reduced-motion, so it needs no
+   guard of its own. */
+.jobs-steps__number::after {
+  content: "";
+  position: absolute;
+  top: -60%;
+  bottom: -60%;
+  left: 0;
+  width: 38%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgb(255 255 255 / 0.42) 50%,
+    transparent 100%
+  );
+  transform: translateX(-140%) rotate(8deg);
+  animation: btn-shine 5s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .jobs-steps__item h3 {
@@ -482,13 +529,67 @@
 .jobs-steps__item p {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
-  max-width: 34rem;
+}
+
+/* Centred, at every width — same treatment as this page's FAQ heading, so the two
+   centred sections read as one decision. */
+.jobs-steps .section__intro {
+  max-width: none;
+  margin-inline: auto;
+  text-align: center;
 }
 
 @media (min-width: 768px) {
   .jobs-steps__list {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-7);
+  }
+
+  .jobs-steps__item {
+    align-items: center;
+    text-align: center;
+  }
+
+  .jobs-steps__number {
+    margin-bottom: var(--space-5);
+  }
+
+  /* A comfortable measure for centred copy — centred text wants a narrower
+     column than left-aligned text of the same size. */
+  .jobs-steps__item p {
+    max-width: 22rem;
+  }
+
+  /* The hairline BETWEEN this number and the next one. Both ends are computed
+     from the item's own box, so the segment stays right at any column width:
+     it starts at the item's centre plus the circle's radius (1.125rem) plus a
+     little air, and ends the same distance short of the NEXT item's centre —
+     which is this item's right edge, plus the grid gap, plus half the next
+     column. `right` is an inset from this item's right edge, so that lands as a
+     negative value. */
+  .jobs-steps__item:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    top: 1.125rem;
+    left: calc(50% + 1.75rem);
+    right: calc(-1 * (var(--space-7) + 50% - 1.75rem));
+    height: 1px;
+    /* Blue, matching the markers it joins (client 2026-08-05) — the same
+       --color-blue-light as the numbers and every blue button on the site, not
+       the on-white blue-dark the conventions doc prescribes for blue *content* on
+       a light section. The rule and the exception are both deliberate: this line
+       is decoration that reinforces an order the <ol> and the numerals already
+       carry, so nothing depends on reading it (WCAG 1.4.11 covers information
+       required to understand content, which this is not), and matching the
+       markers is the whole point of it being blue. */
+    background-color: var(--color-blue-light);
+    /* The drawn-line animation. `--step-line` is set on the STEP by
+       js/jobs-steps.js (a pseudo-element cannot be a GSAP target), and defaults
+       to 1 here — so with no JS, a script error or reduced motion the line is
+       simply already drawn. Horizontal here, vertical in the phone block: one
+       property, two axes, one timeline. */
+    transform: scaleX(var(--step-line, 1));
+    transform-origin: left center;
   }
 }
 
@@ -517,14 +618,10 @@
   text-align: center;
 }
 
-/* .section-eyebrow is `display: flex` (it has the blinking square), and a
-   parent's text-align cannot centre a flex container's own items — the same
-   gotcha already documented on the homepage's References/Trust-Metrics intros.
-   The homepage's FAQ has no eyebrow at all; this page's every section does, so
-   it stays and gets centred rather than becoming the one section without one. */
-.jobs-faq .section-eyebrow {
-  justify-content: center;
-}
+/* The `.jobs-faq .section-eyebrow { justify-content: center }` rule that lived
+   here is gone with the eyebrows themselves (client 2026-08-05: "saca todos los
+   eyebrows"). This page has none now, so nothing needs centring — and a rule kept
+   "in case they come back" would be a dead selector. Git has it. */
 
 /* The card-style accordion that used to be mirrored here from page-home.css is
    now the shared `.faq__list--cards` modifier in components.css (promoted
@@ -613,15 +710,19 @@
 
 /* ---- Light-section overrides tokens can't reach ------------------------- */
 /* .section--light re-declares the colour tokens (page-service.css §8.2), so
-   everything above that consumes a token is already correct on white. The one
-   exception is a surface that declares its own background: the step number's
-   pill is --color-bg (black) so it can cover the hairline, and on a white
-   section that would be a black dot. Same class of trap as the price box
-   inheriting dark text on a light section — a panel with its own background
-   needs its own colour per surface. */
-.section--light .jobs-steps__number {
-  background-color: var(--color-white);
-}
+   everything that consumes a token is already correct on white, and right now
+   nothing on this page needs a hand-written exception.
+   ⚠️ There WAS one, and how it died is worth keeping: the step marker used to be
+   a transparent pill with the section's own background (`--color-bg`, black) so
+   it could cover the connector hairline behind it, which needed
+   `background-color: var(--color-white)` here or it was a black dot on a white
+   section. When the marker became solid brand blue (client 2026-08-05) that
+   override was still in the file and silently won — white pill, white numeral,
+   an invisible marker. Caught by reading the computed style, not by looking at a
+   screenshot of a section whose animation had not fired yet.
+   The lesson for the next panel: a surface that follows its section's colour needs
+   a per-section override; one with its own brand colour must NOT have one. When you
+   change which of the two it is, go delete the other. */
 
 /* ---- Phone (built responsive, measured — docs/page-conventions.md §7) --- */
 @media (max-width: 767.98px) {
@@ -657,6 +758,36 @@
       );
   }
 
+  /* ---- The page's own rhythm on a phone ----------------------------------
+     Measured at 390px before this pass: 11.287px, 13,4 screens — and 1.560px of
+     that was section padding with nothing in it. Every section that follows a
+     pixel seam reserves `--space-9 + 120px` (216px) at its top plus 96px at its
+     bottom; on a 1440px desktop that is proportionate, on a 390px phone it is a
+     quarter of a screen of blank before each heading, five times over.
+     So the seam band and the rhythm get their own phone values HERE, scoped to
+     `.page-jobs` (the body class) because the rules being overridden live in the
+     shared page-service.css and every other page loads them too.
+     ⚠️ The band height and the reservation must stay equal: js/pixel-transition.js
+     measures the band it is given and fills exactly that box with tiles, so a
+     reservation smaller than the band would put tiles over real content. Change
+     one, change the other. 80px still gives the dissolve ~3 rows of 24px tiles,
+     which is what the homepage's own mobile band has. */
+  .page-jobs .pixel-seam__band {
+    height: 80px;
+  }
+  .page-jobs .section {
+    padding-block: var(--space-8);
+  }
+  .page-jobs .pixel-seam + .section {
+    padding-top: calc(var(--space-8) + 80px);
+  }
+  .page-jobs .pixel-seam + .conversion {
+    padding-top: 80px;
+  }
+  .page-jobs .pixel-seam + .site-footer {
+    padding-top: calc(var(--space-8) + 80px);
+  }
+
   .jobs-steps__list,
   .jobs-levels__list {
     /* minmax(0, 1fr) rather than the implicit auto: a long compound in a
@@ -664,8 +795,132 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  /* ---- The four Arbeitgeber cards: swipe strip ---------------------------- */
+  /* Knobs for css/swipe-carousel.css, set on the SECTION because the injected
+     counter and progress line are the strip's siblings and custom properties only
+     inherit downwards. Defaults are 86vw / 4vw / 3vw / 0.
+     --swipe-bleed is the one that has to be right: the strip lives inside a
+     padded `.container` that ALSO carries this page's --content-inset, so it has
+     to escape both or the first card starts ~32px in and the last one can never
+     reach its snap position. */
+  .jobs-why {
+    --swipe-bleed: calc(-1 * (var(--container-padding) + var(--space-2)));
+  }
+
+  /* Two-level, per swipe-carousel.css's own header: that file loads last, so a
+     single-class rule here would lose to it. */
+  .jobs-why .jobs-why__grid {
+    /* Equal height across all four, so swiping does not change the card's size —
+       the same promise the desktop grid makes. The shared default is
+       `align-items: start` because two of the three homepage strips want their
+       own heights. */
+    align-items: stretch;
+    margin-top: var(--space-6);
+  }
+
+  /* `height: 100%` is what makes the cards equal in the desktop GRID (against the
+     stretched track) and it is exactly what breaks them in the flex strip:
+     measured 448/426/426/426 with it — a percentage cross-size against an
+     auto-height flex container resolves before stretch can apply, so only the
+     tallest card was its real height and the other three shrank to content.
+     `auto` hands the job back to align-items: stretch above. */
+  .jobs-why .jobs-why__item {
+    height: auto;
+  }
+
+  /* The card keeps its whole anatomy in the strip (photo → icon → title → copy);
+     only the frame gets a little shorter, because at 86vw a 4:3 photo is 251px
+     and the card would run past the counter + progress line on a short phone. */
+  .jobs-why .jobs-why__media {
+    aspect-ratio: 3 / 2;
+  }
+
   .jobs-levels__item {
-    padding-block: var(--space-5);
+    padding-block: var(--space-4);
+  }
+
+  .jobs-levels__body {
+    gap: var(--space-3);
+  }
+
+  /* The §34a link is 34 characters and wraps to two lines at 350px. As an
+     inline-FLEX box (page-service.css's own treatment) that made the box take the
+     full column width, which parks the arrow against the right edge, vertically
+     centred between the two lines — it reads as a stray glyph, not as the link's
+     own arrow. `display: inline` puts the arrow back in the text flow, right after
+     the last word, and the hairline then draws under BOTH line fragments instead
+     of only the last one.
+     No padding-block for the touch target here, unlike an inline link inside a
+     sentence: at two lines the link's own box is already ~50px, and padding on a
+     multi-line inline box would overlap its own fragments. Measured below. */
+  .jobs-levels .service-link {
+    display: inline;
+    min-height: 0;
+  }
+
+  .jobs-levels .service-link__arrow {
+    display: inline-block;
+    vertical-align: -0.08em;
+    margin-left: 0.35em;
+  }
+
+  /* ---- The three application steps: a vertical rail ----------------------- */
+  /* From 768px the three numbers sit on one centred line joined by a hairline, and
+     that line is what makes three blocks read as one sequence. Stacked on a phone
+     the same markup would give three separate blocks 48px apart — three things
+     that happen to be numbered, not three steps of one process. So the rail turns
+     vertical: the number goes to the left of its step and each step draws the
+     segment down to the next one.
+     Only :not(:last-child) draws a segment, so the line ends AT the third number
+     instead of running past it into empty space — and it needs no knowledge of how
+     tall the last step's copy is. Same trick as the horizontal connector, one axis
+     over.
+     Left-aligned on purpose, unlike the centred desktop row: the heading above is
+     still centred (like the FAQ's), but three or four lines of centred German in a
+     350px column is harder to read than the same copy ranged left. */
+  .jobs-steps__list {
+    gap: var(--space-5);
+  }
+
+  .jobs-steps__item {
+    padding-left: 3.5rem;
+  }
+
+  /* Out of the flex flow and back to the left margin, at the top of its own
+     step — on desktop it is an in-flow, centred, block above the title. */
+  .jobs-steps__number {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .jobs-steps__item:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    /* Centre of the 2.25rem number pill. */
+    left: 1.09375rem;
+    top: 2.25rem;
+    /* Down to the next number, across the list's own gap. */
+    bottom: calc(-1 * var(--space-5));
+    width: 1px;
+    /* Same blue as the desktop rail and as the markers — see the note there. */
+    background-color: var(--color-blue-light);
+    /* Same `--step-line` the desktop rail uses, on the other axis — so
+       js/jobs-steps.js draws this one downwards with no branching of its own.
+       Defaults to 1: no JS means an already-drawn line. */
+    transform: scaleY(var(--step-line, 1));
+    transform-origin: center top;
+  }
+
+  .jobs-steps__item h3 {
+    /* Aligns the title with the number's optical centre instead of its top edge. */
+    padding-top: 0.25rem;
+  }
+
+  /* Two link groups stacked: 64px between them is a desktop value for two columns
+     side by side, where the gap is horizontal. */
+  .jobs-related .service-related__cols {
+    gap: var(--space-6);
   }
 
   /* The number tracks the title's size here too — they share one line, so a
@@ -684,6 +939,15 @@
     display: inline-block;
     /* 0.65rem, measured: 0.5rem gave a 42px box, just under the minimum. */
     padding-block: 0.65rem;
+  }
+
+  /* The <summary> IS the control that opens each answer, so it owes the 44px.
+     Measured: the four two-line questions clear it on their own, but the one
+     single-line question ("Wo werde ich eingesetzt?") came in at 33px. min-height
+     on the flex row rather than more padding, so the four that are already tall
+     enough do not grow. */
+  .jobs-faq .faq-item summary {
+    min-height: 44px;
   }
 
   /* 16px exactly on the two new controls: anything smaller makes iOS Safari zoom

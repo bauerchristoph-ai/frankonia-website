@@ -143,7 +143,7 @@
           "name": "Was kostet Werkschutz pro Stunde?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Werkschutz kostet in der Regel zwischen 28 und 40 Euro pro Stunde, abhängig von Qualifikation, Einsatzzeiten (tarifliche Zuschläge) und Aufgabenumfang. Ein durchgehend besetzter 24/7-Posten wird individuell kalkuliert — Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
+            "text": "Werkschutz kostet in der Regel zwischen 26 und 32 Euro pro Stunde, abhängig von Qualifikation, Einsatzzeiten (tarifliche Zuschläge) und Aufgabenumfang. Ein durchgehend besetzter 24/7-Posten wird individuell kalkuliert — Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
           }
         },
         {
@@ -222,6 +222,13 @@
   <!-- Leistungsumfang: pinned image mask reveal (client 2026-08-03). Uses the
        GSAP + ScrollTrigger + Lenis stack above; CSS position:sticky, no pin. -->
   <script src="/js/service-flow.js" defer></script>
+  <!-- Vorteile: the drawn arrow, the arriving modules and the blue marker, all
+       from one scroll progress per module (client 2026-08-04). -->
+  <script src="/js/service-contrast.js" defer></script>
+  <!-- Sicherheitskonzept: the three nodes land and the rail draws between them,
+       scrubbed to the scroll (client 2026-08-05 — the same behaviour as /jobs/).
+       Generic: it discovers every [data-steps-sequence] list. -->
+  <script src="/js/steps-sequence.js" defer></script>
 </head>
 <body>
   <!-- include: icon-sprite -->
@@ -383,7 +390,6 @@
     <section class="section section--light service-risk" data-nav-theme="light">
       <div class="container">
         <div class="section__intro service-risk__intro">
-          <p class="section-eyebrow">Risiko</p>
           <h2>Was für Ihren Betrieb auf dem Spiel steht</h2>
           <p class="service-risk__lede" data-reveal data-reveal-delay>Ein Produktions- oder Logistikstandort hat mehr zu verlieren als Material: Stillstand kostet pro Stunde oft mehr als ein ganzer Monat Werkschutz. Und die teuersten Vorfälle sind selten die spektakulären, sondern die, die niemand bemerkt hat.</p>
         </div>
@@ -426,8 +432,32 @@
           <li class="service-risk__item">
             <p class="service-risk__num" aria-hidden="true">03</p>
             <h3 class="service-risk__title">Diebstahl im und um den Betrieb</h3>
+            <!-- SCENE 03 IS THE CLIENT'S OWN FILE, USED AS-IS (2026-08-05). Source:
+                 assets/images/risk-03-diebstahl.svg — a pallet losing a crate to a
+                 delivery truck, same isometric language as the other three.
+
+                 ⚠️ It is an <img>, deliberately, after a first attempt inlined it and
+                 rewrote its colours onto this page's .rz-line/.rz-accent/.rz-guide
+                 classes. That BROKE the drawing in three ways the client caught:
+                   - .rz-line declares `fill: none`, and CSS beats a presentation
+                     attribute — so it killed the `fill="white"` on 11 paths that exist
+                     precisely to OCCLUDE the lines behind them. Crates and truck body
+                     went transparent and back edges showed through.
+                   - .rz-accent's stroke-width turned the dashed blue crates into a
+                     chain of fat blobs.
+                   - .rz-guide's own dasharray replaced the designer's dash rhythm.
+                 As a file none of that can happen: no CSS of ours reaches inside an
+                 <img>, so it renders exactly as drawn. The cost is one 21KB request
+                 (cached, lazy, below the fold) and that its blue stays the file's own
+                 #3D9AD3 instead of the token — a graphic at 3.11:1 on white, which
+                 clears the 3:1 minimum for non-text. If the other three should match it,
+                 the fix is to change THEM, not to reprocess this one.
+
+                 alt="" + width/height: it is decorative (the h3 and the paragraph carry
+                 the meaning, like the other three scenes' aria-hidden), and the
+                 dimensions are the file's own viewBox so the frame reserves its space. -->
             <figure class="service-risk__art">
-              <svg class="rz-art" viewBox="-114 -74 264 182" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path class="rz-guide" d="M-39.8 -41.0 L12.1 -11.0 L-39.8 19.0 L-91.8 -11.0 Z"/><path class="rz-guide" d="M48.5 10.0 L128.2 56.0 L76.2 86.0 L-3.5 40.0 Z"/><path class="rz-line" d="M56.3 -5.5 L56.3 -39.5"/><path class="rz-line" d="M45.9 0.5 L45.9 -33.5"/><path class="rz-line" d="M35.5 6.5 L35.5 -27.5"/><path class="rz-line" d="M25.1 12.5 L25.1 -21.5"/><path class="rz-line" d="M14.7 18.5 L14.7 -15.5"/><path class="rz-line" d="M-16.5 36.5 L-16.5 2.5"/><path class="rz-line" d="M-26.8 42.5 L-26.8 8.5"/><path class="rz-line" d="M56.3 -39.5 L8.7 -12.0"/><path class="rz-guide" d="M56.3 -23.5 L8.7 4.0"/><path class="rz-line" d="M-13.0 0.5 L-28.6 9.5"/><path class="rz-guide" d="M-13.0 16.5 L-28.6 25.5"/><path class="rz-line" d="M-43.3 -40.6 L-8.7 -20.6 L-43.3 -0.6 L-77.9 -20.6 Z"/><path class="rz-line" d="M-77.9 -20.6 L-43.3 -0.6 L-43.3 5.0 L-77.9 -15.0 Z"/><path class="rz-line" d="M-8.7 -20.6 L-43.3 -0.6 L-43.3 5.0 L-8.7 -15.0 Z"/><path class="rz-line" d="M-43.3 -51.6 L-29.4 -43.6 L-43.3 -35.6 L-57.2 -43.6 Z"/><path class="rz-line" d="M-57.2 -43.6 L-43.3 -35.6 L-43.3 -19.6 L-57.2 -27.6 Z"/><path class="rz-line" d="M-29.4 -43.6 L-43.3 -35.6 L-43.3 -19.6 L-29.4 -27.6 Z"/><path class="rz-line" d="M-26.8 -42.1 L-13.0 -34.1 L-26.8 -26.1 L-40.7 -34.1 Z"/><path class="rz-line" d="M-40.7 -34.1 L-26.8 -26.1 L-26.8 -10.1 L-40.7 -18.1 Z"/><path class="rz-line" d="M-13.0 -34.1 L-26.8 -26.1 L-26.8 -10.1 L-13.0 -18.1 Z"/><path class="rz-line" d="M-59.8 -42.1 L-45.9 -34.1 L-59.8 -26.1 L-73.6 -34.1 Z"/><path class="rz-line" d="M-73.6 -34.1 L-59.8 -26.1 L-59.8 -10.1 L-73.6 -18.1 Z"/><path class="rz-line" d="M-45.9 -34.1 L-59.8 -26.1 L-59.8 -10.1 L-45.9 -18.1 Z"/><path class="rz-line" d="M43.3 2.6 L90.1 29.6 L64.1 44.6 L17.3 17.6 Z"/><path class="rz-line" d="M17.3 17.6 L64.1 44.6 L64.1 70.6 L17.3 43.6 Z"/><path class="rz-line" d="M90.1 29.6 L64.1 44.6 L64.1 70.6 L90.1 55.6 Z"/><path class="rz-line" d="M86.3 36.8 L102.7 46.3 L80.9 58.9 L64.4 49.4 Z"/><path class="rz-line" d="M64.4 49.4 L80.9 58.9 L80.9 77.9 L64.4 68.4 Z"/><path class="rz-line" d="M102.7 46.3 L80.9 58.9 L80.9 77.9 L102.7 65.3 Z"/><ellipse class="rz-line" cx="29.4" cy="50.6" rx="5.9" ry="3.4"/><ellipse class="rz-line" cx="64.1" cy="70.6" rx="5.9" ry="3.4"/><path class="rz-accent" d="M-33.8 -10.5 L21.7 21.5"/><path class="rz-accent" d="M10.7 20.4 L21.7 21.5 L15.2 12.6"/><path class="rz-accent" d="M-8.7 -4.5 L8.3 29.1 L-25.7 29.1 Z"/><path class="rz-accent" d="M-8.7 9.1 L-8.7 18.9"/><path class="rz-accent" d="M-8.7 23.8 l0 0.5"/></svg>
+              <img class="rz-art rz-art--file" src="/assets/images/risk-03-diebstahl.svg" alt="" width="989" height="634" loading="lazy">
             </figure>
             <p class="service-risk__text">Werkzeuge, Metalle, Kraftstoff, IT, sowohl von außen als auch über unkontrollierten Lieferverkehr. Konsequente Torkontrolle senkt die Verluste messbar.</p>
           </li>
@@ -456,49 +486,122 @@
          draft's own Pain-Aufhänger ("Der Ansprechpartner ist kaum
          erreichbar") and from what each FRANKONIA point answers. They are the
          only invented sentences on this page — review them with the copy. -->
+    <!-- REFINED 2026-08-04 (client brief: the concept and the copy were right but
+         "the UX still feels too much like a dark comparison table... the left side
+         looks almost disabled... the blurred inactive content feels unfinished").
+         Same three contrasts, same words, rebuilt as three contrast MODULES.
+
+         What actually changed, and why each one:
+         - The blur is gone. Its source was `data-item-reveal-strong` on the
+           container: js/item-reveal.js's strong preset animates `filter:
+           blur(10px)` on a SCRUBBED ScrollTrigger, so a module that had not yet
+           reached `bottom 60%` sat permanently half-blurred. That is exactly the
+           "unfinished" the brief describes. Each module now uses the plain
+           `data-reveal` primitive, with its blur suppressed in CSS — the entrance
+           is opacity + translate only.
+         - The problem side went from 0.45 to 0.75 white (measured 11.2:1 on this
+           section's black). It was reading as disabled, not as secondary.
+         - Each module now declares WHAT it is contrasting (number + topic), so the
+           section can be scanned in a few seconds instead of read.
+         - The labels sit once as column headings on desktop, and inside every
+           module on mobile — see the note on .service-contrast__label below for
+           how that is done without hiding them from a screen reader.
+
+         ⚠️ THREE NEW WORDS ON THIS PAGE: the topic labels "Erreichbarkeit",
+         "Stammpersonal" and "Nachweisbarkeit" are the client brief's own, NOT from
+         `Webtext 03 Werkschutz.docx`. They are category labels, not claims — each
+         one names the contrast the module already makes in the approved copy — but
+         they are new text and are flagged in docs/build-checklist.md for Chris.
+         Everything else in this section is the draft's, verbatim, EXCEPT the three
+         "So läuft es oft" lines, which were written for this build and have been
+         flagged since 2026-08-03 (the draft asks for the Gegenüberstellung but
+         supplies only the FRANKONIA side).
+
+         H2 is the client's literal Pain statement. -->
     <section class="section service-contrast">
       <div class="container">
-        <div class="section__intro">
-          <p class="section-eyebrow">Vorteile</p>
+        <div class="section__intro service-contrast__intro">
           <h2>Der häufigste Grund, warum Betriebe ihren Werkschutz wechseln</h2>
           <p data-reveal data-reveal-delay>Wenn die Nachtschicht ein Problem meldet und niemand ans Telefon geht, trägt Ihr Team das Risiko. Bei FRANKONIA erreichen Sie Ihren Einsatz- oder Bereichsleiter direkt, rund um die Uhr, ohne Zentrale, ohne Warteschleife.</p>
         </div>
 
-        <div class="service-contrast__table" data-item-reveal=".service-contrast__row" data-item-reveal-strong>
+        <div class="service-contrast__set">
+          <!-- Column headings, desktop only and aria-hidden: the per-module labels
+               below carry the same words for assistive tech at every width, so
+               announcing these too would say each one four times. -->
           <div class="service-contrast__head" aria-hidden="true">
             <span class="service-contrast__head-cell service-contrast__head-cell--old">So läuft es oft</span>
             <span class="service-contrast__head-cell service-contrast__head-cell--new">So läuft es bei FRANKONIA</span>
           </div>
 
-          <div class="service-contrast__row">
-            <div class="service-contrast__cell service-contrast__cell--old">
-              <p>Die Nummer führt in eine Zentrale, der zuständige Disponent ist morgen wieder da.</p>
+          <article class="service-contrast__module" data-contrast-module>
+            <div class="service-contrast__side service-contrast__side--old">
+              <p class="service-contrast__topic">
+                <span class="service-contrast__num" aria-hidden="true">01</span>
+                <span class="service-contrast__topic-label">Erreichbarkeit</span>
+              </p>
+              <p class="service-contrast__label service-contrast__label--old">So läuft es oft</p>
+              <p class="service-contrast__problem">Die Nummer führt in eine Zentrale, der zuständige Disponent ist morgen wieder da.</p>
             </div>
-            <div class="service-contrast__cell service-contrast__cell--new">
+
+            <div class="service-contrast__cue" aria-hidden="true">
+              <svg class="service-contrast__arrow" viewBox="0 0 120 24" fill="none" data-contrast-arrow>
+                <path class="service-contrast__arrow-path" d="M2 12 H98 M86 4 L98 12 L86 20"/>
+              </svg>
+            </div>
+
+            <div class="service-contrast__side service-contrast__side--new">
+              <p class="service-contrast__label service-contrast__label--new">So läuft es bei FRANKONIA</p>
               <h3>Ein fester Ansprechpartner</h3>
-              <p>Ihr Bereichsleiter kennt Ihren Betrieb, Ihre Schichtpläne und Ihre Besonderheiten. Änderungen, Verstärkung, Sonderfälle, ein Anruf genügt, mit garantierter Antwortzeit.</p>
+              <p>Ihr Bereichsleiter kennt Ihren Betrieb, Ihre Schichtpläne und Ihre Besonderheiten. Änderungen, Verstärkung, Sonderfälle, <span class="service-contrast__mark">ein Anruf genügt, mit garantierter Antwortzeit</span>.</p>
             </div>
-          </div>
+          </article>
 
-          <div class="service-contrast__row">
-            <div class="service-contrast__cell service-contrast__cell--old">
-              <p>Am Tor steht jede Woche ein anderes Gesicht, ausgewählt ohne Ihr Zutun.</p>
+          <article class="service-contrast__module" data-contrast-module>
+            <div class="service-contrast__side service-contrast__side--old">
+              <p class="service-contrast__topic">
+                <span class="service-contrast__num" aria-hidden="true">02</span>
+                <span class="service-contrast__topic-label">Stammpersonal</span>
+              </p>
+              <p class="service-contrast__label service-contrast__label--old">So läuft es oft</p>
+              <p class="service-contrast__problem">Am Tor steht jede Woche ein anderes Gesicht, ausgewählt ohne Ihr Zutun.</p>
             </div>
-            <div class="service-contrast__cell service-contrast__cell--new">
+
+            <div class="service-contrast__cue" aria-hidden="true">
+              <svg class="service-contrast__arrow" viewBox="0 0 120 24" fill="none" data-contrast-arrow>
+                <path class="service-contrast__arrow-path" d="M2 12 H98 M86 4 L98 12 L86 20"/>
+              </svg>
+            </div>
+
+            <div class="service-contrast__side service-contrast__side--new">
+              <p class="service-contrast__label service-contrast__label--new">So läuft es bei FRANKONIA</p>
               <h3>Professionelles Auftreten gegenüber Gästen, Kunden und Kollegen</h3>
-              <p>Ihre Werkschutzkräfte sind das erste Gesicht Ihres Betriebs, am Tor, am Empfang, beim Rundgang. Wir besetzen diese Position mit festen, geschulten Stammkräften, bei deren Auswahl Sie mitreden.</p>
+              <p>Ihre Werkschutzkräfte sind das erste Gesicht Ihres Betriebs, am Tor, am Empfang, beim Rundgang. Wir besetzen diese Position mit <span class="service-contrast__mark">festen, geschulten Stammkräften, bei deren Auswahl Sie mitreden</span>.</p>
             </div>
-          </div>
+          </article>
 
-          <div class="service-contrast__row">
-            <div class="service-contrast__cell service-contrast__cell--old">
-              <p>Was in der Nachtschicht passiert ist, bleibt eine mündliche Auskunft ohne Nachweis.</p>
+          <article class="service-contrast__module" data-contrast-module>
+            <div class="service-contrast__side service-contrast__side--old">
+              <p class="service-contrast__topic">
+                <span class="service-contrast__num" aria-hidden="true">03</span>
+                <span class="service-contrast__topic-label">Nachweisbarkeit</span>
+              </p>
+              <p class="service-contrast__label service-contrast__label--old">So läuft es oft</p>
+              <p class="service-contrast__problem">Was in der Nachtschicht passiert ist, bleibt eine mündliche Auskunft ohne Nachweis.</p>
             </div>
-            <div class="service-contrast__cell service-contrast__cell--new">
+
+            <div class="service-contrast__cue" aria-hidden="true">
+              <svg class="service-contrast__arrow" viewBox="0 0 120 24" fill="none" data-contrast-arrow>
+                <path class="service-contrast__arrow-path" d="M2 12 H98 M86 4 L98 12 L86 20"/>
+              </svg>
+            </div>
+
+            <div class="service-contrast__side service-contrast__side--new">
+              <p class="service-contrast__label service-contrast__label--new">So läuft es bei FRANKONIA</p>
               <h3>Nachweisbare Ergebnisse</h3>
-              <p>Digitales Wachbuch, Torbuch und regelmäßiger Report machen die Werkschutz-Leistung für Ihre Geschäftsführung sichtbar, inklusive Vorfallstatistik und Maßnahmenverfolgung.</p>
+              <p><span class="service-contrast__mark">Digitales Wachbuch, Torbuch und regelmäßiger Report</span> machen die Werkschutz-Leistung für Ihre Geschäftsführung sichtbar, inklusive Vorfallstatistik und Maßnahmenverfolgung.</p>
             </div>
-          </div>
+          </article>
         </div>
       </div>
     </section>
@@ -507,173 +610,202 @@
 
     <!-- ============ 4. LEISTUNGSUMFANG ============ -->
     <section class="section section--light service-scope" data-nav-theme="light">
-      <div class="container">
-        <!-- Pinned image mask-reveal (client 2026-08-03, reference: a GSAP
-             "pinned image mask reveal on scroll" pen). Left column = the six
-             duties, one per screen; right column = a stack of six photos that
-             stays put while they scroll, each clipping away (clip-path inset
-             from the bottom) to reveal the next, plus a slow object-position
-             drift so the visible image is never static.
+      <!-- REDESIGNED 2026-08-04 (client brief: "a premium 50/50 scroll-driven
+           storytelling experience", desktop and large tablet ONLY, mobile
+           unchanged). What changed is the DESKTOP mechanism and this block's
+           position in the DOM; not one word of the approved copy moved.
 
-             Differences from the reference, on purpose:
-             - CSS `position: sticky` instead of ScrollTrigger's `pin` — this
-               project's own pattern for every sticky section (see
-               js/system-story.js, js/konzept-seq.js).
-             - It reuses the page's single Lenis + GSAP ticker (set up by
-               js/smooth-scroll.js); the reference creates its own Lenis, which
-               would be a second instance. Never do that.
-             - No animated page background: this page already alternates
-               black/white per section and drives that with the pixel seams.
-             - No per-item link/pill: the section's one link is the highlight
-               box below. Six invented CTAs would be six exits from the page.
+           The flow is now a DIRECT CHILD OF THE SECTION, not of .container.
+           That is what lets the right-hand image panel be exactly 50% of the
+           viewport and bleed to the right edge — the brief's "one continuous
+           visual panel", "avoid small inset margins". It costs nothing on
+           mobile: .service-flow re-declares the container's own geometry as its
+           own padding (see --flow-page-lead in page-service.css), so the base
+           layout lines up on the same vertical as every other section. The
+           highlight box below stays in the .container.
 
-             The two group headings ("Im laufenden Betrieb" / "Nachts, am
-             Wochenende, an Feiertagen") are now the phase label on each step
-             instead of two <h3>s over two lists — same words, same reading
-             order, and each duty gets to be its own <h3>.
+           Desktop mechanism (≥1152px + motion allowed):
+             - both columns are CSS `position: sticky` for the flow's scroll —
+               this project's pattern, never ScrollTrigger's `pin` (see
+               js/system-story.js, js/konzept-seq.js). Nothing traps the scroll.
+             - the left column is the heading plus all six duties, laid out ONCE
+               and never reflowed: js/service-flow.js only changes each step's
+               opacity/transform, so the list has its final height from the first
+               frame and the items cannot shift as they appear (no CLS).
+             - the right column is the six photos stacked and crossfaded.
+           The previous mechanism (a clip-path mask wipe over a stack) is gone —
+           it replaced one photo with the next while the text scrolled past, and
+           the brief wants the text to ACCUMULATE instead. Git has it.
 
-             JS-only-ever-enhances: every step's text is real, visible HTML and
-             nothing here is hidden by CSS. The stacking/clipping only applies
-             from 1024px up AND only with motion allowed — below that, or under
-             prefers-reduced-motion, the same markup lays out as six
-             text+photo pairs in normal flow (see .service-flow in
-             page-service.css). Photos are decorative support for text that
-             already says everything, so a crawler loses nothing.
+           The two group headings ("Im laufenden Betrieb" / "Nachts, am
+           Wochenende, an Feiertagen") are the phase label on each step, as
+           before — same words, same reading order, each duty its own <h3>.
 
-             PHOTOS: four of the six are the client's real per-step photos as of
-             2026-08-03 (see the note on .service-flow__media below); steps 02 and
-             06 are still placeholders. The two stand-ins I had exported for this
-             section earlier (flow-alarmbedienung from Cameras.png,
-             flow-kontrollgang from lab.jpg) are superseded and no longer
-             referenced. -->
-        <div class="service-flow" data-service-flow>
-          <!-- The section heading lives INSIDE the flow (client 2026-08-03: "que
-               quede el título fixed arriba y que lo que se muevan sean solo los
-               textos de la izquierda y las imágenes"). Being a child of the flow
-               is what makes it stick for exactly the flow's scroll and let go at
-               its end, instead of staying pinned over the highlight box below. -->
+           JS-only-ever-enhances, unchanged contract: every step's text is real,
+           visible HTML and NOTHING here is hidden by CSS. The future-item
+           hiding lives behind `.service-flow--stepped`, a class only
+           js/service-flow.js ever adds, so no JS / a script error / a crawler /
+           prefers-reduced-motion all get the readable layout with all six
+           duties visible — never one item with five invisible.
+
+           PHOTOS: four of the six are the client's real per-step photos as of
+           2026-08-03; steps 02 and 06 are still placeholders. Marked inline. -->
+      <div class="service-flow" data-service-flow>
+        <div class="service-flow__col">
+          <!-- The heading lives INSIDE the flow (client 2026-08-03: "que quede el
+               título fixed arriba"). It is now part of the sticky left column,
+               so it holds for exactly this section's scroll and releases with
+               the photo panel at the end — it can never be left pinned over the
+               highlight box below. -->
           <div class="section__intro service-flow__intro">
-            <p class="section-eyebrow">Leistungsumfang</p>
             <h2>Das übernimmt der FRANKONIA Werkschutz</h2>
           </div>
 
-          <div class="service-flow__steps">
-            <article class="service-flow__step">
-              <p class="service-flow__phase">Im laufenden Betrieb</p>
+          <!-- Each duty is title + description, nothing else (client 2026-08-04:
+               "hay mucho texto, quiero solo el título y abajo el texto"). The
+               per-step category label — the draft's two group headings, "Im
+               laufenden Betrieb" and "Nachts, am Wochenende, an Feiertagen" — and
+               the 01–06 markers were both removed with it. That IS approved copy
+               leaving this section, on instruction; the night/weekend/holiday
+               coverage is still stated on the page in the FAQ ("Vom reinen Nacht-
+               und Wochenenddienst..."), in Kosten and in the Anwendungsfälle, so
+               no fact is lost. Their CSS was deleted, not left dead.
+               Side effect worth knowing: the list is ~138px shorter, so MORE
+               duties now fit on one screen — see the fit numbers in CLAUDE.md. -->
+          <!-- The extra inner wrapper is not decoration: on a viewport too short
+               to hold all six duties at once, js/service-flow.js slides the list
+               up so the ACTIVE duty is always fully in view, and the outer
+               .service-flow__steps is what clips it (and fades its top edge)
+               instead of letting it paint over the heading. On a tall viewport
+               nothing ever moves. In the base layout both are `display: contents`
+               so the mobile interleave is unchanged. -->
+          <div class="service-flow__steps" data-flow-viewport>
+            <div class="service-flow__steps-inner" data-flow-track>
+            <article class="service-flow__step" data-flow-step>
               <h3>Pfortendienst &amp; Empfang</h3>
               <p>Besucher-Management, Ausweiskontrolle, Koordination von Fremdfirmen und Lieferverkehr, freundlich und konsequent.</p>
             </article>
 
-            <article class="service-flow__step">
-              <p class="service-flow__phase">Im laufenden Betrieb</p>
+            <article class="service-flow__step" data-flow-step>
               <h3>Zugangs- &amp; Torkontrolle</h3>
               <p>Nur befugte Personen und Fahrzeuge auf dem Gelände; Kontrolle nach Ihren Vorgaben, dokumentiert.</p>
             </article>
 
-            <article class="service-flow__step">
-              <p class="service-flow__phase">Im laufenden Betrieb</p>
+            <article class="service-flow__step" data-flow-step>
               <h3>Kontrollgänge in Produktion &amp; Lager</h3>
               <p>Rundgänge nach Plan und stichprobenartig, mit Blick für Brandlasten, offene Zugänge und technische Auffälligkeiten.</p>
             </article>
 
-            <article class="service-flow__step">
-              <p class="service-flow__phase">Nachts, am Wochenende, an Feiertagen</p>
+            <article class="service-flow__step" data-flow-step>
               <h3>Verschluss- &amp; Kontrollrunden</h3>
               <p>Gebäude, Tore und Anlagen werden kontrolliert verschlossen und dokumentiert.</p>
             </article>
 
-            <article class="service-flow__step">
-              <p class="service-flow__phase">Nachts, am Wochenende, an Feiertagen</p>
+            <article class="service-flow__step" data-flow-step>
               <h3>Alarm- &amp; Anlagenbedienung</h3>
               <p>Technik-geschulte Kräfte bedienen Brandmelde-, Einbruchmelde- und Zutrittsanlagen sachgemäß und reagieren sofort.</p>
             </article>
 
-            <article class="service-flow__step">
-              <p class="service-flow__phase">Nachts, am Wochenende, an Feiertagen</p>
+            <article class="service-flow__step" data-flow-step>
               <h3>Notfall-Erstmaßnahmen</h3>
               <p>Definierte Meldeketten, Einweisung von Feuerwehr und Rettungsdiensten, Erstmaßnahmen nach Ihrem Notfallplan.</p>
             </article>
-          </div>
-
-          <!-- DOM order matches the steps above (step 1's photo first). The
-               stacking order is the reverse — photo 1 on top, clipping away to
-               expose photo 2 — and that is set in CSS with nth-child z-indexes,
-               not by reordering the markup, so the mobile/reduced-motion
-               interleave stays a plain `order` on the natural sequence. -->
-          <!-- PHOTOS, state as of 2026-08-03. The client supplied four of the six
-               as "<n>. <Leistung>.png/.jpg" and they are wired to the step they
-               are named for, exported to WebP + JPEG in assets/images/
-               (flow-0<n>-*). Steps 02 and 06 are still placeholders — those two
-               files were not among the supplied set. Each one is marked below, so
-               the swap is a two-line edit when they arrive.
-               Note: the supplied "5. Alarm- & Anlagenbedienung" is the same photo
-               the homepage uses as system-operational-control, which step 02 used
-               to show here. It now sits at step 05 where the client put it, and
-               step 02's placeholder was changed so the same photo does not appear
-               twice in one scroll. -->
-          <div class="service-flow__media">
-            <!-- 01 — real, client-supplied. Also the closest thing in the project
-                 to the Pfortendienst/Werkstor shot the hero brief asks for. -->
-            <figure class="service-flow__frame">
-              <picture>
-                <source srcset="/assets/images/flow-01-pfortendienst.webp" type="image/webp">
-                <img src="/assets/images/flow-01-pfortendienst.jpg" alt="FRANKONIA Mitarbeiter am Pfortenhäuschen eines Betriebsgeländes" width="1000" height="1500" loading="lazy">
-              </picture>
-            </figure>
-
-            <!-- 02 — 🔴 PLACEHOLDER, "2. Zugangs- & Torkontrolle" not supplied. -->
-            <figure class="service-flow__frame">
-              <picture>
-                <source srcset="/assets/images/werkschutz.webp" type="image/webp">
-                <img src="/assets/images/werkschutz.jpg" alt="FRANKONIA Werkschutzkraft auf einem Industriegelände" width="820" height="1227" loading="lazy">
-              </picture>
-            </figure>
-
-            <!-- 03 — real, client-supplied. Worth a look before launch: the copy
-                 says "Rundgänge durch Produktion und Lager" and this photo is a
-                 patrol in a retail aisle. Used as named, not swapped. -->
-            <figure class="service-flow__frame">
-              <picture>
-                <source srcset="/assets/images/flow-03-kontrollgaenge.webp" type="image/webp">
-                <img src="/assets/images/flow-03-kontrollgaenge.jpg" alt="FRANKONIA Sicherheitskraft beim Kontrollgang zwischen den Regalen" width="1000" height="1500" loading="lazy">
-              </picture>
-            </figure>
-
-            <!-- 04 — real, client-supplied. -->
-            <figure class="service-flow__frame">
-              <picture>
-                <source srcset="/assets/images/flow-04-verschluss.webp" type="image/webp">
-                <img src="/assets/images/flow-04-verschluss.jpg" alt="FRANKONIA Einsatzfahrzeug bei der nächtlichen Verschluss- und Kontrollrunde" width="1200" height="1038" loading="lazy">
-              </picture>
-            </figure>
-
-            <!-- 05 — real, client-supplied. -->
-            <figure class="service-flow__frame">
-              <picture>
-                <source srcset="/assets/images/flow-05-alarmbedienung.webp" type="image/webp">
-                <!-- Exported at its native 751px: the supplied file is only
-                     751x941, so a 1000px export would just upscale it. -->
-                <img src="/assets/images/flow-05-alarmbedienung.jpg" alt="Sicherheitskraft bedient die Kamera- und Alarmtechnik an der Pforte" width="751" height="941" loading="lazy">
-              </picture>
-            </figure>
-
-            <!-- 06 — 🔴 PLACEHOLDER, "6. Notfall-Erstmaßnahmen" not supplied. -->
-            <figure class="service-flow__frame">
-              <picture>
-                <source srcset="/assets/images/system-reliable-teams-751.webp" type="image/webp">
-                <img src="/assets/images/system-reliable-teams.jpg" alt="Eingespieltes FRANKONIA Team bei der Schichtübergabe" width="751" height="941" loading="lazy">
-              </picture>
-            </figure>
+            </div>
           </div>
         </div>
 
-        <!-- Highlight-Box (draft): the one cross-sell moment in this section. -->
-        <aside class="service-highlight" data-reveal>
-          <h3 class="service-highlight__title">Werkschutz + Technik aus einem Konzept</h3>
-          <p>Wo Videoüberwachung, Zutrittssysteme oder Alarmanlagen Personalstunden ersetzen können, planen wir sie in Ihr Sicherheitskonzept ein. Das senkt die laufenden Kosten, bei gleicher oder besserer Sicherheit.</p>
-          <a class="service-link" href="/sicherheitstechnik/">Zur Sicherheitstechnik<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
-        </aside>
+        <!-- DOM order matches the steps above (step 1's photo first), and the
+             text column comes BEFORE this one in the DOM — reading order is the
+             content, the panel is its illustration.
+             On desktop these are stacked absolutely and crossfaded by
+             js/service-flow.js. The descending z-index below is written in CSS,
+             not set from JS, so the correct static state (photo 01 on top) exists
+             before any script runs and a no-JS visitor never sees an empty panel.
+             PHOTOS, state as of 2026-08-03. The client supplied four of the six
+             as "<n>. <Leistung>.png/.jpg" and they are wired to the step they
+             are named for, exported to WebP + JPEG in assets/images/
+             (flow-0<n>-*). Steps 02 and 06 are still placeholders — those two
+             files were not among the supplied set. Each one is marked below, so
+             the swap is a two-line edit when they arrive.
+             Note: the supplied "5. Alarm- & Anlagenbedienung" is the same photo
+             the homepage uses as system-operational-control, which step 02 used
+             to show here. It now sits at step 05 where the client put it, and
+             step 02's placeholder was changed so the same photo does not appear
+             twice in one scroll. -->
+        <div class="service-flow__media">
+          <!-- 01 — real, client-supplied. Also the closest thing in the project
+               to the Pfortendienst/Werkstor shot the hero brief asks for. -->
+          <figure class="service-flow__frame">
+            <picture>
+              <source srcset="/assets/images/flow-01-pfortendienst.webp" type="image/webp">
+              <img src="/assets/images/flow-01-pfortendienst.jpg" alt="FRANKONIA Mitarbeiter am Pfortenhäuschen eines Betriebsgeländes" width="1000" height="1500" loading="lazy">
+            </picture>
+          </figure>
+
+          <!-- 02 — 🔴 PLACEHOLDER, "2. Zugangs- & Torkontrolle" not supplied. -->
+          <figure class="service-flow__frame">
+            <picture>
+              <source srcset="/assets/images/werkschutz.webp" type="image/webp">
+              <img src="/assets/images/werkschutz.jpg" alt="FRANKONIA Werkschutzkraft auf einem Industriegelände" width="820" height="1227" loading="lazy">
+            </picture>
+          </figure>
+
+          <!-- 03 — real, client-supplied. Worth a look before launch: the copy
+               says "Rundgänge durch Produktion und Lager" and this photo is a
+               patrol in a retail aisle. Used as named, not swapped. -->
+          <figure class="service-flow__frame">
+            <picture>
+              <source srcset="/assets/images/flow-03-kontrollgaenge.webp" type="image/webp">
+              <img src="/assets/images/flow-03-kontrollgaenge.jpg" alt="FRANKONIA Sicherheitskraft beim Kontrollgang zwischen den Regalen" width="1000" height="1500" loading="lazy">
+            </picture>
+          </figure>
+
+          <!-- 04 — real, client-supplied. The one LANDSCAPE source in the set
+               (1200x1038); the panel is portrait, so this frame gets its own
+               object-position in page-service.css to hold the vehicle. -->
+          <figure class="service-flow__frame">
+            <picture>
+              <source srcset="/assets/images/flow-04-verschluss.webp" type="image/webp">
+              <img src="/assets/images/flow-04-verschluss.jpg" alt="FRANKONIA Einsatzfahrzeug bei der nächtlichen Verschluss- und Kontrollrunde" width="1200" height="1038" loading="lazy">
+            </picture>
+          </figure>
+
+          <!-- 05 — real, client-supplied. -->
+          <figure class="service-flow__frame">
+            <picture>
+              <source srcset="/assets/images/flow-05-alarmbedienung.webp" type="image/webp">
+              <!-- Exported at its native 751px: the supplied file is only
+                   751x941, so a 1000px export would just upscale it. -->
+              <img src="/assets/images/flow-05-alarmbedienung.jpg" alt="Sicherheitskraft bedient die Kamera- und Alarmtechnik an der Pforte" width="751" height="941" loading="lazy">
+            </picture>
+          </figure>
+
+          <!-- 06 — 🔴 PLACEHOLDER, "6. Notfall-Erstmaßnahmen" not supplied. -->
+          <figure class="service-flow__frame">
+            <picture>
+              <source srcset="/assets/images/system-reliable-teams-751.webp" type="image/webp">
+              <img src="/assets/images/system-reliable-teams.jpg" alt="Eingespieltes FRANKONIA Team bei der Schichtübergabe" width="751" height="941" loading="lazy">
+            </picture>
+          </figure>
+        </div>
       </div>
+
+      <!-- REMOVED 2026-08-05 (client: "esto sacalo") — the draft's own Highlight-Box,
+           "Werkschutz + Technik aus einem Konzept", with its paragraph and its
+           `Zur Sicherheitstechnik` link. Its wrapping .container went with it, since
+           it existed only to keep this one block on the page's editorial inset while
+           the flow above it is full-bleed. `.service-highlight*` was used by no other
+           page, so all of its CSS was deleted too rather than left dead.
+
+           ⚠️ THIS IS APPROVED DRAFT COPY LEAVING THE PAGE, and it is the one place
+           that developed the "technology can replace personnel hours, which lowers
+           the running cost" argument. What survives elsewhere is thinner: the hero's
+           "Technik-geschulte Kräfte", duty 05, the Sicherheitskonzept's
+           "Technik-Empfehlung", and one five-word factor in Kosten
+           ("Technik-Kombination, die Personalstunden ersetzt"). Flagged in
+           docs/build-checklist.md for Chris.
+           No navigation was lost: /sicherheitstechnik/ is still linked from
+           "Verwandte Leistungen" at the close of the page. -->
     </section>
 
     <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
@@ -702,7 +834,6 @@
     <section class="section service-compare">
       <div class="container">
         <div class="section__intro">
-          <p class="section-eyebrow">Abgrenzung</p>
           <h2>Werkschutz oder Objektschutz, was braucht Ihr Betrieb?</h2>
           <!-- The intro is ONE line on purpose (client 2026-08-03: "es mucho
                texto el título más el subtítulo más el texto"). The draft's longer
@@ -787,9 +918,14 @@
             <h3 class="service-decision__heading">Sie sind nicht sicher, welche Leistung passt?</h3>
             <p>Wir prüfen Ihren Standort und empfehlen die passende Lösung — kostenfrei und unverbindlich.</p>
           </div>
+          <!-- The "Ausführlicher Vergleich im Ratgeber" link to
+               /ratgeber/werkschutz-vs-objektschutz/ was REMOVED 2026-08-05
+               (Change Request 2.5): that article is not in the client's 52-page
+               set, so the link was a guaranteed 404 — "do not ship a linked
+               404". Chris's own resolution was remove-for-now. If they later
+               deliver the article, this is a one-line restore; git has it. -->
           <div class="service-decision__actions">
             <a class="btn btn--primary" href="#anfrage">Kostenfreie Einschätzung erhalten<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
-            <a class="service-link service-decision__link" href="/ratgeber/werkschutz-vs-objektschutz/">Ausführlicher Vergleich im Ratgeber<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
           </div>
         </aside>
       </div>
@@ -801,7 +937,6 @@
     <section class="section section--light service-cases" data-nav-theme="light">
       <div class="container">
         <div class="section__intro">
-          <p class="section-eyebrow">Anwendungsfälle</p>
           <h2>Für diese Betriebe arbeitet der FRANKONIA Werkschutz</h2>
         </div>
 
@@ -823,8 +958,8 @@
           </li>
           <li class="service-cases__item">
             <span class="service-cases__number" aria-hidden="true">04</span>
-            <h3>Hafen- &amp; Logistikstandorte</h3>
-            <p>Als Partner des Bayernhafens Bamberg kennen wir die Abläufe von Umschlagstandorten: Lieferverkehr, Gefahrgut, weitläufige Areale.</p>
+            <h3>Logistik- &amp; Umschlagstandorte</h3>
+            <p>Durchgehender Lieferverkehr, Gefahrgut, weitläufige Areale — hier zählen dokumentierte Torkontrolle und Rundgänge nach Plan.</p>
           </li>
         </ul>
 
@@ -832,12 +967,17 @@
              the copy names, exported as white silhouettes to match the
              homepage's own client-logo treatment (assets/images/client-logos/).
              No invented testimonial here — the draft says "Referenzen auf
-             Anfrage" and that is exactly what this says. -->
+             Anfrage" and that is exactly what this says.
+             2026-08-05: the second client here was swapped for the
+             Sozialstiftung Bamberg, text and logo, per Webtext 03 (Stand
+             04.08.2026) — the previous one's Freigabe did not come through, so
+             its name is deliberately not repeated anywhere in this markup. Its
+             logo file is still in client-logos/ but nothing references it. -->
         <div class="service-cases__proof" data-reveal>
-          <p class="service-cases__proof-text">Referenzen auf Anfrage, unter anderem vertrauen MORELO Reisemobile und der Bayernhafen Bamberg auf FRANKONIA.</p>
+          <p class="service-cases__proof-text">Referenzen auf Anfrage, unter anderem vertrauen MORELO Reisemobile und die Sozialstiftung Bamberg auf FRANKONIA.</p>
           <div class="service-cases__logos">
             <img class="service-cases__logo" src="/assets/images/client-logos/morelo.png" alt="MORELO Reisemobile Logo" width="128" height="160" loading="lazy">
-            <img class="service-cases__logo" src="/assets/images/client-logos/bayernhafen.png" alt="bayernhafen Bamberg Logo" width="374" height="160" loading="lazy">
+            <img class="service-cases__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" alt="Sozialstiftung Bamberg Logo" width="150" height="160" loading="lazy">
           </div>
         </div>
       </div>
@@ -846,35 +986,105 @@
     <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
 
     <!-- ============ 7. INDIVIDUELLES SICHERHEITSKONZEPT ============ -->
-    <!-- The compact version of this block (the homepage has the big 3-cube
-         exploded-view sequence, css/konzept-seq.css) — it is deliberately text
-         + three ticks + one link, per the draft's "kompakter als auf
-         /objektschutz/". docs/build-checklist.md counts 11 pages needing this
-         compact variant, which is why it is a generic .service-konzept block. -->
+    <!-- REDESIGNED 2026-08-04 (client brief: the copy was right but it "feels too
+         much like a text block with bullets aligned to the left" — rebuilt as a
+         centred process-and-value section). Still the COMPACT variant the draft
+         asks for ("kompakter als auf /objektschutz/"); the homepage keeps the big
+         3-cube exploded sequence (css/konzept-seq.css). Generic .service-konzept*
+         names because docs/build-checklist.md counts 11 pages needing this block.
+
+         COPY IS THE DRAFT'S, UNCHANGED. Two structural notes:
+         - The approved paragraph's LAST sentence (the 30 % customer result) was
+           MOVED out of the paragraph into the proof block below, not copied — the
+           brief asks to "visually separate the final sentence from the first
+           explanatory part" without changing its wording, and duplicating a
+           factual claim about a real client would be worse than either.
+         - "30 %" is a large inline figure inside that sentence rather than a
+           display number with the sentence repeated underneath, so the claim
+           appears exactly once and reads exactly as approved.
+
+         The three illustrations are INLINE SVG reusing this page's own .rz-line /
+         .rz-accent classes (the four isometric risk scenes established them):
+         one stroke weight, currentColor for the line work, brand blue for the one
+         accent per scene, no image requests and nothing to optimise. -->
     <section class="section service-konzept">
       <div class="container service-konzept__inner">
-        <div class="section__intro">
-          <p class="section-eyebrow">Sicherheitskonzept</p>
+        <div class="section__intro service-konzept__intro">
           <h2>Erst das Sicherheitskonzept, dann der Stundensatz</h2>
-          <p data-reveal data-reveal-delay>Standard-Pakete gibt es bei FRANKONIA nicht. Vor dem Angebot steht die Begehung: Unsere Experten analysieren Tore, Zugänge, Schichtmodelle, Anlagen und Auflagen, und entwickeln ein Werkschutz-Konzept, das Personal und Technik wirtschaftlich kombiniert. Bei einem Großkunden hat ein neues Einsatzkonzept 30 % Personalkosten eingespart, bei gleicher Sicherheit.</p>
+          <p data-reveal data-reveal-delay>Standard-Pakete gibt es bei FRANKONIA nicht. Vor dem Angebot steht die Begehung: Unsere Experten analysieren Tore, Zugänge, Schichtmodelle, Anlagen und Auflagen, und entwickeln ein Werkschutz-Konzept, das Personal und Technik wirtschaftlich kombiniert.</p>
         </div>
 
-        <ul class="service-konzept__list" data-item-reveal>
-          <li>
-            <svg class="icon service-konzept__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
-            Kostenfreie Begehung und Risiko-Analyse Ihres Standorts
+        <!-- A real <ol>: these are three steps in a fixed order, and that order is
+             the content. The visible 01–03 are aria-hidden because the list
+             already numbers itself for assistive tech. The connector line and the
+             nodes are drawn in CSS and are decoration only — the sequence is never
+             communicated by the blue alone. -->
+        <!-- data-steps-sequence hands this list to js/steps-sequence.js, which
+             plays it as one ordered timeline scrubbed to the scroll (client
+             2026-08-05: the same behaviour as /jobs/'s "In drei Schritten" row) —
+             node 01 lands, its number/illustration/label rise in under it, the
+             connector draws towards 02, and so on.
+             No data-steps-marker: this block's node is a ::before pseudo-element,
+             so the script drives it through --step-node on the step instead.
+             The generic hooks are deliberately OFF: data-item-reveal is gone (it
+             cascaded the three steps as cards, which is what this replaces) and
+             data-no-text-reveal stops text-reveal.js from also animating the
+             label — text-reveal only skips a subtree automatically when it sits
+             inside [data-reveal]/[data-item-reveal], and neither is here anymore.
+             Two timelines on one element is what makes a reveal look broken. -->
+        <ol class="service-konzept__steps" data-steps-sequence data-no-text-reveal>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">01</span>
+            <!-- Site plan: boundary with a gate gap, two buildings, the dashed
+                 inspection route, and the blue risk marker it ends on. -->
+            <svg class="service-konzept__art" viewBox="4 7 40 40" aria-hidden="true">
+              <path class="rz-line" d="M6 12H42V40H28"/>
+              <path class="rz-line" d="M18 40H6V12"/>
+              <path class="rz-line" d="M11 18h10v9H11z"/>
+              <path class="rz-line" d="M29 27h8v7h-8z"/>
+              <path class="rz-guide" d="M10 36l6-9 10 6 8-13"/>
+              <circle class="rz-accent" cx="34" cy="18" r="3.6"/>
+              <path class="rz-accent" d="M34 25v2.5"/>
+            </svg>
+            <p class="service-konzept__text">Kostenfreie Begehung und Risiko-Analyse Ihres Standorts</p>
           </li>
-          <li>
-            <svg class="icon service-konzept__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
-            Schriftliches Konzept mit Besetzungsplan und Technik-Empfehlung
-          </li>
-          <li>
-            <svg class="icon service-konzept__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
-            Unverbindliches Angebot innerhalb eines Werktages
-          </li>
-        </ul>
 
-        <a class="service-link" href="/sicherheitskonzept/">So entsteht Ihr Sicherheitskonzept<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">02</span>
+            <!-- Written concept: two layered sheets, the plan's own lines, and the
+                 blue brace that joins two rows — staffing and technology combined
+                 into one document, which is what this step's copy says. -->
+            <svg class="service-konzept__art" viewBox="4 7 40 40" aria-hidden="true">
+              <path class="rz-line" d="M14 9h20a2 2 0 012 2v22"/>
+              <rect class="rz-line" x="7" y="14" width="27" height="26" rx="2"/>
+              <path class="rz-line" d="M13 22h11M13 28h15M13 34h9"/>
+              <path class="rz-accent" d="M30 21v14"/>
+              <path class="rz-accent" d="M30 21h-3M30 35h-3"/>
+            </svg>
+            <p class="service-konzept__text">Schriftliches Konzept mit Besetzungsplan und Technik-Empfehlung</p>
+          </li>
+
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">03</span>
+            <!-- The offer: the same sheet as step 02, so the trio reads as one
+                 family, with the blue check that step 02 was working toward. -->
+            <svg class="service-konzept__art" viewBox="4 7 40 40" aria-hidden="true">
+              <rect class="rz-line" x="7" y="9" width="26" height="25" rx="2"/>
+              <path class="rz-line" d="M12 17h15M12 23h10"/>
+              <path class="rz-accent" d="M14 30l5 5 11-12"/>
+            </svg>
+            <p class="service-konzept__text">Unverbindliches Angebot innerhalb eines Werktages</p>
+          </li>
+        </ol>
+
+        <!-- Evidence, not an advertisement: one sentence, hairline-bounded, no
+             chart and no invented company name. The draft's exact wording. -->
+        <p class="service-konzept__proof" data-reveal>Bei einem Großkunden hat ein neues Einsatzkonzept <span class="service-konzept__figure">30 %</span> Personalkosten eingespart, bei gleicher Sicherheit.</p>
+
+        <div class="service-konzept__actions" data-reveal>
+          <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          <a class="service-link" href="/sicherheitskonzept/">So entsteht Ihr Sicherheitskonzept<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        </div>
       </div>
     </section>
 
@@ -904,20 +1114,23 @@
            No copy or figure changed. -->
       <div class="container service-price__layout">
         <div class="section__intro service-price__intro">
-          <p class="section-eyebrow">Kosten</p>
           <h2>Was kostet Werkschutz?</h2>
-          <p class="service-price__answer" data-reveal data-reveal-delay>Werkschutz kostet in der Regel zwischen 28 und 40 Euro pro Stunde, etwas mehr als einfacher Objektschutz, weil technik-geschulte und oft zusätzlich qualifizierte Kräfte eingesetzt werden. Die genaue Lage in der Spanne bestimmen:</p>
+          <p class="service-price__answer" data-reveal data-reveal-delay>Werkschutz kostet in der Regel zwischen 26 und 32 Euro pro Stunde netto, zuzüglich tariflicher Zuschläge — geleistet von technik-geschulten, oft zusätzlich qualifizierten Kräften. Die genaue Lage in der Spanne bestimmen:</p>
         </div>
 
-        <!-- Preis-Box: the page's second conversion point. Real <p>/<a>, no
-             JS — the figures are the draft's own. -->
+        <!-- Preis-Box: the page's second conversion point. Real <p>/<a>, no JS — the
+             figures are the draft's own.
+             The card+note wrapper this used to sit inside is GONE: the Hinweis moved to
+             a full-width row at the foot of the section (client 2026-08-05), so there
+             is no longer a card-and-note unit to wrap. The card is a grid item again
+             and carries its own width cap and edge alignment. -->
         <aside class="service-price__box" data-reveal>
           <p class="service-price__box-label">Ihre Preisspanne</p>
           <!-- Short hyphen, not the en dash the draft's Preis-Box uses (client
                2026-08-03). German typography would take a Bis-Strich (–) for a
                range; this is the client's explicit call on the glyph, and it is
                the only character that changed. -->
-          <p class="service-price__box-value">28-40 <span class="service-price__box-unit">€/Std.</span></p>
+          <p class="service-price__box-value">26-32 <span class="service-price__box-unit">€/Std.</span></p>
           <p class="service-price__box-note">netto, je nach Qualifikation und Besetzung</p>
           <ul class="service-price__box-list">
             <li>
@@ -943,6 +1156,13 @@
           <li>Technik-Kombination, die Personalstunden ersetzt</li>
         </ul>
 
+        <!-- The draft's Hinweis, verbatim. FULL WIDTH at the foot of the section
+             (client 2026-08-05: "ponémelo abajo, a lo largo de toda la sección, no
+             sólo abajo de la card"). It explains the logic behind the whole block —
+             the price AND the factors — so it closes the section rather than belonging
+             to either column. Last in the DOM, which is also its order on a phone.
+             Kept OUTSIDE the black card and as plain body copy, never a
+             legal-warning panel. -->
         <p class="service-price__hint">
           <svg class="icon service-price__hint-icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
           <span><strong>Hinweis:</strong> Ein 24/7-Werkschutzposten ist eine sechsstellige Jahresinvestition. Deshalb rechnet sich das Konzept vor dem Vertrag: Häufig lässt sich die gleiche Sicherheit mit intelligenterer Besetzung und Technik günstiger erreichen.</span>
@@ -972,7 +1192,6 @@
     <section class="section service-contact">
       <div class="container service-contact__layout">
         <div class="section__intro service-contact__intro">
-          <p class="section-eyebrow">Ansprechpartner</p>
           <h2>Vom ersten Gespräch bis zur laufenden Schicht: feste Ansprechpartner</h2>
         </div>
 
@@ -1039,14 +1258,13 @@
     <section class="section section--light service-faq" data-nav-theme="light">
       <div class="container">
         <div class="section__intro">
-          <p class="section-eyebrow">FAQ</p>
           <h2>Werkschutz: die häufigsten Fragen</h2>
         </div>
 
         <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
           <details class="faq-item">
             <summary><h3>Was kostet Werkschutz pro Stunde?</h3></summary>
-            <p class="faq-item__answer">Werkschutz kostet in der Regel zwischen 28 und 40 Euro pro Stunde, abhängig von Qualifikation, Einsatzzeiten (tarifliche Zuschläge) und Aufgabenumfang. Ein durchgehend besetzter 24/7-Posten wird individuell kalkuliert — Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
+            <p class="faq-item__answer">Werkschutz kostet in der Regel zwischen 26 und 32 Euro pro Stunde, abhängig von Qualifikation, Einsatzzeiten (tarifliche Zuschläge) und Aufgabenumfang. Ein durchgehend besetzter 24/7-Posten wird individuell kalkuliert — Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
           </details>
           <details class="faq-item">
             <summary><h3>Welche Aufgaben hat der Werkschutz?</h3></summary>
@@ -1155,7 +1373,6 @@
     <section class="section section--light service-related" data-nav-theme="light">
       <div class="container">
         <div class="section__intro">
-          <p class="section-eyebrow">Weiterlesen</p>
           <h2>Verwandte Leistungen und Einsatzgebiete</h2>
         </div>
 

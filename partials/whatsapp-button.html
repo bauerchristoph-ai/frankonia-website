@@ -3,19 +3,23 @@
   this partial (single place to update, per CLAUDE.md). Pure CSS/HTML, no
   JavaScript: it's a plain <a> to a wa.me link.
 
-  PLACEHOLDER NUMBER — not yet confirmed by the client. "491234567890" is
-  a deliberately fake, obviously-not-real number (do not treat as real).
-  Once the client confirms a WhatsApp Business number, replace the href
-  below with https://wa.me/<countrycode+number>, digits only, no "+",
-  no spaces, no leading zero after the country code — e.g. a Bamberg
-  mobile number would look like https://wa.me/49171XXXXXXX.
+  REAL NUMBER as of 2026-08-05 (Change Request 2.3, "RESOLVED"):
+  +49 172 7866338 (Steffen) -> https://wa.me/491727866338
+  Format for any future change: digits only, no "+", no spaces, no leading
+  zero after the country code. This one href is the only place the number
+  appears, which is the "keep the number easily configurable" the change
+  request asks for — do not duplicate it into a page.
+
+  aria-label is German because every page that ships this partial is German
+  (the /en/ variant is not the live site); it used to say "Contact via
+  WhatsApp" while sitting on a de page.
 -->
 <a
   class="whatsapp-button"
-  href="https://wa.me/491234567890"
+  href="https://wa.me/491727866338"
   target="_blank"
   rel="noopener noreferrer"
-  aria-label="Contact via WhatsApp (opens in new tab)"
+  aria-label="Kontakt über WhatsApp (öffnet in neuem Tab)"
 >
   <img class="whatsapp-button__icon" src="/assets/icons/whatsapp-icon.png" alt="" width="128" height="128" loading="lazy">
 </a>
