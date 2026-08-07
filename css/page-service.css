@@ -495,6 +495,42 @@ main h2 {
    language the homepage uses for its metric rows, which keeps a four-up grid
    from reading as a pricing table. */
 
+/* NAVY BAND (client 2026-08-05: "hacéme esta sección con el fondo navy que
+   tenemos en la sección de los tres stages de la home, y que tenga el degradado
+   azul arriba y abajo"). This is the homepage's .konzept treatment, values
+   copied verbatim so the two bands are the same surface and not two similar
+   navies: #00091F plus --color-blue-light at 0.38 → 0.16 → 0 over the first and
+   last 340px. The literal hex is the same documented exception .konzept already
+   carries — a client-specified section surface, not a brand token.
+
+   The section was `.section--light` (white) until now, and dropping that class
+   is what flips every token in here back to the page's dark set: text, muted
+   text, borders and --color-accent (blue-dark on white → blue-light on dark) all
+   follow with no per-rule colour override. `data-nav-theme="light"` came off in
+   the same edit — the sticky header must NOT switch to dark text over this.
+
+   ⚠️ This is the service TEMPLATE, so the other 11 service pages get the navy
+   Risiko band too, and the page's black/white alternation now reads
+   hero ■ → Risiko (navy) → Vorteile ■. Both seams around it were re-tuned; see
+   .pixel-seam--navy below for why the outgoing one could not stay white. */
+.service-risk {
+  background-color: #00091F;
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgb(61 154 211 / 0.38) 0,
+      rgb(61 154 211 / 0.16) 150px,
+      rgb(61 154 211 / 0) 340px
+    ),
+    linear-gradient(
+      to top,
+      rgb(61 154 211 / 0.38) 0,
+      rgb(61 154 211 / 0.16) 150px,
+      rgb(61 154 211 / 0) 340px
+    );
+  color: var(--color-white);
+}
+
 .service-risk__lede {
   margin-top: var(--space-4);
 }
@@ -517,10 +553,19 @@ main h2 {
    choice between two options (flat, comparable) and these are four exhibits.
 
    The `background-color` is NOT redundant now that the frame is gone. The card
-   was transparent before, letting the section's own white through; a shadow
-   implies a raised opaque surface, so the card has to BE that surface — and the
-   section this lives in is white, so with no fill and no border the shadow would
-   be drawing the edge of nothing.
+   was transparent before, letting the section's own background through; a shadow
+   implies a raised opaque surface, so the card has to BE that surface, or the
+   shadow would be drawing the edge of nothing.
+
+   NAVY, and one step LIGHTER than the section, deliberately (client 2026-08-05:
+   "obviamente las cards también sean de ese color"). Exactly #00091F would make
+   the card invisible through the middle of the band — a shadow does almost no
+   work on a dark surface, so with no border and no tonal difference there is
+   nothing left to read an edge by. #0D152A is that navy with white at 5 % baked
+   in, which reads as a panel over the flat middle AND over the lit top and
+   bottom, where the card stays its own value while the background is glowing.
+   It is OPAQUE on purpose: the hidden-line fills inside the card 03 artwork are
+   painted this exact hex, so the two must not drift. Change one, change both.
 
    The two internal rules stay: they are what give the card its drawing-sheet
    feel (one under the header, one above the caption) and they are not the frame
@@ -535,7 +580,7 @@ main h2 {
   align-items: center;
   gap: 0 var(--space-4);
   padding: var(--space-5);
-  background-color: var(--color-white);
+  background-color: #0D152A;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
 }
@@ -631,13 +676,19 @@ main h2 {
    `.rz-guide`'s dasharray replaced the designer's dash rhythm. Those classes set
    stroke-width in USER UNITS and assume a viewBox near the generated scenes' 264; this
    file is 989. **Do not re-apply them to a supplied drawing.** */
-.rz-art--file {
+/* The client's supplied drawing, INLINED 2026-08-06 (was an <img>) so
+   js/svg-draw.js can draw its line work. Renamed from --file, which stopped being
+   true in that edit.
+   No object-fit: an inline <svg> scales by preserveAspectRatio, and the default
+   `meet` does exactly what `contain` did — the file is 989x634 (1.56) against the
+   frame's 16:10 (1.60), so a few pixels letterbox rather than crop the drawing.
+   ⚠️ This rule must never set fill, stroke or stroke-width. Mapping this drawing
+   onto .rz-line/.rz-accent/.rz-guide destroyed it once: .rz-line's `fill: none`
+   killed the 17 occlusion fills and back edges showed through. */
+.rz-art--supplied {
   display: block;
   width: 100%;
   height: 100%;
-  /* `contain`, not cover: the file is 989x634 (1.56) against the frame's 16:10 (1.60),
-     so a few pixels letterbox rather than crop the drawing. */
-  object-fit: contain;
 }
 
 .service-risk__text {
@@ -869,16 +920,36 @@ main h2 {
   background-color: rgb(255 255 255 / 0.035);
 }
 
-/* 30px at 1440, up from 26px. This is the claim the whole module exists to make
-   and it has to out-weigh a 19px problem line opposite it. */
+/* A LABEL, not a headline (client 2026-08-05: "que los títulos de la derecha sean
+   del mismo estilo que los de la izquierda, tamaño y todo, pero que sean azules").
+   Every type value here is .service-contrast__topic-label's — same clamp, same
+   500, same uppercase, same 0.06em — so the two columns open on the same kind of
+   thing; only the colour differs.
+
+   ⚠️ This REVERSES the 2026-08-04/05 passes, which took this title 18 → 26 → 30px
+   precisely so it would out-weigh the problem line opposite it. The client asked
+   for the opposite and that decision stands — but it means the module's weight now
+   sits in the 19px solution PARAGRAPH, not in its title, so don't "restore" the
+   big size on the grounds that the claim needs emphasis.
+
+   The blue is --color-accent (blue-light on this dark section, 6.8:1 on the panel),
+   the same token the 01–03 numerals and the "So läuft es bei FRANKONIA" column
+   heading already use — so the whole FRANKONIA side reads as one system. */
 .service-contrast__side--new h3 {
-  font-size: clamp(1.5rem, 1rem + 1.1vw, 1.875rem);
-  line-height: 1.22;
-  margin-bottom: 0.375rem;
-  /* 34ch, up from 30: the column is wider now, and the point of widening it was to
-     stop titles like "Professionelles Auftreten gegenüber Gästen, Kunden und
-     Kollegen" wrapping awkwardly. */
-  max-width: 34ch;
+  font-size: clamp(0.9375rem, 0.82rem + 0.22vw, 1.0625rem);
+  font-weight: var(--font-weight-medium, 500);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1.35;
+  color: var(--color-accent);
+  /* 0.375rem was the gap under a 30px headline; at label size the paragraph needs
+     real separation or the two read as one block. Matches the left column's own
+     label→text gap. */
+  margin-bottom: 0.75rem;
+  /* Was 34ch, fitted to the old 30px title. At label size that would be ~320px in
+     a 690px column and would break the long title into three lines for no reason —
+     it now shares the paragraph's own measure so the panel reads as one column. */
+  max-width: 56ch;
 }
 
 /* 19px at 0.9 white, capped at 56ch — the column grew again on 2026-08-05, and the
@@ -1139,6 +1210,13 @@ main h2 {
      with prefers-reduced-motion gets, and there a full 1440px-wide photo would
      dwarf its own caption. */
   max-width: 40rem;
+  /* ⚠️ SOURCE SIZE CAVEAT (2026-08-06). The client's six Leistungsumfang photos
+     are 598–652px wide at source. The stepped desktop panel renders this frame
+     at 619x766 CSS px, so they are fine at DPR 1 and upscale roughly 2x on a
+     Retina screen. They are exported at native size on purpose — re-exporting
+     larger would upscale in the file instead of on the screen, which is worse.
+     If this ever looks soft on a Retina screen, the fix is asking the client
+     for the originals at ≥1600px, not re-encoding these. */
 }
 
 .service-flow__frame img {
@@ -1454,13 +1532,14 @@ main h2 {
   .service-flow--stepped .service-flow__media > :nth-child(5) { z-index: 2; }
   .service-flow--stepped .service-flow__media > :nth-child(6) { z-index: 1; }
 
-  /* Five of the six sources are portrait and crop cleanly into a portrait panel.
-     Frame 04 is the one LANDSCAPE file (1200x1038): centred, `cover` cuts both
-     sides and loses the vehicle, so it holds a little left of centre where the
-     vehicle actually sits. */
-  .service-flow--stepped .service-flow__media > :nth-child(4) img {
-    object-position: 42% 50%;
-  }
+  /* The per-frame object-position that used to sit here (frame 04, `42% 50%`)
+     is GONE as of 2026-08-06. It existed for one reason: the old step-04 file
+     was the single landscape source in the set (1200x1038) and centring it cut
+     the vehicle out. The client's new set is portrait throughout, so all six
+     crop cleanly from the centre and the shared 50%/50% resting position — plus
+     the drift js/service-flow.js applies on top of it — is correct for every
+     frame. Deleted rather than left as a rule aimed at a file that no longer
+     exists. */
 }
 
 
@@ -1962,9 +2041,15 @@ main h2 {
   content: "";
   position: absolute;
   top: 0;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
+  /* SQUARE, not a dot (client 2026-08-06: "los bulletitas hacelos cuadraditos en
+     vez de círculos") — which also suits this section's drawing-sheet language
+     better than a dot did. 8px, not the circle's 9: a square of the same nominal
+     size carries ~27 % more area and read heavier on the hairline. 8px also puts
+     the node's centre at exactly 4px, which is where the connector's `top` already
+     sits, so the rail now meets it dead centre instead of half a pixel high. */
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
   background-color: var(--color-accent);
   box-shadow: 0 0 0 5px var(--color-bg);
   opacity: var(--step-node, 1);
@@ -2008,10 +2093,43 @@ main h2 {
    remember the stroke is 1.5 USER units — cropping the viewBox therefore makes the
    drawing bigger AND the line proportionally thicker, which is why the crop stops
    at 40 rather than hugging the art. */
+/* The client's own Figma icons (2026-08-06), one <img> each. They replaced three
+   inline scenes drawn here; git has those.
+
+   `object-fit: contain` matters: the files are 354x328 (ratio 1.079), not square,
+   so a flat width+height would squash them. `display: block` kills the inline
+   baseline gap an <img> would otherwise add under the icon.
+
+   ⚠️ The strokes are a fixed `white` inside the files, so this block only works on
+   a DARK section. It is generic (docs/build-checklist.md counts 11 pages needing
+   `.service-konzept*`), and on this page the Sicherheitskonzept section is dark —
+   but a light-section variant needs its own export from the client, not a filter.
+   `color` is kept for the numerals and any future inline art in this block. */
+/* The client's own Figma icons (2026-08-06), INLINED verbatim — every fill and
+   stroke attribute is theirs, untouched; the only additions are the class and
+   aria-hidden. Inlining is what lets js/steps-sequence.js draw them
+   (`data-steps-draw`), which an <img> can never allow since no CSS or JS of ours
+   reaches inside one. ⚠️ It is safe here for one reason and it is worth being
+   precise about it: what destroyed the card 03 artwork was not inlining, it was
+   MAPPING it onto this page's .rz-* classes. Nothing here sets fill, stroke or
+   stroke-width. Keep it that way.
+
+   5rem, up from 4 (client 2026-08-06: "hacelos un poco más grandes"). Side effect
+   worth knowing: the effective stroke goes 0.98px → 1.22px, which lands on the
+   shared sprite's own ~1.25px.
+
+   No object-fit: an inline <svg> with a viewBox scales by preserveAspectRatio, so
+   the 354x328 art centres inside the square box with no distortion.
+
+   ⚠️ The strokes are a fixed `white` inside the artwork, so this block only works
+   on a DARK section. It is generic (docs/build-checklist.md counts 11 pages needing
+   `.service-konzept*`), and on this page the section is dark — but a light-section
+   variant needs its own export from the client, not a filter.
+   `color` is kept for the numerals and any future currentColor art in this block. */
 .service-konzept__art {
-  width: 4rem;
-  height: 4rem;
-  /* .rz-line is currentColor, so the line work inherits this. */
+  display: block;
+  width: 5rem;
+  height: 5rem;
   color: rgb(255 255 255 / 0.92);
 }
 
@@ -2794,13 +2912,19 @@ main h2 {
    were, bold, still uppercase (that is this site's label idiom), with a 2px blue
    rule above each one so the two groups read as two blocks.
 
-   ⚠️ The blue is DEEPER than --color-accent on purpose. In a light section that
-   token is blue-dark (#5287C9) = 3.71:1 on white, which clears the 3:1 for a
-   graphic and for large text but NOT the 4.5:1 for text this size — an 18–20px
-   bold uppercase heading sits right on the 18.66px large-text boundary, so
-   relying on it would be relying on a borderline number. The mix is 4.88:1 and
-   still unmistakably the same brand blue (docs/design-system.md §7). The 2px
-   RULE keeps --color-accent: a graphic element only needs 3:1. */
+   ⚠️ THE BLUE IS THE CTA'S OWN --color-blue-light (#3D9AD3) since 2026-08-05
+   (client: "que el celeste sea el celeste del CTA"). It replaces a deeper
+   `color-mix(blue-dark 85%, black)` that measured 4.88:1, and #3D9AD3 measures
+   only **3,11:1 on white** — which is why the FONT SIZE is now a flat 1.25rem
+   instead of --font-size-md's 1.125→1.25rem clamp. That is not a taste change:
+   WCAG's large-text threshold is 18.66px BOLD, so at 20px bold the 3:1 minimum
+   applies and 3,11:1 passes, while at the clamp's 18px floor the 4,5:1 for normal
+   text would apply and it would fail. Raising the size to the threshold is the
+   documented cheap way out for this exact situation (docs/page-conventions.md §3,
+   docs/design-system.md §7) — do not lower the size back without also
+   reconsidering the colour.
+   The 2px RULE keeps --color-accent (blue-dark on a light section): a graphic
+   element only needs 3:1 and it clears that on its own. */
 /* The second selector is not redundant: this section is a LIGHT one, and
    `.section--light h3` is (0,2,0) — it beat the plain `.service-related__title`
    (0,1,0) and painted these titles black instead of blue (measured:
@@ -2810,12 +2934,20 @@ main h2 {
 .section--light .service-related__title {
   padding-top: var(--space-4);
   margin-bottom: var(--space-5);
-  border-top: 2px solid var(--color-accent);
-  font-size: var(--font-size-md);
+  /* The same CTA blue as the title text below it. It used to be --color-accent
+     (blue-dark on a light section) while the text was a deeper mix — two blues
+     4 pixels apart, which reads as a mistake rather than a hierarchy now that the
+     text is #3D9AD3. A 2px graphic only needs 3:1 and #3D9AD3 gives 3,11:1. */
+  border-top: 2px solid var(--color-blue-light);
+  /* Flat 20px, not the clamp — see the contrast note above. */
+  font-size: 1.25rem;
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: color-mix(in srgb, var(--color-blue-dark) 85%, var(--color-logo-black));
+  /* 0.05em, down from 0.08em (client 2026-08-05: "que el letter spacing de los
+     títulos no sea tan salado, un poco menos"). Still tracked out enough to read
+     as a label rather than a heading — uppercase at 0 tracking sets too tight. */
+  letter-spacing: 0.05em;
+  color: var(--color-blue-light);
 }
 
 .service-related__list {
@@ -2854,12 +2986,19 @@ main h2 {
 }
 
 /* Significantly larger than the 0.9em slivers they were, and centred in the row
-   by the flex alignment above. */
+   by the flex alignment above. Up again to 1.75rem (28px) on 2026-08-05, client:
+   "las flechas más grandes". The row is 81px tall and the label 20px, so the arrow
+   can carry this size without competing with the text — it is the row's only other
+   mark. */
 .service-related__arrow {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.75rem;
+  height: 1.75rem;
   flex-shrink: 0;
-  color: var(--color-accent);
+  /* The CTA blue, like the group titles and their rules — one blue in this block
+     instead of two that differ by a few percent. A line graphic needs 3:1 and this
+     clears it at 3,11:1. On hover the row inverts and the arrow takes the row's own
+     colour, which is handled further down. */
+  color: var(--color-blue-light);
   /* Same measured bug and same fix as .service-link__arrow above — see the note
      there. Without these the row arrows were filled slivers, i.e. absent. */
   fill: none;
@@ -3093,6 +3232,27 @@ main h2 {
 /* White tiles, for a light -> dark boundary. Pure --color-white, matching the
    light sections above exactly: #FAFAFA here would read as a greyish second
    white against a real white edge (the mistake the homepage already made once). */
+/* Risiko (navy) -> Vorteile (near-black). The band sits in the incoming
+   section's top, so the tiles must match the OUTGOING section's bottom edge —
+   and that edge is not flat #00091F, because .service-risk carries the same lit
+   blue glow at its bottom that .konzept does. A flat-navy tile would read as a
+   darker second navy stepping out of a lighter section, the documented "two
+   blacks" bug. Same fix as the homepage's .pixel-seam--konzept: give the tile
+   the section's own two-layer stack instead of hardcoding the composited hex,
+   so it follows the token. Keep the 0.38 in step with .service-risk's own first
+   gradient stop.
+
+   This replaced .pixel-seam--white on that seam (2026-08-05): white tiles were
+   correct while Risiko was a white section, and would now flash bright out of a
+   navy band. */
+.pixel-seam--navy .pixel-seam__tile {
+  background-color: #00091F;
+  background-image: linear-gradient(
+    rgb(61 154 211 / 0.38),
+    rgb(61 154 211 / 0.38)
+  );
+}
+
 .pixel-seam--white {
   --pixel-tile-color: var(--color-white);
 }

@@ -220,8 +220,22 @@
   /* With the grid's default `stretch`, this is what makes all four cards end on
      the same line no matter which body copy runs longest. */
   height: 100%;
-  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+  /* SHADOW ONLY, no outline (client 2026-08-05: "hacele drop shadow a estas cards"
+     → "y sacales el border, o sea que sea solo el drop shadow"). Both halves
+     reverse the original brief's "very subtle 1px border… avoid heavy shadows", so
+     they are the client's later call, not drift.
+     --shadow-md (0 4px 12px / 0.10), not --shadow-lg: lg is the site's "lifted
+     panel" value, used by the white form card, and a card that only needs to sit
+     slightly off the page gets the medium one. With the border gone the shadow is
+     now the ONLY thing defining the card's edge, which is exactly why it does not
+     get smaller than this.
+     The card also needs its own FILL now: a box-shadow on a transparent element
+     still paints, but "a shadow under nothing" is a bug waiting for the day this
+     block lands on a section that is not white. --color-white is the same colour
+     the light section already is, so nothing changes visually today. */
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-md);
   /* Clips the photo to the card's own radius, so the image needs no radius of
      its own and the two can never disagree. */
   overflow: hidden;
@@ -237,8 +251,10 @@
 .jobs-why__media {
   aspect-ratio: 4 / 3;
   background-color: var(--color-bg-subtle);
-  /* The divider between photo and text — the section's own hairline, not a
-     second value. */
+  /* The divider between photo and text. It is NOT the card's border — that one was
+     removed 2026-08-05 so the shadow alone defines the card. This line separates
+     two zones inside it, and with the outline gone it is the only thing keeping the
+     photo from bleeding straight into the copy. Say the word if it should go too. */
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -816,6 +832,13 @@
        own heights. */
     align-items: stretch;
     margin-top: var(--space-6);
+    /* Room for the cards' drop shadow. The strip is `overflow-y: hidden` (it has
+       to be, or a horizontal scroller would also scroll vertically), which clips
+       anything outside its content box — including a shadow that reaches ~16px
+       below the card. Two-level selector on purpose: swipe-carousel.css loads last
+       and sets `padding` as a SHORTHAND, so a single-class `padding-block` here
+       would lose to it. */
+    padding-block: 4px 16px;
   }
 
   /* `height: 100%` is what makes the cards equal in the desktop GRID (against the

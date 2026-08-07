@@ -1,0 +1,23 @@
+          <!-- SHARED city chips (the 10 linked Einsatzgebiete). Include it:
+                 include: coverage-chips
+               One place for the city list and its URLs, so an edit like the
+               2026-08-05 Forchheim-in / Hof-out change is made once here
+               instead of being repeated by hand.
+               LIMIT, on purpose: the two footers render the SAME ten cities as
+               .footer-pill, without the map attributes, so they still keep
+               their own copy. Rendering one list three ways needs loops, and
+               build.js deliberately has none. Adding or removing a city is
+               therefore still THREE edits: here, footer-de.html, footer.html.
+               This block also carries data-coverage-city and the Alle button,
+               which only mean something on a page that loads
+               js/coverage-map.js. A page without the map wants a plainer
+               list, not this one. -->
+          <ul class="coverage__list">
+            <li><button type="button" class="coverage__pill coverage__pill--all" data-coverage-city="all" aria-pressed="true">Alle</button></li>
+            <li><a class="coverage__pill" data-coverage-city="bamberg" href="/sicherheitsdienst-bamberg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Bamberg</a></li>
+            <li><a class="coverage__pill" data-coverage-city="nuremberg" href="/sicherheitsdienst-nuernberg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Nürnberg</a></li>
+            <li><a class="coverage__pill" data-coverage-city="wuerzburg" href="/sicherheitsdienst-wuerzburg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Würzburg</a></li>
+            <li><a class="coverage__pill" data-coverage-city="erlangen" href="/sicherheitsdienst-erlangen/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Erlangen</a></li>
+            <li><a class="coverage__pill" data-coverage-city="fuerth" href="/sicherheitsdienst-fuerth/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Fürth</a></li>
+            <li><a class="coverage__pill" data-coverage-city="schweinfurt" href="/sicherheitsdienst-schweinfurt/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Schweinfurt</a></li>
+          </ul>

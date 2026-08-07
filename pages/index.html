@@ -555,24 +555,7 @@
                specifies as `H2:` is the one below. -->
           <h2 class="sticky-story__scene-title">Über 300 Unternehmen vertrauen unserem Sicherheitsdienst</h2>
           <p class="sticky-story__lede" data-reveal>Langfristige Sicherheitspartnerschaften in Bamberg, Nürnberg und ganz Franken — auf Basis von Zuverlässigkeit und messbarer Leistung.</p>
-          <ul class="sticky-story__metrics">
-          <li class="sticky-story__metric">
-            <span class="sticky-story__metric-value"><span data-count-to="300">300</span><span class="sticky-story__metric-plus">+</span></span>
-            <span class="sticky-story__metric-label">Unternehmen und Einrichtungen</span>
-          </li>
-          <li class="sticky-story__metric">
-            <span class="sticky-story__metric-value"><span data-count-to="1000000">1.000.000</span><span class="sticky-story__metric-plus">+</span></span>
-            <span class="sticky-story__metric-label">Geleistete Einsatzstunden</span>
-          </li>
-          <li class="sticky-story__metric">
-            <span class="sticky-story__metric-value"><span data-count-to="10">10</span><span class="sticky-story__metric-plus">+</span></span>
-            <span class="sticky-story__metric-label">Jahre im Sicherheitsgewerbe</span>
-          </li>
-          <li class="sticky-story__metric">
-            <span class="sticky-story__metric-value"><span data-count-to="4.7" data-decimals="1">4.7</span><span class="sticky-story__metric-star" aria-hidden="true"></span></span>
-            <span class="sticky-story__metric-label">Google-Bewertungen (97)</span>
-          </li>
-          </ul>
+          <!-- include: trust-metrics -->
         </div>
       </div>
 
@@ -2095,44 +2078,7 @@
                treatment (page-home.css) and the button markup (now an
                icon + text pairing instead of the old full-width pill —
                see .conversion__submit). -->
-          <form class="conversion__form" action="#" method="post">
-            <div class="form-field">
-              <label class="form-field__label" for="cf-name">Name *</label>
-              <input class="form-field__input" type="text" id="cf-name" name="name" autocomplete="name" required>
-            </div>
-
-            <div class="form-field">
-              <label class="form-field__label" for="cf-company">Unternehmen *</label>
-              <input class="form-field__input" type="text" id="cf-company" name="company" autocomplete="organization" required>
-            </div>
-
-            <div class="form-field">
-              <label class="form-field__label" for="cf-email">E-Mail *</label>
-              <input class="form-field__input" type="email" id="cf-email" name="email" autocomplete="email" required>
-            </div>
-
-            <div class="form-field">
-              <label class="form-field__label" for="cf-phone">Telefon *</label>
-              <input class="form-field__input" type="tel" id="cf-phone" name="phone" autocomplete="tel" required>
-            </div>
-
-            <div class="form-field conversion__form-field--full">
-              <label class="form-field__label" for="cf-message">Nachricht</label>
-              <textarea class="form-field__textarea" id="cf-message" name="message"></textarea>
-            </div>
-
-            <div class="form-checkbox">
-              <input class="form-checkbox__input" type="checkbox" id="cf-privacy" name="privacy" required>
-              <label class="form-checkbox__label" for="cf-privacy">
-                Ich habe die <a href="/datenschutz/">Datenschutzerklärung</a> gelesen und stimme zu. *
-              </label>
-            </div>
-
-            <button class="btn btn--primary conversion__submit" type="submit">
-              Jetzt unverbindliches Angebot einholen
-              <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
-            </button>
-          </form>
+          <!-- include: lead-form prefix="cf" messageLabel="Nachricht" -->
 
           <!-- Direct-call alternative below the form (client copy "Webtext 01",
                2026-07-28): same real number as the header/footer. -->
@@ -2236,15 +2182,7 @@
              this 6+5 split — it's prepended as its own first item so the
              footer-matching count/order of real city links is untouched. -->
         <div class="coverage__rows" data-coverage-rows data-coverage-label="Einsatzgebiet" data-reveal>
-          <ul class="coverage__list">
-            <li><button type="button" class="coverage__pill coverage__pill--all" data-coverage-city="all" aria-pressed="true">Alle</button></li>
-            <li><a class="coverage__pill" data-coverage-city="bamberg" href="/sicherheitsdienst-bamberg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Bamberg</a></li>
-            <li><a class="coverage__pill" data-coverage-city="nuremberg" href="/sicherheitsdienst-nuernberg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Nürnberg</a></li>
-            <li><a class="coverage__pill" data-coverage-city="wuerzburg" href="/sicherheitsdienst-wuerzburg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Würzburg</a></li>
-            <li><a class="coverage__pill" data-coverage-city="erlangen" href="/sicherheitsdienst-erlangen/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Erlangen</a></li>
-            <li><a class="coverage__pill" data-coverage-city="fuerth" href="/sicherheitsdienst-fuerth/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Fürth</a></li>
-            <li><a class="coverage__pill" data-coverage-city="schweinfurt" href="/sicherheitsdienst-schweinfurt/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Schweinfurt</a></li>
-          </ul>
+          <!-- include: coverage-chips -->
           <ul class="coverage__list">
             <li><a class="coverage__pill" data-coverage-city="bayreuth" href="/sicherheitsdienst-bayreuth/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Bayreuth</a></li>
             <li><a class="coverage__pill" data-coverage-city="coburg" href="/sicherheitsdienst-coburg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Coburg</a></li>

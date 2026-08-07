@@ -47,7 +47,71 @@ const SHARED_CSS_ORDER = [
   "tokens", "reset", "base", "layout", "components", "site-chrome", "motion",
 ];
 
-const INCLUDE_RE = /<!--\s*include:\s*([\w-]+)\s*-->/g;
+// An include marker, with optional parameters:
+//     <!-- include: header -->
+//     <!-- include: lead-form prefix="wk" heading="Ihre Anfrage" -->
+// The parameterless form is byte-for-byte the old behaviour, so every existing
+// page is unaffected.
+const INCLUDE_RE = /<!--\s*include:\s*([\w-]+)((?:\s+[\w.-]+="[^"]*")*)\s*-->/g;
+const PARAM_RE = /([\w.-]+)="([^"]*)"/g;
+
+// {{ key }} / {{ key.sub }} — filled from an include's own parameters first,
+// then from content/values.json.
+const VAR_RE = /\{\{\s*([\w.]+)\s*\}\}/g;
+
+// ---------------------------------------------------------------------------
+// Shared values (content/values.json)
+// ---------------------------------------------------------------------------
+// One place for the facts that repeat across the site — price, phone, address,
+// rating. Before this existed the phone number was written 21 times across 8
+// files and the address 11 times, and a price change meant 54 hand edits (27
+// pages x visible + JSON-LD). Those are exactly the edits that go wrong
+// silently: miss one JSON-LD copy and Google is served a different price than
+// the visitor sees.
+//
+// This is deliberately NOT a templating language. It substitutes values into
+// otherwise-static HTML and nothing else — no logic, no loops, no conditionals.
+// Adding it was discussed and approved (client 2026-08-06) as the alternative
+// to copy-pasting sections across 44 remaining pages; see CLAUDE.md's
+// "Non-negotiable tech constraints", which requires exactly that discussion
+// before build.js grows.
+const VALUES_FILE = path.join(ROOT, "content", "values.json");
+
+function loadValues() {
+  if (!fs.existsSync(VALUES_FILE)) return {};
+  try {
+    return JSON.parse(fs.readFileSync(VALUES_FILE, "utf8"));
+  } catch (err) {
+    throw new Error(`content/values.json is not valid JSON — ${err.message}`);
+  }
+}
+
+// "phone.display" -> values.phone.display
+function lookup(scope, dottedKey) {
+  return dottedKey.split(".").reduce(
+    (acc, part) => (acc && typeof acc === "object" ? acc[part] : undefined),
+    scope
+  );
+}
+
+function resolveVars(content, scopes, sourceLabel) {
+  return content.replace(VAR_RE, (match, key) => {
+    for (const scope of scopes) {
+      const value = lookup(scope, key);
+      if (value !== undefined && value !== null && typeof value !== "object") {
+        return String(value);
+      }
+    }
+    // Loud on purpose. A placeholder that silently survives into the output
+    // ships a literal "{{price.werkschutz}}" to a visitor, which is worse than
+    // a failed build — and it is the one failure mode this whole mechanism
+    // could plausibly introduce.
+    throw new Error(
+      `${sourceLabel}: unresolved placeholder ${match} — no such key in the ` +
+        `include's parameters or in content/values.json`
+    );
+  });
+}
 
 function walkHtml(dir) {
   let results = [];
@@ -77,15 +141,23 @@ function copyRecursive(src, dest) {
   }
 }
 
-function resolveIncludes(content, sourceLabel) {
-  return content.replace(INCLUDE_RE, (_match, name) => {
+function resolveIncludes(content, sourceLabel, values) {
+  return content.replace(INCLUDE_RE, (_match, name, rawParams) => {
     const partialPath = path.join(PARTIALS_DIR, `${name}.html`);
     if (!fs.existsSync(partialPath)) {
       throw new Error(
         `${sourceLabel}: unknown include "${name}" — expected partials/${name}.html`
       );
     }
-    return fs.readFileSync(partialPath, "utf8").trim();
+    const params = {};
+    if (rawParams) {
+      for (const m of rawParams.matchAll(PARAM_RE)) params[m[1]] = m[2];
+    }
+    const partial = fs.readFileSync(partialPath, "utf8").trim();
+    // The partial's own parameters win over the global values, so two pages can
+    // include the same partial with different ids/headings. Still one level
+    // deep: partials do not include partials (CLAUDE.md).
+    return resolveVars(partial, [params, values], `partials/${name}.html (from ${sourceLabel})`);
   });
 }
 
@@ -107,10 +179,14 @@ function buildPages() {
     return 0;
   }
 
+  const values = loadValues();
+
   for (const pageFile of pageFiles) {
     const sourceLabel = path.relative(ROOT, pageFile);
     let content = fs.readFileSync(pageFile, "utf8");
-    content = resolveIncludes(content, sourceLabel);
+    content = resolveIncludes(content, sourceLabel, values);
+    // Then the page's own placeholders (the ones outside any include).
+    content = resolveVars(content, [values], sourceLabel);
 
     const notice =
       `<!-- GENERATED FILE — do not edit. Source: ${sourceLabel}. ` +

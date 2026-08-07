@@ -1,0 +1,56 @@
+          <!-- SHARED lead form. Include it, never copy it:
+                 include: lead-form prefix="xx" messageLabel="..."
+               prefix must be unique per page (it prefixes every id/for);
+               messageLabel is the only per-page label. Rationale, and why
+               /kontakt/ and /jobs/ keep their own form: page-conventions.md 6. -->
+<form class="conversion__form" action="#" method="post">
+            <div class="form-field">
+              <label class="form-field__label" for="{{prefix}}-name">Name *</label>
+              <input class="form-field__input" type="text" id="{{prefix}}-name" name="name" autocomplete="name" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="{{prefix}}-company">Unternehmen *</label>
+              <input class="form-field__input" type="text" id="{{prefix}}-company" name="company" autocomplete="organization" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="{{prefix}}-email">E-Mail *</label>
+              <input class="form-field__input" type="email" id="{{prefix}}-email" name="email" autocomplete="email" required>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="{{prefix}}-phone">Telefon *</label>
+              <input class="form-field__input" type="tel" id="{{prefix}}-phone" name="phone" autocomplete="tel" required>
+            </div>
+
+            <div class="form-field conversion__form-field--full">
+              <label class="form-field__label" for="{{prefix}}-message">{{messageLabel}}</label>
+              <!-- rows="2" is load-bearing: a CSS min-height can only grow a
+                   textarea's box, never shrink it from the default 2-3 rows.
+                   See docs/page-conventions.md §6. -->
+              <textarea class="form-field__textarea" id="{{prefix}}-message" name="message" rows="2"></textarea>
+            </div>
+
+            <!-- Honeypot (docs/page-conventions.md §6): out of the layout but
+                 NOT display:none (bots skip hidden fields), out of the tab order
+                 and out of the accessibility tree. Nothing reads it yet — the
+                 form has no backend — but it ships with the markup so it is
+                 already there when one exists. -->
+            <div class="conversion__hp" aria-hidden="true">
+              <label for="{{prefix}}-website">Website</label>
+              <input type="text" id="{{prefix}}-website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+
+            <div class="form-checkbox">
+              <input class="form-checkbox__input" type="checkbox" id="{{prefix}}-privacy" name="privacy" required>
+              <label class="form-checkbox__label" for="{{prefix}}-privacy">
+                Ich habe die <a href="/datenschutz/">Datenschutzerklärung</a> gelesen und stimme zu. *
+              </label>
+            </div>
+
+            <button class="btn btn--primary conversion__submit" type="submit">
+              Jetzt unverbindliches Angebot einholen
+              <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </button>
+          </form>

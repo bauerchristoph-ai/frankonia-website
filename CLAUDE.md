@@ -416,6 +416,31 @@ real URL and carry `.site-nav__link`, so `initActiveNavLink()` can mark them.
   hardcoded chevron data-URI that cannot follow `currentColor`. All of that is now
   written into `docs/page-conventions.md` §6, since the next form with a select
   should not rediscover it.
+- **2026-08-05 — the "Weiterlesen" group titles and arrows** (client: "que el letter
+  spacing de los títulos no sea tan salado, un poco menos", "que el celeste sea el
+  celeste del CTA", "las flechas más grandes"). All three in `page-service.css`, so
+  **/werkschutz/ gets them too** — it is the same shared block, and "use the CTA
+  blue" reads as a brand rule rather than a Karriere-only preference. (/referenzen/
+  has no `.service-related__title`.)
+  - Tracking 0.08em → **0.05em**, arrows 1.5rem → **1.75rem (28px)**.
+  - **The blue is now `--color-blue-light` (#3D9AD3), the CTA's own** — for the title
+    text, for the 2px rule above it AND for the row arrows. The rule and the arrows
+    were `--color-accent` (blue-dark, #5287C9) while the text was a deeper mix: three
+    blues within a few percent of each other in one block, which reads as a mistake
+    rather than a hierarchy. One blue now.
+  - ⚠️ **The title's font-size is a flat `1.25rem` and that is a CONTRAST decision,
+    not a size preference.** #3D9AD3 measures **3,11:1 on white**: fine for the 3:1
+    that applies to large text and to graphics, short of the 4,5:1 for normal text.
+    WCAG's large-text threshold is 18.66px **bold**, and `--font-size-md` is a
+    1.125→1.25rem clamp — so at 1440 it was already 20px and passed, but at narrower
+    viewports it fell to 18px, where the 4,5:1 would have applied and it would have
+    failed. Pinning it at 20px keeps 3:1 the applicable threshold at every width.
+    This is the documented cheap way out for exactly this case (page-conventions §3),
+    used here instead of overriding the client's colour. **Do not put the clamp back
+    without revisiting the colour.**
+  - Measured after, on both pages: title 20px/800, 1px tracking, #3D9AD3 at 3,11:1
+    and `isLargeText: true`; arrow 28px, same blue, 3,11:1 as a graphic; row still
+    81px tall; no horizontal overflow.
 - **2026-08-05 — the hero now matches the HOMEPAGE hero's format, same copy**
   (client: "el formato como la hero del homepage… los DEKRA badges como en la hero
   de la home, lo mismo con los tamaños, los tics, que sean así en fila").
@@ -623,10 +648,28 @@ real URL and carry `.site-nav__link`, so `initActiveNavLink()` can mark them.
   always the same height (grid `stretch` + `height: 100%`, no fixed heights
   anywhere) and the same structure.
   - Restrained per the brief, and that is what keeps it off the generic-SaaS-card
-    path: one hairline border, `--radius-md`, **no shadow, no fill** (the card is
-    the section's own white), no gradient or overlay on the photos and no text over
-    them. The only other line is the same hairline under each photo. Padding is
-    `--space-5` (24px), inside the brief's 24–28px and a real token.
+    path: `--radius-md`, no gradient or overlay on the photos, no text over them, and
+    padding `--space-5` (24px), inside the brief's 24–28px and a real token.
+  - **SHADOW ONLY, no outline, since 2026-08-05** — two client instructions in
+    sequence: "hacele drop shadow a estas cards", then "y sacales el border, o sea
+    que sea solo el drop shadow". Both reverse the original brief's "very subtle 1px
+    border… avoid heavy shadows", so they are the client's later call, not drift.
+    `--shadow-md` (0 4px 12px / 0.10), not `--shadow-lg`: lg is the site's "lifted
+    panel" value (the white form card), and this one only needs to sit slightly off
+    the page. With the border gone the shadow is the ONLY thing defining the card's
+    edge, which is why it does not get any smaller than this.
+    The card gained an explicit `background-color: var(--color-white)` in the same
+    edit — a box-shadow on a transparent element still paints, but "a shadow under
+    nothing" is a bug waiting for the day this block lands on a section that is not
+    white. No visual change today.
+    **The hairline UNDER EACH PHOTO stays**: it is not the card's outline, it
+    separates the two zones inside it, and with the outline gone it is the only thing
+    keeping the photo from bleeding into the copy.
+    ⚠️ The mobile swipe strip needed `padding-block: 4px 16px` for the shadow: the
+    strip is `overflow-y: hidden` (a horizontal scroller must not scroll vertically),
+    which clips anything outside its content box — including a shadow reaching ~16px
+    below the card. Two-level selector, because swipe-carousel.css loads last and
+    sets `padding` as a shorthand.
   - **Photos are the client's own 2022 studio shoot**, named per card in the brief
     (`Frankonia_Sicherheitsdienst_02_05_22_063/156/040/137-a_prev.jpg` from
     ~/Downloads), cropped 3:2 → 4:3 and exported as
@@ -1532,6 +1575,44 @@ July version was built with is gone, on purpose. What changed:
     `data-item-reveal` transform mid-flight and `getBoundingClientRect()` reports the
     transformed box. With motion off, and reading `offsetHeight` as well, all four are
     586px. A rect is not a layout measurement while GSAP is running.
+  - **2026-08-05 — LA SECCIÓN ES AHORA UNA BANDA NAVY** (client: "hacéme esta sección
+    con el fondo navy que tenemos en la sección de los tres stages en la home, y que
+    tenga el degradado azul arriba y abajo… las cards también de ese color, los textos
+    blancos"). Es el tratamiento de `.konzept` del homepage, **valores copiados
+    literales** (#00091F + `--color-blue-light` 0.38 → 0.16 → 0 en los primeros y
+    últimos 340px) para que las dos bandas sean la misma superficie y no dos navies
+    parecidos. Ojo: **es el TEMPLATE**, así que las otras 11 páginas de servicio también
+    tendrán el Risiko en navy.
+    - **Sacar `.section--light` es lo que hizo casi todo el trabajo**: texto, texto
+      muted, bordes y `--color-accent` (blue-dark sobre blanco → blue-light sobre
+      oscuro) volvieron solos a los tokens oscuros, sin un solo override de color por
+      regla. Las tres escenas isométricas también: `.rz-line` es `currentColor` y
+      `.rz-guide` es `--color-border-strong`. `data-nav-theme="light"` salió en la
+      misma edición — si no, el header pasaba a texto oscuro sobre navy.
+    - ⚠️ **Las cards NO son exactamente #00091F, y no puede serlo.** Una sombra casi no
+      trabaja sobre una superficie oscura, así que sin borde y sin diferencia tonal no
+      queda nada con qué leer el borde: la card desaparecía en el medio de la banda.
+      Son **#0D152A** (ese navy con blanco al 5 % ya compuesto) y **opacas a propósito**.
+    - ⚠️ **La ilustración del cliente de la card 03 hubo que RECOLOREARLA** — es un
+      `<img>`, así que ningún CSS nuestro la alcanza, y traía negro y blanco fijos: 39
+      trazos negros (invisibles sobre navy) y 18 rellenos blancos (manchas brillantes).
+      Ahora `black` → `#FFFFFF`, `white` → **`#0D152A`, el fill de la CARD, no el de la
+      sección** (esos paths ocluyen líneas detrás de las cajas, así que tienen que
+      igualar lo que está justo atrás del dibujo), y las guías `#C5C8CC` → `#4A5164`.
+      El azul de marca no se tocó, ni la geometría, ni el ROL de ningún fill/stroke.
+      **Si cambiás el fill de la card, hay que cambiar esos 18 fills también.** El
+      original sobre fondo claro está en git.
+    - **El seam de salida pasó de `--white` a un `--navy` nuevo.** Tiles blancos eran
+      correctos mientras el Risiko era blanco y ahora destellarían saliendo de una
+      banda navy. Mismo fix que `.pixel-seam--konzept`: al tile se le da el stack de
+      dos capas de la propia sección (#00091F + blue 0.38) en vez del hex compuesto,
+      porque el borde inferior está iluminado por el degradado y un navy plano se
+      leería como "dos navies". El seam de ENTRADA queda con tiles negros sin tocar: el
+      degradado superior levanta los primeros 340px, que es justo lo que le da contraste
+      (el mismo cálculo que documenta `.konzept`).
+    - Medido a 390 / 768 / 1024 / 1440, sin scroll horizontal: h2 y lede **19,83:1**,
+      título de card **18,14:1**, texto **8,07:1**, el número azul **5,84:1**. Los 180
+      tiles del seam de salida verificados con motion prendido.
   - **Scenes inset, cards shorter** (client 2026-08-05, same day: "igual de width pero
     un poco menos height, y que la imagen de dentro sea un poco más chica, con un toque
     más de padding en los bordes"). `.service-risk__art` gained
@@ -1734,6 +1815,148 @@ July version was built with is gone, on purpose. What changed:
     the same probe reported `position: sticky` and `position: static` for the same
     width. Dispatch a `resize` and assert `.service-flow--stepped` is present before
     measuring anything in this section.
+- **2026-08-06 — la ilustración de la card 03 también se DIBUJA con el scroll, y sólo
+  esa de las cuatro** (client: "aplicame el mismo efecto al diagrama de Diebstahl im und
+  um den Betrieb, solo a ese de los 4, que vaya formando las líneas"). Nuevo primitivo
+  `js/svg-draw.js`, opt-in por `data-svg-draw`, con su propio `<script defer>`.
+  - **La ilustración pasó de `<img>` a INLINE**, verbatim otra vez: sólo se sacaron
+    `width`/`height` del root. Verificado después del cambio: los 51 trazos siguen con su
+    `stroke` y `stroke-width` originales y los 19 rellenos siguen en `#0D152A`.
+    `.rz-art--file` se renombró a **`.rz-art--supplied`** porque "--file" dejó de ser
+    cierto, y perdió el `object-fit`: un `<svg>` inline escala por
+    `preserveAspectRatio`, y el `meet` por defecto hace exactamente lo que hacía
+    `contain`.
+  - ⚠️ **Los 19 rellenos NO se animan, y es la decisión que hace que esto funcione.** Un
+    `stroke-dashoffset` sobre un fill no hace nada, y acá los fills son oclusión de línea
+    oculta (esconden los bordes detrás de los cajones y de la caja del camión), así que
+    tienen que pintar desde el primer frame o el dibujo se transparenta a sí mismo
+    mientras se forma. El script filtra por `stroke` presente; medido: 51 con dash, **0
+    rellenos tocados**.
+  - **El stagger es un spread TOTAL (`amount: 0.9`), no un delay por elemento.** Este
+    dibujo tiene 51 trazos contra los ~10 de un icono chico: con un delay fijo por
+    elemento el mismo efecto duraría cinco veces más acá. Un valor, cualquier cantidad de
+    paths.
+  - **Arranca DESPUÉS del reveal de la card**, a propósito (`start: "top 62%"`): el grid
+    usa `data-item-reveal-strong`, que scrubea un blur de 10px y una escala hasta que el
+    bottom de la card llega al 60 % del viewport — dibujar debajo de eso gastaría el
+    efecto detrás de un blur.
+  - **El dash se limpia en `onComplete`**, así que una ilustración terminada no queda con
+    ningún estilo inline nuestro. Medido: al final `conDash: 0`.
+  - **Verificado por scroll real**: 50 de 51 sin dibujar antes de entrar, 36 a mitad, 0 al
+    final; **las otras tres cards nunca reciben un dash** (`otrasConDash: 0`), que era la
+    parte "sólo ese de los 4". Con `prefers-reduced-motion` forzado no se escribe un solo
+    dash en ninguna posición y el dibujo está completo siempre.
+  - Costo: la página compilada queda en 140KB (**42KB gzip**) y se ahorran 4 requests de
+    SVG entre esto y los tres iconos. El archivo sigue en `assets/images/` como fuente de
+    verdad — si el cliente lo re-manda, se re-inlinea desde ahí.
+  - ⚠️ **Nota de orden de dibujo:** el orden es el del documento (paleta → cajones →
+    guías → flecha → camión), así que a mitad del scrub el camión todavía se está
+    formando. Se lee bien como dibujo en proceso. Cambiar el orden sería reordenar
+    elementos dentro del archivo del cliente, o sea cirugía de artwork, y no se hizo sin
+    pedido.
+- **2026-08-06 — los iconos del Konzept SE DIBUJAN con el scroll, y pasaron a 5rem**
+  (client: "hacelos un poco más grandes, y si podés, como son SVG, hacerles un efecto
+  como que se va formando la línea… si no, no hagas nada"). Sí se podía, y la condición
+  que lo hizo posible es medible: los tres archivos son **línea pura — 32 elementos con
+  stroke y CERO rellenos distintos de `none`**, así que un `stroke-dashoffset` los dibuja
+  enteros.
+  - **Los SVG están INLINEADOS ahora, no como `<img>`** — es la única forma, porque
+    ningún CSS ni JS nuestro entra en un `<img>`. ⚠️ **Y esto NO contradice la lección de
+    la card 03: lo que destruyó ese dibujo no fue inlinearlo, fue MAPEARLO sobre las
+    clases `.rz-*`.** Acá se inlinea verbatim — cada `fill` y cada `stroke` es el del
+    cliente, lo único que se agregó es la clase y `aria-hidden`; sólo se sacaron `width`
+    y `height` del root para que el CSS dimensione. Verificado después: los 32 elementos
+    siguen con `stroke="white"` y `stroke-width="5"` intactos. **Nada en el CSS de este
+    bloque toca fill, stroke ni stroke-width. Que siga así.**
+  - **El dibujado es una capacidad OPT-IN de `js/steps-sequence.js`**, vía
+    `data-steps-draw="<selector>"` en la lista. Sin ese atributo el script se comporta
+    exactamente como antes, así que `/jobs/` (que además usa `js/jobs-steps.js`, otro
+    archivo) no se toca. Un solo tween por paso sobre todos sus trazos, con **valores por
+    función** para que cada path se dashee con su PROPIA `getTotalLength()` — nunca una
+    constante compartida, la misma regla que sigue `js/service-contrast.js` con su
+    flecha — más `stagger: 0.035`, que es lo que hace que se lea como una pluma y no como
+    32 trazos apareciendo juntos.
+  - **El icono sale del stagger de la copia a propósito.** El dibujado ES su llegada, y
+    hacerle un fade de opacidad mientras se dibuja esconde el efecto detrás de una rampa.
+    Se inserta en posición `"<"` (el inicio del tween anterior), o sea arranca junto con
+    su caption y dura un poco más, así el dibujo sigue cuando el texto ya se asentó.
+  - **Verificado por scroll real, no por razonamiento**: arriba de la sección los 32
+    trazos tienen dash con offset > 0 (sin dibujar); a mitad de la secuencia los iconos 01
+    y 02 están en offset 0 y el 03 sigue con sus 10 trazos sin dibujar; al final los 32 en
+    0. O sea **dibujan de a uno, en orden, con el riel**. Con `prefers-reduced-motion`
+    forzado **nunca se escribe un solo dasharray** y los tres están completos en cualquier
+    posición de scroll — el contrato de "JS sólo mejora" se sostiene.
+  - **5rem, de 4** (el otro pedido). Efecto secundario que conviene saber: el trazo
+    efectivo pasa de 0,98px a **1,22px**, que cae justo en los ~1,25px del sprite
+    compartido — así que agrandarlos también alineó el peso de línea con el resto del
+    sitio.
+  - Los tres `.svg` quedan en `assets/icons/` aunque el markup ya no los pida: son la
+    fuente del cliente. `build.js` copia `assets/` entero, así que se publican sin usarse
+    — inofensivo acá, pero es la misma clase de huérfano que ya se documentó.
+- **2026-08-06 — los nodos del conector son CUADRADOS** (client: "los bulletitas
+  hacelos cuadraditos en vez de círculos"). `border-radius: 50%` → `0` en
+  `.service-konzept__step::before`, y de paso encaja mejor con el lenguaje de plano
+  técnico de la sección que un punto.
+  **9px → 8px, y no es capricho:** un cuadrado del mismo tamaño nominal tiene ~27 % más
+  de área y pesaba más sobre la hairline. 8px además pone el centro del nodo en
+  exactamente 4px, que es donde ya estaba el `top` del segmento del conector, así que
+  ahora el riel lo encuentra al centro en vez de medio píxel arriba. El `left:
+  calc(50% + 12px)` del conector sigue despejado (4px de mitad + 5px de anillo = 9px).
+  Verificado a 1440 y 390: los tres nodos 8x8 con radio 0, segmentos a `top: 4px`, el
+  riel vertical del teléfono sigue igual, sin scroll horizontal.
+- **2026-08-06 — los 3 iconos del Sicherheitskonzept son los del CLIENTE, hechos en
+  Figma** ("ya hice los iconos de esta sección yo en Figma… buscalos y ponelos ahí").
+  `assets/icons/{standortanalyse,sicherheitskonzept,angebot-24h}.svg`, renombrados desde
+  los nombres de Figma (`Standortanalyse.svg`, `Sicherheitskonzept.svg`, `Angebot in
+  24h.svg`) a la convención del proyecto — minúsculas, con guiones, sin espacios que
+  haya que codificar en una URL. Reemplazan las tres escenas dibujadas acá; git las
+  tiene.
+  - **Van como `<img>`, NO inline**, y esta vez la decisión fue directa por lo que ya
+    costó una vez: `Standortanalyse.svg` trae tres `<mask>` de Figma con ids propios
+    (`path-7-inside-1_556_70`) y los tres tienen `stroke="white"` fijo. Inlinearlos y
+    mapearlos sobre `.rz-line`/`.rz-accent` es exactamente lo que destruyó la
+    ilustración de la card 03. Dentro de un `<img>` no entra ningún CSS nuestro.
+  - Los tres son 354x328 (ratio 1.079, **no cuadrados**), así que la caja de 4rem
+    necesita `object-fit: contain` o los achata. `display: block` saca el hueco de
+    baseline que un `<img>` inline mete debajo del icono. Con `width`/`height` reales en
+    el markup no hay CLS.
+  - **El trazo efectivo es 0,98px**, contra los **2,4px** de las escenas que reemplazan
+    (yo las había dibujado a 1.5 sobre un viewBox de 40 unidades a 64px). Los iconos del
+    sprite compartido dan ~1,25px (1.5 sobre 24 unidades a 20px), así que **los nuevos
+    están más cerca del lenguaje de línea del sitio que los que salieron** — la fila lee
+    más delicada, y eso es lo correcto, no una regresión. Si el cliente la quiere más
+    firme, se sube la caja (una línea) o re-exporta con más trazo; no se toca el archivo.
+  - **Ninguno de los tres trae acento azul**, y las tres escenas anteriores tenían uno
+    cada una (el marcador, la llave, el check). La sección conserva el azul en los
+    numerales 01–03 y en los nodos del conector, así que no queda sin él — pero el icono
+    ya no aporta color. Es como los exportó el cliente.
+  - ⚠️ **`.service-konzept__art` sólo funciona sobre sección OSCURA ahora**: el blanco
+    está dentro de los archivos. El bloque es genérico (11 páginas lo necesitan según
+    docs/build-checklist.md) y acá la sección es oscura, pero una variante para sección
+    clara necesita un export nuevo del cliente, no un `filter`.
+  - Verificado: los tres cargan (`naturalWidth` 354), caja 64x64, sin scroll horizontal.
+- **2026-08-05, FIFTH pass on Vorteile — el título de la solución es una ETIQUETA
+  azul, no un headline** (client: "que los títulos de la derecha sean del mismo estilo
+  que los de la izquierda, tamaño y todo, pero que sean azules"). Copy intacto.
+  `.service-contrast__side--new h3` toma los valores de tipo de
+  `.service-contrast__topic-label` — mismo clamp, mismo 500, uppercase, 0.06em — y sólo
+  cambia el color a `--color-accent`, el mismo token que ya usan los numerales 01–03 y
+  el encabezado "So läuft es bei FRANKONIA", así que todo el lado FRANKONIA lee como un
+  sistema. Verificado a 1440 / 1024 / 390: los dos títulos dan **idénticos** en
+  `font-size`, `font-weight`, `text-transform` y `letter-spacing`, y la única diferencia
+  es el color (blue-light contra blanco 0.95).
+  ⚠️ **Esto REVIERTE las pasadas del 2026-08-04/05**, que llevaron este título de 18 → 26
+  → 30px justamente para que pesara más que la línea de problema de enfrente. La decisión
+  del cliente manda, pero significa que **el peso del módulo ahora vive en el párrafo de
+  19px, no en el título** — no "restaurar" el tamaño grande argumentando que el claim
+  necesita énfasis.
+  Dos valores se movieron con el cambio y no son cosméticos: el `margin-bottom` fue
+  0.375rem → **0.75rem** (0.375 era el hueco bajo un headline de 30px; a tamaño de
+  etiqueta el párrafo necesita separación real o los dos se leen como un bloque), y el
+  `max-width` 34ch → **56ch**, el del propio párrafo — 34ch estaba ajustado al título
+  grande y a tamaño de etiqueta son ~320px en una columna de 690, lo que partía el título
+  largo en tres líneas sin motivo. Medido: 1 / 2 / 1 líneas a 1440 y 1024, módulos
+  226/263/226 → **218/240/218px**, sin scroll horizontal a 1440 / 1024 / 390.
 - **2026-08-05, FOURTH pass on Vorteile — arrow, width, identifiers** (client: the
   arrow too small, the FRANKONIA side still needing width, the `01 ERREICHBARKEIT`
   identifiers too weak, and the rows still too tall). Desktop only; copy untouched

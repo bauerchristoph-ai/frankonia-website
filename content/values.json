@@ -1,0 +1,45 @@
+{
+  "_comment": [
+    "Facts that repeat across the site. Referenced from markup as {{phone.display}}.",
+    "Change a value here and every page that uses it changes on the next build —",
+    "that is the whole point: the annual price adjustment used to be 54 hand edits.",
+    "The build FAILS on an unknown placeholder, so a typo can never ship as literal",
+    "'{{...}}' text. Keep this file free of anything that is not a plain fact:",
+    "no markup, no copy, no per-page prose."
+  ],
+  "phone": {
+    "display": "+49 951 964352-0",
+    "href": "tel:+499519643520"
+  },
+  "phoneJaeger": {
+    "display": "+49 951 964352-70",
+    "href": "tel:+4995196435270"
+  },
+  "email": "info@frankonia-sicherheit.de",
+  "whatsapp": "https://wa.me/491727866338",
+  "address": {
+    "street": "Neuerbstraße 19",
+    "postal": "96052",
+    "city": "Bamberg",
+    "full": "Neuerbstraße 19, 96052 Bamberg"
+  },
+  "rating": {
+    "value": "4,7",
+    "count": "97",
+    "countTo": "4.7"
+  },
+  "counters": {
+    "_comment": "Cifras del Live-Entwurf. 300+/1.000.000+/10+ siguen SIN confirmar por el cliente (CLAUDE.md). 'count' es el valor crudo que lee el contador animado; el resto es como se muestra.",
+    "customers": "300",
+    "customersCount": "300",
+    "hours": "1.000.000",
+    "hoursCount": "1000000",
+    "years": "10",
+    "yearsCount": "10"
+  },
+  "price": {
+    "_comment": "Hourly rates, net, before the collective-agreement surcharges. Source: the client's Webtexte, Stand 04.08.2026.",
+    "werkschutz": "26-32",
+    "unit": "€/Std."
+  }
+}

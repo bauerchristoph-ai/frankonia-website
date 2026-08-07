@@ -1,0 +1,27 @@
+          <!-- SHARED trust counters. Include it, never copy it:
+                 include: trust-metrics
+               The four figures come from content/values.json, so a confirmed
+               number is one edit for every page that shows the bar. The labels
+               live here because they are identical everywhere; values.json holds
+               facts only, never copy.
+               WARNING: 300+ / 1.000.000+ / 10+ are still UNCONFIRMED placeholder
+               figures (CLAUDE.md). Only the 4,7 / 97 Google rating is a real,
+               client-confirmed number. -->
+          <ul class="sticky-story__metrics">
+          <li class="sticky-story__metric">
+            <span class="sticky-story__metric-value"><span data-count-to="{{counters.customersCount}}">{{counters.customers}}</span><span class="sticky-story__metric-plus">+</span></span>
+            <span class="sticky-story__metric-label">Unternehmen und Einrichtungen</span>
+          </li>
+          <li class="sticky-story__metric">
+            <span class="sticky-story__metric-value"><span data-count-to="{{counters.hoursCount}}">{{counters.hours}}</span><span class="sticky-story__metric-plus">+</span></span>
+            <span class="sticky-story__metric-label">Geleistete Einsatzstunden</span>
+          </li>
+          <li class="sticky-story__metric">
+            <span class="sticky-story__metric-value"><span data-count-to="{{counters.yearsCount}}">{{counters.years}}</span><span class="sticky-story__metric-plus">+</span></span>
+            <span class="sticky-story__metric-label">Jahre im Sicherheitsgewerbe</span>
+          </li>
+          <li class="sticky-story__metric">
+            <span class="sticky-story__metric-value"><span data-count-to="{{rating.countTo}}" data-decimals="1">{{rating.countTo}}</span><span class="sticky-story__metric-star" aria-hidden="true"></span></span>
+            <span class="sticky-story__metric-label">Google-Bewertungen ({{rating.count}})</span>
+          </li>
+          </ul>

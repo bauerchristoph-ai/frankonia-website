@@ -42,6 +42,12 @@
                                               (e.g. /jobs/'s numbered circle). Omit
                                               it and the marker is assumed to be a
                                               pseudo-element driven by --step-node.
+              data-steps-draw="<selector>"    an INLINE <svg> per step whose line
+                                              work draws itself instead of fading
+                                              in (client 2026-08-06 on
+                                              /werkschutz/'s Konzept icons). Opt-in:
+                                              without it nothing about a step
+                                              changes, so /jobs/ is untouched.
     Everything that is not the marker is that step's copy, staggered in.
 
   ⚠️ The list must carry `data-no-text-reveal` and must NOT carry
@@ -85,6 +91,7 @@
     if (steps.length < 2) return;
 
     var markerSel = list.getAttribute("data-steps-marker");
+    var drawSel = list.getAttribute("data-steps-draw");
 
     var timeline = gsap.timeline({
       scrollTrigger: {
@@ -101,10 +108,35 @@
 
     steps.forEach(function (step, i) {
       var marker = markerSel ? step.querySelector(markerSel) : null;
-      // Everything in the step that is not the marker. Element children only, so
-      // a text node or a comment never ends up as a tween target.
+
+      // The line art that draws itself, if this list opted in. It is deliberately
+      // EXCLUDED from the copy stagger below: the drawing IS its arrival, and
+      // fading a shape in while its own stroke is still being drawn hides the
+      // effect behind an opacity ramp.
+      var art = drawSel ? step.querySelector(drawSel) : null;
+      // Only real geometry with a real stroke. Skips a <mask>'s filled shapes (the
+      // Figma inside-stroke idiom, present in one of these icons) — a dash offset
+      // on a fill does nothing, and skipping is what keeps it from vanishing.
+      var strokes = art
+        ? Array.prototype.filter.call(
+            art.querySelectorAll("path, rect, circle, ellipse, line, polyline, polygon"),
+            function (el) {
+              return (
+                typeof el.getTotalLength === "function" &&
+                el.getAttribute("stroke") &&
+                el.getAttribute("stroke") !== "none" &&
+                el.getTotalLength() > 0
+              );
+            }
+          )
+        : [];
+      if (!strokes.length) art = null;
+
+      // Everything in the step that is neither the marker nor the drawn art.
+      // Element children only, so a text node or a comment never ends up as a
+      // tween target.
       var copy = Array.prototype.filter.call(step.children, function (el) {
-        return el.nodeType === 1 && el !== marker;
+        return el.nodeType === 1 && el !== marker && el !== art;
       });
       var isLast = i === steps.length - 1;
 
@@ -136,6 +168,37 @@
           { opacity: 0, y: 18 },
           { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.08 },
           "-=0.3"
+        );
+      }
+
+      // --- the icon draws itself --------------------------------------------
+      // ONE tween over all of the step's strokes, with function-based values so
+      // each path is dashed by its OWN measured length — never a shared constant,
+      // the same rule js/service-contrast.js follows for its arrow. The stagger is
+      // what makes it read as a pen rather than eleven strokes appearing at once.
+      //
+      // Position "<" = the start of the tween added just before this one, i.e. the
+      // step's copy. So the icon draws WHILE its caption rises, as one arrival.
+      // It also runs longer than the copy does, so the drawing is still going when
+      // the text has settled.
+      if (art) {
+        timeline.fromTo(
+          strokes,
+          {
+            strokeDasharray: function (i, el) {
+              return el.getTotalLength();
+            },
+            strokeDashoffset: function (i, el) {
+              return el.getTotalLength();
+            },
+          },
+          {
+            strokeDashoffset: 0,
+            duration: 0.62,
+            ease: "power1.inOut",
+            stagger: 0.035,
+          },
+          copy.length ? "<" : "-=0.3"
         );
       }
 

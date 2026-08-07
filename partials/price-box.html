@@ -1,0 +1,23 @@
+          <!-- SHARED Preis-Box. Include it, never copy it:
+                 include: price-box range="{{price.werkschutz}}" note="netto, je nach Qualifikation und Besetzung"
+               `range` normally comes from content/values.json so the annual rate
+               change is ONE edit instead of 27 pages x 2 (visible + JSON-LD).
+               Only the box is shared: the section's H2, the answer paragraph, the
+               factor list and the Hinweis are per-service copy from that
+               service's own Webtext. page-conventions.md 8.2. -->
+          <aside class="service-price__box" data-reveal>
+            <p class="service-price__box-label">Ihre Preisspanne</p>
+            <p class="service-price__box-value">{{range}} <span class="service-price__box-unit">{{price.unit}}</span></p>
+            <p class="service-price__box-note">{{note}}</p>
+            <ul class="service-price__box-list">
+              <li>
+                <svg class="icon service-price__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+                Kostenfreie Begehung
+              </li>
+              <li>
+                <svg class="icon service-price__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+                Angebot in 1 Werktag
+              </li>
+            </ul>
+            <a class="btn btn--primary service-price__cta" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </aside>

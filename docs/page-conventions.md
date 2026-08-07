@@ -473,7 +473,7 @@ Dos cosas que hay que acertar:
 
 | | |
 |---|---|
-| **Color del tile** | El del fondo de la sección de arriba. Página blanca → `.pixel-seam--white`. Página negra → sin modificador (el default es `--color-bg`). Si la de arriba es `.section--subtle` va `.pixel-seam--subtle` (#090909): un negro apenas distinto se nota y se lee como "dos negros". |
+| **Color del tile** | El del fondo de la sección de arriba. Página blanca → `.pixel-seam--white`. Página negra → sin modificador (el default es `--color-bg`). Si la de arriba es `.section--subtle` va `.pixel-seam--subtle` (#090909): un negro apenas distinto se nota y se lee como "dos negros". **Si la de arriba tiene un degradado en su borde inferior, el tile tiene que llevar el mismo stack, no el color plano** — `.pixel-seam--konzept` (home) y `.pixel-seam--navy` (`/werkschutz/`, banda navy del Risiko) le dan al tile el `#00091F` + `--color-blue-light` a 0.38 de la propia sección, en vez de hardcodear el hex compuesto. Mantené el 0.38 en sincro con el primer stop de la sección. |
 | **Padding del que sigue** | Lo que va **después** del seam tiene que reservar la altura de la banda o los tiles tapan contenido real: `.pixel-seam + .site-footer`, y en una página que alterna también `.pixel-seam + .section` y `.pixel-seam + .conversion` (la sección del formulario no es `.section` y su padding vive en el panel interno). `calc(var(--space-9) + 200px)`, 120px en teléfono. |
 
 El CSS del seam vive en `page-home.css`, que ninguna otra página carga, así que
@@ -566,6 +566,40 @@ homepage, no inventes otros:
 ---
 
 ## 6. Formularios
+
+### 6.0 El formulario de cierre es un partial — se incluye, no se copia
+
+Desde 2026-08-06 el formulario de conversión vive en `partials/lead-form.html`.
+No lo copies a una página nueva:
+
+```html
+<!-- include: lead-form prefix="ob" messageLabel="Ihr Objekt und Ihre Anforderung" -->
+```
+
+| Parámetro | Qué es |
+|---|---|
+| `prefix` | prefija **todos** los `id`/`for` del formulario. **Único por página**: dos formularios con los mismos id en un documento rompen cada `<label for>`. En uso: `cf` (home), `wk` (werkschutz), `rf` (referenzen). |
+| `messageLabel` | el único label que cambia por página. El resto es idéntico a propósito. |
+
+`build.js` sustituye valores y nada más — **no tiene condicionales y no va a
+tenerlos**. Si una página necesita otros campos, no es este partial.
+
+**Dos páginas NO lo usan, y está bien:** `/kontakt/` tiene otros campos
+obligatorios (Firma y Telefon opcionales, Nachricht requerido) y `/jobs/` es otro
+formulario (select de Qualifikation, subida de CV, sin Firma). Meterlos acá
+pediría condicionales, y son dos casos únicos, no el que se repite 44 veces.
+
+**El honeypot es parte del partial.** La copia a mano del homepage no lo tenía;
+la extracción cerró ese hueco solo. Es el argumento entero a favor de compartir:
+el bug existía porque había cinco copias.
+
+**Valores compartidos:** `content/values.json` guarda precio, teléfono,
+dirección, rating y contadores. Se usan como `{{phone.display}}` en cualquier
+página o partial. **Si el marcador no existe, el build falla** — nunca se publica
+un `{{...}}` literal. Antes de esto, cambiar el precio eran 54 ediciones a mano
+(27 páginas × visible + JSON-LD), que es justo donde el FAQ visible y su JSON-LD
+se desincronizan sin que nadie lo note.
+
 
 Todos los formularios del sitio se ven igual, y desde el 2026-08-03 **hay una
 sola implementación**: `css/lead-form.css` (`.conversion*`), sacada de
