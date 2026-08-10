@@ -93,15 +93,17 @@
       keyboard: !touch,
     }).setView([lat, lng], ZOOM);
 
-    // CARTO "Voyager" — a full-colour street map (green parks, blue water,
-    // yellow/white road hierarchy, POI labels), client request 2026-08-04:
-    // "Positron" was the greyscale variant and read as a wireframe rather than
-    // as a map you orient yourself on. Same provider, same free/keyless terms
-    // and the same @2x support as the light and dark variants, so nothing about
-    // the approval, the attribution or the retina behaviour changes — only the
-    // style path (`rastertiles/voyager/` instead of `light_all/`).
+    // CARTO "Dark Matter" — the SAME basemap the homepage's Einsatzgebiete map
+    // uses (js/coverage-map.js, identical URL), client request 2026-08-08:
+    // "hacéme el mapa negro como está en la homepage". The two maps on the site
+    // now share one basemap, which is one less thing to keep in sync by eye.
+    //
+    // This page's style has walked light -> colour -> dark: "Positron"
+    // (greyscale, read as a wireframe), then "Voyager" (full colour). Same
+    // provider throughout, so the approval, the attribution and the @2x support
+    // never changed — only the style path.
     // {r} resolves to "@2x" only on high-DPI screens, empty otherwise.
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
       maxZoom: 19,
       subdomains: "abcd",
       detectRetina: true,

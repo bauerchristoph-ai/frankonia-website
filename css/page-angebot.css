@@ -1,0 +1,379 @@
+/* ==========================================================================
+   Angebot landing page (/angebot/)
+   ==========================================================================
+   The site's conversion LP. Chassis is css/page-service.css; the form is
+   partials/lead-form.html; the counters are partials/trust-metrics.html. This
+   file is only the two-column hero and the three steps.
+   ========================================================================== */
+
+/* The hero section carries .service-hero (css/page-service.css) so the H1 gets
+   the site's shared hero scale — clamp(2rem, 1.6rem + 2.2vw, 3.25rem) at
+   --font-weight-regular, the value docs/page-conventions.md §2 makes mandatory
+   for every hero. An earlier version of this page used a plain .section, so the
+   H1 fell through to base.css's default and rendered at 49px/800 — visibly
+   heavier than every other hero on the site. Reusing the class rather than
+   copying the clamp is the point of the chassis; this page already loads it.
+   The lede does the same via .service-hero__lead. */
+
+/* Stacked on a phone with the PITCH first: the three ticks are what earn the
+   form, and on a small screen a form with no argument above it is just a wall of
+   fields. From 900px they sit side by side and both are in the first screen,
+   which is the draft's "kein Scrollen nötig". */
+.ag-hero__grid {
+  display: grid;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .ag-hero__grid {
+    /* The form gets the wider column — it is the page's one job. */
+    grid-template-columns: 0.85fr 1fr;
+    gap: var(--space-9);
+  }
+}
+
+.ag-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.ag-hero__badge .icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--color-accent);
+  fill: none;
+  stroke: currentColor;
+}
+
+.ag-hero__lead {
+  /* No max-width here: .service-hero__lead already carries the homepage's 32rem
+     measure, and capping it again at 34ch squeezed the column enough that
+     base.css's hyphens: auto started breaking words ("kos-tenfreie"). */
+  margin-top: var(--space-4);
+}
+
+.ag-ticks {
+  list-style: none;
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.ag-tick {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  line-height: var(--line-height-base);
+}
+
+/* fill/stroke explicit: the sprite's presentation attributes do not survive
+   <use> (CLAUDE.md). flex-shrink so a two-line tick never squashes its check. */
+.ag-tick__icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  margin-top: 0.22em;
+  color: var(--color-accent);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.25;
+}
+
+/* The white form card, same object as every other page's. */
+.ag-hero__form {
+  width: 100%;
+}
+
+.ag-hero__alt {
+  margin-top: var(--space-4);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.ag-hero__alt a {
+  color: var(--color-text);
+}
+
+/* ---- The three steps ---------------------------------------------------- */
+.ag-steps__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .ag-steps__list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.ag-step {
+  display: flex;
+  gap: var(--space-4);
+}
+
+/* A real numeral, not a decorative marker: the <ol> numbers itself for assistive
+   tech, so this one is aria-hidden in the markup and exists only to make the
+   order scannable. Solid brand blue with white on it is the documented, accepted
+   3.1:1 caveat that every blue button on this site already carries. */
+.ag-step__num {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background-color: var(--color-blue-light);
+  color: var(--color-white);
+  font-size: var(--font-size-sm);
+}
+
+.ag-step__title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: normal;
+  line-height: var(--line-height-heading);
+  margin-bottom: var(--space-2);
+}
+
+.ag-step__text {
+  color: rgb(59 73 86 / 0.75);
+  line-height: var(--line-height-base);
+}
+
+.ag-steps__link {
+  margin-top: var(--space-7);
+}
+
+
+
+/* One quote, not the homepage's three-card grid: this page is deliberately lean
+   and a single named voice next to the counters is the whole job. */
+.ag-quote {
+  max-width: 46rem;
+  margin: var(--space-7) 0 0;
+  padding-left: var(--space-5);
+  border-left: 2px solid var(--color-accent);
+}
+
+.ag-quote__text {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-base);
+  color: rgb(255 255 255 / 0.86);
+}
+
+.ag-quote__who {
+  margin-top: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   TRUST / SOCIAL PROOF  (client brief 2026-08-10)
+   --------------------------------------------------------------------------
+   One centred composition, black background, blue only as an accent. The
+   hierarchy the brief asks for — headline, numbers, testimonial, certifications
+   — is carried by type and spacing, not by giving every element a card.
+   ========================================================================== */
+
+.ag-trust__inner {
+  text-align: center;
+}
+
+.ag-trust__eyebrow {
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-accent);
+}
+
+/* The heading stays on the shared `main h2` scale (60px at its ceiling) rather
+   than the brief's suggested 64-76px. The brief's own words are "slightly more
+   controlled than now", and what makes it feel uncontrolled is the LINE LENGTH,
+   not the size — a 62-character heading running the full container. Capping the
+   measure fixes that; growing the type would fight it.
+   It is also the rule: docs/page-conventions.md §2 makes one size mandatory for
+   every section title, and CLAUDE.md already records three exceptions with the
+   note that a fourth should reopen §2 instead of being added. Say the word and
+   it becomes a documented exception. */
+.ag-trust__head h2 {
+  max-width: 68rem;          /* ~1088px — inside the brief's 1000-1100 */
+  margin-inline: auto;
+  text-wrap: balance;
+}
+
+/* ---- Metrics ------------------------------------------------------------ */
+/* Four equal columns on desktop, 2x2 on a phone. Hairlines between, never
+   around: the brief asks for one elegant system, and a border box per metric
+   turns four facts into four cards. */
+.ag-metrics {
+  list-style: none;
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-7) 0;
+}
+
+/* Four across only from 1200px, not 900 — measured, not chosen. The longest
+   value is "1.000.000+", which needs 264px at this type size; a quarter of a
+   1440px container gives 284px of usable width, but a quarter of 1024px gives
+   only 170px and the value silently wrapped its "+" onto a second line,
+   knocking that column's label out of line with the other three. Below 1200 the
+   2x2 grid has room to spare. */
+@media (min-width: 1200px) {
+  .ag-metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: var(--space-9);
+  }
+}
+
+.ag-metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-inline: var(--space-3);
+}
+
+/* The divider is on the ITEM, not between grid tracks, so it follows the 2x2
+   wrap on a phone without a second rule: every item that is not first in its
+   row gets a left hairline. */
+.ag-metric:nth-child(2n) { border-left: 1px solid rgb(255 255 255 / 0.1); }
+
+@media (min-width: 1200px) {
+  .ag-metric:nth-child(2n) { border-left: 0; }
+  .ag-metric + .ag-metric { border-left: 1px solid rgb(255 255 255 / 0.1); }
+}
+
+.ag-metric__value {
+  font-size: clamp(2.25rem, 1.6rem + 2vw, 3.25rem);   /* 36 -> 52px */
+  font-weight: var(--font-weight-regular);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  /* A value must never wrap: it is one number and its unit. Wrapping is what
+     broke the row before, and silently — nowrap makes any future overflow
+     visible instead of quietly misaligning one column. */
+  white-space: nowrap;
+  /* The count-up rewrites this node's text every frame; a fixed tabular figure
+     stops the row from twitching as digits change width. */
+  font-variant-numeric: tabular-nums;
+}
+
+/* The "+" and the "/" in brand blue (client 2026-08-10). They stay real text,
+   never aria-hidden: "300+" and "4,7 / 5" mean different things without them.
+   This section is on the page's own black, where blue-light measures 6.8:1 —
+   the one surface where the CTA blue is safe on text (see CLAUDE.md's contrast
+   caveat). On a light section it would need the deeper mix instead. */
+.ag-metric__sym {
+  color: var(--color-blue-light);
+}
+
+.ag-metric__label {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+  color: var(--color-text-muted);
+}
+
+/* ---- Testimonial: the focal object -------------------------------------- */
+.ag-quote {
+  max-width: 56rem;                 /* ~896px, inside the brief's 850-950 */
+  margin: var(--space-9) auto 0;
+  padding: clamp(2rem, 1.2rem + 3vw, 4rem);
+  background-color: #0C0C0C;        /* a step off the page black, not a new hue */
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 1.75rem;           /* 28px, the brief's own range */
+  text-align: center;
+}
+
+/* The one piece of decoration in the section, and it earns its place: it marks
+   the card as a quotation before a word is read. Blue, large, and aria-hidden —
+   the <blockquote> already carries the meaning. */
+.ag-quote__mark {
+  display: block;
+  font-size: 4rem;
+  line-height: 0.6;
+  color: var(--color-accent);
+}
+
+.ag-quote__text {
+  margin: var(--space-5) 0 0;
+  font-size: clamp(1.125rem, 0.95rem + 0.7vw, 1.5rem);   /* 18 -> 24px */
+  line-height: 1.5;
+  color: rgb(255 255 255 / 0.92);
+  /* hyphens OFF here, unlike ordinary body prose: the quote is centred, and a
+     centred column gains nothing from hyphenation while "Regi-on" and
+     "professio-nelles" in the focal element read as damage. Same call the
+     References testimonials already make. */
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+.ag-quote__who {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid rgb(255 255 255 / 0.08);
+}
+
+.ag-quote__who-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.ag-quote__name {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+}
+
+.ag-quote__role {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ---- Certifications: the quiet closing line ----------------------------- */
+.ag-certs {
+  list-style: none;
+  margin: var(--space-7) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3) var(--space-5);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Separators drawn between items rather than as characters in the markup, so a
+   wrapped row never starts with a stray middot. */
+.ag-certs li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.ag-certs li + li::before {
+  content: "";
+  width: 1px;
+  height: 0.9em;
+  background-color: rgb(255 255 255 / 0.18);
+}
+
+@media (max-width: 767.98px) {
+  /* A middot column between wrapped lines reads as noise on a phone. */
+  .ag-certs li + li::before { display: none; }
+  .ag-certs { gap: var(--space-2) var(--space-4); }
+}

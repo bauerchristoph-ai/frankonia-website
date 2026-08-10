@@ -38,8 +38,20 @@
     "yearsCount": "10"
   },
   "price": {
-    "_comment": "Hourly rates, net, before the collective-agreement surcharges. Source: the client's Webtexte, Stand 04.08.2026.",
-    "werkschutz": "26-32",
-    "unit": "€/Std."
-  }
+    "_comment": [
+      "Hourly rate, net, before the collective-agreement surcharges. Source: the",
+      "client's Webtexte, Stand 04.08.2026.",
+      "RENAMED 2026-08-09 from 'werkschutz' to 'range', when the first city page",
+      "needed it: the Webtexte publish the SAME 26-32 for every service and every",
+      "city, so a service-specific key name invited a second, drifting copy of one",
+      "number. One key, one number, ~27 pages. If a service ever gets its own",
+      "range, add a key for THAT service and leave this one as the default."
+    ],
+    "range": "26-32",
+    "unit": "€/Std.",
+    "general": "26-32"
+  },
+  "nameRequired": "required",
+  "companyRequired": "required",
+  "_formComment": "nameRequired/companyRequired: banderas del partial lead-form. Por defecto ambos obligatorios; una página las sobrescribe en su include, p.ej. nameRequired=\"\" para bajar la fricción en una landing de Ads. Van al nivel superior porque un parámetro de include es una clave plana y no puede sobrescribir una anidada."
 }

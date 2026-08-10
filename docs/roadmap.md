@@ -137,7 +137,7 @@ Nada de esto lo destraba el código; depende de decisiones y accesos del cliente
 | | Estado |
 |---|---|
 | `/leistungen/` enlazado 2× desde el nav, no existe | 🔴 **404 en vivo** |
-| 10 ciudades enlazadas desde footer + Coverage, no existen | 🔴 **404 en vivo** |
+| 10 ciudades enlazadas desde footer + Coverage | 🟡 **1 de 10 existe** — Nürnberg construida 2026-08-09; las otras 9 siguen 404 en vivo |
 | `/werkschutz/` en `lang="en"` + 8 placeholders | pendiente |
 | Métricas `300+`, `1.000.000+`, `10+` | 🔴 sin confirmar |
 | `4.7★ / 97`, 3 testimonios reales, JSON-LD | ✅ |

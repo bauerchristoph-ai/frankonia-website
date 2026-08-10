@@ -61,6 +61,7 @@
    is a centred card in a full-bleed panel, css/lead-form.css) and it is centred
    on the homepage too. */
 main > .breadcrumbs,
+.service-hero__crumbs,
 main > section > .container {
   padding-inline: calc(var(--container-padding) + var(--content-inset));
 }
@@ -130,7 +131,7 @@ main h2 {
 .service-compare__answer,
 .service-panel__fact dd,
 .service-decision__text > p,
-.service-cases__item p,
+.service-cases__card p,
 .service-cases__proof-text,
 .service-konzept__text,
 .service-konzept__proof,
@@ -217,12 +218,110 @@ main h2 {
    .hero__reassurance / .hero__trust, in that order, and this page reuses that
    script unchanged. */
 
+/* FULL-BLEED TO THE TOP OF THE PAGE (client 2026-08-07: "la imagen está cortada
+   arriba y abajo, la idea es que sea como la homepage, que llegue hasta arriba del
+   todo de background y abajo hasta que aparece la otra sección… es el background de
+   toda la sección").
+
+   ⚠️ THIS REVERSES the 2026-08-03 decision recorded a few rules below and the
+   equivalent one on /jobs/ ("the photo deliberately does NOT bleed up behind the
+   header, because on an interior page the breadcrumb sits between them"). The
+   client's call stands, and the breadcrumb problem is solved differently: it moved
+   INSIDE the hero and now sits over the photo instead of above it.
+
+   --service-hero-overlap is the homepage's own `--hero-header-overlap` value and
+   for the same reason: a deliberately generous constant, not a measured header
+   height, so it keeps working if the header ever grows. The negative margin pulls
+   the section under the sticky header; the same value is added back as padding so
+   the breadcrumb and the copy land where they did. */
 .service-hero {
   position: relative;
   /* Clips the background photo to the section — it is absolutely positioned and
      `cover` will otherwise paint past the bottom edge on short viewports. */
   overflow: hidden;
   padding-block: var(--space-8) var(--space-9);
+}
+
+/* ---- .service-hero--bleed: the photo IS the section's background, top to bottom
+   (client 2026-08-07: "la imagen está cortada arriba y abajo, la idea es que sea
+   como la homepage, que llegue hasta arriba del todo de background y abajo hasta
+   que aparece la otra sección").
+
+   ⚠️ A MODIFIER, and that is not stylistic tidiness — `.service-hero` is the hero
+   SECTION on six pages (/werkschutz/, /jobs/, /referenzen/ and the three case
+   studies). The first build of this change put these declarations on the base rule
+   and slid all six under the header; the five that keep their breadcrumb ABOVE the
+   hero (as `main > .breadcrumbs`) then had the hero climbing over it — exactly the
+   overlap this change exists to avoid. Opting in means two things together: add
+   this class AND move that page's breadcrumb inside the section.
+
+   --service-hero-overlap is the homepage's own --hero-header-overlap value, for the
+   same reason: a deliberately generous constant rather than a measured header
+   height, so it keeps working if the header grows. The negative margin pulls the
+   section under the sticky header and the same value is added back as padding, so
+   the breadcrumb and the copy land where they did. */
+.service-hero--bleed {
+  --service-hero-overlap: 6rem;
+  --service-hero-header-h: 5rem;
+  /* THE PHOTO'S OWN BOX, and the hero is this PLUS the dissolve band — not the same
+     thing (client 2026-08-07: "como quedó para arriba me roba height del hero… quiero
+     que haya un poco más aire; si se termina la imagen, nomás degradala a negro").
+     Before this the band overlaid the photo's last 200px, so 200px of photograph were
+     permanently under navy tiles — the hero looked 200px shorter than it was. Now the
+     photo gets its own height and the band lives BELOW it, in space that is the hero's
+     own black.
+     The max() keeps the two regimes the previous pass established: above ~1328px wide
+     the photo's natural height at full width wins (so `cover` has nothing to crop and
+     the WHOLE image shows above the band); below it the one-screen term wins, and there
+     the container is already taller in ratio than the photo, so the full height shows
+     anyway with the crop falling on the width. */
+  /* The dissolve band's height, owned HERE and not on the band, because the hero has to
+     add the same number to its own height for the band to start exactly where the photo
+     ends. The band is a descendant, so it inherits it.
+     ⚠️ Keep in step with .pixel-seam__band's own height (200px / 120px): same band,
+     expressed twice because the other seams on this page are not inside their hero. */
+  --service-hero-band-h: 200px;
+  /* THE MIDPOINT BETWEEN THE TWO EXTREMES, literally (client 2026-08-07: "pasaste de un
+     extremo a otro, esto es muy corto y lo otro era mucho, ¿no podés hacer algo
+     intermedio? literal en el medio").
+
+     The two extremes are named rather than inlined so the average reads as what it is:
+       --service-hero-screen-h  one screen — the short version, which cropped the photo's
+                                height to 92 % at 1440 and 80 % at 2000;
+       --service-hero-tall-h    the photo's own full height at 100vw plus the dissolve
+                                band — the tall version, 1193px at 1440 and 1579 at 2000.
+
+     Worth knowing, because it is a better outcome than a compromise usually is: at the
+     midpoint the box is still TALLER in ratio than the photo at 1440 (1.37 against 1.45),
+     so `cover` scales by height and the FULL image height shows anyway — the crop moves
+     to the width, which the client said does not matter. Measured: 100 % of the height at
+     1440, 97 % at 2000, against 92 % / 80 % for the short version. */
+  --service-hero-screen-h: calc(
+    100svh + var(--service-hero-overlap) - var(--service-hero-header-h)
+  );
+  --service-hero-tall-h: calc(
+    max(var(--service-hero-screen-h), calc(100vw * 1118 / 1621)) +
+      var(--service-hero-band-h)
+  );
+  min-height: calc(
+    (var(--service-hero-screen-h) + var(--service-hero-tall-h)) / 2
+  );
+  margin-top: calc(-1 * var(--service-hero-overlap));
+  padding-block: calc(var(--space-8) + var(--service-hero-overlap)) var(--space-9);
+}
+
+/* The photo fills the whole section again (the base rule's `inset: 0`), so the dissolve
+   band at the bottom overlays photograph rather than sitting under it in empty black.
+   That is what the band was built for — see .pixel-seam--photo. */
+
+/* Over the photo, so it needs its own layer: .service-hero__bg is z-index 0 and
+   absolutely positioned, and the breadcrumb is a later sibling with no z-index of
+   its own — which would still paint above it, but only by source order. Making it
+   explicit is what keeps a future reorder from putting the breadcrumb behind the
+   picture. */
+.service-hero__crumbs {
+  position: relative;
+  z-index: 1;
 }
 
 .service-hero__bg {
@@ -284,6 +383,37 @@ main h2 {
       rgb(1 1 1 / 0) 16%,
       rgb(1 1 1 / 0) 74%,
       rgb(1 1 1 / 0.4) 100%
+    );
+}
+
+/* NAV LEGIBILITY, only on the bleed variant: there the nav sits over the photo, so
+   a top band has to carry it — the same job .hero__bg::after does on the homepage.
+   The whole stack is restated because background-image is one property and a layer
+   cannot be appended to it. The top stop is a FIXED LENGTH, not a percentage: it has
+   to cover the header, not a share of however tall the hero happens to be, and it
+   runs to twice the overlap so there is no visible edge where the band ends. */
+.service-hero--bleed .service-hero__bg::after {
+  background-image:
+    linear-gradient(
+      to right,
+      rgb(1 1 1 / 0.86) 0%,
+      rgb(1 1 1 / 0.64) 34%,
+      rgb(1 1 1 / 0.16) 68%,
+      rgb(1 1 1 / 0) 100%
+    ),
+    /* Back to a soft bottom fade (was full black): the photo runs to the section's own
+       edge again, so there is no "the image stopped here" line to hide — and a black
+       bottom would fight the dissolve band that now sits over it. */
+    linear-gradient(
+      to bottom,
+      rgb(1 1 1 / 0) 74%,
+      rgb(1 1 1 / 0.4) 100%
+    ),
+    linear-gradient(
+      to bottom,
+      rgb(1 1 1 / 0.62) 0,
+      rgb(1 1 1 / 0.28) var(--service-hero-overlap),
+      rgb(1 1 1 / 0) calc(var(--service-hero-overlap) * 2)
     );
 }
 
@@ -472,13 +602,91 @@ main h2 {
      band below the fold, which is the opposite of what the homepage does.
      min-height, not height: if the copy ever grows past it, the hero grows too
      rather than overflowing. */
+  /* The SHARED desktop hero, restored: /jobs/, /referenzen/ and the three case
+     studies all rely on these four declarations. The 8rem it subtracts is the solid
+     header plus the breadcrumb row, both of which sit ABOVE the hero on those pages. */
   .service-hero {
     min-height: calc(100svh - 8rem);
+    /* Tighter than the base 4rem/6rem: the photo needs the vertical room more than
+       the section padding does, and this is what lets the whole hero — trust band
+       included — land inside the first screen. */
+    padding-block: var(--space-7);
+    display: grid;
+    align-content: center;
+  }
+
+  .service-hero--bleed {
+    /* ONE FULL SCREEN, and the arithmetic is the homepage's own — see .hero's
+       --hero-header-h note in page-home.css, this is the same three-term sum for
+       the same reason. .site-header is position:STICKY, so it occupies real flow;
+       the hero's negative margin of --service-hero-overlap therefore starts it at
+       (header height − overlap), NOT at −overlap. Subtracting the header height
+       back is what makes the VISIBLE part exactly 100svh instead of overshooting
+       the fold by one header — which is what cut the trust band off in the first
+       build of this change (measured: hero bottom at 980 in a 900px viewport).
+       Was `calc(100svh - 8rem)`, which reserved room for a header and a breadcrumb
+       that both sat outside the section and are inside it now. */
+    /* ⚠️ RESTATED, not inherited. `--service-hero-photo-h` and the sum live on the base
+       modifier (they are needed at every width), but the SHARED `.service-hero` rule a
+       few lines above sets `min-height: calc(100svh - 8rem)` and is (0,1,0) just like
+       `.service-hero--bleed` — inside this same block it comes FIRST, so without this
+       line it wins by source order and the hero collapsed to 772px while its photo box
+       was 993 (measured). Third time this exact trap has bitten on this page; see the
+       phone-padding note further down for the other two. */
+    /* ⚠️ RESTATED for the same source-order reason as before — see the note below the
+       shared rule. Same expression as the base modifier's. */
+    min-height: calc(
+      (var(--service-hero-screen-h) + var(--service-hero-tall-h)) / 2
+    );
     /* Tighter than the base 4rem/6rem: the photo needs the vertical room more
        than the section padding does, and this is what lets the whole hero —
        trust band included — land inside the first screen. */
-    padding-block: var(--space-7);
+    /* Top padding is the HOMEPAGE's own (--space-3 + the overlap, i.e. 112px there),
+       not --space-7: it is what lifts the breadcrumb tight under the nav so the copy,
+       centred in the row below it, lands at the homepage's height rather than ~114px
+       under it (measured). The bottom keeps --space-7. */
+    padding-block: calc(var(--space-3) + var(--service-hero-overlap)) var(--space-7);
+    /* TWO ROWS, not one centred block. The breadcrumb belongs at the top of the
+       page under the nav; with a single centred track it floated down to 232px and
+       read as part of the copy (measured). Row 1 is the breadcrumb at its own
+       height, row 2 takes the rest and centres the copy inside itself — so both
+       are still in normal flow and a short viewport can never overlap them, which
+       is what absolute-positioning the breadcrumb would have risked. */
     display: grid;
+    grid-template-rows: auto 1fr;
+    /* ⚠️ Cancels the shared rule's `align-content: center`: with `auto 1fr` the
+       tracks already fill the container, and leaving it centred is what put the
+       breadcrumb at 232px. The 1fr row is what centres the copy now, via the
+       align-self below. */
+    align-content: stretch;
+  }
+
+  /* TOP-ALIGNED, not centred (client 2026-08-07: "tiene que estar a la misma altura
+     que el contenido de la izquierda de la homepage, no sé por qué en werkschutz está
+     muchísimo más abajo"). Measured: the homepage's H1 starts at 183 and this one was
+     at 436 — 253px lower — because the copy was centring inside a 1fr row that got
+     much taller when the hero grew to hold the photo plus the dissolve band. Sitting
+     it directly under the breadcrumb is what puts the two pages on the same line.
+     The remaining difference is the breadcrumb itself, which the homepage does not
+     have — there is no way to have both a breadcrumb above the H1 and the H1 at the
+     homepage's exact y. */
+  /* CENTRED again (client 2026-08-07: "el contenido de texto tiene que estar centrado a
+     nivel altura, ahora está alineado arriba"). It was top-aligned two passes ago for a
+     good reason — the hero had grown to 1193px to hold the photo plus the band, and
+     centring inside that put the H1 at 436. With the hero back to one screen that
+     reason is gone and centring is what matches the homepage, whose own hero centres
+     its copy through symmetric padding. */
+  /* CENTRED ON THE FIRST SCREEN, not in the whole hero. The hero is taller than one
+     screen at the midpoint height, so centring in it dropped the H1 to 348 (measured)
+     — 165px below the homepage's 183, which undoes the "same height as the homepage"
+     the client asked for two passes ago. Centring inside one screen's worth of box
+     instead keeps the copy where the visitor's eye is and leaves the extra hero height
+     as more photograph below the fold.
+     11rem is the room above this box (the 7rem top padding plus the breadcrumb row) —
+     it only has to be close, since what it feeds is a centring, not an edge. */
+  .service-hero--bleed .service-hero__grid {
+    align-self: start;
+    min-height: calc(var(--service-hero-screen-h) - 11rem);
     align-content: center;
   }
 
@@ -691,6 +899,27 @@ main h2 {
   height: 100%;
 }
 
+/* CARD 03 ONLY — the drawing is scaled down inside its frame (client 2026-08-07:
+   "tiene que estar más chica en el cuadrado, más como la de la derecha que tiene más
+   padding, más aire").
+
+   The cause was measurable and it is the ARTBOARD, not the frame: this file's ink
+   fills 987 of its 989-unit viewBox, so it renders at 86 % of the frame's width,
+   while cards 01/02/04 all sit at 63–64 % because their artboards carry their own
+   margin. 0.74 brings it to ~64 % — the frame, the padding and the ratio are all
+   untouched, only this one drawing is smaller inside them.
+
+   In CSS and not in the SVG on purpose: how a drawing is framed is our decision,
+   not the client's file's. Nothing here touches fill, stroke or stroke-width.
+   ⚠️ Side effect worth knowing: a transform scales the strokes too, so the effective
+   line weight goes 1.06px → 0.78px. That is a FEATURE here — cards 02 and 04 render
+   at 0.71px, so this is what finally makes the four read as one family. If the client
+   ever wants all four heavier, it is a stroke-width change in the four files, not a
+   change here. */
+.rz-art--supplied--inset {
+  transform: scale(0.74);
+}
+
 .service-risk__text {
   grid-area: text;
   margin-top: var(--space-5);
@@ -783,6 +1012,38 @@ main h2 {
    edge of its background (client 2026-08-05). Change it here or they drift apart. */
 .service-contrast {
   --contrast-panel-lead: 1.25rem;
+  /* ---- The FRANKONIA panel's frame: TWO variables, and they are not the same
+     number on purpose. ----
+     2026-08-07: the frame shipped at 2px, the client asked twice for it finer
+     ("finita y delicada", then "más fina aún"), and going below 1px is where these
+     two had to split.
+
+     ⚠️ CHROME SNAPS `border-width` TO WHOLE CSS PIXELS — `border: 0.5px` computes
+     back as `1px`, measured at DPR 1 AND DPR 2. An SVG `stroke-width` has no such
+     floor. So a single variable would have silently described two different things:
+     the box the border actually creates, and the line the frame actually draws.
+     Measured with one variable at 0.5px, the drawn frame landed ~0.75px inside the
+     ring the border occupies and the SVG box came out 1px short of the panel — a
+     mismatch that only shows up as a soft edge, which is exactly the kind that
+     survives a review.
+
+       --contrast-frame-box  the LAYOUT term: what the border really renders as.
+                             Consumed by the panel's `border-width` and by the
+                             desktop head cell's padding, which has to clear it to
+                             land on the panel's text. Keep it a whole pixel.
+       --contrast-frame-w    the drawn STROKE's weight, sub-pixel allowed.
+
+     What 0.5px actually looks like: one device pixel at full colour on a 2x screen,
+     i.e. genuinely half the 1px version; on a 1x screen one pixel at ~53 % strength
+     (measured rgb(34,81,109) against 1px's rgb(61,154,211)) — finer by being paler,
+     because 1px is that screen's floor. The static CSS border behind it stays 1px,
+     since that is as thin as a border can be; it is only ever seen with no JS or
+     under reduced motion.
+
+     Because the box term did NOT move, the panel's layout is identical across all
+     three weights this frame has had. */
+  --contrast-frame-box: 1px;
+  --contrast-frame-w: 0.5px;
 }
 
 .service-contrast__set {
@@ -844,12 +1105,34 @@ main h2 {
    weak"). 20px at large desktop via the clamp below, medium weight, higher
    contrast. */
 .service-contrast__label,
+/* 25px at 1440, up from 20 (client 2026-08-07: "tienen que ser un poco más
+   grandes… que su aparición sea importante"). They are the section's two column
+   titles, so they now sit clearly above the 19px topic labels and the 19px problem
+   line rather than level with them. */
 .service-contrast__head-cell {
-  font-size: clamp(1.0625rem, 0.85rem + 0.35vw, 1.25rem);
+  font-size: clamp(1.25rem, 1rem + 0.62vw, 1.5625rem);
   font-weight: var(--font-weight-medium, 500);
   letter-spacing: 0.005em;
   line-height: 1.3;
   margin-bottom: var(--space-3);
+}
+
+/* The mask the entrance slides inside. js/service-contrast.js wraps each cell's
+   text in a .service-contrast__head-inner and only then adds
+   `.service-contrast__head--masked`, so the clipping exists ONLY when the script is
+   there to slide the text back into view — no JS, a script error or reduced motion
+   leave the headings as plain, fully visible text. Never put the overflow on the
+   base rule. */
+.service-contrast__head--masked .service-contrast__head-cell {
+  overflow: hidden;
+  /* The descenders in "läuft" and "FRANKONIA"'s cap-height both need room, or a
+     clip at the line box shaves them. */
+  padding-bottom: 0.12em;
+}
+
+.service-contrast__head-inner {
+  display: block;
+  will-change: transform;
 }
 
 .service-contrast__label--old,
@@ -908,16 +1191,83 @@ main h2 {
 }
 
 /* ---- The FRANKONIA side: a different material ---- */
-/* Trimmed again 2026-08-05: 14px block, 8px on the right (the measure caps the
-   line anyway, so right padding was buying nothing but width), and the text inset
-   comes from --contrast-panel-lead so the column heading can align to it. */
+/* A FRAMED BOX since 2026-08-07 (client: "las boxes … que hoy solo tienen una linea
+   celeste en el borde izquierdo quiero que sean boxes con un borde celeste y que el
+   borde celeste se vaya creando cuando escroleo, como hemos hecho con las flechas").
+   It was a 2px blue rule on the left edge only; it is now a full blue outline, and
+   js/service-contrast.js draws that outline with the scroll.
+
+   ⚠️ THE BORDER DECLARED HERE IS ALSO THE FRAME'S LAYOUT PLACEHOLDER, and that is
+   the whole reason the drawn version cannot shift the text. The SVG frame is
+   absolutely positioned, so it takes no space; if the live state simply dropped the
+   border, every panel's content would jump a pixel left and up the moment the script
+   ran. Instead the border stays and only its COLOUR goes transparent (rule under
+   `--live` further down), so the two states occupy the identical box. Which is also
+   why its width is --contrast-frame-box, the whole-pixel term, and NOT the sub-pixel
+   stroke weight — see the two variables' note where they are declared.
+
+   It is also the no-JS / reduced-motion state: a solid blue frame, finished, which
+   is exactly what the drawing ends on.
+
+   The right padding went 8px → --contrast-panel-lead: with only a left rule there
+   was nothing on the right for the text to crowd (the 56ch measure caps the line
+   anyway), and with a real edge there is. Block padding 14 → 16px for the same
+   reason — a closed box needs its content off all four sides. */
 .service-contrast__side--new {
-  padding: 0.875rem 0.5rem 0.875rem var(--contrast-panel-lead);
-  border-left: 2px solid var(--color-accent);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  position: relative;
+  padding: 1rem var(--contrast-panel-lead);
+  border: var(--contrast-frame-box) solid var(--color-accent);
+  /* 8px, up from the 4px the two right-hand corners had. A four-corner box at 4px
+     reads as a rectangle with the corners chipped; this is the site's own card
+     radius. js/service-contrast.js reads this value back and insets the drawn
+     corner by half the stroke, so the two versions trace the same curve. */
+  border-radius: var(--radius-md);
   /* 3.5% white — enough to read as a surface against #010101, far short of the
      elevated-grey card this section must not become. */
   background-color: rgb(255 255 255 / 0.035);
+}
+
+/* The drawn frame, built at runtime by js/service-contrast.js — there is no such
+   element in the markup, so a crawler and a no-JS visitor only ever see the CSS
+   border above.
+
+   ⚠️ ITS BOX IS SET BY THE SCRIPT, in pixels, from the panel's measured
+   getBoundingClientRect and its RENDERED border width — not by a calc here. The
+   values below are only the pre-measurement placeholder. The reason is the
+   whole-pixel snapping documented at the two variables: a `calc(100% + …)` built
+   from the sub-pixel stroke resolves against the padding box and lands 1px short of
+   the border box, which is what a `calc` version measured. One measurement cannot
+   disagree with itself.
+
+   The box has to reach OUT over the border box at all, because an absolutely
+   positioned child's containing block is the PADDING box — `inset: 0` would put the
+   stroke inside the border it is replacing. And with no `viewBox` on the SVG one
+   user unit is one CSS pixel, so the rect goes straight in from the same
+   measurement with no projection step. */
+.service-contrast__frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* ⚠️ REQUIRED, and it is not defensive. reset.css sets `svg { max-width: 100% }`
+     sitewide, and 100% here is the containing block — the panel's PADDING box, i.e.
+     exactly what the script's inline width has to exceed. Measured without it, back
+     when the frame was 2px: the box came back 695.5px wide inside a 699.5px panel,
+     so the right edge of the stroke sat off the border it is replacing. Height was
+     unaffected (the reset sets no max-height), which is why it looked correct. */
+  max-width: none;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.service-contrast__frame rect {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: var(--contrast-frame-w);
+  /* Rounded joins so the corner arrives as a curve rather than a mitre while the
+     dash is mid-way through it. */
+  stroke-linejoin: round;
 }
 
 /* A LABEL, not a headline (client 2026-08-05: "que los títulos de la derecha sean
@@ -998,6 +1348,12 @@ main h2 {
   background-size: calc(var(--mark, 0) * 100%) 100%;
 }
 
+/* The frame hands over to the SVG. Colour only — the border keeps its 2px of
+   layout, which is what makes the handover invisible (see the panel rule above). */
+.service-contrast--live .service-contrast__side--new {
+  border-color: transparent;
+}
+
 /* ---- The three states of a module ----
    `.service-contrast--live` is added by js/service-contrast.js and nothing else,
    so every hidden/undrawn state below cannot exist without the script that
@@ -1056,9 +1412,9 @@ main h2 {
   .service-contrast__head-cell--new {
     grid-column: 3;
     /* Lands on the beginning of the solution TEXT, not on the outer edge of its
-       background: the panel's 2px blue rule plus its own --contrast-panel-lead.
-       One value, two consumers — see the note where the variable is declared. */
-    padding-left: calc(2px + var(--contrast-panel-lead));
+       background: the panel's blue frame plus its own --contrast-panel-lead.
+       Both are variables — see the note where they are declared. */
+    padding-left: calc(var(--contrast-frame-box) + var(--contrast-panel-lead));
   }
 
   /* THREE COLUMNS, ONE ROW. The topic moved INSIDE the left column (2026-08-05,
@@ -1193,6 +1549,7 @@ main h2 {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-regular);
 }
+
 
 .service-flow__step > p:last-child {
   margin-top: var(--space-3);
@@ -1373,25 +1730,91 @@ main h2 {
      layout shift, nothing to re-measure, and all six present for a crawler.
      The hairline is the divider the brief asks for; the first item does not get
      one because the heading already separates it. */
-  /* The padding is on EVERY step, active or not — that is what keeps the active
-     fill from shifting the list when it appears. Same reason the reveal animates
-     opacity instead of height. */
+  /* The padding is on EVERY step, active or not — nothing about the active state
+     may change an item's box, or the list would shift under the reader as the
+     scrub moves. Same reason the reveal animates opacity instead of height, and
+     the same reason the arrow below occupies a permanently reserved slot. */
+  /* HORIZONTAL CARDS, not a ruled list (client 2026-08-09: "en vez de ser así la lista
+     quiero que sean cards horizontales con drop shadow y el texto dentro… sacás las
+     flechas"). The hairline separators and the arrow's reserved column went with it.
+     ⚠️ Padding stays TIGHT and the gap small on purpose: these six live in a sticky
+     column that has to fit one screen, and every px added here is 6px of list. The
+     shadow does the separating that the hairlines used to, so the spacing does not have
+     to. */
   .service-flow--stepped .service-flow__step {
     min-height: 0;
     max-width: 34rem;
-    padding: clamp(0.6rem, 1.25vh, 1rem) var(--space-4);
-    border-top: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
+    padding: clamp(0.55rem, 1.15vh, 0.9rem) var(--space-4);
+    border-radius: var(--radius-md);
+    background-color: var(--color-white);
+    box-shadow: 0 10px 26px rgb(1 1 1 / 0.06), 0 1px 3px rgb(1 1 1 / 0.04);
     position: relative;
     transition:
       opacity var(--duration-slow) var(--easing-premium),
       transform var(--duration-slow) var(--easing-premium),
-      background-color var(--duration-base) var(--easing-standard),
+      box-shadow var(--duration-base) var(--easing-premium),
       color var(--duration-base) var(--easing-standard);
   }
 
-  .service-flow--stepped .service-flow__step:first-child {
-    border-top: 0;
+  .service-flow--stepped .service-flow__steps-inner {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  /* ---- THE ACTIVE CARD'S BORDER, DRAWN ----
+     Client 2026-08-09: "cuando esté seleccionada también que tenga el borde celeste, y que
+     el borde se forme como que la línea celeste va completando el borde". So it is not a
+     border-colour swap — the line travels around the card.
+
+     ⚠️ `pathLength="1"` on the rect (set in the markup) is what makes this work without
+     JS: it renormalises the perimeter to 1, so `stroke-dasharray: 1` + a dashoffset from
+     1 to 0 draws exactly one full lap **at any card size**. A measured length would need
+     getTotalLength() and a re-measure on every resize, which is the whole reason
+     js/svg-draw.js exists for the illustrations — here the attribute does it for free.
+
+     The rect's geometry is set in CSS (SVG2 geometry properties), not in the markup, so
+     the inset and the radius can follow the card's own values instead of being duplicated
+     as attributes. Inset by half the stroke width, or the line would be clipped in half
+     by the svg's own edge. */
+  .service-flow--stepped .service-flow__outline {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .service-flow--stepped .service-flow__outline rect {
+    x: 0.5px;
+    y: 0.5px;
+    width: calc(100% - 1px);
+    height: calc(100% - 1px);
+    rx: var(--radius-md);
+    fill: none;
+    stroke: var(--color-blue-light);
+    /* ⚠️ 1, AND the rect inset by exactly HALF of it (0.5px) — the two numbers always move
+       together. An SVG stroke is centred on its path, so the inset has to be half the
+       width for the stroke to span 0→width and land on whole pixels. This pairing is what
+       makes the border the same thickness on all four sides; break it and it goes uneven
+       again. The history, all measured on a 2x render: 1,5 stroke with a 1px inset spanned
+       0,25→1,75 and gave 1,0px on three sides and 1,5 at the bottom; 2 with a 1px inset
+       was even at 2,0. This is the same rule at half the weight — a hairline (client
+       2026-08-10: "más finito el borde, más delicado").
+       (`vector-effect: non-scaling-stroke` does NOT rescue a broken pairing — the defect
+       is the fractional position, not the width.) */
+    stroke-width: 1;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    /* Slower than the card's own scale: the point is watching the line travel, and at
+       --duration-base it is over before it reads as drawing.
+       ⚠️ NOT --easing-premium here, and that is measured: expo-out puts 65 % of the
+       perimeter in the first 80ms (1.000 → 0.652), so the line snapped and then crawled.
+       --easing-standard is the symmetric curve, which is what makes this read as one lap
+       around the card rather than a flash. It is the one place on this page where the
+       premium curve is the wrong choice — because here the TRAVEL is the effect, not the
+       arrival. */
+    transition: stroke-dashoffset 0.65s var(--easing-standard);
   }
 
   /* Bigger than the first build (18px → 21px at 1440) because the category label
@@ -1403,8 +1826,60 @@ main h2 {
   .service-flow--stepped .service-flow__step h3 {
     font-size: clamp(1.15rem, 0.5rem + 0.9vw, 1.5rem);
     color: var(--color-text);
+    /* `inline` matters: the title's highlight is a background on this text, and a flex
+       or block box would paint it across the card's full width instead of hugging the
+       words. */
+    display: block;
     transition: color var(--duration-base) var(--easing-standard);
   }
+
+
+
+  /* The title's underline is drawn, not toggled: a blue bar painted as a
+     background image and grown from 0 to full width, so it reads as a line being
+     laid under the duty rather than a border appearing. background-size is not a
+     compositor property, but it paints inside one 20px-tall box and cannot move
+     anything around it. */
+  /* THE TITLE'S HIGHLIGHT — a background fill behind the words, not a rule under them
+     (client 2026-08-09: "que se subraye el fondo del título, como se subraya en la
+     sección de 'So läuft es bei FRANKONIA'"). Same mechanism as
+     .service-contrast__mark: a gradient painted as a background and grown from 0 to full
+     width, `box-decoration-break: clone` so it survives a line break, and a small
+     inline padding plus a radius so it reads as a marker pen rather than a block.
+
+     ⚠️ THE TEXT STAYS DARK — it does not go white like the Vorteile marks do, and that is
+     a contrast decision, not a style one. Those sit at 22px+ where white on the deep mix
+     works; this title is ~21px REGULAR, which is under the 24px large-text threshold, so
+     it needs 4.5:1 and white on #3D9AD3 would be 3,11:1. Near-black on #3D9AD3 measures
+     **6,76:1**, so keeping the title dark is what lets it use the CTA's own blue at all.
+
+     background-size, not a compositor property, but it paints inside the title's own box
+     and cannot move anything around it. */
+  .service-flow--stepped .service-flow__step-title {
+    /* A HIGHLIGHTER TINT, not a solid block (client 2026-08-09: "está feísima… quiero las
+       cards más lindas, más clean y más pro, y que tenga el contraste suficiente para que
+       se lea"). The solid #3D9AD3 behind near-black type was the loudest thing in the
+       column and it put the title at 6,72:1; this tint composites to rgb(212 233 245) on
+       white, where the title measures **~15:1**. Same marker idea, far cleaner, and the
+       accessibility question disappears instead of being argued.
+       ⚠️ NOT `--color-accent-subtle`: this is a `.section--light`, which re-declares that
+       token to 8 % of blue-DARK — as a highlighter it is nearly invisible. This is an
+       explicit tint of the CTA blue the client asked for. */
+    background-image: linear-gradient(
+      rgb(61 154 211 / 0.22),
+      rgb(61 154 211 / 0.22)
+    );
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 0 100%;
+    padding-inline: 0.22em;
+    margin-inline: -0.22em;
+    border-radius: 4px;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    transition: background-size var(--duration-base) var(--easing-premium);
+  }
+
 
   /* NO measure cap here, deliberately: the step's own 34rem already governs, and
      a `ch`-based cap on top of it was the bug that made this composition look
@@ -1446,38 +1921,60 @@ main h2 {
     transform: none;
   }
 
-  /* ACTIVE — the whole item fills (client 2026-08-05: "en vez de la raya vertical
-     me gustaría que todo el fill del item sea de un color, azul puede ser con el
-     texto blanco"). The 2px blue rule that used to mark it is gone.
+  /* ACTIVE — a diagonal arrow slides in ahead of the duty and its title gets a
+     blue rule drawn under it (client 2026-08-07: "en vez de tener fill celeste
+     quiero que haya una flecha adelante, de las flechas que usamos en todos lados
+     de la web, esas que rotan […] y que se subraye el título con una línea
+     celeste, el celeste del CTA").
 
-     ⚠️ ACCEPTED CONTRAST CAVEAT, client's explicit call (2026-08-05: "usá el azul del
-     CTA para el fill del item", after the trade-off was put to them). The fill is
-     `--color-blue-light` = #3D9AD3, which IS what .btn--primary uses, and white on it
-     is **3.11:1**: enough for the 3:1 minimum that applies to a UI component and to
-     large text, but under the 4.5:1 for normal text — and this item carries a 14px
-     description. Same class of exception the primary button already ships with
-     (tokens.css) and the same handling: documented, not overridden.
-     A first build used `blue-dark 85 % + black` (#4673AB, 4.88:1) and that is the
-     value to go back to if this is ever revisited — it reads as the same brand blue
-     one step down. Recorded in docs/design-system.md §7.
-     ⚠️ `--color-blue-light`, NOT `--color-accent`: `.section--light` re-declares that
-     token to blue-dark, so `--color-accent` here would give #5287C9, not the CTA's
-     blue.
-     Everything mitigable without changing the colour is done: both texts are SOLID
-     white (an alpha tier would push the description under even 3:1), and the
-     hierarchy comes from size and weight. The active state also never depends on hue
-     alone — it is the only item at full opacity, the others sit at 0.72 and 0.18. */
+     ⚠️ THIS REVERSES the 2026-08-05 blue fill, which itself replaced a 2px blue
+     left rule. Three treatments for the same state, each a client call — do not
+     "restore" the fill. The fill is also why this file used to carry a contrast
+     caveat here: white on #3D9AD3 is 3,11:1, which is under 4.5:1 for the item's
+     14px description. That caveat is now MOOT, and that is a real gain: the title
+     and description are back on the section's own text colours (black on white and
+     the muted grey), and the blue is only ever a graphic — the arrow and the 2px
+     rule — where 3:1 is the applicable threshold and 3,11:1 clears it.
+
+     The state still never depends on hue alone: the active duty is the only one at
+     full opacity (the others sit at 0.72 and 0.18) AND the only one carrying the
+     arrow, which is a shape, not a colour. */
+  /* ⚠️ NO `scale` here any more, and it is a measured trade, not a preference. The 1.02
+     the client asked for on 2026-08-09 left the card at 97,92px — a FRACTIONAL height —
+     so the drawn border landed on half a pixel and rendered 1,0px on three sides against
+     1,5 at the bottom. `vector-effect: non-scaling-stroke` does not fix that: the defect
+     is the fractional POSITION, not the scaled width. With integer geometry the four
+     sides come out identical, which is what the client asked for in the same breath
+     ("que el borde sea del mismo grosor en los cuatro lados") — and a 1.02 on a 553px
+     card was ~11px, far less visible than the border and the marker that now carry the
+     state anyway.
+     The active card is still unmistakable and never by hue alone: it is the only one at
+     full opacity, the only one with a drawn outline, and the only one whose title is
+     marked. */
   .service-flow--stepped .service-flow__step.is-active {
     opacity: 1;
     transform: none;
-    background-color: var(--color-blue-light);
-    /* The hairline above would otherwise cut across the fill. */
-    border-top-color: transparent;
+    box-shadow: 0 16px 36px rgb(1 1 1 / 0.10), 0 2px 6px rgb(1 1 1 / 0.05);
   }
 
-  .service-flow--stepped .service-flow__step.is-active h3,
-  .service-flow--stepped .service-flow__step.is-active > p:last-child {
-    color: var(--color-white);
+  /* ⚠️ NO HOVER STATE, and it is deliberate (client 2026-08-10: "queda seleccionada la de
+     arriba, voy moviendo para abajo y funciona, pero la de arriba queda con el efecto de
+     selección"). Hover used to get the full active treatment, so a pointer resting
+     anywhere over the list left TWO cards looking current at once — the scrolled one and
+     the pointed one — which reads as a bug even though the script only ever marks one
+     (`classList.toggle("is-active", i === index)`).
+     It is also the right call on its own terms: these are `<article>` elements with no
+     link and nothing to click, so a hover state that says "selected" asserts an
+     interactivity that does not exist. Exactly one card is current, and scroll decides
+     which. */
+
+
+  .service-flow--stepped .service-flow__step.is-active .service-flow__step-title {
+    background-size: 100% 100%;
+  }
+
+  .service-flow--stepped .service-flow__step.is-active .service-flow__outline rect {
+    stroke-dashoffset: 0;
   }
 
   /* ---- Right half: one large sticky VERTICAL CARD ----
@@ -1799,124 +2296,243 @@ main h2 {
   }
 }
 
-/* ---- 6. Anwendungsfälle ---- */
-/* Numbered items, same oversized-number-beside-title idea as the homepage's
-   services index — the number is decoration (aria-hidden), the <h3> carries
-   the meaning. */
+/* ---- 6. Anwendungsfälle ------------------------------------------------------
+   REDESIGNED 2026-08-08 (client brief: "convert the 4 use cases into full
+   self-contained cards… high-end B2B / premium SaaS / editorial, not generic cards").
+
+   What went, on instruction: the blue vertical spine, the separate blue text panels, and
+   the feeling that the illustration and its text were two objects. Each case is ONE white
+   panel now. The scroll timeline that drove the spine went with it — js/case-timeline.js
+   is replaced by js/case-cards.js. All of it is in git.
+   Copy, illustrations and their order are untouched. */
+
+.service-cases .section__intro {
+  max-width: 52rem;
+  margin-inline: auto;
+  text-align: center;
+}
 
 .service-cases__grid {
   list-style: none;
   display: grid;
+  gap: var(--space-6);
+}
+
+/* THE CARD. "Almost like a physical editorial panel floating slightly above the white
+   background" — which on a white section means the separation has to come from the border
+   and the shadow, since there is no fill to contrast with. */
+.service-cases__card {
+  display: grid;
+  /* Illustration, then the text block. One gap between the two zones; the spacing INSIDE
+     the text block is much tighter (see __text), which is what keeps number, title and
+     description reading as one unit rather than three stacked things. */
   gap: var(--space-5);
-}
-
-/* Glossy blue cards with the CTA's own light sweep (client 2026-08-03: "que
-   tengan el mismo estilo que el CTA, que sean azules y brillosas, con el reflejo
-   que tiene el CTA").
-
-   The fill is EXACTLY the CTA's --color-blue-light (#3D9AD3), flat, like
-   .btn--primary — client decision, reaffirmed after the contrast trade-off below
-   was raised ("tiene que ser el mismo azul del CTA").
-
-   ⚠️ ACCEPTED CONTRAST CAVEAT, same class of exception the primary button already
-   carries in tokens.css. Measured white on each candidate:
-       #3D9AD3 (the CTA fill, used here)   3.11:1
-       #5287C9 (its hover)                 3.71:1
-       blue-dark 85% + black  #4673AB      4.88:1
-       blue-dark 70% + black  #3A5F8D      6.56:1
-   3.11 clears the 3:1 minimum for UI components and large text, but NOT the 4.5:1
-   for normal-size body copy — and these cards carry a paragraph each. It is the
-   client's approved brand blue and the same number already shipped on every
-   primary button, so it is recorded as a known caveat, not "fixed" unilaterally.
-   Everything mitigable without changing the colour has been done: every text on
-   the card is SOLID white (no alpha tiers — those would push the paragraph below
-   3:1), and hierarchy comes from size/weight instead. If this is ever revisited,
-   the cheap fix is a deeper fill (the two mixes above) or larger/bolder card
-   copy, not a different blue. */
-.service-cases__item {
-  position: relative;
-  overflow: hidden;
+  align-content: start;
   padding: var(--space-6);
-  border-radius: var(--radius-md);
-  color: var(--color-white);
-  background-color: var(--color-blue-light);
-  /* The gloss: a soft drop shadow plus a 1px highlight along the top edge, which
-     is what makes a flat fill read as a lit surface. */
-  box-shadow: var(--shadow-md), inset 0 1px 0 rgb(255 255 255 / 0.28);
+  /* 1.5rem = 24px. Deliberately the SAME literal the price card already uses rather than a
+     second off-scale radius: the brief asks for 24–32px and no token sits in that range,
+     so the site keeps exactly one value outside the scale instead of two. */
+  border-radius: 1.5rem;
+  border: 1px solid rgb(1 1 1 / 0.07);
+  background-color: var(--color-white);
+  /* ⚠️ The transform is COMPOSED from custom properties, never set directly by the script.
+     Three things want to move this card — the resting offset of the even column, hover,
+     and the entrance — and the last one is GSAP's. If GSAP wrote `transform` it would
+     erase the other two the first time it ran. --card-y / --card-s are written by
+     js/case-cards.js and every transform below folds its own offset in. */
+  transform: translateY(var(--card-y, 0px)) scale(var(--card-s, 1));
+  /* Two layers, not --shadow-lg: that token is a single 0.14 blob tuned for the nav
+     submenu, and at this size it reads as a drop shadow rather than as elevation. A wide,
+     very low-opacity spread plus a tight contact shadow is what makes a panel look lifted
+     off white. */
+  box-shadow: 0 18px 48px rgb(1 1 1 / 0.07), 0 2px 6px rgb(1 1 1 / 0.04);
+  transition: transform var(--duration-base) var(--easing-premium),
+    box-shadow var(--duration-base) var(--easing-premium),
+    border-color var(--duration-base) var(--easing-premium);
 }
 
-/* The CTA's sweep, reusing its @keyframes btn-shine (components.css) rather than
-   declaring a second identical animation. Two deliberate differences from the
-   button: the band is softer (0.28 vs 0.42 — on a card it crosses paragraphs,
-   not a four-word label, and a bright flash over copy reads as glare), and it
-   sits BEHIND the content (see the z-index on the children below), so it polishes
-   the surface instead of washing over the text.
-   prefers-reduced-motion is handled globally in motion.css — nothing to add. */
-.service-cases__item::after {
-  content: "";
-  position: absolute;
-  top: -60%;
-  bottom: -60%;
-  left: 0;
-  width: 38%;
-  background: linear-gradient(
-    100deg,
-    transparent 0%,
-    rgb(255 255 255 / 0.28) 50%,
-    transparent 100%
-  );
-  transform: translateX(-140%) rotate(8deg);
-  animation: btn-shine 5s ease-in-out infinite;
-  pointer-events: none;
+/* ---- The illustration ----
+   No frame, no fill, no decoration behind it (brief). A FIXED height rather than an
+   aspect-ratio: the card's height comes from its copy, and a square ratio on a ~560px card
+   made the drawing 70 % of it. The inline SVG carries a viewBox, so `meet` fits the square
+   artwork inside this box and centres it with no distortion — measured at ~41 % of the
+   card, inside the brief's 40–45 %. */
+.service-cases__art {
+  /* Bigger (client 2026-08-08: "un poco más grandes las ilustraciones"): 202px → 245px at
+     1440, +21 %. The artwork is square and fitted by HEIGHT, so raising this widens the
+     drawing by the same factor — the scene reads noticeably larger, not just taller.
+     ⚠️ This takes it past the brief's own 40–45 % of card height, to ~48 %. The client's
+     later instruction wins, but that is the number to come back to if the card ever starts
+     feeling illustration-led rather than title-led. */
+  height: clamp(10rem, 17vw, 15.5rem);
 }
 
-/* Staggered so the four don't flash in unison — the reflection reads as moving
-   across the row. */
-.service-cases__item:nth-child(2)::after { animation-delay: 0.6s; }
-.service-cases__item:nth-child(3)::after { animation-delay: 1.2s; }
-.service-cases__item:nth-child(4)::after { animation-delay: 1.8s; }
+.service-cases__scene {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* currentColor inside the artwork resolves to this, so the scenes follow the section
+     they sit in — dark line work here, and they would come out white on a dark section
+     with no second file. 0.82 rather than solid: at full contrast a 1180-unit drawing of
+     80-odd hairlines out-shouts the card's own title, which the brief wants as the main
+     textual focus. */
+  color: rgb(1 1 1 / 0.82);
+}
 
-/* Above the sweep. */
-.service-cases__number,
-.service-cases__item h3,
-.service-cases__item p {
-  position: relative;
-  z-index: 1;
+/* ⚠️ THE ONE THING RESTYLED INSIDE A SUPPLIED DRAWING ON THIS PAGE — do not read it as
+   permission elsewhere. The four files carry `stroke-width="2"` on a 1180-unit viewBox,
+   which at this size renders as a sub-pixel hairline: fine as white on the dark background
+   the client designed against, nearly invisible as dark on white. 4 puts it where the rest
+   of this site's line art sits (risk scenes 0.7–1.06px, Konzept icons 1.22px).
+   It is safe because all 66–99 paths in every file share ONE width and none owns a
+   `stroke-dasharray` — the two things that made this kind of override destroy risk card
+   03's crates. Nothing here touches fill or stroke colour, and `getTotalLength()` is
+   unaffected, so the draw is unchanged. */
+.service-cases__scene :is(path, rect, circle, ellipse, line, polyline, polygon) {
+  stroke-width: 4;
+}
+
+/* ---- The text block ----
+   number -> title -> description, tight (brief: "avoid excessive spacing between number,
+   title and description"). The gaps are per-element rather than one grid gap because the
+   number wants less air under it than the title does. */
+.service-cases__text {
+  display: grid;
 }
 
 .service-cases__number {
-  display: block;
-  margin-bottom: var(--space-3);
-  font-size: var(--font-size-lg);
-  /* Solid white, not an alpha tier: on #3D9AD3 white is already only 3.11:1, so
-     any transparency drops it further. The number reads as secondary through its
-     size and position, not through opacity. */
-  color: var(--color-white);
-  font-variant-numeric: tabular-nums;
-}
-
-/* The second selector is not redundant: this section is a LIGHT one, and
-   `.section--light h3` is (0,2,0) — it beat the plain `.service-cases__item h3`
-   (0,1,1) and painted these titles near-black on the blue fill (caught in a
-   screenshot). Matching its specificity is the fix; !important is not needed. */
-.service-cases__item h3,
-.section--light .service-cases__item h3 {
-  font-size: var(--font-size-md);
-  margin-bottom: var(--space-3);
-  color: var(--color-white);
-}
-
-.service-cases__item p {
-  /* Solid white for the same reason as the number above, and explicitly NOT
-     --color-text-muted: in this light section that token is a dark grey (see
-     .section--light), which would be near-invisible on blue. */
-  color: var(--color-white);
+  margin-bottom: var(--space-2);
   font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium, 500);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  /* THE CTA's OWN BLUE (client 2026-08-09: "los números tienen que ser del celeste del
+     CTA"). ⚠️ Written as --color-blue-light and NOT --color-accent: this is a
+     `.section--light`, and that scope re-declares --color-accent to blue-dark, so the
+     token would give #5287C9 instead.
+
+     ⚠️ ACCEPTED CONTRAST CAVEAT, and it is a real one: white-background text at 14px needs
+     4.5:1, and #3D9AD3 on white measures **3.11:1**. Measured alternatives, for whoever
+     revisits this:
+         #3D9AD3  (the CTA fill, used here)         3.11:1
+         #5287C9  (--color-accent here)             3.71:1
+         blue-dark 85 % + black  #4673AB            4.88:1  ← what this replaced
+     The client has now chosen the CTA blue over the safe mix three times on this page (the
+     case cards' fill, the Leistungsumfang fill, this), so it is recorded rather than
+     overridden. Two things keep the cost small: the numeral is `aria-hidden` decoration —
+     the <h3> beside it carries the meaning, so nothing is lost to a reader who cannot
+     resolve it — and it repeats the card's own position in an ordered list.
+     If it is ever revisited, the cheap fix is SIZE, not hue: at 18.66px bold or 24px
+     regular the numeral counts as large text, where 3:1 applies and #3D9AD3 passes. */
+  color: var(--color-blue-light);
 }
 
-/* Referenz-Abbinder: one sentence + the two real client marks. The logos are
-   white artwork on transparent PNGs, same files/treatment as the homepage's
-   client-logo marquee. */
+/* The main textual focus (brief), so it is the biggest thing in the card: 28px at 1440
+   against the 20px it was. */
+.service-cases__card h3 {
+  font-size: clamp(1.375rem, 1.05rem + 0.65vw, 1.75rem);
+  font-weight: var(--font-weight-medium, 500);
+  line-height: 1.25;
+}
+
+.service-cases__card p {
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+}
+
+/* ---- LIVE state: only ever added by js/case-cards.js ----------------------------
+   Everything above renders the finished section. This is the only rule that hides a card,
+   and it exists only while the script is there to bring it back — same contract as every
+   other motion primitive here. */
+.service-cases__grid--live .service-cases__card {
+  opacity: 0;
+}
+
+@media (min-width: 900px) {
+  .service-cases__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-7) var(--space-6);
+  }
+
+  .service-cases__card {
+    padding: var(--space-7);
+  }
+
+  /* The brief's optional rhythm, for the 2x2 band only: the right-hand card sits a touch
+     lower so the pair does not read as a rigid table. 28px, inside its 20–30px.
+     ⚠️ It is RESET at four-up below — an alternating offset along a single row of four
+     reads as misalignment, not as rhythm. */
+  .service-cases__card:nth-child(even) {
+    transform: translateY(calc(28px + var(--card-y, 0px))) scale(var(--card-s, 1));
+  }
+
+  /* Hover: a lift and a little more shadow, and the border warms very slightly toward the
+     brand blue. No scale — the brief is explicit, and scaling a card with a 1180-unit line
+     drawing inside it also resamples the artwork.
+     ⚠️ Any card with a resting transform has to restate it in its own hover, or it snaps
+     back to the grid line as you point at it. */
+  .service-cases__card:hover {
+    transform: translateY(calc(-5px + var(--card-y, 0px))) scale(var(--card-s, 1));
+    border-color: rgb(61 154 211 / 0.35);
+    box-shadow: 0 24px 60px rgb(1 1 1 / 0.10), 0 3px 10px rgb(1 1 1 / 0.05);
+  }
+
+  .service-cases__card:nth-child(even):hover {
+    transform: translateY(calc(23px + var(--card-y, 0px))) scale(var(--card-s, 1));
+  }
+}
+
+/* ---- ALL FOUR IN ONE ROW (client 2026-08-09: "hacéme las cuatro cards en una misma fila,
+   con el mismo estilo que tienen ahora pero más angostas así entran las 4 en una misma
+   fila"). Same panel — same border, radius, shadow and hover — just narrower, and with
+   every size that was tuned for a 569px card brought down to fit ~270px.
+
+   1100px, not 900: four cards plus three gaps need the room. Between 900 and 1099 the 2x2
+   above still applies, so the layout degrades to the previous design rather than to four
+   unreadably narrow columns. */
+@media (min-width: 1100px) {
+  .service-cases__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .service-cases__card {
+    padding: var(--space-5);
+  }
+
+  /* ⚠️ The 2x2's alternating offset is cancelled here — see the note on it above. Both
+     transforms have to be restated (resting and hover) or the even cards keep the 28px. */
+  .service-cases__card:nth-child(even),
+  .service-cases__card {
+    transform: translateY(var(--card-y, 0px)) scale(var(--card-s, 1));
+  }
+
+  .service-cases__card:hover,
+  .service-cases__card:nth-child(even):hover {
+    transform: translateY(calc(-5px + var(--card-y, 0px))) scale(var(--card-s, 1));
+  }
+
+  /* Every value below was fitted to a 569px card and has to come down for a ~270px one. */
+  /* A touch larger than a straight scale-down would give: the client had just asked for
+     bigger illustrations when they changed direction to one row, so the scene keeps as
+     much presence as a ~290px card allows. 158px at 1440 = 38 % of the card. */
+  .service-cases__art {
+    height: clamp(7.5rem, 11vw, 11rem);
+  }
+
+  .service-cases__card h3 {
+    font-size: clamp(1.0625rem, 0.75rem + 0.42vw, 1.25rem);
+    line-height: 1.3;
+  }
+
+  .service-cases__card p {
+    font-size: var(--font-size-sm);
+    line-height: 1.55;
+  }
+}
+
 .service-cases__proof {
   display: flex;
   flex-wrap: wrap;
@@ -1951,19 +2567,6 @@ main h2 {
   width: auto;
   object-fit: contain;
   opacity: 0.85;
-}
-
-@media (min-width: 640px) {
-  .service-cases__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-6);
-  }
-}
-
-@media (min-width: 1024px) {
-  .service-cases__grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
 }
 
 /* ---- 7. Sicherheitskonzept — centred process + proof ------------------------
@@ -2326,7 +2929,7 @@ main h2 {
    The gloss is three things, none of them a heavy shadow: a faint diagonal
    lightening of the fill, a 1px highlight on the top edge, and the BUTTON'S OWN
    sweep — @keyframes btn-shine from components.css, reused rather than
-   redeclared, the same way .service-cases__item does it. */
+   redeclared, the same way .service-cases__card does it. */
 .service-price__box {
   position: relative;
   /* Clips the sweep to the card's radius. */
@@ -2773,12 +3376,25 @@ main h2 {
 /* ---- The certification strip ---- */
 /* Set apart by a hairline and its own top padding rather than a card — the
    section stays flat, and the strip reads as supporting the block above it. */
+/* CENTRED, the same composition as /referenzen/'s closing certification block
+   (client 2026-08-07, with both screenshots side by side: "los badges en la página de
+   werkschutz están como la primera foto y quiero que estén como la segunda foto,
+   referenzen"). It was seals-left / lines-right; now it is seals centred on top and
+   the three standards as three centred columns underneath.
+   ⚠️ THE PROMOTION THIS NOTE ASKED FOR HAPPENED (2026-08-09) — it is `.trust-certs*`,
+   further down this same file, and both /referenzen/ and
+   /sicherheitsdienst-nuernberg/ use it. This block is the ONE remaining copy, and it
+   still exists only because it is welded into this section's grid areas
+   ("seals lines" / `certs`), so converting it is a layout change on a finished page
+   rather than a rename. Folding it in is the next cleanup; until then, keep the two
+   in step — and do NOT make a third. */
 .service-contact__certs {
   display: grid;
   gap: var(--space-6);
   margin-top: var(--space-6);
   padding-top: var(--space-7);
   border-top: 1px solid var(--color-border);
+  text-align: center;
 }
 
 .service-contact__certs-title {
@@ -2786,54 +3402,71 @@ main h2 {
   font-weight: var(--font-weight-regular);
 }
 
-/* Significantly larger than the 4.5rem they were (brief), proportions untouched —
-   height only, width auto. */
 .service-contact__seals {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: var(--space-6);
 }
 
 .service-contact__seal {
-  /* 8.5rem = 136px, up from the 4.5rem (72px) they were. Height only, width auto,
-     so the official DEKRA proportions are untouched — they may be scaled, never
-     cropped or distorted. Sized to read clearly beside the three lines without
-     out-weighing the contact block above (brief). */
-  height: 8.5rem;
+  /* Height only, width auto, so the official DEKRA proportions are untouched — they
+     may be scaled, never cropped or distorted.
+
+     80–112px, down from a flat 8.5rem (136px) — client 2026-08-07: they should read
+     the way the seals in /referenzen/'s closing section do. The clamp is
+     `.trust-certs__seal`'s own value, copied deliberately rather than re-derived, so the
+     two blocks are the same size at every width instead of two similar sizes.
+     ⚠️ Two consumers now, in two page-scoped files. A THIRD one should promote this to
+     a shared class here — DONE 2026-08-09, see .trust-certs__seal below (page-service.css is /referenzen/'s chassis, so it reaches
+     it) instead of a third copy. The hero's own 2.75rem seals are NOT this case —
+     those are a compact trust-row chip, a different job. */
+  height: clamp(5rem, 3rem + 4vw, 7rem);
   width: auto;
 }
 
-/* Short lines: the standard name is the emphasis, the rest is muted supporting
-   text. Same three facts, same wording, just split so the standard can lead. */
+/* .trust-certs__list's own structure: the standard's NAME on its own line carrying the
+   weight, the supporting text muted underneath, each item keeping its own top rule so
+   they read as three columns of one row rather than three stacked blocks.
+   Copy and wording unchanged — only the arrangement. */
 .service-contact__certs-list {
   list-style: none;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-7);
 }
 
 .service-contact__certs-list li {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-1) var(--space-3);
-  padding-block: var(--space-4);
+  display: grid;
+  gap: var(--space-1);
+  padding-top: var(--space-4);
   border-top: 1px solid var(--color-border);
   font-size: var(--font-size-sm);
-}
-
-.service-contact__certs-list li:last-child {
-  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  -webkit-hyphens: none;
+  hyphens: none;
 }
 
 .service-contact__certs-list strong {
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--color-text);
-  white-space: nowrap;
 }
 
 .service-contact__certs-list span {
   color: var(--color-text-muted);
+}
+
+/* Three across once there is room — .trust-certs__list's own breakpoint and values, so
+   the two blocks break at the same width instead of at two similar ones. */
+@media (min-width: 700px) {
+  .service-contact__certs-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+    max-width: 56rem;
+    margin-inline: auto;
+  }
 }
 
 @media (min-width: 900px) {
@@ -2857,20 +3490,10 @@ main h2 {
     max-width: 26rem;
   }
 
-  /* Badges on one side, the three lines on the other (brief). Badges first, which
-     is also their order on a phone. */
-  .service-contact__certs {
-    grid-template-columns: auto minmax(0, 1fr);
-    grid-template-areas:
-      "title title"
-      "seals lines";
-    column-gap: var(--space-9);
-    align-items: center;
-  }
-
-  .service-contact__certs-title { grid-area: title; }
-  .service-contact__seals { grid-area: seals; }
-  .service-contact__certs-list { grid-area: lines; }
+  /* ⚠️ The seals-left / lines-right split that used to live here is GONE (2026-08-07):
+     the block is one centred column at every width now, matching /referenzen/. Its
+     three grid-area assignments went with it — leaving them would have kept forcing
+     the two-column arrangement this change exists to remove. */
 }
 
 /* ---- 10. FAQ ---- */
@@ -3010,25 +3633,34 @@ main h2 {
     color var(--duration-base) var(--easing-standard);
 }
 
-/* A light blue wash, not the white/black inversion this had — the brief asks for
-   flat and lightweight. --color-accent-subtle is already the on-white blue tint
-   in a light section (see .section--light), so this is a token, not a new value.
-   The text colour on hover is set per theme: see the .section--light pair further
-   down, which is where the "darker on hover" values live. Every instance of this
-   block today sits on a light section; on a dark one the wash still works and the
-   text simply keeps --color-text. */
+/* SOLID BLACK FILL with white text, exactly like the homepage's outfit-name list
+   (client 2026-08-05: "cuando hoveree, que sea igual que la lista de outfits de la
+   home, que el fondo se ponga negro y que la flecha rote"). Same two tokens that
+   rule uses (--color-logo-black / --color-white), so the two lists are one
+   decision.
+   This REVERSES the light blue wash a 2026-08-03 brief asked for ("flat and
+   lightweight") — the client's later call, and it is also the more accessible of
+   the two: white on black is 21:1, where the wash relied on the label darkening
+   for its only state change.
+   Every instance of this block today sits on a light section. On a dark one a black
+   fill would be invisible, so a future dark instance needs its own inverted pair —
+   flagged rather than pre-built, since none exists. */
 .service-related__link:hover,
 .service-related__link:focus-visible {
-  background-color: var(--color-accent-subtle);
-  color: var(--color-logo-black);
+  background-color: var(--color-logo-black);
+  color: var(--color-white);
 }
 
-/* The icon is drawn pointing up-right, so it travels the way it points — a 3px
-   nudge, not a rotation (brief: "move the arrow slightly to the upper-right...
-   keep the animation subtle"). */
+/* ROTATES 45deg, turning the up-right arrow into a straight right arrow — the same
+   mechanism as .outfits__name-arrow and .services__item-arrow on the homepage
+   (client 2026-08-05: "que la flecha rote"). It replaces a 3px translate an earlier
+   brief asked for: one icon, two states, and the transition is a real rotation
+   rather than a nudge.
+   White, because it now sits on the black fill. */
 .service-related__link:hover .service-related__arrow,
 .service-related__link:focus-visible .service-related__arrow {
-  transform: translate(3px, -3px);
+  transform: rotate(45deg);
+  color: var(--color-white);
 }
 
 @media (min-width: 768px) {
@@ -3102,8 +3734,24 @@ main h2 {
 /* Hardcoded values that tokens can't reach, one per block: */
 
 /* The hairline under an inline link, and its hover — the dark-section version
-   goes to white, which would vanish here. */
+   goes to white, which would vanish here.
+   ⚠️ REAL, PRE-EXISTING CONTRAST BUG, found 2026-08-09 while measuring a new
+   .service-link on /sicherheitsdienst-nuernberg/, and confirmed already LIVE on
+   /referenzen/'s three "Case Study lesen" links, undetected until now — this is
+   not new to either page, it is a gap in this shared rule.
+   `.service-link`'s base rule reads `color: var(--color-accent)`, and this scope
+   re-declares that token to `--color-blue-dark` (#5287C9) — 3,71:1 on white.
+   That clears the 3:1 minimum for a graphic or large text, but this is a 16px,
+   weight-500 link: normal text (500 is not WCAG "bold", which needs 700), so it
+   needs 4,5:1 and fails. Measured live on /referenzen/ before this fix: 3.71:1.
+   Fixed with the documented deep mix (docs/design-system.md §5,
+   docs/page-conventions.md §5): `color-mix(in srgb, var(--color-blue-dark) 85%,
+   black)` = 4,88:1, the same value `.city-fields__num` already uses on the
+   Nürnberg page for the identical reason. The arrow inherits it via
+   `currentColor` too — safe, since a graphic only needed 3:1 and this clears it
+   with room to spare. Border colour is untouched; only the text/icon colour. */
 .section--light .service-link {
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
   border-bottom-color: rgb(82 135 201 / 0.45);
 }
 .section--light .service-link:hover,
@@ -3140,20 +3788,21 @@ main h2 {
   filter: invert(1);
 }
 
-/* The related-links rows: the light section's own text colours. The base rule
-   further up is theme-agnostic (--color-text + the blue wash on hover); these two
-   are what make the row DARKEN on hover the way the brief asks, which needs
-   values that only mean something on white.
-   This REPLACES the black/white inversion these rows had — it had higher
-   specificity than the new wash and loaded later, so it won and the wash never
-   showed (caught by reading the cascade, before it reached a screenshot). */
+/* The related-links rows on a white section. The resting colour is this section's
+   own grey; the base rule further up is theme-agnostic (--color-text).
+   ⚠️ The hover pair here is load-bearing and easy to get wrong: it is (0,2,1)
+   against the base hover's (0,1,1), so whatever it says WINS. It used to set
+   `color: var(--color-logo-black)` for a "darken on hover" brief — with the row now
+   filling BLACK on hover, that would have left a black label on a black fill. It
+   sets white, matching the base rule. Same class of cascade trap as the note this
+   comment replaced, just in the other direction. */
 .section--light .service-related__link {
   color: var(--color-gray);
 }
 
 .section--light .service-related__link:hover,
 .section--light .service-related__link:focus-visible {
-  color: var(--color-logo-black);
+  color: var(--color-white);
 }
 
 /* The FAQ "+" glyph on the BORDERED default: blue-dark on white clears large
@@ -3173,6 +3822,97 @@ main h2 {
    the page's one lifted panel, and its own white-alpha type/ticks are already
    correct for that). Nothing to override — noted so it doesn't look like an
    omission. */
+
+/* ---- Certification block (SHARED) ----------------------------------------
+   PROMOTED here 2026-08-09 from page-referenzen.css's `.ref-certs*`, when
+   /sicherheitsdienst-nuernberg/ became the THIRD page to need this exact
+   composition — big centred DEKRA seals, then the three standards as one ruled
+   line each, then a closing line. Two notes in this very file already said that
+   the third consumer should do this instead of making a third copy (see
+   `.service-contact__seal` below), so this is that.
+
+   Not one value changed in the move: the 7rem seal clamp, the 700px
+   three-across breakpoint and every space token are the ones /referenzen/ was
+   using, so both pages measure identically. Renamed `.ref-*` → `.trust-*`
+   because this file is the CHASSIS for pages that are not /referenzen/.
+
+   ⚠️ STILL TWO COPIES ON THE SITE, deliberately. /werkschutz/'s Ansprechpartner
+   section has its own `.service-contact__certs*` variant of the same idea, and it
+   is welded into that section's grid areas (`"seals lines"` / `certs`), so
+   converting it is a layout change on a finished page rather than a rename. It is
+   the next thing to fold in here, and when it happens this block is the target.
+
+   The DEKRA files are official artwork: scale proportionally, never crop or
+   recolour (CLAUDE.md, Corporate identity). */
+.trust-certs {
+  margin-top: var(--space-8);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+}
+
+/* "Bastante grandes" (client 2026-08-07): 7rem against the 2.75rem the seals have
+   in a hero trust row. */
+.trust-certs__seals {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+}
+
+.trust-certs__seal {
+  height: clamp(5rem, 3rem + 4vw, 7rem);
+  width: auto;
+}
+
+/* One standard per row, the standard itself leading. Ruled, not carded — the same
+   "hairlines, not boxes" language the rest of the site uses. The rows are centred
+   as a block but each row is its own line, so the eye lands on the three names. */
+.trust-certs__list {
+  list-style: none;
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-7);
+}
+
+.trust-certs__list li {
+  display: grid;
+  gap: var(--space-1);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* The standard's name is the thing being claimed, so it carries the weight. */
+.trust-certs__list li strong {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.trust-certs__memberships {
+  max-width: 34rem;
+  margin: var(--space-6) auto 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* Three across once there is room. Each keeps its own top rule, so they read as
+   three columns of one row rather than three stacked blocks. */
+@media (min-width: 700px) {
+  .trust-certs__list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+    max-width: 56rem;
+    margin-inline: auto;
+  }
+}
 
 /* ---- Pixel seam at every section boundary + before the footer -------------
    docs/page-conventions.md §4.4, client 2026-07-31: every page ends with the
@@ -3204,7 +3944,10 @@ main h2 {
   left: 0;
   right: 0;
   top: 0;
-  height: 200px;
+  /* Hoisted into a property because .pixel-seam--photo's tiles need the SAME value to
+     size a band-wide background across themselves. A second copy would drift. */
+  --pixel-band-h: 200px;
+  height: var(--pixel-band-h);
   display: grid;
   /* Column/row counts and the shared tile size are set inline by
      js/pixel-transition.js after measuring the band — the same pixel value on
@@ -3227,6 +3970,79 @@ main h2 {
 
 .pixel-seam__tile.is-revealed {
   opacity: 0;
+}
+
+/* ---- .pixel-seam--photo: dissolve OUT OF A PHOTO, not out of a flat colour -----
+   Client 2026-08-07: "¿ves que hay una línea negra? … ese negro que veo en el efecto
+   de píxeles es un sólido negro… en este caso quiero que sea transparente y se vea la
+   imagen de fondo".
+
+   They were right, and the cause is that the normal model cannot work here. A seam's
+   tiles are the OUTGOING section's colour, painted over the incoming one — so at
+   progress 0 the band is a solid 200px slab of that colour. When the outgoing section
+   is a flat black that is invisible; when it is a PHOTO it is a black bar across the
+   bottom of the photo, which is what they saw.
+
+   So this variant inverts the whole model:
+     · the band sits INSIDE the hero, over the photo, instead of in the next section's
+       reserved padding — so what shows through a transparent tile is the photograph;
+     · the tiles are the INCOMING section's colour (the navy Risiko band);
+     · and they run transparent → opaque, so navy pixels progressively eat the photo
+       instead of black pixels clearing off it.
+   `.is-revealed` is still the script's own class and the script is untouched: only
+   what the two states MEAN is swapped, here in CSS. */
+.pixel-seam--photo {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  height: 0;
+}
+
+.pixel-seam--photo .pixel-seam__band {
+  /* Anchored to the seam's own bottom, so the whole band sits INSIDE the hero —
+     .service-hero's `overflow: hidden` would clip anything below it. */
+  top: auto;
+  bottom: 0;
+  /* Inherited from .service-hero--bleed, so the hero's own extra height and this band
+     can never disagree — they did at 390px, where the hero added 200px and the band was
+     120, leaving 80px of dead black between the photo's end and the dissolve. */
+  --pixel-band-h: var(--service-hero-band-h);
+}
+
+/* THE TILES CARRY THE NEXT SECTION'S OWN GLOW, not a flat navy (client 2026-08-07:
+   "no respeta el degradado que hay en la sección de abajo, que en realidad está
+   funcionando con un degradado el fondo").
+
+   They were right and it is the documented "two navies" bug: .service-risk's top is
+   #00091F lit by --color-blue-light at 0.38, decaying to 0 over its first 340px, so a
+   flat #00091F tile reads as a darker navy stepping out of a lighter section — exactly
+   what .pixel-seam--konzept on the homepage exists to avoid.
+
+   The fix is a band-wide background reconstructed ACROSS the tiles: each one is given
+   the whole band's gradient via background-size, then shifted to its own row with
+   background-position. `--pixel-row` and `--pixel-tile-size` both come from
+   js/pixel-transition.js, so this stays correct at any tile count or viewport.
+
+   The ramp runs 0.38 at the band's BOTTOM (where it meets the section's top edge, so
+   the two are continuous) to 0 at its top, mirroring the section's own decay — so the
+   dissolve and the section read as one lit band rather than two.
+   ⚠️ Keep the 0.38 in step with .service-risk's first gradient stop, and the navy
+   literal in step with its background-color. */
+.pixel-seam--photo .pixel-seam__tile {
+  background-color: #00091F;
+  background-image: linear-gradient(
+    to top,
+    rgb(61 154 211 / 0.38) 0,
+    rgb(61 154 211 / 0) 100%
+  );
+  background-size: 100% var(--pixel-band-h, 200px);
+  background-position: 0 calc(-1 * var(--pixel-row, 0) * var(--pixel-tile-size, 24px));
+  background-repeat: no-repeat;
+  opacity: 0;
+}
+
+.pixel-seam--photo .pixel-seam__tile.is-revealed {
+  opacity: 1;
 }
 
 /* White tiles, for a light -> dark boundary. Pure --color-white, matching the
@@ -3257,6 +4073,34 @@ main h2 {
   --pixel-tile-color: var(--color-white);
 }
 
+/* Pulse, not a wipe: when both sides of a seam are the same flat black there
+   is nothing to dissolve into, so a normal tile is invisible whichever way it
+   ends. Tiles here fade up to full solid white and back down as the
+   scroll-driven window passes each one (js/pixel-transition.js, "pulse"
+   mode), instead of latching open — the same --color-white every other
+   `.pixel-seam--white` tile on the site uses (client 2026-08-10: "poca
+   opacidad, lo quiero blanco, como el resto").
+
+   TWO CONSUMERS since 2026-08-10, both the main→footer boundary: /referenzen/
+   (where it was first asked for) and /einsatzgebiete/ (client: "la transición
+   de píxeles que hay cuando la sección es negra y el footer también, que
+   aplicamos en la otra sección que pasaba lo mismo"). That is the trigger this
+   file's own convention names for promoting a one-off: a THIRD black-into-black
+   seam should make this the default for that case rather than opting in by hand
+   a third time. The condition to check is literal — the section above and the
+   footer both resolving to the same flat black (--color-bg / --color-logo-black
+   are the same hex), which is what leaves a normal wipe tile with nothing to
+   dissolve between. */
+.pixel-seam--pulse .pixel-seam__tile {
+  background-color: var(--color-white);
+  opacity: 0;
+  transition: opacity 0.4s var(--easing-standard);
+}
+
+.pixel-seam--pulse .pixel-seam__tile.is-active {
+  opacity: 1;
+}
+
 /* Every element that FOLLOWS a seam reserves the band's height as extra
    padding, so the covered zone always lands in empty space and no real content
    is ever underneath a tile — with or without JS, since this is real layout.
@@ -3277,7 +4121,12 @@ main h2 {
 
 @media (max-width: 767.98px) {
   .pixel-seam__band {
-    height: 120px;
+    --pixel-band-h: 120px;
+  }
+
+  /* The hero's own copy of the same number — see --service-hero-band-h. */
+  .service-hero--bleed {
+    --service-hero-band-h: 120px;
   }
 
   .pixel-seam + .section {
@@ -3520,6 +4369,7 @@ main h2 {
      with the container padding), so this template does too. Same additive
      calc() as the base rule, for the same reason. */
   main > .breadcrumbs,
+  .service-hero__crumbs,
   main > section > .container {
     padding-inline: calc(var(--container-padding) + var(--space-2));
   }
@@ -3536,6 +4386,16 @@ main h2 {
 
   .service-hero {
     padding-block: var(--space-6) var(--space-8);
+  }
+
+  /* ⚠️ The rule above is (0,1,0) and so is `.service-hero--bleed`, so on a phone it
+     WINS BY SOURCE ORDER and drops the overlap back out of the padding — measured:
+     the breadcrumb landed under the header at 320 and 390. The bleed variant has to
+     restate its own phone padding, keeping the overlap term. Any future
+     `.service-hero { padding-block: … }` at a new breakpoint needs the same
+     companion rule. */
+  .service-hero--bleed {
+    padding-block: calc(var(--space-6) + var(--service-hero-overlap)) var(--space-8);
   }
 
   /* A 3:2 photo cropped to a phone's tall hero keeps only a narrow vertical
@@ -3662,4 +4522,133 @@ main h2 {
     white-space: normal;
   }
 
+}
+
+
+/* ==========================================================================
+   HUB TILE GRID (.hub-*) — shared, 2026-08-09
+   --------------------------------------------------------------------------
+   Promoted out of page-leistungen.css the moment a SECOND page needed it, which
+   is the rule that file wrote for itself: /leistungen/ lists eleven services and
+   /einsatzgebiete/ lists ten cities, and both are the same object — a titled
+   tile with two sentences and a link, grouped under a label.
+   Named .hub-* rather than .service-*: it belongs to hub pages, not to the
+   service-page template that the rest of this file describes.
+   ========================================================================== */
+/* ---- The service tiles ---------------------------------------------------
+   Three groups, because the draft groups by "Einsatzlogik" rather than listing
+   eleven equal things — a visitor arrives knowing their situation (permanent?
+   one-off? technical?), not the product name. */
+.hub-group + .hub-group {
+  margin-top: var(--space-8);
+}
+
+.hub-group__label {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  /* Body metrics, not display: base.css's -1px tracking is calibrated for 48px+
+     headings and reads as collision at this size (design-system §2). */
+  letter-spacing: normal;
+  line-height: var(--line-height-heading);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--space-5);
+}
+
+.hub-group__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-5);
+}
+
+/* Two up from tablet, three from desktop. Not four: the widest group has four
+   items, and a 4-column row would put the other two groups' 3-and-4 counts on
+   ragged rows against it. Three keeps every group either full or one short. */
+@media (min-width: 640px) {
+  .hub-group__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .hub-group__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* The whole tile is the link, so the tap target is the card and not a line of
+   text inside it — same call as /kontakt/'s contact rows. */
+.hub-tile {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: inherit;
+  text-decoration: none;
+  transition: background-color var(--duration-base) var(--easing-standard),
+    border-color var(--duration-base) var(--easing-standard);
+}
+
+.hub-tile:hover,
+.hub-tile:focus-visible {
+  background-color: var(--color-accent-subtle);
+  border-color: var(--color-accent);
+  /* ⚠️ REAL BUG, fixed 2026-08-10, and it is a specificity loss not an
+     oversight: the tile is an <a>, and base.css's sitewide `a:hover` sets
+     `color: var(--color-link-hover)` — which is WHITE. That rule is (0,1,1)
+     while `.hub-tile`'s own `color: inherit` above is (0,1,0), so on hover the
+     whole anchor turned white and the tile's title went invisible against the
+     pale-blue wash this same rule paints (measured: rgb(255,255,255) on an
+     8%-blue background). The description survived only because it declares its
+     own colour.
+     Restating `color: inherit` HERE makes it (0,1,1) too, and page-service.css
+     loads after base.css, so it wins. Any future card-shaped <a> on a light
+     section needs the same line. */
+  color: inherit;
+}
+
+.hub-tile__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: normal;
+  line-height: var(--line-height-heading);
+}
+
+.hub-tile__text {
+  /* Pushes the "Mehr erfahren" row to the bottom so every tile in a row ends on
+     the same line regardless of how long its two sentences are. */
+  flex: 1;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+}
+
+.hub-tile__more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  font-size: var(--font-size-sm);
+  /* NOT --color-accent. On .section--light that token resolves to blue-dark,
+     which is 3.71:1 on white — fine for a 3:1 graphic, under the 4.5:1 that
+     applies to this 15px label. The deeper mix is the value CLAUDE.md already
+     documents for blue TEXT on white (measured 4.88:1) and reads as the same
+     blue. Measured here: 4.9:1. */
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+}
+
+/* fill/stroke set explicitly: the sprite's presentation attributes live on its
+   <g id="icon-defs"> wrapper and do not survive <use> — the same trap that made
+   every .service-link__arrow a filled sliver (CLAUDE.md 2026-08-03). */
+.hub-tile__arrow {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  transition: transform var(--duration-base) var(--easing-standard);
+}
+
+.hub-tile:hover .hub-tile__arrow,
+.hub-tile:focus-visible .hub-tile__arrow {
+  transform: translate(2px, -2px);
 }

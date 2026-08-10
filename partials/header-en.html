@@ -37,7 +37,42 @@
             <a class="site-nav__submenu-all" href="/leistungen/">All Services →</a>
           </div>
         </li>
+
+        <!-- COVERAGE AREAS — the English counterpart of header-de.html's
+             "Einsatzgebiete" (added 2026-08-10, same client request). Kept in
+             step so the two headers do not structurally diverge, which is the
+             reason this file exists at all.
+             The URLs are the German ones, exactly as this file's Services
+             submenu and its References link already are — the city pages are
+             German-only and the slugs are the confirmed ones from guidelines
+             §2.2. Only the label and the "All …" row are translated; the ten
+             city names are proper nouns and are identical in both. -->
+        <li class="site-nav__item site-nav__item--has-submenu">
+          <a class="site-nav__link" href="/einsatzgebiete/">
+            Coverage Areas
+            <svg class="icon site-nav__caret" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+          </a>
+          <div class="site-nav__submenu">
+            <ul class="site-nav__submenu-list">
+              <li><a href="/sicherheitsdienst-bamberg/">Bamberg</a></li>
+              <li><a href="/sicherheitsdienst-nuernberg/">Nürnberg</a></li>
+              <li><a href="/sicherheitsdienst-wuerzburg/">Würzburg</a></li>
+              <li><a href="/sicherheitsdienst-erlangen/">Erlangen</a></li>
+              <li><a href="/sicherheitsdienst-fuerth/">Fürth</a></li>
+              <li><a href="/sicherheitsdienst-schweinfurt/">Schweinfurt</a></li>
+              <li><a href="/sicherheitsdienst-bayreuth/">Bayreuth</a></li>
+              <li><a href="/sicherheitsdienst-coburg/">Coburg</a></li>
+              <li><a href="/sicherheitsdienst-ansbach/">Ansbach</a></li>
+              <li><a href="/sicherheitsdienst-forchheim/">Forchheim</a></li>
+            </ul>
+            <a class="site-nav__submenu-all" href="/einsatzgebiete/">All Coverage Areas →</a>
+          </div>
+        </li>
+
         <li><a class="site-nav__link" href="/referenzen/">References</a></li>
+        <!-- Kept in step with header-de.html — the two headers must not
+             diverge structurally, which is the reason this file exists. -->
+        <li><a class="site-nav__link" href="/ueber-uns/">About Us</a></li>
         <!-- "Our System" removed from the nav 2026-08-03, same as header-de.html
              (client) — it was the only item that was not a page. The /en/
              homepage section and its id are untouched. -->

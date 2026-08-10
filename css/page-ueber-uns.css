@@ -1,0 +1,511 @@
+/* ==========================================================================
+   Über uns (/ueber-uns/)
+   ==========================================================================
+   Chassis is css/page-service.css. This file holds every block only this page
+   has: the milestone timeline, the six promises, the leadership row and the
+   certificate list. page-leistungen.css is still linked for one shared piece,
+   .lh-hero__badge in the hero — the six promises used to reuse its .lh-why*
+   too, but that block was built for /leistungen/'s own four columns; see
+   .uu-promises below for why it took its own block instead.
+   ========================================================================== */
+
+/* ---- Die Geschichte ------------------------------------------------------ */
+/* Same centring as .uu-zert / .uu-inno below — client 2026-08-10.
+   ⚠️ Two classes, not one — the same specificity trap: page-service.css styles
+   `.section__intro` generically and a single-class selector loses on source
+   order. `text-align` centres the TEXT; `margin-inline: auto` centres the BOX. */
+.uu-story .section__intro { text-align: center; }
+
+.uu-story .section__intro h2 {
+  max-width: 32ch;
+  margin-inline: auto;
+}
+
+.uu-story .section__intro > p {
+  margin-inline: auto;
+}
+
+/* ---- Meilensteine ------------------------------------------------------- */
+/* Five dated events on one rail, scrubbed to the scroll by js/steps-sequence.js.
+   Not cards: five facts of one sentence each become five boxes of mostly empty
+   space, and the rail is what makes them read as a sequence rather than a list.
+   The dot is a REAL element (.uu-mile__dot, landed directly by that script via
+   data-steps-marker) and the segment is the <li>'s ::after, driven by --step-line
+   and DEFAULTING TO 1 here, so the finished timeline is the no-JS /
+   reduced-motion state. The segment is one element aimed two ways — scaleY
+   stacked, scaleX in a row — the same one-value-two-axes pattern
+   .service-konzept__step uses. */
+.uu-miles {
+  --uu-dot: 9px;
+  /* THE CTA BLUE, written literally (client 2026-08-10: "usá el celeste del CTA
+     para lo azul de esta sección"). It must NOT be --color-accent: this section is
+     .section--light, where that token re-resolves to blue-dark (#5287C9), which is
+     a visibly different blue from every button on the site. Safe on white for the
+     dot, the rail and the ring — they are graphics, so 3:1 applies and #3D9AD3
+     measures 3.11:1. The year is text and needs its own guard, see
+     .uu-mile__year. */
+  --uu-blue: var(--color-blue-light);
+  list-style: none;
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-6);
+}
+
+.uu-mile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  /* Room for the dot beside the year. */
+  padding-left: var(--space-6);
+}
+
+.uu-mile__dot {
+  position: absolute;
+  left: 0;
+  /* Optically centred on the year's first line (1.5rem at line-height 1). */
+  top: 8px;
+  width: var(--uu-dot);
+  height: var(--uu-dot);
+  border-radius: 50%;
+  background-color: var(--uu-blue);
+}
+
+/* The arrival ring (client 2026-08-10: "cuando vamos llegando a los puntos que se
+   haga un aro alrededor del bullet como lo hay en la homepage"). It IS the
+   homepage's ring — .pain-hook__node::after's own curve and timing, copied rather
+   than re-derived so the two read as one system: one expanding circle, brightest
+   a third of the way through, gone by the end. Replays every time the dot lands,
+   because js/steps-sequence.js takes .is-arrived off again on the way back up.
+   Sized against this dot, not the homepage's: 2.25rem is 4× a 9px dot, where the
+   homepage's 2.4rem is 6× its 0.4rem node.
+   The ring is a child of the dot, so it also inherits the dot's landing scale —
+   harmless, since it only ever animates once that landing has finished (scale 1).
+   prefers-reduced-motion neutralises the animation through motion.css's blanket
+   duration override, and .is-arrived is never added there in the first place. */
+.uu-mile__dot::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1px solid var(--uu-blue);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.4);
+  pointer-events: none;
+}
+
+.uu-mile.is-arrived .uu-mile__dot::after {
+  animation: uu-mile-halo 0.9s var(--easing-premium);
+}
+
+@keyframes uu-mile-halo {
+  0%   { opacity: 0;   transform: translate(-50%, -50%) scale(0.4); }
+  35%  { opacity: 0.5; }
+  100% { opacity: 0;   transform: translate(-50%, -50%) scale(1.7); }
+}
+
+/* The segment from THIS dot to the next one — never past the last, the same
+   :not(:last-child) rule the rest of the site's rails follow. A line running on
+   after the final event with nothing to reach is the bug /jobs/'s centred steps
+   already paid for once.
+   No occluding ring on the dot (unlike .service-konzept__step's): the segment
+   starts clear of it, so nothing has to be painted over. That also sidesteps a
+   documented trap — .section--light does NOT re-declare --color-bg, so a ring
+   using that token would render black inside this white section. */
+.uu-mile:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  /* Half the dot, minus half the 1px line, so it sits dead centre. */
+  left: calc(var(--uu-dot) / 2 - 0.5px);
+  top: calc(8px + var(--uu-dot) + 6px);
+  /* Down to 2px short of the next dot: this item's bottom edge, plus the row
+     gap, plus that dot's own 8px offset. */
+  bottom: calc(-1 * (var(--space-6) + 6px));
+  width: 1px;
+  background-color: var(--uu-blue);
+  transform: scaleY(var(--step-line, 1));
+  transform-origin: top center;
+}
+
+@media (min-width: 768px) {
+  .uu-miles {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  /* The dot moves above the year and the rail turns horizontal. */
+  .uu-mile {
+    padding-left: 0;
+    padding-top: var(--space-5);
+  }
+
+  .uu-mile__dot { top: 0; }
+
+  /* Same element re-aimed: from this dot's right edge to 6px short of the next
+     dot. `right` is an inset from this item's right edge, so reaching the next
+     column's left edge (where that dot sits) is a negative gap. */
+  .uu-mile:not(:last-child)::after {
+    left: calc(var(--uu-dot) + 6px);
+    top: calc(var(--uu-dot) / 2 - 0.5px);
+    right: calc(-1 * (var(--space-4) - 6px));
+    bottom: auto;
+    width: auto;
+    height: 1px;
+    transform: scaleX(var(--step-line, 1));
+    transform-origin: left center;
+  }
+}
+
+/* ---- The rail spans the whole content width, and the hops are not equal ----
+   Client 2026-08-10: the dots have to run the full width of the content column,
+   the labels have to be narrower, and equal hops make no sense for years that are
+   two, two, three and one apart.
+
+   THE LAST DOT SITS ON THE CONTENT'S RIGHT EDGE, which is what makes the rail
+   reach it: its track is 0 wide, so the fourth item's segment reaching `right`
+   lands exactly on it, and the item itself escapes that track (justify-self: end
+   + an explicit width) with its year and label right-aligned under it.
+
+   ⚠️ THE FOURTH TRACK HAS A FLOOR AND THAT IS THE WHOLE TRADE-OFF OF THIS BLOCK.
+   Every other track only has to hold its own label; the 2023 → 2024 hop has to
+   hold BOTH the 2023 label and the right-aligned 2024 one, and it is also the
+   shortest span. Measured: 105px (the 2023 label wrapped) + 19px clear + 132px
+   (the 2024 label) = 256px = 16rem. Strictly proportional it would be 1/8 of the
+   width — 154px at 1440 — and the two labels would sit on top of each other.
+   So it is pinned at 16rem and the remaining space goes to the other three in
+   2 : 2 : 3. At 1440 that reads 279 / 279 / 419 / 256px: the three-year hop is
+   clearly the longest and the one-year hop the shortest, which is the point.
+   Below ~1100px the floor grows past the two-year hops and the order stops
+   reading, which is why this layout starts there and 768–1099 keeps the equal
+   columns above.
+   ⚠️ Raising any label's max-width raises that floor. They are measured values,
+   not round ones. */
+@media (min-width: 1100px) {
+  .uu-miles {
+    grid-template-columns:
+      minmax(0, 2fr) minmax(0, 2fr) minmax(0, 3fr) minmax(16rem, 1fr) 0;
+    /* No gutter: the labels' own max-width leaves the breathing room, and a gap
+       would push the last dot off the content edge. */
+    gap: 0;
+  }
+
+  /* The next dot now sits exactly on this item's right edge. */
+  .uu-mile:not(:last-child)::after { right: 6px; }
+
+  /* Except the fourth: the last dot is a dot's width inside the edge, not on it. */
+  .uu-mile:nth-child(4)::after { right: calc(var(--uu-dot) + 6px); }
+
+  .uu-mile__what {
+    /* 8.25rem = 132px is not a round number: it is the narrowest cap that still
+       fits "Sicherheitsdienst" (130px measured, the longest word in the five
+       labels) on one line of its own. */
+    max-width: 8.25rem;
+    /* ⚠️ AND THAT CAP IS WHAT MAKES THIS SAFE. base.css sets hyphens: auto on
+       li, correct for prose and wrong for a stack of four-word labels: measured,
+       it rendered "größter Sicher- / heitsdienst" and "prak- / tisch von null
+       wie- / der aufgebaut", i.e. it broke the page's own keyword and read as a
+       rendering fault. With breaks falling only at spaces, no label can overflow
+       BECAUSE its longest word still fits the cap above — which is not true in the
+       768–1099 band, where a column is 115px and "Sicherheitsdienst" does not fit,
+       so hyphens stay on there. Same call /referenzen/ and /leistungen/'s centred
+       copy already make. */
+    -webkit-hyphens: none;
+    hyphens: none;
+  }
+
+  /* One step narrower, because this is the label that shares its hop with the
+     final one: wrapping it to "100 / Mitarbeitende" gives 105px instead of 122
+     and buys the floor above 27px. */
+  .uu-mile:nth-child(4) .uu-mile__what { max-width: 6.75rem; }
+
+  .uu-mile:last-child {
+    /* Escapes its 0-width track: min(max-content, 8.25rem), right edge on the
+       content edge. Stated explicitly rather than left to justify-self alone,
+       which would resolve to the widest word instead. */
+    width: max-content;
+    max-width: 8.25rem;
+    justify-self: end;
+    text-align: right;
+  }
+
+  .uu-mile:last-child .uu-mile__dot {
+    left: auto;
+    right: 0;
+  }
+}
+
+.uu-mile__year {
+  /* 1.5rem FLAT, not --font-size-lg's 21 → 25px clamp, and that is a CONTRAST
+     decision rather than a size preference. The CTA blue measures 3.11:1 on
+     white: enough for the 3:1 that applies to LARGE text (WCAG: 24px at any
+     weight) and short of the 4.5:1 for normal text. Pinned at 24px the large
+     threshold applies at every viewport; the clamp fell to 21px below 1440, where
+     it would not. Same call .combo-steps__title makes.
+     ⚠️ Do not put the clamp back without revisiting the colour. */
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--uu-blue);
+  font-variant-numeric: tabular-nums;
+}
+
+.uu-mile__what {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+  color: rgb(59 73 86 / 0.75);
+}
+
+/* ---- Führung ------------------------------------------------------------ */
+.uu-lead__grid {
+  display: grid;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .uu-lead__grid {
+    /* 2026-08-10: text moved to column 1 (client: text left, photo right —
+       matches the new DOM order above). Text still gets the wider column;
+       the photo grew (0.6fr → 0.8fr, and its own max-width cap moved with
+       it, see .uu-lead__photo) without becoming the dominant element. */
+    grid-template-columns: 1fr 0.8fr;
+    gap: var(--space-9);
+  }
+}
+
+/* Real portrait since 2026-08-10 (was a reserved frame — the aspect-ratio is
+   the same value that used to hold the empty space).
+   ⚠️ No radius, no border, no background tint, on purpose: the photo's own
+   backdrop is pure black (0,0,0 measured), matching --color-bg exactly, so
+   it blends straight into the section — a radius would round nothing but
+   black, and a border/tint would draw an edge around a photo that already
+   has none. Same call as /jobs/'s KarriereHero portrait.
+   max-width 22rem → 30rem the same day (client: "la foto tiene que ser más
+   grande") — re-exported at 480/960w to match, see the <picture> markup. */
+.uu-lead__photo {
+  aspect-ratio: 4 / 5;
+  max-width: 30rem;
+}
+
+.uu-lead__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.uu-lead__text p {
+  margin-top: var(--space-4);
+  max-width: 46rem;
+  color: var(--color-text-muted);
+  line-height: var(--line-height-base);
+}
+
+/* ---- Sechs Versprechen ---------------------------------------------------
+   Client 2026-08-10: the old four-column .lh-why* left a stranded row of two
+   under two empty columns (six items in four columns), asked for it to feel
+   "más dinámico", and named the site's own background-mark idiom by name
+   ("subrayar el fondo de lo más importante, como hacemos en otras secciones").
+   Rebuilt as its own block: THREE across so six items are two clean rows (the
+   client's own "3 y 3"), a numeral per promise (the set is real HTML text
+   either way — the numeral is a rhythm device, not the labelling), and the
+   title wiped in by js/uu-promise-marks.js exactly like /leistungen/'s cards.
+   Heading centred, content left — the same split /leistungen/'s own Warum
+   section and this page's Zertifikate/Innovation already use. */
+.uu-promises .section__intro { text-align: center; }
+
+.uu-promises .section__intro h2 {
+  max-width: 28ch;
+  margin-inline: auto;
+  text-wrap: balance;
+}
+
+.uu-promises__list {
+  list-style: none;
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-7);
+}
+
+@media (min-width: 640px) {
+  .uu-promises__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Three across from 900px — two clean rows of three, the width this project
+   already measures for a comfortable three-column row (the Innovation/
+   Erreichbarkeit tics elsewhere use the same breakpoint for the same reason:
+   three columns need more room per item than four before they cramp). */
+@media (min-width: 900px) {
+  .uu-promises__list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: var(--space-8);
+    column-gap: var(--space-7);
+  }
+
+  /* A quiet grid of hairlines rather than six separate cards — this page has
+     no competing card grid to stay quieter than, so a light table-of-facts
+     feel reads as more considered than either plain stacked blocks or a
+     second card treatment borrowed from a different page. Vertical rule
+     between columns, horizontal rule between the two rows; both sides get
+     matching padding so the rule sits exactly between two items, not hugging
+     one of them. */
+  .uu-promises__item:not(:nth-child(3n)) {
+    border-right: 1px solid var(--color-border);
+    padding-right: var(--space-7);
+  }
+
+  .uu-promises__item:nth-child(n + 4) {
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-7);
+  }
+}
+
+.uu-promises__item {
+  position: relative;
+}
+
+/* Tabular, thin, blue — a rhythm device sized to lead the eye down the row,
+   not a caption. aria-hidden: the <ol> already numbers these for assistive
+   tech, and the promise names carry the actual meaning. --color-accent is
+   blue-light here (no .section--light on this dark section), 6.8:1 on black —
+   though as decoration it only needs the 3:1 a graphic gets. */
+.uu-promises__num {
+  display: block;
+  margin-bottom: var(--space-3);
+  font-size: clamp(1.75rem, 1.4rem + 1.3vw, 2.5rem);
+  font-weight: var(--font-weight-light);
+  line-height: 1;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.uu-promises__title {
+  margin-bottom: var(--space-3);
+  /* Body metrics on purpose (design-system §2): a heading styled as body copy
+     takes body metrics, not the −1px display tracking base.css puts on every
+     heading by default. */
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: normal;
+  line-height: var(--line-height-heading);
+}
+
+/* The mark itself — SAME RECIPE as .lh-card__mark (css/page-leistungen.css),
+   values copied rather than re-derived so the two read as one idiom on two
+   pages: a filled background clipped to the words, grown from 0 to 100% width
+   by js/uu-promise-marks.js as the item scrolls into view.
+   ⚠️ FILLED BY DEFAULT (background-size: 100% 100%). Only .uu-promises--live
+   (added by that script, once GSAP/ScrollTrigger are confirmed present and
+   prefers-reduced-motion is off) switches the fill to be driven by --mark.
+   That order is the whole no-JS contract: without it, or under reduced
+   motion, or on a crawler, every title renders already highlighted — never
+   unmarked. Same bug class .service-contrast__mark's first build shipped
+   (measured mark=0% under forced reduced motion, i.e. the highlight
+   vanished) — the fallback here can never be 0 for the same reason. */
+.uu-promises__mark {
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--color-blue-dark) 85%, var(--color-logo-black)),
+    color-mix(in srgb, var(--color-blue-dark) 85%, var(--color-logo-black))
+  );
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 100% 100%;
+  padding-inline: 0.14em;
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  color: var(--color-white);
+}
+
+.uu-promises--live .uu-promises__mark {
+  background-size: calc(var(--mark, 1) * 100%) 100%;
+}
+
+.uu-promises__text {
+  max-width: 28rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+}
+
+/* ---- Zertifikate -------------------------------------------------------- */
+/* The block itself is the shared .trust-certs (css/page-service.css). Only two
+   things differ here, and both come from it being the SECTION rather than a
+   footer under other content — on /referenzen/ and /sicherheitsdienst-nuernberg/
+   it closes a section, so it carries a top rule and top padding to separate
+   itself from what precedes it. Here nothing precedes it but its own H2, where
+   that rule would read as a stray divider under the heading. */
+.uu-certs {
+  margin-top: var(--space-7);
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* The whole section centres with it (client 2026-08-10: "centrada toda la
+   sección"), so the heading has to come along — otherwise it reads as a centred
+   block hanging off a left-ranged title.
+   ⚠️ Two classes, not one: page-service.css styles `.section__intro` generically
+   and a single-class selector would tie and lose on source order. Capped in `ch`
+   and given auto margins, because `text-align` centres the TEXT while the auto
+   margins centre the BOX — the trap this project has now hit in five places. */
+.uu-zert .section__intro { text-align: center; }
+
+.uu-zert .section__intro h2 {
+  max-width: 24ch;
+  margin-inline: auto;
+}
+
+/* ---- Innovation & digitale Werkzeuge ------------------------------------ */
+/* Same centring as .uu-zert right above it (client 2026-08-10), so the two
+   light sections read as one continuous, centred chapter.
+   ⚠️ Two classes, not one — same specificity trap: page-service.css styles
+   `.section__intro` generically and a single-class selector loses on source
+   order. `text-align` centres the TEXT; `margin-inline: auto` centres the BOX. */
+.uu-inno .section__intro { text-align: center; }
+
+.uu-inno .section__intro h2 {
+  max-width: 28ch;
+  margin-inline: auto;
+}
+
+.uu-inno .section__intro > p {
+  margin-inline: auto;
+}
+
+/* ---- Team / Karriere ------------------------------------------------------
+   Client 2026-08-10: "esto centrame" — the heading, its paragraph, AND the
+   "Sie wollen Teil davon werden?" line below, so the whole section reads as one
+   centred block rather than a left-ranged heading over a left-ranged closing
+   line. Same centring already used on .uu-story / .uu-zert / .uu-inno above.
+   ⚠️ Two classes, not one — the same specificity trap those three already
+   document: page-service.css styles `.section__intro` generically and a
+   single-class selector loses on source order. `text-align` centres the TEXT;
+   `margin-inline: auto` centres the BOX. */
+.uu-team .section__intro { text-align: center; }
+
+.uu-team .section__intro h2 {
+  max-width: 34ch;
+  margin-inline: auto;
+  text-wrap: balance;
+}
+
+.uu-team .section__intro > p {
+  margin-inline: auto;
+}
+
+/* The closing line is a sibling of .section__intro, not a child of it — its own
+   rule, and `justify-content` is enough: as a block-level flex row it already
+   spans the full container, so what needs centring is its CONTENT, not its box. */
+.uu-team__link {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3) var(--space-4);
+  margin-top: var(--space-6);
+  color: var(--color-text-muted);
+}

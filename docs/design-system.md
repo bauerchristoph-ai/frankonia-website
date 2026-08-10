@@ -314,6 +314,15 @@ blanco puro. Se construyó primero con `#4673AB` (4,88:1) y el cliente pidió
 explícitamente el azul del CTA. Mismo caveat, misma mitigación: **texto blanco
 sólido** (un nivel de alpha lo bajaría de 3:1) y jerarquía por tamaño y peso.
 
+> ⚠️ **Ese segundo caso YA NO EXISTE (2026-08-07).** El cliente reemplazó el fill
+> por una flecha diagonal + un subrayado azul bajo el título, así que el azul ahí
+> es ahora sólo **gráfico** (la flecha y una regla de 2px), donde la barra
+> aplicable es 3:1 y 3,11 la pasa. **El caveat se cerró solo, y por el camino
+> correcto**: no se cambió el color, cambió qué lo lleva. Sigue vigente el primer
+> caso (las 4 cards de Anwendungsfälle). Cuando un fill de marca no llega a 4,5:1,
+> pasar el color a un gráfico y devolver el texto a los colores de la sección es
+> una salida real, además de bajarle el tono al color.
+
 ⚠️ **Dos trampas al escribir "el azul del CTA":**
 1. Es **`--color-blue-light`**. `.btn--primary` (components.css) usa ese token desde
    el 2026-07-28; `--color-blue-dark` es su estado hover. La tabla de colores de

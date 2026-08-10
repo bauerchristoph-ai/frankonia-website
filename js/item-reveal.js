@@ -55,32 +55,87 @@
     // the start state is applied only here at runtime; no CSS hides anything.
     const strong = group.hasAttribute("data-item-reveal-strong");
 
-    gsap.fromTo(
-      items,
-      {
-        opacity: 0,
-        y: strong ? 48 : 24,
-        scale: strong ? 0.97 : 1,
-        filter: strong ? "blur(10px)" : "blur(6px)",
+    // PER-ITEM MODE — opt-in via data-item-reveal-each (client 2026-08-07, on
+    // /werkschutz/'s risk cards: "quiero que aparezcan un poco antes las cards…
+    // si no escroleo y terminan apareciendo muy tarde").
+    //
+    // The default below is ONE timeline whose range spans the whole GROUP, which
+    // is right for a single row or a short list but breaks down on a tall
+    // multi-row grid: the range is as tall as the grid, so the second row only
+    // reveals near the end of it. Measured on the risk grid (4 cards, ~1150px):
+    // card 3 finished with its own top 122px ABOVE the viewport. Per item, each
+    // card is triggered by ITSELF, so it always arrives at the same point in its
+    // own approach no matter which row it is in.
+    //
+    // Same preset values, same scrub, no stagger (a per-item trigger IS the
+    // stagger), and the same JS-only-ever-enhances contract.
+    const each = group.hasAttribute("data-item-reveal-each");
+    // Per-group start/end overrides. `end` has been here since 2026-07-28 (the
+    // outfit-name list finished too late); `start` is the symmetric lever, added
+    // 2026-08-07 for the same reason in the other direction.
+    const startAttr = group.getAttribute("data-item-reveal-start");
+    const endAttr = group.getAttribute("data-item-reveal-end");
+
+    const from = {
+      opacity: 0,
+      y: strong ? 48 : 24,
+      scale: strong ? 0.97 : 1,
+      filter: strong ? "blur(10px)" : "blur(6px)",
+    };
+    const to = {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      filter: "blur(0px)",
+      ease: strong ? "power3.out" : "power2.out",
+    };
+
+    // ⚠️ DROP THE FILTER ONCE THE ITEM IS FULLY REVEALED. `filter: blur(0px)` is not
+    // free: any filter other than `none` keeps the element on its own compositing
+    // layer, blurring nothing, for the rest of the visit. Measured on the German
+    // homepage (2026-08-08, client: it "se tranca un poco" going past the map): 116
+    // elements sat on a leftover filter, and the page's 3s trace was spending 2678ms
+    // in Layerize. The sibling half of that bug was js/title-reveal.js's permanent
+    // will-change — see the long note there for the numbers.
+    //
+    // Only on `onLeave`, and that is the safe edge on purpose: it fires at the END of
+    // the range, where the item is already at opacity 1 / blur 0 / no offset — i.e.
+    // exactly the CSS resting state, so removing the inline styles changes nothing on
+    // screen. Doing the same at `onLeaveBack` would strip a start state that is
+    // `opacity: 0` and make unrevealed content flash into view.
+    //
+    // Re-entering from below is fine: the scrub re-renders the tween, which writes
+    // the properties again from scratch.
+    const drop = (targets) => ({
+      onLeave: () => gsap.set(targets, { clearProps: "filter,willChange" }),
+    });
+
+    if (each) {
+      items.forEach((item) => {
+        gsap.fromTo(item, from, {
+          ...to,
+          scrollTrigger: {
+            trigger: item,
+            start: startAttr || (strong ? "top 85%" : "top 88%"),
+            end: endAttr || (strong ? "top 55%" : "top 60%"),
+            scrub: strong ? 0.6 : 0.5,
+            ...drop(item),
+          },
+        });
+      });
+      return;
+    }
+
+    gsap.fromTo(items, from, {
+      ...to,
+      stagger: strong ? 0.16 : 0.1,
+      scrollTrigger: {
+        trigger: group,
+        start: startAttr || (strong ? "top 85%" : "top 88%"),
+        end: endAttr || (strong ? "bottom 60%" : "top 60%"),
+        scrub: strong ? 0.6 : 0.5,
+        ...drop(items),
       },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        filter: "blur(0px)",
-        ease: strong ? "power3.out" : "power2.out",
-        stagger: strong ? 0.16 : 0.1,
-        scrollTrigger: {
-          trigger: group,
-          start: strong ? "top 85%" : "top 88%",
-          // Per-group end override (client 2026-07-28): the outfit-name list
-          // finished too late — the last item was still blurry as you scrolled
-          // the character out of view. data-item-reveal-end lets a single group
-          // complete its reveal earlier without touching the shared presets.
-          end: group.getAttribute("data-item-reveal-end") || (strong ? "bottom 60%" : "top 60%"),
-          scrub: strong ? 0.6 : 0.5,
-        },
-      }
-    );
+    });
   });
 })();

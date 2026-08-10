@@ -332,6 +332,12 @@
        own header comment for the full mechanism. -->
   <script src="/js/pixel-transition.js" defer></script>
 
+  <!-- Sektion 12's three cards: the frame draws and the key phrase highlights,
+       both scrubbed to scroll. Same GSAP + ScrollTrigger above, no new lib.
+       Homepage-only, its own tag — see the file's header for why it duplicates
+       js/service-contrast.js's frame mechanism instead of sharing it (yet). -->
+  <script src="/js/philosophy-cards.js" defer></script>
+
   <!-- Leaflet.js + OpenStreetMap, self-hosted (assets/js/vendor/leaflet.js,
        css/vendor/leaflet.css — no CDN, same self-hosting pattern as
        GSAP/fonts). Approved 2026-07-21 (client brief: interactive
@@ -1332,7 +1338,7 @@
             <article class="system-story__card" data-system-card>
               <div class="system-story__card-inner">
               <div class="system-story__media" data-visual="uniforms">
-                <picture><source type="image/webp" srcset="/assets/images/system-first-impression-640.webp 640w, /assets/images/system-first-impression-956.webp 956w" sizes="(min-width: 768px) 540px, 100vw"><img class="system-story__img" src="/assets/images/system-first-impression.jpg" alt="Professionelles FRANKONIA-Sicherheitspersonal vor Ort" width="956" height="1052" loading="lazy"></picture>
+                <picture><source type="image/webp" srcset="/assets/images/system-first-impression-640.webp 640w, /assets/images/system-first-impression-956.webp 956w" sizes="(min-width: 768px) 540px, 100vw"><img class="system-story__img" src="/assets/images/system-first-impression.jpg" alt="Professionelles FRANKONIA-Sicherheitspersonal vor Ort" width="956" height="1195" loading="lazy"></picture>
               </div>
                 <div class="system-story__body">
                   <h3 class="system-story__title"><span class="system-story__num">1.</span> Professioneller Eindruck</h3>
@@ -2142,10 +2148,14 @@
          added — see Trust Metrics' own section comment above and
          CLAUDE.md for why (invisible black-tile-on-black-background,
          client asked to isolate testing to Services → Uniforms only). -->
-    <!-- No seam here: the form section is dark now, and Coverage is dark too —
-         the white->black pixel transition moved to BEFORE the form section
-         (client 2026-07-29). Dark flows straight into dark. -->
-    <section class="section coverage">
+    <!-- Pixel-seam: dark form section -> WHITE Coverage (client 2026-08-08).
+         Default black tiles (no modifier): a seam's tiles are always the colour
+         the section ABOVE actually ends on, and .conversion is --color-bg. This
+         seam was removed 2026-07-29 when Coverage was dark (black over black is
+         invisible) and is back now that Coverage is white. Band sits in
+         Coverage's top; its padding-top reserves the height. -->
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <section class="section coverage" data-nav-theme="light">
       <div class="container">
         <!-- Reveal decoupled (client 2026-07-29): lede eases in after the title. -->
         <div class="section__intro coverage__intro">
@@ -2215,6 +2225,10 @@
       </div>
     </section>
 
+    <!-- Pixel-seam: WHITE Coverage -> dark Philosophy (client 2026-08-08).
+         White tiles, matching the section above. -->
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
     <!-- ============ 6.6 SICHERHEIT, WIE WIR SIE VERSTEHEN ============
          Sektion 12 of "2026-08-04 Webtext 01 Homepage.docx" (NEW in copy v2),
          placed exactly where the doc puts it: "NEUE Sektion unter den
@@ -2227,11 +2241,13 @@
          paragraph pairs under one H2, no cards, no imagery, no motion of its
          own beyond the shared primitives.
 
-         DARK section, and there is NO pixel-seam between it and Coverage above:
-         both sit on the plain page background, and a band of black tiles over
-         black is invisible (docs/page-conventions.md §9.2). The existing seam
-         below still belongs to the white FAQ section, whose padding-top reserves
-         its band — that pairing is untouched.
+         DARK section. Since 2026-08-08 there IS a pixel-seam above it, because
+         Coverage went white: white tiles (.pixel-seam--white) dissolve out of
+         Coverage over this section's dark top, and .pixel-seam + .philosophy
+         reserves the band height. (Until then Coverage was dark too and a band
+         of black tiles over black is invisible — docs/page-conventions.md §9.2.)
+         The seam below still belongs to the white FAQ section, whose padding-top
+         reserves its own band — that pairing is untouched.
 
          Note the H2 is the doc's own "Ihr Sicherheitsdienst für Franken…";
          "Sicherheit, wie wir sie verstehen" is the section's NAME in the brief,
@@ -2248,18 +2264,18 @@
           <h2 id="philosophy-title">Ihr Sicherheitsdienst für Franken: Qualität, Innovation, Verantwortung</h2>
         </div>
 
-        <div class="philosophy__grid" data-item-reveal=".philosophy__item">
+        <div class="philosophy__grid" data-item-reveal=".philosophy__item" data-philosophy-cards>
           <article class="philosophy__item">
             <h3 class="philosophy__item-title">Wachdienst, Wachschutz, Werkschutz — oder Sicherheitsdienst?</h3>
-            <p class="philosophy__item-text">Die Begriffe meinen im Kern dasselbe: die gewerbliche Bewachung von Objekten, Werten und Menschen nach § 34a GewO. „Wachdienst" und „Wachschutz" stehen meist für klassische Bewachung und Kontrollgänge, „Werkschutz" für den Schutz laufender Industriebetriebe, „Sicherheitsdienst" ist der Oberbegriff — von der Brandwache über die Baustellenbewachung bis zur Kaufhausdetektei. Entscheidend ist nicht der Name, sondern Qualifikation, Zertifizierung und ein System, auf das Sie sich verlassen können.</p>
+            <p class="philosophy__item-text">Die Begriffe meinen im Kern dasselbe: die gewerbliche Bewachung von Objekten, Werten und Menschen nach § 34a GewO. „Wachdienst" und „Wachschutz" stehen meist für klassische Bewachung und Kontrollgänge, „Werkschutz" für den Schutz laufender Industriebetriebe, „Sicherheitsdienst" ist der Oberbegriff — von der Brandwache über die Baustellenbewachung bis zur Kaufhausdetektei. Entscheidend ist nicht der Name, sondern <span class="philosophy__mark">Qualifikation, Zertifizierung und ein System</span>, auf das Sie sich verlassen können.</p>
           </article>
           <article class="philosophy__item">
             <h3 class="philosophy__item-title">Ein Einsatzgebiet, ein Standard</h3>
-            <p class="philosophy__item-text">Ob Objektschutz in Bamberg, Werkschutz im Großraum Nürnberg, Baustellenbewachung in Würzburg oder Brandwache in Erlangen und Fürth: FRANKONIA arbeitet überall mit denselben zertifizierten Prozessen (DIN 77200-1, ISO 9001, DEKRA-geprüft). Auch in Schweinfurt, Bayreuth, Coburg, Forchheim und Ansbach sind wir im Einsatz — und darüber hinaus in Hof, Kronach, Kulmbach, Lichtenfels oder Schwandorf. Ihre Kräfte arbeiten fest vor Ort im Objekt, koordiniert von einer Einsatzleitung, die Sie rund um die Uhr direkt erreichen.</p>
+            <p class="philosophy__item-text">Ob Objektschutz in Bamberg, Werkschutz im Großraum Nürnberg, Baustellenbewachung in Würzburg oder Brandwache in Erlangen und Fürth: FRANKONIA arbeitet <span class="philosophy__mark">überall mit denselben zertifizierten Prozessen</span> (DIN 77200-1, ISO 9001, DEKRA-geprüft). Auch in Schweinfurt, Bayreuth, Coburg, Forchheim und Ansbach sind wir im Einsatz — und darüber hinaus in Hof, Kronach, Kulmbach, Lichtenfels oder Schwandorf. Ihre Kräfte arbeiten fest vor Ort im Objekt, koordiniert von einer Einsatzleitung, die Sie rund um die Uhr direkt erreichen.</p>
           </article>
           <article class="philosophy__item">
             <h3 class="philosophy__item-title">Innovativ, langfristig, auf Ihrer Seite</h3>
-            <p class="philosophy__item-text">Wir sehen Sicherheit anders als viele in der Branche: nicht als verkaufte Stunden, sondern als System, das laufend besser wird. Digitale Nachweise statt Behauptungen, ein kostenfreies Sicherheitskonzept, das mit unserer KI-gestützten Software auch Einsparpotenziale findet, und Bestandskundenpflege, die so weit geht, dass wir eigene Stunden reduzieren, wenn es für Sie die richtige Entscheidung ist. Kunden haben so bis zu 30 % Kosten gespart — bei gleichbleibender Sicherheit.</p>
+            <p class="philosophy__item-text">Wir sehen Sicherheit anders als viele in der Branche: nicht als verkaufte Stunden, sondern als System, das laufend besser wird. Digitale Nachweise statt Behauptungen, ein kostenfreies Sicherheitskonzept, das mit unserer KI-gestützten Software auch Einsparpotenziale findet, und Bestandskundenpflege, die so weit geht, dass wir eigene Stunden reduzieren, wenn es für Sie die richtige Entscheidung ist. Kunden haben so <span class="philosophy__mark">bis zu 30 % Kosten gespart</span> — bei gleichbleibender Sicherheit.</p>
           </article>
         </div>
       </div>

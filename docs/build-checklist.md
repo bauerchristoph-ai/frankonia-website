@@ -224,25 +224,311 @@ formulario compartido.*
 *Las 10 fotos de servicio ya están. Esto es ensamblado.*
 
 ### Bloque 4 — Primera ciudad (1 página)
-- [ ] `/sicherheitsdienst-nuernberg/` — la más importante
-- [ ] 🔴 **Conseguir fotos de ciudad: no hay ninguna**
-- [ ] Reusar: índice de servicios · barra de confianza · pastillas · formulario
-- [ ] Nuevo acá: casi nada, salvo el bloque de precios en versión corta
+- [x] `/sicherheitsdienst-nuernberg/` — **2026-08-09**, la más importante (su
+      propio draft se titula "WICHTIGSTE STADTSEITE", ~1.240 búsquedas/mes
+      combinadas). Texto real del Webtext 13, alemán, 11 secciones, 9 seams.
+      **Arregla un 404 que estaba en vivo en el footer de todas las páginas y en
+      los chips de Coverage del homepage.** Es la plantilla de las 9 restantes:
+      `css/page-city.css` (~600 líneas) sobre `page-service.css` de chasis.
+      Medida a 320/390/768/900/1024/1200/1440/1600: **sin scroll horizontal**,
+      **cero fallos de contraste**, los 8 bloques de contenido con el texto en la
+      misma línea izquierda, un solo `<h1>` y sin saltos de nivel, FAQ visible ↔
+      `FAQPage` **6/6 idénticas**. Sin JS: nada oculto, 9.532 caracteres de texto
+      real y 21 links en `<main>`.
+      Documentada en [page-conventions.md §10](page-conventions.md#10-página-de-ciudad).
+  - [x] **Sección de Leistungen rehecha en DOS GRUPOS** (2026-08-09, después de
+        leerla a nivel UX): los 4 con página de ciudad como **cards** (4 en una
+        fila, el gemelo oscuro de las cards de Warum) y los 4 con página genérica
+        como **filas** bajo la etiqueta "Ebenfalls verfügbar". Los 8 conservan su
+        descripción — el grupo 2 son filas y no chips justamente por eso, así que
+        no se perdió ni un carácter de los ~760 de copy. **El split no reordena
+        nada:** el draft ya los lista 1–4 ciudad / 5–8 genéricos.
+        Medido a 320 → 1600: radio, padding y tamaño de nombre **idénticos** a la
+        card de Warum en todos los anchos, contraste sin fallos, cero targets bajo
+        44px, sin scroll horizontal. La sección pasó de 1.207 a 1.302px a 1440.
+  - [ ] 🔴 **Pregunta abierta para Chris: sacar " in Nürnberg" de los labels de
+        servicio.** Los 8 miden 22–32 caracteres y comparten el sufijo; sin él
+        quedarían en 10–20 y la lista se escanearía al doble de velocidad. **No se
+        hizo**: es la "einheitliche Benennung" del draft y son 8 instancias del
+        keyword principal. Por eso la etiqueta del grupo 2 dice "Ebenfalls
+        verfügbar" y no "Ebenfalls im Großraum Nürnberg verfügbar" — con los
+        labels intactos, nombrar la ciudad también ahí la repetía tres veces en dos
+        líneas.
+  - [ ] 🟡 **Fotos por servicio en las 4 cards** — las 10 fotos existen
+        (`assets/images/<service>.webp`) pero son verticales 820×1227 y harían
+        falta exports 4:3 nuevos para un tope de card de ~290px. Se dejó afuera de
+        esta pasada; es la mejora obvia si la página se siente muy tipográfica.
+  - [x] **Los 5 Lokale Einsatzfelder cierran cada uno con un link a su servicio**
+        (2026-08-09, mismo pedido abierto de UX). Los 5 describen, casi textual,
+        un servicio puntual; la sección no enlazaba a ninguno. 3 de 5 lo nombran
+        directo en la frase, los otros 2 usan casi las mismas palabras que la
+        Sección 3 usa para ese servicio. **Revier- & Schließdienst consigue acá su
+        único link de toda la página** — no está en la lista de 8 de arriba.
+        ⚠️ El emparejamiento es inferencia mía, no del draft — vale confirmarlo con
+        Chris, aunque de bajo riesgo (3 de 5 nombran el servicio directo).
+        De paso se cerró un hueco real: con 5 en una grilla 2-up el ítem 5 quedaba
+        solo, con un hueco medido de 752 a 1337px a 1440. Ahora ocupa las dos
+        columnas desde 900px.
+  - [x] 🐛 **Bug de contraste pre-existente encontrado y arreglado en la fuente**:
+        `.service-link` dentro de `.section--light` daba 3,71:1 (falla 4,5:1 de
+        texto normal) — **ya estaba en vivo en `/referenzen/`** (sus 3 links de
+        "Case Study lesen"), sin detectar. Un solo fix en `page-service.css` lo
+        corrigió en las dos páginas: **4,9:1** con la mezcla profunda ya
+        documentada. Re-medido: `/referenzen/` y `/werkschutz/` sin cambios de
+        layout, sin scroll horizontal.
+  - [x] 🔴→✅ **Fotos de ciudad: ya no bloquean.** El hero **no lleva foto**,
+        y no es un parche: el Hero-Aufbau del draft de Nürnberg no pide imagen
+        (el de Bamberg sí). En su lugar va **el contorno administrativo real de
+        la ciudad** como `<path>` inline, generado una vez con
+        `docs/design-sources/city-outline.py` desde los geojson que ya estaban en
+        el repo. Cero requests, cero terceros, **ningún elemento LCP de imagen en
+        la página**, y honesto para un Einsatzgebiet (un área, no una dirección).
+        Correr el script con el slug de cada ciudad; las 10 ya tienen geojson.
+  - [x] Reusado sin tocar nada: la sección de Kosten entera (`.service-price*` +
+        `include: price-box`), el formulario (`partials/lead-form.html`), el FAQ
+        (`.faq__list--cards`), la card de testimonio (`css/testimonials.css`) y
+        todo el chasis (inset, `main h2`, breadcrumb, seams, `.section--light`).
+  - [x] **`.ref-certs*` promovido a `.trust-certs*` en `page-service.css`** —
+        esta página era el tercer consumidor, que es justo el disparador que
+        CLAUDE.md había anotado. `/referenzen/` migrado en el mismo commit y
+        **re-medido: sello 70×106 a 1440 y 53×80 a 390, ratio 0,665 = 399/600
+        exacto, 3 columnas desde 700px — idéntico a antes.**
+  - [x] `content/values.json`: `price.werkschutz` → **`price.range`**. Los
+        Webtexte publican el mismo 26-32 para todos los servicios y ciudades, así
+        que un nombre por servicio invitaba a una segunda copia del mismo número.
+  - [ ] ⚠️ **Confirmar con Chris:** (1) los 2 testimonios van **completos**, no
+        "gekürzt wie Demo" como pide el draft — acortar la cita de un cliente real
+        con nombre es editarle las palabras a una persona, y no hay versión corta
+        en ningún documento; (2) **"Bayernhafen Nürnberg"** aparece en el
+        Einsatzfeld 01 (es el puerto público como descripción geográfica, no el
+        cliente de Bamberg cuya Freigabe nunca llegó, pero el nombre tiene
+        historia en este proyecto); (3) el H2 de Umgebung es la **cuarta
+        excepción** a la escala de títulos de §2 — la próxima tiene que replantear
+        §2 en vez de sumarse.
+  - [ ] La página enlaza **15 URLs confirmadas que todavía no existen** (7
+        servicios, las 4 combo de Nürnberg, 2 ciudades vecinas, `/einsatzgebiete/`,
+        `/leistungen/`). Es la convención del proyecto (§8.3), no placeholders —
+        y el CTA primario sí apunta al formulario vivo de la propia página.
 
 ### Bloque 5 — Las 9 ciudades restantes
-- [ ] Würzburg · Bamberg · Erlangen · Fürth · Bayreuth · Schweinfurt ·
+- [ ] Würzburg · **Bamberg** · Erlangen · Fürth · Bayreuth · Schweinfurt ·
       Coburg · Forchheim · Ansbach
+- [ ] Cada una: copiar la página de Nürnberg, cambiar copy + meta + JSON-LD
+      (`areaServed`), correr `city-outline.py <slug>` para el contorno, cambiar
+      las vecinas y el `prefix` del formulario. **`page-city.css` no se toca.**
+- [ ] ⚠️ **Bamberg es la única con estructura distinta**: es el único sitio con
+      dirección real, así que va con NAP completo + geo, badge "Unser Zuhause:
+      Sitz in Bamberg" y una Zuhause-Story en vez de las 4 tarjetas de "Warum".
+      Su draft lo marca como "Struktur-Variante Heimmarkt". Es una sección
+      distinta, no una hoja de estilos distinta.
 
 ### Bloque 6 — Primer combo + los 15 restantes
-- [ ] `/brandwache-nuernberg/` de prueba (7 secciones, todas ya existentes)
-- [ ] Los otros 15
+- [x] `/brandwache-nuernberg/` — **2026-08-09**, texto real del Webtext 34
+      (Stand 25.07.2026), alemán, 8 secciones. Cierra un 404 que ya estaba en vivo:
+      la página de ciudad lo enlaza **tres veces** (filas de servicio, callout de
+      Brandwache y FAQ). "Puro ensamblado" resultó cierto: **`css/page-combo.css`
+      son cuatro reglas**, porque la página carga `page-service.css` de chasis
+      **y `page-city.css` de capa geo** (badge, contorno, tics en columna, bloques
+      numerados, cards de Warum, filas de servicio, ritmo de teléfono). La
+      plantilla completa está en
+      [page-conventions.md §11](page-conventions.md#11-página-combo-servicio--ciudad).
+  - [x] Por qué ésta primero: el draft se llama "stärkste Kombi" (20/mo, la más
+        alta de las 16) y es la LP de Ads de K2/K5 — y es la única de las cuatro
+        con hero **Notfall**, así que construirla primero obliga a la plantilla a
+        resolver el caso raro (**el teléfono como CTA primario**) en vez de
+        descubrirlo en la página 14.
+  - [x] Medida a 320 / 360 / 390 / 430 / 768 / 900 / 1024 / 1100 / 1280 / 1440 /
+        1600 / 1920: **sin scroll horizontal en ninguno**, un solo `<h1>`, sin
+        saltos de nivel, 6 seams con el color de tile correcto, FAQ visible ↔
+        `FAQPage` **6/6 byte-idénticas**, `<title>` 60 y meta 145. Sin JS
+        (scripts desactivados de verdad): 3.394 caracteres de texto real en
+        `<main>`, 24 headings, 0 tiles, 0 elementos ocultos. Pasada de scroll
+        completa con motion prendido: nada queda en opacidad <1 ni con blur, y
+        **0 elementos con `will-change` en reposo**.
+  - [x] **2026-08-10 — la sección de Kosten quedó INVERTIDA** (cliente: fondo negro,
+        card blanca, sólo en esta sección). Scopeado a `.combo-price`: las otras 26
+        páginas que publican ese bloque siguen con la card negra. **De paso arregló
+        el ritmo de color**: la card negra obligaba a que su sección fuera clara, lo
+        que dejaba Warum + Kosten + FAQ como un solo capítulo claro de tres
+        secciones; ahora la página **alterna hasta abajo, 8 seams**. Card blanca con
+        los valores de la del formulario (misma página), y medida: label/unit/note
+        5,25:1, la cifra 20,87:1, los tics 9,24:1.
+  - [x] **Bug de contraste encontrado midiendo y arreglado en las DOS páginas:**
+        los links dentro de una respuesta del FAQ heredaban blue-light, que sobre
+        el relleno de la card mide **2,87:1**. `.city-faq .faq-item__answer a`
+        (page-city.css) ahora usa la mezcla profunda de §5, **4,88:1** — o sea
+        también arregla `/sicherheitsdienst-nuernberg/`, donde estaba en vivo.
+  - [ ] ⚠️ **Confirmar con Chris:** el texto de anclaje del link al Ratgeber
+        ("Wann eine Brandwache vorgeschrieben ist") está **escrito para el build** —
+        el draft ahí sólo pone la URL suelta. Es el nombre de la página destino en
+        sus propias palabras, misma convención que usó la página de ciudad.
+  - [ ] La página enlaza 3 URLs confirmadas que todavía no existen (`/brandwache/`,
+        `/ratgeber/brandwache-wann-vorgeschrieben/`, `/einsatzgebiete/`). Es la
+        convención del proyecto (§8.3) — y el CTA primario sí es el teléfono real
+        y el secundario el formulario vivo de la propia página.
+- [ ] Los otros 15 — copiar la página, cambiar copy + meta + JSON-LD + contorno +
+      `prefix` del formulario. **`page-combo.css` no se toca.** Ojo: las otras tres
+      de Nürnberg varían su sección 2 a propósito (Objekt-Typen / Industrie-Fokus /
+      Bauphasen) y **su hero lidera con el formulario, no con el teléfono**.
 
 *Es el tipo de página más corto y el más repetitivo. Puro ensamblado.*
 
 ### Bloque 7 — Los 3 índices
-- [ ] `/leistungen/` ← **arregla un 404 que ya está online**
-- [ ] `/einsatzgebiete/`
-- [ ] `/ratgeber/`
+- [x] `/leistungen/` — **2026-08-09**, copy verbatim del draft 23, alemán.
+      **Arregla el 404 más enlazado del sitio**: está en el nav de las 9 páginas
+      y en el "Alle Leistungen" del submenú. 6 secciones (hero · grid de 11
+      leistungen en 3 grupos · sección de keyword Wachdienst/Wachschutz · warum ·
+      FAQ · formulario), 5 seams. Chasis `page-service.css` (§9.1); lo único
+      propio es `page-leistungen.css` con el tile grid.
+      Medido a 320/390/768/900/1024/1280/1440/1600: sin scroll horizontal, un
+      solo `<h1>`, sin saltos de nivel, FAQ visible ↔ `FAQPage` **3/3
+      byte-idénticas**, cero fallos de contraste fuera del caveat sitewide del
+      azul del CTA (3,11:1), y sin JS **3.659 caracteres de texto real en
+      `<main>`** con 0 elementos ocultos. Alto 7.252px a 1440 y 9.538 a 390.
+  - [x] **REDISEÑO COMPLETO — 2026-08-10, brief del cliente.** "No mejoren las
+        cards cosméticamente": hero a ~70svh con las 3 familias en escenas
+        isométricas, capa de **orientación** nueva (3 selectores de capítulo), los
+        3 grupos como **capítulos** (numeral azul + título grande + regla), y un
+        sistema de cards de **tres pesos** (`--featured` para Objektschutz y
+        Werkschutz · base · `--compact`). Se fue "Mehr erfahren" de las 11 cards:
+        la card entera es el link. `.hub-*` **no se tocó** — lo usa el journey de
+        `/einsatzgebiete/`. Medido a 320→1600: sin scroll horizontal, 5 seams, FAQ
+        3/3, cero fallos de contraste fuera del azul del CTA, sin JS 4.118
+        caracteres en `<main>`. Detalle en CLAUDE.md.
+  - [x] **Los 11 tiles YA llevan icono** — 7 símbolos nuevos en el sprite (key,
+        flame, crane, crowd, bag, camera, plan) + los 4 que ya servían. Cierra el
+        🔴 de ayer.
+  - [x] **"Warum FRANKONIA" rediseñada** (2026-08-10) — cuatro bloques rayados con
+        la misma regla azul corta de la sección de keyword, 4-up desde 1100px.
+        ⚠️ **Estuvo sin ningún estilo en vivo**: otra sesión borró `.lh-why*` de
+        `page-leistungen.css` creyendo que sólo lo usaba `/einsatzgebiete/`, y esta
+        página tiene 12 referencias. **Las dos páginas comparten esa hoja — grepear
+        las dos antes de podar cualquier `.lh-*`.**
+  - [x] **Los 3 iconos de la orientación son arte del cliente** (2026-08-10) —
+        `assets/icons/family-*.png`, recortados al arte sólido y cuantizados:
+        2,1MB → 12/14/20KB. Van como `<img>` (ningún CSS nuestro entra ahí, así que
+        sus rellenos de oclusión no se pueden romper) en una caja fija con
+        `object-fit: contain` y `object-position: left bottom`, que es lo que para
+        los tres plintos en la misma línea de piso.
+  - [x] **La sección de keyword (Wachdienst/Wachschutz) va centrada** (2026-08-10,
+        cliente: "está muy tirada ahí nomás… la centraría"). El párrafo se partió en
+        dos en el primer punto del draft para promover la respuesta directa —
+        **ninguna palabra cambió, verificado uniendo los dos `<p>` contra el docx** —
+        y es además ganancia de GEO, porque los motores toman la primera frase bajo
+        el heading. Sin hyphenación: en líneas centradas rompía "Kontrollgän-ge".
+  - [x] **Los títulos de las 11 cards se marcan con el scroll** (2026-08-10,
+        cliente) — el mismo marcador de fondo de `/werkschutz/`
+        (`.service-contrast__mark`), no un subrayado. `js/lh-card-marks.js` anima
+        `--mark`; relleno `#4673AB`, **4,89:1** con texto blanco. Lleno por defecto
+        sin JS y con reduced motion (11/11 verificados), que es el contrato.
+  - [x] **Un solo tamaño de card** (2026-08-10, cliente: "mismo tamaño todas") —
+        se borraron los tiers `--featured` y `--compact`. ⚠️ **Revierte el punto 5
+        del brief original**, que pedía dar más peso a Objektschutz y Werkschutz.
+        Medido: 26px de título, 32 de padding, 28 de icono y flecha en las 11.
+  - [x] **La página alterna claro/oscuro con seam en cada cambio** (2026-08-10,
+        cliente). Orden: hero ▪ foto · Orientierung ▫ · Kapitel ▪ · Keyword ▫ ·
+        Warum ▪ · FAQ ▫ · Formular ▪. **7 seams**, de 5 — cuesta ~450px a 1440 y
+        ~290 a 390, que es lo que valen dos bandas de disolución más. Las 11 cards
+        pasaron al gemelo oscuro (blanco al 4,5 % + hairline, sin sombra): sobre
+        negro la sombra no trabaja y un panel blanco encandila, lo mismo que ya
+        había encontrado el hub de ciudades. La versión blanca quedó scopeada a
+        `.section--light` por si vuelve a hacer falta.
+  - [x] **El hero lleva FOTO** (2026-08-10, misma sesión, cliente: "no me gusta que
+        no haya un hero definido"). Hero y orientación compartían el mismo negro sin
+        seam, así que el hero no terminaba en ningún lado. Las tres escenas
+        isométricas bajaron a los selectores de orientación, donde además dejan de
+        duplicar lo que esos selectores ya dicen. Contraste medido sobre la foto:
+        H1 18,64:1 · lede 13,13:1 · badge 8,49:1 · teléfono 6,40:1.
+  - [ ] 🔴 **FALTA UNA FOTO DE HUB DE SERVICIOS.** Ninguna de las landscape del
+        proyecto está libre: todas son el hero de alguna página. La que está puesta
+        es el apretón de manos de la system-story del homepage, elegida porque no es
+        el hero de nadie y su tercio izquierdo es oscuro (57 contra 117 de
+        luminancia), pero **mide 1.280px y escala hacia arriba a 1440+**. Pedirle al
+        cliente una foto propia, ≥1.920px, con el lado izquierdo tranquilo.
+  - [ ] 🔴 **Confirmar con Chris las 3 frases de la orientación** — es el único
+        copy nuevo de la página. Cada sustantivo sale de las descripciones que ya
+        están abajo, así que no afirma nada que el draft no afirme.
+  - [ ] 🔴 **Confirmar con Chris el H2 del cierre.** Era "Welche Leistung brauchen
+        Sie? Wir beraten Sie kostenfrei"; con la orientación arriba ésa era la
+        tercera vez que la página hacía la misma pregunta. Ahora dice "Sie sind
+        nicht sicher, welche Leistung passt?", que es la frase siguiente del propio
+        draft, promovida desde el lede que va debajo.
+  - [ ] 🟡 **A 390px la página mide 11.300px** (antes 9.538). El aumento es la capa
+        de orientación, que es lo que el brief pide; las cards ya se compactaron
+        285 → 249px. Si molesta, la palanca es convertir la orientación en tira
+        deslizable (`data-swipe-carousel`, ~590px) — no se hizo porque su trabajo
+        es que se vean las tres opciones a la vez.
+  - [ ] Los 11 destinos son URLs confirmadas que todavía no existen (sólo
+        `/werkschutz/` está viva). Es la convención del proyecto (§8.3).
+  - [ ] ⚠️ **A confirmar con Chris:** el draft escribe las comillas alemanas
+        como `„Wachdienst"` (apertura tipográfica + comilla recta de cierre, no
+        `“`). Se publicó **verbatim**; si es un typo del docx, se corrige en las
+        3 apariciones de la sección de keyword.
+- [x] `/einsatzgebiete/` — **2026-08-09**, copy verbatim del draft 24, alemán.
+      Cierra el segundo 404 de nivel nav: está en el footer de las 9 páginas.
+      Medido a los mismos 8 anchos: sin scroll horizontal, un `<h1>`, sin saltos
+      de nivel, FAQ 3/3 byte-idénticas, sin JS 2.706 caracteres en `<main>` y 0
+      ocultos. **Los paneles de ciudad sobre el mapa miden 6,39:1** (verificado
+      muestreando píxeles reales, no la cadena de ancestros — ver abajo).
+  - [ ] ⚠️ **UWG:** la página no promete tiempos de respuesta ni distancias
+        fuera del contexto Bamberg, y dice explícitamente que no hay sucursales.
+        No "mejorar" ese copy con claims de velocidad.
+  - [ ] ⚠️ **Los números de arriba son de las 11:0x del 2026-08-10 y ya envejecieron:
+        otra sesión estaba editando esta página en paralelo** (entró un hero con
+        foto y cambió `page-einsatzgebiete.css` a las 11:25–11:29), y el alto a 1440
+        pasó de 9.353 a 8.994px por eso, no por el rediseño de `/leistungen/`.
+        Re-medir después de que esa sesión cierre. Es el escenario multi-sesión que
+        CLAUDE.md ya documenta para este repo.
+- [x] `/ratgeber/` + **los 3 artículos** — **2026-08-10**, drafts 30/31/32/33
+      verbatim, alemán. Cierra el hub (2 páginas lo enlazaban) y los 2 artículos
+      que ya estaban enlazados por nombre desde `/jobs/` y
+      `/brandwache-nuernberg/`. Una sola hoja, `css/page-ratgeber.css`, para las
+      cuatro: el hub y los artículos son una familia y los tres artículos tienen
+      la MISMA forma (H1 · byline · respuesta en 2 frases · 5–6 H2 · FAQ · CTA),
+      así que el artículo cuatro es copy, no CSS. Chasis `page-service.css`.
+      Medido a 520/768/1440: sin scroll horizontal, un solo `<h1>`, sin saltos de
+      nivel, FAQ visible ↔ `FAQPage` **4/4 byte-idénticas en los tres**, 0
+      placeholders sin resolver, y **cero 404 dentro de `<main>`**.
+  - [ ] ⚠️ **`/ratgeber/kosten-sicherheitsdienst/` perdió la columna "Details" de
+        su tabla de precios**, y es una decisión de 404: el draft manda cada una de
+        las 9 filas a su página de servicio y **8 de las 9 no existen**. Esa columna
+        no cargaba información, sólo links, así que sacarla no le quita nada a la
+        página; abajo de la tabla queda una línea a `/leistungen/`. **Cuando salgan
+        las páginas de servicio, la columna vuelve como un `href` por fila.**
+  - [ ] ⚠️ **Mismo criterio en los otros dos:** `/brandwache/`,
+        `/veranstaltungsschutz/`, `/baustellenbewachung/`, `/sicherheitskonzept/` y
+        `/sicherheitstechnik/` resuelven hoy a `/leistungen/`, y los CTA de
+        conversión a `/angebot/` — que es literalmente lo que el copy promete
+        ("kostenfreie Begehung, Angebot in einem Werktag"). Un `href` por link
+        cuando existan.
+  - [ ] ⚠️ **Confirmar con Chris — 3 huecos del propio draft:** los dos `[PRÜFEN]`
+        del artículo 34a (tarifas actuales de la IHK antes de salir a producción, y
+        si FRANKONIA cubre el costo del 34a-Schein) y la **fecha**: los tres drafts
+        escriben `Stand: [Datum]` y se publicó la fecha de build (2026-08-10) en el
+        byline visible y en `datePublished`.
+  - [ ] ⚠️ **El artículo 34a habla de "du", los otros dos de "Sie".** Es la
+        decisión de los propios drafts (ese apunta a reclutamiento y alimenta
+        `/jobs/`, la otra única página del sitio que tutea). **No unificar.**
+  - [ ] ⚠️ **Las comillas van `„X"`** — apertura tipográfica U+201E, cierre RECTO
+        U+0022, verbatim del docx, igual que en `/leistungen/`. Si es un typo del
+        cliente son 4 apariciones entre el hub y el artículo 34a.
+  - [ ] 🔧 **`.rg-article` es la SEGUNDA copia del cuerpo de artículo** (`.cs-article`
+        en `page-case-study.css` es la primera), con los valores copiados a
+        propósito para que las 6 páginas de artículo sean un diseño y no dos
+        parecidos. Ese archivo ya pedía replantear §2 en vez de sumar una cuarta
+        excepción: la consolidación es un `.article-body` compartido en el chasis
+        más un cambio de clase en 3 case studies terminadas. **No se hizo en esta
+        pasada porque otra sesión estaba editando `page-service.css`.** Hacerlo
+        antes del artículo cuatro.
+
+> ⚠️ **Trampa de medición encontrada acá, vale para cualquier panel translúcido:**
+> una sonda de contraste que sube por los ancestros buscando el primer fondo opaco
+> da un número FALSO cuando el panel es `position: absolute` sobre algo que no es
+> su ancestro. En `/einsatzgebiete/` reportó 2,94:1 (y hasta 1,0:1) para los tiles
+> de ciudad, porque componía el panel `rgb(1 1 1 / 0.72)` sobre la sección blanca;
+> el backdrop REAL renderizado es `rgb(7 10 12)` y da **6,39:1**. Muestrear los
+> píxeles del screenshot con el texto en `visibility: hidden`, no razonar sobre el
+> CSS.
 
 ### Bloque 8 — Páginas de empresa
 - [ ] `/angebot/` — solo formulario, rápida

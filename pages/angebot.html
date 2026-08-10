@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- Built 2026-08-10 from NewVersionCopiesFrankonia/"2026-08-04 Webtext 26
+     Angebot-LP.docx", verbatim.
+
+     This is the site's CONVERSION landing page — the draft calls it "die
+     zentrale Conversion-Seite (Ziel aller Primär-CTAs)" and "schlank, ein Ziel:
+     Formular". So it is deliberately the shortest page on the site: form above
+     the fold, three expectation-setting steps, a compact trust block, three
+     questions. No hero photo, no motion set-pieces, nothing that delays the one
+     thing it exists for.
+
+     It also absorbs three retired URLs (/angebot/, /sicherheitsanalyse/,
+     /sicherheitscheck-walde/) via 301 — see the draft's F5/F7 note. Those
+     redirects are NOT configured yet; they belong with the WordPress redirect
+     list that is still outstanding.
+
+     The form is partials/lead-form.html with nameRequired="" — this is the one
+     page where Name is optional and Firma required, per the draft's own field
+     list, because lowering friction is the whole point of an Ads landing page. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unverbindliches Angebot in einem Werktag – FRANKONIA</title>
+  <meta name="description" content="Jetzt unverbindliches Angebot anfordern: kostenfreie Beratung, auf Wunsch Begehung vor Ort, transparente Preise. Antwort innerhalb eines Werktages.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/angebot/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/angebot/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/angebot/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Unverbindliches Angebot in einem Werktag – FRANKONIA">
+  <meta property="og:description" content="Jetzt unverbindliches Angebot anfordern: kostenfreie Beratung, auf Wunsch Begehung vor Ort, transparente Preise. Antwort innerhalb eines Werktages.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/angebot/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- index, per the draft: it is a landing page but with standalone content. -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://frankonia-sicherheit.de/" },
+        { "@type": "ListItem", "position": 2, "name": "Angebot", "item": "https://frankonia-sicherheit.de/angebot/" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Ist das Angebot wirklich unverbindlich?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Ja — Sie erhalten Beratung, auf Wunsch Begehung und Sicherheitskonzept kostenfrei und entscheiden danach frei. Es gibt keine automatischen Verlängerungen oder versteckten Verpflichtungen." }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie schnell kann FRANKONIA starten?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Nach Angebotsannahme je nach Leistung oft kurzfristig — Brandwachen und dringende Einsätze nach Absprache auch sofort: +49 951 964352-0." }
+        },
+        {
+          "@type": "Question",
+          "name": "Was kostet ein Sicherheitsdienst?",
+          "acceptedAnswer": { "@type": "Answer", "text": "In der Regel 26 bis 32 Euro pro Stunde netto, je nach Leistung, Qualifikation und Einsatzzeit. Die Spannen je Leistung stehen offen auf jeder Leistungsseite — Ihr konkreter Preis steht im Angebot." }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-angebot.css">
+
+  <!-- The site's standard motion stack, in the documented order
+       (docs/page-conventions.md §4.1). An earlier version of this page shipped a
+       trimmed-down stack on the reasoning that a conversion LP should stay lean
+       — that was wrong twice over: the page still carried four .pixel-seam divs
+       with no pixel-transition.js to draw them (dead markup), and the section
+       transitions and smooth scroll are what make a page look like it belongs to
+       this site. Every one of these is defer + self-hosted and none of them
+       gates the form, which is plain HTML above the fold. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Angebot</span></li>
+      </ol>
+    </nav>
+
+    <!-- ============ 1. HERO + FORMULAR (above the fold) ============ -->
+    <!-- Two columns: the argument on the left, the form on the right, both in
+         the first screen. No data-reveal on the form column — the draft's "kein
+         Scrollen nötig" means it must be usable the instant the page paints, and
+         a reveal that has not fired yet is a form nobody can fill in. -->
+    <section id="anfrage" class="service-hero ag-hero">
+      <div class="container ag-hero__grid">
+        <div class="ag-hero__pitch">
+          <p class="ag-hero__badge">
+            <svg class="icon" aria-hidden="true"><use href="#icon-clock"></use></svg>
+            Antwort innerhalb eines Werktages, garantiert
+          </p>
+          <h1>Ihr unverbindliches Angebot, in einem Werktag auf dem Tisch</h1>
+          <p class="service-hero__lead ag-hero__lead">Kurz beschreiben, absenden, fertig: kostenfreie Beratung und Ihr transparentes Angebot, innerhalb eines Werktages.</p>
+          <ul class="ag-ticks">
+            <li class="ag-tick">
+              <svg class="icon ag-tick__icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Unverbindliches Angebot innerhalb eines Werktages
+            </li>
+            <li class="ag-tick">
+              <svg class="icon ag-tick__icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Kostenfreie Expertenberatung, auf Wunsch mit Begehung und Sicherheitskonzept
+            </li>
+            <li class="ag-tick">
+              <svg class="icon ag-tick__icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Transparente Preise: in der Regel {{price.general}} {{price.unit}} je nach Leistung
+            </li>
+          </ul>
+        </div>
+
+        <div class="ag-hero__form conversion__form-wrap">
+          <!-- include: lead-form prefix="ag" messageLabel="Nachricht (Objekt, Zeitraum, Standort)" nameRequired="" -->
+          <p class="ag-hero__alt">Lieber direkt sprechen? <a href="{{phone.href}}">{{phone.display}}</a> — 24/7 erreichbar</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 2. WAS NACH DEM ABSENDEN PASSIERT ============ -->
+    <section class="section section--light ag-steps" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Was nach dem Absenden passiert</h2>
+        </div>
+        <ol class="ag-steps__list" data-item-reveal=".ag-step">
+            <li class="ag-step">
+              <span class="ag-step__num" aria-hidden="true">1</span>
+              <div>
+                <h3 class="ag-step__title">Rückmeldung innerhalb eines Werktages</h3>
+                <p class="ag-step__text">Ein Sicherheitsexperte, nicht ein Callcenter, meldet sich telefonisch oder per E-Mail und klärt die wichtigsten Eckpunkte.</p>
+              </div>
+            </li>
+            <li class="ag-step">
+              <span class="ag-step__num" aria-hidden="true">2</span>
+              <div>
+                <h3 class="ag-step__title">Kostenfreie Beratung, auf Wunsch Begehung</h3>
+                <p class="ag-step__text">Bei Objekten mit Beratungsbedarf kommen wir vor Ort, bewerten Risiken und erstellen Ihr kostenfreies Sicherheitskonzept.</p>
+              </div>
+            </li>
+            <li class="ag-step">
+              <span class="ag-step__num" aria-hidden="true">3</span>
+              <div>
+                <h3 class="ag-step__title">Ihr Angebot, transparent kalkuliert</h3>
+                <p class="ag-step__text">Leistungsumfang, Einsatzzeiten, Preis: alles nachvollziehbar aufgeschlüsselt. Sie entscheiden in Ruhe.</p>
+              </div>
+            </li>
+        </ol>
+        <p class="ag-steps__link">
+          <a class="service-link" href="/sicherheitskonzept/">So entsteht Ihr Sicherheitskonzept
+            <svg class="service-link__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+          </a>
+        </p>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 3. TRUST / SOCIAL PROOF ============ -->
+    <!-- Redesigned 2026-08-10 (client brief). The section previously ran
+         heading -> plain metric lines -> quote -> a closing paragraph that
+         repeated every number already shown. Now it is one centred composition:
+         eyebrow, heading, a metrics row, the testimonial as the focal object,
+         and the certifications as a quiet closing line.
+
+         NO COPY WAS REWRITTEN. Webtext 26 §3 gives the proof as one sentence
+         ("300+ Unternehmen und Einrichtungen · 1.000.000+ geleistete
+         Einsatzstunden · 10+ Jahre, dazu DIN 77200-1, ISO 9001 (DEKRA-geprüft),
+         IHK-qualifizierte Kräfte nach § 34a GewO und unsere Google-Bewertungen");
+         this splits that sentence at its own separators into the metrics above
+         and the cert row below. Every word still appears, once.
+
+         The numbers come from content/values.json, so this row and the
+         homepage's band can never disagree. The MARKUP is this page's own rather
+         than partials/trust-metrics.html: that partial renders the homepage's
+         label wording and its rating as "Google-Bewertungen (97)", and this
+         brief asks for a different split ("4,7 / 5" over "97 Google-
+         Bewertungen"). Shared values, page-specific presentation. -->
+    <section class="section ag-trust">
+      <div class="container ag-trust__inner">
+
+        <div class="ag-trust__head">
+          <p class="ag-trust__eyebrow">Warum FRANKONIA</p>
+          <h2>Warum sich über 300 Unternehmen für FRANKONIA entschieden haben</h2>
+        </div>
+
+        <!-- data-sticky-story is what hands these numbers to the existing
+             count-up in js/sticky-story.js — the script keys off that attribute
+             and off [data-count-to], and its second job (a stagger on
+             .sticky-story__metric) bails cleanly because those classes are not
+             here. The stagger is done instead by the shared item-reveal, so no
+             shared JS had to change. -->
+        <ul class="ag-metrics" data-sticky-story data-item-reveal=".ag-metric">
+          <li class="ag-metric">
+            <span class="ag-metric__value"><span data-count-to="{{counters.customersCount}}">{{counters.customers}}</span><span class="ag-metric__sym">+</span></span>
+            <span class="ag-metric__label">Unternehmen und Einrichtungen</span>
+          </li>
+          <li class="ag-metric">
+            <span class="ag-metric__value"><span data-count-to="{{counters.hoursCount}}">{{counters.hours}}</span><span class="ag-metric__sym">+</span></span>
+            <span class="ag-metric__label">geleistete Einsatzstunden</span>
+          </li>
+          <li class="ag-metric">
+            <span class="ag-metric__value"><span data-count-to="{{counters.yearsCount}}">{{counters.years}}</span><span class="ag-metric__sym">+</span> Jahre</span>
+            <span class="ag-metric__label">im Sicherheitsgewerbe</span>
+          </li>
+          <li class="ag-metric">
+            <!-- No count-up on this one, deliberately: the shared counter in
+                 js/sticky-story.js formats with toFixed(), which is locale-independent
+                 and would overwrite the German comma with "4.7". Animating it would
+                 mean changing shared JS to satisfy one metric on one page. The other
+                 three still count up. -->
+            <span class="ag-metric__value">{{rating.value}} <span class="ag-metric__sym">/</span> 5</span>
+            <span class="ag-metric__label">{{rating.count}} Google-Bewertungen</span>
+          </li>
+        </ul>
+
+        <!-- The focal object. A <figure>/<blockquote>/<figcaption>, so the quote
+             and its attribution are related in the accessibility tree rather
+             than being two loose paragraphs. -->
+        <figure class="ag-quote" data-reveal>
+          <span class="ag-quote__mark" aria-hidden="true">„</span>
+          <blockquote class="ag-quote__text">Ich bin froh, mit FRANKONIA einen zuverlässigen Partner aus der Region gefunden zu haben: In puncto Sicherheit werden alle Leistungen persönlich auf unsere individuellen Bedürfnisse zugeschnitten. Es ist sehr beruhigend zu wissen, dass wir stets auf Qualität sowie professionelles Auftreten der Sicherheitskräfte vertrauen können.</blockquote>
+          <figcaption class="ag-quote__who">
+            <!-- MORELO's mark is NOT shown here. It is 128x160 — a portrait
+                 lockup — and at the small size this row needs it reads as a
+                 smudge rather than as a logo, while the attribution beneath
+                 already names the company. The brief lists it as optional and
+                 asks for no decoration without meaning. -->
+            <span class="ag-quote__who-text">
+              <span class="ag-quote__name">Robert Crispens</span>
+              <span class="ag-quote__role">Geschäftsführer MORELO Reisemobile</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <!-- Deliberately NOT a card and NOT the DEKRA seal images: the brief
+             asks for this row to read as secondary, and the two seals are strong
+             enough graphics to pull focus off the testimonial above them. They
+             exist (assets/icons/dekra-*.png) if that call is ever reversed. -->
+        <ul class="ag-certs" data-reveal data-reveal-delay>
+          <li>DIN 77200-1</li>
+          <li>ISO 9001</li>
+          <li>DEKRA-geprüft</li>
+          <li>IHK-qualifizierte Kräfte nach § 34a GewO</li>
+        </ul>
+
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 4. MINI-FAQ ============ -->
+    <section class="section section--light service-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Kurze Antworten vor Ihrer Anfrage</h2>
+        </div>
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item">
+            <details class="faq-item">
+              <summary><h3>Ist das Angebot wirklich unverbindlich?</h3></summary>
+              <p>Ja — Sie erhalten Beratung, auf Wunsch Begehung und Sicherheitskonzept kostenfrei und entscheiden danach frei. Es gibt keine automatischen Verlängerungen oder versteckten Verpflichtungen.</p>
+            </details>
+            <details class="faq-item">
+              <summary><h3>Wie schnell kann FRANKONIA starten?</h3></summary>
+              <p>Nach Angebotsannahme je nach Leistung oft kurzfristig — Brandwachen und dringende Einsätze nach Absprache auch sofort: +49 951 964352-0.</p>
+            </details>
+            <details class="faq-item">
+              <summary><h3>Was kostet ein Sicherheitsdienst?</h3></summary>
+              <p>In der Regel 26 bis 32 Euro pro Stunde netto, je nach Leistung, Qualifikation und Einsatzzeit. Die Spannen je Leistung stehen offen auf jeder Leistungsseite — Ihr konkreter Preis steht im Angebot.</p>
+            </details>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

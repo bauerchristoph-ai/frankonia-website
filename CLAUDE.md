@@ -99,6 +99,1468 @@ strategically and optimize it carefully," not "remove all animation."
 > única copia de la fuente de verdad actual y no tiene historial — conviene
 > commitearla antes de empezar a migrar.
 
+**2026-08-10, MISMO DÍA — LA SECCIÓN "MENSCHEN, DIE BLEIBEN" SE CENTRÓ ENTERA**
+(cliente: "esto centrame", sobre el título, el párrafo y la línea de cierre "Sie
+wollen Teil davon werden? Offene Stellen ansehen"). Mismo tratamiento que ya
+llevan `.uu-story`, `.uu-zert` y `.uu-inno` en esta misma página.
+
+- **Dos clases, no una** — la misma trampa de especificidad que documentan las
+  otras tres: `page-service.css` estiliza `.section__intro` genérico y una sola
+  clase pierde por orden de aparición. `text-align` centra el TEXTO,
+  `margin-inline: auto` centra la CAJA.
+- **La línea de cierre es hermana de `.section__intro`, no hija** — su propia
+  regla, `justify-content: center`: como fila flex a nivel de bloque ya ocupa
+  todo el ancho del container, así que lo que había que centrar era su
+  CONTENIDO, no la caja.
+- **Medido con un `Range` sobre los nodos de texto reales** (el rect del elemento
+  miente acá, porque el h2 lleva `max-width`): título, párrafo y línea de cierre
+  a **0px del eje** a 390 / 768 / 1024 / 1280 / 1440 / 1600 / 1920, sin scroll
+  horizontal en ninguno.
+
+**2026-08-10, MISMO DÍA — "SECHS VERSPRECHEN" DEJÓ DE SER `.lh-why*` Y PASÓ A SER
+`.uu-promises*`: 3×2, numeradas y con el mismo subrayado de fondo que ya usa el
+resto del sitio** (cliente: "esto me gustaría hacerlo más lindo, más dinámico
+también, subrayá lo importante con el subrayado que se repite en la web, de
+subrayar el fondo… dividirlo en 3 y 3 o una lista de items, no sé, vos sé
+creativo"). Ni una palabra de copy cambió — mismos seis títulos, mismas seis
+frases.
+
+- **`.lh-why*` era la causa real del problema, no sólo el estilo.** Ese bloque es
+  de `/leistungen/` y está armado para SUS cuatro columnas; con seis promesas
+  dentro de una grilla de 4, la última fila quedaba con dos items sueltos bajo dos
+  columnas vacías — exactamente lo que se veía en la captura del cliente. La
+  solución no era ajustar el grid: era que esta página deje de pedir prestado un
+  bloque ajustado a otro contenido y tenga el suyo propio, **`.uu-promises*`**, en
+  `css/page-ueber-uns.css`. `page-leistungen.css` se queda cargada igual —
+  `.lh-hero__badge` del hero de esta misma página todavía lo usa.
+- **3 arriba y 3 abajo, literal** (el "3 y 3" que pidió el cliente): `<ol>` a tres
+  columnas desde 900px, dos desde 640, una en el teléfono. Es un `<ol>` y no un
+  `<ul>` porque ahora los seis llevan un numeral 01–06 visible — mismo criterio
+  que ya aplica en el resto del sitio (el numeral visible es lo que obliga al
+  `<ol>`, no al revés).
+- **El subrayado ES el mismo mecanismo de `.lh-card__mark`**, valores copiados y
+  no re-derivados: un `background-image` recortado a las palabras del título, que
+  crece de 0 a 100% de ancho con el scroll. Nuevo `js/uu-promise-marks.js`, una
+  segunda copia de `js/lh-card-marks.js` en vez de un módulo compartido —
+  siguiendo la convención del proyecto de no generalizar hasta el tercer
+  consumidor, anotado en el propio archivo para cuando llegue ese tercero.
+  ⚠️ **Mismo contrato sin JS que todo el resto del sitio: el fill nace LLENO**
+  (`background-size: 100% 100%`) y sólo el script lo pone en 0 y lo maneja por
+  `--mark`, agregando `.uu-promises--live`. Verificado en los tres estados: carga
+  normal arranca en `0% 100%` y crece con el scroll real; con
+  `prefers-reduced-motion` y sin JS los seis quedan **ya marcados**, `100% 100%`,
+  sin la clase `--live` en ninguno de los dos.
+- **Relleno: la misma mezcla profunda que `.lh-card__mark`** (`color-mix` de
+  blue-dark al 85% con `--color-logo-black`, texto blanco encima) — verificado
+  renderizado, ~`#4673AB`, el mismo 4,88:1 ya documentado en el resto del sitio
+  para blanco sobre esa mezcla.
+- **Ya no son cards.** La sección no tenía otra grilla de cards con la que
+  competir (a diferencia de `/leistungen/`, donde el "ruled, not carded" existe
+  justamente por eso), así que en vez de pedir prestado un tratamiento de tarjeta
+  de otra página se armó una grilla de líneas: hairline vertical entre columnas
+  (`:not(:nth-child(3n))`) y hairline horizontal entre las dos filas
+  (`:nth-child(n + 4)`), sólo desde 900px. Se lee como una tabla editorial de
+  hechos, no como seis cajas.
+- **El numeral es ritmo, no información**: `aria-hidden`, tabular-nums, peso 300,
+  el mismo celeste — el `<ol>` ya los cuenta para tecnología asistiva y el nombre
+  de la promesa es lo que carga el significado.
+- ⚠️ **No se agregó ningún hover-lift a los items.** `data-item-reveal` apunta al
+  propio `<li>` (`.uu-promises__item`), y GSAP escribe `translate/rotate/scale:
+  none` inline sobre lo que anima — la trampa que ya dejó muerto el hover de
+  `.city-why__item` en dos páginas y que este archivo documenta varias veces. Un
+  hover con `transform` acá habría caído en la misma trampa; se dejó afuera en vez
+  de repetir el bug.
+- **Medido a 320 / 360 / 390 / 430 / 640 / 768 / 900 / 1024 / 1152 / 1280 / 1440 /
+  1600 / 1920:** sin scroll horizontal en ninguno, tres columnas ya activas a 900,
+  las seis frases idénticas a las del `.lh-why*` que reemplaza.
+
+**2026-08-10 — LA TIMELINE DE `/ueber-uns/`: RIEL A TODO EL ANCHO, SALTOS
+PROPORCIONALES A LOS AÑOS, EL CELESTE DEL CTA Y UN ARO QUE SE EXPANDE EN CADA PUNTO**
+(cliente: "los puntos tienen que ir a lo largo de la screen horizontalmente… esos
+textos menos width… tiene que espaciar más las distancias, porque ahora están todos a
+la misma distancia y no tiene sentido, ya que además no llega a completar el width que
+podría, la línea" + "usá el celeste del CTA" + "cuando vamos llegando a los puntos que
+se haga un aro alrededor del bullet como lo hay en la homepage, que titila"). Ni una
+palabra de copy cambió.
+
+- **El último punto se sienta EN el borde de contenido, y eso es lo que hace que el
+  riel llegue:** su track mide 0, así que el segmento del cuarto item que llega a
+  `right` aterriza exactamente encima, y el item escapa de ese track
+  (`justify-self: end` + un `width` explícito) con año y label alineados a la derecha
+  debajo del punto. Medido: el riel termina a 4,5px del borde (el radio del punto) a
+  1100 / 1152 / 1280 / 1440 / 1512 / 1600 / 1920 — antes se quedaba **241px corto**.
+- ⚠️ **EL CUARTO TRACK TIENE PISO, y ése es el trade-off entero del bloque.** Todos los
+  demás sólo tienen que albergar su propio label; el salto 2023 → 2024 tiene que
+  albergar **el label de 2023 Y el de 2024 alineado a la derecha**, y encima es el
+  span más corto. Medido: 105px (2023 envuelto) + 19 de aire + 132 (2024) = **256px =
+  16rem**. Estrictamente proporcional serían 1/8 del ancho — 154px a 1440 — y **los dos
+  labels se pisarían**. Así que va fijo en 16rem y el resto se reparte 2:2:3.
+  **Medido a 1440: 279 / 279 / 419 / 247px** — los dos saltos de 2 años iguales, el de
+  3 años claramente el más largo y el de 1 año el más corto, que es el pedido.
+  ⚠️ **Sólo lee bien desde ~1300px.** Entre 1100 y 1280 el piso empata o pasa a los
+  saltos de 2 años (a 1152: 207/207/310/247), y por debajo de 1100 los invertiría —
+  por eso **este layout arranca en 1100 y la banda 768–1099 conserva las cinco columnas
+  iguales**, con el riel quedándose corto ahí. Subir cualquier `max-width` de label
+  sube ese piso; son valores medidos, no redondos.
+- ⚠️ **EL CAP DE LOS LABELS ES LO QUE HACE SEGURO APAGAR LA HYPHENACIÓN, y hacía falta
+  apagarla.** base.css pone `hyphens: auto` en todo `li` — correcto para prosa,
+  equivocado para cinco labels de cuatro palabras: **renderizaba "größter Sicher- /
+  heitsdienst" y "prak- / tisch von null wie- / der aufgebaut"**, o sea partía el
+  keyword propio de la página y se leía como falla de render. Con los cortes sólo en
+  espacios ningún label desborda **porque su palabra más larga entra en el cap**:
+  8.25rem = 132px es el cap más angosto que todavía deja "Sicherheitsdienst" (130px
+  medidos) en una línea. En la banda 768–1099 una columna mide 115px y esa palabra NO
+  entra, así que ahí la hyphenación **se queda prendida** a propósito.
+- **El año pasó a `1.5rem` FIJO, y es contraste, no gusto:** #3D9AD3 mide **3,11:1**
+  sobre blanco — alcanza el 3:1 de texto GRANDE (WCAG: 24px a cualquier peso) y falla
+  el 4,5:1 de texto normal. `--font-size-lg` es un clamp de 21 → 25px, o sea abajo de
+  1440 caía a 21px, donde ese 3,11 sería una falla real. Misma salida que
+  `.combo-steps__title`. **No devolverle el clamp sin cambiar el color.**
+  ⚠️ El azul se escribe `--color-blue-light` literal: la sección es `.section--light`,
+  donde `--color-accent` re-resuelve a blue-dark (#5287C9). Verificado renderizado:
+  punto, riel, aro y año los cuatro en `rgb(61, 154, 211)`.
+- **El aro ES el del homepage** (`.pain-hook__node::after`), curva y timing copiados en
+  vez de re-derivados; 2.25rem alrededor de un punto de 9px (4×, donde el homepage usa
+  6× su nodo de 0.4rem). Una sola pasada de 0,9s, que es la decisión que el propio
+  cliente ya había tomado ahí ("un halo que aparece una vez, explícitamente NO un pulso
+  infinito").
+- ⚠️ **HIZO FALTA UN HOOK NUEVO EN `js/steps-sequence.js`, y la razón es estructural:
+  un timeline SCRUBBEADO no tiene "un momento" al que atar un `@keyframes`.** Ahora el
+  script pone **`.is-arrived`** en el paso cuando su marcador termina de aterrizar y la
+  **saca** al volver para arriba — eso último es lo que permite que el aro se repita la
+  próxima vez que bajás. Está documentado en page-conventions §4.7 junto a los otros
+  tres hooks. **Siempre se agrega, no es opt-in**, y es inofensivo: ninguna hoja de
+  `/jobs/`, `/werkschutz/` ni `/brandwache-nuernberg/` nombra esa clase — verificado por
+  grep y midiendo las tres (rieles en `--step-line: 1`, los 3 marks de brandwache en
+  `100% 100%`, sin scroll horizontal).
+- **El punto pasó de pseudo-elemento a elemento real** (`.uu-mile__dot` +
+  `data-steps-marker`), porque el `<li>` ya gastaba su `::before` en el punto y su
+  `::after` en el segmento del riel: el aro necesitaba una tercera caja.
+- **Medido a 390 / 768 / 900 / 1024 / 1099 / 1100 / 1152 / 1280 / 1440 / 1512 / 1600 /
+  1920:** sin scroll horizontal en ninguno, y de 1100 para arriba el aire entre labels
+  vecinos **pintados** nunca baja de 48px (el cálculo del piso de arriba es de CAJAS, y
+  la caja del último label llega al borde aunque su línea más larga mida 101). Sin JS y
+  con `prefers-reduced-motion`: los 5 puntos en
+  opacidad 1 sin transform, los 4 segmentos en `scaleX(1)`, **cero `.is-arrived` y cero
+  animaciones de aro**. Con motion prendido, verificado por scroll real: los puntos
+  llegan de a uno (`.....` → `A....` → `AA...` → `AAA..` → `AAAA.`), el aro corre en
+  los cuatro con **183–341ms de desfase entre ellos** (o sea escalonado, no todos
+  juntos), y volviendo para arriba las clases se retiran y al bajar de nuevo se
+  reproduce.
+- ⚠️ **Detalle visible y asumido:** "100 Mitarbeitende" (2023) envuelve a dos líneas
+  mientras "50 Mitarbeitende" (2020) queda en una, porque ese label lleva un cap un paso
+  más angosto (6.75rem) — son los 27px que el piso del cuarto track necesita. Es el
+  precio de que el salto de 1 año sea el más corto.
+
+**2026-08-10 — `/leistungen/` REDISEÑADA ENTERA (brief del cliente).** El pedido fue
+explícito: "do not just cosmetically improve the current cards" — el hero se sentía
+vacío, las 11 cards tenían todas el mismo peso, "Mehr erfahren" se repetía once
+veces y nada ayudaba a entender QUÉ tipo de servicio necesita el visitante. La meta
+de IA que fija el brief: la página deja de decir "acá hay 11 servicios" y pasa a
+decir "primero entendé qué problema tenés, después elegí". **Ni un servicio salió y
+ninguna descripción se reescribió.**
+
+- **La estructura nueva es hero → orientación → 3 capítulos → CTA**, con el hero y
+  la capa de orientación sobre el MISMO negro y sin seam entre ellos, así que se
+  leen como una sola composición (y de paso la página ya no abre contra un muro
+  blanco de cards). Ritmo: hero ▪ · Orientierung ▪ · Kapitel ▫ · Keyword ▪ ·
+  Warum ▪ · FAQ ▫ · Formular ▪ → footer. **5 seams, los mismos de antes.**
+- ⚠️ **`.hub-*` NO SE TOCÓ, y es la decisión más importante del rediseño.** Ese
+  bloque vive en el chasis y **`/einsatzgebiete/` monta TODO su journey de mapa
+  encima** (`.eg-journey__panel` extiende `.hub-tile`). Restilar `.hub-tile` habría
+  rediseñado la página de ciudades en silencio. Las cards nuevas son `.lh-card`,
+  page-scoped.
+- **El hero pasa de una pantalla a ~70svh.** Primero se armó a dos columnas (copy
+  izquierda, las tres familias en escenas isométricas a la derecha); **ese layout
+  duró unas horas** — ver la pasada del hero con foto más abajo, que es el estado
+  actual. Las escenas siguen en la página, ahora dentro de los selectores de
+  orientación. La geometría se **genera**, no se escribe a mano —
+  `docs/design-sources/leistungen-families.py`, proyección dimétrica 2:1 de
+  coordenadas 3D reales con viewBox ajustado a lo dibujado, misma receta que las
+  escenas del Risiko.
+  - Las tres comparten escala de coordenadas (~21 unidades) **a propósito**: es lo
+    que permite que un solo `stroke-width` en unidades de usuario les dé el mismo
+    peso óptico. Una escena nueva a otra escala necesita su propio valor.
+  - 01 es un edificio permanente con un anillo de ronda CERRADO que le pasa por
+    detrás (oclusión real, con caras rellenas del color del hero); 02 son paneles
+    de valla sueltos con una ruta **ABIERTA y con topes** — abierto contra cerrado
+    es lo único que separa "permanente" de "temporal" en un dibujo; 03 es el plano
+    con la cámara y su cono de visión.
+- ⚠️ **UN SOFT HYPHEN, y el arreglo obvio no funcionaba.** "Sicherheitsdienst-
+  leistungen" mide **611px** al H1 de 52px, y la columna de copy quedaba en 597 →
+  el H1 partía **dentro de la palabra**, sin guion ("Sicherheitsdienstleistunge /
+  n"). Se corrigió el split a 1.1fr y el gap a 64px (643px, entra a 1440+) y se
+  metió un `&shy;` para los anchos menores. **El `&shy;` era completamente inerte:
+  base.css pone `hyphens: none` en todos los headings y `none` suprime también los
+  soft hyphens.** Hace falta `hyphens: manual` en ese h1 — restaura exactamente un
+  comportamiento (cortar donde el autor puso el `&shy;`) sin habilitar
+  hyphenación automática. Verificado renderizado: a 1280 corta como
+  "Sicherheits- / dienstleistungen / im Überblick".
+- ⚠️⚠️ **HALLAZGO SITEWIDE QUE INVALIDA UNA NOTA "VERIFICADA" DE ESTE ARCHIVO:
+  GSAP escribe `translate: none; rotate: none; scale: none;` INLINE**, no sólo
+  `transform`. Así que el workaround documentado el 2026-08-09 ("usá `translate` en
+  vez de `transform` para el hover") **tampoco funciona** — el inline gana en las
+  dos. La prueba vieja pasó porque puso el transform inline a mano en vez de
+  dejárselo a GSAP. **El hover de las cards de Warum de `/sicherheitsdienst-
+  nuernberg/` y `/brandwache-nuernberg/` está muerto hoy** (medido con puntero
+  real: el borde cambia, la card no se mueve). Ver la corrección anotada en esa
+  entrada. **La solución que sí funciona, y la que usa esta página: que
+  `data-item-reveal` apunte al `<li>` envolvente**, no a la card — GSAP anima el
+  wrapper y la card conserva sus propias propiedades de transform. Verificado con
+  `Input.dispatchMouseEvent` real: la card sube de 236 a 232px, la flecha se
+  desplaza 5/-5, la sombra crece, y todo vuelve al salir.
+- **Tres pesos de card, una sola familia**: `--featured` (Objektschutz y
+  Werkschutz, los dos estratégicos), base, y `--compact` para el capítulo de tres.
+  Difieren **sólo** en padding, escala tipográfica y tamaño de icono — mismo borde,
+  radio, sombra, hover y estructura. Medido a 1440: títulos **30 / 26 / 23px**,
+  alturas 360 / 284 / 281. ⚠️ El tier compact **no usa `--font-size-lg`**: ese token
+  da 25px contra los 26 del base, o sea un tier que cuesta una regla y se lee como
+  un accidente de render.
+- **"Mehr erfahren" desapareció de las once cards.** La card entera es el link y la
+  flecha azul de 28–32px dice lo mismo sin repetir tres palabras once veces.
+- **Los 11 iconos existen ahora**, lo que cierra el 🔴 que esta página arrastraba
+  desde ayer: **7 símbolos nuevos en el sprite** (key, flame, crane, crowd, bag,
+  camera, plan) más los 4 que ya servían. Tres se rehicieron después de mirarlos
+  renderizados a 60px: la grúa se leía como una **horca** hasta que se le pusieron
+  los tensores del ápice, la multitud eran tres puntos flotando hasta que ganó la
+  valla, y la cámara tenía una base que la hacía parecer un trípode de fotografía.
+- ⚠️ **El único copy nuevo de la página son las tres frases de la orientación**, y
+  cada sustantivo sale de las descripciones que ya están abajo (Bestreifung,
+  Pforte, Verschlussrunden / Heißarbeiten, Baufortschritt, Veranstaltungen /
+  Videoüberwachung, Alarmverfolgung, Maßnahmenplan). **Y un cambio de H2 en el
+  cierre:** era "Welche Leistung brauchen Sie? Wir beraten Sie kostenfrei", que tras
+  el rediseño era la tercera vez que la página hacía la misma pregunta — ahora es
+  "Sie sind nicht sicher, welche Leistung passt?", que es la **propia frase
+  siguiente del draft**, promovida desde el lede que va justo debajo. Las dos cosas
+  anotadas para Chris en la checklist.
+- **La sección de servicios reserva menos aire tras el seam**: el chasis pone
+  `--space-9 + 200px` = 296px y **200 de eso es la banda de disolución**, que no
+  puede achicarse (los tiles pintan ahí). Lo que se fue son los 96px de ritmo
+  apilados encima → **232px**. Page-scoped; el resto del sitio mantiene el valor
+  del chasis.
+- **Medido a 320 / 390 / 768 / 900 / 1024 / 1280 / 1440 / 1600:** sin scroll
+  horizontal en ninguno, un solo `<h1>`, sin saltos de nivel, 5 seams, FAQ visible
+  ↔ `FAQPage` **3/3 byte-idénticas**, y **cero fallos de contraste fuera del caveat
+  sitewide del azul del CTA** (3,11:1, el mismo de todo botón primario). Ningún
+  elemento nuevo baja de 44px: dentro de `<main>` los 11 targets chicos son los
+  compartidos de siempre (breadcrumb, `<summary>` en escritorio, inputs, honeypot,
+  checkbox de consentimiento, link de privacidad).
+- **Sin JS: 4.118 caracteres de texto real en `<main>`** (antes 3.659), 30
+  headings, 18 links, las 11 cards presentes, 0 elementos ocultos, 0 tiles.
+- **Navegación por ancla verificada con click real**: el selector 02 lleva a
+  `#leistungen-temporaer` y el capítulo aterriza a 192px del tope, o sea despejado
+  del header sticky de 80. Doble mecanismo a propósito — `data-scroll-offset="-96"`
+  para el camino con Lenis y `scroll-margin-top` para scroll nativo (sin JS /
+  reduced motion).
+- **Pasada completa de scroll (abajo, arriba y abajo otra vez) con motion prendido:**
+  ningún elemento de contenido queda en opacidad <1 ni con blur en pantalla, y **0
+  elementos con `will-change` en reposo**. Lo único por debajo de 1 son tiles de
+  seam a mitad de disolución, que es el efecto funcionando.
+- ⚠️ **Costo medido en teléfono: 9.538 → 11.300px a 390px.** El aumento es la capa
+  de orientación (982px), que es justamente lo que el brief pide. Se compensó lo
+  que se podía sin recortar copy — padding y ritmo de las cards, 285 → **249px**
+  cada una, o sea 512px menos en la sección de servicios. **La orientación quedó
+  apilada y no como tira que se desliza** (el brief admite las dos): su trabajo es
+  que se vean las tres opciones a la vez, y un carrusel esconde dos detrás de un
+  swipe. Si la longitud molesta, ésa es la palanca y son ~590px.
+- **Lo que sigue sin verificar**, mismo caveat de siempre: el switch claro/oscuro
+  del header sobre las secciones blancas necesita eventos de scroll reales
+  (`npm run dev`).
+
+**2026-08-10, MISMO DÍA — EL HERO DE `/leistungen/` LLEVA FOTO** (cliente, viendo el
+rediseño: "no me gusta que no haya un hero definido"). Tenía razón y la causa era
+una decisión mía: hero y capa de orientación compartían el mismo negro plano y no
+había seam entre ellos, así que **el hero no terminaba en ningún lado** — seguía de
+largo. Se le preguntó al cliente entre tres salidas (foto de fondo · separar las dos
+superficies · seam + orientación en claro) y eligió la foto.
+
+- **Las tres escenas isométricas BAJARON a los selectores de orientación**, y eso
+  arregla algo que ya estaba mal: decían las mismas tres cosas que los selectores,
+  a una pantalla de distancia. Ahora cada selector es dibujo + numeral + título +
+  frase + flecha, que es lo que lo convierte de bloque de texto en algo que merece
+  llamarse selector de capítulo. El hero se queda con una sola columna de copy.
+- ⚠️ **`.lh-hero__bg` VA COMO HIJO DIRECTO DE LA SECCIÓN, nunca del
+  `.service-hero__grid`.** El chasis pone `position: relative` en ese grid, así que
+  un `inset: 0` adentro resuelve contra la caja del GRID, no de la sección — la
+  primera versión salió como **una banda a media altura CON EL COPY DETRÁS**, porque
+  un absoluto también pinta por encima del contenido no posicionado de sus
+  hermanos. Los dos síntomas, un solo error.
+- ⚠️ **TODO va scopeado a `.lh-hero--photo`, y no es prolijidad:** otra sesión hizo
+  que **`/einsatzgebiete/` cargue `page-leistungen.css` y su hero lleve `.lh-hero`**
+  (`service-hero lh-hero eg-hero`). Cualquier cosa puesta en la clase pelada
+  restilaría esa página también. Ojo con esto en cualquier edición futura de este
+  archivo.
+- ⚠️ **FOTO INTERINA, y hay que pedirle una al cliente.** No existe una foto de hub
+  de servicios en el proyecto: **todas las landscape ya son el hero de alguna
+  página** (herofinal = homepage, HeroWerkschutz = /werkschutz/, ReferenzenHero,
+  KarriereHero). Se usó el apretón de manos de la system-story del homepage, que al
+  menos no es el hero de nadie, y su tercio izquierdo es genuinamente oscuro
+  (**luminancia medida 57 contra 117 a la derecha**) — que es lo que permite que el
+  wash quede liviano y las dos personas y la entrada con la marca sigan leyéndose.
+  **El origen mide 1.280px de ancho, así que a 1440+ escala hacia arriba.** Cambiarla
+  es un `<picture>` y tres archivos.
+- **Dos washes, y el de arriba es el que hace el trabajo menos obvio:** la rampa
+  horizontal deja el copy sobre oscuro y el lado derecho de la foto visible; la
+  vertical arranca en 0,97 porque **la foto empieza justo debajo del breadcrumb y un
+  corte horizontal duro ahí se lee como un error** — la rampa hace que la imagen
+  emerja del negro de la página.
+- **Contraste sobre la foto, muestreando píxeles reales del render con el texto en
+  `visibility: hidden`** (no razonando sobre el CSS): a 1440 badge **8,49:1**, H1
+  **18,64:1**, lede **13,13:1**, teléfono **6,40:1**; a 390, 8,40 / 18,24 / 12,88 /
+  6,52.
+- ⚠️ **Bug de alineación que encontró la medición en la orientación:** los tres
+  viewBox tienen proporciones distintas (1,71 / 1,74 / 1,32), así que a ancho
+  compartido daban tres alturas distintas y los numerales caían en tres líneas
+  distintas (388 / 379 / 401). **Se dimensionan por ALTO**, y el ancho distinto no
+  lo ve nadie. Y un segundo desfase de 9px salía de `align-content` en su valor por
+  defecto (stretch): la columna cuyo título rompe en dos líneas tenía menos holgura
+  y sus filas subían. Con `start`, los tres numerales, títulos y flechas quedan en
+  **la misma y exacta**.
+- Re-medido después de la foto: sin scroll horizontal a 320→1600, 5 seams, FAQ 3/3,
+  cero fallos de contraste fuera del azul del CTA, sin JS **4.015 caracteres** en
+  `<main>` con las 11 cards y 0 ocultos, y el `<picture>` elige bien (768w a 390,
+  1280w a 1440).
+
+**2026-08-10, MISMO DÍA — LA PÁGINA ALTERNA CLARO/OSCURO EN CADA SECCIÓN, con seam
+en cada cambio** (cliente: la orientación blanca, "y que entre la hero y esta que
+estén los píxeles de siempre", después Kapitel negra y Keyword blanca). Es la
+consecuencia lógica de la pasada de la foto: si el hero tiene superficie propia, la
+capa de orientación no puede seguir compartiéndola.
+
+- **Orden final: hero ▪ (foto) · Orientierung ▫ · Kapitel ▪ · Keyword ▫ · Warum ▪ ·
+  FAQ ▫ · Formular ▪ → footer. 7 seams**, de 5. Cada cambio de color paga su banda
+  de disolución, así que la página crece ~450px a 1440 (8.098 → **8.546**) y ~290 a
+  390 (11.236 → **11.524**). Verificado con la sonda: los 7 seams con **180 tiles**
+  cada uno y **el color de tile correcto según la dirección** (negros bajando a
+  claro, blancos bajando a oscuro), más dos capturas a mitad de disolución para
+  verlo, no deducirlo.
+- ⚠️ **LAS CARDS PASAN A SER EL GEMELO OSCURO, y no es gusto:** sobre negro una
+  sombra casi no trabaja y **un panel blanco encandila** — es exactamente lo que ya
+  había encontrado la sección de Leistungen del hub de ciudades. Ahora son relleno
+  de blanco al **4,5 %** más hairline, sin sombra (no una sombra que no pinta nada).
+  **La versión de panel blanco se conservó, scopeada a `.section--light`**, porque
+  el mismo componente está a un flip de volver a una sección clara. El hover también
+  se partió: sobre oscuro lo cargan el relleno y el borde, no la sombra.
+- ⚠️ **HABÍA QUE BORRAR EL `padding-top` DE `.lh-orient`, no ajustarlo.** Esa regla
+  existía porque la sección iba pegada al hero; ahora sigue a un seam, y el chasis
+  reserva `--space-9 + 200px` para la banda. Las dos son (0,1,0) y esta hoja carga
+  después, así que dejarla habría **tirado 200px de tiles encima del título**.
+- ⚠️ **Las tres escenas isométricas tenían blanco cableado y se rompían en claro.**
+  El trazo `rgb(255 255 255 / 0.9)` es **invisible sobre blanco**, y las caras de
+  oclusión rellenaban con `--color-bg` — o sea **tres losas negras** en medio del
+  dibujo. Ahora el trazo es `currentColor` (sigue a la sección que sea) y sólo las
+  guías y las caras llevan valor por superficie. ⚠️ **`.section--light` NO
+  re-declara `--color-bg`** (sólo texto, bordes y acentos), así que el relleno de
+  las caras hay que nombrarlo explícitamente o se queda negro.
+- ⚠️ **Los dos numerales cambian de azul según la superficie, y por contraste de
+  TEXTO:** sobre oscuro `--color-accent` es blue-light (6,8:1, pasa); sobre claro
+  ese mismo token es blue-dark (**3,71:1**, alcanza para gráfico pero no para los
+  4,5:1 de texto), así que ahí va la mezcla profunda documentada (4,9:1). Mismo
+  cuidado con `.lh-keyword__text`, que tenía blanco cableado de cuando la sección
+  era oscura y ahora usa el token.
+- Re-medido entero: sin scroll horizontal a 320 / 390 / 768 / 900 / 1024 / 1280 /
+  1440 / 1600, un solo `<h1>`, sin saltos de nivel, FAQ 3/3, **cero fallos de
+  contraste fuera del azul del CTA**, y sin JS 11 cards, **4.062 caracteres** en
+  `<main>`, 0 tiles y 0 elementos ocultos.
+
+**2026-08-10, MISMO DÍA — LOS TÍTULOS DE LAS 11 CARDS SE MARCAN CON EL SCROLL, y se
+fueron los tiers de tamaño** (cliente: "que cuando vayamos escroleando se vayan
+subrayando los títulos de los servicios, no subrayando línea sino el fondo como
+hemos hecho en otras secciones" + "no quiero que le hagas otro tamaño a Objektschutz
+y Werkschutz, mismo tamaño todas").
+
+- **Es el MISMO marcador de `/werkschutz/`** (`.service-contrast__mark`, el que el
+  cliente señaló en su captura): un fondo pintado detrás de las palabras que crece
+  de 0 a 100 % de ancho, no un borde. `js/lh-card-marks.js` (nuevo, page-specific)
+  anima sólo `--mark`; el relleno vive en CSS como
+  `background-size: calc(var(--mark, 0) * 100%) 100%`.
+- ⚠️ **El marcador está LLENO por defecto y sólo arranca en cero cuando el script
+  agrega `.lh-services--live`.** Ese orden ES el contrato sin JS: sin JS, para un
+  crawler o con `prefers-reduced-motion`, los once títulos aparecen ya marcados y
+  nunca sin marcar. Es exactamente el bug con el que salió `.service-contrast__mark`
+  la primera vez (medía `mark=0%` con reduced motion, o sea el resaltado
+  desaparecía). **Verificado en los dos estados: 11 de 11 al 100 % sin JS y con
+  reduced motion, y la clase `--live` ausente en ambos.**
+- ⚠️ **El marcador va en un `<span>` DENTRO del h4, nunca en el h4.** Un fondo sobre
+  el bloque pintaría una barra del ancho de la card en vez de abrazar las palabras.
+  `box-decoration-break: clone` es lo que lo mantiene abrazándolas cuando el título
+  parte en dos líneas. En "Revier- & Schließdienst" el marcador envuelve **sólo el
+  nombre**: el `(Raum Bamberg)` es un `<span>` `display: block` y meterlo adentro del
+  inline rompería el marcador.
+- **El relleno es la mezcla profunda documentada, `#4673AB`, y con texto blanco mide
+  4,89:1** — calculado a mano, porque `getComputedStyle` devuelve un
+  `color(srgb 0.27 0.45 0.67)` y una sonda con regex de `rgb()` lo lee como
+  casi-negro y reporta 20,95:1 (la misma trampa que este archivo ya documenta). Ese
+  4,89 es lo que permite que el título siga legible incluso donde el clamp baja a
+  21px, por debajo de los 24px que harían aplicable el 3:1.
+- **Disparado por la CARD, no por el marcador**, que está ~200px adentro: si no, el
+  barrido arrancaría bastante después de que la card ya llegó. Medido por scroll
+  real: 0 % → 32 % → 91 % → 100 % por card, y las 11 al 100 % al final de la página.
+- ⚠️ **SE FUERON LOS DOS TIERS DE TAMAÑO** (`--featured` y `--compact`), markup
+  incluido, no dejados como modificadores muertos. **Esto revierte el punto 5 del
+  brief original del propio cliente** (dar más peso a Objektschutz y Werkschutz);
+  la decisión posterior manda. Medido después: las 11 cards con **un solo valor** de
+  título (26px), padding (32px), icono (28px) y flecha (28px). Los capítulos se
+  distinguen por cantidad de columnas, nunca por tamaño de card. **No reintroducir un
+  tier sin preguntar.**
+
+**2026-08-10, MISMO DÍA — LOS TRES ICONOS DE LA ORIENTACIÓN SON ARTE DEL CLIENTE**
+(mandó `Dauerhafter Schutz.png`, `Zeitlich begrenzter shutz.png` y `Technik und
+konzept.png` al Desktop). Reemplazan las tres escenas isométricas generadas acá, en
+el mismo lenguaje isométrico, así que la sección no cambia de idioma visual.
+
+- **Esta vez los nombres SÍ coincidían con el dibujo, pero igual se verificó
+  abriéndolos** — es la cuarta vez que llega un lote donde podrían no coincidir, y
+  ya hubo tres incidentes (`Bayernwerk.png` era Stadt Coburg, `Bayerishe.png` era la
+  Landessiedlung, `FemalePointing.png` era la card de "Ein Arbeitgeber"). Mapear por
+  el dibujo, siempre.
+- **Van como `<img>`, no inlineados**, y por la razón que este archivo ya pagó una
+  vez: los archivos traen sus propios rellenos blancos haciendo oclusión de línea
+  oculta, y **ningún CSS nuestro entra en un `<img>`**, así que no hay forma de
+  romperlos con una regla de color (el desastre de la card 03 del Risiko, 2026-08-05).
+- **De 2,1MB cada uno a 12/14/20KB**, y el recorte importa tanto como la compresión:
+  el arte sólido ocupa ~5 % del lienzo de 1536x1024 y el resto es un glow de alfa
+  bajísimo, así que **hay que recortar al bbox del arte SÓLIDO, no al bbox de alfa
+  distinto de cero** — ése abarca casi todo el lienzo. Después, **cuantizado a
+  paleta**, que es el tratamiento que este proyecto ya usa para gráficos de color
+  plano (los sellos DEKRA, 105KB → 18KB). Verificado contra el RGBA original a 112px
+  y a 336px: idénticos, sin bandeo en el glow.
+- ⚠️ **Caja fija con `object-fit: contain`, NO una altura compartida.** Los tres
+  tienen proporciones distintas (1,52 / 1,19 / 0,96 — el de la cámara es casi
+  cuadrado porque el engranaje va arriba), así que compartir sólo la altura habría
+  hecho al primero una vez y media más ancho que al tercero y achicado la base del
+  tercero para que entrara su torre. `object-position: left bottom` es el detalle
+  que hace que la fila lea como un juego: **los tres son plintos isométricos, así que
+  alinear sus BASES los para a todos en la misma línea de piso**. Medido: caja
+  144x101 a 1440, los tres con el mismo bottom (406) y los numerales en una línea.
+- **Se borraron `.lh-iso*` y todo `.lh-hero__family*`**, que quedaron sin markup
+  (las escenas generadas y la lista de familias del hero respectivamente). El
+  generador `docs/design-sources/leistungen-families.py` queda con una nota de que
+  está fuera de uso: documenta el método y regenera las escenas si se las quiere de
+  vuelta.
+
+**2026-08-10, MISMO DÍA — EL CTA DE CIERRE DE `/leistungen/` NO LLEVA PANEL: NEGRO
+PLENO** (cliente: "tiene un fondo que no es del todo negro, es raro el color… tiene
+que ser negro"). Le había puesto un `.lh-cta`: panel con inset, radio de 24px y
+**#0B0D10**, "un paso fuera del negro de la página para que el cierre lea como un
+objeto". Tenía razón el cliente: **un casi-negro al lado del negro real no se lee
+como elevación, se lee como una falla de render** — y la página ya tiene siete seams
+haciendo la separación entre secciones, así que el panel resolvía un problema que no
+existía. **Se borró el bloque entero, no sólo el relleno:** sin fill, el radio y el
+inset no pintaban nada, y una regla que no se puede ver es una regla cuyo propósito
+alguien tiene que adivinar después. La sección queda en `--color-bg` desde
+`.conversion` (lead-form.css, intacto). Medido: `rgb(1, 1, 1)` computado y muestreado
+en tres puntos del render. **No reintroducir el panel.**
+
+**2026-08-10, MISMO DÍA — LAS TRES ESCENAS ISOMÉTRICAS REDIBUJADAS, y el H2 de Warum
+centrado** (cliente: "este título centralo… y mejora el icono de la foto").
+
+- **Las escenas 02 y 03 se redibujaron en una segunda pasada** (cliente: "mejorame
+  estos iconos"), y en las dos el problema era el mismo: el dibujo no nombraba su
+  idea a 58px.
+  - **02 era dos rieles sobre postes y se leía como dos mesitas.** Ahora es una
+    **corrida de vallas móviles con cruces de arriostramiento** — el equipo que
+    todo el mundo reconoce como "temporal, y después se va" — y **la X es lo que
+    sobrevive a tamaño de icono**, donde un riel liso no. Tres paneles en fila, no
+    un cerco: la escena 01 es la cerrada, y el contraste entre las dos es
+    justamente el par.
+  - **03 era una cámara chica sobre un mástil y un plano vacío**, o sea casi todo
+    cono. Ahora el plano lleva **el objeto para el que se escribe el concepto** y el
+    cono aterriza sobre él, que es la idea real de esta familia: técnica planificada
+    contra un sitio, no técnica sola.
+    ⚠️ El objeto es un **volumen bajo, no una huella plana**: la huella compartía
+    dos esquinas con el cono, las dos formas se fundían y la escena se leía como
+    una lámpara sobre un plato vacío. Un sólido además **ocluye el cono por
+    detrás**, que es lo que pone la cámara delante del objeto y no adentro. El cono
+    ahora aterriza más ancho que el objeto de los dos lados, así que nunca comparten
+    arista.
+- ⚠️ **SE FUE EL PLANO PUNTEADO DE LAS ESCENAS 01 Y 02, y la razón es el tamaño real
+  al que se ven.** Estos dibujos renderizan a **58px de alto** en los selectores de
+  orientación, y a ese tamaño un rombo punteado es moiré, no información — además
+  encajonaba al sujeto, así que el edificio se quedaba con la mitad del cuadro. El
+  recorrido azul ya dice "esto es un sitio delimitado"; el plano lo decía otra vez y
+  peor. La grilla de la escena 03 bajó de cinco líneas a **una cruz** por lo mismo.
+- **La escena 01 ahora se lee como instalación, no como caja:** dos volúmenes (nave
+  principal + anexo bajo), una **entrada** en la cara frontal y dos líneas de planta
+  en la lateral. Dos masas leen "instalaciones"; un cubo solo lee "cajón".
+- ⚠️ **EL ORDEN DE CAPAS ES EL ALGORITMO DE LÍNEA OCULTA, no una decisión estética,
+  y me mordió al primer intento.** El renderer pinta guías → recorrido → líneas →
+  **caras (que van RELLENAS)**, así que todo lo que va sobre una cara tiene que
+  dibujarse DESPUÉS: la puerta y las líneas de planta quedaron invisibles bajo el
+  relleno hasta que se agregó una capa `detail` posterior a `face`. Si agregás
+  detalle sobre una superficie, va en `detail`, no en `line`.
+- **El H2 de Warum va centrado, el contenido a la izquierda** — el mismo reparto que
+  ya usan la sección Vertrauen del hub de ciudades y el FAQ de esta página. ⚠️
+  `margin-inline: auto` en el **H2 mismo**, no en `.section__intro`: el chasis deja
+  ese wrapper en `max-width: none`, o sea ya es de ancho completo y las auto-márgenes
+  ahí no hacen nada. Es la misma trampa que la sección de keyword dos ediciones
+  antes. Medido con un `Range` sobre el texto real: **0px del eje a 1440 / 1024 /
+  390**, dos líneas balanceadas.
+
+**2026-08-10, MISMO DÍA — LA SECCIÓN "WARUM FRANKONIA" DE `/leistungen/` ESTUVO SIN
+NINGÚN ESTILO EN VIVO, y la causa fue OTRA SESIÓN borrando CSS compartido.** El
+cliente lo vio y lo describió exacto: "me cambiaste tipografía y no usaste ningún
+estilo que ya estamos usando en la web".
+
+- ⚠️ **QUÉ PASÓ, porque es la trampa multi-sesión de este repo en su forma más
+  cara.** Otra sesión migró el bloque `.lh-why*` a `/einsatzgebiete/` como
+  `.eg-why*` y **borró las reglas de `page-leistungen.css` con la nota "Nothing on
+  THIS page used it"** — pero `pages/leistungen.html` tiene **12 referencias** a
+  `.lh-why*` en su sección 4. Sin CSS, la sección cayó al render por defecto:
+  `<h3>` en peso 800 con el tracking de −1px que base.css reserva para display,
+  sin grilla, sin acento. **Las dos páginas comparten `page-leistungen.css`
+  (einsatzgebiete lo carga), así que antes de podar cualquier `.lh-*` hay que
+  grepear LAS DOS.** Queda anotado en el propio bloque del CSS.
+- **No se restauró: se rediseñó en el lenguaje de la página.** Cuatro bloques
+  rayados, cada uno abriendo con **la misma regla azul corta de 3rem que usa la
+  sección de keyword**, así la página tiene UN vocabulario de acento en vez de una
+  invención por sección. **Rayado, no en cards**: las once cards de arriba son el
+  momento "card" de la página y una segunda grilla de cards de cuatro competiría
+  con ellas.
+- 4 columnas desde **1100px** (el ancho que este proyecto ya midió para una fila de
+  cuatro — Anwendungsfälle de `/werkschutz/` y el Warum del hub de ciudades), 2
+  desde 640, una abajo. Medido a 1440: 4 columnas, los cuatro items arrancando en
+  **la misma y (395)**, título 20px en **peso 400 y tracking normal** (la regla de
+  design-system §2: un heading tipografiado como cuerpo toma métricas de cuerpo —
+  justo lo que el fallback crudo perdía), y la regla en `rgb(61,154,211)`.
+
+**2026-08-10, MISMO DÍA — LA SECCIÓN DE KEYWORD (Wachdienst/Wachschutz) VA CENTRADA**
+(cliente: "esta sección está muy tirada ahí nomás, ¿cómo le damos un poco más de
+amor? la centraría"). Era un H2 a lo ancho de un campo blanco con un párrafo pegado a
+la izquierda y nada que uniera las dos cosas.
+
+- **El párrafo se partió en DOS, y no cambió una palabra.** El corte cae en el primer
+  punto del propio draft, así que la respuesta directa — los términos significan lo
+  mismo, bewachung nach § 34a GewO — queda como línea grande y el resto sigue como
+  prosa corrida. **Es ganancia de GEO, no sólo de layout:** esta sección existe para
+  que la extraigan por "wachdienst" (880/mo) y "wachschutz" (480/mo), y los motores
+  de respuesta toman la primera frase bajo el heading. **Verificado uniendo los dos
+  `<p>` del build y comparando contra el docx: idéntico.**
+- ⚠️ **CADA HIJO NECESITA SU `margin-inline: auto`, y me volvió a morder la misma
+  trampa que documenta §6** — una caja con `max-width` dentro de un padre centrado
+  centra su TEXTO y se queda pegada a la izquierda. Puse la regla para los hijos
+  directos y **el H2 igual salió 219px fuera del eje**, porque va envuelto en
+  `.section__intro`: es nieto, no hijo, y el chasis deja ese wrapper en
+  `max-width: none`, así que las auto-márgenes en él no hacen nada. **Medido con un
+  `Range` sobre los nodos de texto reales** — el rect del elemento no lo habría
+  mostrado, porque lo que estaba corrido era la CAJA, no el texto adentro.
+- ⚠️ **Sin hyphenación en este bloque.** base.css pone `hyphens: auto` en todo `<p>`,
+  que acá es lo equivocado: una línea centrada ya tiene dos bordes irregulares, y los
+  compuestos alemanes rompían como "Kontrollgän-ge" y "Kom-bination" en líneas
+  centradas consecutivas — se lee como falla de render, no como tipografía. Misma
+  decisión que ya toma `/referenzen/` con su copy centrado.
+- El H2 se topa en **34ch** (dos líneas balanceadas a 1440 y 1024, tres a 390) y la
+  respuesta lleva `text-wrap: balance` para que "nach § 34a GewO." no quede sola en
+  una tercera línea. Único adorno: una regla azul de 3rem centrada arriba — es un
+  gráfico, y `--color-accent` en `.section--light` da 3,71:1, que pasa el 3:1.
+- Medido: H2, respuesta y párrafo **a 0px del eje** a 1440 / 1024 / 390, sin scroll
+  horizontal, y el resto de la página sin cambios (7 seams, FAQ 3/3, sin JS 4.063
+  caracteres y los 11 marcadores llenos).
+
+**2026-08-09 — LOS DOS HUBS DE NIVEL NAV: `/leistungen/` y `/einsatzgebiete/`.
+Es el Bloque 7 de [docs/build-checklist.md](docs/build-checklist.md), menos
+`/ratgeber/`.** Copy de los `Webtext 23 Hub Leistungen` y `24 Hub Einsatzgebiete`
+(Stand 04.08.2026), verbatim, alemán. **Cierran los dos 404 más enlazados del
+sitio**: `/leistungen/` está en el nav de las 9 páginas más el "Alle Leistungen"
+del submenú, y `/einsatzgebiete/` en el footer de las 9.
+
+- **Puro ensamblado, otra vez, y es la prueba de que el chasis funciona:**
+  `page-leistungen.css` sólo agrega el grid de tiles; todo lo demás
+  (`--content-inset`, el `main h2`, el chevrón del breadcrumb, `.section--light`,
+  `.service-hero*`, el bloque `.pixel-seam`) sale de `page-service.css` (§9.1) y
+  el formulario de `lead-form.css`.
+- **Las 11 leistungen van en TRES grupos, no como 11 iguales** (dauerhafter Schutz ·
+  anlassbezogener Schutz · Technik und Konzept). Es la agrupación que el propio
+  draft escribe; el markup sólo la hace visible, no reordena nada.
+- ⚠️ **Los 11 tiles NO llevan icono, y es deliberado:** el sprite tiene 18 símbolos
+  y sólo 5 de las 11 leistungen tienen uno que las signifique de verdad. Es la
+  misma decisión que ya documenta el caso vest / "flexible scheduling": un icono
+  equivocado es peor que ninguno. Queda anotado para el cliente.
+- ⚠️ **TRAMPA DE MEDICIÓN NUEVA, y me hizo reportar un bug que no existía.** Mi
+  sonda de contraste sube por los ancestros hasta el primer fondo opaco — eso
+  MIENTE cuando el elemento es `position: absolute` sobre algo que no es su
+  ancestro. En `/einsatzgebiete/` los paneles de ciudad dieron **2,94:1** (y los
+  títulos **1,0:1**, o sea "texto invisible") porque componía el panel
+  `rgb(1 1 1 / 0.72)` sobre la sección blanca. El backdrop REAL, muestreado del
+  screenshot con el texto en `visibility: hidden`, es `rgb(7 10 12)` → **6,39:1**.
+  **Para un panel translúcido, samplear píxeles; el CSS no alcanza.**
+- **Medido a 320 / 390 / 768 / 900 / 1024 / 1280 / 1440 / 1600** en las dos: sin
+  scroll horizontal en ninguno, un solo `<h1>`, sin saltos de nivel, 5 seams cada
+  una, FAQ visible ↔ `FAQPage` **3/3 byte-idénticas**, y **cero fallos de
+  contraste fuera del caveat sitewide del azul del CTA** (3,11:1, el mismo que
+  publica cada botón primario). Sin JS: **3.659 caracteres de texto real en
+  `<main>`** en `/leistungen/` y 2.706 en `/einsatzgebiete/`, 0 elementos ocultos,
+  0 tiles. Alturas 7.252 / 9.353px a 1440.
+- **Las dos entraron a `sitemap.xml` con priority 0.9**, por encima de las páginas
+  de servicio y ciudad que indexan: son las únicas dos páginas que están en el
+  chrome de todas las demás.
+- ⚠️ **A confirmar con Chris:** el draft 23 escribe las comillas alemanas como
+  `„Wachdienst"` — apertura tipográfica U+201E y cierre con comilla RECTA, no `“`.
+  Se publicó verbatim (regla del proyecto); si es un typo del docx son 3
+  apariciones en la sección de keyword.
+- **Lo que sigue sin verificar**, mismo caveat de siempre: el switch claro/oscuro
+  del header sobre las secciones blancas necesita eventos de scroll reales
+  (`npm run dev`).
+
+**2026-08-09 — PRIMERA PÁGINA COMBO: `/brandwache-nuernberg/` (servicio × ciudad).
+Es el Bloque 6 de [docs/build-checklist.md](docs/build-checklist.md) y la plantilla
+de las 15 restantes.** Copy del `Webtext 34 Kombi Brandwache Nuernberg` (Stand
+25.07.2026), verbatim, alemán. Décima página terminada, y **cierra un 404 que la
+página de ciudad enlaza TRES veces** (filas de servicio, callout de Brandwache y
+FAQ). La plantilla completa está en
+[docs/page-conventions.md §11](docs/page-conventions.md#11-página-combo-servicio--ciudad);
+acá va sólo lo que no se deduce de ahí.
+
+- **"Puro ensamblado" resultó literalmente cierto: `css/page-combo.css` son CUATRO
+  reglas.** La razón es que esta página carga **tres capas**: `page-service.css` de
+  chasis (§9.1), **`page-city.css` de capa geo** (el badge de Einsatzgebiet, la
+  grilla del hero a dos columnas, el contorno de la ciudad, los tics en columna,
+  los bloques numerados, las cards de Warum, las filas de servicio) y encima lo
+  poco que agrega este tipo. El `<body>` lleva `class="page-city page-combo"` y
+  **`page-city` no es una etiqueta**: el bloque de teléfono de esa hoja (banda de
+  seam de 80px con sus reservas, padding reducido, CTAs a todo el ancho) está
+  scopeado ahí.
+  ⚠️ **Significa que un cambio en `page-city.css` cae en 26 páginas, no en 10.** Es
+  deliberado (el badge y las cards tienen que ser UN diseño en los dos tipos), pero
+  hay que medir los dos tipos después de tocarla. Ya pasó en esta misma sesión: otra
+  sesión convirtió las cards de Warum de bloques con hairline a **paneles blancos
+  elevados**, y esta página las hereda.
+- **Por qué Brandwache Nürnberg y no otra.** Las dos fuentes coinciden otra vez: la
+  checklist nombra esta URL como el combo de prueba, y el draft se titula
+  **"stärkste Kombi"** (20/mo, la más alta de las 16) y es la LP de Ads de K2/K5. Y
+  **es la única de las cuatro con hero Notfall**, así que construirla primero obliga
+  a la plantilla a resolver el caso raro en vez de descubrirlo en la página 14.
+- ⚠️ **EL TELÉFONO ES EL CTA PRIMARIO Y EL FORMULARIO EL SECUNDARIO**, lo que
+  invierte todas las demás páginas del sitio. Es instrucción explícita del draft
+  ("CTA primär: Jetzt anrufen … · CTA sekundär: Unverbindliches Angebot einholen") y
+  es lo correcto para el único servicio al que se llega en medio de un incidente.
+  **No "corregirlo" por consistencia: los otros tres combos de Nürnberg SÍ lideran
+  con el formulario**, y esa diferencia también está en sus drafts.
+  - `#icon-phone` es el **único símbolo relleno del sprite que no declara su propia
+    pintura**, así que dentro de un botón azul sale como mancha negra sin
+    `fill: currentColor; stroke: none`. La regla de `.service-hero__phone .icon` no
+    sirve: trae además la píldora de contorno, que es justo lo que este botón no es.
+  - **2026-08-10 — la etiqueta del botón es EL NÚMERO SOLO** (cliente: "sacá el
+    Jetzt anrufen de adelante del número"), y eso es lo que además puso **los dos
+    botones en una fila** (mismo pedido). Medido: con el prefijo el par pedía
+    **662px** (313 + 325 + 24 de gap) contra los 634–640 de la columna de copy, o sea
+    se apilaba en todo el escritorio; sin él el primario baja a **211px** y entran
+    con aire. La acción sigue siendo inequívoca: icono de teléfono, `tel:`, azul.
+    ⚠️ **La banda 1024–1151 necesitó su propia regla, y es aritmética:** page-city
+    parte el hero en dos columnas a 1024 (1fr / 0.62fr) y ahí la columna de copy
+    queda en **506px**, 54 cortos. Darle `0.42fr` al contorno en esa banda le compra
+    ~570px, y el contorno no pierde nada porque está dimensionado por ALTO
+    (`width: auto` + `max-height`). Verificado en una fila a 768 / 900 / 1024 / 1100
+    / 1151 / 1152 / 1280 / 1440 / 1600 / 1920.
+  - **2026-08-10 — SE SACÓ EL BADGE DE EINSATZGEBIET del hero** (cliente: "sacá la
+    pill"). ⚠️ **Ningún dato se perdió**: la Einsatzleitung 24/7 está en la FAQ 1, en
+    el paso 03 del Ablauf y en el CTA de cierre. Y el encuadre UWG no depende de él
+    acá — el requisito de "kein Scheinstandort" es del draft de CIUDAD (Webtext 13),
+    no del de esta combo (Webtext 34), y lo que lo sostiene sigue en su lugar (el
+    `LocalBusiness` lleva el NAP real de Bamberg con `areaServed` y la página no
+    reclama oficina en Nürnberg). **La página de ciudad conserva el suyo.** Igual
+    vale una línea a Chris: era la única declaración en palabras que hacía la
+    primera pantalla.
+- **2026-08-10 — LA SECCIÓN DE KOSTEN ESTÁ INVERTIDA: fondo negro, card BLANCA**
+  (cliente: "en esta sección de brandwache-nuernberg, si podés alterná los colores,
+  el fondo negro y la card la podés hacer blanca o platinum, sólo en esta sección").
+  Es el inverso de las otras 26 páginas que publican ese bloque, y está scopeado a
+  `.combo-price` — nada fuera de esta sección cambia.
+  - **Y arregló algo con lo que la página había salido.** La card del chasis es
+    negra brillosa, o sea obliga a que su sección sea clara; `.service-konzept*`
+    (los 3 pasos) tiene el texto blanco escrito a mano y sólo funciona en oscuro;
+    los paneles de `.city-why*` son cards blancas y sólo funcionan en claro. Esas
+    tres restricciones juntas dejaban **Warum + Kosten + FAQ como un solo capítulo
+    claro de tres secciones sin ningún cambio de color adentro**, y así se
+    documentó (como inevitable). Con la card blanca la página **alterna hasta
+    abajo**: hero ▪ · Einsatzlagen ▫ · Ablauf ▪ · Warum ▫ · **Kosten ▪** · FAQ ▫ ·
+    Formular ▪ · Weiterführend ▫ → footer, **8 seams**, cada tile con el color de
+    la sección de arriba (verificado sección por sección en el DOM).
+    ⚠️ **Si vuelve la card negra, vuelve el bloque de tres y hay que borrar los dos
+    seams que rodean a Kosten.**
+  - **Blanca, no un gris "platinum" nuevo:** el formulario dos secciones más abajo
+    ya es una card blanca sobre el negro de esta misma página, así que `.combo-price`
+    toma los valores de `.conversion__form-wrap` (mismo hairline, `--radius-lg`,
+    `--shadow-lg`). Dos cards blancas en una página tienen que ser una decisión.
+  - Se van dos cosas que sobre blanco no pintan nada en vez de quedar como
+    declaraciones muertas: el degradado diagonal del relleno y **el sweep de
+    `btn-shine`** (`content: none`, o sea también deja de correr una animación
+    infinita que no se veía).
+  - ⚠️ **Los alfas NO son los de la card negra espejados.** Su label va a 0.6 blanco
+    sobre negro, y 0.6 de `--color-gray` sobre blanco mide ~3,2:1 y falla. El piso
+    en blanco es 0.75; acá van a 0.8. **Medido: label/unit/note 5,25:1, la cifra
+    20,87:1, las filas de tics 9,24:1.** Y el tick azul lleva la mezcla profunda de
+    §5, **no** `--color-accent` — esta sección ya no es `.section--light`, así que
+    ese token resuelve a blue-light (3,11:1 sobre blanco).
+  - **El texto de la izquierda se centra verticalmente** (cliente, mismo día:
+    "hacéme el texto no alineado arriba pero al centro de la sección"). En una
+    página de servicio esa columna es título → respuesta → factores → Hinweis y
+    alinear arriba es lo correcto; acá no hay factores ni Hinweis (el draft los mete
+    dentro de su propia frase), así que eran dos párrafos contra una card de ~530px
+    y se leía como texto caído al tope de una columna vacía.
+    ⚠️ **Hacen falta las DOS declaraciones:** `grid-row: 1 / -1`, porque el chasis
+    pone el intro en la FILA 1 de una grilla de tres mientras la card abarca las
+    tres — centrar dentro de la fila 1 sería centrar dentro de una caja del alto del
+    propio texto, o sea un no-op — y recién ahí `align-self: center`. Medido a 900 /
+    1024 / 1280 / 1440 / 1600: **0px** entre el centro del texto y el de la card.
+    Sólo ≥900px.
+  - Re-medido después: sin scroll horizontal a 320–1920, los 8 seams construyen sus
+    180 tiles cada uno, nada queda en opacidad <1 ni con blur tras una pasada
+    completa de scroll, y **0 elementos con `will-change` en reposo**.
+- **2026-08-10 — FAMILIA DE ICONOS EN TRES SECCIONES** (brief del cliente:
+  Einsatzlagen y Ablauf sin anclas visuales, y los iconos de las cards de Warum
+  "too small and visually timid", con la condición de que las tres se lean como UN
+  sistema). La plantilla está en
+  [docs/page-conventions.md §11.5](docs/page-conventions.md#115-la-familia-de-iconos-un-peso-de-línea-tres-tamaños).
+  - **Sin librería nueva y con UN solo símbolo nuevo.** Los 9 glifos restantes ya
+    estaban en el sprite del proyecto — varios los había agregado otra sesión el
+    mismo día para `/leistungen/` — y por eso son familia gratis: una grilla de
+    24x24, una misma mano, `fill: none; stroke: currentColor` heredado de
+    `<g id="icon-defs">`.
+  - ⚠️ **EL TRAZO SE FIJA POR TAMAÑO, y es lo único no obvio de todo esto.**
+    `stroke-width` de SVG está en UNIDADES DE USUARIO: un símbolo dibujado a 1.5
+    sobre 24 renderiza 1,75px a 28px y **2,5px a 40px**. Sin corregirlo, tres
+    tamaños dan tres pesos de línea, que es exactamente el "same stroke weight" que
+    el brief prohíbe. Fórmula: `stroke-width = 1.75 x 24 / <px>` → **1.5 a 28px
+    (Einsatzlagen), 1.31 a 32px (Ablauf), 1.05 a 40px (cards)**. Verificado: los 10
+    iconos a **1,75px efectivos exactos**.
+    **1,75 se midió dos veces**: 1,6 empataba pero a 40px se leía *timid* — la
+    palabra del propio brief — porque un glifo más grande al mismo peso absoluto se
+    ve más liviano. 1,75 sigue abajo de 2px y deja el tamaño de 28px en el 1.5
+    nativo del sprite.
+  - **Colocación, tres decisiones que no son cosméticas:** en Einsatzlagen el icono
+    va en la fila del NUMERAL (un renglón más serían cuatro cosas que leer antes de
+    la frase, que es lo que vuelve card a una lista editorial); en el Ablauf va
+    DEBAJO del numeral, porque el nodo del riel y su 01/02/03 son lo que hace que
+    se lea como línea de tiempo — y como es un hijo elemento más del step,
+    `js/steps-sequence.js` ya lo entra con su título y su frase, sin hook extra; y
+    en Warum **sólo cambia el tratamiento, no los glifos** (28 → 40px, gap del icono
+    24 → 32, título→texto 12 → 16), scopeado a `.combo-why` para que las diez
+    ciudades conserven sus 28px.
+  - ⚠️ **`#icon-radio` es nuevo a propósito**: `#icon-shield-check` era el glifo más
+    cercano para "Wache steht", pero ya es la tercera card de Warum en la MISMA
+    página, y un glifo haciendo dos trabajos a una sección de distancia se lee como
+    error y no como sistema.
+  - **2026-08-10, misma sesión — los iconos de Einsatzlagen: 40px, SIN numeral, y
+    se DIBUJAN con el scroll** (cliente: "más grandes y sacá el número… quiero que
+    se formen cuando escrolee, o sea que la línea se vaya trazando"). Quedan **dos
+    tiers, no tres**: 40px donde el icono es el ancla del bloque (Einsatzlagen y las
+    cards) y 32px en el riel de tres pasos, donde la estructura dominante es la
+    línea de tiempo.
+    ⚠️ **La lista pasó a `<ul>`**: era `<ol>` sólo porque existían esos numerales.
+    Sin ellos los cuatro son un CONJUNTO paralelo de situaciones, no una secuencia,
+    y un `<ol>` le seguiría contando a la tecnología asistiva un orden que la página
+    ya no muestra.
+  - ⚠️ **UN `<use>` NO SE PUEDE DIBUJAR, y ése fue el único trabajo real.** Un icono
+    escrito como `<svg><use href="#icon-flame"></svg>` renderiza el símbolo del
+    sprite a través de un shadow tree que el documento **no alcanza**:
+    `querySelectorAll` no encuentra un solo path, así que no hay nada que medir ni
+    dashear. **`js/svg-draw.js` ahora clona los hijos del símbolo y descarta el
+    `<use>`, en runtime**, dentro de la función que ya salía temprano con reduced
+    motion, sin JS o sin GSAP — o sea el sprite sigue siendo la única fuente de la
+    geometría (no se pegó una segunda copia en la página) y en esos tres casos el
+    markup conserva su `<use>` y el icono renderiza como siempre. Dos detalles
+    obligatorios: **el `viewBox` tiene que viajar** (un `<use>` toma su sistema de
+    coordenadas del símbolo; un `<svg>` pelado no tiene uno, así que 24 unidades
+    renderizarían a 24px en la esquina de una caja de 40), y **el filtro de trazos
+    pasó a mirar el valor COMPUTADO** además del atributo, porque un símbolo del
+    sprite no trae `stroke` propio — su pintura vive en `<g id="icon-defs">`.
+    Los rellenos siguen excluidos igual (el default de SVG es `stroke: none`), que
+    es lo que mantiene pintando la oclusión de línea oculta de la card 03 de
+    `/werkschutz/` — **re-verificado: 72 trazos sin dibujar → 0 y sus 5 rellenos
+    intactos**, o sea el cambio no tocó al consumidor original.
+    Medido bajando la sección: **15/15 sin dibujar antes de entrar → 13 → 9 → 0**, y
+    el último termina con el item a 109px del borde superior, entero a la vista.
+  - **2026-08-10, tercer pedido — los iconos del Ablauf a 40px con aire arriba, y
+    los TÍTULOS SE HIGHLIGHTEAN con el scroll** ("un poco más grandes y aireados
+    arriba" + "que los títulos sean highlighteados con fondo celeste mientras
+    escroleo, como hacemos en otras secciones"). Con eso la familia queda en **UN
+    SOLO TAMAÑO, 40px / stroke 1.05**, en las tres secciones — más fácil de sostener
+    en las otras quince páginas que dos tiers. El `margin-top` del icono pasó de
+    NEGATIVO (pegado al numeral) a +12px, o sea 24px de aire contando el gap del
+    flex.
+  - **El highlight es el marcador que el sitio ya tiene** (Vorteile de
+    `/werkschutz/`, pain hook del homepage), pero manejado por **el propio timeline
+    de `js/steps-sequence.js`** vía un hook nuevo, `data-steps-mark="<selector>"`,
+    así el relleno barre como parte de la ÚNICA llegada del paso y no como un
+    segundo efecto que aterriza cerca. Opt-in igual que `data-steps-draw`
+    (verificado: `/werkschutz/` y `/jobs/` con 0 marks, sin cambios).
+    ⚠️ **El `<span>` no es decoración**: `.combo-steps__title` es un FLEX ITEM del
+    step y un flex item se blockifica, así que `display: inline` en el h3 computaría
+    `block` y el marcador barrería toda la columna en vez de abrazar las palabras.
+    ⚠️ **El relleno es la MEZCLA PROFUNDA (#4673AB), NO el celeste del CTA, y es
+    contraste, no gusto.** El título es 20px a peso 500, o sea NO es texto grande
+    (eso pide 24px, o 18,66 y bold) → aplica 4,5:1. Y el texto tiene que quedarse
+    blanco porque a mitad del barrido la mitad sigue sobre el negro de la sección:
+    blanco sobre #3D9AD3 mide **3,11:1** y falla, sobre #4673AB mide **4,80:1** en
+    el relleno y 21:1 sobre el negro que todavía no alcanzó. Pasar el texto a oscuro
+    —lo que sí hace el Leistungsumfang sobre su sección clara— acá lo volvería
+    invisible a mitad del barrido.
+    ⚠️ **El fallback es `var(--mark, 1)`, no 0.** Es el bug exacto que
+    `.service-contrast__mark` publicó una vez (medido en 0 % con reduced motion, o
+    sea los highlights desaparecían). **Verificado sin JS y con reduced motion: los
+    tres a `100% 100%` y `--mark` sin setear.**
+  - **2026-08-10, cuarto pedido — iconos a 44px, los del Ablauf BLANCOS, y UN SOLO
+    CELESTE en toda la página** ("los iconos los quiero un poco más grandes, y
+    blancos" + "encargate que sea todo el mismo celeste, que es el celeste del
+    CTA"). Los iconos quedan en **44px con stroke 0.95** (el mismo 1,75px óptico).
+    - **Blancos SÓLO en el Ablauf**, y no es una interpretación libre: es la única
+      de las tres secciones que está sobre el negro de la página. En las otras dos
+      los iconos van sobre cards blancas, donde un glifo blanco es invisible. No le
+      cuesta color de marca a la sección: riel, nodos, numerales y el highlight del
+      título son todos el celeste del CTA.
+    - ⚠️ **La causa del "segundo azul" era `--color-accent`**, que es dependiente de
+      la sección: dentro de una `.section--light` resuelve a blue-DARK (#5287C9).
+      Por eso los iconos de Einsatzlagen y de las cards salían en un azul casi
+      idéntico pero distinto del de los botones. Ahora todos escriben
+      `--color-blue-light` literal. Es seguro en las dos superficies porque **un
+      icono es un GRÁFICO** → mínimo 3:1, y #3D9AD3 mide 3,11:1 sobre blanco.
+    - ⚠️ **El highlight del título pasó al celeste del CTA, y EL TAMAÑO DEL TÍTULO
+      ES LO QUE LO HACE LEGAL.** El texto tiene que quedarse blanco (a mitad del
+      barrido la mitad sigue sobre el negro, así que oscuro sería invisible), y
+      blanco sobre #3D9AD3 es 3,11:1 → falla el 4,5:1 de texto normal. El título
+      pasó a **1.5rem (24px) fijo**, que es el umbral de "texto grande" de WCAG a
+      cualquier peso: ahí aplica 3:1 y el 3,11 pasa. **No devolverlo a
+      `--font-size-md` sin cambiar el relleno** — a 20px esto era una falla real, y
+      es por eso que el relleno había sido la mezcla profunda.
+    - **Lo único que NO es el celeste del CTA son CUATRO `<a>`**: los 3 links dentro
+      de respuestas del FAQ y el de la Datenschutzerklärung del formulario. Son
+      texto de cuerpo de 15–16px sobre superficie casi blanca, donde #3D9AD3 mide
+      **2,87:1** contra un piso de 4,5:1 — y no hay umbral que los salve (un link
+      dentro de una frase no puede ir a 24px). Quedan en la mezcla profunda a 4,80:1.
+      **Verificado computando el color de cada elemento de `<main>`: todo lo demás
+      es #3D9AD3.**
+  - **2026-08-10 — `#icon-factory` REDIBUJADO** (cliente: "el icono este puede y
+    debe mejorar"). Es un símbolo **compartido**, así que mejora tres páginas:
+    `/brandwache-nuernberg/`, la comparación de `/werkschutz/` y la card de
+    Werkschutz de `/leistungen/`.
+    - Los tres defectos del viejo: la **chimenea** era `M18 5V3h2v2`, un corchete
+      abierto flotando separado del edificio, que a cualquier tamaño real se lee
+      como bandera o antena; la nave y la torre eran **un solo path**, así que el
+      techo entraba directo en un bloque alto y el conjunto se leía como una línea
+      de gráfico quebrada; y los dientes de sierra medían 3 unidades contra un
+      dibujo de 18 de ancho, o sea **lo que dice "fábrica" era el detalle más chico
+      del icono**.
+    - Ahora es **nave → casa de máquinas → chimenea**, en ese orden. Dos borradores
+      descartados, y la razón importa más que las coordenadas: nave + bloque alto
+      pelado se lee como depósito con torre, y nave + tubo alto con tapa se lee como
+      caño o termómetro. **La chimenea tiene que apoyarse sobre algo** para que el
+      bloque se convierta en edificio.
+    - ⚠️ **Dimensionado para su uso MÁS CHICO, no el más grande.** Renderiza a
+      **18px en `/werkschutz/`**, 28 en `/leistungen/` y 44 acá — los tres medidos.
+      La chimenea tiene 3,1 unidades de ancho porque a 2,4 sus dos verticales se
+      funden en una mancha a 18px. Los cuatro candidatos se renderizaron a los tres
+      tamaños antes de elegir.
+  - **2026-08-10 — los glifos de los pasos 02 y 03 REEMPLAZADOS** (cliente: "no me
+    gustan, mejoralos"). En ninguno de los dos el problema era color ni tamaño:
+    **no se leían.**
+    - `#icon-plan` (hoja de plano con barra lateral) salía como una caja recargada,
+      y **es compartido con `/leistungen/`** — así que esta página tomó glifo propio
+      en vez de redibujar aquél: **`#icon-agree`**, un globo de diálogo con check,
+      o sea una conversación que RESOLVIÓ algo, que es lo que significa abstimmen.
+      Elegido sobre un portapapeles con check: un portapapeles dice "checklist", y
+      este paso no es una lista sino un acuerdo con un tercero.
+    - `#icon-radio` renderizaba como una tarjeta con renglones. Se probaron cuatro
+      variantes más (cuerpo angosto, rejilla vertical, perilla, micrófono de pie) y
+      la mejor **seguía necesitando un segundo para decodificarse** — que es la
+      falla exacta que esta pasada vino a arreglar. Queda **`#icon-guard`**: una
+      persona dentro del escudo, el puesto CUBIERTO.
+      ⚠️ El contorno del escudo es **el de `#icon-shield-check`, copiado exacto**:
+      los dos están en esta página a dos secciones de distancia, así que tienen que
+      leerse como UN escudo con dos cosas adentro y no como dos escudos parecidos.
+    - **Método, y vale para el próximo icono:** los candidatos se RENDERIZARON a los
+      tamaños reales y se compararon en una captura, en vez de juzgarse por el path.
+      Es lo que descartó tres borradores de fábrica y cinco de radio.
+  - Medido a 320 / 390 / 700 / 768 / 1024 / 1440 / 1920: sin scroll horizontal, y
+    `/leistungen/` sigue con su `#icon-plan` intacto. Sin JS y con reduced motion:
+    los 4 `<use>` de Einsatzlagen intactos, cero dash inline escrito, iconos a 44px
+    y opacidad 1, y los 3 marcadores a `100% 100%`. El dibujado sigue andando
+    (13 paths, 13 → 3 → 0 sin dibujar, terminando con la card entera a la vista). El barrido de los marcadores, medido bajando:
+    `0/0/0 → 1/0/0 → 1/1/0 → 1/1/1`, o sea en orden con sus pasos.
+    ⚠️ **Nota de medición, para no volver a perseguirlo:** una sonda que hace
+    `setDeviceMetricsOverride` de 1440 a 390 y mide enseguida puede reportar cientos
+    de px de scroll horizontal que **no existen** — es ScrollTrigger todavía
+    refrescando. Se confirmó con tres corridas en tres páginas: 0 en todas.
+- ⚠️ **BUG DE CONTRASTE ENCONTRADO MIDIENDO, Y ESTABA EN VIVO EN LA PÁGINA DE
+  CIUDAD:** los links dentro de una respuesta del FAQ heredaban `--color-link` =
+  blue-light, que sobre el relleno casi blanco de la card mide **2,87:1** — falla
+  clara del 4,5:1 de texto de 16px. `.city-faq .faq-item__answer a` (page-city.css)
+  ahora fija la mezcla profunda de §5, **4,88:1**, así que el arreglo cae en las dos
+  páginas. **`.section--light` no lo resuelve solo: re-declara `--color-accent`, no
+  `--color-link`.**
+- **Arreglado de paso, y era un resto de la migración de precio del 2026-08-05:**
+  el `Service.offers` del JSON-LD de `/werkschutz/` seguía publicando **28–40**
+  mientras la página visible dice 26–32 en sus tres lugares. Ahora 26–32.
+- **Dos cosas del chasis que hubo que ajustar, las dos medidas:** la lista de pasos
+  trae `margin-bottom: --space-8` porque en `/werkschutz/` la siguen dos bloques más
+  (la prueba del 30 % y las acciones) — acá no la sigue nada, o sea 64px de espacio
+  muerto; y el Weiterführend corre como **una lista a todo el ancho** en vez de las
+  dos columnas de `/werkschutz/`, porque dos links no hacen dos grupos y en la
+  grilla quedaba en la mitad izquierda bajo un H2 a todo el ancho.
+- **La sección de Kosten NO lleva `.service-price__factors`**, y es seguir el copy:
+  este draft mete los tres factores dentro de su propia frase. La grilla coloca sus
+  hijos por columna explícitamente, así que la lista ausente sólo deja su fila vacía.
+- **Medido a 320 / 360 / 390 / 430 / 768 / 900 / 1024 / 1100 / 1280 / 1440 / 1600 /
+  1920:** sin scroll horizontal en ninguno, un solo `<h1>` sin saltos de nivel, 6
+  seams con el color de tile correcto, FAQ visible ↔ `FAQPage` **6/6 byte-idénticas**,
+  `<title>` 60 y meta 145 exactos. Alto 7.679px a 1440 y 9.684 a 390. Con los
+  scripts desactivados de verdad: **3.394 caracteres de texto real en `<main>`**, 24
+  headings, 13 links, 0 tiles, 0 elementos ocultos, y los nodos del Ablauf en su
+  estado terminado por CSS. Pasada de scroll completa (abajo, arriba y abajo otra
+  vez) con motion prendido: nada queda en opacidad <1 ni con blur, **0 elementos con
+  `will-change` en reposo**, y los 6 seams con sus 180 tiles.
+  Los únicos targets bajo 44px son los compartidos ya documentados (breadcrumb,
+  honeypot, checkbox de consentimiento, y en escritorio el `<summary>` del FAQ y los
+  inputs del formulario) — **ninguno de los elementos nuevos falla**.
+- ⚠️ **Pendiente sitewide, encontrado midiendo y NO arreglado acá porque toca 6
+  páginas:** `.faq__list--cards .faq-item__answer` es `rgb(59 73 86 / 0.75)` sobre el
+  relleno del 5 %, o sea **4,39:1** — apenas abajo del 4,5:1. Está igual en el
+  homepage, `/werkschutz/`, `/jobs/`, la página de ciudad y ésta. El arreglo es un
+  solo valor en `components.css` (0.75 → 0.8 da ~4,9:1); decidirlo antes de tocarlo.
+- ⚠️ **A confirmar con Chris:** el texto de anclaje del link al Ratgeber ("Wann eine
+  Brandwache vorgeschrieben ist") está **escrito para el build** — el draft ahí sólo
+  pone la URL suelta. Es el nombre de la página destino en sus propias palabras,
+  misma convención que usó la página de ciudad.
+- **Lo que sigue sin verificar**, mismo caveat de siempre: el switch claro/oscuro del
+  header sobre las 4 secciones blancas necesita eventos de scroll reales
+  (`npm run dev`).
+
+**2026-08-10 — la card "Behördenfest dokumentiert" de `/brandwache-nuernberg/`
+cambió su icono, sin símbolo nuevo.** Era `#icon-badge` (una medalla, cliente: "no
+me gusta, mejoralo"). Pasó a **`#icon-document-check`**, que ya existía en el
+sprite para la claim IDÉNTICA en el Erreichbarkeit-tile de
+`/sicherheitsdienst-nuernberg/` ("Dokumentation für Behörde und Versicherung
+inklusive") — una medalla se lee como premio, no como papeleo que sobrevive una
+auditoría del Bauordnungsamt o el Versicherer, que es de lo que habla esta card.
+Es el segundo consumidor de ese símbolo, y renderiza a **44px** contra los ~22px
+para los que se había dibujado — sigue leyéndose limpio porque el símbolo evita
+arcos a propósito. Verificado: sin scroll horizontal de 320 a 1920, y la página
+de ciudad sigue con su propio `#icon-document-check` intacto.
+
+**2026-08-10 — dos cambios en `/sicherheitsdienst-nuernberg/`, los dos a pedido del
+cliente y los dos con una trampa que vale la pena anotar.**
+
+- **Las certificaciones son SU PROPIA SECCIÓN BLANCA** ("una sección blanca literal
+  — la transición de píxeles a sección blanca y después a la negra de abajo, como
+  pasa en toda la web"). El bloque de DEKRA salió de la sección de Vertrauen a una
+  sección propia con **un pixel seam de cada lado**. Los dos testimonios se quedan
+  atrás sobre el negro, con su H2. Seams **9 → 11**.
+  - ⚠️ **Un primer intento lo hizo una CARD BLANCA dentro de la sección oscura y
+    estaba mal** — no por cómo se veía, sino porque era un cambio de color **sin
+    seam**, que es lo único sobre lo que está construido el ritmo de esta página.
+    Y la card encima necesitaba su propio flip de tokens y un arreglo de contraste
+    para el link. Como `.section--light` de verdad **no necesita ninguna de las
+    dos**: esa clase ya re-declara todos los tokens que `.trust-certs` consume, y
+    page-service.css ya le da a `.service-link` en sección clara el azul profundo de
+    4,88:1. Quedaron cuatro líneas en `page-city.css` que sacan margen, padding y
+    hairline superiores — existían para separarlo de los testimonios cuando
+    compartían sección.
+  - **Medido**: estándar 20,87:1, descripciones y línea de referencias 4,60:1, link
+    4,90:1; los 12 seams con sus 180 tiles; nada sin asentar tras una pasada
+    completa de scroll; sin scroll horizontal de 320 a 1920. La sección **no lleva
+    H2 propio** a propósito — el de Vertrauen dos bloques arriba es su encabezado.
+  - ⚠️ **El par oscuro 7+8 dejó de existir**: Vertrauen y Erreichbarkeit ya no son
+    adyacentes, así que ese borde es ahora un cambio de color real y lleva tiles
+    `--white`. Si las certificaciones vuelven arriba, ese seam se va con ellas.
+- **El tile del Wachbuch pasó a `#icon-route`** (ruta con marcadores en cada
+  checkpoint), nuevo en el sprite.
+  ⚠️ **`#icon-badge` NO se redibujó, porque no está mal**: es una medalla, y dos
+  secciones más arriba significa "Kräfte mit § 34a GewO und
+  Brandschutzhelfer-Qualifikation" — exactamente para lo que sirve una medalla.
+  Estaba mal sólo en el tile del Wachbuch. Y tampoco se reusó
+  `#icon-document-check`, que es la metáfora de papel obvia: ese símbolo YA está en
+  esta página una sección arriba ("Dokumentation für Behörde und Versicherung"), y
+  dos hojas-con-check en una página se leen como repetición. Una ruta con
+  checkpoints es el único glifo del set que carga el "je RUNDE".
+
+**2026-08-09 — PRIMERA PÁGINA DE CIUDAD: `/sicherheitsdienst-nuernberg/`. Es el
+Bloque 4 de [docs/build-checklist.md](docs/build-checklist.md) y la plantilla de
+las 9 restantes.** Copy del `Webtext 13 Stadt Nuernberg` (Stand 24.07.2026),
+verbatim, alemán. Novena página terminada y **cierra un 404 que estaba en vivo en
+el footer de TODAS las páginas y en los chips de Coverage del homepage**.
+La plantilla completa está en
+[docs/page-conventions.md §10](docs/page-conventions.md#10-página-de-ciudad); acá
+va sólo lo que no se deduce de ahí.
+
+- **Por qué Nürnberg y no Bamberg** (el pedido fue "la que sea más estratégica
+  para empezar"). Las dos fuentes coinciden: el draft mismo se titula
+  **"WICHTIGSTE STADTSEITE"** y combina ~1.240 búsquedas/mes (720 sólo en
+  "sicherheitsdienst nürnberg"), y el Bloque 4 de la checklist nombra esta URL.
+  Bamberg es el "Heimmarkt, Easy Win" pero su draft es una **Struktur-Variante
+  explícita** (Zuhause-Story en vez de las 4 tarjetas de Warum, dirección real en
+  vez de Einsatzgebiets-Framing), así que no habría dado una plantilla reusable —
+  y de paso Nürnberg es de donde cuelgan las 4 páginas combo.
+- ⚠️ **LA REGLA QUE DOMINA ESTE TIPO DE PÁGINA ES LEGAL, NO DE DISEÑO: UWG,
+  "kein Scheinstandort".** FRANKONIA tiene UNA dirección y está en Bamberg. El
+  draft lo pide como requisito y aterriza en cuatro cosas concretas: el badge del
+  hero dice **"Einsatzgebiet Nürnberg"** y nunca "Standort"; el JSON-LD lleva
+  `LocalBusiness` con el **NAP real de Bamberg** más `areaServed: City` y **nunca**
+  una dirección en la ciudad de la página; la primera pregunta del FAQ es "¿Tienen
+  sede en Nürnberg?" y se contesta con la verdad; y el Abbinder de Erreichbarkeit
+  **no promete tiempos de respuesta ni distancias** (Prüfkatalog F10). **No
+  "mejorar" ninguna de las cuatro.**
+- **EL HERO NO LLEVA FOTO, y no es un parche: el draft no pide una.** Su
+  Hero-Aufbau enumera badge, H1, subline, 3 tics, doble CTA y el widget de Google,
+  y nada más (el de Bamberg sí pide "Bild"). Eso resuelve el 🔴 de la checklist
+  ("no hay ni una foto de ciudad") sin inventar nada, y sale gratis: **esta página
+  no tiene elemento LCP de imagen** — cero preload, cero decodificación.
+  - Lo que ocupa la columna derecha es **el contorno administrativo REAL de
+    Nürnberg**, un `<path>` inline de 2,6KB. Se genera una vez, en desarrollo, con
+    **`docs/design-sources/city-outline.py <slug>`** (nuevo) desde los geojson que
+    ya estaban en el repo desde julio — 3.566 puntos simplificados a 200 con
+    Douglas-Peucker. **Las 10 ciudades ya tienen su geojson, así que las otras 9
+    son un comando.**
+  - Es la opción honesta para un Einsatzgebiet: **un área, no una dirección**. Un
+    pin único se leería como sucursal, que es exactamente lo que la regla de
+    arriba prohíbe. Y a diferencia de los mapas Leaflet de `/` y `/kontakt/`, no
+    hace ninguna request ni llama a un tercero (los tiles de CARTO sí, y todavía
+    no hay banner de consentimiento).
+  - **Se dibuja al cargar, no con el scroll**, y el `stroke-dasharray` es el largo
+    **medido** del path (7381 unidades), no un número al voleo. Arriba del fold un
+    reveal scrubbeado es el bug que ya pagó el hero de `/referenzen/`.
+- **La sección de Kosten se reusó ENTERA sin tocar CSS** — es exactamente para lo
+  que `.service-price*` se construyó genérico en `/werkschutz/` (la checklist lo
+  cuenta en 27 páginas), y la Preis-Box es un partial. Lo único nuevo ahí es
+  `.city-rates`, las cuatro filas servicio → tarifa que una página de servicio no
+  tiene. ⚠️ **No reusa `.service-price__factors`**: ese bloque dibuja un `+` azul
+  por fila y un `+` delante de "Objektschutz · 26-32 €/Std." se lee como lista de
+  extras. Pero **sí tiene que repetir su `grid-column: 1`**, o cae en la segunda
+  columna, debajo de la card de precio.
+- **`.ref-certs*` promovido a `.trust-certs*` en `page-service.css`.** Esta página
+  era el TERCER consumidor de esa composición, que es literalmente el disparador
+  que este archivo y `page-service.css` ya habían anotado ("un TERCERO tiene que
+  promoverlo en vez de una tercera copia"). `/referenzen/` migrado en el mismo
+  commit y **re-medido: sello 70×106 a 1440 y 53×80 a 390, ratio 0,665 = 399/600
+  exacto, 3 columnas desde 700px — idéntico a antes del cambio.** ⚠️ Quedan DOS
+  copias a propósito: `/werkschutz/` tiene su propia `.service-contact__certs*`
+  soldada a las grid-areas de esa sección, así que convertirla es un cambio de
+  layout en una página terminada, no un rename. Es lo próximo a plegar.
+- **`content/values.json`: `price.werkschutz` → `price.range`.** Los Webtexte
+  publican el mismo 26-32 para todos los servicios y todas las ciudades, así que un
+  nombre por servicio invitaba a una segunda copia del mismo número — que es
+  justo lo que ese archivo existe para evitar.
+- ⚠️ **DOS ERRORES MÍOS QUE ENCONTRÓ LA MEDICIÓN, no el razonamiento:**
+  1. **Escribí `fill: currentColor; stroke: none` para tres iconos "rellenos" del
+     sprite.** Está mal: **TODOS los símbolos del sprite viven dentro de
+     `<g id="icon-defs">` con `fill: none; stroke: currentColor`, así que son
+     TODOS de trazo.** El único relleno es `#icon-star`, que declara su propia
+     pintura. (De paso: la regla de `page-service.css` que llama "FILLED" a
+     `#icon-phone` es la excepción del sitio, no el patrón a copiar.) Grepear el
+     sprite antes de escribir una de estas reglas, no deducirlo del nombre.
+  2. **Áreas táctiles: `min-height`, no `padding-block`.** Los dos `.service-link`
+     sueltos medían 29 y 27px. Padear los dos con el MISMO valor quedó corto en
+     los dos y **por distinto margen** (43 y 41px), porque están a tamaños de
+     tipografía distintos. `min-height: 44px` da 44 siempre y `.service-link` ya es
+     `inline-flex; align-items: center`.
+  Y un tercero que la medición atrapó antes de publicarse: el paréntesis de la
+  fila de tarifas estaba en `--color-gray` al 0.7 = **4,04:1**, abajo del 4,5:1.
+  La escala quedó anotada en §10.4 para no volver a elegirla a ojo (0.75, que es
+  lo que da `--color-text-muted` en sección clara, apenas pasa con 4,60).
+- **Los 8 links del FAQ que el draft pide, NO se renderizaron como links**, y las
+  dos razones están medidas: ocho anchors en una frase miden 18px cada uno, y
+  aplicar el arreglo de §7 ocho veces en un párrafo destroza el renglón (WCAG
+  2.5.8 tiene una excepción explícita para targets limitados por el line-height de
+  una frase); y sobre todo **los ocho ya son filas completas dos secciones
+  arriba**, o sea serían los mismos ocho destinos por segunda vez en la misma
+  página. El link que sí queda es el de Brandwache, con `padding-block` sobre
+  `inline-block`.
+**2026-08-10 — NUEVO ÍTEM DE NAV "EINSATZGEBIETE" CON SUBMENÚ DE LAS 10 CIUDADES,
+igual que Leistungen. Y arregló un bug que estaba EN VIVO desde julio.** Pedido
+del cliente ("en el nav agregame areas o coverage areas, tiene que ser igual que
+Leistungen, que se abre con la flechita para abajo y se ven las distintas
+ciudades"). Toca `partials/header-de.html`, `partials/header-en.html`,
+`js/main.js` y `css/site-chrome.css`, o sea **las 13 páginas**.
+
+- **El CSS del submenú no necesitó UNA línea.** Ya era genérico:
+  `.site-nav__item--has-submenu` es `position: relative` y el panel es
+  `position: absolute` adentro, así que un segundo instancia funciona sola.
+  Medido a 1400 / 1440 / 1600: panel de 416px, 2 columnas, sin desbordar el
+  borde derecho (975 / 995 / 1075 contra el viewport).
+- ⚠️ **`js/main.js` SÍ necesitó cambio, y era un bloqueo real.**
+  `initMobileSubmenu()` usaba `document.querySelector` **singular**, escrito
+  cuando Leistungen era el único submenú. Con un segundo, el nuevo se habría
+  quedado **sin toggle**: permanentemente expandido en mobile, empujando el resto
+  del nav y el CTA del header fuera del drawer — que es exactamente el bug que esa
+  función existe para arreglar. Ahora es `querySelectorAll` + `forEach`.
+  - **El id de fallback ahora es indexado** (`site-nav-submenu-1/-2`). Era un
+    `"site-nav-submenu"` pelado, así que con dos paneles los dos habrían tenido el
+    MISMO id y el `aria-controls` del segundo botón habría apuntado al panel del
+    primero.
+  - **Se comporta como acordeón**: abrir uno cierra el otro. Con dos submenús de
+    diez links, dejar los dos abiertos mete 20 links más 5 ítems de primer nivel
+    en el drawer, o sea más de una pantalla otra vez.
+  - Verificado en mobile a 390: **2 toggles creados** (antes habría sido 1), ids
+    únicos, los dos colapsados al arrancar, los links padre siguen siendo links
+    reales (`/leistungen/`, `/einsatzgebiete/`), y el acordeón cierra el hermano.
+    Drawer abierto: nav de 405px y el CTA terminando en 456px sobre 844 de
+    viewport — entra con holgura.
+- ⚠️⚠️ **BUG QUE ESTABA EN VIVO, encontrado midiendo el panel nuevo y después
+  chequeando el viejo: "Alle Leistungen →" era BLANCO SOBRE BLANCO.**
+  `.site-nav__submenu-all` vive dentro de `.site-nav__list`, así que la regla
+  compartida `.site-nav__list a` — (0,1,1), una clase más un elemento — le ganaba
+  a la clase pelada (0,1,0) e imponía su `color: var(--color-text)` (blanco) y
+  `display: inline-block`. Medido: `rgb(255, 255, 255)` sobre el panel blanco, o
+  sea **invisible desde que ese panel se volvió claro el 2026-07-22**. Los links
+  de ciudad/servicio nunca tuvieron el problema porque
+  `.site-nav__submenu-list a` también es (0,1,1) y gana por orden de aparición.
+  Arreglado con `a.site-nav__submenu-all`; medido después en `/`, `/werkschutz/`
+  y la página de ciudad: `rgb(1, 1, 1)` y `display: block` en las tres.
+- **LABEL: "Einsatzgebiete", no "Coverage Areas".** El cliente lo nombró en
+  inglés pero este nav es todo alemán (Leistungen · Referenzen · Karriere ·
+  Kontakt), y Einsatzgebiete es la palabra que ya usan el link "Alle
+  Einsatzgebiete" del footer, el breadcrumb de las páginas de ciudad y la URL
+  `/einsatzgebiete/`. `header-en.html` lleva "Coverage Areas" por la razón
+  inversa, y se mantuvo en sincro para que los dos headers no divergan
+  estructuralmente — que es la razón por la que ese archivo existe.
+- **Posición: justo después de Leistungen.** Qué hace FRANKONIA, después dónde lo
+  hace — y deja los dos ítems con caret juntos en vez de partidos por Referenzen.
+- **El nav pasó de 4 a 5 ítems y sigue entrando**, que era el riesgo real (el
+  breakpoint ya se movió tres veces por esto: 1024 → 1200 → 1320 → 1400). Medido
+  a 1400 / 1440 / 1512 / 1600 / 1920: **una sola línea en todos**, con ~200px
+  libres entre el logo y el nav y otros ~200 entre el nav y el CTA, sin scroll
+  horizontal y con la hamburguesa en `display: none`.
+- **Ganancia gratis que no busqué:** `initActiveNavLink()` ya propagaba el
+  `aria-current="page"` de un link de submenú a su ítem padre, así que **cada
+  página de ciudad ahora marca "Einsatzgebiete" en el nav** con el subrayado azul,
+  igual que `/werkschutz/` marca Leistungen.
+- ⚠️ **Agregar o sacar una ciudad ahora son CUATRO ediciones, no tres**:
+  `header-de.html`, `header-en.html`, `footer-de.html`, `footer.html`. Las diez
+  son la lista y el orden del footer (Bamberg primero, después por región).
+  **Hof no está**: no está en el set de páginas del cliente y salió de todo el
+  sitio el 2026-08-05, reemplazado por Forchheim.
+- **Nota de medición:** `:focus-within` sí responde a un `.focus()` por script (al
+  contrario que `:hover`), pero **sólo si el iframe tiene el foco del documento** —
+  una corrida dio `focusWithin: true` y la siguiente no, con el mismo código. Y
+  bajo `--virtual-time-budget` las transiciones se congelan, así que `opacity`
+  quedó en 0 mientras `visibility` sí cambiaba (su transición es de 0s). Las dos
+  cosas leídas juntas confunden; el estado abierto se verificó al final con un
+  screenshot forzando el panel con las mismas declaraciones de la regla real.
+
+- **2026-08-09, mismo día — LOS 5 EINSATZFELDER LOCALES CIERRAN CADA UNO CON UN
+  LINK A SU SERVICIO, y se cerró un hueco visual real.** Pedido abierto ("cómo se
+  puede mostrar de la mejor forma posible, son 5 puntos"), y el hallazgo fue que
+  los 5 no son color local suelto: cada uno describe, casi textual, un servicio
+  puntual de FRANKONIA — y la sección no enlazaba a ninguno, justo debajo de la
+  sección de Leistungen que existe para eso.
+  - Los 5 pares (01 Objektschutz-Nürnberg · 02 Revier- & Schließdienst · 03
+    Veranstaltungsschutz · 04 Kaufhausdetektei · 05 Baustellenbewachung-Nürnberg):
+    3 de 5 nombran el servicio en la propia frase ("Zivile Kaufhausdetektive",
+    "Baustellenbewachung mit…", "Veranstaltungen"); los otros 2 usan casi las
+    mismas palabras que la Sección 3 usa para describir ESE servicio
+    ("Bestreifung, Zufahrtskontrolle" = Objektschutz; "Kontrollgänge zu
+    variierenden Zeiten" = el rasgo que define Revier- & Schließdienst en el draft
+    de Bamberg). **Revier- & Schließdienst no está en la lista de 8 de la Sección
+    3** — este es el único lugar de la página donde consigue un link.
+  - ⚠️ **El emparejamiento NO viene del draft** (el docx sólo anota "→ URL" en la
+    Sección 3), así que es una inferencia mía y vale confirmarla con Chris —
+    aunque de bajo riesgo, dado que 3 de 5 nombran el servicio directamente.
+    **No repite el error que Sektion 12 del homepage evitó a propósito**
+    (linkear algunos términos mencionados mientras sus hermanos daban 404): ahí
+    la alcanzabilidad era mixta (1 viva, el resto no); acá los 8 destinos de la
+    Sección 3 YA están linkeados pese a no existir ninguno — es la práctica
+    propia de esta página (§8.3), no una excepción a ella.
+  - **Bug real de hueco, medido, no supuesto:** con 5 ítems en una grilla 2-up, el
+    5 quedaba solo en la fila 3 — un hueco visible de 752 a 1337px a 1440 (482 a
+    833 a 900). Arreglado con `grid-column: 1 / -1` en el último ítem desde
+    900px, con su propio contenido capado a 34rem para que no se lea como un
+    párrafo estirado sino como un cierre deliberado.
+  - ⚠️⚠️ **UN BUG DE CONTRASTE PRE-EXISTENTE, encontrado midiendo mi propio
+    agregado — y no era mío, ya estaba en vivo.** `.service-link` dentro de
+    `.section--light` da **3,71:1** (blue-dark a 16px/500, que es texto normal y
+    necesita 4,5:1, no 3:1). Medido en `/referenzen/`, que usa el mismo componente
+    en sus 3 links de "Case Study lesen" desde el 05/08: **3,71:1, en vivo, sin
+    detectar hasta ahora.** Arreglado UNA vez en la fuente compartida
+    (`page-service.css`, `.section--light .service-link`) con la mezcla profunda
+    ya documentada (`color-mix(in srgb, var(--color-blue-dark) 85%, black)` =
+    **4,9:1**, el mismo valor que ya usa `.city-fields__num`), así que el cambio
+    corrigió mi link nuevo **y** los 3 de `/referenzen/` de una sola vez.
+    Verificado: `#4673AB` en las dos páginas, 4,9:1 medido matemáticamente sobre
+    el valor `color(srgb …)` que Chrome reporta para un `color-mix()` computado
+    (mi sonda con regex `rgb()` no lo leía; el cálculo a mano sí).
+  - **Un archivo mío quedó renombrado a `.hold` por otra sesión concurrente en
+    el mismo repo mientras trabajaba** — el contenido era el mío, intacto,
+    simplemente con el nombre cambiado. Se restauró con un `mv`. Vale saberlo:
+    en este repo hay más de una sesión escribiendo al mismo tiempo, así que un
+    build que de golpe no encuentra la página propia no es necesariamente un
+    error propio — antes de investigar más, chequear si el archivo fuente sigue
+    ahí con otro nombre.
+  - Medido a 320/390/768/900/1024/1440/1600: sin scroll horizontal en ninguno,
+    los 5 links presentes y resolviendo al destino correcto en todos, sin romper
+    `/referenzen/` (7.219px, sin scroll) ni `/werkschutz/` (19.387px, sin scroll).
+- **2026-08-09, mismo día — LA SECCIÓN DE LEISTUNGEN VA EN DOS GRUPOS, no como 8
+  iguales.** El cliente pidió leerla a nivel UX antes de tocarla, y la medición
+  encontró que los ocho no son ocho cosas equivalentes: **4 tienen su propia
+  página `/…-nuernberg/`** (cargan el volumen local — brandwache nürnberg mide
+  20/mes contra los 10 del resto — y un clic mantiene al visitante en el camino de
+  ciudad) y **4 apuntan a la página de servicio genérica**, que no va a contener la
+  palabra Nürnberg. Como pares iguales, el label de esos cuatro **prometía una
+  página local que no existe**, o sea la misma clase de afirmación implícita que la
+  regla UWG del hero existe para evitar.
+  - Grupo 1 → **cards**, 4 en una fila. Grupo 2 → **filas**, bajo la etiqueta
+    "Ebenfalls verfügbar".
+  - ⚠️ **EL SPLIT NO REORDENA NADA**: el draft ya los lista 1–4 ciudad / 5–8
+    genéricos, así que esto sólo hace visible una agrupación que Chris ya escribió.
+    Verificado en el markup antes de moverlos.
+  - **Los 8 conservan su descripción** (cliente: "no me gusta que los chips
+    pierdan su descripción"). El grupo 2 son **filas y no chips** justamente por
+    eso: sobreviven los ~760 caracteres de copy concreto y crawleable. Lo
+    secundario lo marca la posición y la superficie, no menos información. Lo único
+    de texto nuevo son las dos palabras de la etiqueta.
+  - ⚠️ **Las cards NO pueden ser idénticas a las de "Warum", y el motivo es
+    estructural, no de gusto.** Esas viven en `.section--light` y son paneles
+    BLANCOS; esta sección es oscura, y un panel blanco acá encandila. Voltear la
+    sección a clara **no está disponible**: dejaría tres claras seguidas y
+    cascadearía hasta Kosten, cuya caja de precio está construida como panel oscuro
+    DENTRO de una sección clara. Así que es el **gemelo oscuro**, y lo que le da
+    borde es una **diferencia de relleno** (blanco al 4,5 %) más una hairline, no la
+    sombra — sobre oscuro la sombra casi no trabaja, la misma conclusión a la que
+    llegaron las risk cards sobre su banda navy. **Medido a 320 → 1600: radio,
+    padding y tamaño de nombre idénticos a la card de Warum en todos los anchos.**
+  - ⚠️ **Cuando existan los otros siete destinos, NO promover una fila a card
+    porque su página salió.** La agrupación es por si el destino es
+    CIUDAD-específico, no por si existe. `/empfangsdienst/` va a existir y seguirá
+    sin ser sobre Nürnberg.
+  - ⚠️ **Pendiente para Chris, y por eso la etiqueta dice sólo "Ebenfalls
+    verfügbar":** sacar " in Nürnberg" de los 8 labels los llevaría de 22–32 a
+    10–20 caracteres y duplicaría la velocidad de escaneo, pero es la
+    "einheitliche Benennung" del draft y son 8 instancias del keyword principal.
+    **No se hizo.** Con los labels intactos, una etiqueta que nombrara la ciudad la
+    repetía tres veces en dos líneas.
+- **2026-08-09, mismo día — las 4 cards de "Warum" son PANELES BLANCOS ELEVADOS,
+  las mismas que los Anwendungsfälle de `/werkschutz/`** (cliente: "iguales a las
+  cards de werkschutz en donde hay 4 cards en una fila, que tengan drop shadow […]
+  solo que en este caso sin la ilustración grande"). Cada valor está **copiado** de
+  `.service-cases__card`, no re-derivado — borde `rgb(1 1 1 / 0.07)`, radio 1.5rem,
+  sombra de dos capas, padding por breakpoint, los mismos clamps de `h3` — así que
+  son un diseño en dos archivos y no dos parecidos. **Medido a 900 / 1100 / 1440 /
+  1600: las dos páginas dan IDÉNTICO** en radio, borde, fondo, sombra, padding,
+  ancho de card (216 / 290 / 326px) y tipografía; sin ancestro que recorte la
+  sombra y sin scroll horizontal.
+  ⚠️ **Revierte el "ruled, not carded" de §8.2 para este bloque** — decisión del
+  cliente, con el precedente de que los Anwendungsfälle hicieron el mismo camino.
+  4 en una fila desde **1100px** (el número de werkschutz, no el 1200 de `/jobs/`,
+  que venía de una card con FOTO).
+  ⚠️⚠️ **EL HOVER USA `translate` Y NO `transform`, y no es estilo: es obligatorio.**
+  Estos items llevan `data-item-reveal`, y `js/item-reveal.js` anima `y`/`scale` con
+  GSAP, que escribe un `transform` **inline** — y un inline le gana a cualquier
+  regla de hoja, así que un `transform: translateY(-5px)` en el hover **nunca se
+  aplicaría** después del reveal. `translate` es otra propiedad y se compone con
+  `transform`. **Verificado en aislamiento, no razonado:** un elemento con
+  `transform: matrix(1,0,0,1,0,24)` inline **y** `translate: 0 -5px` de hoja
+  reporta las dos computadas y aterriza en `layout + 24 − 5`. Es el mismo problema
+  que `page-service.css` resuelve componiendo desde `--card-y`/`--card-s`, pero eso
+  necesita un script propio y esta página usa el primitivo genérico. **Por lo mismo
+  no se copió el offset alterno de 28px de las pares** (es un `transform` en
+  reposo, ahí GSAP gana; en el 4-up werkschutz lo cancela igual).
+  > 🔴 **CORRECCIÓN 2026-08-10 — ESTE ARREGLO NO FUNCIONA, y el hover de estas
+  > cards está MUERTO en producción.** El "verificado en aislamiento" de arriba es
+  > justamente el agujero: la prueba puso el `transform` inline **a mano**, no con
+  > GSAP. GSAP no escribe sólo `transform` — escribe
+  > **`translate: none; rotate: none; scale: none;` inline** en todo elemento cuyo
+  > transform anima, precisamente para que las propiedades individuales no le
+  > peleen. O sea que el inline también gana en `translate`, y la hoja no puede
+  > tocar ninguna de las dos.
+  > **Medido con puntero real sobre `/sicherheitsdienst-nuernberg/`:** al hoverear
+  > una `.city-why__item`, el `border-color` SÍ cambia (esa propiedad no la toca
+  > GSAP) pero `translate` sigue en `none` y el top de la card no se mueve —
+  > 276px antes y después. Los 5px de elevación no ocurren nunca.
+  > **Afecta a `.city-why__item` en `/sicherheitsdienst-nuernberg/` y
+  > `/brandwache-nuernberg/`** (las dos cargan `page-city.css`). **No se arregló
+  > acá** porque el pedido del cliente era el rediseño de `/leistungen/` y decía
+  > explícitamente no tocar secciones ajenas.
+  > **El arreglo es de una palabra en el markup:** que `data-item-reveal` apunte al
+  > `<li>` envolvente en vez de a la card
+  > (`data-item-reveal=".city-why__item"` → `data-item-reveal="li"`). GSAP anima el
+  > wrapper, la card conserva sus propias propiedades de transform, y el hover
+  > vuelve a existir. Es exactamente lo que hace `/leistungen/` desde el rediseño,
+  > y ahí está **verificado con puntero real**: la card sube de 236 a 232px.
+  Tampoco se copiaron la ilustración grande (la excepción que pidió el cliente), el
+  numeral 01–04 (esas cards son un `<ol>` de casos; estas cuatro son razones, y
+  numerarlas sería inventar un orden que el copy no tiene) ni el header centrado.
+- **2026-08-09, mismo día — el header de la sección Vertrauen va CENTRADO**
+  (cliente: "hacemelo centrado"). H2 y lede sobre el eje del container; el
+  contenido de las cards de testimonio queda **a la izquierda** y el bloque de
+  certificaciones ya se centraba solo, así que la sección entera se lee centrada
+  con dos reglas. Es el tratamiento que ya tienen el FAQ de esta página, el de
+  `/werkschutz/` y `.ref-intro--center` de `/referenzen/`, o sea una decisión ya
+  tomada, no una nueva.
+  ⚠️ **`margin-inline: auto` en el lede no es opcional** y es la misma trampa de
+  especificidad que documenta §6: el chasis pone
+  `.section__intro > p { max-width: 42rem }`, así que `text-align: center` por sí
+  solo centra el TEXTO dentro de una caja de 672px que sigue pegada al borde
+  izquierdo — se ve como título centrado con párrafo alineado a la izquierda. Al
+  H2 se le suma `max-width: 36ch` (en `ch`, para que sirva a las otras nueve
+  ciudades) y rompe en "Nürnberger / Auftraggeber".
+  **Verificado con un `Range` sobre los nodos de texto reales, no con el rect del
+  elemento** — que acá miente, porque la caja del párrafo está capada a 42rem:
+  H2 y lede a **0px del eje** a 390 / 768 / 1024 / 1440 / 1600.
+- **2026-08-10 — CASI TODOS LOS HEADERS DE LA PÁGINA TERMINARON CENTRADOS, pedidos
+  de a uno.** Los dos últimos son **Warum** ("Warum Nürnberger Unternehmen auf
+  FRANKONIA setzen") y **Leistungen** ("Unsere Sicherheitsdienstleistungen in
+  Nürnberg"), que se suman a Vertrauen, Brandwache, Erreichbarkeit y Umgebung, más
+  el FAQ (lo centra el chasis) y el formulario (lo centra `lead-form.css`).
+  **Sólo quedan dos rangeados a la izquierda:** el strip de Einsatzfelder, y Kosten,
+  cuyo intro vive en la columna izquierda de un grid de dos columnas y no se puede
+  centrar sin romper esa maqueta. **La próxima ciudad conviene arrancarla con los
+  headers centrados** — está escrito en page-conventions §10 como el default de una
+  página de ciudad, y ahorra seis idas y vueltas.
+  ⚠️⚠️ **LA MISMA TRAMPA DE ESPECIFICIDAD APARECIÓ CINCO VECES EN UNA SOLA PÁGINA**
+  (Vertrauen, Brandwache, Umgebung, Warum, Leistungen), así que ahora está escrita
+  como regla general en page-conventions y no repetida por bloque: cuando un
+  `.section__intro` lleva H2 **y** párrafo, hacen falta **dos** cosas — un selector
+  de **dos clases** (el chasis pone `.section__intro > p { max-width: 42rem }` a
+  (0,1,1), así que una sola clase empata y pierde por orden) y `margin-inline: auto`
+  (el `text-align` centra el texto, los márgenes automáticos centran la CAJA).
+  Con una sola de las dos se ve título centrado con párrafo pegado a la izquierda,
+  que es peor que no centrar nada.
+  🔧 Seis reglas casi idénticas en `page-city.css` quieren ser un modificador
+  `.city-centred` cuando se construya la segunda ciudad; hoy no se consolidaron
+  porque cuatro cargan sus propios `max-width` medidos y sería refactor de reglas
+  que funcionan.
+  Medido con `Range` sobre los nodos de texto reales a 390 / 768 / 1024 / 1440 /
+  1600: los cuatro elementos (H2 + párrafo de las dos secciones) a **0px del eje**
+  del container, sin scroll horizontal, y las 4 cards de Warum y las 8 filas/cards
+  de servicios siguen alineadas a la izquierda dentro de su propia columna.
+- **2026-08-10 — LA SECCIÓN DE ERREICHBARKEIT (`.city-proof`) SE CENTRÓ ENTERA, no
+  sólo su título** (cliente: "esto centrámelo todo", sobre una captura de la sección
+  completa). ⚠️ **Revierte la nota de la pasada anterior de ese mismo bloque**, que
+  decía que la tira de tres se quedaba rangeada a la izquierda para seguir el par
+  "header centrado / contenido a la izquierda" de Vertrauen y Brandwache. Es
+  **la única sección de la página que centra también su contenido**, y es coherente
+  en vez de excepción: son tres frases de una línea con un icono arriba, mientras
+  aquéllas llevan citas de cuatro líneas y bloques de beneficios que necesitan un
+  borde izquierdo al que el ojo vuelva. **No "restaurar" la alineación izquierda por
+  consistencia.**
+  - ⚠️ **HUBO QUE BORRAR UNA REGLA, no alcanzaba con agregar `text-align`.** El
+    primer item tenía `padding-left: 0` para que su texto arrancara en el borde de
+    contenido de la página — correcto mientras la tira iba a la izquierda, y
+    **activamente equivocado ahora**: un padding asimétrico corre la caja de
+    contenido de esa columna, así que centrar adentro dejaba icono y frase ~16px a la
+    izquierda del centro real de la columna mientras las otras dos caían en el suyo.
+    Tres columnas centradas comparten un padding. Medido antes de borrar:
+    `32px 32px 24px 0px` contra `32px 32px 24px 32px` en las otras dos.
+    **El costo, asumido:** la primera columna ya no arranca en el borde de contenido
+    (page-conventions §1). Con texto centrado el ancla visual es el centro de la
+    columna, no el borde del container — la misma decisión que ya toma el bloque de
+    keyword centrado de `/leistungen/`.
+  - ⚠️ **`justify-self: center` para el icono, y ni `text-align` ni un auto-margin lo
+    habrían movido:** el item es un GRID, así que el icono es un grid item, y un
+    `<svg>` con ancho definido no responde al `text-align` del padre.
+  - ⚠️ **El Abbinder necesita `margin-inline: auto`** — la misma trampa que los cinco
+    headers de esta página, en su forma más simple: una caja con `max-width` dentro de
+    un padre centrado centra su TEXTO y se queda pegada a la izquierda. Su cap de
+    52rem además deja la hairline de arriba como una regla centrada de 832px en vez de
+    una que cruza el container, o sea se lee como el cierre de la tira y no como un
+    divisor de sección.
+  - **`text-wrap: balance` entró con el centrado y no es adorno:** una frase centrada
+    tiene dos bordes irregulares, así que un corte desparejo se ve dos veces. Medido:
+    a 1024 las líneas pasaron de **[3,4,3] a [3,3,2]**. El `hyphens: none` que estas
+    frases ya tenían pesa más ahora por lo mismo.
+  - Medido a 320 / 390 / 768 / 1024 / 1280 / 1440 / 1600: **texto e icono de las tres
+    columnas a 0–1px del centro de SU propia columna** (el resto es redondeo
+    sub-píxel), H2 y Abbinder a **0px del eje** del container, padding **32/32 en las
+    tres**, sin scroll horizontal, y la sección sigue en **761px** a 1440 — el
+    centrado no costó alto.
+- **Medido, no a ojo, a 320 / 390 / 768 / 900 / 1024 / 1200 / 1440 / 1600:** sin
+  scroll horizontal en ninguno, **cero fallos de contraste**, y los 8 bloques de
+  contenido con **el texto exactamente en la misma línea izquierda** (20 / 63 / 68
+  / 77 / 90 / 103 / 112px — medido con un `Range` sobre el nodo de texto real, no
+  con el rect del contenedor, que en un `.container` no dice nada). Un solo `<h1>`,
+  sin saltos de nivel, 9 seams con el color de tile correcto en cada borde. Alto
+  12.151px a 1440 y 15.922 a 390. FAQ visible ↔ `FAQPage` **6/6 byte-idénticas**
+  (y re-verificadas también en el homepage 11/11 y `/werkschutz/` 5/5, que no se
+  rompieron).
+- **Sin JS, verificado sacando los 10 `<script src>`**: nada oculto, 0 tiles de
+  seam, 26 headings, 21 links y **9.532 caracteres de texto real en `<main>`** —
+  el contrato de §4.5, que acá además es requisito de GEO.
+- **Lo que sigue sin verificar**, mismo caveat de siempre: el switch claro/oscuro
+  del header sobre las 4 secciones blancas necesita eventos de scroll reales
+  (`npm run dev`), y la secuencia de reveals con movimiento activado sólo se
+  comprobó por medición del estado final, no mirándola.
+- ⚠️ **Tres cosas para confirmar con Chris**, todas anotadas también en la
+  checklist: los 2 testimonios van **completos** y no "gekürzt wie Demo" (acortar
+  la cita de un cliente real con nombre es editarle las palabras a una persona, y
+  no hay versión corta en ningún documento); **"Bayernhafen Nürnberg"** aparece en
+  el Einsatzfeld 01 — es el puerto público como descripción geográfica, no el
+  cliente de Bamberg cuya Freigabe nunca llegó, pero el nombre tiene historia acá;
+  y el H2 de Umgebung es la **CUARTA excepción** a la escala de §2 (el draft lo
+  pide con esas palabras, "H2 (klein)"), así que **la próxima tiene que replantear
+  §2 en vez de sumarse a la lista**.
+
+**2026-08-08 — EL SCROLL SE TRABABA EN EL HOMEPAGE Y NO ERA EL MAPA. Bug de
+compositing sitewide: 447 `will-change` permanentes + 116 filtros gastados.**
+Cliente: "cuando estoy en la homepage de desktop pasando por el mapa, al final, se
+tranca un poco, creo que es porque carga en el momento". El diagnóstico del cliente
+era razonable — el mapa YA es lazy (`js/coverage-lazy.js` desde 2026-07-27) y carga
+justo ahí — **pero medido, no era eso**, y arrancar por "optimizar el mapa" habría
+sido tiempo tirado. Toca `js/title-reveal.js`, `js/item-reveal.js`, `js/main.js` y
+`css/motion.css`, así que **afecta a las 9 páginas**.
+
+- **Cómo se descartó el mapa, que es la parte que vale la pena repetir.** A/B parado
+  en distintos puntos del scroll, 4x de CPU throttle: **arriba del mapa 8ms de frame
+  y 0 de blocking; a la altura del mapa 109ms; pasando el mapa 83ms; y volviendo a
+  subir, 8ms otra vez con Leaflet ya cargado.** O sea no era la carga (subir después
+  es limpio) ni Leaflet. Y `#coverage-map { display: none }` **no cambiaba nada**.
+  El `backdrop-filter: blur(8px)` del overlay del mapa tampoco: 0 de diferencia
+  medida. Dos sospechosos plausibles descartados por medición.
+- **La respuesta la dio un TRACE, no el CPU profile.** El profile de JS daba 144ms de
+  leaflet y 2ms de coverage-map sobre una ventana de 5s — o sea el JS no era nada, el
+  99 % estaba en `(program)`. Un `Tracing` con las categorías de timeline lo nombró:
+  **2678ms de `Layerize` sobre 3000ms de traza**, con Paint 76ms y Layout 37ms al
+  lado. Layerize es el compositor recalculando el árbol de capas. La página tenía
+  **425–479 capas**.
+- ⚠️ **CAUSA 1 — `js/title-reveal.js` ponía `will-change` en CADA CARÁCTER de cada
+  `h2`, para siempre.** El script parte cada heading en un `<span>` por letra:
+  **437 spans hinteados** desde el load hasta el final de la visita. `will-change` es
+  un hint CON COSTO — le pide al compositor que mantenga una capa lista — así que
+  hintear cientos de elementos que no van a animar en horas es peor que no hintear.
+  Ahora se enciende cuando el heading entra en su propio rango de scroll y se apaga
+  al salir (`onToggle` para el scrubbeado, `onStart`/`onComplete` para el que juega
+  una sola vez), así que como mucho lo llevan uno o dos headings a la vez.
+  **447 → 10 elementos con `will-change`.**
+- ⚠️ **CAUSA 2, misma clase de bug en dos lugares más — un `filter` gastado no se
+  retira.** `filter` distinto de `none` deja al elemento en su propia capa **aunque
+  sea `blur(0px)`**: sigue rasterizándose, sin desenfocar nada. Dos fuentes:
+  `js/item-reveal.js` (termina en `blur(0px)` y ahí queda) y `.u-reveal.is-visible`
+  de `css/motion.css` (idem). **116 elementos** con un filtro cumplido, y el peor de
+  todos era **`.coverage__map-wrap`: una caja de 835k píxeles envolviendo el mapa
+  Leaflet vivo, sostenida en su propia capa por un desenfoque de cero** — que es por
+  qué el problema se sentía "en el mapa" sin ser el mapa.
+  - item-reveal limpia con `clearProps` **sólo en `onLeave`**, y ese borde es
+    deliberado: es el final del rango, donde el item ya está en opacidad 1 / blur 0 /
+    sin offset, o sea idéntico al estado de reposo del CSS. Hacerlo en `onLeaveBack`
+    borraría un estado inicial que es `opacity: 0` y **haría aparecer de golpe
+    contenido sin revelar**. Volver a entrar desde abajo es seguro: el scrub
+    re-renderiza el tween y reescribe las propiedades.
+  - `.u-reveal` gana `.is-settled { filter: none }`, que `js/main.js` agrega recién
+    con el `transitionend` del `filter` (con un timeout de 2s de red de seguridad,
+    para cuando el evento no llega). `none` y `blur(0)` se ven idénticos, así que el
+    cambio es invisible. **No plegarlo dentro de `.is-visible`** — mataría el blur
+    antes de que juegue.
+- **Medido antes → después** (mismo harness, parado 3s, headless con rasterizado por
+  software; el 4x exagera los absolutos pero el A/B es el punto):
+
+  | | frame @4x | blocking @4x | frame @1x |
+  |---|---|---|---|
+  | a la altura del mapa | 109 → **58ms** | 1405 → **353ms** | 24 → **16ms** |
+  | pasando el mapa (FAQ) | 83 → **40ms** | 1320 → **0ms** | 9 → **8ms** |
+
+  Capas 479/425/429 → **372/292/249**, y los cambios del árbol de capas en 2s de
+  30/8/6 → **0/5/0**. A velocidad real las dos zonas quedan en 60fps.
+- **Verificado que no se rompió ningún reveal**, que es el riesgo real de tocar esto:
+  scroll completo de la página hacia abajo, hacia arriba y de nuevo hacia abajo, en
+  **las 5 páginas** (homepage, `/werkschutz/`, `/jobs/`, `/referenzen/`,
+  `/kontakt/`) → **0 elementos quedan en opacidad <1 o con blur**, 0 spans con
+  `will-change` al final, y todos los `[data-reveal]` llegan a `.is-settled`.
+  Reduced motion y no-JS no cambian: los tres scripts siguen saliendo temprano y el
+  estado por defecto sigue siendo el contenido visible.
+- **Lo que NO se tocó, a propósito:** los 552KB de GeoJSON de las 10 ciudades sin
+  simplificar (`assets/data/coverage-boundaries/`, 30–102KB cada uno). Se midió y
+  **no aparece**: 154KB transferidos en 15ms y el parseo no figura en el profile,
+  porque Leaflet recorta al viewport (868 puntos de path en total). Sigue siendo
+  peso de red evitable — el archivo de la región ya está simplificado a 8KB y
+  documentado — pero no es esto, y cambiarlo no habría arreglado nada.
+
 **2026-08-05 — primera tanda de migración al copy v2 APLICADA** (cliente: "te doy
 el ok a todo lo que esté en el nuevo copy… respetá todo lo que dice el copy").
 Todo verificado con medición, no a ojo. Lo que se hizo:
@@ -441,6 +1903,211 @@ real URL and carry `.site-nav__link`, so `initActiveNavLink()` can mark them.
   - Measured after, on both pages: title 20px/800, 1px tracking, #3D9AD3 at 3,11:1
     and `isLargeText: true`; arrow 28px, same blue, 3,11:1 as a graphic; row still
     81px tall; no horizontal overflow.
+- **2026-08-05 — the "Weiterlesen" rows hover like the homepage's outfit list**
+  (client: "cuando hoveree, que sea igual que la lista de outfits de la home, que el
+  fondo se ponga negro y que la flecha rote"). In `page-service.css`, so
+  **/werkschutz/ gets it too** — same shared block, and the ask is explicitly parity
+  with a homepage component.
+  - Row fills `--color-logo-black` with `--color-white` text on hover/focus, the same
+    two tokens `.outfits__name-btn` uses, and the arrow **rotates 45°** into a
+    straight right arrow instead of the 3px translate it had. Both REVERSE the
+    2026-08-03 brief that asked for "flat and lightweight" (a pale blue wash + a
+    nudge) — the client's later call. White on black is 21:1, so it is also the
+    stronger state of the two.
+  - ⚠️ **The cascade trap that would have made it look broken:**
+    `.section--light .service-related__link:hover` is (0,2,1) against the base
+    hover's (0,1,1), so it wins — and it was still setting `color: black` from the
+    "darken on hover" brief, which on a black fill is a black label on black. It sets
+    white now. Both directions of this collision are annotated at the rules.
+  - **Verified with a REAL pointer over CDP**, not by reading the rules:
+    `Input.dispatchMouseEvent` at the row's centre, then computed styles —
+    `bg rgb(1,1,1)`, `label rgb(255,255,255)`, arrow white with
+    `matrix(0.707…)` = 45°. `:hover` does not respond to a synthetic
+    `dispatchEvent` from page script, so a "hover test" written that way proves
+    nothing (the harness is in the scratchpad note below).
+- **2026-08-05 — the CV upload shows only its button** (client: "sacame lo de no
+  file chosen, solo que quede el botón de Choose File").
+  - The browser paints that text itself, inside the control's own shadow content,
+    and `::file-selector-button` reaches the BUTTON and nothing else — so
+    `color: transparent` on the input is the only lever CSS has. It hides the empty
+    state and the chosen file's name alike; the button is unaffected because it sets
+    its own colour. The value stays in the accessibility tree either way (it is the
+    input's value), so a screen reader still hears which file is attached.
+  - **New `js/jobs-file-name.js` echoes the chosen name back** under the button,
+    because hiding the text alone would mean attaching a CV changes nothing visible
+    on a form whose point is attaching a CV. Generic hook
+    (`data-file-name-target="#id"`), enhancement only: the echo element is empty in
+    the markup and `aria-hidden` (the input already announces the file), so with no
+    JS the field is exactly the button on its own — the state the client asked for.
+  - ⚠️ **A REAL SPECIFICITY BUG surfaced here, and it had been silently live for two
+    days.** The input carries `.form-field__input` too, and lead-form.css styles
+    `.conversion__form .form-field__input` — (0,2,0). Every single-class
+    `.jobs-form__file` rule in page-jobs.css is (0,1,0) and **loses to it regardless
+    of file order**. It went unnoticed because lead-form's values for the shared
+    properties are identical (same underline, same transparent fill), so the field
+    looked exactly as intended while half the rule did nothing — and it only surfaced
+    when a property lead-form ALSO sets had to differ here: `color: transparent`
+    measured back as `rgb(59,73,86)`, i.e. ignored. All of them are
+    `.jobs-form .jobs-form__file` (0,2,0) now, base + hover + focus + the phone
+    block. **The lesson for the next form: a field that carries a shared component
+    class needs two-level selectors, and "it looks right" is not evidence the rule
+    applied.**
+  - Verified over CDP with a real file attached via `DOM.setFileInputFiles`: empty
+    state renders the button alone (`input color: rgba(0,0,0,0)`, echo empty), and
+    after selecting, the echo reads `Lebenslauf_Max_Mustermann.pdf` with the native
+    text still hidden.
+- **2026-08-07 — the hero is TWO COLUMNS again: copy left, photo right** (client:
+  "poné de imagen de hero la imagen KarriereHero.png y ponela a la derecha del hero,
+  el contenido a la izquierda"). Third shape this hero has had, each one a client
+  call: the service template's copy | portrait split → the full-bleed street photo
+  (2026-08-03) → this.
+  - **`KarriereHero.png`** (1536×1024, from `assets/images/`) is a studio shot of four
+    staff in Dienstkleidung **on a black background**, which is what makes this layout
+    easy: the photo blends into the section's own black, so the frame carries **no
+    radius, no border and no placeholder tint** — a radius would round nothing but
+    black and a light placeholder would flash before the image lands. The frame's only
+    job is `aspect-ratio: 3 / 2`, matching the source exactly, so the space is
+    reserved (no CLS) and `cover` never crops anything.
+  - Exported over the old `jobs-hero-*` names (**the street-photo variants were
+    deleted**, not left stale — git has the bytes): 640/960/1280w WebP + a 1280 JPEG,
+    20/39/59KB WebP, 95KB JPEG. Far lighter than the street photo it replaces
+    (193KB at its largest) because a black studio backdrop compresses well. Still
+    preloaded + eager + fetchpriority with `imagesrcset`/`imagesizes` mirroring the
+    `<picture>`.
+  - **Both readability washes are GONE with the background**, along with
+    `.jobs-hero__bg` and the `object-position` crop. That is the real win of a
+    side-by-side layout: the copy sits on flat black, so nothing is ever fighting a
+    photograph for contrast, and there is no gradient to re-tune the next time the
+    copy column changes width.
+  - Columns are `1.1fr / 0.9fr` from 1024px, not an even split: the copy side carries
+    the H1, lede, CTA, three tick lines and the trust band, and at 50/50 the H1 broke
+    to three lines. Below 1024px it is one column and the DOM order (copy, then photo)
+    is the stacking order — the H1 opens the page, the photo closes the hero.
+  - ⚠️ **A leftover from the previous version would have silently cancelled this
+    one:** the full-bleed pass had its own
+    `@media (min-width: 1024px) { .jobs-hero__grid { grid-template-columns: minmax(0,1fr) } }`
+    further down the file. Same specificity as the new two-column rule and LATER, so
+    the hero would have stayed single-column with the photo underneath at every width.
+    Deleted, with a note at the spot. When a layout is replaced, grep the whole file
+    for the old block — not just the part you are rewriting.
+  - **Made BIGGER the same day** (client: "la imagen tiene que ser bastante más
+    grande, está muy chica") — 512×341 → **688×529 at 1440**, and the four people
+    themselves roughly **twice** the size they were. It took two independent moves,
+    because neither was enough alone:
+    1. **Layout**: even columns instead of 1.1fr / 0.9fr, the gap 96 → 64px, and the
+       photo **bleeding through the container's right inset to the viewport edge**
+       (~120px of width at 1440 on its own). The negative margin is tied to the same
+       two tokens the inset is built from, never a fixed number — the trap that gave
+       the homepage's bleeding rows real horizontal scroll.
+    2. **The export was re-cropped to the GROUP.** The four people spanned only 78 %
+       of the original frame's width, the rest empty backdrop, so ~50px of air around
+       a measured subject box (x 168–1361, y 72–1018 of 1536×1024, found with a
+       98th-percentile luminance scan per column and row rather than by eye) came off.
+       Same layout box, subjects ~37 % larger, nothing lost because what was cropped
+       was black. New crop is 1300×1000, so the frame is `aspect-ratio: 13 / 10` and
+       `cover` still crops nothing; variants re-exported at 640/960/1300w.
+    ⚠️ **What does NOT work, and why:** making the frame tall enough to fill the
+    hero's 772px. `cover` would then crop horizontally, and at this column width the
+    visible slice is the middle ~43 % of the frame — it cuts the outer two people in
+    half. Width is the only lever that enlarges them without losing anyone.
+    ⚠️ **Measured trade-off:** the copy column is 585px now and the H1 breaks to
+    THREE lines instead of two ("Dein Job bei" / "FRANKONIA:" / "Sicherheit, auch für
+    dich"). Two lines need ~620px at the 52px clamp, so a photo this big and the
+    two-line break cannot both fit at 1440. Three lines balances the taller photo;
+    if the break matters more, the lever is the column split (1.09fr / 0.91fr buys
+    the copy ~620px and costs the photo ~50px), not the H1's max-width, which is not
+    the constraint.
+  - **Nudged left and up a notch, same day** (client: "movela un poco a la izquierda y
+    agrandala un pelín"): the split goes 1fr/1fr → **0.95fr / 1.05fr** and the gap
+    64 → 48px, both of which take width off the copy side, so the photo grows
+    LEFTWARDS while its right edge stays pinned to the bleed. At 1440: 688×529 →
+    **726×558**, left edge 752 → 714.
+  - ⚠️ **The two-column hero now starts at 1280px, not 1024 — and the H1 is why.**
+    Measured: two columns leave the copy column at 464px (1024) and 526px (1152)
+    whichever way the split is tuned, and the H1's longest line needs **~595px**
+    (measured off a real 1512px render, not estimated), so the heading broke to FOUR
+    lines in that whole band. No split fixes it; the container does not have 595px
+    plus a photo at those widths. 1024–1279 therefore keeps the stacked layout it
+    already used below 1024: full-width copy (H1 back to two lines) and a **full-width
+    photo — 870→1090px wide there, bigger than any two-column version of it**. The
+    hero is taller in that band (~1215px at 1024), which is exactly what it already
+    did at 768 (1204px). The bleed moved to 1280 with the grid, or it would have
+    pushed the full-width photo past the viewport edge.
+    Line counts, for whoever moves these numbers next: 1024 → 2 (stacked) · 1280 → 3 ·
+    1439 → 2 · 1440 → 3 · 1600 → 2.
+  - **THE BLEED IS GONE (client, asked and answered 2026-08-07: "despegarla del borde
+    derecho").** The photo used to pull through the container's right inset to the
+    viewport edge — 107px of extra width at 1512 — and that is precisely why "move it
+    left" did not read as movement: its right edge was pinned to the screen, so the
+    39px it gained came off its LEFT edge and it looked like the same photo, slightly
+    bigger. Asked directly with the four options and their measured costs; the client
+    picked alignment over size. It now ends on the page's own content edge, the same
+    line every section below it ends on (page-conventions §1), with a real margin to
+    its right: **656×505 at 1512** (from 763×587, i.e. the ~14 % that was known and
+    accepted when choosing).
+    That also buys the heading back: the copy column keeps 594px, so **the H1 is two
+    lines again at 1512 and 1600**. It is still three at 1280–1440, where the column
+    falls under the ~595px the longest line needs — inherent to a fixed 52px H1 beside
+    a photo at those widths, and the reason the two-column layout starts at 1280 at all.
+  - **Bigger once more, 2026-08-10** ("podés agrandarla un poco más la imagen de la
+    derecha del hero"): gap 48 → 32px and the split 0.95/1.05 → 0.9/1.1, so the growth
+    comes off the left while the right edge stays on the content line. At 1512:
+    **656×505 → 696×535**, left edge 749 → 709.
+    **The number that governs this whole hero, finally measured instead of estimated:
+    "Dein Job bei FRANKONIA:" renders at exactly 594px at the H1's 52px.** The copy
+    column was 594px — dead on the threshold — so every pixel the photo gains costs
+    the heading its two-line break. It is three lines at 1280–1550 now and two from
+    ~1570px. The full range at 1512 is 665px of photo with two lines vs 696px with
+    three; there is nothing else to win without shrinking the container inset (breaks
+    page-conventions §1 sitewide) or the H1 clamp (breaks §2).
+  - ⚠️ **Lesson worth keeping about "move it left":** with a right-pinned element,
+    changing the column split does not MOVE it, it RESIZES it. The two reads of the
+    request ("shift the block" vs "grow it leftwards") produce visibly different
+    results, and the numbers — 39px of left edge, 0px of right edge — are what made the
+    difference obvious enough to ask instead of guessing again.
+  - ✅ **2026-08-10, same day — EL H1 DE TRES LÍNEAS SE RESOLVIÓ, y no con ninguna de
+    las dos palancas que este archivo venía anotando como únicas** (encoger la foto o
+    encoger el inset). El cliente propuso la tercera: *"no sean tres líneas el título,
+    podríamos mover un poco la imagen a la derecha así entra"* — y tenía razón porque
+    **la foto no estaba pegada a nada**: medidos **103px (1440) a 112px (1600) de página
+    vacía** entre su borde derecho y el viewport, o sea el inset del container que el
+    2026-08-07 se le devolvió al sacar el bleed. Ese sobrante es el presupuesto.
+    - **`--jobs-hero-shift`, y hay que leer las dos declaraciones juntas.** El grid le
+      da el shift a la columna de copy (split 0.9/1.1 → **1fr/1fr** desde 1440, y
+      1.15/0.85 → **1.2/0.8** en la banda de 1280) y `.jobs-hero__media` se lo devuelve
+      con un `margin-inline-end` negativo del MISMO valor. Resultado medido a 1440:
+      copy **540,7 → 600,8px** (pasa los 593,4 del H1) y la foto **660,9 → 660,8px**, o
+      sea **su ancho no cambió** — sólo se movió 60px a la derecha (borde 1336,8 →
+      1396,8, con 43px todavía libres). El split solo, sin el margen, la habría encogido
+      9 %.
+    - ⚠️ **NO es un bleed y no tiene que volver a serlo.** El del 2026-08-07 llegaba al
+      borde del viewport y el cliente lo pidió afuera ("despegarla del borde derecho");
+      esto conserva margen real, sólo gasta parte del inset. **Un valor más grande hay
+      que re-medirlo contra el sobrante, no estimarlo.**
+    - **El shift es distinto por banda porque el déficit lo era:** 60px desde 1440
+      (faltaban 53px a 1440 y 24 a 1512) y **26px** en 1280–1439, donde a 1280 la
+      columna medía 590,6 contra 593,4 — **tres píxeles**, y por eso rompía a tres
+      líneas sólo en el extremo inferior de la banda.
+    - ⚠️ **El H1 real mide 593,4px, no 594** (la entrada de arriba redondeaba). Y **1440
+      es el peor caso** de su banda: la columna crece con el viewport, así que si 1440
+      pasa, todo lo de arriba pasa. Medir 1440 primero.
+    - Medido a **320 / 390 / 768 / 1024 / 1279 / 1280 / 1400 / 1439 / 1440 / 1512 /
+      1600 / 1920**: **dos líneas en todos los anchos de dos columnas** (antes: 3 a
+      1280, 1440 y 1512), sin scroll horizontal en ninguno, la trust band dentro de la
+      primera pantalla (780 de 900) y el sobrante derecho nunca por debajo de 43px. A
+      320 y 390 el H1 sigue en 4 y 3 líneas — es el layout apilado con una columna de
+      280/350px, inherente y previo a este cambio.
+    - ⚠️ **Quedó una discontinuidad para decidir, NO tocada:** con el H1 ya resuelto, la
+      razón por la que la banda 1280–1439 lleva un split a favor del copy desapareció —
+      ahí la columna tiene 616–701px contra 594 de necesidad, o sea **22 a 107px que
+      podrían ir a la foto**. Hoy la foto mide **480px a 1400 y 661px a 1440**, un salto
+      del 38 % en 40px de viewport. Unificar las dos bandas lo cerraría, pero cambia el
+      tamaño de la foto en anchos que el cliente no mencionó, así que se deja anotado y
+      no aplicado.
+  - Measured at 320 / 390 / 768 / 1024 / 1280 / 1440 / 1600: no horizontal overflow at
+    any width despite the bleed (`overflow: hidden` on the section is what contains
+    it), two columns from 1024 up, stacked below it with the photo after the copy, and
+    the right `<picture>` candidate at each width.
 - **2026-08-05 — the hero now matches the HOMEPAGE hero's format, same copy**
   (client: "el formato como la hero del homepage… los DEKRA badges como en la hero
   de la home, lo mismo con los tamaños, los tics, que sean así en fila").
@@ -670,15 +2337,62 @@ real URL and carry `.site-nav__link`, so `initActiveNavLink()` can mark them.
     which clips anything outside its content box — including a shadow reaching ~16px
     below the card. Two-level selector, because swipe-carousel.css loads last and
     sets `padding` as a shorthand.
-  - **Photos are the client's own 2022 studio shoot**, named per card in the brief
-    (`Frankonia_Sicherheitsdienst_02_05_22_063/156/040/137-a_prev.jpg` from
-    ~/Downloads), cropped 3:2 → 4:3 and exported as
-    `assets/images/jobs-why-{bezahlung,dienstplan,erreichbar,objekte}` at 640/960w
-    WebP plus a 960 JPEG fallback (9–30KB WebP, 32–58KB JPEG). The crop is CENTRED
-    and was checked photo by photo: every face, the clipboard, the radio and the
-    raised hand survive it. They are studio shots on white, which is why the frame
-    carries `--color-bg-subtle` — it reserves the space (no CLS) and the image
-    still reads as a photo panel against the white card.
+  - **Photos: REPLACED 2026-08-07 with dark-backdrop versions** (client: "actualicé
+    las imágenes de estas 4 cards y las guardé como los títulos"). Same four shots,
+    re-lit on a dark navy backdrop instead of white, dropped into
+    `assets/images/` named after the card titles — three by title
+    (`Bezahlung, die ankommt.png`, `Dienstplan mit Ansage.png`,
+    `Feste Objekte statt Springer-Chaos.png`) and **the fourth as
+    `FemalePointing.png`**, which is the "Ein Arbeitgeber, den du erreichst" card
+    (identified by looking at it, not by the filename — third time a supplied file's
+    name has not matched its slot on this project).
+    Re-exported over the SAME asset names, so no markup changed:
+    `jobs-why-{bezahlung,dienstplan,erreichbar,objekte}` at 640/960w WebP + a 960
+    JPEG (11–31KB WebP, 37–57KB JPEG, q85 — one notch up from the white originals'
+    q82, because a large navy gradient bands before a white one does).
+    Two of the four arrive already 4:3 and are **not cropped at all**; the two 3:2
+    ones take a centred 85px-per-side crop, checked frame by frame: every face, both
+    clipboards, the radio, the pointing hand and the raised finger survive it.
+  - **REPLACED AGAIN 2026-08-10, this time on PURE BLACK** (client: "hay que cambiar
+    las imágenes de esta sección… las dejé todas en Desktop con los nombres de las
+    cards"). Same four shots once more, same slots, and this round **all four
+    filenames match their card title**, so nothing had to be identified by eye:
+    `Bezahlung, die ankommt.png` · `Dienstplan mit Ansage.png` ·
+    `Ein Arbeitgeber, den du erreichst.png` · `Feste Objekte statt Springer-Chaos.png`
+    — on the **Desktop, not in `assets/`**, which is the right place for a working
+    original (see the 6,5MB warning below) and means nothing new got published.
+    Re-exported over the same asset names again, so **no markup changed and the four
+    `alt` strings still describe their photo exactly** (verified one by one against
+    the new files: three men in suits with blue ties / woman with clipboard and a
+    colleague / woman on the radio pointing / two men in blue helmets with a
+    clipboard). 640 + 960w WebP q88 plus a 960 JPEG q85, 11–58KB.
+    ⚠️ **Two of them report mode RGBA and it is a red herring** — measured
+    `alpha min == max == 255`, i.e. zero transparent pixels, so they are opaque
+    black-backdrop photos, not cutouts. That mattered before exporting: a real cutout
+    dropped on the white card would have shown the card through the people while the
+    other two sat on black, and the four cards would no longer have read as a set.
+    They are simply `.convert('RGB')`-ed on the way out.
+    The crop is derived from each file's own measured subject bbox rather than from
+    the image centre: the two 3:2 files are cropped to 4:3 **around the subject**
+    (dienstplan left 72, objekte left 42, not the naive 85), with an assertion that
+    the window still contains the full bbox. The mobile strip's 3:2 frame then takes
+    ~4,2 % off the top and bottom of the 4:3 export — the smallest top margin in the
+    set is 6,6 %, so no head is cut on a phone either. Verified in a real render at
+    1440 (four cards, equal height, correct mapping) and 390.
+  - **The frame's placeholder colour followed the photos**: `--color-bg` (near-black)
+    instead of the 4%-grey `--color-bg-subtle` it had. With dark images a light
+    placeholder flashes light-then-dark as each lazy image arrives. The navy itself is
+    not a project colour and a placeholder is not worth inventing a hex for;
+    `.section--light` does not re-declare `--color-bg`, so it stays black inside the
+    white section.
+  - ⚠️ **The four source PNGs are 6,5MB and they are PUBLISHED.** `build.js` copies
+    `assets/` verbatim, so every raw source dropped in there ships and is reachable
+    by URL — the same thing that made the unapproved bayernhafen logo public. The
+    exports actually used total 370KB. They are working originals, so they were left
+    where the client put them rather than moved unilaterally, but they belong in
+    `~/Desktop/FRANKONIA-assets-archive/` (or anywhere outside `assets/`) before the
+    next deploy. Same goes for `HeroWerkschutz.png`, `ReferenzenHero.png` and the six
+    `N. …png` Leistungsumfang sources already sitting there.
   - **Two breakpoints are measured, not conventional, and the comments in
     page-jobs.css carry the numbers.** (1) The four-up row starts at **1200px, not
     this project's usual 1024px**: the card's height comes from its copy, so
@@ -1751,6 +3465,62 @@ July version was built with is gone, on purpose. What changed:
     scroll, no min-height anywhere in the list (row heights are 48px at one line and
     71px at two, i.e. content-driven), and the phone stack is
     intro → card → note → factors at every width below 900.
+- **2026-08-07 — el duty activo del Leistungsumfang ya NO se rellena: lleva una FLECHA
+  adelante y el título SUBRAYADO en celeste** (client: "en vez de tener fill celeste
+  quiero que haya una flecha adelante, de las flechas que usamos en todos lados de la
+  web, esas que rotan […] y que se subraye el título con una línea celeste, el celeste
+  del CTA"). ⚠️ **Tercer tratamiento del mismo estado** — raya azul a la izquierda
+  (2026-08-03) → fill azul entero (2026-08-05) → esto. Los tres son decisiones del
+  cliente; **no "restaurar" el fill**. La entrada de abajo queda como historia.
+  - Es el `#icon-arrow-diagonal` del sprite, con la MISMA rotación de 45° que
+    `.services__item-arrow` y `.service-related__arrow`: en reposo apunta arriba-derecha
+    y al activarse gira a flecha recta hacia el título. Lleva el mismo fix ya
+    documentado tres veces en este archivo — `fill: none; stroke: currentColor`, porque
+    el fill/stroke del sprite vive en `<g id="icon-defs">` y no sobrevive a `<use>`.
+  - **La flecha está SIEMPRE renderizada, a `opacity: 0`**, así llegar a un duty cuesta
+    sólo opacidad y transform: cero layout, la misma regla por la que el padding va en
+    TODOS los steps y no sólo en el activo.
+  - **Arranca en el borde izquierdo del bloque** — la misma línea desde la que ya
+    arrancan el H2 de la sección y la hairline de cada step (client, apenas salió la
+    primera versión: "la flecha tiene que estar alineada con el título, o sea partir
+    desde el mismo punto"; se preguntó con las tres lecturas medidas y eligió ésta).
+    Está **fuera de flujo** (`position: absolute`), y eso es lo que le permite sentarse
+    ahí sin arrastrar el título: los seis títulos y sus párrafos conservan su propio
+    borde de texto, a `--flow-arrow-lead` del contenido del step, sin moverse cuando
+    llega la flecha. El `left` es el padding inline del step NEGADO, porque el bloque
+    contenedor es el h3, cuya padding box empieza un `--space-4` adentro de ese borde.
+    Medido a 1152 / 1280 / 1440 / 1920: la caja de la flecha cae **exactamente** sobre el
+    borde del bloque en los cuatro (98,2 + 5 de la bbox rotada = 103,2 a 1440), y los
+    seis títulos siguen en la misma x que antes del cambio.
+    ⚠️ La primera versión la tenía **en flujo**, en una ranura reservada dentro del h3
+    flex; eso metía el texto 32px adentro y dejaba la flecha suelta en un margen propio,
+    que es justo lo que el cliente marcó.
+  - ⚠️ **El `-50%` de `translate` es el centrado vertical, y HAY QUE REPETIRLO en el
+    estado activo**: `transform` es una sola propiedad, así que una regla activa que
+    escribiera sólo la rotación tiraría el centrado y dejaría la flecha media glifo
+    abajo. Medido: centro de la flecha 231,5 contra 231,4 del centro del texto del
+    título (medido con un `Range` sobre el nodo de texto, no con el rect del `<span>`).
+  - **El subrayado se DIBUJA**: `background-image` de 2px que crece de `0` a `100%`, no
+    un `border-bottom` que aparece. El `padding-bottom: 2px` que lo despega de las
+    descendentes se devuelve con un `margin-bottom: -2px` — **son 12px sobre los seis
+    títulos, y ésa es exactamente la diferencia entre que la lista quede quieta a
+    1440x900 y que el script tenga que deslizarla**. Medido: track 578 / viewport 572,
+    idéntico al estado previo al cambio.
+  - ⚠️ **EL CAVEAT DE CONTRASTE DE ESTE BLOQUE SE CERRÓ, y es una ganancia real.** El
+    fill obligaba a texto blanco sobre `#3D9AD3` (**3,11:1**, por debajo del 4,5:1 que
+    pide la descripción de 14px). Ahora título y descripción vuelven a los colores
+    propios de la sección (negro sobre blanco y el gris muted) y el azul es sólo
+    **gráfico** — la flecha y la regla de 2px — donde la barra es 3:1 y 3,11 la pasa. El
+    estado sigue sin depender del color: el activo es el único a opacidad 1 (los otros
+    0,72 y 0,18) y el único con flecha, que es una forma.
+  - ⚠️ `--color-blue-light`, **no** `--color-accent`: la sección es `.section--light` y
+    ahí ese token es blue-dark (#5287C9), no el azul del CTA.
+  - Medido por scroll real (CDP + Lenis, no `window.scrollTo`) a 1440x900: `is-active`
+    avanza 0→2→4→5 y en cada posición **exactamente un** duty tiene flecha a opacidad 1
+    con `matrix(0.707…)` = 45° y subrayado `100% 2px`; el resto en 0 / `0px 2px`, y
+    ningún step con `background-color`. Barrido 320–1920: sin scroll horizontal, la
+    flecha en `display: none` por debajo de 1152 y con `prefers-reduced-motion` forzado
+    (ahí no existe el layout stepped y los seis duties se leen enteros).
 - **2026-08-05 — the active Leistungsumfang duty is a FILLED BLUE BLOCK, not a blue
   left rule** (client: "en vez de la raya vertical me gustaría que todo el fill del
   item sea de un color, azul puede ser con el texto blanco"). The 2px `::before` rule
@@ -1815,6 +3585,1013 @@ July version was built with is gone, on purpose. What changed:
     the same probe reported `position: sticky` and `position: static` for the same
     width. Dispatch a `resize` and assert `.service-flow--stepped` is present before
     measuring anything in this section.
+- ⚠️⚠️ **2026-08-10 — BORRÉ UN ARCHIVO DEL CLIENTE, por segunda vez con la misma causa.**
+  `assets/icons/Betriebsunterbrechung.svg` (la ilustración de la card 01 del Risiko) se
+  perdió: escribí la versión recoloreada en `betriebsunterbrechung.svg` y después borré
+  `Betriebsunterbrechung.svg` — **en macOS son el mismo archivo**. No estaba trackeado en
+  git ni había llegado a `dist/`, así que no se pudo recuperar y hubo que pedírselo de
+  nuevo al cliente.
+  **Es exactamente la trampa que este archivo ya documentaba** para `know-how-Abfluss.svg`
+  el 2026-08-07, y para `bayernwerk.png` antes de eso. Documentarla no alcanzó.
+  **REGLA, no consejo:** cuando el destino difiere del origen sólo en mayúsculas,
+  **nunca** escribir-después-borrar. Las dos formas seguras son `git mv` (que hace el
+  rename por un temporal) o —mejor para un archivo del cliente— **escribir la salida con un
+  nombre claramente distinto y no borrar nunca el original**. Un `os.remove`/`rm` sobre un
+  nombre que difiere sólo en el case es un borrado a ciegas.
+- **2026-08-10 — el Leistungsumfang ya no tiene estado :hover** (client: "queda seleccionada
+  la de arriba, voy moviendo para abajo y funciona, pero la de arriba queda con el efecto de
+  selección").
+  - **No era el script.** `js/service-flow.js` hace
+    `classList.toggle("is-active", i === index)`, o sea marca exactamente una. Lo que había
+    era que el `:hover` recibía el tratamiento completo del estado activo, así que un
+    puntero apoyado en cualquier parte de la lista dejaba **dos cards con cara de actual** —
+    la del scroll y la apuntada.
+  - **Se sacó el hover del look de selección** (borde dibujado, marcador, opacidad y
+    sombra), en vez de atenuarlo. Es lo correcto por sus propios méritos: son `<article>`
+    sin link y sin nada que clickear, así que un hover que dice "seleccionada" afirma una
+    interactividad que no existe. Exactamente una card es la actual, y la decide el scroll.
+  - Verificado por scroll real, con `A` = `is-active` y `#` = borde dibujado:
+    `A# .- .- .- .- .-` → `.- A# .- .- .- .-` → `.- .- A# .- .- .-`, y **forzando hover en
+    la card 1 mientras la 3 es la activa, la 3 sigue siendo la única marcada**.
+- **2026-08-09 — la card activa: marcador claro y borde parejo** (client: "está feísima como
+  quedó esta card seleccionada, y además tiene que hacer el contraste suficiente para que se
+  lea el texto por tema accesibilidad… más linda, más clean y más pro, y que el borde sea
+  del mismo grosor en los cuatro lados").
+  - **El marcador pasó de bloque saturado a resaltador claro.** Era #3D9AD3 sólido detrás de
+    texto casi negro: lo más ruidoso de la columna, y el título medía **6,72:1**. Ahora es
+    `rgb(61 154 211 / 0.22)`, que compuesto sobre blanco da `rgb(212 233 245)` y deja el
+    título en **16,67:1**. La pregunta de accesibilidad desaparece en vez de discutirse.
+    ⚠️ **NO se usó `--color-accent-subtle`**: la sección es `.section--light`, que
+    re-declara ese token a 8 % de blue-DARK — como resaltador es casi invisible.
+  - ⚠️ **EL BORDE DESPAREJO ERAN DOS CAUSAS, y las dos hacían falta.** Medido sobre el render
+    a 2x, arrancó en 2,0px arriba y a la izquierda contra 1,5 abajo.
+    1. **El `scale(1.02)`** dejaba el alto de la card en 97,92px — fraccionario — así que el
+       trazo caía en medio píxel. `vector-effect: non-scaling-stroke` **NO lo arregla**: el
+       defecto es la POSICIÓN fraccionaria, no el ancho escalado. Se sacó el scale.
+    2. Con el scale afuera seguía dando 1,0 / 1,5 porque **el trazo de 1,5 no combina con un
+       inset de 1px**: un stroke SVG se centra en su path, así que un inset de 1 necesita un
+       trazo de 2 para ir de 0 a 2 y caer en píxeles enteros; con 1,5 iba de 0,25 a 1,75.
+    **Los dos números van juntos** — si se cambia el inset hay que cambiar el trazo, o el
+    borde deja de ser parejo. Medido después: **2,0px en los cuatro lados**.
+  - ⚠️ **El "un poquitín más grande" del mensaje anterior se fue con el scale.** Es la
+    contrapartida del borde parejo, y era 11px sobre una card de 553px — bastante menos
+    visible que el borde y el marcador, que son los que ahora cargan el estado. La card
+    activa sigue sin depender del tono: es la única en opacidad plena, la única con borde
+    dibujado y la única con el título marcado.
+- **2026-08-09 — la card activa del Leistungsumfang además DIBUJA su borde celeste**
+  (client: "cuando esté seleccionada también que tenga el borde celeste, y que el borde se
+  forme como que la línea celeste va completando el borde"). O sea no es un cambio de color
+  de borde: la línea recorre la card.
+  - **Un `<rect>` SVG con `pathLength="1"`**, y ese atributo es lo que hace que esto no
+    necesite JS: renormaliza el perímetro a 1, así `stroke-dasharray: 1` más un
+    `stroke-dashoffset` de 1 a 0 dibuja exactamente una vuelta **a cualquier tamaño de
+    card**. Una longitud medida habría necesitado `getTotalLength()` y re-medir en cada
+    resize — que es exactamente para lo que existe `js/svg-draw.js` en las ilustraciones;
+    acá el atributo lo resuelve gratis.
+  - La geometría del rect (`x`, `y`, `width`, `height`, `rx`) va **en CSS**, no como
+    atributos, así el inset y el radio siguen los valores de la card en vez de duplicarlos.
+    Inset de la mitad del trazo, o el svg le corta la línea al medio.
+  - ⚠️ **La curva NO es `--easing-premium`, y es una medición.** Con expo-out el **65 % del
+    perímetro se traza en los primeros 80ms** (1.000 → 0.652): se leía como un chasquido con
+    una cola lenta. Con `--easing-standard` la progresión medida es 1.000 → 0.986 → 0.806 →
+    0.300 → 0.048 → 0.000 sobre 800ms, o sea la línea recorre de verdad. **Es el único lugar
+    de esta página donde la curva premium es la equivocada** — acá el efecto es el
+    RECORRIDO, no la llegada.
+  - Verificado: 6 outlines, la activa en `stroke-dashoffset: 0` y las demás en 1, color
+    `rgb(61, 154, 211)`, 2px, radio 8px. Hover y estado activo comparten la regla.
+- **2026-08-09 — el Leistungsumfang deja de ser una lista con flecha: son CARDS con sombra
+  y el título se marca con FONDO** (client: "en vez de ser así la lista quiero que sean
+  cards horizontales con drop shadow y el texto dentro… sacás las flechas… cuando estamos
+  arriba de una es un poquitín más grande y se subraya el fondo del título, como se subraya
+  en la sección de 'So läuft es bei FRANKONIA'").
+  - **Las flechas se fueron del markup (6) y del CSS**, incluida la regla base que las
+    ocultaba en el layout móvil — ya no hay nada que ocultar. También se fue la columna
+    reservada que el h3 y el párrafo indentaban (`--flow-arrow-lead`).
+  - **La marca del título pasó de una raya de 2px a un FILL de fondo**, con el mecanismo de
+    `.service-contrast__mark`: gradiente pintado como background y crecido de 0 a 100 %,
+    `box-decoration-break: clone` para que sobreviva un salto de línea, y padding inline +
+    radio para que lea como marcador y no como bloque.
+    ⚠️ **El texto del título SIGUE OSCURO**, no pasa a blanco como las marcas del Vorteile,
+    y es una decisión de contraste: aquéllas están a 22px+, donde el blanco sobre la mezcla
+    profunda funciona; éste es de ~21px REGULAR, o sea bajo el umbral de 24px de "texto
+    grande", así que necesita 4,5:1 y blanco sobre #3D9AD3 daría **3,11:1**. Casi-negro
+    sobre #3D9AD3 mide **6,72:1** — mantener el título oscuro es justamente lo que permite
+    usar el azul del CTA acá.
+  - **El h3 pasó a `display: block`** (era flex por la flecha): con flex o block-level el
+    fondo se pintaría a lo ancho de toda la card en vez de abrazar las palabras.
+  - ⚠️ **El riesgo real era el ALTO, y está medido.** Estas seis viven en una columna sticky
+    que tiene que entrar en una pantalla; convertirlas en cards agrega padding y gaps. Con
+    padding ajustado y `gap: --space-3` la lista mide **635px en una columna de 650** — sigue
+    entrando, así que el script no tiene que deslizarla. Cualquier px que se agregue acá son
+    6px de lista.
+  - **Activo y hover comparten tratamiento**: `scale(1.02)` con `transform-origin: left`
+    (un transform no le cuesta layout a la lista, que es lo que permite agrandarla sin
+    romper el encaje), sombra más fuerte y la marca al 100 %. Medido: la activa en
+    `matrix(1.02…)` con marca `100% 100%`, las inactivas en `0px 100%`.
+  - Sólo en el layout de escritorio (`.service-flow--stepped`). En teléfono la sección es
+    otra composición —texto y fotos intercalados— y ahí siguen siendo bloques de texto;
+    verificado que no quedaron flechas ni scroll horizontal.
+- **2026-08-09 — los numerales de las cards al azul del CTA** (client: "los números tienen
+  que ser del celeste del CTA"). Verificado renderizado: `rgb(61, 154, 211)`.
+  - ⚠️ Escrito `--color-blue-light`, **no** `--color-accent`: la sección es
+    `.section--light` y ese scope re-declara el token a blue-dark (#5287C9).
+  - ⚠️ **CAVEAT DE CONTRASTE ACEPTADO, y este es real.** Texto de 14px sobre blanco
+    necesita 4,5:1; **#3D9AD3 sobre blanco mide 3,11:1**. Medidas para quien lo revise:
+
+    | | sobre blanco |
+    |---|---|
+    | #3D9AD3 (el fill del CTA, lo que se usa) | **3,11:1** |
+    | #5287C9 (`--color-accent` acá) | 3,71:1 |
+    | blue-dark 85 % + negro #4673AB (lo que reemplazó) | 4,88:1 |
+
+    El cliente eligió el azul del CTA sobre la mezcla segura **tres veces en esta página**
+    (el fill de las cards de casos, el fill del Leistungsumfang, esto), así que queda
+    registrado y no revertido. Dos cosas achican el costo: el numeral es `aria-hidden`,
+    o sea decoración — el `<h3>` al lado carga el significado — y repite la posición que
+    el propio `<ol>` ya numera.
+    **Si alguna vez se revisa, la palanca es el TAMAÑO, no el tono**: a 18,66px bold o
+    24px regular el numeral cuenta como texto grande, donde aplica 3:1 y #3D9AD3 pasa.
+- **2026-08-09 — las cuatro cards en UNA fila** (client: "hacéme las cuatro cards en una
+  misma fila, con el mismo estilo que tienen ahora pero más angostas así entran las 4").
+  Mismo panel — mismo borde, radio, sombra y hover; lo que cambia es el ancho y todo lo que
+  estaba calibrado para una card de 569px.
+  - **A partir de 1100px, no de 900**: cuatro cards más tres gaps necesitan lugar. Entre 900
+    y 1099 sigue aplicando el 2x2, o sea degrada al diseño anterior y no a cuatro columnas
+    ilegibles. Abajo de 900, una sola columna.
+  - ⚠️ **El offset alternado de 28px se CANCELA a cuatro por fila.** En un 2x2 daba ritmo;
+    en una sola fila de cuatro se lee como desalineación. Hay que restatear los DOS
+    transforms (reposo y hover) o las pares se quedan con sus 28px — el mismo cuidado que
+    ya pide la composición desde custom properties.
+  - **La ilustración quedó un punto más grande de lo que daría un escalado directo**
+    (`clamp(7.5rem, 11vw, 11rem)`): el cliente venía justo de pedir ilustraciones más
+    grandes cuando cambió de idea hacia una fila, así que la escena conserva toda la
+    presencia que permite una card de ~290px.
+  - Medido: a **1440** son 4 columnas, cards de **290px** y **416px** de alto todas iguales,
+    arte 158px = **38 %**, título 18px, y la sección baja de **1812 a 1158px**. A **1100**
+    siguen las 4 columnas pero la card cae a 216px y el arte al 27 % — es el límite útil de
+    este layout, y es exactamente por qué el corte está ahí y no más abajo. A **1024** vuelve
+    al 2x2 (cards de 419px) y a **390** a una columna. Sin scroll horizontal en ninguno.
+- **2026-08-08 — Anwendungsfälle REDISEÑADA: cuatro paneles editoriales blancos** (brief
+  del cliente: "convert the 4 use cases into full self-contained cards… high-end B2B /
+  premium SaaS / editorial, not generic cards"). Copy, ilustraciones y orden intactos.
+  - **Se fue, por instrucción**: el spine azul vertical, los rectángulos azules de texto y
+    la separación entre ilustración y copy. Cada caso es UN panel blanco ahora, con la
+    ilustración arriba y número → título → descripción abajo. `js/case-timeline.js`
+    (que existía para dibujar el spine) fue reemplazado por **`js/case-cards.js`**; todo
+    está en git.
+  - **La card**: blanco sobre sección blanca, así que la separación tiene que venir del
+    borde y la sombra — no hay relleno que contraste. Borde `rgb(1 1 1 / 0.07)`, radio
+    **1.5rem** y sombra de **dos capas** (`0 18px 48px / 0.07` + `0 2px 6px / 0.04`).
+    ⚠️ No `--shadow-lg`: ese token es una sola capa al 0.14 calibrada para el submenú del
+    nav, y a este tamaño lee como sombra caída, no como elevación. Y el radio es **el mismo
+    literal 24px que ya usa la price card** en vez de un segundo valor fuera de escala — el
+    brief pide 24–32px y ningún token cae ahí, así que el sitio mantiene UN solo valor
+    fuera de la escala, no dos.
+  - **La ilustración lleva alto FIJO, no aspect-ratio.** El alto de la card sale de su
+    copy, y un ratio cuadrado sobre una card de ~560px la dejaba en 70 % de ella. Con
+    `clamp(9rem, 14vw, 13rem)` mide **45 % de la card a 1440**, justo en el 40–45 % del
+    brief. El `<svg>` inline tiene viewBox, así que `meet` centra el dibujo cuadrado sin
+    deformarlo.
+  - ⚠️ **EL TRANSFORM DE LA CARD SE COMPONE DESDE CUSTOM PROPERTIES.** Tres cosas quieren
+    moverla: el offset de reposo de la columna par (28px), el hover, y la entrada — y la
+    última es de GSAP. Si GSAP escribiera `transform` borraría las otras dos la primera vez
+    que corre. El script escribe `--card-y` / `--card-s` y **cada** regla de transform
+    suma su propio offset. Verificado con `CSS.forcePseudoState`: en reposo la impar está
+    en y=34 y la par en 62 (28 + 34 de la entrada); con hover forzado dan **29 y 57**, o
+    sea las dos suben 5px y **la par conserva sus 28**.
+  - **La entrada es del brief**: opacity 0 → 1, `--card-y` 34px → 0, `--card-s` 0.98 → 1,
+    0.7s, `expo.out`, stagger de 0.08s por card. **No scrubbeada** — el brief especifica
+    una duración, que es una afirmación sobre tiempo y no sobre distancia de scroll, así
+    que cada card se reproduce una vez al entrar y no se rearma si volvés a subir.
+  - **El dibujado de las ilustraciones se conservó** aunque el brief no lo menciona: lo
+    pidió el cliente el 2026-08-07 y es una firma de esta página. Arranca a 0.35 de la
+    entrada, superponiéndose a su cola (la card está visualmente asentada mucho antes de
+    que termine su 0.7s, porque `expo.out` llega temprano a su valor final). **Si con el
+    rediseño lo quiere afuera, es borrar un bloque.**
+  - **El título sigue CENTRADO**, contra el "do not center unless already consistent with
+    the page system" del brief: lo pidió el cliente explícitamente el 2026-08-08 y hay otras
+    dos secciones centradas en esta página (Abgrenzung y FAQ), así que sí es consistente.
+  - Medido a 1440: cards **451–484px** (el brief pide no ser excesivamente alta), sección
+    **2114 → 1725px**, offset de la columna par 28px, título **26px** (era 20), número en la
+    mezcla profunda de §5 (4,88:1 — ⚠️ NO `--color-accent`, que en `.section--light` es
+    blue-dark a 3,71:1 y es texto chico), cuerpo en gris oscuro. Con
+    `prefers-reduced-motion` las cuatro cards en opacidad 1 y los cuatro dibujos completos.
+    Sin scroll horizontal a 390 / 768 / 1440.
+  - ⚠️ **DISCREPANCIA DE COPY, no aplicada:** el brief transcribe "Pf**ö**rtendienst" y el
+    draft aprobado (`Webtext 03`) dice "Pfortendienst". Como el mismo brief pide no
+    reescribir el copy, quedó el del draft. Vale confirmarlo con Chris.
+  - En teléfono la ilustración queda en 35 % de la card (el clamp toca su piso de 9rem
+    mientras la card crece con el texto). El 40–45 % era una especificación de escritorio.
+- **2026-08-08 — vuelve el zigzag, pero ESCALONADO y junto** (client: "al final las quiero
+  un poco más intercaladas, primero una a la izquierda, después a la derecha, después a la
+  izquierda de vuelta y derecha, pero no tanta distancia, bastante juntas pero
+  escalonadas"). Reemplaza las dos por fila; eso está en git.
+  - Vuelve el ancho al 50 % con auto-margin en las pares y `gap: 0` + `margin-top` negativo.
+    Un grid de dos columnas no sirve acá: pondría los casos consecutivos en la MISMA fila,
+    que es justo el layout que esto reemplaza.
+  - ⚠️ **El solape tiene un techo duro, y conviene saber de dónde sale.** Los casos n y n+2
+    comparten columna, así que chocan salvo que el PASO (alto del item menos el solape) sea
+    al menos medio item. Los items miden 503–535px, o sea el paso no puede bajar de ~268px.
+    Con 15rem el aire entre los casos 1 y 3 quedaba en **23px** (son los dos más bajos, así
+    que ese par es el ajustado); con **14rem** da **55px** ahí y 87 entre el 2 y el 4 —
+    junto sin leerse como que casi se tocan. **Si el marco de ilustración crece, este valor
+    tiene que bajar con él.**
+  - Medido a 1440: pasos **280 / 279 / 310px**, lados izq/der/izq/der, lista 1372px y
+    sección 2114. Y como el desktop ya no declara `grid-template-columns`, el script lee 1
+    columna y **vuelve a revelar de a uno**, que es la secuencia pedida.
+  - El nodo vuelve a los dos lados (mientras dos casos compartían fila caían sobre los
+    mismos 8px de línea y uno sobraba). Sin scroll horizontal a 390 ni 1440.
+- **2026-08-08 — el dibujado de las ilustraciones ahora se VE** (client: "quiero que las
+  ilustraciones también se formen con las líneas que se van trazando con el scroll").
+  - **Ya estaba corriendo** — medido antes de tocar nada: 99/86/84/66 trazos sin dibujar
+    antes de entrar, 30/99 y 29/86 a mitad de camino, 0 al final. Lo que fallaba era que
+    **casi todo pasaba detrás del fade de su propia card**: el item anima `opacity: 0 → 1`
+    en 0.26 y el dibujo arrancaba en el MISMO instante y duraba 0.54, así que su primera
+    mitad ocurría mientras la card todavía era transparente. Sólo se veía la cola.
+  - **Arranca en `at + 0.1`, después de que la card llega**, y dura más (0.34/0.2 →
+    **0.42/0.3**). ⚠️ 0.1 y no los 0.26 completos del fade: `power3.out` alcanza su valor
+    final muy temprano dentro de su propia duración, así que la card *parece* asentada
+    mucho antes de que el tween termine — esperar el número dejaba **~400px de scroll con
+    la card arriba y la escena en blanco** (medido). Con 0.1 empieza cuando la card
+    visualmente aterriza.
+  - **Medido después, muestreando cada 100px de scroll**: la card sube de 0 → 1 entre −800
+    y −600, y el dibujo corre de ≈−250 a +50 con la card **en opacidad 1 todo el tiempo**
+    — 72/99 → 39/99 → 4/99 → 0. O sea el trazado entero ocurre a la vista.
+  - Con `prefers-reduced-motion` las cuatro escenas siguen completas en toda posición.
+- **2026-08-07 — el timeline pasa a DOS CASOS POR FILA y las cards vuelven a ser azules
+  glossy** (client: "en vez de que aparezcan de a uno que aparezcan de a dos… 01 y 02 en la
+  misma fila y después los últimos dos en la misma" + "que las cards sean celestes con el
+  efecto del CTA").
+  - **Dos columnas de grid reales**, así 01|02 comparten la fila 1 y 03|04 la fila 2 por
+    auto-placement — sin un `grid-row` por item, lo que además deja el bloque correcto si
+    alguna página de servicio tiene tres o seis casos. Reemplaza el zigzag de a uno con el
+    interleave por margen negativo; está en git, y ese interleave existía sólo para
+    recuperar la columna muerta que deja un zigzag de a uno — con dos por fila no hay
+    ninguna.
+  - **Los pares llegan juntos, y cuántos son sale de MEDIR el grid**: la cantidad de tracks
+    del `grid-template-columns` computado (2 en desktop, y `none` resuelve a 1 en teléfono),
+    no de un breakpoint copiado dentro del script. Una sola cosa decide el layout y es la
+    hoja de estilos. Verificado: a 1440 los tops son 947/947 y 1547/1547, y las opacidades
+    van `0,0,0,0` → **`1,1,0,0`** → `1,1,1,1`; a 390 el script lee 1 columna y los revela de
+    a uno, que es lo correcto apilados.
+    ⚠️ Se lee una vez al construir: una ventana redimensionada cruzando los 900px mantiene
+    el agrupamiento con el que arrancó hasta recargar. Mismo caveat que cualquier
+    `gsap.matchMedia` de esta página, y el costo visible es sólo qué casos comparten beat.
+  - **El azul volvió con los valores EXACTOS que tenía**, recuperados de git y no
+    re-derivados, así que es la misma superficie que el cliente aprobó el 2026-08-03 y no un
+    segundo azul parecido: fill `--color-blue-light` plano, `--shadow-md` + un highlight
+    interno de 1px arriba, y el sweep **reutilizando `@keyframes btn-shine`** con delay
+    escalonado por card. Medido: `rgb(61, 154, 211)`, texto y numeral blancos, animación
+    `btn-shine`.
+  - ⚠️ **VUELVE EL CAVEAT DE CONTRASTE con el fill**: blanco sobre #3D9AD3 es **3,11:1** —
+    alcanza el 3:1 de componente de interfaz y texto grande, no el 4,5:1 de cuerpo de texto,
+    y cada card lleva un párrafo. Es el azul de marca aprobado y el mismo número que ya
+    publica cada botón primario, así que queda registrado, no "arreglado" unilateralmente.
+    Todo lo mitigable sin cambiar el color está hecho: todos los textos en blanco SÓLIDO (un
+    tier de alfa dejaría el párrafo abajo de 3:1) y la jerarquía por tamaño y peso. El
+    numeral también pasó a blanco — en la card blanca era azul, y azul sobre azul no se ve.
+  - ⚠️ **Un nodo por fila, no dos.** Medido: con nodo en las dos cards de una fila los dos
+    caen sobre los MISMOS 8px de línea (716–724 en ambos casos, spine en 720), o sea dos
+    cuadrados pintados uno encima del otro. El de la card par se saca con `content: none` en
+    vez de dejarlo redundante — dos elementos ocupando los mismos píxeles es cómo un cambio
+    posterior termina peleándose consigo mismo.
+  - El anillo del nodo es el blanco de la SECCIÓN, no el de la card: el nodo vive afuera de
+    la card, sobre la sección. Sin scroll horizontal a 390 ni 1440.
+- **2026-08-07 — las 4 ilustraciones del cliente entraron en el timeline y SE DIBUJAN con
+  el scroll** (client: "en icons guardé estas 4 ilustraciones para poner en esa sección,
+  con los nombres del título y en svg… aplicá el efecto de que se van formando las líneas
+  mientras escroleamos"). Reemplazan los frames reservados; ésos están en git.
+  `assets/icons/case-{produktion,chemie,mittelstand,logistik}.svg`.
+  - ⚠️ **Mapeadas POR NOMBRE, no por posición.** El orden de la captura del cliente es
+    Produktion · Chemie · **Logistik** · **Mittelstand**, y el de las cards es 01 Produktion
+    · 02 Chemie · **03 Mittelstand** · **04 Logistik** — las dos últimas están cruzadas.
+    Verificado en el HTML compilado: cada escena quedó en su card.
+  - **Un solo cambio dentro de los archivos: `stroke="white"` → `currentColor`** (99/86/84/66
+    paths). Es seguro acá por una razón concreta y chequeada: **los cuatro tienen CERO
+    rellenos**, así que no hay oclusión de línea oculta que destruir — que es exactamente lo
+    que un remap de color rompió en la card 03 de riesgo. Con `currentColor` las escenas
+    siguen el color de texto de la sección donde están, así que sirven igual sobre claro
+    (esta sección) que sobre oscuro, sin un segundo archivo.
+  - **El dibujado vive DENTRO de `js/case-timeline.js`**, no en `svg-draw.js`: así cada
+    escena se forma en el mismo beat que su card, en el mismo timeline scrubbeado — la línea,
+    la card y el dibujo son un movimiento, no tres que coinciden. Mismas reglas que los otros
+    dos: valores por función para que cada path se dashee con su propia
+    `getTotalLength()`, stagger de spread TOTAL (`amount: 0.2`) para que una escena de 99
+    trazos no tarde 1,5x más que una de 66, y el dash inline limpiado al terminar. El guard
+    que saltea paths con `stroke-dasharray` propio está igual, aunque ninguno de estos cuatro
+    tenga uno.
+  - **Medido por scroll real a 1440**: `99/86/84/66` sin dibujar antes de entrar → al 30 %
+    la escena 1 va en 66/99 y el resto intacto → al 70 % las dos primeras en 0 y la tercera
+    en 45/84 → al final los cuatro en 0. O sea **una por una, con su card**. Con
+    `prefers-reduced-motion` las cuatro están completas en toda posición.
+  - ⚠️ **LO ÚNICO RESTYLEADO DENTRO DE UN DIBUJO DEL CLIENTE EN ESTA PÁGINA**, y la razón es
+    específica: los archivos traen `stroke-width="2"` sobre un viewBox de 1180, que al marco
+    de 352px renderiza **0,60px efectivos** — un hairline sub-píxel que funciona como blanco
+    sobre el fondo oscuro contra el que el cliente diseñó y casi desaparece como oscuro sobre
+    blanco. `stroke-width: 4` por CSS da **1,19px**, que es donde vive el resto del line art
+    del sitio (escenas de riesgo 0,7–1,06px, iconos del Konzept 1,22px).
+    Es seguro porque **los 66–99 paths de cada archivo comparten UN solo width y ninguno
+    tiene `stroke-dasharray`** — las dos cosas que hicieron que este tipo de override
+    destruyera los cajones de la card 03. No toca fill ni color, y `getTotalLength()` no se
+    altera, así que el dibujado queda igual.
+  - El marco pasó de 16:9 a **1:1**, porque los cuatro archivos son cuadrados (viewBox
+    1180x1180) — un solo ratio mantiene las cuatro escenas a la misma escala óptica. Tinta
+    real 984x922 dentro del viewBox, o sea traen su propio margen. Caja 352px a 1440 y 326 a
+    390. Color `rgb(1 1 1 / 0.82)`, no negro pleno: a contraste total 80 y pico de hairlines
+    le ganan al título de su propia card.
+- **2026-08-07 — el spine y los nodos al azul del CTA, y TODO el texto a la derecha**
+  (client: "me gustaría que la línea sea azul como el CTA y los puntos también, y que los
+  textos estén todos alineados a la derecha").
+  - ⚠️ **Escrito `--color-blue-light`, NO `--color-accent`**, y esa distinción es la que
+    importa acá: la sección es `.section--light`, y ese scope RE-DECLARA `--color-accent` a
+    blue-dark (#5287C9). El token habría dado el azul equivocado. Misma trampa que ya
+    documenta el fill del Leistungsumfang. Medido: spine y nodos en `rgb(61, 154, 211)`.
+  - **El NUMERAL se queda en `--color-accent` a propósito**: es TEXTO, y #3D9AD3 sobre
+    blanco mide 3,11:1. La línea y los nodos son gráficos y les alcanza el mínimo de 3:1;
+    un numeral no. Blue-dark le da 3,71:1.
+  - **La alineación terminó a la IZQUIERDA**, en los cuatro casos y a todo ancho. Pasó por
+    la derecha en el medio (pedido y revertido en dos mensajes seguidos el mismo día), y el
+    estado final no declara nada: izquierda es la dirección base, así que las cuatro cards
+    usan la misma estructura numeral-después-texto que ya usaba el layout de teléfono.
+    **Las dos columnas NO se espejan** — una alineación y una estructura de card, de los dos
+    lados. Verificado: `text-align: start` en los cuatro items y en los cuatro `h3`, a 390 y
+    a 1440.
+  - ⚠️ Si alguna vez hay que correr algo de lado en este bloque, **no usar `justify-items`**:
+    vuelve content-sized a todo hijo y colapsa el frame de ilustración al ancho de su
+    etiqueta (medido 130px contra 352 cuando los items impares lo usaban). Va un auto-margin
+    en el frame.
+  - Sin scroll horizontal a 390 ni 1440.
+- **2026-08-07 — Anwendungsfälle rehecha como TIMELINE VERTICAL con spine central**
+  (client: "aparece el título y luego escroleo y aparece una línea vertical en el centro de
+  la web que empieza a formarse para abajo mientras voy escroleando, y van saliendo las
+  distintas cards en orden, la primera para la izquierda, la segunda para la derecha,
+  tercera izquierda de vuelta y la cuarta derecha"). Era una grilla 4-up de cards azules
+  glossy. **Mismos cuatro casos, mismo copy, mismo orden.**
+  - **`js/case-timeline.js`**, nuevo, page-specific. **UN solo timeline scrubbeado maneja
+    las dos mitades**, que es el punto: la línea y las cards no son dos efectos que se
+    superponen, son un movimiento. El spine es un `scaleY` alimentado por `--spine` (un
+    pseudo-elemento no puede ser target de GSAP, así que el valor va en la lista) y cada
+    caso se coloca en SU punto de ese mismo timeline, así una card aterriza justo cuando
+    la línea la pasa.
+  - **La dirección horizontal sale del índice en el DOM, no de un atributo por item**:
+    impares a la izquierda del spine y entran desde la izquierda, pares al espejo. El CSS
+    alterna con `:nth-child` también — una sola regla sobre el orden, en dos lugares que no
+    pueden discrepar.
+  - **Medido por scroll real a 1440**: spine 0 → 0,29 → 0,69 → 1, y las opacidades van
+    `0,0,0,0` → `1;0,74;0,0` → `1,1,1;0,49` → `1,1,1,1`. O sea **en orden, a medida que la
+    línea baja**. Lados: izquierda/derecha/izquierda/derecha. Con
+    `prefers-reduced-motion` los cuatro casos están en opacidad 1 en toda posición y el
+    spine nunca se escribe (queda en su `scaleY(1)` por defecto).
+  - ⚠️ **INTERLEAVED en desktop, y no es cosmético.** Cada caso ocupa media columna, así que
+    apilados dejaban la columna opuesta vacía a lo alto de cada caso: **1436px de espacio
+    muerto y una sección de 2466px**, contra ~700px de la grilla que reemplaza.
+    `gap: 0` + `margin-top: -9rem` en los siguientes → sección **1746px**. En teléfono no
+    se aplica: ahí todo es full width y no hay hueco que recuperar.
+  - ⚠️ **Bug real que encontró la medición:** los frames de ilustración salían de tamaños
+    distintos — **130px en los items impares contra 352 en los pares**. Causa:
+    `justify-items: end` (que usaba para arrimar la columna izquierda al spine) hace que
+    TODO hijo sea content-sized, y el frame colapsaba al ancho de su etiqueta. Se arrimó
+    con un auto-margin propio del frame y `width: 100%` + `max-width`. Los cuatro miden
+    **352x198 a 1440 y 326x183 a 390**, idénticos.
+  - **Las ilustraciones son FRAMES RESERVADOS** hasta que lleguen los SVG del cliente
+    (dijo que los manda). Reservan el espacio real, así que no hay CLS cuando entren —
+    mismo patrón que el retrato reservado de Jäger. **Ratio 16:9, 352x198 a 1440**: conviene
+    exportarlas cerca de eso.
+  - ⚠️ **Las cards azules glossy se fueron con la grilla**, y eso REVIERTE la decisión del
+    cliente del 2026-08-03 ("que tengan el mismo estilo que el CTA, azules y brillosas").
+    Razón: se eligieron para cuatro cards iguales paradas solas, y un panel azul glossy
+    debajo de una ilustración de línea sobre sección blanca pelea con ella. Está todo en
+    git y volver es una regla. **Con eso también se retira el caveat de contraste de
+    3,11:1** que ese bloque cargaba: el copy ahora es oscuro sobre blanco.
+  - El canal del spine es `--cases-gutter`, chico en teléfono (a `--space-9` la card se
+    quedaba en 254px de 390) y grande en desktop, donde es el espacio ENTRE las dos
+    columnas. Sin scroll horizontal a 390 ni 1440.
+- **2026-08-07 (séptima y última pasada del hero) — el alto es EL PUNTO MEDIO LITERAL de
+  los dos extremos** (client: "pasaste de un extremo a otro, esto es muy corto de height y
+  lo otro era mucho, ¿no podés hacer algo intermedio? literal en el medio").
+  - Los dos extremos están **nombrados** y el `min-height` es su promedio, para que la
+    expresión se lea como lo que es:
+    `--service-hero-screen-h` (una pantalla) y `--service-hero-tall-h` (el alto natural de
+    la foto a 100vw más la banda). `min-height: calc((screen + tall) / 2)`.
+  - **Salió mejor que un compromiso**: al punto medio la caja sigue siendo más ALTA de
+    proporción que la foto a 1440 (1,37 contra 1,45), así que `cover` escala por alto y se
+    ve el **100 % del alto igual**; el recorte se va al ancho, que el cliente dijo que no
+    importa.
+
+    | | corto | **medio** | alto |
+    |---|---|---|---|
+    | hero @1440 | 916 | **1055** | 1193 |
+    | hero @2000 | 1106 | **1343** | 1579 |
+    | alto de imagen @1440 | 92 % | **100 %** | 100 % |
+    | alto de imagen @2000 | 80 % | **97 %** | 100 % |
+
+  - ⚠️ **El copy se centra en LA PRIMERA PANTALLA, no en todo el hero**, y ese es el ajuste
+    que hace que las tres cosas convivan. El hero al punto medio es más alto que una
+    pantalla, así que centrar en él bajaba el H1 a 348 (medido) — 165px debajo del homepage,
+    deshaciendo el "a la misma altura que el homepage" de la pasada anterior. Centrando
+    dentro de una pantalla de caja el H1 queda en **298 a 1440 y 393 a 2000**, contra 183 y
+    361 del homepage: **32px a la resolución del cliente**. El alto extra del hero queda
+    como más fotografía bajo el fold.
+  - ⚠️ **Las tres restricciones no son simultáneamente satisfacibles y conviene saberlo antes
+    de la próxima vuelta**: "hero al punto medio" + "copy centrado" + "H1 exactamente a la
+    altura del homepage". El homepage centra su copy sobre TODA su caja porque no tiene
+    breadcrumb, y su bloque mide ~500px contra los ~443 de acá. Lo más cerca que se llega
+    centrando es esto; exacto sólo sale alineando arriba, que el cliente ya rechazó.
+  - Trust band dentro de la primera pantalla en los tres anchos (740 de 900, 835 de 1090,
+    713 de 844). Sin scroll horizontal.
+- **2026-08-07 (sexta pasada del hero) — vuelve a UNA PANTALLA y el copy vuelve a
+  CENTRARSE** (client: "tiene mucha height la hero, hacela más chica" + "el contenido de
+  texto tiene que estar centrado a nivel altura, ahora está alineado arriba, a la misma
+  altura de como está el texto en la homepage").
+  - ⚠️ **ESTO REVIERTE dos pasadas de hoy, y el conflicto es geométrico, no de gusto.**
+    Con `cover`, el alto completo de una foto de proporción 1,45 sólo se ve cuando la caja
+    mide al menos `ancho / 1,45` — **993px a 1440, 1379px a 2000**. Un hero de una pantalla
+    es más bajo que eso, así que el recorte vuelve a caer en el alto: **92 % visible a
+    1440, 80 % a 2000** (medido). Pedir hero más chico Y alto completo no se puede
+    satisfacer en un viewport ancho; el cliente eligió el hero más chico. La versión
+    `max(una pantalla, 100vw * 1118 / 1621) + banda` está en git.
+  - Con el hero de vuelta en una pantalla, la foto vuelve a llenar la sección (`inset: 0`)
+    y **la banda de disolución vuelve a superponerse a sus últimos 200px**, que es para lo
+    que `.pixel-seam--photo` se construyó. El borde inferior volvió al fade suave (era
+    negro pleno): ya no hay un "acá se cortó la imagen" que tapar, y un negro abajo pelearía
+    con la banda que ahora va encima.
+  - **`align-self: center`** otra vez en el copy. El `start` de dos pasadas atrás tenía una
+    razón buena — el hero medía 1193px y centrar ahí ponía el H1 en 436 — y esa razón
+    desapareció con el hero más bajo.
+  - **El top padding del modificador pasó a `--space-3 + overlap` (los 112px que usa el
+    homepage) en vez de `--space-7`**: sube el breadcrumb pegado al nav, y eso levanta el
+    copy centrado en la fila de abajo. Midió H1 297 → **279** a 1440 y 392 → **374** a 2000.
+  - **Comparación medida contra el homepage** (H1 top):
+
+    | viewport | homepage | werkschutz | dif |
+    |---|---|---|---|
+    | 2000x1090 | 361 | **374** | 13px |
+    | 1440x900 | 183 | 279 | 96px |
+    | 390x844 | 216 | 163 | −53px |
+
+    A la resolución del cliente son 13px. ⚠️ Los 96px que quedan a 1440 son
+    estructurales y no se cierran sin dejar de centrar: el homepage centra su copy sobre
+    TODA su caja (no tiene breadcrumb) y su bloque de copy es ~500px de alto contra los
+    ~443 de acá, así que centrar dos bloques distintos en dos cajas distintas no da la
+    misma y. "Centrado" y "a la misma altura que el homepage" son compatibles sólo por
+    aproximación.
+  - Trust band dentro de la primera pantalla en todos los anchos medidos (722 de 900 a
+    1440, 817 de 1090 a 2000, 713 de 844 a 390). Sin scroll horizontal.
+- **2026-08-07 — el bloque de certificaciones del Ansprechpartner adopta el LAYOUT de
+  `/referenzen/`, no sólo el tamaño de los sellos** (client, con las dos capturas al lado:
+  "los badges en la página de werkschutz están como la primera foto y quiero que estén
+  como la segunda foto, referenzen"). Mi primera lectura fue que era sólo el tamaño; era
+  la composición entera.
+  - Era **sellos a la izquierda / tres líneas a la derecha**; ahora es **sellos centrados
+    arriba y los tres estándares como tres columnas centradas** debajo, cada una con el
+    nombre del estándar en blanco arriba y el texto de apoyo muted abajo, con su propia
+    regla superior. Valores tomados de `.ref-certs*`: `text-align: center`,
+    `justify-content: center` en los sellos, la lista a `repeat(3, minmax(0, 1fr))` desde
+    **700px** con `max-width: 56rem`. Mismo breakpoint que `/referenzen/` a propósito, para
+    que los dos rompan al mismo ancho y no a dos parecidos.
+  - **La asignación de grid-areas del bloque de escritorio se BORRÓ** (`"seals lines"`).
+    Dejarla habría seguido forzando las dos columnas que este cambio viene a sacar.
+  - **Copy y wording intactos** — sólo cambió el arreglo. Y `/werkschutz/` sigue **sin** la
+    línea "Mitglied im Wirtschaftsclub Bamberg und im Deutschen Mittelstands-Bund" que
+    `/referenzen/` tiene debajo de sus columnas: eso es copy del draft de esa página, no se
+    pidió acá y no se inventó. Es un `<p>` si se quiere.
+  - Verificado en las dos páginas a la vez: a **1440** ambas centradas, 3 columnas, los 3
+    ítems en UNA fila, sellos centrados respecto del bloque; a **390** ambas en 1 columna
+    con los 3 ítems apilados. Sin scroll horizontal.
+    Una diferencia esperada: la lista mide 811px acá contra 896 en `/referenzen/` — el
+    `max-width: 56rem` no se alcanza porque este bloque vive dentro del `--content-inset`
+    de la página. El ancho disponible es la restricción, no el cap.
+  - ⚠️ **Segunda copia de esa composición, en un segundo archivo page-scoped.** Un tercer
+    consumidor tiene que promover `.ref-certs*` a `page-service.css` (que `/referenzen/` ya
+    carga como chasis) en vez de una tercera copia. Mantener las dos en sincro hasta
+    entonces.
+- **2026-08-07 — los sellos DEKRA del Ansprechpartner al tamaño de los de `/referenzen/`**
+  (client: "en la parte que aparecen los iconos de DEKRA quiero que aparezcan así como
+  aparecen en la otra sección"). `8.5rem` fijo (136px) → **`clamp(5rem, 3rem + 4vw, 7rem)`**,
+  o sea 80–112px.
+  - **Se preguntó antes de hacerlo, y valió la pena**: "aparecer" acá podía ser el tamaño
+    o la animación de entrada, y los sellos existen en TRES tamaños en el sitio (hero de
+    esta página 44px, este bloque 136px, `/referenzen/` 80–112px). Elegir mal significaba
+    rehacerlo. El cliente eligió el de `/referenzen/`.
+  - El clamp es **el valor literal de `.ref-certs__seal`, copiado a propósito** en vez de
+    re-derivado, así los dos bloques miden lo mismo a cada ancho en lugar de ser dos
+    tamaños parecidos. Verificado en las dos páginas a la vez: **106x70 a 1440 y 80x53 a
+    390**, ratio **0,665 = 399/600 exacto** en ambas, o sea las proporciones oficiales de
+    DEKRA intactas (se pueden escalar, nunca recortar ni distorsionar).
+  - ⚠️ **Dos consumidores en dos archivos page-scoped.** Un TERCERO tiene que promover esto
+    a una clase compartida en `page-service.css` (que es el chasis de `/referenzen/`, así
+    que la alcanza) en vez de una tercera copia. Los sellos de 2.75rem del hero NO son este
+    caso: son un chip compacto de trust row, otro trabajo.
+- **2026-08-07 (quinta pasada) — el copy del hero a la MISMA altura que el del homepage, y
+  la disolución arranca antes** (client: "¿podés hacer que el scroll afecte antes a los
+  píxeles? porque como es al revés el efecto demora mucho en pasar" + "este contenido tiene
+  que estar a la misma altura que el contenido de la izquierda de la homepage, no sé por
+  qué en werkschutz está muchísimo más abajo").
+  - **La altura del copy: medido, el H1 del homepage arranca en 183 y este estaba en 436**
+    — 253px más abajo. La causa: el copy se centraba (`align-self: center`) dentro de la
+    fila 1fr, y esa fila se volvió mucho más alta cuando el hero creció para contener la
+    foto MÁS la banda. Con `align-self: start` el copy se apoya directamente bajo el
+    breadcrumb: **H1 en 185 contra 183, o sea 2px**. La diferencia que queda es el
+    breadcrumb, que el homepage no tiene — no hay forma de tener un breadcrumb sobre el H1
+    y el H1 exactamente en la y del homepage.
+  - **El timing: el rango del seam se adelantó, y el diagnóstico importa.** Los defaults
+    (`top 80%` → `top 20%`) asumen que la banda está en el TOPE de la sección siguiente,
+    o sea justo en el borde que el visitante percibe. `.pixel-seam--photo` rompe eso: su
+    banda mide 200px y vive al fondo del hero, así que el elemento del seam queda una
+    banda entera POR DEBAJO de donde la disolución empieza visualmente, y todo el rango
+    llegaba con ese retraso. Medido antes: recién alcanzaba el 100 % a scrollY ~1013, con
+    la banda en viewport −20 → 180, o sea **terminaba mientras se iba por arriba**.
+  - **`data-seam-start` / `data-seam-end`, overrides opcionales por seam** en
+    `js/pixel-transition.js` (los defaults no cambiaron, así que ningún otro seam se
+    movió). Este usa `top 95%` → `top 45%`. Medido después:
+
+    | scrollY | banda en viewport | tiles navy |
+    |---|---|---|
+    | 250 | 727 → 927 | 0 % |
+    | 350 | 627 → 827 | 17 % |
+    | 550 | 427 → 627 | 53 % |
+    | 750 | 227 → 427 | 87 % |
+    | 850 | 127 → 327 | **100 %** |
+
+    O sea empieza en cuanto la banda entra en pantalla y **termina con la banda todavía a
+    127px del borde superior**, ~163px de scroll antes que antes y, sobre todo, a la vista.
+  - `align-self: start` va sólo en el bloque de escritorio, así que el teléfono (donde el
+    hero no es grid y el copy ya iba arriba) no cambió.
+- **2026-08-07 (cuarta pasada) — la banda ya no le come alto al hero: la foto tiene su
+  propia caja y la disolución vive DEBAJO** (client: "como quedó, para arriba me roba
+  height del hero y no me gusta mucho, quiero que haya un poco más aire; si se termina la
+  imagen, nomás degradala a negro").
+  - **El problema era real y medible:** la banda se superponía a los últimos 200px de la
+    foto, así que 200px de fotografía quedaban permanentemente bajo tiles navy y el hero
+    se veía 200px más corto de lo que era.
+  - **Ahora `--service-hero-photo-h` es la caja de la FOTO y el hero es esa altura MÁS la
+    banda.** La foto deja de estirarse a toda la sección (`bottom: auto` la libera del
+    `inset: 0` de la regla base) y la banda ocupa espacio que es negro propio del hero.
+    Medido: a 1440 hero **1193 = 993 de foto + 200 de banda**, a 2000 **1579 = 1379 +
+    200**, a 390 **980 = 860 + 120**, y en los tres
+    **la banda arranca exactamente donde termina la foto** (borde a borde, 0px de
+    diferencia). 100 % del alto de la imagen visible y nada de eso bajo los tiles.
+  - **El borde inferior de la foto ahora va a NEGRO PLENO** (era 0,4), instrucción textual
+    del cliente: debajo de ese borde el hero es su propio negro, así que cualquier valor
+    menor que 1 dejaba una línea visible donde la fotografía se corta.
+  - ⚠️ **`--service-hero-band-h` lo declara EL HERO, no la banda**, y es la corrección de
+    un bug real: el hero tiene que sumar el MISMO número que mide la banda para que ésta
+    empiece donde termina la foto. La primera versión sumaba 200px fijos y en teléfono la
+    banda mide 120 → **80px de negro muerto** entre la foto y la disolución (medido). La
+    banda es descendiente del hero, así que hereda la variable y no pueden discrepar.
+    ⚠️ Igual queda expresada dos veces (200/120 acá y en `.pixel-seam__band`) porque los
+    otros seams de la página no están dentro de su hero. Mantenerlas en sincro.
+  - ⚠️ **TERCERA VEZ de la misma trampa de especificidad** y por eso quedó anotada en el
+    código: la regla compartida `.service-hero` del bloque de escritorio pone
+    `min-height: calc(100svh - 8rem)` y es (0,1,0) igual que `.service-hero--bleed`;
+    dentro del mismo bloque va ANTES, así que ganaba por orden y **el hero colapsaba a
+    772px con su caja de foto en 993** (medido). El modificador tiene que RESTATEAR su
+    min-height ahí, no heredarlo.
+  - La trust band sigue dentro de la primera pantalla, ahora más justo: **878 de 900** a
+    1440 y 1072 de 1090 a 2000. Si el copy crece, es lo primero que se cae del fold.
+  - Sin scroll horizontal a 390 / 1440 / 2000.
+- **2026-08-07 (tercera pasada) — los tiles del seam llevan el DEGRADADO de la sección
+  de abajo, no un navy plano** (client: "no respeta el degradado que hay en la sección de
+  abajo, que en realidad está funcionando con un degradado el fondo").
+  - **Tenía razón otra vez, y es el bug de "dos navies" que este archivo ya documenta.**
+    `.service-risk` arranca en #00091F iluminado por `--color-blue-light` al 0,38, que
+    decae a 0 en sus primeros 340px. Un tile de #00091F plano se lee como un navy más
+    oscuro saliendo hacia una sección más clara — exactamente lo que
+    `.pixel-seam--konzept` del homepage existe para evitar.
+  - **La solución es un fondo A LO ANCHO DE LA BANDA reconstruido ENTRE los tiles**: cada
+    uno recibe el degradado completo de la banda vía `background-size` y después se
+    desplaza a su propia fila con `background-position`. La rampa va de **0,38 en el
+    BORDE INFERIOR de la banda** (donde toca el tope de la sección, así los dos son
+    continuos) a 0 en el superior, espejando el decaimiento de la sección — o sea el
+    seam y la sección se leen como una sola banda iluminada.
+  - **`js/pixel-transition.js` ahora expone `--pixel-row` y `--pixel-col` en cada tile.**
+    Dos líneas, genérico, sin cambio de comportamiento para ningún seam que las ignore —
+    y es lo que permite que un seam pinte un fondo de banda completa entre sus tiles.
+    Medido a 1440: 5 filas, `background-size: 100% 200px` y posiciones
+    **0 / −40 / −80 / −120 / −160px**, o sea cada tile muestra su propia franja de 40px
+    del degradado de 200px. 180/180 opacos al final.
+  - **El alto de la banda se hoisteó a `--pixel-band-h`** (200px, 120px en teléfono) porque
+    el `height` y el `background-size` tienen que usar el MISMO valor; dos copias
+    derivarían.
+  - ⚠️ Mantener el 0,38 en sincro con el primer stop de `.service-risk` y el literal navy
+    con su `background-color`. Son tres lugares que describen una sola superficie.
+  - Verificado a 390 / 768 / 1440: 100 % del alto de la foto visible, la banda entera
+    dentro del hero (el `overflow: hidden` no la recorta), tiles transparentes en reposo y
+    sin scroll horizontal.
+- **2026-08-07 (segunda pasada del mismo hero) — SE VE EL ALTO COMPLETO DE LA FOTO, y la
+  disolución de píxeles ahora trabaja SOBRE la foto** (client: "¿estás seguro que se está
+  usando todo el height de la imagen? … mi idea es que se muestre todo el height, el width
+  no importa" + "¿ves que hay una línea negra? … quiero que sea transparente y se vea la
+  imagen de fondo").
+  - **Tenía razón, y era aritmética.** Medido antes de tocar: a 2000px de ancho se veía el
+    **79 % del alto** de la imagen y a 1440 el **92 %**. `cover` recorta el eje que
+    sobra, y un hero de una pantalla de alto es más ANCHO de proporción (1440/916 = 1,57)
+    que la foto (1621/1118 = **1,45**), así que el recorte caía siempre en el alto.
+  - **`min-height: max(<una pantalla>, calc(100vw * 1118 / 1621))`.** El segundo término
+    es el alto al que la proporción del contenedor IGUALA la de la foto, o sea donde
+    `cover` no tiene nada que recortar verticalmente. Gana el mayor de los dos:
+    arriba de ~1328px de ancho el hero crece hasta el alto de la foto (y se pasa un poco
+    de una pantalla, exactamente lo que hace el hero del homepage); abajo gana el piso de
+    una pantalla, y ahí el contenedor ya es más ALTO de proporción que la foto, así que el
+    alto completo ya se veía y el recorte cae en el ancho.
+    **Medido a 320 / 390 / 768 / 1024 / 1440 / 1600 / 2000: 100 % del alto visible en
+    TODOS**, y de 1440 para arriba también 100 % del ancho, o sea sin recorte alguno.
+    ⚠️ El `1118 / 1621` tiene que seguir a la foto exportada. Otra proporción reintroduce
+    el recorte en silencio.
+    **La trust band sigue dentro de la primera pantalla** (778 de 900 a 1440), que era la
+    restricción del 2026-08-03 — el copy se centra en la fila 1fr, así que el hero creció
+    hacia abajo sin arrastrarlo.
+  - **La línea negra era real y el modelo normal del seam no podía funcionar acá.** Los
+    tiles de un seam son el color de la sección de ARRIBA pintados sobre la de abajo, así
+    que a progreso 0 la banda es una losa sólida de ese color: invisible cuando la sección
+    de arriba es negro plano, una **barra negra de 200px sobre la foto** cuando es una
+    fotografía.
+  - **`.pixel-seam--photo` invierte el modelo entero**, y el script no se tocó — sólo
+    cambia en CSS qué SIGNIFICAN sus dos estados:
+      · la banda vive **DENTRO del hero**, sobre la foto, en vez de en el padding
+        reservado de la sección siguiente (`inset: auto 0 0` + la banda anclada a su
+        `bottom`, así el `overflow: hidden` del hero no la recorta);
+      · los tiles son el navy de la sección de ABAJO (#00091F, el mismo literal que
+        `.service-risk` — mantener los dos en sincro);
+      · y van de `opacity: 0` a `1`, o sea **píxeles navy que se van comiendo la foto**
+        en vez de píxeles negros que se despejan de encima.
+    Verificado por scroll real: 124/180 tiles navy a mitad de camino, 180/180 al final, y
+    en la captura se ve el asfalto y la rueda del auto por los tiles que faltan.
+  - **Al mover el seam adentro del hero deja de ser hermano previo de la sección Risiko**,
+    así que esa sección deja de reservar los 200px de banda automáticamente — medido:
+    su `padding-top` volvió a 96px, que es lo correcto porque la banda ya no está en ella.
+  - Sin scroll horizontal en ninguno de los siete anchos.
+- **2026-08-07 — el hero de `/werkschutz/` es FULL-BLEED: la foto llega al tope de la
+  página y baja hasta donde empieza la sección siguiente** (client: "la imagen está
+  cortada arriba y abajo, la idea es que sea como la homepage… es como que tiene un width
+  limitado y la idea es que sea el background de toda la sección").
+  - ⚠️ **ESTO REVIERTE la decisión del 2026-08-03** anotada en `page-service.css` y la
+    equivalente de `/jobs/`: "la foto deliberadamente NO sangra bajo el header, porque en
+    una página interior el breadcrumb va entre los dos". La decisión del cliente manda, y
+    el problema del breadcrumb se resolvió de otra forma: **se movió DENTRO del hero** y
+    ahora va sobre la foto en vez de arriba de ella.
+  - **`--service-hero-overlap: 6rem`**, el mismo valor de `--hero-header-overlap` del
+    homepage y por la misma razón: una constante generosa a propósito, no una altura de
+    header medida. Margen negativo para meterse bajo el header sticky y el mismo valor
+    devuelto como padding.
+    ⚠️ **`.site-header` es `position: sticky`, así que ocupa flow real**: el hero arranca
+    en (alto del header − overlap), o sea **−16px a 1440**, NO en −96. Es exactamente lo
+    que ya documenta `.hero` del homepage.
+  - **Alto: la suma de tres términos del homepage**, `100svh + overlap − headerH`. El
+    primer intento usó `100svh + overlap` y se pasaba de la pantalla por un header
+    completo (medido: bottom en 980 con viewport de 900), lo que dejaba la trust band bajo
+    el fold — justo lo que la nota del 2026-08-03 existía para evitar. Ahora **bottom
+    exactamente en 900 = donde empieza la sección siguiente**, y la trust band adentro de
+    la primera pantalla en todos los anchos.
+  - **Dos filas, no un bloque centrado.** Con una sola pista centrada el breadcrumb se
+    fue a 232px y leía como parte del copy (medido). `grid-template-rows: auto 1fr` +
+    `align-content: stretch` (que **cancela el `center` de la regla compartida**) y el copy
+    centrado dentro de la fila 1fr. Todo sigue en flow, así que un viewport corto no puede
+    superponerlos — que es lo que habría arriesgado posicionar el breadcrumb en absolute.
+  - **Banda oscura arriba para el nav**, sólo en la variante bleed, con el stop en una
+    LONGITUD FIJA (no un porcentaje): tiene que cubrir el header, no una fracción de lo
+    alto que resulte el hero. Se redeclara todo el stack porque `background-image` es una
+    sola propiedad y no se le puede agregar una capa.
+  - ⚠️⚠️ **DOS REGRESIONES QUE ME COMÍ EN EL CAMINO, las dos encontradas midiendo:**
+    1. **`.service-hero` es la sección del hero en SEIS páginas** — `/werkschutz/`,
+       `/jobs/`, `/referenzen/` y las tres case studies. Puse las declaraciones en la regla
+       base y metí las seis bajo el header; las cinco que conservan su breadcrumb ARRIBA
+       del hero quedaron con el hero trepándose encima, exactamente el solapamiento que
+       este cambio venía a arreglar. **Por eso es un modificador `.service-hero--bleed`, y
+       optar por él son dos cosas juntas: la clase Y mover el breadcrumb adentro.**
+    2. Al renombrar la regla de escritorio a `--bleed` les saqué `min-height`,
+       `padding-block`, `display: grid` y `align-content: center` a esas cinco páginas.
+       La compartida está restaurada y el modificador sólo declara lo que cambia.
+       Verificado después: `/jobs/`, `/referenzen/` y una case study vuelven a
+       `heroTop: 137` con `align-content: center`, sin solapamiento.
+  - ⚠️ **Y una trampa de especificidad que encontró el barrido:** el bloque de teléfono
+    tiene `.service-hero { padding-block: … }`, que es (0,1,0) igual que
+    `.service-hero--bleed`, **así que en teléfono ganaba por orden de aparición** y sacaba
+    el overlap del padding — el breadcrumb quedaba bajo el header a 320 y 390. El
+    modificador redeclara su propio padding de teléfono. Cualquier
+    `.service-hero { padding-block: … }` en un breakpoint nuevo necesita su regla
+    compañera.
+  - **Contraste sobre la foto, fondo puro con el header y el copy ocultos y muestreando el
+    rect real de cada elemento:** logo **20,63:1**, nav **20,34:1**, breadcrumb
+    **17,78:1**, H1 **17,14:1**, trust **18,61:1** a 1440; a 390, 20,55 / 20,23 / 17,12 /
+    18,27. La banda del nav hace su trabajo.
+  - Barrido a 320 / 390 / 430 / 768 / 1024 / 1440 / 1600: la foto arranca en −16/−20 en
+    todos, el bottom del hero coincide con el inicio de la sección siguiente en todos, la
+    trust band entra en la primera pantalla en todos, sin solapamiento y sin scroll
+    horizontal.
+- **2026-08-07 — el panel FRANKONIA del Vorteile es una CAJA con borde celeste, y ese
+  borde SE DIBUJA con el scroll** (client: "las boxes que hoy solo tienen una linea
+  celeste en el borde izquierdo quiero que sean boxes con un borde celeste y que el
+  borde celeste se vaya creando cuando escroleo, como hemos hecho con las flechas").
+  Era `border-left: 2px` nomás; ahora es un contorno completo de 2px que
+  `js/service-contrast.js` traza con `stroke-dashoffset`, el mismo mecanismo que la
+  flecha de al lado. **Es el TEMPLATE**, así que las otras 11 páginas de servicio lo
+  heredan.
+  - **2px → 1px → 0,5px, dos pedidos del cliente el mismo día** ("que tenga menos
+    weight la linea, está muy gruesa, hay que hacerla finita y delicada", después "más
+    fina aún"). El primer paso fue una línea; **el segundo obligó a partir la variable
+    en dos, y es lo importante de esta entrada.**
+  - ⚠️ **CHROME REDONDEA `border-width` A PÍXELES ENTEROS: `border: 0.5px` computa
+    `1px`** — medido a DPR 1 **y** a DPR 2. Un `stroke-width` de SVG no tiene ese piso.
+    O sea que una sola variable describía dos cosas distintas: la caja que crea el
+    borde y la línea que dibuja el marco. Medido con una sola a 0,5px: el trazo caía
+    ~0,75px adentro del anillo del borde y la caja del SVG salía 1px más corta que el
+    panel. Ahora son dos, cada una con un solo significado:
+    **`--contrast-frame-box` (1px)** = el término de LAYOUT, o sea lo que el borde
+    realmente renderiza — lo consumen el `border-width` del panel y el padding de la
+    head cell; **`--contrast-frame-w` (0,5px)** = el grosor del trazo dibujado,
+    sub-píxel permitido.
+  - **Qué se ve realmente a 0,5px, medido pixel por pixel sobre el render** (tira de
+    píxeles cruzando el borde izquierdo, comparando trazos de 2 / 1 / 0,75 / 0,5px):
+    en pantalla **2x es UN píxel de dispositivo a color pleno** `rgb(61,154,211)`, o
+    sea literalmente la mitad de la versión de 1px; en pantalla **1x es un píxel al
+    ~53 % de fuerza** (`rgb(34,81,109)` contra `rgb(61,154,211)`), o sea más fina por
+    ser más pálida, porque 1px es el piso de esa pantalla. El borde CSS estático de
+    atrás — el estado sin JS y con reduced motion — queda en **1px**, que es lo más
+    fino que puede ser un borde.
+  - **La caja del marco la setea el SCRIPT en píxeles, no un `calc()` del CSS**, y con
+    `getBoundingClientRect`, **no** `offsetWidth/offsetHeight`: esos redondean a entero
+    y el panel mide 699,53x154,83, así que el par redondeado dejaba el marco hasta medio
+    píxel fuera de su propia caja — a 0,5px de trazo eso es la diferencia entre una
+    hairline y una mancha. Verificado a 320 / 390 / 768 / 899 / 900 / 1024 / 1280 /
+    1440 / 1600: **la caja del SVG iguala exacto la border box del panel en los nueve**,
+    sin scroll horizontal, y el Δ del heading sigue en **0px**.
+  - **El layout no se movió en ninguno de los tres pesos** (el término de caja siguió
+    en 1px desde el segundo): panel **699,53x154,83** en live, en reduced motion y sin
+    JS.
+  - **El borde CSS sigue declarado y es la pieza clave**: en el estado live sólo se le
+    pone `border-color: transparent`, no se saca. El SVG es `position: absolute` y no
+    ocupa espacio, así que sacar el borde movería el texto un píxel arriba y a la
+    izquierda en el momento exacto en que arranca el script. Medido: la caja mide
+    **699,53x154,83 en los dos estados**. Y es también el estado sin JS / con
+    `prefers-reduced-motion`: un marco azul entero, que es donde termina el dibujado
+    (verificado con ejecución de scripts desactivada: 0 SVGs creados, `borderTopColor`
+    = #3D9AD3, misma caja). ⚠️ Con el marco ya en 0,5px ese fallback es **1px**, no
+    0,5 — ver la nota del redondeo de Chrome arriba; es medio píxel en un marco
+    decorativo y sólo lo ve quien no ejecuta JS o tiene reduced motion.
+  - **El `<rect>` NO tiene viewBox, a propósito.** El panel mide lo que su copy y su
+    columna le den y cambia en cada reflow; sin viewBox una unidad de usuario es un
+    píxel CSS, así que el rect se setea directo desde `offsetWidth/offsetHeight` y ni
+    el radio de esquina ni el grosor mienten a ningún ancho. Un viewBox fijo estirado
+    ovalaría las esquinas y afinaría el trazo en los lados largos.
+    El rect se mete **medio trazo hacia adentro** (`x = y = w/2`,
+    `width = offsetWidth - w`) porque un stroke se pinta a caballo de su path: así la
+    banda pintada cae exactamente sobre el anillo que ocupaba el borde CSS, sea cual
+    sea el grosor. Verificado a 320 / 390 / 768 / 899 /
+    900 / 1024 / 1280 / 1440 / 1600: la caja del SVG **iguala la border box del panel en
+    los nueve anchos**, sin scroll horizontal en ninguno.
+  - ⚠️ **`max-width: none` en `.service-contrast__frame` es OBLIGATORIO, y no es
+    defensivo.** `reset.css` pone `svg { max-width: 100% }` en todo el sitio, y ese 100 %
+    es el bloque contenedor — la **padding box** del panel, o sea exactamente el ancho
+    que este elemento intenta desbordar de cada lado. Medido sin la regla, cuando el
+    marco era de 2px: daba **695,5px de ancho dentro de un panel de 699,5**, así que el
+    trazo derecho quedaba fuera del borde que viene a reemplazar. El ALTO no se veía
+    afectado (`max-height` no existe en el reset), que es justo por qué parecía correcto.
+  - ⚠️ **El dibujado va por un OBJETO PROXY, no tweeneando `strokeDashoffset` directo
+    como la flecha.** GSAP graba los valores de inicio y fin de un tween una sola vez, y
+    acá el valor de inicio es el perímetro — que cambia con cada reflow del panel. Un
+    largo horneado animaría hacia un número viejo después de un resize. Se tweenea 0→1 y
+    el offset se deriva en `onUpdate`, así el largo se lee vivo y el handler de `refresh`
+    sólo tiene que re-medir.
+  - **Ranura en el timeline: 0,12 → 1,0** (el mismo timeline por módulo que ya maneja la
+    flecha y el marcador, duración total 1, así que no se movió ningún timing existente).
+    Arranca apenas después de la flecha y aterriza con el marcador: la línea llega al
+    panel y el panel se cierra alrededor de ella. Medido por scroll real a 1440x900, tres
+    paneles: 0/0/0 → **52/0/0 → 99/22/0 → 100/67/0 → 100/100/56 → 100/100/100**, y cada
+    uno completa con su top todavía a 278–556px del borde superior, o sea bien a la vista.
+  - El trazo empieza en la esquina superior izquierda y va en sentido horario (es donde
+    arranca el path de un `<rect>`), así que el borde izquierdo — donde vivía la regla
+    vieja — es el último en cerrarse. Radio 4 → **8px** (`--radius-md`): una caja de
+    cuatro esquinas a 4px se lee como un rectángulo con las puntas mordidas.
+  - Padding derecho 8px → `--contrast-panel-lead` y block 14 → 16px: con sólo una regla a
+    la izquierda no había nada a la derecha contra lo que el texto se apretara (la medida
+    de 56ch lo topa igual), y con un borde real sí lo hay.
+  - **`--contrast-frame-w` se declara en `.service-contrast`, no en el panel**, porque
+    tiene TRES consumidores: el `border` del panel, el `stroke-width` del SVG y el
+    `padding-left` de la head cell de escritorio, que tiene que salvar el marco para caer
+    sobre el texto. Verificado con un `Range` sobre los nodos de texto reales:
+    **Δ = 0px** entre "So läuft es bei FRANKONIA" y el h3 del panel.
+- **2026-08-07 — los dos títulos de columna del Vorteile entran con máscara y son más
+  grandes** (client: "quiero que aparezcan de forma smooth y que su aparición sea
+  importante, tienen que ser un poco más grandes, y después aparecerá la lista debajo").
+  Copy intacto.
+  - **25px a 1440, de 20** (`clamp(1.25rem, 1rem + 0.62vw, 1.5625rem)`). Ahora quedan
+    claramente por encima de los 19px de la etiqueta de tema y de la línea de problema,
+    o sea leen como los títulos de columna de la sección y no como parte de la primera
+    fila.
+  - **La entrada es un slide-up con máscara**, el mismo lenguaje que `js/title-reveal.js`
+    usa para los headings del sitio: el texto arranca completamente debajo de su propia
+    caja recortada y sube. Eso es lo que hace que la llegada se lea como deliberada en
+    vez de como un fade. `ease: "expo.out"`, 0,9s, stagger 0,14 entre los dos.
+  - **El orden pedido está verificado, no asumido.** Medido por scroll real: **justo antes
+    del start los dos títulos están a `translateY(37px)` (fuera de su caja) y los TRES
+    módulos en opacidad 0**; a +120ms el primero va en 15px y el segundo todavía en 37
+    (el stagger); a +260ms 5 y 14; a +420ms los dos en 0. O sea los títulos llegan y
+    después la lista.
+  - **La máscara la pone el SCRIPT y la saca al terminar.** `overflow: hidden` vive en
+    `.service-contrast__head--masked`, una clase que sólo agrega
+    `js/service-contrast.js` justo antes de animar, y que el `onComplete` vuelve a
+    quitar. Dos razones: sin JS / con `prefers-reduced-motion` no hay recorte y los
+    títulos son texto normal completamente visible (verificado: `enmascarado: false`,
+    0 wrappers creados), y un `overflow: hidden` permanente sobre un heading es cómo un
+    cambio futuro — una palabra más larga, un wrap a dos líneas en algún ancho — se
+    recorta en silencio.
+  - ⚠️ **Desktop only, y chequeado POR MEDICIÓN, no con una media query en el script**:
+    el head es `display: none` bajo 900px, y un ScrollTrigger sobre un elemento oculto
+    de altura cero resuelve su start contra nada. `head.offsetParent !== null` es el test
+    honesto de "esto está realmente maquetado". Verificado a 390: `display: none`, 0
+    wrappers creados.
+  - Sin scroll horizontal a 390 ni 1440.
+  - **Nota de medición:** el tween es `once` y dura 0,9s, así que muestrear cada 1600ms lo
+    agarra siempre terminado — mi primera sonda reportó `translateY 0` en todas las
+    posiciones y parecía que no animaba. Para verificar una animación NO scrubbeada hay
+    que cruzar el trigger y muestrear a 120/260/420ms.
+- **2026-08-07 — HERO NUEVO: el cliente reemplazó `HeroWerkschutz.png`.** Otra toma
+  nocturna del mismo escenario, mejor compuesta: el guardia camina hacia la portería y el
+  vehículo con la marca FRANKONIA queda a la derecha, legible. Re-exportado a **los mismos
+  nombres y tamaños**, así que el markup casi no cambió.
+  - Origen 1621x1118 (**ratio 1,450**, contra 1,50 de los exports viejos), RGBA con alfa
+    sin usar (min 243) → aplanado a RGB antes de codificar. Nuevo alto de export **1059**,
+    así que el `height` intrínseco del `<img>` pasó de 1024 a **1059**; es el único cambio
+    de markup.
+  - **Pesa menos que el anterior**: 24 / 61 / 83KB WebP (antes 38 / 93 / 130) y 209KB el
+    JPEG de fallback. El `srcset` elige bien — verificado: 768w hasta 768px, 1280w a 1024,
+    1536w a 1440 y 1600.
+  - **El filtro de brillo SE QUEDA, y está medido:** la foto nueva es igual de oscura que
+    la vieja (mediana de luminancia **0,0093** contra 0,0100; p98 0,173 contra 0,19), así
+    que `brightness(1.34) contrast(0.96) saturate(1.06)` sigue haciendo falta. No es un
+    resto del archivo anterior.
+  - **Ni el `object-position` ni los dos washes se tocaron**, y eso se confirmó midiendo,
+    no asumiendo: probé crops a 62 / 48 / 40 % y stops de wash a 0,60 / 0,68 / 0,74 / 0,80
+    y ninguno movía el número de forma útil. **Fondo puro detrás de cada elemento del hero,
+    con el texto oculto y muestreando el rect real de cada uno:**
+
+    | | 1440 | 390 |
+    |---|---|---|
+    | H1 | 16,59:1 | 20,0:1 |
+    | lede | 18,28:1 | 15,97:1 |
+    | zona del CTA | 12,62:1 | 15,15:1 |
+    | tics | 17,67:1 | 19,09:1 |
+    | trust | 18,42:1 | 19,49:1 |
+
+  - ⚠️ **LECCIÓN DE MEDICIÓN, mía otra vez.** Mi primera pasada reportó "el lede a 4,63:1 a
+    390px" y me llevó a probar crops y washes que no cambiaban nada — porque la caja de
+    píxeles que había elegido a mano (`20,410 → 370,500`) no caía sobre el lede sino sobre
+    **el botón azul del CTA**. De ahí el número y de ahí que fuera insensible a todo. **No
+    elegir cajas de píxeles a mano: pedir el `getBoundingClientRect()` del elemento,
+    ocultar el texto con `visibility:hidden` y muestrear ESE rect.** Es lo que dio la tabla
+    de arriba, y con eso el hero nuevo no necesitaba ningún ajuste.
+  - Sin scroll horizontal a 320 / 390 / 768 / 1024 / 1440 / 1600. Los exports viejos están
+    en git si hay que volver.
+- **2026-08-07 — card 03 encuadrada como las otras, y EL BUG DE LOS PUNTEADOS ERA MÍO**
+  (client: "la ilustración de 3 tiene que estar más chica en el cuadrado, más como la de
+  la derecha que tiene más aire… y fijate cómo podemos hacer que funcionen las líneas
+  punteadas, si no hay forma hagámoslas sólidas"). Las dos cosas se arreglaron; **no hizo
+  falta pasarlas a sólidas.**
+  - ⚠️ **EL DIBUJADO Y UN PUNTEADO DE DISEÑO NO PUEDEN COMPARTIR UN PATH, y es la causa
+    exacta de lo que reportó el cliente.** Dibujar funciona escribiendo
+    `stroke-dasharray`/`-dashoffset`; un path que YA usa `stroke-dasharray` para su
+    aspecto (los cajones fantasma azules, las guías grises del piso) queda con su patrón
+    **pisado durante todo el scrub** y sólo vuelve a su ritmo en el `onComplete`. O sea:
+    el punteado "no funcionaba" porque este efecto lo rompía. Medido: **9 de los 51
+    trazos de la card 03** están en ese grupo, más 2 en la 02 y 4 en la 04.
+  - **La solución: `js/svg-draw.js` ahora SEPARA los trazos en dos grupos.** Sin patrón
+    propio → se dibujan (42 en la card 03). Con patrón propio → **entran por opacidad**,
+    mismo rango y mismo stagger, así que llegan como parte del mismo dibujo y su
+    `dasharray` nunca se toca. Verificado a cinco posiciones de scroll incluyendo media
+    animación: **0 dasharrays inline sobre los punteados** y los patrones del diseñador
+    (`16px, 16px` y `18px, 12px`) renderizando en TODAS las posiciones, con los punteados
+    subiendo 0 → 0,02 → 0,2 → 0,58 → 0,89 → 1.
+    Los tres iconos del Konzept no tienen `stroke-dasharray`, así que
+    `js/steps-sequence.js` no necesitaba el mismo split (chequeado, 0 en los tres).
+  - **El aire: la causa era el ARTBOARD, no el marco.** La tinta de este archivo llena
+    987 de sus 989 unidades de viewBox, así que renderizaba al **86 % del ancho del
+    marco**, mientras 01/02/04 se quedan en **63–64 %** porque sus artboards traen su
+    propio margen. `.rz-art--supplied--inset { transform: scale(0.74) }` la baja a
+    **63 %/66 %** — medido, ahora las cuatro están en 63–64 %.
+    Va **en CSS y no en el SVG a propósito**: cómo se encuadra un dibujo es una decisión
+    nuestra, no del archivo del cliente.
+    ⚠️ Un transform escala también los trazos, así que el peso de línea de la 03 pasa de
+    1,06px a **0,78px**. **Acá eso es una ventaja**: las cards 02 y 04 renderizan a
+    0,71px, así que este cambio es lo que finalmente hace que las cuatro se lean como una
+    familia (el desajuste que quedó pendiente ayer). Si el cliente quiere las cuatro más
+    firmes, es subir `stroke-width` en los cuatro archivos, no tocar esta regla.
+  - Sin scroll horizontal a 1440 ni 390; con `prefers-reduced-motion` las 12 lecturas de
+    dasharray inline siguen en 0.
+- **2026-08-07 — las cards llegan ANTES y el dibujado arranca con la card** (client: "que
+  aparezcan un poco antes las cards y que ni bien aparezca la card empiece esta animación,
+  porque si no escroleo y terminan apareciendo muy tarde"). Medido primero, porque el
+  "muy tarde" tenía una causa estructural, no un valor mal elegido.
+  - **El diagnóstico:** el reveal usa UN timeline cuyo rango abarca todo el GRUPO
+    (`top 85%` → `bottom 60%`), y la grilla mide ~1150px, así que la segunda fila recién
+    aparecía cerca del final del rango. Medido a 1440x900, posición del borde superior de
+    cada card en el momento en que termina: **la card 3 terminaba de dibujarse con su top
+    122px ARRIBA del viewport** (−14 % vh) y la card 1 recién llegaba a opacidad 1 con su
+    top al 8 % de la pantalla. O sea: terminaban fuera de vista.
+  - **`data-item-reveal-each`, nuevo modo opt-in de `js/item-reveal.js`**: un
+    ScrollTrigger POR ITEM, disparado por el item mismo, con los mismos valores del preset
+    y sin stagger (un trigger por item ES el stagger). Es lo que arregla el problema de
+    fondo: una card llega siempre en el mismo punto de SU propia aproximación,
+    independientemente de en qué fila esté. **El camino por defecto no cambió** — mismos
+    `top 85%` / `bottom 60%` / stagger — y está verificado en `/jobs/`
+    (`.jobs-why__grid` va de `[0,0,0,0]` a `[1,1,1,1]`), porque `data-item-reveal-strong`
+    vive en 5 páginas y no se toca.
+  - **`data-item-reveal-start`**, la palanca simétrica del `data-item-reveal-end` que
+    existía desde 2026-07-28 por exactamente el mismo problema en la otra dirección.
+    La grilla del Risiko usa `top 92%` → `top 52%`.
+  - **`data-svg-draw-trigger="<selector>"`** en `js/svg-draw.js`: dispara el dibujado desde
+    un ANCESTRO (`closest`) en vez del `<svg>`. Hace falta porque el dibujo está ~220px
+    adentro de la card, y "cuando llega la card" y "cuando llega el dibujo" son dos
+    posiciones de scroll distintas separadas por la altura de todo lo que tiene encima.
+  - ⚠️ **REVERTIDO a propósito**: el default del dibujado era `top 62%` sobre el `<svg>`,
+    elegido para que no se dibujara detrás del blur del reveal de la card. Medido, eso
+    costaba mucho más de lo que compraba. Ahora `top 88%` → `top 34%` sobre la card. El
+    blur es breve y scrubbeado; un dibujo que termina fuera de pantalla no lo ve nadie.
+  - **Después, medido igual que antes** (top de cada card en % del viewport):
+
+    | card | visible antes | visible ahora | dibujada antes | dibujada ahora |
+    |---|---|---|---|---|
+    | 01 | 8 % | **57 %** | — | — |
+    | 02 | 48 % | **57 %** | −14 % | **20 %** |
+    | 03 | 23 % | **48 %** | −14 % | **23 %** |
+    | 04 | — | **48 %** | — | **23 %** |
+
+    Ningún número negativo: cada dibujo termina con la card entera en pantalla, ~330px de
+    scroll antes que antes. (La card 01 no dibuja — su escena es la generada acá y no lleva
+    atributos `stroke`, así que la sonda la marca "dibujada" en cuanto es visible.)
+  - Con `prefers-reduced-motion`: las 4 cards en opacidad 1 en toda posición y **cero
+    dasharrays** escritos (12 lecturas en 0).
+- **2026-08-07 — las cards 02 y 04 también son ilustraciones DEL CLIENTE y también se
+  dibujan** (client: "en icons guardé Haftung & Auflagen.svg y know-how-Abfluss.svg,
+  ponelas en la ilustración correspondiente como pusiste la de Diebstahl y hacé el mismo
+  efecto"). Renombradas a `assets/icons/{haftung-auflagen,know-how-abfluss}.svg`,
+  recoloreadas para la banda navy, inlineadas verbatim con `data-svg-draw`. **Las tres
+  escenas generadas acá para las cards 02, 03 y 04 ya no existen en la página; git las
+  tiene.** La card 01 siguió con la escena dibujada acá hasta que el cliente mandó la
+  cuarta el mismo día — ver la entrada de Betriebsunterbrechung abajo.
+  - Recoloreo idéntico al de la card 03, una sola regla de sustitución: `black` →
+    `#FFFFFF` (28 y 39 trazos), `white` → **`#0D152A`** (1) y `#C5C8CC` → `#4A5164` (3 y
+    1). Los azules del cliente no se tocan — ojo que **know-how-abfluss trae DOS azules**,
+    `#3D9AD3` y `#55A7D9`; el segundo no es un token nuestro y queda como está.
+  - ⚠️ **El `fill="white"` de haftung-auflagen NO era una oclusión: era
+    `<rect width="1124" height="835">`, un fondo a canvas completo.** Sobre la card navy
+    hubiera sido un bloque blanco tapando todo el arte. Pasarlo al color de la card lo
+    vuelve invisible, que es lo correcto — pero es otra razón para mirar QUÉ es cada fill
+    antes de sustituirlo, no sólo contarlos.
+  - ⚠️ **haftung-auflagen traía un PNG base64 de 33KB adentro**, un patrón de Figma con el
+    símbolo de Gefahrstoffe (calavera) sobre el bidón. Dos problemas reales: era **negro
+    sobre transparente**, o sea invisible sobre navy, y un ráster **no se puede dibujar**
+    con dash. Recoloreado invirtiendo el RGB y conservando el alfa (los píxeles son gris
+    neutro con antialiasing, así que la inversión es exacta) y **bajado de 360x360 a
+    96x96**: renderiza a ~18px en pantalla, así que 360 era puro peso. **33.200 → 5.632
+    bytes de base64.** El archivo pasó de 43,8KB a 16,7KB.
+  - **Medido, no razonado**: 52 / 51 / 38 trazos dasheados antes de entrar y los tres en 0
+    después; **cero `stroke="black"` y cero `fill="white"` en las tres**; la card 01 no
+    recibía un dash todavía (ese día su escena era la generada acá). Con
+    `prefers-reduced-motion` forzado no se escribe un solo dash en
+    ninguna posición (12 lecturas en 0). Sin scroll horizontal a 1440 / 1024 / 390.
+  - ⚠️ **PENDIENTE DE DECISIÓN DEL CLIENTE — el peso de línea de las cuatro no coincide.**
+    Las dos nuevas tienen viewBox 1124x835 con `stroke-width` 2, y entran al marco de
+    473x296 escaladas por ALTO (0,354), así que el trazo efectivo es **0,71px**. La card 03
+    es 989x634 con 2.22337 y escala 0,478 → **1,06px**. O sea las nuevas se ven más finas
+    que la 03 dentro de la misma fila. Es su export, no algo que hicimos: se arregla
+    subiéndoles el `stroke-width` en el archivo o re-exportando, y no se tocó sin pedido.
+  - ⚠️ **ERROR MÍO QUE VALE LA PENA NO REPETIR:** escribí el archivo recoloreado en
+    `know-how-abfluss.svg` y después borré el original con `rm "know-how-Abfluss.svg"` —
+    **macOS es case-insensitive, así que ese `rm` borró el archivo que acababa de
+    escribir**, original incluido. Se recuperó con `git checkout` porque otra sesión lo
+    había commiteado; si no hubiera estado trackeado, se perdía. **Es la misma trampa que
+    este archivo ya documenta para `bayernwerk.png`.** La forma correcta es `git mv` al
+    nombre final PRIMERO y recolorear en su lugar — nunca escribir-y-después-borrar cuando
+    los dos nombres difieren sólo en mayúsculas.
+- **2026-08-06 (misma sesión) — la card 01 también es del cliente: las CUATRO escenas
+  del Risiko son suyas y ninguna generada acá sobrevive en la página** (client:
+  "acabo de guardar en assets/icons la ilustración de Betriebsunterbrechung para la
+  primer card"). Una nave con dos cintas transportadoras rotas, cajas caídas y un
+  triángulo de alerta azul — el mismo lenguaje isométrico que las otras tres.
+  Recoloreada desde `Betriebsunterbrechung1.svg` a
+  `assets/icons/betriebsunterbrechung.svg` e inlineada con
+  `data-svg-draw data-svg-draw-trigger=".service-risk__item"`, sin `--inset`
+  (su viewBox es 1124x835, como las cards 02 y 04, que tampoco lo necesitaron).
+  - **El original del cliente NO se borró, y esta vez el nombre difiere en más que
+    mayúsculas a propósito.** Es la respuesta directa a las dos pérdidas
+    documentadas arriba: en `know-how-abfluss` el `rm` case-insensitive se comió el
+    archivo recién escrito, y la primera copia de ESTA ilustración se perdió del
+    todo porque no estaba trackeada y el `os.remove` apuntaba al mismo inodo. Con
+    `Betriebsunterbrechung1.svg` intacto al lado, el peor caso es un archivo de
+    más.
+  - Sustitución idéntica a las otras tres, y otra vez conviene mirar qué es cada
+    fill antes de tocarlo: **5 rellenos `#09152D`** (oclusiones reales, las caras
+    de las cajas y la nave) pasan al `#0D152A` de la card, los **70 trazos blancos
+    se quedan blancos** (este export ya venía claro, al revés que los anteriores),
+    los 4 `#4A5167` son las guías del piso y los 3 `#3D9AD3` son la alerta.
+  - **4 `stroke-dasharray` de diseño**, que es exactamente para lo que
+    `js/svg-draw.js` separa trazos: 77 elementos con `stroke`, **73 reciben dash de
+    dibujado y esos 4 quedan fuera** — el rombo punteado del piso conserva su ritmo
+    en vez de convertirse en línea llena.
+  - **Medido en las cuatro a la vez**: 72 / 49 / 41 / 33 trazos sin dibujar antes de
+    entrar y **los cuatro en 0 al terminar**; cero `stroke="black"` y cero
+    `fill="white"` en las cuatro; sin scroll horizontal.
 - **2026-08-06 — la ilustración de la card 03 también se DIBUJA con el scroll, y sólo
   esa de las cuatro** (client: "aplicame el mismo efecto al diagrama de Diebstahl im und
   um den Betrieb, solo a ese de los 4, que vaya formando las líneas"). Nuevo primitivo

@@ -66,11 +66,40 @@
       <!-- Added 2026-08-03 for the Werkschutz/Objektschutz comparison, one line
            icon per service. Same 24x24 grid, same 1.5 stroke from #icon-defs as
            every other symbol here — no fill, no second weight. -->
-      <!-- Production site: saw-tooth roof + chimney, i.e. a plant in operation. -->
+      <!-- Production site: saw-tooth hall + chimney, i.e. a plant in operation.
+           REDRAWN 2026-08-10 (client: "el icono este puede y debe mejorar"), and
+           the three faults are worth naming because they are what a factory glyph
+           gets wrong:
+           · the CHIMNEY was `M18 5V3h2v2` — an open bracket floating clear of the
+             building, which at any real size reads as a flag or an antenna, not a
+             stack. It is now a full stack standing on the ground with a cap lip,
+             so its silhouette is unambiguous;
+           · the hall and the stack were ONE path, so the roof ran straight into a
+             tall block and the whole thing read as a jagged chart line. They are
+             separate objects now, sitting on a shared ground line;
+           · the teeth were 3 units deep against an 18-unit-wide drawing, so the
+             saw-tooth — the thing that says "factory" — was the smallest feature
+             in it. They are 3.2 deep on a 12-wide hall now.
+           The shape is hall → machine house → chimney, in that order left to right,
+           which is the silhouette that reads as "factory" without a caption. Two
+           rejected drafts, because the reason matters more than the coordinates:
+           a hall plus a bare tall block reads as a warehouse with a tower, and a
+           hall plus a narrow capped stack reads as a pipe or a thermometer. The
+           chimney has to sit ON something for the block to become a building.
+
+           ⚠️ SIZED FOR ITS SMALLEST USE, NOT ITS LARGEST. This symbol renders at
+           18px on /werkschutz/, 28px on /leistungen/ and 44px on
+           /brandwache-nuernberg/ — all three measured. The chimney is 3.1 units
+           wide because at 2.4 its two verticals merge into one blob at 18px; the
+           four candidates were rendered at all three sizes before picking this one.
+
+           Ink is x 2.5→21.5, y 3.9→20.5. Same 24x24 grid and the 1.5 stroke
+           inherited from #icon-defs. -->
       <symbol id="icon-factory" viewBox="0 0 24 24">
-        <path d="M3 20h18"/>
-        <path d="M3 20v-8l4 3v-3l4 3v-3l4 3V7l3-2v15"/>
-        <path d="M18 5V3h2v2"/>
+        <path d="M2.5 20.5h19"/>
+        <path d="M3.5 20.5V12.2l3.5 2.8V12.2l3.5 2.8V12.2l3.5 2.8"/>
+        <path d="M14 20.5V8h5.4v12.5"/>
+        <path d="M15.3 8V3.9h3.1V8"/>
       </symbol>
       <!-- Added 2026-08-03 for /jobs/: "Bezahlung, die ankommt" (the employer
            benefits four-up and the hero badge). A euro coin, drawn on the same
@@ -89,6 +118,24 @@
         <rect x="3" y="5.5" width="18" height="13" rx="2"/>
         <path d="M3.5 6.5l8.5 6 8.5-6"/>
       </symbol>
+      <!-- Documentation that has been signed off: a page with a folded corner and
+           a check inside it. Added 2026-08-10 for /sicherheitsdienst-nuernberg/'s
+           Erreichbarkeit tile ("Dokumentation für Behörde und Versicherung
+           inklusive"), which had no glyph in this sprite — #icon-shield-check was
+           the nearest and a shield reads as protection, not paperwork. Same
+           24x24 grid and 1.5 stroke as the rest; arcs kept out of it deliberately
+           so it stays crisp at small sizes.
+           ⚠️ A SECOND CONSUMER since 2026-08-10: /brandwache-nuernberg/'s
+           "Behördenfest dokumentiert" Warum card, replacing #icon-badge there
+           (a medal read as an award, not as paperwork surviving an audit — the
+           exact same claim this symbol was already drawn for). It renders at 44px
+           there against the ~22px this comment used to name, and reads clean at
+           both — the arcs-free construction is what makes that hold. -->
+      <symbol id="icon-document-check" viewBox="0 0 24 24">
+        <path d="M13.5 3H6.5A1.5 1.5 0 005 4.5v15A1.5 1.5 0 006.5 21h11a1.5 1.5 0 001.5-1.5V8.5L13.5 3z"/>
+        <path d="M13.5 3v5.5H19"/>
+        <path d="M8.5 14.5l2.5 2.5 4.5-4.5"/>
+      </symbol>
       <!-- Premises: a plain building with a doorway — no production. -->
       <symbol id="icon-building" viewBox="0 0 24 24">
         <path d="M3 20h18"/>
@@ -96,6 +143,133 @@
         <path d="M16 20V9h3a1 1 0 011 1v10"/>
         <path d="M8.5 8h1.5M8.5 12h1.5M12.5 8h1.5M12.5 12h1.5"/>
         <path d="M9.5 20v-4h3v4"/>
+      </symbol>
+
+      <!-- Added 2026-08-10 for the /leistungen/ redesign: one marker per service
+           card. Seven symbols, because the sprite already covered the other four
+           (#icon-shield-check Objektschutz, #icon-factory Werkschutz,
+           #icon-contact Empfangsdienst, #icon-alert Interventionsdienst) and a
+           near-miss glyph is worse than none — the reason this page shipped with
+           no icons at all on 2026-08-09.
+           Same 24x24 grid and the 1.5 stroke inherited from #icon-defs. Do NOT
+           give any of them a fill: every symbol in this sprite is stroke-only
+           except #icon-star, which declares its own paint. -->
+
+      <!-- Revier- & Schließdienst: a key. The one service whose defining act is
+           locking up, so the object beats any route/clock metaphor. -->
+      <symbol id="icon-key" viewBox="0 0 24 24">
+        <circle cx="7.5" cy="12" r="3.5"/>
+        <path d="M11 12h9.5"/>
+        <path d="M17.5 12v3M14.5 12v2.25"/>
+      </symbol>
+      <!-- Brandwache: a flame, outer contour plus the inner tongue so it still
+           reads as fire at 26px rather than as a leaf. -->
+      <symbol id="icon-flame" viewBox="0 0 24 24">
+        <path d="M12 3c.4 3 2 4 3.4 5.6A7 7 0 0119 13.2 7 7 0 015 13.2c0-2.4 1.2-4 2.4-5.2.2 1.3.9 2 1.7 2 1 0 1.6-.8 1.6-2.1C10.7 6.2 11.1 4.4 12 3z"/>
+        <path d="M12 20a3 3 0 01-3-3c0-1.6 1.4-2.4 2-3.6.7 1 3 2 3 3.7a3 3 0 01-2 2.9z"/>
+      </symbol>
+      <!-- Baustellenbewachung: a tower crane. The apex ties to both jib ends are
+           what stop this reading as a gallows — the first draft had a bare T on a
+           post and that is exactly what it looked like. -->
+      <symbol id="icon-crane" viewBox="0 0 24 24">
+        <path d="M3 21h18"/>
+        <path d="M8 21V4.5"/>
+        <path d="M3.5 4.5h17"/>
+        <path d="M8 1.5l-4.5 3M8 1.5l12.5 3"/>
+        <path d="M3.75 4.5v2.5h2.5V4.5"/>
+        <path d="M16 4.5v3.5"/>
+        <path d="M14.5 8h3v2.5h-3z"/>
+      </symbol>
+      <!-- Veranstaltungsschutz: a crowd behind a barrier. Three heads alone read
+           as three dots at 26px; the rail is what makes it event control and not
+           just "people". -->
+      <symbol id="icon-crowd" viewBox="0 0 24 24">
+        <circle cx="12" cy="5.75" r="2.25"/>
+        <circle cx="5.5" cy="7.5" r="1.85"/>
+        <circle cx="18.5" cy="7.5" r="1.85"/>
+        <path d="M8.25 15c0-2.2 1.7-3.75 3.75-3.75S15.75 12.8 15.75 15"/>
+        <path d="M2.5 15c0-1.9 1.3-3.1 3-3.25"/>
+        <path d="M21.5 15c0-1.9-1.3-3.1-3-3.25"/>
+        <path d="M2 17.5h20"/>
+        <path d="M5.5 17.5V21M18.5 17.5V21"/>
+      </symbol>
+      <!-- Kaufhausdetektei: a retail bag. The store is the setting, and it is the
+           only one of the eleven that happens inside one. -->
+      <symbol id="icon-bag" viewBox="0 0 24 24">
+        <path d="M5 7.5h14l-1.2 12.5H6.2L5 7.5z"/>
+        <path d="M9 10V6.5a3 3 0 016 0V10"/>
+      </symbol>
+      <!-- Sicherheitstechnik: a surveillance camera on a wall mount, aimed down-left.
+           Body, lens ring, arm, wall plate — nothing else. An earlier draft added a
+           floor stand under it, which read as a tripod, i.e. a photo camera. -->
+      <symbol id="icon-camera" viewBox="0 0 24 24">
+        <path d="M4.2 10.1l11.4-3.4 1.5 5-11.4 3.4-1.5-5z"/>
+        <path d="M4.6 11.6l-1.9.6"/>
+        <path d="M17.1 11.7l1.9-.6"/>
+        <path d="M19 11.1V19"/>
+        <path d="M16.5 19h5"/>
+        <path d="M8.2 15.6L9.4 19.5"/>
+      </symbol>
+      <!-- Added 2026-08-10 for /brandwache-nuernberg/'s Ablauf, step 02
+           ("Abstimmen: Qualifikation und Einsatzplan klären wir direkt mit Behörde
+           oder Versicherer"). A speech bubble with a check — a conversation that
+           SETTLED something, which is what abstimmen means. Two elements.
+           Chosen over a clipboard-with-check, which is the obvious alternative:
+           a clipboard says "checklist", and this step is not a list, it is an
+           agreement reached with a third party. It is also the only organic shape
+           in this page's icon set, so it never blurs into the rectangles. -->
+      <symbol id="icon-agree" viewBox="0 0 24 24">
+        <path d="M20.6 11.9c0 4.1-3.9 7.5-8.6 7.5-.9 0-1.8-.13-2.6-.36L4.6 21l1.5-3.7a7 7 0 0 1-2.7-5.4c0-4.1 3.9-7.5 8.6-7.5s8.6 3.4 8.6 7.5z"/>
+        <path d="M8.4 11.9l2.5 2.5 4.7-5"/>
+      </symbol>
+      <!-- Added 2026-08-10 for the same Ablauf, step 03 ("Wache steht:
+           dokumentierte Runden, Meldekette, direkt erreichbarer Einsatzleiter").
+           A guard inside the shield: the post is MANNED, which is the whole claim
+           of that step.
+           ⚠️ REPLACES an #icon-radio (a handheld two-way radio) drawn earlier the
+           same day, and the reason it went is worth keeping: rendered at 44px it
+           read as a card with lines on it, not as a radio. Four more radio drafts
+           were rendered against it — narrower body, vertical speaker grille, a
+           channel knob, a stand mic — and the best of them still needed a beat to
+           decode. A glyph that needs a beat is the failure this whole icon pass
+           exists to fix.
+           ⚠️ The shield outline is #icon-shield-check's, COPIED EXACTLY rather
+           than redrawn. Both appear on that page, two sections apart, so they have
+           to read as one shield with two different things inside it — a person
+           here, a check there — rather than as two similar shields. -->
+      <symbol id="icon-guard" viewBox="0 0 24 24">
+        <path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"/>
+        <circle cx="12" cy="10" r="2.2"/>
+        <path d="M8.4 16.3c.5-1.9 1.9-2.9 3.6-2.9s3.1 1 3.6 2.9"/>
+      </symbol>
+      <!-- Added 2026-08-10 for /sicherheitsdienst-nuernberg/'s "Digitales Wachbuch
+           mit Checkpoint-Nachweis je Runde": a patrol route with a marker at each
+           checkpoint.
+           ⚠️ It REPLACES #icon-badge on that tile, and #icon-badge was not redrawn
+           because it is not wrong — it is a medal, and two sections up it means
+           "Kräfte mit § 34a GewO und Brandschutzhelfer-Qualifikation", which is
+           exactly what a medal is for. It was only wrong on the Wachbuch tile.
+           Also deliberately NOT #icon-document-check, which is the obvious paper
+           metaphor: that symbol is already on this page, one section up, for
+           "Dokumentation für Behörde und Versicherung". Two sheets-with-a-check on
+           one page read as a repeat. A route with checkpoints is the only glyph in
+           the set that carries "je RUNDE".
+           The path starts and ends clear of the end markers (2.2 units from each
+           centre against a 1.8 radius) so the line never runs through a dot. -->
+      <symbol id="icon-route" viewBox="0 0 24 24">
+        <path d="M8.4 5.4h6.2a3.4 3.4 0 0 1 0 6.8H9.4a3.4 3.4 0 0 0 0 6.8h6.2"/>
+        <circle cx="6.2" cy="5.4" r="1.8"/>
+        <circle cx="12" cy="12.2" r="1.8"/>
+        <circle cx="17.8" cy="19" r="1.8"/>
+      </symbol>
+      <!-- Sicherheitskonzept: the plan sheet itself, with the measure ticks that
+           make it a drawing rather than a letter, and the approved check. -->
+      <symbol id="icon-plan" viewBox="0 0 24 24">
+        <rect x="3.5" y="3.5" width="17" height="17" rx="2"/>
+        <path d="M3.5 8h17"/>
+        <path d="M8 8v12.5"/>
+        <path d="M11 12.5l2 2 4.5-4.5"/>
+        <path d="M5.75 11.5h2.5M5.75 15h2.5"/>
       </symbol>
     </g>
   </defs>

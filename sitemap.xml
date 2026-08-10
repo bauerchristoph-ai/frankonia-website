@@ -25,6 +25,25 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
+  <!--
+    Hub pages (Webtexte 23/24), built 2026-08-09. Priority 0.9, above the
+    service and city pages they index: both sit in the site chrome of every
+    page (/leistungen/ in the nav and the services submenu, /einsatzgebiete/ in
+    the footer) and both were live 404s until now. The third hub, /ratgeber/,
+    follows (docs/build-checklist.md Bloque 7).
+  -->
+  <url>
+    <loc>https://frankonia-sicherheit.de/leistungen/</loc>
+    <lastmod>2026-08-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/einsatzgebiete/</loc>
+    <lastmod>2026-08-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
   <url>
     <loc>https://frankonia-sicherheit.de/werkschutz/</loc>
     <lastmod>2026-07-25</lastmod>
@@ -37,10 +56,77 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <!--
+    City pages. Priority 0.8, the same as a service page: these carry the
+    heaviest local intent on the site (720/mo on "sicherheitsdienst nürnberg"
+    alone) and are the pages Ads and the Local Pack land on. The other nine
+    follow (docs/build-checklist.md Bloque 5).
+  -->
+  <url>
+    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-nuernberg/</loc>
+    <lastmod>2026-08-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!--
+    Combo pages (service × city). Priority 0.8 like the city and service pages:
+    they carry the most specific commercial intent on the site and double as the
+    Google-Ads landing pages (Webtext 34 marks this one K2/K5). The other fifteen
+    follow (docs/build-checklist.md Bloque 6).
+  -->
+  <url>
+    <loc>https://frankonia-sicherheit.de/brandwache-nuernberg/</loc>
+    <lastmod>2026-08-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
   <url>
     <loc>https://frankonia-sicherheit.de/jobs/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <!-- Ratgeber, built 2026-08-10. The hub sits with the other hubs; the three
+       articles are dated editorial pieces, so yearly like the case studies. -->
+  <url>
+    <loc>https://frankonia-sicherheit.de/ratgeber/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/ratgeber/paragraph-34a-erklaert/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/ratgeber/kosten-sicherheitsdienst/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/ratgeber/brandwache-wann-vorgeschrieben/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <!-- Conversion landing page, built 2026-08-10. Priority with the service
+       pages: it is the destination of the free-analysis CTA, not a leaf. -->
+  <url>
+    <loc>https://frankonia-sicherheit.de/angebot/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Built 2026-08-10. Below the service pages, above Kontakt: it converts
+       nobody on its own, but it is the entity page Organization schema hangs
+       off and it is now in the main nav. -->
+  <url>
+    <loc>https://frankonia-sicherheit.de/ueber-uns/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>

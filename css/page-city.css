@@ -1,0 +1,1722 @@
+/*
+  CITY-PAGE TEMPLATE — the ten /sicherheitsdienst-<stadt>/ pages.
+  Built 2026-08-09 with the first of them, /sicherheitsdienst-nuernberg/.
+
+  This file is SMALL on purpose. css/page-service.css is loaded first as the
+  page CHASSIS (docs/page-conventions.md §9.1), so everything a city page shares
+  with the rest of the site already exists there and is NOT re-copied here:
+
+    --content-inset on both sides   §1     `main h2` clamp             §2
+    breadcrumb chevron              §3     the whole .pixel-seam block §4.4
+    .section--light token flip      §5/8.2 .service-hero*              §8
+    .service-link                          the entire Kosten block (.service-price*)
+
+  So what is in here is only what a CITY page adds to that: the hero's
+  Einsatzgebiet badge and boundary outline, the four Warum blocks, the eight
+  service rows, the five local Einsatzfelder, the Brandwache callout, the rate
+  rows, the two-up quotes, the three Nachweis tiles and the neighbour tiles.
+
+  REUSE MODEL FOR THE NEXT NINE CITIES: every class is `.city-*`, never
+  `.nuernberg-*`. Building Würzburg should be a copy of the page file with new
+  copy, new meta/JSON-LD, a new outline path (docs/design-sources/city-outline.py)
+  and new neighbour tiles — and NOT ONE LINE of this stylesheet. If a city's copy
+  does not fit, that is more <li>, not new CSS. The one page that will genuinely
+  differ is BAMBERG: its draft is an explicit Struktur-Variante (Zuhause-Story
+  instead of Warum-Karten, a real address instead of Einsatzgebiets-Framing), so
+  expect one extra block there, not a second stylesheet.
+
+  Sitewide pieces stay where they are: components.css (.section, .section__intro,
+  .section-eyebrow, .faq__list, .review-card, .btn*), css/lead-form.css (the
+  form), css/testimonials.css (the quote card).
+*/
+
+/* ---- Centred section headers --------------------------------------------- */
+/* Client 2026-08-10, asked section by section over the course of the day. By now
+   MOST of this page's headers are centred: Warum and Leistungen (here), plus
+   Brandwache, Vertrauen, Erreichbarkeit and Umgebung in their own blocks below,
+   plus the FAQ (centred by the chassis) and the form (centred by lead-form.css).
+   Only two are still ranged left — the Einsatzfelder strip, and Kosten, whose
+   intro lives in the left column of a two-column grid and cannot be centred
+   without breaking that layout.
+   ⚠️ THE `> p` NEEDS TWO CLASSES, and this is the FOURTH and FIFTH time the same
+   trap has come up on this page. The chassis sets
+   `.section__intro > p { max-width: 42rem }` at (0,1,1), so a single-class rule
+   only ties it: `text-align: center` alone then centres the TEXT inside a 672px box
+   that is still pinned to the container's LEFT edge, which renders as a centred
+   heading above a left-aligned paragraph. The auto margins are what centre the box.
+   🔧 Worth a cleanup when the next city page is built: six near-identical centring
+   rules in one file want to be one `.city-centred` modifier on the intro, with the
+   blocks that need extra caps keeping only those. Not done now because the other
+   four carry their own measured max-widths and notes, and consolidating them is a
+   refactor of working rules rather than part of this request. */
+.city-why .section__intro,
+.city-services .section__intro {
+  text-align: center;
+}
+
+.city-why .section__intro > h2,
+.city-why .section__intro > p,
+.city-services .section__intro > h2,
+.city-services .section__intro > p {
+  margin-inline: auto;
+}
+
+/* ---- Hyphenation --------------------------------------------------------- */
+/* base.css sets `hyphens: auto` on every p/li, which is right for running prose
+   and wrong for everything on this page: the copy is set in 2- and 4-up columns
+   and in ruled rows, where German compounds break on almost every line
+   ("Sicher-heitskräfte", "Zugangs-kontrolle") and read as broken text rather
+   than typesetting. Same call the chassis makes for the service template
+   (page-service.css) and the homepage makes for its own column sets.
+   The FAQ answers are deliberately NOT in here — they are real prose in a wide
+   measure, where auto-hyphenation still earns its keep. */
+.city-hero__badge,
+.city-why__item p,
+.city-services__card-name,
+.city-services__card-text,
+.city-services__more-label,
+.city-services__name,
+.city-services__text,
+.city-fields__title,
+.city-fields__item p,
+.city-callout__points li,
+.city-rates li,
+.city-proof__label,
+.city-proof__outro,
+.city-nearby__name {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* ==========================================================================
+   1. HERO
+   ==========================================================================
+   Two columns from 1024px: the draft's copy on the left, the city's own
+   administrative outline on the right. Below that, one column and the outline is
+   hidden — see .city-hero__map.
+
+   NO PHOTOGRAPH, and that is following the copy rather than working around a
+   gap: the draft's Hero-Aufbau lists badge, H1, subline, ticks, double CTA and
+   the Google widget, and names no image (the Bamberg draft, by contrast, does
+   ask for one). There is also no city photography anywhere in the project.
+   The upside is real: this page has NO LCP image at all — no preload, no
+   decoding, nothing to compress — and the visual it does have costs zero
+   requests. */
+
+/* The shared .service-hero__grid is a one-column grid with `align-items: center`;
+   this makes it two, with the copy column first in the DOM so it is also first
+   on a phone. 1fr / 0.62fr, not an even split: the copy carries the badge, H1,
+   lede, CTA pair, three full-sentence ticks and the trust band, and the outline
+   is a portrait shape that does not need half the page to read. */
+@media (min-width: 1024px) {
+  .city-hero__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.62fr);
+    /* Wider than the shared --space-8 so the outline never crowds the ticks. */
+    gap: clamp(3rem, 5vw, 5rem);
+  }
+}
+
+/* The shared cap is 44rem, which is right for a hero whose copy spans the whole
+   section. Here the copy already has its own column, so the cap only has to stop
+   the H1 from stretching on very wide screens. */
+.city-hero__content {
+  max-width: 40rem;
+}
+
+/* ---- Einsatzgebiet badge ------------------------------------------------- */
+/* The badge is BACK on this page type after being dropped from /werkschutz/'s
+   hero in August, and the reason it earns its place here is not decoration: it
+   is the draft's own copy AND it is the UWG disclosure. This page must never
+   imply a branch office in the city (the draft: "Einsatzgebiets-Framing, kein
+   Scheinstandort"), and this line is where that is stated, above the fold, in
+   the visitor's first glance. On /werkschutz/ the removed chip was repeating the
+   DEKRA claim the seals below it already made — a third element saying the same
+   thing. This one says something nothing else on the screen says.
+   Values are the deleted .service-hero__badge's, so the two page types would
+   look identical if that one ever comes back. */
+.city-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  padding: 0.4rem 0.85rem 0.4rem 0.7rem;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: var(--radius-pill);
+  background-color: rgb(255 255 255 / 0.05);
+  font-size: var(--font-size-sm);
+  color: rgb(255 255 255 / 0.9);
+  line-height: 1.35;
+}
+
+/* fill/stroke restated because the sprite declares them on its
+   <g id="icon-defs"> wrapper and that does NOT survive <use> — without them the
+   icon renders as a solid black blob. The trap is documented four times over in
+   page-service.css; it is required, not defensive.
+   ⚠️ CHECKED, not assumed: EVERY symbol this page uses (#icon-pin,
+   #icon-contact, #icon-transparency, #icon-building, #icon-shield-check,
+   #icon-clock, #icon-badge, #icon-check, #icon-arrow-diagonal) lives inside that
+   group and is therefore a STROKE icon. `#icon-star` is the only filled one in
+   the whole sprite, and it declares its own paint. So every rule in this file
+   sets `fill: none; stroke: currentColor` and none of them needs the filled
+   variant — page-service.css's `fill: currentColor` on #icon-phone is the
+   exception on the site, not the pattern to copy. */
+.city-hero__badge-icon {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-blue-light);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---- The three hero ticks, as a COLUMN ----------------------------------- */
+/* The shared .service-hero__points is a wrapping flex ROW of short chips, which
+   is what the homepage hero and /werkschutz/ use. It cannot hold these three:
+   the draft's lines are full sentences ("Feste Teams für laufende Aufträge,
+   direkt vor Ort im Objekt"), and /jobs/ already measured what that costs in a
+   row — ~1000px against the ~700px a hero copy column has. That page put the
+   same question to the client and the answer was the list ("mejor los tics
+   ponelos en una lista en vez de una línea"). Same shape here, and the sentences
+   stay verbatim.
+   ⚠️ `align-items: flex-start` is load-bearing, not tidiness: the shared rule
+   centres its items for the row layout, and in a column that centres every tick
+   HORIZONTALLY. */
+.city-hero__points {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+/* ---- The city outline --------------------------------------------------- */
+/* An inline path of the city's real OSM boundary, generated once in development
+   by docs/design-sources/city-outline.py from the geojson already in this repo.
+   Why an outline and not a map or a photo is argued at the markup; the short
+   version is that it is honest for an EINSATZGEBIET (an area, not an address),
+   unique per city, and free (no request, no third-party tiles, no consent
+   question). */
+.city-hero__map {
+  /* Sized by HEIGHT, not width: the shape's aspect differs per city (Nürnberg is
+     1000×1432, i.e. clearly portrait; Würzburg and Fürth will not be), so
+     driving it from the width would make each city's page a different height.
+     A height cap keeps all ten optically the same size, and the column's width
+     is then just an upper bound. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.city-map {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(30rem, calc(100svh - 22rem));
+}
+
+/* Below 1024px the hero is one column and the outline would sit under the trust
+   band, adding ~380px of scroll to the first screen for something purely
+   decorative. It is `display: none` rather than a smaller version, and that is
+   safe precisely because it is decorative — the <div> is aria-hidden and the
+   path carries no information the H1 does not. */
+@media (max-width: 1023.98px) {
+  .city-hero__map {
+    display: none;
+  }
+}
+
+/* The boundary itself: a hairline, not a filled shape. A fill would read as a
+   coloured blob and would have to answer "what does this colour mean"; a line
+   reads as a drawing, which is the site's own language (the isometric risk
+   scenes, the Konzept icons, the Vorteile frame). */
+.city-map__area {
+  fill: rgb(61 154 211 / 0.05);
+  stroke: rgb(255 255 255 / 0.55);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+/* Dashed construction guides through the centre of the shape's box. They are
+   what stops a bare outline from reading as a random blob — the same role the
+   `.rz-guide` dashes play in the risk illustrations. Same rhythm as those, so
+   the two drawings read as one family. */
+.city-map__guide {
+  stroke: rgb(255 255 255 / 0.12);
+  stroke-width: 2;
+  stroke-dasharray: 16 16;
+}
+
+/* The outline DRAWS ITSELF on load, not on scroll — it is above the fold, and a
+   scroll-scrubbed reveal there is the bug /referenzen/'s hero already paid for
+   (the title sat half-revealed until the visitor scrolled). Same reason
+   js/hero-reveal.js plays on load.
+   7381 is the path's MEASURED length in viewBox units, not a guess: a value
+   below it would leave a visible gap in the outline, and a value far above it
+   would waste the first part of the animation on nothing.
+   Gated on `no-preference` per docs/page-conventions.md §4.3 — the global
+   motion.css override collapses `animation-duration` but not `animation-delay`,
+   so an ungated cascade with a delay would leave a reduced-motion visitor
+   looking at an unfinished drawing. Gated, they simply get the finished
+   outline. */
+@media (prefers-reduced-motion: no-preference) {
+  .city-map__area {
+    stroke-dasharray: 7381;
+    animation: city-map-draw 2.4s var(--easing-premium) 240ms backwards;
+  }
+
+  .city-map__guide {
+    animation: city-map-guides var(--duration-slower) var(--easing-premium) 120ms backwards;
+  }
+}
+
+@keyframes city-map-draw {
+  from { stroke-dashoffset: 7381; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes city-map-guides {
+  from { opacity: 0; }
+}
+
+/* ==========================================================================
+   2. WARUM FRANKONIA IN <STADT>
+   ==========================================================================
+   RAISED WHITE PANELS, four in a row (client 2026-08-09: "estas cards quiero que
+   sean iguales a las cards de werkschutz en donde hay 4 cards en una fila, que
+   tengan drop shadow […] solo que en este caso sin la ilustración grande").
+
+   So this block is now `.service-cases__card`'s twin: same border, same 24px
+   radius, same two-layer shadow, same padding at each breakpoint, same type
+   scale, same hover. Every value below is COPIED from that rule rather than
+   re-derived, so the two blocks are one design in two files and not two similar
+   ones — if page-service.css's cases card changes, change this with it.
+
+   ⚠️ This REVERSES the block's first build (ruled blocks on hairlines, "ruled,
+   not carded", which is the language of the rest of the site and what
+   docs/page-conventions.md §8.2 asks for). It is the client's explicit call, and
+   the precedent is real: /werkschutz/'s own Anwendungsfälle went the same way for
+   the same reason. Do not "restore" the hairlines.
+
+   WHAT IS DELIBERATELY NOT COPIED:
+   - the big line illustration — the client's own exception ("sin la ilustración
+     grande"). The card keeps its small 28px sprite icon, which is a different
+     thing at a different size, and it plays the role the illustration plays
+     there: the first mark you see;
+   - the number (01–04). Those cards are a numbered `<ol>` of use cases; these
+     four are reasons, and numbering them would be inventing an order the copy
+     does not have;
+   - the alternating 28px offset on even cards in the 2-up band — see the hover
+     note below for why a resting `transform` cannot live on these items;
+   - the centred section header. The client asked about the cards; this section's
+     heading stays on the editorial inset like the rest of the page. */
+.city-why__grid {
+  list-style: none;
+  display: grid;
+  gap: var(--space-6);
+  margin-top: var(--space-8);
+  padding: 0;
+}
+
+.city-why__item {
+  display: grid;
+  /* Content sits at the TOP of the card, so the four cards in a row are equal
+     height (grid `stretch`) while their icons and titles still line up. */
+  align-content: start;
+  min-width: 0;
+  padding: var(--space-6);
+  /* 1.5rem = 24px, and it is deliberately the SAME literal the cases card and the
+     price card already use rather than a third off-scale radius. No token sits in
+     the 24–32px range the client's card brief asks for, so the site keeps exactly
+     one value outside the scale. */
+  border-radius: 1.5rem;
+  border: 1px solid rgb(1 1 1 / 0.07);
+  background-color: var(--color-white);
+  /* Two layers, NOT --shadow-lg: that token is a single 0.14 blob calibrated for
+     the nav submenu and at this size it reads as a dropped shadow rather than as
+     elevation. A wide, very low-opacity spread plus a tight contact shadow is
+     what makes a white panel look lifted off white — and on a white section the
+     border and this shadow are the ONLY things defining the card's edge, which is
+     why neither gets any smaller. */
+  box-shadow: 0 18px 48px rgb(1 1 1 / 0.07), 0 2px 6px rgb(1 1 1 / 0.04);
+  /* `translate`, not `transform` — see the hover rule. */
+  transition: translate var(--duration-base) var(--easing-premium),
+    box-shadow var(--duration-base) var(--easing-premium),
+    border-color var(--duration-base) var(--easing-premium);
+}
+
+/* Stands in for the cases card's illustration, at icon size. The gap under it is
+   that card's own art→text gap (--space-5), and title→text is its own
+   (--space-3), so the three zones keep the same rhythm one size down. */
+.city-why__icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-bottom: var(--space-5);
+  /* blue-dark in this light section: 3,71:1 on white, which is what a GRAPHIC
+     needs (3:1). The cases card's numeral is the CTA blue instead — but that is
+     text at 14px, which is the accepted caveat documented at that rule. An icon
+     does not need to inherit that caveat, so it does not. */
+  color: var(--color-accent);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The cases card's own h3 clamp for the 2-up band: 22→28px. */
+.city-why__title {
+  font-size: clamp(1.375rem, 1.05rem + 0.65vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.city-why__item p {
+  margin-top: var(--space-3);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+/* Two-up from 640px, which is the ONE deliberate difference from the cases
+   block (it stays single-column until 900). These cards carry no illustration, so
+   they are roughly half the height and two of them fit comfortably at a tablet
+   width where a case card would not. */
+@media (min-width: 640px) {
+  .city-why__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-7) var(--space-6);
+  }
+
+  .city-why__item {
+    padding: var(--space-7);
+  }
+
+  /* HOVER: a 5px lift, a little more shadow, and the border warming toward the
+     brand blue — the cases card's exact three declarations. No scale, same
+     reason: the brief is explicit about it.
+
+     ⚠️ IT IS `translate`, NOT `transform`, AND THAT IS LOAD-BEARING. These items
+     carry `data-item-reveal`, and js/item-reveal.js animates `y` and `scale` with
+     GSAP — which writes an INLINE `transform`, and an inline style beats any
+     stylesheet rule. A CSS `transform: translateY(-5px)` here would simply never
+     apply once the reveal has run. `translate` is a separate property that
+     composes with `transform` (individual transform properties apply first), so
+     GSAP keeps `transform` and this keeps `translate`, and neither erases the
+     other. It is the same problem page-service.css solves for the cases card by
+     composing from `--card-y`/`--card-s`; that route needs a bespoke script
+     writing those properties, and this page uses the generic primitive. */
+  .city-why__item:hover,
+  .city-why__item:focus-within {
+    translate: 0 -5px;
+    border-color: rgb(61 154 211 / 0.35);
+    box-shadow: 0 24px 60px rgb(1 1 1 / 0.10), 0 3px 10px rgb(1 1 1 / 0.05);
+  }
+}
+
+/* ---- ALL FOUR IN ONE ROW ----
+   1100px, matching the cases block exactly, and for its reason: four cards plus
+   three gaps need the room, and between 900 and 1099 the 2x2 above is a better
+   layout than four unreadably narrow columns. This is also why the earlier
+   1200px four-up here is gone — /jobs/'s 1200 was fitted to a card with a PHOTO
+   whose column width drives its height, which is not this card.
+   Every size below was tuned for a ~570px card and has to come down for ~270px. */
+@media (min-width: 1100px) {
+  .city-why__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .city-why__item {
+    padding: var(--space-5);
+  }
+
+  .city-why__title {
+    font-size: clamp(1.0625rem, 0.75rem + 0.42vw, 1.25rem);
+    line-height: 1.3;
+  }
+
+  .city-why__item p {
+    font-size: var(--font-size-sm);
+    line-height: 1.55;
+  }
+}
+
+/* ==========================================================================
+   3. LEISTUNGEN IN <STADT> — two groups, not eight peers
+   ==========================================================================
+   Rebuilt 2026-08-09 after a UX read of the section. It shipped as eight equal
+   ruled rows, which hid a distinction the data makes plainly (the reasoning, the
+   keyword volumes and the honesty argument are all at the markup):
+
+     GROUP 1, .city-services__featured — the four with their own /…-nuernberg/
+       page. Raised cards, four in a row, the twin of the Warum cards.
+     GROUP 2, .city-services__more — the four whose destination is the generic
+       service page. The same ruled rows as before, one step quieter.
+
+   Both groups keep their descriptions. That was the constraint (client: "no me
+   gusta que los chips pierdan su descripción"), and it is why group 2 is rows and
+   not chips — ~760 characters of concrete, crawlable copy stays on the page.
+
+   ⚠️ THE CARDS CANNOT BE LITERALLY IDENTICAL TO THE WARUM CARDS, and the reason
+   is structural rather than a preference: those sit on a `.section--light` and are
+   WHITE panels, and this section is dark. A white panel here would be a slab of
+   glare, and flipping the section to light is not available — it would put three
+   light sections in a row and cascade into Kosten, whose price box is built as a
+   dark elevated panel INSIDE a light section.
+   So this is the dark twin: the same OBJECT — same 1.5rem radius, same padding at
+   every breakpoint, same type scale, same 5px lift on hover, same blue-warming
+   border — with the surface treatment a dark section needs instead. Keep the two
+   in step; they are one design in two colour contexts. */
+
+/* ---- GROUP 1: the four with a city page ---------------------------------- */
+.city-services__featured {
+  list-style: none;
+  display: grid;
+  gap: var(--space-6);
+  margin-top: var(--space-8);
+  padding: 0;
+}
+
+.city-services__card {
+  display: grid;
+  /* name → description → arrow, with the description absorbing the slack so all
+     four arrows sit on the same line at the foot of the row. */
+  grid-template-rows: auto 1fr auto;
+  gap: var(--space-3);
+  height: 100%;
+  min-width: 0;
+  padding: var(--space-6);
+  border-radius: 1.5rem;
+  text-decoration: none;
+  color: var(--color-text);
+  /* ⚠️ A FILL DIFFERENCE IS DOING THE WORK HERE, NOT A SHADOW. On a dark surface a
+     box-shadow is close to invisible — the same thing /werkschutz/'s risk cards ran
+     into on their navy band, where the answer was an opaque, slightly lighter panel
+     rather than a shadow. So the white card's `0 18px 48px / 0.07` is replaced by a
+     4.5%-white fill plus a slightly brighter hairline; those two are what give the
+     card an edge to read. A shadow is kept only as a faint contact layer, which does
+     register against black at this size. */
+  background-color: rgb(255 255 255 / 0.045);
+  border: 1px solid rgb(255 255 255 / 0.09);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.35);
+  /* `translate`, not `transform` — see the hover. */
+  transition: translate var(--duration-base) var(--easing-premium),
+    background-color var(--duration-base) var(--easing-premium),
+    border-color var(--duration-base) var(--easing-premium);
+}
+
+.city-services__card-name {
+  font-size: clamp(1.375rem, 1.05rem + 0.65vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.city-services__card-text {
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.city-services__card-arrow {
+  width: 1.5rem;
+  height: 1.5rem;
+  /* Bottom-left, not top-right: it closes the card the way you finish reading it,
+     and on a 290px card the top-right corner is 250px from the title it would be
+     pointing at. Fill/stroke restated for the usual <use> reason. */
+  justify-self: start;
+  margin-top: var(--space-2);
+  color: var(--color-accent);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform var(--duration-base) var(--easing-premium);
+}
+
+@media (min-width: 640px) {
+  .city-services__featured {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-7) var(--space-6);
+  }
+
+  .city-services__card {
+    padding: var(--space-7);
+  }
+
+  /* ⚠️ `translate` and NOT `transform`, for the same measured reason as the Warum
+     cards: this list carries `data-item-reveal`, js/item-reveal.js animates `y`
+     and `scale`, and GSAP writes those as an INLINE `transform` that beats any
+     stylesheet rule. `translate` is a separate property and composes with it —
+     verified in isolation (an element with both reports both and lands at
+     `layout + 24 − 5`). The arrow's own rotation is safe as `transform` because
+     GSAP never touches the arrow, only the card. */
+  .city-services__card:hover,
+  .city-services__card:focus-visible {
+    translate: 0 -5px;
+    background-color: rgb(255 255 255 / 0.07);
+    border-color: rgb(61 154 211 / 0.45);
+  }
+
+  .city-services__card:hover .city-services__card-arrow,
+  .city-services__card:focus-visible .city-services__card-arrow {
+    transform: rotate(45deg);
+  }
+}
+
+/* Four in a row from 1100px — the same breakpoint and the same step-down in every
+   fitted value as the Warum cards and /werkschutz/'s case cards. */
+@media (min-width: 1100px) {
+  .city-services__featured {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .city-services__card {
+    padding: var(--space-5);
+  }
+
+  .city-services__card-name {
+    font-size: clamp(1.0625rem, 0.75rem + 0.42vw, 1.25rem);
+    line-height: 1.3;
+  }
+
+  .city-services__card-text {
+    font-size: var(--font-size-sm);
+    line-height: 1.55;
+  }
+}
+
+/* ---- GROUP 2: the four on a generic service page ------------------------- */
+/* Set apart by a hairline and a label rather than by being smaller or fewer: the
+   copy is identical in kind to the four above, so what marks it as secondary is
+   its POSITION and its surface (no panel), not a reduced amount of information. */
+.city-services__more {
+  margin-top: var(--space-8);
+  padding-top: var(--space-7);
+  border-top: 1px solid var(--color-border);
+}
+
+.city-services__more-label {
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  /* 0.62 white = 8,6:1 on this black. Quiet enough to read as a group marker and
+     not as a heading, and it is deliberately NOT an `<h3>`: it labels a set of
+     links, it does not open a subsection, and a third heading level here would
+     put a rung in the document outline that the content does not have. */
+  color: rgb(255 255 255 / 0.62);
+}
+
+/* ---- The rows themselves (group 2) -------------------------------------- */
+/* Unchanged from the eight-row version, values and all — only the number of rows
+   and what sits above them changed. A visitor scanning these four is scanning
+   names, which is what a row does better than a card. */
+.city-services__list {
+  list-style: none;
+  padding: 0;
+}
+
+.city-services__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: background-color var(--duration-base) var(--easing-standard),
+              color var(--duration-base) var(--easing-standard);
+}
+
+.city-services__list li:last-child .city-services__row {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.city-services__name {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  line-height: var(--line-height-tight);
+}
+
+.city-services__text {
+  grid-column: 1;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.city-services__arrow {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-accent);
+  /* Same fill/stroke correction as every other #icon-arrow-diagonal use on the
+     site: the sprite's paint lives on <g id="icon-defs"> and does not survive
+     <use>, so without this the arrow is a filled sliver. */
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform var(--duration-base) var(--easing-premium);
+}
+
+/* Hover/focus: a faint white wash and the arrow rotating 45° from ↗ to →, the
+   same gesture .service-related__link and the homepage's outfit list use.
+   ⚠️ It is a WASH here, not the black fill those rows use, and the difference is
+   forced: this section is DARK, so filling `--color-logo-black` would be black
+   on black — a row that does nothing on hover. If a city page ever puts this
+   block on a `.section--light`, that variant needs the black fill instead, and
+   its label needs to go white with it (the cascade trap page-service.css
+   documents at `.section--light .service-related__link:hover`). */
+.city-services__row:hover,
+.city-services__row:focus-visible {
+  background-color: rgb(255 255 255 / 0.05);
+}
+
+.city-services__row:hover .city-services__arrow,
+.city-services__row:focus-visible .city-services__arrow {
+  transform: rotate(45deg);
+}
+
+/* From 900px the name and its description share one line, name first, so the
+   eight service names form a single scannable column. */
+@media (min-width: 900px) {
+  .city-services__row {
+    grid-template-columns: minmax(0, 20rem) minmax(0, 1fr) auto;
+    align-items: baseline;
+    /* The wash bleeds a little past the text on both sides, tied to
+       --container-padding rather than a fixed rem — a fixed -1rem against a 12px
+       container padding is the documented way this pattern produces real
+       horizontal page scroll (docs/page-conventions.md §7). */
+    padding-inline: var(--container-padding);
+    margin-inline: calc(-1 * var(--container-padding));
+  }
+
+  .city-services__text {
+    grid-column: 2;
+  }
+
+  .city-services__arrow {
+    grid-column: 3;
+    grid-row: 1;
+    align-self: center;
+  }
+}
+
+/* ==========================================================================
+   4. LOKALE EINSATZFELDER
+   ==========================================================================
+   The block that makes this a CITY page rather than a service page with a place
+   name pasted in: five fields with real local references. Numbered, because five
+   long blocks need an ordinal to be scannable — and it is a real <ol>, so the
+   visible numerals are aria-hidden decoration on top of semantics that already
+   exist. */
+.city-fields__list {
+  list-style: none;
+  display: grid;
+  gap: var(--space-7);
+  margin-top: var(--space-8);
+  padding: 0;
+  counter-reset: none;
+}
+
+.city-fields__item {
+  min-width: 0;
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+.city-fields__num {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  /* ⚠️ NOT --color-accent. In a `.section--light` the chassis re-declares that
+     token to blue-dark (#5287C9), which measures 3,71:1 on white — fine for a
+     graphic or large text, short of the 4,5:1 this 15px numeral needs. The
+     deeper mix documented in docs/page-conventions.md §5 measures 4,88:1 and
+     reads as the same blue. Same fix the case-card numerals use. */
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+}
+
+.city-fields__title {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  line-height: var(--line-height-tight);
+}
+
+.city-fields__item p {
+  margin-top: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* The link that closes each field — see the markup comment for the five
+   pairings and why each is a safe inference from the copy, not an invention.
+   `.service-link` is reused as-is (it already has its own `.section--light`
+   override in the chassis, so no new colour rule is needed here); only the
+   spacing is this block's own. */
+.city-fields__link {
+  margin-top: var(--space-4);
+}
+
+/* Two-up from 900px. Deliberately not three: these are 300–450 character
+   paragraphs, and a third column puts them at ~20 lines each. */
+@media (min-width: 900px) {
+  .city-fields__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-8);
+  }
+
+  /* MEASURED bug fix: with 5 items in a 2-up grid, item 5 landed alone in row 3
+     — a real, visible gap in the second column (752–1337px at 1440, 482–833px
+     at 900), not a hypothetical one. Spanning it fixes the hole; capping its
+     own measure at 34rem (roughly one column's own width) is what keeps it
+     from just stretching into an oddly wide paragraph — it reads as a
+     deliberate closing item instead of a leftover.
+     Left-aligned, not centred: centring would break the shared left edge every
+     item above it sits on, and this section's own left inset. */
+  .city-fields__item--wide {
+    grid-column: 1 / -1;
+  }
+
+  .city-fields__item--wide .city-fields__title,
+  .city-fields__item--wide p {
+    max-width: 34rem;
+  }
+}
+
+/* ==========================================================================
+   5. BRANDWACHE CALLOUT
+   ==========================================================================
+   A whole section for one keyword, because the draft makes it a Pflichtabschnitt
+   ("brandwache <stadt>" is the second-strongest term on this page type).
+   Two columns from 900px: the GEO answer on the left, the three qualifying facts
+   and the link on the right.
+   NO PANEL FILL, on purpose — docs/page-conventions.md §8.2 keeps the page's one
+   filled surface for the price box, and a second one here would compete with it
+   two sections later. A top hairline is the separation. */
+/* ⚠️ `gap: 0`, and the vertical rhythm comes from explicit margins on each block
+   instead. MEASURED BUG: with a grid `gap` here, every gap in the section was the
+   sum of THREE spacings — this gap, plus the block's own margin-top, plus
+   `.section__intro`'s own `margin-bottom: var(--space-8)` from components.css.
+   The brief asks for ~55–70px between the intro and the module stack; it measured
+   **192px** (64 + 64 + 64), and stack→CTA measured 112 against a 40–48 target.
+   One source of spacing per gap is the only way this stays predictable. */
+.city-callout__layout {
+  display: grid;
+  gap: 0;
+}
+
+/* CENTRED, ONE COLUMN (client 2026-08-10: "está muy fea y desbalanceada… tiene
+   que ser clean y balanceada"). It was a 50/50 split: the H2 and the answer on
+   the left, a hairline-topped panel with the three facts and the link on the
+   right, offset down by --space-7.
+
+   ⚠️ WHY IT LOOKED BROKEN, measured before touching it (1440px):
+     · left column content ran 5166 → 5533 = **367px**;
+     · right column ran 5214 → 5467 = **253px**, i.e. 114px shorter AND pushed
+       48px down, so it ended 66px higher than the left and left a hole in the
+       bottom-right quadrant;
+     · the H2 took **3 lines / 224px** in a 581px column and dominated the
+       composition;
+     · the panel's top hairline had nothing on the left to align with — it was a
+       rule floating in space;
+     · the first of the three facts wrapped to two lines while the other two took
+       one, so the "list" was ragged (2+1+1).
+
+   The fix is symmetry rather than better offsets: header centred, the three facts
+   as a 3-up row beneath it, one centred action row. Nothing can be lopsided
+   because nothing is beside anything.
+   It is also NOT a new pattern on this page — the Vertrauen header two sections
+   down and the FAQ are already centred, so this reads as the third instance of a
+   decision the client already made. `.city-callout__panel` is GONE (markup and
+   CSS), not left as a dead rule. */
+.city-callout__intro {
+  text-align: center;
+  /* The shared `.section__intro` carries `margin-bottom: var(--space-8)`. The gap
+     under the intro is set by the module stack's own margin-top here, so this
+     zeroes the second source — see the note on `.city-callout__layout`. */
+  margin-bottom: 0;
+}
+
+/* ⚠️ `.section-eyebrow` is `display: flex`, so the parent's `text-align: center`
+   does NOT move it — it needs its own `justify-content`. That is the exact trap
+   docs/page-conventions.md §8.2 records from the eyebrows that were removed from
+   /werkschutz/'s centred sections ("si un eyebrow vuelve a una sección centrada,
+   esa regla tiene que volver también"). This is that rule coming back.
+   Nothing else is styled: the shared component already gives the brief's
+   uppercase, 12px, 0.08em tracking, CTA-blue colour and the "tiny blue square
+   before it" (its own 6px ::before). */
+.city-callout__eyebrow {
+  justify-content: center;
+  /* ⚠️ `margin-inline: auto` and a `max-width` of its own, and leaving them out was
+     a MEASURED BUG: the eyebrow is a `<p>` inside `.section__intro`, so the chassis
+     gave it `max-width: 42rem`. A 672px box with no auto margins sits against the
+     LEFT edge, and `justify-content: center` then centres the label inside THAT
+     box — so it drifted further off-axis the wider the viewport got: −92px at
+     1024, −274px at 1440, −345px at 1600, while the heading below it was dead
+     centre. `fit-content` + auto margins makes the box hug the label, so the box
+     itself is what gets centred. */
+  max-width: fit-content;
+  margin-inline: auto;
+  /* 16px to the heading. The component's own 12px is a little tight under a
+     heading this size; the brief asks for ~20px. */
+  margin-bottom: var(--space-4);
+}
+
+/* ⚠️ Both need `margin-inline: auto` explicitly, and the `p` needs TWO classes.
+   The chassis sets `.section__intro > p { max-width: 42rem }` at (0,1,1), so a
+   single-class rule here only ties and would leave the paragraph in a 672px box
+   pinned to the LEFT edge — a centred heading over a left-aligned paragraph.
+   Same trap docs/page-conventions.md §6 documents for the form's own intro, and
+   the same fix the Vertrauen header above uses.
+   32ch on the heading is what breaks this particular sentence into balanced
+   lines instead of one long line and one short one; 60ch on the answer is the
+   measure the Konzept section already uses for centred body copy. */
+/* ⚠️ SMALLER THAN THE SHARED `main h2` CLAMP — 52px instead of 60 (brief: the
+   heading is "oversized… reduce the size slightly so it feels more controlled").
+   52px is NOT a new number: it is the site's own hero H1 clamp
+   (docs/page-conventions.md §2, first row), reused rather than invented.
+   ⚠️ THE BRIEF'S OWN FIGURES CONTRADICT ITS INSTRUCTION and are not followed:
+   it asks for "64–78px desktop", which is LARGER than what this heading already
+   rendered (the shared clamp caps at 60px at 1440) and larger than anything on
+   the site. Following the numbers would have made it bigger while the sentence
+   above them asks for smaller, so the instruction won.
+   ⚠️ This is the FIFTH declared exception to §2 (Vorteile 48px, Leistungsumfang
+   40px, case-study articles 34px, city-nearby 28px, this). CLAUDE.md has been
+   saying since the third that the next one should re-open §2 rather than join the
+   list — and a pattern is now visible and worth acting on: every exception so far
+   is a heading that is CENTRED or shares its screen with its own section's
+   content. That is a rule §2 could state once instead of five exceptions.
+   30ch is what breaks this sentence into two balanced lines. */
+.city-callout__intro h2 {
+  font-size: clamp(1.75rem, 1.35rem + 2.2vw, 3.25rem);
+  max-width: 30ch;
+  margin-inline: auto;
+}
+
+/* Narrower and quieter than before (brief: max-width ~720–800px, 18–20px, muted
+   rather than pure white). 44rem = 704px, and --font-size-md is the 18→20px clamp
+   the site already uses for lede copy. 0.72 white measures 10,5:1 on this black.
+   ⚠️ IT NEEDS ITS OWN CLASS, and skipping that was a REAL BUG caught by measuring:
+   this rule was `.city-callout .city-callout__intro > p`, and the EYEBROW is also a
+   `<p>` that is a direct child of that intro — so the eyebrow was inheriting this
+   font-size and rendering at 20px uppercase instead of its own 12px, plus this
+   margin-top and this colour. Selecting the lede by name is unambiguous; a
+   `:not(.section-eyebrow)` would have worked too but would break the next time a
+   third `<p>` lands in here.
+   ⚠️ TWO CLASSES: the chassis sets `.section__intro > p { max-width: 42rem;
+   margin-top: var(--space-4) }` at (0,1,1), so a single-class rule only ties. */
+.city-callout .city-callout__lede {
+  max-width: 44rem;
+  /* 32px under the heading — the brief's 30–36px. */
+  margin-top: var(--space-6);
+  margin-inline: auto;
+  font-size: var(--font-size-md);
+  line-height: 1.6;
+  color: rgb(255 255 255 / 0.72);
+}
+
+/* ---- The three benefit modules ----
+   Stacked horizontal panels, not a 3-up row (brief 2026-08-10). Tight together on
+   purpose — 16px, the brief's 14–18px — so the three read as ONE set of promises
+   instead of three separate blocks. 44rem = 704px, inside the brief's 620–720px.
+   ⚠️ THE SURFACE IS THE SAME ONE `.city-services__card` USES, deliberately copied
+   rather than re-derived: 4.5%-white fill plus a 1px hairline at 9%. On a dark
+   section a shadow does almost nothing, so a fill difference and a slightly
+   brighter border are what give a panel an edge — the same conclusion the risk
+   cards reached on their navy band. A third dark-panel treatment on one page would
+   have read as three different materials.
+   ⚠️ RADIUS IS `--radius-lg` (16px), NOT the brief's 18–22px. Nothing sits at
+   18–22 on the token scale, and the site already carries exactly ONE off-scale
+   radius (the 24px shared by the price card and the four card blocks). 16px is on
+   the scale, one step from the brief's range, and keeps that count at one. */
+.city-callout__points {
+  list-style: none;
+  display: grid;
+  gap: 1rem;
+  max-width: 44rem;
+  /* 64px under the intro — the brief's 55–70px. */
+  margin: var(--space-8) auto 0;
+  padding: 0;
+}
+
+.city-callout__points li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  /* Vertically centred against the icon: a one-line module would otherwise sit
+     its text at the top of an 88px panel. */
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+  /* 88px, inside the brief's 86–100px. min-height rather than height so a line
+     that wraps on a narrow desktop grows the panel instead of overflowing it. */
+  min-height: 5.5rem;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  background-color: rgb(255 255 255 / 0.045);
+  border: 1px solid rgb(255 255 255 / 0.09);
+  font-size: var(--font-size-md);
+  line-height: 1.4;
+}
+
+/* The circular blue-tinted container the brief asks for. Fixed size (not em) so
+   all three are identical whatever their text does, and `flex-shrink: 0` so a
+   wrapping line can never squash it. */
+.city-callout__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background-color: rgb(61 154 211 / 0.12);
+}
+
+/* 22px, the low end of the brief's 22–26 — the icon supports scanning, it does not
+   lead. `--color-blue-light` is the CTA blue and is correct here: this is a
+   GRAPHIC on a dark surface, where 3:1 applies and it clears it comfortably.
+   fill/stroke restated for the usual <use> reason — the sprite declares them on
+   its `<g id="icon-defs">` wrapper and that does not survive the reference. */
+.city-callout__icon .icon {
+  width: 1.375rem;
+  height: 1.375rem;
+  color: var(--color-blue-light);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The shared .service-link is an inline-flex row whose height is its text plus a
+   2px underline gap — measured 29px and 27px here, under the 44px minimum. These
+   two are standalone actions, not links inside a sentence, so §7's inline
+   exception does not apply and they need real height.
+   ⚠️ `min-height`, not `padding-block`. Padding was the first attempt and it
+   under-shot at BOTH sites, by different amounts, because the two links are set at
+   different font sizes (20px in the callout, 15px in the memberships line):
+   0.5rem of padding measured 43px and 41px. A min-height is the same 44 whatever
+   the type size, and .service-link is already `inline-flex; align-items: center`,
+   so the label simply centres in it. */
+.city-callout__link,
+.trust-certs__memberships .service-link {
+  min-height: 44px;
+}
+
+/* ---- The action row ----
+   The phone first, then the quieter text link. Centred, and on one line at
+   desktop so the section ends on a single balanced gesture rather than on a link
+   hanging under an empty column.
+   The phone is `.btn--secondary`, the SHARED outline treatment (components.css)
+   — token-driven, already correct on a dark section, no new component. Why the
+   phone is here at all, and why it is secondary rather than primary, is argued at
+   the markup. */
+.city-callout__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4) var(--space-6);
+  /* 48px under the module stack — the brief's 40–48px. Directly below the
+     benefits, so the set of promises and the way to act on them read as one
+     block rather than two. */
+  margin-top: var(--space-7);
+}
+
+/* #icon-phone is one of the two symbols on the site rendered as a FILL rather
+   than a stroke (page-service.css does the same for the hero's phone pill), so
+   this matches how the number reads everywhere else — including
+   /brandwache-nuernberg/'s own "Jetzt anrufen" button, which this one mirrors. */
+.city-callout__call .icon {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* The link needs no top margin: it is a flex sibling of the phone, not a block
+   under a list. The 44px floor above still applies.
+   NOTE: the `@media (min-width: 768px)` rule that used to put these three in a
+   3-up ROW is GONE, not overridden — they are stacked modules at every width now
+   (brief 2026-08-10: "replace the current three horizontally dispersed benefit
+   columns with three compact stacked modules"). The row lasted a few hours; git
+   has it. That is why nothing here re-declares grid-template-columns: one column
+   is the default and the only layout. */
+
+/* ==========================================================================
+   6. RATE ROWS (inside the shared Kosten section)
+   ==========================================================================
+   The draft's "Typische Preisspannen" line, split into its four services so it
+   can be read instead of parsed. It deliberately does NOT reuse
+   .service-price__factors: that block draws a blue `+` before every row, which
+   in front of "Objektschutz · 26-32 €/Std." reads as a list of extras. What it
+   does reuse is the shared grid's placement, restated below. */
+.city-rates {
+  list-style: none;
+  margin-top: var(--space-6);
+  padding: 0;
+}
+
+.city-rates li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-4);
+  padding-block: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  /* SOLID --color-gray, not --color-text-muted: on a light section that token is
+     0.75 alpha and measures 4,56:1, where this one measures 9,24:1. Same reason
+     the chassis's own factor rows use it (docs/page-conventions.md §8.2). */
+  color: var(--color-gray);
+}
+
+.city-rates li:last-child {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.city-rates__service {
+  font-weight: 500;
+}
+
+/* ⚠️ 0.82, not 0.7 — MEASURED. The parenthetical is 16px normal text, so it needs
+   4,5:1, and 0.7 alpha of --color-gray on white measures 4,04:1 (it FAILED the
+   first sweep of this page). 0.82 measures 5,55:1 and still reads a step quieter
+   than the service name beside it. The reference points on this scale, for the
+   next time a muted value is picked by eye: 0.7 → 4,04 · 0.75 → 4,60 ·
+   0.8 → 5,25 · 0.82 → 5,55. Note that --color-text-muted, which is 0.75 in a
+   light section, only just clears the threshold. */
+.city-rates__note {
+  font-weight: var(--font-weight-regular);
+  color: rgb(59 73 86 / 0.82);
+}
+
+.city-rates__range {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* The Kosten grid places its own children explicitly at ≥900px
+   (page-service.css: `.service-price__intro`/`__factors` → column 1). This list
+   stands in for the factors, so it needs the same placement or it lands in the
+   implicit second column, under the price card. */
+@media (min-width: 900px) {
+  .city-rates {
+    grid-column: 1;
+  }
+
+  /* THE PRICE CARD IS VERTICALLY CENTRED, not top-aligned (client 2026-08-10,
+     from a screenshot of this exact section: "esta card centrada en la sección
+     a nivel altura… está alineada arriba y la quiero en el centro").
+     ⚠️ SCOPED TO `.page-city` — this is NOT a change to the chassis's own
+     `.service-price__box { align-self: start }`, and should not become one.
+     `.city-rates` is what makes this page's left column taller than
+     /werkschutz/'s: MEASURED, the two layouts before this fix —
+       /werkschutz/                     543px column vs a 504px card (39px gap)
+       /sicherheitsdienst-nuernberg/    718px column vs the same 504px card
+                                         (214px gap — the empty space in the
+                                         screenshot)
+     werkschutz's own 39px is close enough that `start` already reads as
+     centred there; this page's extra `.city-rates` block is what opened the
+     gap, so the fix belongs to the page that grew, not to the shared rule
+     every service page also uses. Specificity is (0,2,0) against the chassis
+     rule's (0,1,0), so this wins regardless of load order — no `!important`
+     needed. The floating animation (service-price-float, page-service.css)
+     is untouched: it translates ±10px around whatever static position the
+     card has, so centring only moves what it floats around. */
+  .service-price__box {
+    align-self: center;
+  }
+}
+
+/* ==========================================================================
+   7. TRUST — two quotes side by side
+   ==========================================================================
+   The card itself is the shared component (css/testimonials.css, extracted from
+   the homepage 2026-08-03). Only the grid is here, and only because this page
+   shows TWO quotes where /referenzen/ shows three and the homepage shows three:
+   its .ref-quotes__grid is a 2-column masonry tuned for an odd count. */
+/* CENTRED HEADER (client 2026-08-09: "hacemelo centrado"). Same treatment the
+   FAQ on this page and on /werkschutz/ already has, and /referenzen/'s
+   .ref-intro--center — one decision, not a new one.
+   It also makes the whole section read as centred without touching anything
+   else: the certification block below already centres itself, and the two
+   testimonial cards are a symmetric two-up grid.
+   ⚠️ `margin-inline: auto` on the lede is NOT optional. The chassis sets
+   `.section__intro > p { max-width: 42rem }`, so `text-align: center` alone
+   centres the TEXT inside a 672px box that is still pinned to the left edge —
+   which reads as a centred heading with a left-aligned paragraph under it. The
+   selector is (0,2,1) against the chassis's (0,1,1) and this file loads later,
+   so it wins; the same specificity trap docs/page-conventions.md §6 documents
+   for the form's own intro. */
+.city-trust .section__intro {
+  text-align: center;
+}
+
+.city-trust .section__intro > p {
+  margin-inline: auto;
+}
+
+/* The heading gets its own measure so a centred 60px line breaks at a sensible
+   place instead of running the full 1234px container. Capped in `ch` rather than
+   px because it has to hold for the other nine cities' own headings, which are
+   the same sentence with a different city name in it. */
+.city-trust .section__intro h2 {
+  max-width: 36ch;
+  margin-inline: auto;
+}
+
+/* Card CONTENT stays left-aligned — centring a four-line quote takes away the
+   left edge the eye reads down, and `.testimonial` declares `text-align: left`
+   itself, so nothing here has to undo the centring above. Centred header +
+   left-aligned card content is the same pairing the Abgrenzung section of the
+   service template uses (docs/page-conventions.md §8.2). */
+.city-trust__quotes {
+  display: grid;
+  gap: var(--space-6);
+  margin-top: var(--space-8);
+}
+
+@media (min-width: 900px) {
+  .city-trust__quotes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* Equal height, so the two Google marks and the two star rows line up. */
+    align-items: stretch;
+  }
+
+  .city-trust__quotes .testimonial {
+    height: 100%;
+  }
+}
+
+/* ==========================================================================
+   8. ERREICHBARKEIT / DIGITALE NACHWEISE
+   ==========================================================================
+   REBUILT 2026-08-10 in /leistungen/'s CHAPTER-STRIP language (client: "hacémela
+   con el mismo diseño"). It was three icon + one-line rows sitting 32px apart with
+   a hairline over each — three separate blocks. Now it is one editorial strip:
+   a single rule across the three, vertical hairlines between the columns, and an
+   icon over a blue numeral over the statement at heading size.
+
+   ⚠️ EVERY VALUE IS COPIED FROM `.lh-orient*` (css/page-leistungen.css), not
+   re-derived — same rule colour, same paddings, same numeral size, same title
+   clamp. The two pages are one pattern in two files; if that block changes, change
+   this with it. Its own two measured traps are copied too, and they are the reason
+   the columns line up:
+     · `gap: 0` on the grid — the divider is a BORDER on the item, so it can never
+       fall between a wrapped pair the way a gap or an absolute rule would;
+     · `align-content: start` with `height: 100%` — the default (stretch) hands the
+       leftover height to the auto rows, so a column whose line wraps sits its rows
+       higher than its neighbours' (measured 9px there).
+   What is NOT copied, and why, is argued at the markup: no arrow (these are
+   statements, not links), no description row (the draft gives one line each), and
+   sprite icons instead of the isometric scenes. */
+.city-proof__grid {
+  list-style: none;
+  display: grid;
+  gap: 0;
+  margin-top: var(--space-8);
+  padding: 0;
+}
+
+/* One row split into three by hairlines — an editorial strip, not three cards.
+   ⚠️ 1024px, NOT the reference block's 900. MEASURED: the three statements are
+   50-character sentences from the draft, and at 900 a third of the container is
+   ~245px, which wrapped them to **4, 5 and 3 lines** — at that point the
+   "statement" reads as a paragraph and the strip is 307px tall. /leistungen/ can
+   break at 900 because its three titles are two words each ("Dauerhafter Schutz")
+   with the sentence in a separate, smaller row; this block has no such row, so the
+   sentence carries the heading's size and needs the width. Line counts across the
+   band: 768 → [1,1,1] stacked · 1024 → [3,4,3] · 1440 → [2,3,2]. */
+@media (min-width: 1024px) {
+  .city-proof__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .city-proof__grid > li + li {
+    border-left: 1px solid var(--color-border);
+  }
+}
+
+.city-proof__item {
+  display: grid;
+  /* One column now: icon, numeral and statement stack. The second (arrow) column
+     `.lh-orient__item` carries is deliberately absent — see the markup. */
+  align-content: start;
+  height: 100%;
+  min-width: 0;
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--color-border);
+}
+
+@media (min-width: 1024px) {
+  .city-proof__item {
+    padding: var(--space-6) var(--space-6) var(--space-5);
+  }
+}
+
+/* ⚠️ `.city-proof__grid > .city-proof__item:first-child { padding-left: 0 }` USED TO
+   SIT HERE and was DELETED when the section went centred (client 2026-08-10: "esto
+   centrámelo todo"), not merely overridden. It existed to line the first column's
+   text up with the section's own left edge, which was right while the strip was
+   ranged left — and it is actively WRONG now: an asymmetric padding shifts that
+   column's content box, so centring inside it lands the icon and the statement
+   ~16px left of the column's true centre while columns 2 and 3 sit on theirs.
+   Three centred columns have to share one padding. Measured before deleting: item 1
+   read `32px 32px 24px 0px` against `32px 32px 24px 32px` on the other two.
+   The trade-off, and it is the correct one: the first column's content no longer
+   starts on the page's content edge (page-conventions §1). With centred text the
+   visual anchor is the column's own centre, not the container's edge — the same
+   reason /leistungen/'s centred keyword block does not align to it either. */
+
+/* Bigger than the 24px it was: in this layout the icon plays the role
+   `.lh-orient`'s isometric drawing plays — the first mark you see above the
+   statement — so at 24px it read as a bullet instead. 40px is as large as a
+   24-unit sprite glyph goes before the 1.5 stroke starts looking thin.
+   ⚠️ The gap is `--space-5` (24px), not the reference's `--space-4` (16px), and
+   that is BECAUSE the numeral is gone. There it separates the drawing from a 15px
+   numeral which then has its own 16px to the title; here it separates the icon
+   from the statement directly, so 16px alone left the two touching. 24px puts the
+   statement back at roughly the distance it had when the numeral sat between
+   them. */
+/* ⚠️ `justify-self: center` is what centres the icon, and neither `text-align` nor
+   an auto margin would do it: the item is a GRID, so the icon is a grid item, and an
+   `<svg>` with a definite width is not affected by its parent's `text-align`. It has
+   to be the item's own inline alignment. */
+.city-proof__icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  justify-self: center;
+  margin-bottom: var(--space-5);
+  color: var(--color-accent);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* `.city-proof__num` (the 01–03 numerals this block briefly carried) was DELETED
+   here, markup and rule, on the client's instruction the same day it was added —
+   not left as a dead selector. The reasoning is at the markup: three parallel
+   facts are not three steps, so the ordinal was implying an order the copy does
+   not have. If it ever comes back, `.lh-orient__num` in page-leistungen.css is the
+   value to copy, and remember to take the icon's `margin-bottom` back down to
+   `--space-4` at the same time. */
+
+/* THE WHOLE SECTION IS CENTRED — heading, the three statements and the Abbinder
+   (client 2026-08-10: "este título centrado", then "esto centrámelo todo").
+   ⚠️ The second ask REVERSES the first pass's own note, which said the strip would
+   stay ranged left to match the centred-header/left-content pairing Vertrauen and
+   Brandwache use. It is now the ONE section on this page that centres its content
+   too, and that is coherent rather than an outlier: this is a three-item strip of
+   one-line facts with an icon above each, which centres well, whereas those two
+   hold multi-line quotes and benefit blocks that need a left edge for the eye to
+   return to. **Do not "restore" the left alignment for consistency.**
+   Three declarations plus one DELETION carry it: `text-align` on the intro and the
+   items, `justify-self` on the icon (a grid item ignores `text-align` — see its own
+   rule), auto margins on the Abbinder's capped box, and the first item's
+   `padding-left: 0` removed. This section's `.section__intro` holds only an H2, so
+   it is the one centred header here that does NOT hit the `.section__intro > p`
+   specificity trap the other five needed. */
+.city-proof .section__intro,
+.city-proof__item {
+  text-align: center;
+}
+
+.city-proof .section__intro h2 {
+  margin-inline: auto;
+}
+
+/* `.lh-orient__title`'s clamp and metrics — 22→28px at regular weight. The
+   statement is the heading of its own column now, not a caption.
+   ⚠️ `letter-spacing: normal` is load-bearing: base.css tightens every heading by
+   a flat -1px, which is calibrated for 48px+ and collides at this size
+   (design-system §2). This is a <p>, so it does not inherit that — but it is
+   restated because the value is part of the copied pattern and the next person to
+   turn this into an <h3> would need it. */
+/* ⚠️ NO max-width, matching `.lh-orient__title`, which has none either — only its
+   DESCRIPTION row is capped (26rem), and this block has no description row. A
+   20rem cap was here first and it measured 320px inside a ~358px column, so every
+   statement wrapped a word early with visible room left over ("24/7 direkt
+   erreichbare / Einsatzleitung an / 365 Tagen" at three lines). The column is the
+   measure.
+
+   ⚠️ SIZE IS `--font-size-md` (18→20px), NOT the reference block's 22→28px clamp
+   (client 2026-08-10: "esto tiene que tener menos scale"). It is the one value in
+   this block that deliberately departs from `.lh-orient__title`, and the reason is
+   the same one that moved the breakpoint to 1024: those titles are two words
+   ("Dauerhafter Schutz") with the prose in a separate smaller row, while these are
+   50-character sentences from the draft carrying the whole cell. At 28px they took
+   2–3 lines each and read as three paragraphs set in heading type.
+   `--font-size-md` is an existing token — the site's own lede size — so this adds
+   no new number to the scale. The statement still outranks the Abbinder below it
+   at the same size, because it is solid white against that paragraph's 0.75 alpha
+   and sits above a hairline. */
+/* ⚠️ `text-wrap: balance` came in WITH the centring, and it is not decoration: a
+   centred statement has two ragged edges instead of one, so an uneven break shows
+   twice. It evens the two/three lines out. The `hyphens: none` these labels already
+   carry (top of this file) matters more now for the same reason — a hyphen at a
+   centred line's edge reads as a render fault. */
+.city-proof__label {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: normal;
+  line-height: var(--line-height-heading);
+  text-wrap: balance;
+}
+
+/* The Abbinder. It is written to be UWG-safe (it makes no claim about response
+   times or travel distances — Prüfkatalog F10), so it stays plain body copy and
+   never becomes a highlighted promise box.
+   ⚠️ `margin-inline: auto` is required, not tidiness — this is the same trap the
+   five centred headers on this page hit, in its plainest form: a box with a
+   `max-width` inside a centred parent centres its TEXT and stays pinned to the left
+   edge. The 52rem cap also means the hairline above it is a centred 832px rule
+   rather than one spanning the container, which is what makes it read as the strip's
+   own closing rule instead of a section divider. */
+.city-proof__outro {
+  max-width: 52rem;
+  margin-top: var(--space-8);
+  margin-inline: auto;
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* ⚠️ A `@media (min-width: 768px)` rule that ALSO made `.city-proof__grid` three
+   columns — with a 48px column-gap — used to sit here, left over from this
+   section's first build. Deleted 2026-08-10, and it was live for a while: it and
+   the new 900px rule are both (0,1,0), so between 768 and 899 the old one won and
+   gave three columns with a gap and NO dividers, i.e. neither layout. Caught by
+   measuring line counts, not by looking: the statements read [4, 5, 3] lines at
+   768 and [4, 6, 3] at 900 against [3, 3, 2] at 1440, and the three items' `top`
+   came back identical at 768 where a single column should have stacked them.
+   When a layout is replaced, grep the whole file for the old breakpoint — the same
+   lesson /jobs/'s hero already recorded. */
+
+/* The two inline links inside FAQ answers (the phone number and the Brandwache
+   pointer) are single targets in a sentence. §7's fix for that is vertical
+   padding on an inline-block: the hit area grows to 44px and the surrounding text
+   does not move, because an inline-block's padding does not affect the line box's
+   own height. Do NOT reach for this when an answer has several links in one
+   sentence — see the note in the markup at FAQ 4. */
+/* ⚠️ AND THE COLOUR, MEASURED 2026-08-09 while building the first combo page:
+   base.css links are `--color-link` = blue-light (#3D9AD3), which is 6,8:1 on a
+   dark section and **2,87:1** on the FAQ card's near-white fill — a plain failure
+   of the 4,5:1 for 16px text, and it had been live on this page since it shipped.
+   The deep mix docs/page-conventions.md §5 prescribes for blue content on a light
+   surface measures 4,88:1 and reads as the same blue; it is the same value
+   `.conversion__form-alt a` and `.service-related__title` already use.
+   `.section--light` does NOT solve this on its own: it re-declares
+   `--color-accent`, not `--color-link`. */
+.city-faq .faq-item__answer a {
+  display: inline-block;
+  padding-block: 0.75rem;
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+}
+
+/* ==========================================================================
+   9. UMGEBUNG — neighbour tiles
+   ==========================================================================
+   Neighbours that have their own page are tiles that link; a neighbour the draft
+   names as a MENTION ONLY (Schwabach, which gets no page) is the same tile
+   without an anchor. That distinction is the point of the block: it is what
+   stopped /sicherheitsdienst-hof/ from being a linked 404 in the footer of every
+   page in August. Never turn a mention into a link to satisfy the row's
+   symmetry. */
+/* CENTRED (client 2026-08-10: "hacela bien, centrada"). It was left-aligned on
+   the editorial inset, which left the three pills in the left third of a 1234px
+   row with the rest empty — the other half of what looked wrong about this
+   section, alongside its merging with the form.
+   ⚠️ The `<p>` needs `margin-inline: auto` explicitly and a two-class selector:
+   the chassis's `.section__intro > p { max-width: 42rem }` is (0,1,1), so
+   `text-align: center` alone would centre the TEXT inside a 672px box still
+   pinned to the left. Third time this same trap comes up on this page — the
+   Vertrauen header and the Brandwache lede both needed the same fix. */
+.city-nearby__intro {
+  text-align: center;
+}
+
+.city-nearby__intro h2,
+.city-nearby .city-nearby__intro > p {
+  margin-inline: auto;
+}
+
+.city-nearby__list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  /* The pills centre as a row; each pill keeps its own icon-left layout. */
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-7);
+  padding: 0;
+}
+
+.city-nearby__tile {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  /* 44px of touch target comes from the padding, not a min-height, so the tile
+     grows with the type instead of centring inside a fixed box. */
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: background-color var(--duration-base) var(--easing-standard),
+              border-color var(--duration-base) var(--easing-standard);
+}
+
+.city-nearby__name {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+}
+
+.city-nearby__pin {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-accent);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.city-nearby__arrow {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-accent);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform var(--duration-base) var(--easing-premium);
+}
+
+/* ---- Hover: the pill FILLS SOLID BLUE ----
+   Client 2026-08-10: "hago hover y se pone blanco el texto, no es la idea, pensá
+   en un hover más bueno."
+
+   ⚠️ THIS IS NOT A NEW IDEA — it is `.coverage__pill`'s own hover, copied. The
+   homepage hit this exact bug with this exact component (city pills that moved
+   onto a light section) and its note in page-home.css is the answer:
+     "Hover was a 12%-blue wash with WHITE text — fine on black, unreadable on
+      white (1.6:1). On a light section the hover has to be the solid fill, which
+      is also what the active state uses, so hovering now previews selection."
+   So hovering a city pill now looks the same everywhere on the site, which is
+   worth more than a bespoke gesture here.
+
+   The two intermediate states this replaces were both wrong, in opposite ways:
+     · `rgb(255 255 255 / 0.06)` — a WHITE wash, from when this section was dark.
+       Invisible once the section became light: the pill did nothing on hover.
+     · `--color-accent-subtle` — a pale-blue wash. Visible, but so faint it reads
+       as a rendering artefact rather than a state, and it is the same wash the
+       homepage explicitly abandoned here.
+
+   ⚠️ ACCEPTED CONTRAST CAVEAT, the site's documented one: white on #3D9AD3
+   measures 3,11:1 — enough for the 3:1 of a UI component and of large text, short
+   of the 4,5:1 for normal text. It is the brand fill every primary button on the
+   site already publishes at that number, and `.coverage__pill` already publishes
+   it for these same city labels. Recorded, not "fixed" unilaterally. Two things
+   keep the cost small: it is a TRANSIENT state (the resting pill is 20,87:1), and
+   the label is a city name the visitor just read at full contrast.
+   If it is ever revisited, the cheap fix is the deeper mix
+   (`color-mix(in srgb, var(--color-blue-dark) 85%, black)` = 4,9:1 against white
+   text), not a different gesture. */
+a.city-nearby__tile:hover,
+a.city-nearby__tile:focus-visible {
+  background-color: var(--color-blue-light);
+  border-color: var(--color-blue-light);
+  color: var(--color-white);
+}
+
+/* ⚠️ THE PIN AND THE ARROW HAVE TO COME WITH IT. Both rest on
+   `color: var(--color-accent)`, which in a light section is blue-dark — and
+   blue-dark on a blue-light fill is 1,2:1, i.e. the icons would vanish into the
+   pill exactly as the label used to vanish into the wash. `currentColor` is
+   already what they stroke with, so inheriting the white above is all it takes. */
+a.city-nearby__tile:hover .city-nearby__pin,
+a.city-nearby__tile:focus-visible .city-nearby__pin,
+a.city-nearby__tile:hover .city-nearby__arrow,
+a.city-nearby__tile:focus-visible .city-nearby__arrow {
+  color: currentColor;
+}
+
+a.city-nearby__tile:hover .city-nearby__arrow,
+a.city-nearby__tile:focus-visible .city-nearby__arrow {
+  transform: rotate(45deg);
+}
+
+/* The mention is visibly quieter than the two real links AND carries no arrow,
+   so "this one goes somewhere" is never signalled by colour alone (WCAG 1.4.1) —
+   the missing arrow is the shape that says it. */
+.city-nearby__tile--mention {
+  border-style: dashed;
+  color: var(--color-text-muted);
+}
+
+.city-nearby__tile--mention .city-nearby__pin {
+  color: var(--color-text-muted);
+}
+
+/* ⚠️ SMALL H2, and this is a DECLARED EXCEPTION to docs/page-conventions.md §2
+   (one size for every section title). The draft asks for it in as many words —
+   "H2 (klein)" — because this is a navigation footer to the page, not a chapter
+   of it, and it sits directly above the closing conversion H2. At the shared
+   60px clamp the two headings compete on one screen and the smaller of them is
+   the form.
+   ⚠️ This is now the FOURTH exception on the site (Vorteile 48px, Leistungsumfang
+   40px, the case-study article H2s 34px, this). CLAUDE.md already says the next
+   one should re-open §2 rather than be added to the list — that is still true,
+   and this one only went in because it is client copy instruction rather than a
+   local aesthetic call. Do not add a fifth without revisiting §2. */
+.city-nearby__title {
+  font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.75rem);
+}
+
+/* ==========================================================================
+   THE CERTIFICATION BLOCK IS ITS OWN WHITE SECTION
+   ==========================================================================
+   Client 2026-08-10: "una sección blanca literal — la transición de píxeles a
+   sección blanca y después a la negra de abajo, como pasa en toda la web". So the
+   DEKRA block was pulled OUT of the Vertrauen section into a section of its own,
+   with a pixel seam on each side, exactly like every other colour change on this
+   page. The two testimonials stay behind on the black, with their H2.
+
+   ⚠️ A FIRST ATTEMPT MADE IT A WHITE CARD INSIDE THE DARK SECTION and that was
+   wrong — not because it looked bad, but because it was a colour change with no
+   seam, i.e. the one thing this page's rhythm is built on. The card also needed
+   its own token flip and a contrast fix for the link. As a real `.section--light`
+   it needs NEITHER: that class already re-declares every token `.trust-certs`
+   consumes, and page-service.css already gives `.service-link` inside a light
+   section the deep 4,88:1 blue. This rule is what is left over — four lines.
+
+   Seams: black tiles going in (the section above is dark) and `--white` coming
+   out (this one is light). Both added to the markup; the count went 9 → 11. */
+.city-certs .trust-certs {
+  /* The margin, the top padding and the hairline all existed to separate this
+     block from the testimonials ABOVE it inside one section. It is its own
+     section now — `.section`'s padding does that job, and a rule across the top
+     of a white section reads as a leftover. */
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* ==========================================================================
+   PHONE — the page's own rhythm
+   ==========================================================================
+   docs/page-conventions.md §7.2: the seam band and the section padding are
+   desktop values, and eight seams reserving `--space-9 + 120px` each is a
+   quarter-screen of empty space before eight headings. Scoped to
+   <body class="page-city"> because the rules being overridden live in
+   page-service.css, which every page loads.
+   ⚠️ The band height and the reservation MUST stay equal:
+   js/pixel-transition.js fills whatever band it is given, so a reservation
+   smaller than the band puts tiles over real content. 80px still gives the
+   dissolve ~3 rows of tiles, the same as the homepage on a phone. */
+@media (max-width: 767.98px) {
+  .page-city .pixel-seam__band {
+    --pixel-band-h: 80px;
+  }
+
+  .page-city .section {
+    padding-block: var(--space-8);
+  }
+
+  .page-city .pixel-seam + .section {
+    padding-top: calc(var(--space-8) + 80px);
+  }
+
+  .page-city .pixel-seam + .conversion {
+    padding-top: 80px;
+  }
+
+  .page-city .pixel-seam + .site-footer {
+    padding-top: calc(var(--space-8) + 80px);
+  }
+
+  /* The hero is the exception that keeps its generous end of the trade-off: it
+     is the first screen and it carries the badge, the H1 and both CTAs. */
+  .page-city .city-hero {
+    padding-block: var(--space-8) var(--space-9);
+  }
+
+  /* Both hero CTAs full width and stacked — the same treatment every other page
+     gives them on a phone. */
+  .city-hero .service-hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .city-hero .service-hero__actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* The phone full width, the link stacked under it and CENTRED — the brief's
+     mobile spec, and now consistent with the intro above, which stays centred
+     too. `align-items: stretch` is what makes the button fill the column; the
+     link centres inside its own full-width row. */
+  .city-callout__actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .city-callout__link {
+    justify-content: center;
+  }
+
+  /* ⚠️ `white-space: normal` is the load-bearing half, and leaving it out cost
+     13px of real horizontal page scroll at 320px (measured). `.btn` is
+     `white-space: nowrap`, so "Jetzt anrufen: +49 951 964352-0" plus the icon and
+     the padding sets a min-content width wider than the 280px this page has
+     inside its inset at 320 — and `width: 100%` alone cannot shrink a box whose
+     content refuses to wrap. Exactly the trap the price card's CTA already
+     documents for the same reason. */
+  .city-callout__actions .btn {
+    width: 100%;
+    justify-content: center;
+    white-space: normal;
+  }
+
+  /* ⚠️ STAYS CENTRED ON A PHONE — and that REVERSES what this block said a few
+     hours ago ("not centred on a phone, deliberately"). Two things changed and
+     both point the other way now: the brief asks for it ("on mobile: keep
+     everything centered"), and the heading is no longer the same object — it caps
+     at 52px instead of 60, which renders 30px at 390 instead of 35, so the
+     centred wrap that made it hard to read is a shorter, calmer shape.
+     The three modules are unaffected either way: they are siblings of the intro,
+     not descendants, so their icon-left / text-left layout never inherits this. */
+  .city-callout__intro h2,
+  .city-callout .city-callout__lede {
+    max-width: none;
+  }
+
+  /* A single-line row can measure under the 44px minimum, so the service rows
+     get a floor. The eight-row list is the densest tappable block on the page. */
+  .city-services__row {
+    min-height: 44px;
+    padding-block: var(--space-4);
+  }
+
+  .city-fields__list {
+    gap: var(--space-6);
+  }
+}

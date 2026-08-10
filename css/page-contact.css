@@ -35,15 +35,23 @@
            underline-only fields, blue focus underline, pill submit — the
            same values as .conversion__form-wrap / .conversion__form.
 
-   IMPORTANT — this page runs LIGHT on a dark-theme site. The tokens are
-   calibrated against black (see tokens.css), so the "on white" values here
-   are the same hardcoded rgb(59 73 86 / …) greys the homepage's own white
-   sections use (.faq, .references, .outfits, the conversion form), not new
-   colours. Two rules of thumb, both from tokens.css's contrast notes:
-     - blue-light (#3D9AD3) does NOT clear contrast on white. Every blue on
-       this page is --color-blue-dark (#5287C9).
-     - --color-focus-ring is white, i.e. invisible here — the ring is
-       overridden to blue-dark page-wide, including in the header/footer.
+   ⚠️ SUPERSEDED IN PART, 2026-08-07: instruction 2 above no longer holds. The
+   page is now BLACK for its first section and white only for the form card and
+   the map section, with a pixel dissolve at the boundary (client: "el fondo de
+   la primera sección … que sea negra y el form que sea blanco, y cuando pasamos
+   a la sección del mapa … haya el efecto de los píxeles"). The footer is still
+   always black. Section order: ■ contact → seam → □ map → seam → ■ footer.
+
+   So this page has BOTH surfaces now, and which colour set applies depends on
+   where a rule lands:
+     - FIRST SECTION (black): consume the --kc-* variables declared on
+       .page-contact. Blue there is blue-LIGHT (#3D9AD3, 6.8:1 on black).
+     - FORM CARD and MAP SECTION (white): the hardcoded rgb(59 73 86 / …) greys
+       the homepage's own white sections use (.faq, .references, .outfits, the
+       conversion form). Blue there is blue-DARK (#5287C9) — blue-light does NOT
+       clear contrast on white.
+     - --color-focus-ring is white, i.e. invisible on the light areas, so the
+       ring is overridden to blue-dark page-wide; that value passes on both.
 
    Mobile-first: base rules are the phone layout, min-width queries add the
    wider ones, and a touch-target block at the end fixes anything landing
@@ -58,7 +66,30 @@
    only <main> white would leave the header band on the body's black. The
    footer sets its own background and is unaffected. */
 .page-contact {
-  background-color: var(--color-white);
+  /* ---- Section 1 runs DARK (client 2026-08-07) ----
+     This page shipped white end to end (client 2026-07-31). The client now wants
+     the first section black with the form card staying white, and a pixel
+     dissolve into the white map section — i.e. the same black/white alternation
+     the rest of the site uses. So the PAGE background is the site's normal black
+     again and .contact-location re-lights itself below.
+
+     The first section's colours come from these four variables rather than from
+     a duplicated set of rules, which is the pattern page-service.css's
+     .section--light already uses: custom properties inherit, so any future rule
+     in this section that consumes them gets the right value for free. The white
+     islands — the form card and the map section — deliberately do NOT consume
+     them; they keep their own hardcoded "on white" values, so nothing about them
+     had to change.
+
+     Values are the documented on-black set (CLAUDE.md, Corporate identity):
+     white text, white alphas for secondary copy and hairlines, and blue-LIGHT
+     for the accent, because blue-dark is calibrated for white. */
+  --kc-ink: var(--color-white);
+  --kc-ink-muted: rgb(255 255 255 / 0.72);
+  --kc-line: rgb(255 255 255 / 0.14);
+  --kc-accent: var(--color-blue-light);
+
+  background-color: var(--color-bg);
   color: var(--color-gray);
   /* tokens.css sets color-scheme: dark on :root so native controls match the
      dark site. On this page that made the consent checkbox render as a dark
@@ -67,60 +98,26 @@
   color-scheme: light;
 }
 
-/* The white focus ring (--color-focus-ring) is invisible on this page.
-   Blue-dark clears the 3:1 non-text minimum on white (3.7:1) AND on the
-   footer's black (~5.7:1), so one override covers the whole page. */
+/* Blue-dark clears the 3:1 non-text minimum on BOTH surfaces this page now has
+   — 3.7:1 on the white form card and the white map section, ~5.7:1 on the black
+   first section and the footer — so one override still covers the whole page.
+   The shared --color-focus-ring is white, which would vanish on the white
+   areas. */
 .page-contact :focus-visible {
   outline-color: var(--color-blue-dark);
 }
 
-/* Same inversion, opposite direction: the shared skip-link is a white chip
-   for a black page, which would vanish here. */
-.page-contact .skip-link {
-  background-color: var(--color-logo-black);
-  color: var(--color-white);
-}
+/* The skip-link, the logo filter and the grey-nav overrides that used to sit
+   here are GONE (2026-08-07). All four existed for one reason: the page was
+   white from the very top, so the shared white logo, white nav and white
+   skip-link chip were invisible against it. The top of the page is black again,
+   which is what those shared defaults are built for.
 
-/* Header readability without JS. [data-nav-force-dark] on <body> makes
-   initHeaderScrollTheme() add .site-header--dark, which recolours the logo
-   and nav — but if that script never runs, a white logo and white nav links
-   sit on a white page. These two rules are the same recolour applied from
-   CSS alone, so the header is legible either way (JS then only adds the
-   frosted backdrop). */
-.page-contact .site-header__logo img {
-  filter: brightness(0);
-}
-
-.page-contact .site-nav__list a,
-.page-contact .site-nav__caret,
-.page-contact .nav-toggle__bar,
-.page-contact .nav-toggle__bar::before,
-.page-contact .nav-toggle__bar::after {
-  color: var(--color-gray);
-}
-
-.page-contact .nav-toggle__bar,
-.page-contact .nav-toggle__bar::before,
-.page-contact .nav-toggle__bar::after {
-  background-color: var(--color-gray);
-}
-
-/* The current-page nav item's blue underline (client 2026-07-31) used to be
-   overridden here, page-scoped, because the shared default was a filled dark
-   pill. That underline IS the shared default now (client 2026-08-03, sitewide)
-   — see a.site-nav__link[aria-current="page"] in site-chrome.css. The scoped
-   copy was deleted rather than left as a no-op duplicate. */
-
-/* Below the desktop nav breakpoint (1400px, site-chrome.css) the nav is a
-   drop-down drawer with its own BLACK background — dark grey links inside it
-   would be unreadable. Only the ≥1400px inline nav actually sits on the white
-   header bar, so the recolour above is reverted for the drawer. */
-@media (max-width: 1399.98px) {
-  .page-contact .site-nav__list a,
-  .page-contact .site-nav__caret {
-    color: var(--color-text);
-  }
-}
+   The header now switches per section like every other page — no
+   [data-nav-force-dark] on <body> any more; .contact-location carries
+   data-nav-theme="light" so initHeaderScrollTheme() (js/main.js) flips it to
+   the frosted light state over the map and back. Same contract as
+   /werkschutz/, /referenzen/ and /jobs/, which all have white sections. */
 
 /* ---- Breadcrumbs ----
    Two things at once: the shared component (components.css) is built for
@@ -134,7 +131,7 @@
    Until then, every new page repeats this block. */
 .page-contact .breadcrumbs__list {
   gap: var(--space-3);
-  color: rgb(59 73 86 / 0.7);
+  color: var(--kc-ink-muted);
 }
 
 /* No underline at rest (the reference has none) — safe here, unlike an inline
@@ -142,25 +139,25 @@
    distinguished from surrounding text by colour alone (WCAG 1.4.1). The
    underline comes back on hover/focus. */
 .page-contact .breadcrumbs__link {
-  color: rgb(59 73 86 / 0.7);
+  color: var(--kc-ink-muted);
   text-decoration: none;
 }
 
 .page-contact .breadcrumbs__link:hover,
 .page-contact .breadcrumbs__link:focus-visible {
-  color: var(--color-blue-dark);
+  color: var(--kc-accent);
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
 
 .page-contact .breadcrumbs__current {
-  color: var(--color-logo-black);
+  color: var(--kc-ink);
 }
 
 .page-contact .breadcrumbs__sep {
   display: inline-flex;
   align-items: center;
-  color: rgb(59 73 86 / 0.45);
+  color: rgb(255 255 255 / 0.45);
 }
 
 /* The sprite chevron points left; mirrored here instead of adding a second
@@ -252,23 +249,78 @@
    case comfortable rather than cramped. */
 @media (min-width: 1024px) {
   .contact-main__grid {
-    /* 40 / 60 — inside the brief's 38–42% / 58–62%. minmax(0, …) so a long
-       unbreakable string in either column can't blow the track out. */
-    grid-template-columns: minmax(0, 40fr) minmax(0, 60fr);
+    /* 45 / 55 (client 2026-08-07: "hacele un poco menos de width a la card del
+       form, está muy ancha"), from 40 / 60.
+
+       ⚠️ That takes the form column OUTSIDE the 58–62% the 2026-08-03 layout
+       brief asked for — the client's later call, so it wins, but it is the
+       reason to look here first if that band ever comes back up.
+
+       Narrowing the form widens the left column, which is fine for the bottom
+       alignment those two columns now share: the Highlight-Box takes
+       `margin-top: auto`, so a left column that reflows shorter is absorbed
+       rather than left hanging. Re-measured at every desktop width after this
+       change, not assumed.
+
+       minmax(0, …) so a long unbreakable string in either column can't blow the
+       track out. */
+    grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+    /* ---- The left column is CENTRED against the form, not top-aligned
+       (client 2026-08-07: "en vez de alineado arriba el contenido, que esté
+       alineado al centro") ----
+
+       The intro and the aside are two separate grid items, so "centre the left
+       column" cannot be `align-self: center` — that would centre each of them
+       inside its OWN row and leave them just as far apart. What centres them as
+       one block is a pair of empty 1fr spacer rows, one above and one below:
+       the form spans all four rows, and whatever height it has beyond the two
+       left items is split evenly between those two spacers.
+
+       The gaps stay symmetric too — one row-gap above the intro, one below the
+       aside — so the block really does land in the middle, and the intro→aside
+       gap is still the same single row-gap it was before.
+
+       This REPLACES the old `auto 1fr`, whose whole job was to push the free
+       space to the BOTTOM so it never opened between the intro and the aside.
+       The two spacer rows do that job better: no free space can land between
+       them at all, because neither of the rows they sit in is flexible.
+
+       If the left column ever grows taller than the form, both 1fr rows
+       collapse to 0 and this degrades to the plain top-aligned stack. */
     grid-template-areas:
+      ".     form"
       "intro form"
-      "aside form";
-    /* auto 1fr, not the default auto auto: the form spans both rows, so any
-       height it has beyond the intro would otherwise be split between the two
-       left-column rows and open a dead gap between the intro and the aside. */
-    grid-template-rows: auto 1fr;
+      "aside form"
+      ".     form";
+    grid-template-rows: 1fr auto auto 1fr;
     /* Kept moderate on purpose: the gap sits between the two tracks, so a
        wide one pushes the real 40/60 track split further from the brief's
        38–42 / 58–62 of the row. At 3.5rem the measured split is 38.6 / 57.8. */
     column-gap: clamp(2rem, 3vw, 3.5rem);
-    row-gap: var(--space-6);
+    row-gap: var(--space-5);
     align-items: start;
   }
+
+  /* ---- The aside is a plain stacked column again (client brief 2026-08-07,
+     "hero/contact refinement") ----
+
+     ⚠️ THIS REVERSES the same-day change that made the two columns end on
+     exactly the same line. That change stretched the aside into its grid row and
+     gave the trust block `margin-top: auto` so it sat on the card's bottom edge.
+     The refinement brief supersedes it, in its own words: "Do not try to make the
+     left column exactly the same height as the form. It is okay if the form
+     extends slightly lower", plus "keep it [the 24/7 statement] directly below
+     the contact list" and "avoid oversized empty spaces".
+
+     Those cannot both hold. Chasing the bottom edge is exactly what opened the
+     16–87px hole between the list and the trust block, and with the block now
+     compacted to a two-line statement that hole would only grow. So the column
+     is stacked top-down again and simply ends where its content ends.
+
+     `align-self: stretch` and `margin-top: auto` are both gone (the latter from
+     the .contact-highlight override further down); the grid's `auto 1fr` rows
+     stay, because that is what still keeps the intro and the aside from sharing
+     the card's extra height between them. */
 }
 
 /* No sticky on the form card, deliberately. The card is ~830px tall at 1440px,
@@ -312,7 +364,7 @@
   font-size: clamp(2.25rem, 0.4rem + 3.7vw, 3.75rem);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-tight);
-  color: var(--color-logo-black);
+  color: var(--kc-ink);
 }
 
 /* One line (client 2026-08-03). The 14ch measure that used to sit here is
@@ -324,8 +376,19 @@
    ~330px at this size. nowrap is deliberately NOT applied below 1024 — at
    320 it would push the page into horizontal scroll instead of wrapping. */
 @media (min-width: 1024px) {
+  /* 32px at 1440, down from 36 (client brief 2026-08-07). The form heading came
+     down ~12% in the same pass, and at 36 vs 37 the two would have read as the
+     same size — which inverts the ladder the brief specifies (form heading first,
+     this one second). Stepping this down keeps the ratio at ~1.16, so they still
+     "feel related, not completely different scales", and it is also what makes
+     the left column read as support rather than as a second pitch.
+
+     Note this is a REDUCTION where the brief said "increase the left heading
+     slightly IF NEEDED so it has a better relationship with the form heading".
+     The relationship was the goal; with the form heading shrinking, holding this
+     one still would have closed the gap instead of improving it. */
   .contact-intro h1 {
-    font-size: clamp(1.875rem, 1.1rem + 1.2vw, 2.25rem);
+    font-size: clamp(1.625rem, 1rem + 1vw, 2rem);
     max-width: none;
     white-space: nowrap;
   }
@@ -334,7 +397,7 @@
 .contact-intro__lead {
   margin-top: var(--space-3);
   font-size: var(--font-size-base);
-  color: rgb(59 73 86 / 0.75);
+  color: var(--kc-ink-muted);
   /* At this measure the automatic hyphenation from base.css broke the last
      line as "Be-ratung" — fine in a paragraph of body copy, wrong in a
      two-line lead. overflow-wrap: break-word (sitewide) still guards overflow. */
@@ -396,11 +459,11 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  border-top: 1px solid rgb(59 73 86 / 0.12);
+  border-top: 1px solid var(--kc-line);
 }
 
 .contact-methods li {
-  border-bottom: 1px solid rgb(59 73 86 / 0.12);
+  border-bottom: 1px solid var(--kc-line);
 }
 
 .contact-method {
@@ -420,26 +483,29 @@
 }
 
 .contact-method:hover {
-  background-color: rgb(59 73 86 / 0.045);
+  background-color: rgb(255 255 255 / 0.05);
 }
 
 /* The row is the link, so the ring goes around the whole row. */
 .contact-method:focus-visible {
-  outline: 2px solid var(--color-blue-dark);
+  outline: 2px solid var(--kc-accent);
   outline-offset: 2px;
 }
 
-/* Priority for the phone, kept deliberately faint (client: subtle, and NOT a
-   highlighted card): a 6% blue wash, no border, no shadow — it reads as one
-   tinted row inside the list. color-mix keeps it tied to the brand token
-   rather than hardcoding a fourth blue. */
-.contact-method--priority {
-  background-color: color-mix(in srgb, var(--color-blue-dark) 6%, transparent);
-}
+/* The phone row's resting tint is GONE (client 2026-08-10: "no quiero que esté
+   seleccionado el número con background distinto a los otros … si hovereamos sí,
+   pero no quiero que esté predeterminado uno, dejalos todos iguales"). Both the
+   13% resting wash and its 20% hover are deleted, so all three rows now rest
+   transparent and share the one `.contact-method:hover` wash above — a filled
+   row at rest read as "already selected", which is exactly what a list of three
+   equal choices should not do.
 
-.contact-method--priority:hover {
-  background-color: color-mix(in srgb, var(--color-blue-dark) 11%, transparent);
-}
+   ⚠️ .contact-method--priority is STILL on the phone row in the markup and must
+   stay: it also carries the larger 22px value and the extra breathing room under
+   its supporting line further down this file. So the phone is still the
+   strongest row — the hierarchy is carried by SIZE now instead of by a fill,
+   which is also the more robust signal (it survives a hover, and it does not
+   depend on colour alone, WCAG 1.4.1). */
 
 /* Nudged down so it optically lines up with the label's cap height rather
    than its line box — same offset on all three rows. */
@@ -448,7 +514,7 @@
   height: 1.125rem;
   margin-top: 0.15rem;
   fill: none;
-  stroke: var(--color-blue-dark);
+  stroke: var(--kc-accent);
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -464,14 +530,14 @@
   font-size: 0.6875rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgb(59 73 86 / 0.7);
+  color: var(--kc-ink-muted);
 }
 
 .contact-method__value {
   font-size: var(--font-size-base);
   line-height: 1.35;
   font-style: normal;
-  color: var(--color-logo-black);
+  color: var(--kc-ink);
   overflow-wrap: anywhere; /* info@frankonia-sicherheit.de in a 40% column */
 }
 
@@ -479,13 +545,13 @@
   margin-top: 0.1rem;
   font-size: var(--font-size-sm);
   line-height: 1.5;
-  color: rgb(59 73 86 / 0.7);
+  color: var(--kc-ink-muted);
 }
 
 .contact-method__action {
   margin-top: 0.1rem;
   font-size: var(--font-size-sm);
-  color: var(--color-blue-dark);
+  color: var(--kc-accent);
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
@@ -511,7 +577,7 @@
   align-self: center;
   flex-shrink: 0;
   fill: none;
-  stroke: var(--color-blue-dark);
+  stroke: var(--kc-accent);
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -523,7 +589,7 @@
 .contact-method:hover .contact-method__arrow,
 .contact-method:focus-visible .contact-method__arrow {
   transform: rotate(45deg);
-  stroke: var(--color-blue-dark);
+  stroke: var(--kc-ink);
 }
 
 /* Supporting copy was rgb(59 73 86 / 0.7), which composites to (118,128,137) on
@@ -538,7 +604,7 @@
    it here alone would make one link on the page a different blue than the rest. */
 .contact-method__label,
 .contact-method__text {
-  color: rgb(59 73 86 / 0.8);
+  color: var(--kc-ink-muted);
 }
 
 /* --------------------------------------------------------------------------
@@ -560,14 +626,30 @@
 
    Nothing here touches the form card, and no copy changed. */
 @media (min-width: 768px) {
-  /* 24px, inside the brief's 20–28px, from 10px. Applied to all three rows
-     equally: "distribute the rows more evenly" is about a consistent rhythm, not
-     about forcing three unequal copy blocks to the same pixel height — that
-     would need exactly the blank filler the brief rules out. The rows stay a
-     list: no radius per row, no fill, no shadow, and the hairline separators
-     still run the full column width. */
+  /* 16px, walked down from 24px across 2026-08-07 (24 → 20 → 16). Removing the
+     form's "Formulartitel" took 73px out of the card and the left column then
+     ran PAST the card's bottom — measured +32px at 1440, which is the misaligned
+     edge the client pointed at.
+
+     ⚠️ This is BELOW the 20–28px band the "refine the left column" brief asked
+     for. That is the client's own later call ("achicá un poquito el height de
+     los items de la lista … para que quede a la misma altura que el form"), so
+     matching the two bottom edges won over that band. The lever is here if the
+     band ever matters more — but the columns stop aligning when it moves.
+
+     Trimming slightly MORE than the 32px needed is deliberately safe: the
+     Highlight-Box takes `margin-top: auto`, so anything removed beyond what the
+     tightest width needs is absorbed into the gap above that box instead of
+     leaving the column ending short.
+
+     Applied to all three rows equally: "distribute the rows more evenly" is
+     about a consistent rhythm, not about forcing three unequal copy blocks to
+     the same pixel height — that would need exactly the blank filler the brief
+     rules out. The rows stay a list: no radius per row, no fill, no shadow, and
+     the hairline separators still run the full column width. Row heights stay
+     far above the 44px touch minimum (≈110–139px). */
   .contact-method {
-    padding-block: var(--space-5);
+    padding-block: 1rem;
   }
 
   /* Real air between label / value / supporting line, which is what makes a
@@ -646,8 +728,16 @@
 
 /* Same clamp as .conversion__form-title — a form heading, not a section
    title, and the left column's H2 is matched to it (see above). */
+/* Reduced ~12% (client brief 2026-08-07: "reduce the form heading size by around
+   10–15%"), 42px → 36.8px at 1440. It is still by far the largest text in the
+   section, which the brief requires — the form has to stay the strongest object.
+
+   Only the CEILING moved. The floor stays at 2rem so the phone rendering is
+   byte-identical to before: that brief is scoped to desktop ("Refine only the
+   desktop hero/contact section"), and dropping the floor would have taken the
+   phone's form heading 32px → 28px as a side effect. */
 .contact-form-card__title {
-  font-size: clamp(2rem, 1.6rem + 1.5vw, 2.625rem);
+  font-size: clamp(2rem, 1.4rem + 1.35vw, 2.3rem);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-heading);
   color: var(--color-logo-black);
@@ -673,18 +763,14 @@
   line-height: var(--line-height-base);
 }
 
-/* The doc's "Formulartitel" — subordinate to the block's H2 above, so it is
-   sized as a label rather than a heading, and takes body letter-spacing: the
-   -1px base.css applies to headings is calibrated for display sizes and reads
-   as collision here (same call as the FAQ question, design-system §2). */
-.contact-form-card__form-title {
-  margin-top: var(--space-7);
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-regular);
-  letter-spacing: normal;
-  line-height: var(--line-height-heading);
-  color: var(--color-logo-black);
-}
+/* .contact-form-card__form-title (the doc's "Formulartitel") was removed
+   2026-08-07 on client instruction — see the markup comment in
+   pages/kontakt.html. Its rule is deleted rather than left dead; git has it.
+
+   It used to contribute 48px of top margin + its own line + the form's 32px,
+   i.e. ~106px between the lede and the first field. That whole stack is gone
+   and only .contact-form's own margin is left, which is the point — the ask was
+   a shorter card, so the space is NOT redistributed to something else. */
 
 /* Highlight-Box (Webtext 25 §2). Sits under the three contact rows in the aside
    column. A tile, not a card: 5%-grey fill and no border, per §5's "Card / tile"
@@ -692,25 +778,49 @@
    would read as a fourth contact method rather than as a statement about them.
    The blue left rule is what marks it as the emphasis, and blue-dark is the only
    blue that passes on white. */
+/* Compact trust statement, NOT a card (client brief 2026-08-07: the filled block
+   "creates unnecessary visual weight" and "avoid creating another visual focal
+   point"). What went: the 5%-white fill, the 16px radius, and all of the inner
+   padding. What stayed: the blue rule, which is now the only thing marking it —
+   a single accent line instead of a surface.
+
+   ⚠️ The COPY is unchanged, deliberately. The brief offers a condensed
+   "24/7 erreichbar · direkter Ansprechpartner · keine Warteschleife" as one
+   option, but it also says not to rewrite approved German copy unless asked, and
+   this is the Highlight-Box verbatim from Webtext 25 §2 — condensing it would
+   drop "keine Weiterleitungen" and re-word the rest. So the weight came out of
+   the styling, not out of the sentence. Say the word if the short version is
+   wanted instead; it is a one-line swap.
+
+   It sits directly under the list, per the brief, so the margin is the whole
+   separation — there is no auto-margin pushing it to the column's bottom any
+   more. */
 .contact-highlight {
-  margin-top: var(--space-6);
-  padding: var(--space-5);
-  background-color: rgb(59 73 86 / 0.05);
-  border-radius: var(--radius-lg);
-  border-inline-start: 3px solid var(--color-blue-dark);
+  margin-top: var(--space-5);
+  padding: 0;
+  padding-inline-start: var(--space-4);
+  border-inline-start: 2px solid var(--kc-accent);
 }
 
+/* The `margin-top: auto` + padding override that used to sit here is gone with
+   the bottom-alignment approach it belonged to — see the note in the layout
+   @media above. The block's own margin below is the whole gap now. */
+
+/* Down from --font-size-md (20px) — at that size it read as a third heading in
+   the column and competed with the contact values above it. It is a statement,
+   so it stays solid white and simply stops being big. */
 .contact-highlight__title {
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-regular);
   letter-spacing: normal;
   line-height: var(--line-height-heading);
-  color: var(--color-logo-black);
+  color: var(--kc-ink);
 }
 
 .contact-highlight__text {
-  margin-top: var(--space-2);
-  color: rgb(59 73 86 / 0.75);
+  margin-top: var(--space-1);
+  font-size: var(--font-size-sm);
+  color: var(--kc-ink-muted);
   line-height: var(--line-height-base);
 }
 
@@ -905,12 +1015,21 @@
   --pixel-tile-color: var(--color-white);
 }
 
-/* The band lives in the footer's top, so the footer reserves its height as
-   extra padding and no footer content is ever covered. Scoped to the adjacent
-   sibling, so a page without a seam keeps the normal footer spacing. Keep in
-   sync with .pixel-seam__band's height above. */
+/* The band lives in the NEXT section's top, so that section reserves its height
+   as extra padding and no real content is ever covered. Scoped to the adjacent
+   sibling, so a page without a seam keeps its normal spacing. Keep both values
+   in sync with .pixel-seam__band's height above.
+
+   There are TWO seams on this page since 2026-08-07:
+     1. black first section -> white map section. Plain .pixel-seam, i.e. the
+        default black tiles, because the tiles always match the section ABOVE.
+     2. white map section -> black footer. .pixel-seam--white, as before. */
 .pixel-seam + .site-footer {
   padding-top: calc(var(--space-9) + 200px);
+}
+
+.pixel-seam + .contact-location {
+  padding-top: calc(var(--space-8) + 200px);
 }
 
 @media (max-width: 767.98px) {
@@ -920,6 +1039,12 @@
 
   .pixel-seam + .site-footer {
     padding-top: calc(var(--space-9) + 120px);
+  }
+
+  /* The phone's own section rhythm (the 2026-08-04 mobile pass trimmed this
+     section's top padding to --space-6) plus the shorter mobile band. */
+  .pixel-seam + .contact-location {
+    padding-top: calc(var(--space-6) + 120px);
   }
 }
 
@@ -1057,14 +1182,21 @@
    Anfahrt map (client 2026-08-03)
    --------------------------------------------------------------------------
    Leaflet renders into #contact-map (js/contact-map.js). Everything here is
-   "on white" like the rest of this page — the same rgb(59 73 86 / …) hairline
-   pattern used by .contact-method above, not a token, because this page
-   deliberately breaks from the sitewide dark theme.
+   "on white" — the same hardcoded rgb(59 73 86 / …) pattern the homepage's own
+   white sections use.
+
+   Since 2026-08-07 this is the ONE white full-width section on the page, so it
+   paints that white itself instead of inheriting it from <body>. It deliberately
+   does NOT consume the --kc-* variables: those are the black first section's
+   set, and this section is the light half of the alternation.
 
    The wrap owns the height, radius and clipping so the map element itself can
    be a plain 100%×100% box: Leaflet writes inline transforms onto its own
    panes, and giving it a border-radius directly makes tiles bleed past the
    corners in some browsers. */
+.contact-location {
+  background-color: var(--color-white);
+}
 /* Same treatment as .contact-intro h1 above — the homepage's `main h2` scale at
    regular weight. Without it this heading falls back to base.css's bold 800,
    which is the one type style this page's own headings never use. */
@@ -1073,6 +1205,26 @@
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-tight);
   color: var(--color-logo-black);
+}
+
+/* Centred (client 2026-08-10). Three declarations, and all three are load-
+   bearing: `text-align` centres the lines, the auto margins centre the BLOCK
+   itself — .section__intro (components.css) caps it at 42rem, so without them a
+   centred paragraph would still sit hard against the left inset — and the
+   heading needs its own cap or it runs the full container width and the
+   centring stops reading as centring at all.
+
+   The map below stays full width on purpose: it is the section's content, not
+   part of the heading block. */
+.contact-location__intro {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.contact-location__intro h2 {
+  max-width: 20ch;
+  margin-inline: auto;
+  text-wrap: balance;
 }
 
 .contact-location__intro p {
@@ -1100,17 +1252,36 @@
 }
 
 /* The background is what shows while the tiles are still loading (and, at
-   360px-tall, what a very slow connection sees longest) — a pale neutral, so
-   the box never flashes as an empty white hole on a white page. */
-.contact-location__map {
+   360px-tall, what a very slow connection sees longest). It follows the basemap,
+   not the section: with the pale neutral this used to carry, a dark map arrived
+   as a white box that snapped to black — a flash on every load. Matching the
+   tiles means the frame simply fills in. */
+/* TWO selectors, and both are needed. leaflet.css is injected into <head> at
+   RUNTIME by js/contact-map.js, so it loads after this file and its
+   `.leaflet-container { background: #ddd }` beats a plain `.contact-location__map`
+   at equal specificity — measured: the frame came back rgb(221,221,221) with the
+   black set here, i.e. this rule only ever applied for the moment BEFORE the map
+   mounted. The compound selector (0,2,0) wins without needing !important, and it
+   cannot match until Leaflet adds its class, which is why the plain one has to
+   stay for the pre-mount state. Same trap the tooltip rule further down already
+   documents. */
+.contact-location__map,
+.contact-location__map.leaflet-container {
   width: 100%;
   height: 100%;
-  background-color: rgb(59 73 86 / 0.06);
+  background-color: var(--color-logo-black);
 }
 
 /* No-JS / Leaflet-failed state: the real address block that ships inside the
    map div. Centred in the box so it reads as intentional content, not a
-   broken embed. */
+   broken embed.
+
+   ⚠️ It sits ON the frame's own background, which became black with the dark
+   basemap (2026-08-08) — so its colours follow the FRAME, not the white section
+   around it. Left on the page's "on white" grey it was dark-on-black, i.e. the
+   no-JS fallback would have been unreadable: the one state that exists purely
+   for when nothing else works. Same reason the link below takes blue-light
+   rather than the blue-dark every other link on this page uses. */
 .contact-location__fallback {
   display: flex;
   flex-direction: column;
@@ -1119,8 +1290,12 @@
   margin: 0;
   padding: var(--space-5);
   text-align: center;
-  color: var(--color-gray);
+  color: var(--color-white);
   line-height: var(--line-height-base);
+}
+
+.contact-location__fallback a {
+  color: var(--color-blue-light);
 }
 
 /* Same circular dot as the homepage's .coverage-marker, one notch larger:
@@ -1167,20 +1342,13 @@
   font-family: var(--font-family-base);
 }
 
-/* Colour boost on the TILE PANE only (client 2026-08-04: the map still read as
-   white). CARTO's "Voyager" style is genuinely colour but pitched pale on
-   purpose, so at this zoom the parks and the road hierarchy barely separate
-   from the buildings. Saturating the pane is the cheap, reversible lever — it
-   keeps the approved keyless provider, the @2x tiles and the attribution
-   exactly as they are, instead of switching to a heavier basemap.
-
-   Scoped to .leaflet-tile-pane, NOT the container: a filter on the container
-   would also hit the marker dot, the white tooltip chip and the attribution
-   link, and a filter creates a new stacking context, which is why it belongs
-   on the pane Leaflet already isolates for the tiles. */
-.contact-location__map .leaflet-tile-pane {
-  filter: saturate(1.75) contrast(1.04);
-}
+/* The `filter: saturate(1.75) contrast(1.04)` that sat here is DELETED
+   (2026-08-08). It existed for exactly one reason: CARTO's "Voyager" style is
+   pitched pale, so at this zoom the parks and the road hierarchy barely
+   separated from the buildings. The basemap is "Dark Matter" now, which is
+   near-monochrome by design — saturating it would tint the few coloured
+   elements it has (water, the odd park) without making anything more legible.
+   Removed rather than re-tuned; git has it if the colour map comes back. */
 
 @media (max-width: 767.98px) {
   .contact-location__map-wrap {

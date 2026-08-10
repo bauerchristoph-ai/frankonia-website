@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- Built 2026-08-09 from NewVersionCopiesFrankonia/"2026-08-04 Webtext 23 Hub
+     Leistungen.docx". Every visible line is that document's copy, verbatim.
+     Closes the most-linked 404 on the site: /leistungen/ sits in the nav of all
+     9 pages, plus the services submenu's own "Alle Leistungen" link.
+     Design language and effect stack come from css/page-service.css, the shared
+     chassis (docs/page-conventions.md §9.1); this page adds only its tile grid.
+     The closing form and the price/trust values come from partials — see §6.0. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sicherheitsdienstleistungen im Überblick – FRANKONIA</title>
+  <meta name="description" content="Alle Sicherheitsdienstleistungen von FRANKONIA aus Bamberg: Objektschutz, Werkschutz, Brandwache, Baustellenbewachung &amp; mehr. DIN 77200-1, DEKRA-geprüft.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/leistungen/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/leistungen/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/leistungen/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sicherheitsdienstleistungen im Überblick – FRANKONIA">
+  <meta property="og:description" content="Alle Sicherheitsdienstleistungen von FRANKONIA aus Bamberg: Objektschutz, Werkschutz, Brandwache, Baustellenbewachung &amp; mehr. DIN 77200-1, DEKRA-geprüft.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/leistungen/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- Schema per the draft: BreadcrumbList + ItemList (the 11 services) +
+       FAQPage. The FAQ answers below are generated from the SAME strings as the
+       visible accordion, so the two cannot drift — the failure mode CLAUDE.md
+       documents (Google served a different price than the visitor). -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://frankonia-sicherheit.de/" },
+        { "@type": "ListItem", "position": 2, "name": "Leistungen", "item": "https://frankonia-sicherheit.de/leistungen/" }
+      ]
+    },
+    {
+      "@type": "ItemList",
+      "name": "Sicherheitsdienstleistungen",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Objektschutz", "url": "https://frankonia-sicherheit.de/objektschutz/" },
+        { "@type": "ListItem", "position": 2, "name": "Werkschutz", "url": "https://frankonia-sicherheit.de/werkschutz/" },
+        { "@type": "ListItem", "position": 3, "name": "Empfangsdienst", "url": "https://frankonia-sicherheit.de/empfangsdienst/" },
+        { "@type": "ListItem", "position": 4, "name": "Revier- & Schließdienst (Raum Bamberg)", "url": "https://frankonia-sicherheit.de/revier-schliessdienst/" },
+        { "@type": "ListItem", "position": 5, "name": "Brandwache", "url": "https://frankonia-sicherheit.de/brandwache/" },
+        { "@type": "ListItem", "position": 6, "name": "Baustellenbewachung", "url": "https://frankonia-sicherheit.de/baustellenbewachung/" },
+        { "@type": "ListItem", "position": 7, "name": "Veranstaltungsschutz", "url": "https://frankonia-sicherheit.de/veranstaltungsschutz/" },
+        { "@type": "ListItem", "position": 8, "name": "Kaufhausdetektei", "url": "https://frankonia-sicherheit.de/kaufhausdetektei/" },
+        { "@type": "ListItem", "position": 9, "name": "Sicherheitstechnik", "url": "https://frankonia-sicherheit.de/sicherheitstechnik/" },
+        { "@type": "ListItem", "position": 10, "name": "Interventionsdienst", "url": "https://frankonia-sicherheit.de/interventionsdienst/" },
+        { "@type": "ListItem", "position": 11, "name": "Sicherheitskonzept", "url": "https://frankonia-sicherheit.de/sicherheitskonzept/" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Was kostet ein Sicherheitsdienst von FRANKONIA?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Je nach Leistung in der Regel zwischen 26 und 32 Euro pro Stunde netto — Details und Einflussfaktoren stehen transparent auf jeder Leistungsseite. Ihr konkretes, unverbindliches Angebot erhalten Sie innerhalb eines Werktages." }
+        },
+        {
+          "@type": "Question",
+          "name": "Kann ich mehrere Leistungen kombinieren?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Ja, das ist sogar der Regelfall: Objektschutz plus Technik, Baustellenbewachung plus Brandwache, Empfang plus Werkschutz. Die Kombination wird im kostenfreien Sicherheitskonzept geplant, damit sich die Bausteine ergänzen statt doppeln." }
+        },
+        {
+          "@type": "Question",
+          "name": "Welche Leistung passt zu meinem Objekt?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Das beantwortet die kostenfreie Begehung: Unsere Sicherheitsexperten bewerten Risiken und empfehlen die wirtschaftlichste Lösung, auch wenn das die kleinere ist. → /sicherheitskonzept/" }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- LCP element on this page. imagesrcset/imagesizes repeat the <picture>'s own
+       srcset/sizes so the preload and the <img> pick the same candidate. -->
+  <link rel="preload" as="image" type="image/webp" imagesrcset="/assets/images/leistungen-hero-768.webp 768w, /assets/images/leistungen-hero-1280.webp 1280w" imagesizes="100vw">
+  <!-- include: head-common -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-leistungen.css">
+
+  <!-- Motion stack — docs/page-conventions.md §4.1, documented order. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+  <script src="/js/lh-card-marks.js" defer></script>
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Leistungen</span></li>
+      </ol>
+    </nav>
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- Redesigned 2026-08-10 (client brief), then given a photograph the same day
+         after the client saw it: "no me gusta que no haya un hero definido".
+         ~70svh rather than a full screen, so the orientation layer below is already
+         visible at the fold. The three family scenes that briefly lived in a right
+         column here are now in the orientation selectors — they were saying the
+         same three things one screen apart, and the hero needed the room. -->
+    <section class="service-hero lh-hero lh-hero--photo" data-hero-reveal>
+      <!-- The photograph IS the hero now (client 2026-08-10: "no me gusta que no
+           haya un hero definido" — with hero and orientation both on flat black
+           and no seam between them, the hero never visibly ended).
+           ⚠️ A DIRECT CHILD OF THE SECTION, never of .service-hero__grid. The
+           chassis sets `position: relative` on that grid, so an absolutely
+           positioned layer inside it resolves `inset: 0` against the GRID's box,
+           not the section's — the first build of this put the photo inside and it
+           came out as a band across the middle of the hero WITH THE COPY BEHIND
+           IT, because an absolutely positioned child also paints above its
+           non-positioned siblings' content.
+           ⚠️ INTERIM PHOTO. There is no services-hub photograph in the project —
+           every landscape image is already some page's hero — so this is the
+           homepage system-story's handshake shot, which at least is not a hero
+           anywhere. Its left third is genuinely dark (measured luminance 57 against
+           117 on the right), which is what lets the wash stay light enough to keep
+           the two people and the branded entrance readable. Swapping it is a
+           <picture> and three files. -->
+      <div class="lh-hero__bg" aria-hidden="true">
+        <picture>
+          <source type="image/webp" srcset="/assets/images/leistungen-hero-768.webp 768w, /assets/images/leistungen-hero-1280.webp 1280w" sizes="100vw">
+          <img src="/assets/images/leistungen-hero-1280.jpg" width="1280" height="853" alt="" loading="eager" fetchpriority="high" decoding="async">
+        </picture>
+      </div>
+
+      <div class="container service-hero__grid lh-hero__grid">
+        <div class="service-hero__content hero__content">
+          <p class="lh-hero__badge">
+            <svg class="icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+            DEKRA-zertifiziert nach DIN 77200-1 und ISO 9001
+          </p>
+          <!-- The &shy; is a SOFT HYPHEN, not a copy change: it is invisible unless
+               the line actually has to break, and it breaks at the compound's own
+               seam ("Sicherheits-/dienstleistungen") instead of mid-word. The word
+               is 611px at 52px and the copy column falls under that below ~1400px,
+               so without it the H1 splits as "Sicherheitsdienstleistunge / n".
+               Deliberate over `hyphens: auto`: that needs a browser hyphenation
+               dictionary and would also hyphenate the rest of the heading. -->
+          <h1>Sicherheits&shy;dienstleistungen im Überblick</h1>
+          <p class="service-hero__lead hero__lead">Elf Leistungen, ein Anspruch: professionelle Sicherheit für Unternehmen, Objekte, Baustellen und Events in ganz Franken.</p>
+          <div class="service-hero__actions hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn hero__phone" href="{{phone.href}}">
+              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 1.5 ORIENTIERUNG ============ -->
+    <!-- Added 2026-08-10 (client brief): before eleven services, the three
+         questions that separate them.
+         WHITE since the same day's colour pass (client): it used to share the
+         hero's black with no seam between them, which is exactly why the hero had
+         no edge. Now the page alternates on every section and every change carries
+         a dissolve — hero ▪ · Orientierung ▫ · Kapitel ▪ · Keyword ▫ · Warum ▪ ·
+         FAQ ▫ · Formular ▪.
+         ⚠️ The three one-line descriptions are the only NEW German on this page.
+         Every noun in them is lifted from the tile copy underneath (Bestreifung,
+         Pforte, Verschlussrunden / Heißarbeiten, Baufortschritt, Veranstaltungen /
+         Videoüberwachung, Alarmverfolgung, Maßnahmenplan), so nothing is claimed
+         that the draft does not already claim. Flagged for Chris in the checklist. -->
+    <section class="section section--light lh-orient" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Welche Sicherheitsleistung brauchen Sie?</h2>
+          <p>Die elf Leistungen lösen drei verschiedene Aufgaben. Wählen Sie die Situation, die auf Ihr Objekt zutrifft.</p>
+        </div>
+        <ul class="lh-orient__list">
+          <li>
+            <a class="lh-orient__item" href="#leistungen-betrieb">
+              <img class="lh-orient__icon" src="/assets/icons/family-dauerhafter-schutz.png" width="400" height="263" alt="" loading="lazy" decoding="async">
+              <span class="lh-orient__num" aria-hidden="true">01</span>
+              <h3 class="lh-orient__title">Dauerhafter Schutz</h3>
+              <p class="lh-orient__text">Ständige Präsenz an Ihrem Standort: Bestreifung, Pforte, Empfang und Verschlussrunden im Dauerauftrag.</p>
+              <svg class="lh-orient__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="lh-orient__item" href="#leistungen-temporaer">
+              <img class="lh-orient__icon" src="/assets/icons/family-zeitlich-begrenzt.png" width="400" height="335" alt="" loading="lazy" decoding="async">
+              <span class="lh-orient__num" aria-hidden="true">02</span>
+              <h3 class="lh-orient__title">Zeitlich begrenzter Schutz</h3>
+              <p class="lh-orient__text">Für Bauphasen, Veranstaltungen, Heißarbeiten und Technikausfälle: befristet, kurzfristig gestellt.</p>
+              <svg class="lh-orient__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="lh-orient__item" href="#leistungen-technik">
+              <img class="lh-orient__icon" src="/assets/icons/family-technik-konzept.png" width="400" height="295" alt="" loading="lazy" decoding="async">
+              <span class="lh-orient__num" aria-hidden="true">03</span>
+              <h3 class="lh-orient__title">Technik und Konzept</h3>
+              <p class="lh-orient__text">Videoüberwachung, Alarmverfolgung und der Maßnahmenplan, der Personal und Technik verbindet.</p>
+              <svg class="lh-orient__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 2. DIE DREI KAPITEL ============ -->
+    <!-- Rebuilt 2026-08-10 (client brief). The three groups the draft already
+         writes are now real CHAPTERS — blue numeral, large heading, rule — and the
+         eleven tiles are a card system with three weight tiers instead of eleven
+         identical boxes. No service left, no description was rewritten.
+         This section carries no <h2> on purpose: the orientation layer above owns
+         the question ("Welche Sicherheitsleistung brauchen Sie?") and these are its
+         three answers, so a second h2 here would be the same heading twice.
+         data-scroll-offset is read by js/smooth-scroll.js — it lands the jump 96px
+         ABOVE the chapter so the sticky header never covers the heading it just
+         scrolled to. scroll-margin-top in the CSS does the same for native scroll
+         (no JS / reduced motion). -->
+    <section class="section lh-services">
+      <div class="container">
+
+        <div class="lh-chapter" id="leistungen-betrieb" data-scroll-offset="-96">
+          <div class="lh-chapter__head">
+            <span class="lh-chapter__num" aria-hidden="true">01</span>
+            <h3 class="lh-chapter__title">Dauerhafter Schutz für Objekte und Betriebe</h3>
+          </div>
+          <!-- ⚠️ NO SIZE TIERS. Objektschutz and Werkschutz were a "featured" tier
+               (bigger padding, title and icon) per the original brief's point 5,
+               and the client reversed it the same day: "no quiero que le hagas otro
+               tamaño a objektschutz y werkschutz, mismo tamaño todas". All eleven
+               cards are one size now. Do not re-introduce a tier without asking. -->
+          <!-- ⚠️ data-item-reveal targets the <li>, NOT .lh-card, and that is load
+               bearing. GSAP writes `translate: none; rotate: none; scale: none;`
+               INLINE on anything whose transform it animates, so a hover lift on
+               the element GSAP owns is dead whether it is written as `transform`
+               OR as `translate`. Revealing the wrapper leaves the card's own
+               transform properties free. Verified with a real pointer over CDP. -->
+          <ul class="lh-cards lh-cards--pair" data-item-reveal="li">
+            <li>
+              <a class="lh-card" href="/objektschutz/">
+                <span class="lh-card__head">
+                  <svg class="lh-card__icon icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+                  <span class="lh-card__num" aria-hidden="true">01</span>
+                </span>
+                <h4 class="lh-card__title"><span class="lh-card__mark">Objektschutz</span></h4>
+                <p class="lh-card__text">Bestreifung, Zugangskontrolle und Alarmverfolgung für Gebäude, Gelände und Einrichtungen aller Art.</p>
+                <svg class="lh-card__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="lh-card" href="/werkschutz/">
+                <span class="lh-card__head">
+                  <svg class="lh-card__icon icon" aria-hidden="true"><use href="#icon-factory"></use></svg>
+                  <span class="lh-card__num" aria-hidden="true">02</span>
+                </span>
+                <h4 class="lh-card__title"><span class="lh-card__mark">Werkschutz</span></h4>
+                <p class="lh-card__text">Die spezialisierte Form für Industrie und Produktion — Pfortendienst, Rundgänge, Anlagen-Bedienung durch technik-geschulte Kräfte.</p>
+                <svg class="lh-card__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="lh-card" href="/empfangsdienst/">
+                <span class="lh-card__head">
+                  <svg class="lh-card__icon icon" aria-hidden="true"><use href="#icon-contact"></use></svg>
+                  <span class="lh-card__num" aria-hidden="true">03</span>
+                </span>
+                <h4 class="lh-card__title"><span class="lh-card__mark">Empfangsdienst</span></h4>
+                <p class="lh-card__text">Professioneller Empfang mit Sicherheitskompetenz — Besuchermanagement, Telefonzentrale, Zutrittssteuerung.</p>
+                <svg class="lh-card__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="lh-card" href="/revier-schliessdienst/">
+                <span class="lh-card__head">
+                  <svg class="lh-card__icon icon" aria-hidden="true"><use href="#icon-key"></use></svg>
+                  <span class="lh-card__num" aria-hidden="true">04</span>
+                </span>
+                <h4 class="lh-card__title"><span class="lh-card__mark">Revier- &amp; Schließdienst</span> <span class="lh-card__qualifier">(Raum Bamberg)</span></h4>
+                <p class="lh-card__text">Kontrollfahrten und Verschlussrunden zu variierenden Zeiten, der wirtschaftliche Basisschutz im Bamberger Kernrevier.</p>
+                <svg class="lh-card__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="lh-chapter" id="leistungen-temporaer" data-scroll-offset="-96">
+          <div class="lh-chapter__head">
+            <span class="lh-chapter__num" aria-hidden="true">02</span>
+            <h3 class="lh-chapter__title">Zeitlich begrenzter und anlassbezogener Schutz</h3>
+          </div>
+          <ul class="lh-cards lh-cards--pair" data-item-reveal="li">
+            <li>
+              <a class="lh-card" href="/brandwache/">
+                <span class="lh-card__head">
+                  <svg class="lh-card__icon icon" aria-hidden="true"><use href="#icon-flame"></use></svg>
+                  <span class="lh-card__num" aria-hidden="true">05</span>
+                </span>
+                <h4 class="lh-card__title"><span class="lh-card__mark">Brandwache</span></h4>
+                <p class="lh-card__text">Brandsicherheitswachen bei BMA-Ausfall, Heißarbeiten und Veranstaltungen, kurzfristig gestellt, lückenlos dokumentiert.</p>
+                <svg class="lh-card__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="lh-card" href="/baustellenbewachung/">
+                <span class="lh-card__head">
+                  <svg class="lh-card__icon icon" aria-hidden="true"><use href="#icon-crane"></use></svg>
+                  <span class="lh-card__num" aria-hidden="true">06</span>
+                </span>
+                <h4 class="lh-card__title"><span class="lh-card__mark">Baustellenbewachung</span></h4>
+                <p class="lh-card__text">Schutz vor Diebstahl und Vandalismus, mit Konzepten, die dem Baufortschritt folgen.</p>
+                <svg class="lh-card__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="lh-card" href="/veranstaltungsschutz/">
+                <span class="lh-card__head">
+                  <svg class="lh-card__icon icon" aria-hidden="true"><use href="#icon-crowd"></use></svg>
+                  <span class="lh-card__num" aria-hidden="true">07</span>
+                </span>
+                <h4 class="lh-card__title"><span class="lh-card__mark">Veranstaltungsschutz</span></h4>
+                <p class="lh-card__text">Einlass, Ordnerdienst, Deeskalation und Türsteher, inklusive Unterstützung bei behördlichen Auflagen.</p>
+                <svg class="lh-card__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="lh-card" href="/kaufhausdetektei/">
+                <span class="lh-card__head">
+                  <svg class="lh-card__icon icon" aria-hidden="true"><use href="#icon-bag"></use></svg>
+                  <span class="lh-card__num" aria-hidden="true">08</span>
+                </span>
+                <h4 class="lh-card__title"><span class="lh-card__mark">Kaufhausdetektei</span></h4>
+                <p class="lh-card__text">Zivile Ladendetektive gegen Ladendiebstahl, gerichtsfest dokumentiert.</p>
+                <svg class="lh-card__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Three-up, but the SAME card as the other eight — only the column count
+             changes, so this chapter closes the section without a fourth 2x2 block. -->
+        <div class="lh-chapter" id="leistungen-technik" data-scroll-offset="-96">
+          <div class="lh-chapter__head">
+            <span class="lh-chapter__num" aria-hidden="true">03</span>
+            <h3 class="lh-chapter__title">Technik und Konzept</h3>
+          </div>
+          <ul class="lh-cards lh-cards--trio" data-item-reveal="li">
+            <li>
+              <a class="lh-card" href="/sicherheitstechnik/">
+                <span class="lh-card__head">
+                  <svg class="lh-card__icon icon" aria-hidden="true"><use href="#icon-camera"></use></svg>
+                  <span class="lh-card__num" aria-hidden="true">09</span>
+                </span>
+                <h4 class="lh-card__title"><span class="lh-card__mark">Sicherheitstechnik</span></h4>
+                <p class="lh-card__text">Videoüberwachung, Alarm- und Brandmeldetechnik, Zutrittskontrolle, geplant als Teil des Gesamtkonzepts.</p>
+                <svg class="lh-card__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="lh-card" href="/interventionsdienst/">
+                <span class="lh-card__head">
+                  <svg class="lh-card__icon icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+                  <span class="lh-card__num" aria-hidden="true">10</span>
+                </span>
+                <h4 class="lh-card__title"><span class="lh-card__mark">Interventionsdienst</span></h4>
+                <p class="lh-card__text">Alarmverfolgung mit qualifizierten Interventionskräften, damit aus dem Alarm eine Reaktion wird.</p>
+                <svg class="lh-card__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="lh-card" href="/sicherheitskonzept/">
+                <span class="lh-card__head">
+                  <svg class="lh-card__icon icon" aria-hidden="true"><use href="#icon-plan"></use></svg>
+                  <span class="lh-card__num" aria-hidden="true">11</span>
+                </span>
+                <h4 class="lh-card__title"><span class="lh-card__mark">Sicherheitskonzept</span></h4>
+                <p class="lh-card__text">Der Startpunkt jeder Zusammenarbeit — Begehung, Risikoanalyse, Maßnahmenplan. Kostenfrei.</p>
+                <svg class="lh-card__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 3. WACHDIENST & WACHSCHUTZ (Keyword-Sektion) ============ -->
+    <!-- Centred (client 2026-08-10: "esta sección está muy tirada ahí nomás… la
+         centraría"). It was an H2 across a wide white field with one paragraph
+         pinned to the left, and nothing holding the two together.
+         ⚠️ THE PARAGRAPH IS SPLIT IN TWO, AND NOT ONE WORD CHANGED. The break is at
+         the draft's own first full stop, so the direct answer — "the terms mean the
+         same thing: commercial guarding under § 34a GewO" — becomes the large line
+         and the rest stays as running prose. That is a GEO gain, not just layout:
+         this section exists to be extracted for "wachdienst" (880/mo) and
+         "wachschutz" (480/mo), and answer engines take the first sentence under the
+         heading. Joining the two <p> back together reproduces the draft byte for
+         byte — verified. -->
+    <section class="section section--light lh-keyword" data-nav-theme="light">
+      <div class="container lh-keyword__inner">
+        <span class="lh-keyword__rule" aria-hidden="true"></span>
+        <div class="section__intro">
+          <h2>Wachdienst, Wachschutz oder Sicherheitsdienst, was ist der Unterschied?</h2>
+        </div>
+        <p class="lh-keyword__answer">Die Begriffe meinen im Kern dasselbe: die gewerbliche Bewachung von Objekten und Werten nach § 34a GewO.</p>
+        <p class="lh-keyword__text">„Wachdienst" und „Wachschutz" stehen meist für die klassische Bewachung — Kontrollgänge, Posten, Verschlussrunden —, während „Sicherheitsdienst" als Oberbegriff auch Empfang, Detektei, Veranstaltungsschutz und Technik umfasst. Bei FRANKONIA bekommen Sie beides aus einem System: klassischen Wachschutz und die Leistungen darüber hinaus, welche Kombination sinnvoll ist, klärt die kostenfreie Begehung.</p>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 4. WARUM FRANKONIA ============ -->
+    <!-- Dark again, between the white keyword section and the white FAQ, so it
+         carries a seam on both sides. -->
+    <section class="section lh-why">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Ein Partner, ein System, elf Leistungen</h2>
+        </div>
+        <ul class="lh-why__list" data-item-reveal=".lh-why__item">
+            <li class="lh-why__item">
+              <h3 class="lh-why__title">Ein Sicherheitskonzept statt Einzelaufträge</h3>
+              <p class="lh-why__text">Alle Leistungen greifen ineinander — Personal, Technik und Kontrollen aus einem Plan, mit einem Ansprechpartner.</p>
+            </li>
+            <li class="lh-why__item">
+              <h3 class="lh-why__title">Zertifizierte Qualität</h3>
+              <p class="lh-why__text">DIN 77200-1 und ISO 9001, DEKRA-geprüft; ausschließlich IHK-qualifizierte Kräfte nach § 34a GewO, regelmäßig geschult.</p>
+            </li>
+            <li class="lh-why__item">
+              <h3 class="lh-why__title">Eingespielte Teams</h3>
+              <p class="lh-why__text">Überdurchschnittliche Bezahlung, wenig Fluktuation — Sie bekommen feste Kräfte, die Ihr Objekt kennen.</p>
+            </li>
+            <li class="lh-why__item">
+              <h3 class="lh-why__title">Angebot in 1 Werktag</h3>
+              <p class="lh-why__text">Unverbindlich, mit kostenfreier Beratung durch Sicherheitsexperten.</p>
+            </li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 5. FAQ ============ -->
+    <section class="section section--light service-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Häufige Fragen zu unseren Leistungen</h2>
+        </div>
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item">
+            <details class="faq-item">
+              <summary><h3>Was kostet ein Sicherheitsdienst von FRANKONIA?</h3></summary>
+              <p>Je nach Leistung in der Regel zwischen 26 und 32 Euro pro Stunde netto — Details und Einflussfaktoren stehen transparent auf jeder Leistungsseite. Ihr konkretes, unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
+            </details>
+            <details class="faq-item">
+              <summary><h3>Kann ich mehrere Leistungen kombinieren?</h3></summary>
+              <p>Ja, das ist sogar der Regelfall: Objektschutz plus Technik, Baustellenbewachung plus Brandwache, Empfang plus Werkschutz. Die Kombination wird im kostenfreien Sicherheitskonzept geplant, damit sich die Bausteine ergänzen statt doppeln.</p>
+            </details>
+            <details class="faq-item">
+              <summary><h3>Welche Leistung passt zu meinem Objekt?</h3></summary>
+              <p>Das beantwortet die kostenfreie Begehung: Unsere Sicherheitsexperten bewerten Risiken und empfehlen die wirtschaftlichste Lösung, auch wenn das die kleinere ist. → /sicherheitskonzept/</p>
+            </details>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 6. ABSCHLUSS-CTA + FORMULAR ============ -->
+    <!-- The page's single conversion point, and the only CTA between the chapters
+         and the footer — deliberately not repeated after each group.
+         ⚠️ NO page-scoped frame. This briefly had a `.lh-cta` inset panel at
+         #0B0D10; a near-black beside the page's real black reads as a fault rather
+         than as elevation (client 2026-08-10), and the seams already separate the
+         sections. It is the shared section on plain --color-bg now.
+         ⚠️ COPY CHANGE, the one on this page: the H2 was "Welche Leistung brauchen
+         Sie? Wir beraten Sie kostenfrei", which after the redesign was the third
+         time the page asks the same question (the orientation layer's H2 owns it
+         now). The replacement is the draft's OWN next sentence, promoted from the
+         lede below it — not new copy. Flagged for Chris in the checklist. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form" data-reveal>
+        <div class="section__intro conversion__intro">
+          <h2>Sie sind nicht sicher, welche Leistung passt?</h2>
+          <p class="conversion__intro-lede">Sie sind nicht sicher, ob Objektschutz, Technik oder eine Kombination die beste Lösung ist? Unsere Sicherheitsexperten beraten Sie kostenfrei — Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
+        </div>
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="lh" messageLabel="Ihr Objekt und Ihre Anforderung" -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

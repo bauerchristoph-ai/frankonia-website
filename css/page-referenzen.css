@@ -39,8 +39,7 @@
 .ref-hero__lead,
 .ref-results__label,
 .ref-marquee__name,
-.ref-case p,
-.ref-cta__memberships {
+.ref-case p {
   -webkit-hyphens: none;
   hyphens: none;
 }
@@ -61,10 +60,30 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
+/* Sits higher than the shared hero (client 2026-08-07: "todo el hero tiene que
+   estar un poco más arriba"). ⚠️ The top padding is only HALF the gap that was
+   showing: the supplied photo carries 70px of its own 941px as black above the
+   men's heads, which at 1440 renders as another 43px of empty space nobody can
+   see or delete without re-cropping the client's file. So 64px of padding read as
+   107px. 24px brings the real gap under the breadcrumb to ~67px.
+   The bottom stays at --space-9: the whole block moves up, it is not squeezed. */
+.ref-hero {
+  /* ZERO on top (client 2026-08-07: the photo grows "solo para arriba porque la
+     línea de base es la misma"). Growing a centred photo upward means taking the
+     space above it, and this padding was the only space there — so it goes, and the
+     height budget below shrinks by the same 24px, which keeps the photo's BOTTOM
+     edge exactly where it was. Nothing collides: the export still carries ~4% of
+     black headroom, so the men's heads land ~15px below the breadcrumb, not
+     against it. */
+  padding-block: 0 var(--space-9);
+}
+
 /* The column is as wide as the PHOTO wants to be; the two text blocks cap
    themselves below, so making the picture bigger never stretches the measure of
    the heading or the lede. */
 .ref-hero__content {
+  /* Follows the photo's own cap above — the heading and the lede set their own
+     narrower measures, so widening this never stretches the text. */
   max-width: 62rem;
   margin-inline: auto;
   text-align: center;
@@ -78,23 +97,45 @@
   margin-inline: auto;
 }
 
-/* The team cutout above the title. MUCH larger since 2026-08-05 (client): 56rem
-   against the 34rem it launched with — ~64% of the column at 1440px, which is the
-   proportion the client's reference hero has. The source is 1729px wide, so at
-   896px displayed it is still ~1.9x, i.e. retina-sharp.
-   `aspect-ratio` matches the real export (1729×1073) so the row is reserved before
+/* The team photo above the title. MUCH larger since 2026-08-05 (client) — it
+   launched at 34rem, which was nothing like the proportion of the reference hero
+   the client sent. The cropped source is 1360px wide, so at 1056px displayed it is
+   ~1.29x — still sharp, but near the ceiling: much wider and it upscales.
+   `aspect-ratio` matches the real export (1360×825) so the row is reserved before
    the image decodes — no layout shift on the LCP element. <picture> is INLINE, so
    it needs display: block or the <img> inside measures against a shrink-to-fit box
    (the trap already documented for the service hero and the flow frames). */
 .ref-hero__media {
-  width: 100%;
-  max-width: 56rem;
-  /* The bottom margin is what pushes the text down (client: "the text a bit more
-     down"). It reads larger than 64px because the mask below fades the photo out
-     before its box ends. */
-  margin: 0 auto var(--space-8);
-  aspect-ratio: 1729 / 1073;
+  /* ⚠️ THE PHOTO IS CAPPED BY THE VIEWPORT'S HEIGHT, not only by a rem width, and
+     that is the whole point of this rule (client 2026-08-07: "quiero que se vea el
+     texto cuando entro… no se puede ver solo la imagen").
+     A width cap alone cannot promise that: the title's position is header +
+     breadcrumb + THIS PHOTO'S HEIGHT, so on a short laptop the photo grew until the
+     H1 fell below the fold. Measured on the client's own screen — a ~820px viewport
+     — the H1 started at 826px, i.e. 6px too low to see.
+     24.5rem is what the rest of the first screen needs (137px of header +
+     breadcrumb, the gap below, both lines of the H1 AND the subline — measured: at
+     24rem the lede landed exactly 2px under the fold on a 820px and a 900px
+     viewport, so 26rem was the safe value while this section still had 24px of top
+     padding; that padding is now 0 and the budget drops by the same 24px, which is
+     what lets the photo grow UPWARD without moving its bottom edge or the title).
+     Whatever is left is the photo's height budget, and x 1.648 (its own ratio)
+     turns that into a width — so the box shrinks on a short screen and the text always clears the
+     fold. On a tall screen the 60rem cap takes over and nothing changes.
+     Same idea the service hero already uses to fit its portrait photo. */
+  width: min(100%, 62rem, calc((100svh - 24.5rem) * 1.648));
+  /* A small positive gap. ⚠️ It was briefly NEGATIVE, on the belief that the photo
+     faded to nothing before its box ended — it does not. That reading came from
+     measuring the BRIGHTEST pixel per row, which drops to ~21 near the bottom; but
+     a dark grey jacket at luminance 21 is still perfectly visible against a #010101
+     page, and the title landed on their chests. Measured properly (how many pixels
+     are above the background at all), content ran to 98.9% of the file's height.
+     The fix was to crop that dim stub off instead and dissolve the new edge below —
+     so this stays positive and small. */
+  margin: 0 auto var(--space-4);
+  aspect-ratio: 1360 / 825;
 }
+
 
 .ref-hero__media picture {
   display: block;
@@ -105,24 +146,22 @@
 .ref-hero__media img {
   width: 100%;
   height: 100%;
-  /* `contain`, not `cover`: this is a cutout of three people, so cropping it would
-     cut someone in half. */
+  /* `contain`, not `cover`: three people in one frame, so cropping it would cut
+     someone in half. */
   object-fit: contain;
-  /* The cutout's bottom is a straight crop through their legs, and against pure
-     black that reads as a hard horizontal line — measured: the trousers end at
-     rgb(27 26 31) and the next row is rgb(1 1 1). Fading the last quarter lets
-     them dissolve into the section instead of being sliced. Starts at 74% so no
-     face or torso is touched. */
-  -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
+  /* The export is cropped at 92% of the supplied file's height, where the jackets
+     are already down to ~luminance 33 — dim, but a hard cut all the same. This
+     dissolves the last eighth of the box so they sink into the section instead of
+     being sliced. Starts at 88%, well below anyone's face or hands. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
 }
 
 @media (min-width: 1024px) {
   .ref-hero {
     /* Comfortable, not full-screen — see above. Overrides .service-hero's own
-       min-height: calc(100svh - 8rem). */
+       min-height: calc(100svh - 8rem). The padding is the base rule's now. */
     min-height: 0;
-    padding-block: var(--space-8) var(--space-9);
   }
 
   .ref-hero__grid {
@@ -147,8 +186,8 @@
    left-anchored under a centred heading.
    `.section__intro` is `max-width: none` from the chassis, so the heading has the
    full column to centre in; `text-wrap: balance` (base.css) keeps the lines even.
-   The Case Studies heading is the one that is still LEFT-aligned — the client
-   centred the other three by name and did not include it. */
+   Since 2026-08-09 this covers all four headings on the page — Case Studies was
+   the last one left aligned. */
 .ref-intro--center {
   text-align: center;
 }
@@ -519,9 +558,14 @@
 }
 
 /* ---- 5. Case Studies ---------------------------------------------------- */
+/* ⚠️ `margin-inline: auto` is what actually centres this, not the parent's
+   text-align. The note carries its own 42rem measure, and a narrower block inside a
+   wider centred one still sits at the left edge unless its own margins are auto —
+   the same trap the shared lead form hit against the page chassis. */
 .ref-cases__note {
   max-width: 42rem;
   margin-top: var(--space-4);
+  margin-inline: auto;
   color: var(--color-text-muted);
 }
 
@@ -582,49 +626,26 @@
   }
 }
 
-/* ---- 6. Trust-Abbinder + Formular -------------------------------------- */
-/* The draft makes the closing trust statement and the form ONE section, so the
-   certification proof sits above the form card inside the shared
-   .conversion__panel--form column (css/lead-form.css) rather than becoming a
-   seventh section of its own. Nothing was added below the submit button —
-   docs/page-conventions.md §6. */
-/* The panel is a centred flex COLUMN, so this needs its own width to line up
-   with the form card above/below it instead of shrinking to its content — same
-   max-width as .conversion__form-wrap. */
-.ref-cta__certs {
-  width: 100%;
-  max-width: 38.75rem;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-4) var(--space-5);
-  margin-bottom: var(--space-7);
-  padding-bottom: var(--space-6);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.ref-cta__seals {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-}
-
-.ref-cta__seal {
-  height: 2.75rem;
-  width: auto;
-}
-
-.ref-cta__memberships {
-  max-width: 26rem;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-}
+/* ---- Zertifizierungen (foot of the Kunden section) ----------------------- */
+/* MOVED 2026-08-09 to css/page-service.css as the generic `.trust-certs*`, when
+   /sicherheitsdienst-nuernberg/ became the THIRD page to need this exact
+   composition — which is the trigger CLAUDE.md and this file's own note at
+   .service-contact__seal both wrote down ("un TERCERO tiene que promover
+   .ref-certs* a page-service.css en vez de una tercera copia").
+   Nothing changed but the class names: the values, the 7rem seal clamp and the
+   700px three-across breakpoint are the ones that were here, so this page
+   measures exactly as it did. page-service.css is loaded BEFORE this file on
+   /referenzen/, so a page-scoped override is still possible if one is ever
+   needed. */
 
 /* ---- Phone (built responsive, measured — docs/page-conventions.md §7) --- */
 @media (max-width: 767.98px) {
   .ref-hero {
-    padding-block: var(--space-6) var(--space-8);
+    /* A little top padding comes back on a phone: the photo is small there, so its
+       own 4% of headroom is only ~8px and the heads would sit almost against the
+       breadcrumb. There is no fold pressure at this size (255px to spare), so it
+       costs nothing. */
+    padding-block: var(--space-3) var(--space-8);
   }
 
   /* The stacked-CTA and trust-row rules that were here went out with the markup

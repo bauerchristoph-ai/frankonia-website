@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- FIRST CITY PAGE (2026-08-09), built from
+     NewVersionCopiesFrankonia/"2026-08-04 Webtext 13 Stadt Nuernberg.docx"
+     (Stand 24.07.2026, "Entwurf für Review (Dirk)"), verbatim, in German.
+
+     WHY NÜRNBERG FIRST — it is the strategic choice on both counts the project
+     tracks: the draft itself is titled "WICHTIGSTE STADTSEITE" and carries the
+     largest local demand of the ten (~1.240 searches/month combined, 720 of them
+     on "sicherheitsdienst nürnberg" alone), and docs/build-checklist.md Bloque 4
+     names this exact URL as the first city page. It is also the TEMPLATE the
+     other nine follow: its 10-section structure is the draft's "validierte
+     Blaupause", and four combo pages (/werkschutz-nuernberg/,
+     /objektschutz-nuernberg/, /brandwache-nuernberg/,
+     /baustellenbewachung-nuernberg/) hang off it. Bamberg is the "Heimmarkt,
+     Easy Win" but its draft is an explicit STRUKTUR-VARIANTE (Zuhause-Story
+     instead of Warum-Karten, real address instead of Einsatzgebiets-Framing), so
+     it would not have produced a reusable template.
+
+     It also closes a 404 that has been live for weeks: /sicherheitsdienst-nuernberg/
+     is linked from the footer of EVERY page and from the homepage's Coverage
+     Areas chips.
+
+     ⚠️ UWG / "kein Scheinstandort" — the draft's own hard rule for this page
+     type, and it shapes three decisions here: the hero badge says
+     "Einsatzgebiet", not "Standort"; the LocalBusiness JSON-LD carries the real
+     Bamberg NAP with `areaServed: Nürnberg` and NOT a Nürnberg address; and the
+     FAQ answers "Hat FRANKONIA einen Standort in Nürnberg?" honestly. Do not
+     "improve" any of those into a local-address claim.
+
+     REUSE MODEL FOR THE NEXT NINE CITIES: every class is `.city-*`, never
+     `.nuernberg-*`, and css/page-service.css is loaded as the CHASSIS
+     (docs/page-conventions.md §9.1) — inset, `main h2`, breadcrumb chevron,
+     `.section--light`, `.service-hero*`, `.service-link`, the whole
+     `.pixel-seam*` block and the entire Kosten section come from there. This
+     page's own stylesheet only holds what a city page adds. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title (50 chars) and description (152) are the draft's own, character
+       counts included — docs/page-conventions.md §12. -->
+  <title>Sicherheitsdienst Nürnberg | DIN 77200 – FRANKONIA</title>
+  <meta name="description" content="Sicherheitsdienst für Nürnberg: Objektschutz, Werkschutz, Brandwache &amp; Baustellenbewachung durch IHK-qualifizierte Kräfte. DEKRA-zertifiziert seit 2016.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/sicherheitsdienst-nuernberg/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/sicherheitsdienst-nuernberg/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/sicherheitsdienst-nuernberg/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sicherheitsdienst Nürnberg | DIN 77200 – FRANKONIA">
+  <meta property="og:description" content="Sicherheitsdienst für Nürnberg: Objektschutz, Werkschutz, Brandwache &amp; Baustellenbewachung durch IHK-qualifizierte Kräfte. DEKRA-zertifiziert seit 2016.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/sicherheitsdienst-nuernberg/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- NO hero image preload, because this page has no hero photograph: there is
+       not one city photo in the project (docs/build-checklist.md Bloque 4 flags
+       it in red) and the draft does not ask for one either — its hero Aufbau
+       lists badge, H1, subline, ticks, double CTA and the Google widget, nothing
+       else. The hero's visual is an inline SVG outline of Nürnberg's real
+       administrative boundary, so it costs no request at all. See
+       .city-hero__map below. -->
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "{{phone.display}}",
+      "email": "{{email}}",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 49.9019037,
+        "longitude": 10.9067377
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Nürnberg",
+        "containedInPlace": { "@type": "AdministrativeArea", "name": "Bayern" }
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "reviewCount": "{{rating.count}}",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/sicherheitsdienst-nuernberg/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Hat FRANKONIA einen Standort in Nürnberg?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "FRANKONIA koordiniert alle Einsätze zentral, Nürnberg ist eines unserer festen Einsatzgebiete mit laufenden Aufträgen. Ihre Sicherheitskräfte sind fest in Ihrem Objekt eingeteilt, mit dokumentierten Kontrollen und einem Ansprechpartner, den Sie direkt erreichen."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was kostet ein Sicherheitsdienst in Nürnberg?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Für Einsätze in Nürnberg liegen die Stundensätze in der Regel zwischen 26 und 32 Euro, abhängig von Qualifikation der Kräfte, Einsatzzeiten (Nacht-, Wochenend- und Feiertagszuschläge) und Auftragsdauer. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie schnell kann FRANKONIA in Nürnberg starten?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sehr kurzfristig: Unsere hocheffiziente interne Verwaltung macht Starts nach Absprache in wenigen Tagen möglich, in dringenden Fällen schneller. Die Einsatzleitung ist rund um die Uhr erreichbar, Ihr Angebot erhalten Sie innerhalb eines Werktages."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Welche Leistungen bietet FRANKONIA in Nürnberg an?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In Nürnberg übernehmen wir das komplette Spektrum: Objektschutz, Werkschutz, Brandwache, Baustellenbewachung, Veranstaltungsschutz, Kaufhausdetektei und Empfangsdienst sowie ergänzende Sicherheitstechnik."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Stellt FRANKONIA auch kurzfristig eine Brandwache in Nürnberg?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, etwa bei Ausfall der Brandmeldeanlage oder für Heißarbeiten. Die Einsatzleitung ist rund um die Uhr erreichbar (+49 951 964352-0), die Besetzung erfolgt nach Absprache auch am Wochenende. Details und Konditionen: Brandwache Nürnberg."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was unterscheidet FRANKONIA von anderen Anbietern in Nürnberg?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sie bekommen beides: die Zertifizierungen und Prozesse eines großen Anbieters (DIN 77200-1, ISO 9001, DEKRA-geprüft) und die Zuverlässigkeit und Innovationskraft eines modernen Start-ups, mit festen Teams und digital nachweisbarer Leistung."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Einsatzgebiete",
+          "item": "https://frankonia-sicherheit.de/einsatzgebiete/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Sicherheitsdienst Nürnberg",
+          "item": "https://frankonia-sicherheit.de/sicherheitsdienst-nuernberg/"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+
+  <!-- Shared, in cascade order (docs/page-conventions.md §9.1):
+       lead-form → testimonials → page-service.css (the CHASSIS) → this page. -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/testimonials.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-city.css">
+
+  <!-- The documented generic effect stack, nothing page-specific
+       (docs/page-conventions.md §4.1). Deliberately NOT loaded: every
+       homepage-section script, and the service-page-only ones
+       (service-flow, service-contrast, case-cards, steps-sequence, svg-draw) —
+       none of their markup exists here. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+</head>
+<body class="page-city">
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Chevron separators, not slashes — docs/page-conventions.md §3. Matches
+         the BreadcrumbList JSON-LD above. /einsatzgebiete/ is the confirmed URL
+         from guidelines §2.2 and is not built yet (Bloque 7); linking a
+         confirmed-but-unbuilt URL is this project's convention
+         (docs/page-conventions.md §8.3), not a placeholder.
+         The breadcrumb sits ABOVE the hero here, unlike /werkschutz/, where it
+         had to move inside because that hero is a full-bleed photograph that
+         reaches the top of the page. This hero has no photo, so the standard
+         shared position is correct and the hero needs no `--bleed` geometry. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/einsatzgebiete/">Einsatzgebiete</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Nürnberg</span></li>
+      </ol>
+    </nav>
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- The draft's own Hero-Aufbau: honest Einsatzgebiets-Badge → H1 → subline →
+         3 ticks → double CTA → Google widget. Nothing added, nothing dropped.
+         .hero__lead / .hero__actions / .hero__reassurance / .hero__trust are
+         load-bearing class names, not decoration: js/hero-reveal.js animates
+         exactly those four blocks in that order and this page reuses it with no
+         per-page JS (docs/page-conventions.md §4.1).
+         The badge is BACK on this page type, after being removed from
+         /werkschutz/'s hero in August — because here it is the draft's own copy
+         AND it is the UWG disclosure ("Einsatzgebiet", not "Standort"), so it
+         carries information nothing else on the first screen carries. -->
+    <section class="service-hero city-hero" data-hero-reveal>
+      <div class="container service-hero__grid city-hero__grid">
+        <div class="service-hero__content city-hero__content">
+          <p class="city-hero__badge">
+            <svg class="icon city-hero__badge-icon" aria-hidden="true"><use href="#icon-pin"></use></svg>
+            Einsatzgebiet Nürnberg, fester Ansprechpartner rund um die Uhr
+          </p>
+
+          <h1>Sicherheitsdienst Nürnberg</h1>
+
+          <p class="hero__lead service-hero__lead">
+            Objektschutz, Werkschutz, Brandwache und mehr für Nürnberg, durch IHK-qualifizierte Kräfte, DEKRA-zertifiziert nach DIN 77200-1.
+          </p>
+
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn service-hero__phone" href="{{phone.href}}">
+              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+          </div>
+
+          <!-- The draft's three lines, VERBATIM and therefore a stacked list, not
+               the homepage hero's one-line row of chips. /werkschutz/ truncated
+               its three to chips to get them into a row; /jobs/ measured the same
+               trade-off and the client chose the list instead ("mejor los tics
+               ponelos en una lista en vez de una línea"), because full sentences
+               need ~1000px in a row at this type size. Same call here — these are
+               sentences, and one of them is a promise with a number in it.
+               .city-hero__points turns the shared row into a column; the shared
+               rule is a wrapping flex row with centred items, so the column also
+               needs align-items: flex-start or the ticks centre horizontally. -->
+          <ul class="hero__reassurance service-hero__points city-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Feste Teams für laufende Aufträge, direkt vor Ort im Objekt
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Digital nachweisbar: Wachbuch, Checkpoints, Reports
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Unverbindliches Angebot innerhalb eines Werktages
+            </li>
+          </ul>
+
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- THE CITY'S REAL ADMINISTRATIVE OUTLINE, as an inline path.
+             Why this and not a photo or a map:
+               · there is no city photography in the project, and the draft does
+                 not ask for any — so a photo here would have to be either
+                 invented or a generic shot standing in for "Nürnberg", which is
+                 the kind of implied-local claim the UWG rule on this page exists
+                 to avoid;
+               · it is the honest visual for an EINSATZGEBIET: an area, not an
+                 address. A single pin would read as a branch office;
+               · as a path it costs ZERO requests and no third-party tiles,
+                 unlike the Leaflet maps on / and /kontakt/ (CARTO tiles are a
+                 third-party call and there is still no consent banner);
+               · every one of the remaining nine cities gets its own unique
+                 visual for free.
+             Generated once, in development, from the boundary data already in
+             this repo (assets/data/coverage-boundaries/nuremberg.geojson, fetched
+             from OSM/Nominatim in July) by
+             docs/design-sources/city-outline.py — 3.566 points simplified to 200,
+             2,6KB of path data. Run that script with the next city's slug; never
+             hand-edit the coordinates.
+             aria-hidden + no title: it repeats the H1's own place name and
+             carries no information of its own. -->
+        <div class="city-hero__map" aria-hidden="true">
+          <svg class="city-map" viewBox="0 0 1000 1432" fill="none" focusable="false">
+            <!-- Dashed construction guides through the centre of the shape's box,
+                 the same technical-drawing language as the risk scenes'
+                 .rz-guide. They are what stops a bare outline from reading as a
+                 random blob. -->
+            <line class="city-map__guide" x1="500" y1="0" x2="500" y2="1432"></line>
+            <line class="city-map__guide" x1="0" y1="716" x2="1000" y2="716"></line>
+            <path class="city-map__area" d="M0.0 28.8 L22.2 39.5 L17.8 94.9 L68.0 124.0 L44.8 137.5 L48.0 185.9 L76.9 194.5 L76.4 209.1 L112.4 227.1 L125.1 227.9 L126.5 215.3 L160.6 219.8 L162.5 210.0 L177.6 219.0 L153.8 245.0 L154.9 287.7 L113.2 329.6 L126.0 333.0 L141.6 385.2 L153.2 383.8 L153.1 408.4 L165.7 407.1 L164.9 464.5 L159.6 474.3 L120.4 465.7 L125.0 487.6 L116.6 520.6 L105.9 512.9 L99.4 522.4 L90.1 589.8 L49.7 629.5 L26.1 629.6 L47.1 674.7 L34.9 676.4 L40.6 700.7 L12.0 716.2 L40.1 755.8 L38.2 780.8 L62.7 787.4 L76.9 832.3 L119.2 845.1 L133.0 828.5 L150.4 838.1 L118.6 889.1 L123.4 899.9 L140.1 885.7 L122.2 908.2 L165.6 941.4 L146.7 995.7 L158.2 1004.5 L107.0 1014.1 L87.4 1051.5 L41.3 1045.0 L39.4 1076.6 L24.5 1091.7 L16.7 1083.3 L22.2 1122.9 L39.0 1119.9 L58.0 1149.3 L82.2 1144.7 L122.8 1172.2 L133.4 1158.0 L184.7 1171.4 L198.6 1155.4 L245.7 1211.0 L251.4 1235.0 L245.2 1258.3 L220.8 1268.2 L232.7 1264.5 L238.1 1287.2 L220.2 1289.1 L222.1 1297.8 L252.4 1286.6 L267.9 1338.4 L284.0 1334.4 L288.1 1360.8 L336.7 1376.4 L359.7 1431.9 L375.1 1423.6 L366.7 1408.3 L382.6 1408.5 L369.3 1389.3 L382.6 1377.9 L399.4 1388.5 L400.4 1377.5 L455.7 1356.6 L442.1 1319.5 L459.0 1305.0 L466.5 1315.1 L475.8 1299.9 L481.2 1311.1 L505.2 1306.8 L524.9 1284.9 L537.6 1292.2 L549.0 1260.0 L593.8 1254.0 L590.8 1222.0 L545.3 1210.5 L533.3 1175.9 L529.6 1188.2 L495.0 1153.5 L523.8 1164.4 L526.5 1151.8 L544.1 1152.7 L567.0 1179.0 L596.6 1177.5 L524.4 1114.3 L497.3 1119.9 L541.2 1054.0 L543.2 1014.3 L622.3 1032.6 L642.5 1018.7 L698.2 1050.4 L783.0 1028.0 L816.2 1045.2 L892.7 1032.0 L829.5 874.9 L917.9 923.1 L835.3 867.1 L858.7 848.8 L929.5 866.7 L975.5 835.8 L972.6 823.1 L1000.0 819.8 L991.9 809.9 L942.6 812.6 L911.4 793.2 L910.5 770.1 L849.8 766.7 L843.0 805.0 L857.2 840.6 L836.3 863.1 L640.0 741.8 L655.9 699.5 L623.7 686.7 L621.6 673.7 L644.9 669.8 L660.6 642.5 L709.8 664.7 L740.7 643.8 L730.2 598.1 L668.5 615.4 L658.5 601.2 L690.1 595.0 L683.6 578.1 L709.8 560.0 L767.2 558.2 L816.3 539.8 L821.2 523.3 L888.6 501.2 L866.7 487.2 L850.4 443.2 L718.8 462.8 L712.9 396.8 L689.1 384.8 L686.1 364.6 L622.0 356.7 L612.6 348.3 L619.5 333.0 L597.2 340.0 L598.4 236.5 L581.1 230.1 L584.8 190.7 L557.7 175.9 L530.5 195.5 L530.7 219.6 L509.4 210.6 L476.7 225.9 L482.9 272.0 L387.8 252.6 L391.5 223.4 L355.6 241.8 L308.1 243.1 L307.5 203.8 L332.4 202.6 L347.7 183.9 L315.8 171.8 L339.8 169.6 L357.8 134.0 L381.6 150.4 L399.0 143.9 L333.8 111.5 L340.8 102.9 L355.2 111.5 L347.0 99.9 L307.1 87.4 L276.6 58.7 L255.1 74.9 L224.5 71.1 L195.9 58.9 L190.2 34.8 L172.6 39.3 L151.1 19.5 L129.5 19.6 L121.1 34.1 L79.1 18.5 L77.7 7.9 L12.7 0.0 L1.5 2.0 L0.0 28.8 Z"></path>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pixel dissolve at every colour change (docs/page-conventions.md §4.4).
+         Tiles are the colour of the section ABOVE, so the outgoing section is
+         what pixelates away: no modifier = black tiles on a dark → light
+         boundary, .pixel-seam--white on a light → dark one. The band is built
+         inside the section BELOW by js/pixel-transition.js, and every element
+         after a seam reserves its height as real padding, so tiles never sit
+         over content — with or without JS. -->
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 2. WARUM FRANKONIA IN NÜRNBERG ============ -->
+    <!-- The draft's four Demo-validated cards. Ruled blocks on hairlines, not
+         filled cards — the "ruled, not carded" language of the whole site
+         (docs/page-conventions.md §8.2). One line icon each, from the shared
+         sprite. -->
+    <section class="section section--light city-why" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Warum Nürnberger Unternehmen auf FRANKONIA setzen</h2>
+          <p>Nürnberg ist das wirtschaftliche Zentrum Frankens und eines unserer wichtigsten Einsatzgebiete. Sie bekommen einen Mittelständler, bei dem der Inhaber selbst für die Qualität geradesteht: modern, digital und zertifiziert.</p>
+        </div>
+
+        <ul class="city-why__grid" data-item-reveal=".city-why__item">
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-transparency"></use></svg>
+            <h3 class="city-why__title">Modern und digital nachweisbar</h3>
+            <p>Digitales Wachbuch, Checkpoint-Kontrollen und Reports zeigen Ihnen jederzeit, was auf Ihrem Nürnberger Objekt passiert.</p>
+          </li>
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-contact"></use></svg>
+            <h3 class="city-why__title">Feste Ansprechpartner statt Hotline</h3>
+            <p>Bei FRANKONIA erreichen Sie Ihren Einsatz- oder Bereichsleiter direkt, rund um die Uhr. Keine Warteschleifen, keine wechselnden Zuständigkeiten, keine anonyme Zentrale.</p>
+          </li>
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-building"></use></svg>
+            <h3 class="city-why__title">Fränkischer Mittelstand statt Großkonzern</h3>
+            <p>Sie sprechen direkt mit dem Inhaber, nicht mit einer Vertriebsabteilung. Über 300 Kunden in Franken vertrauen darauf, darunter Unternehmen, Kommunen und öffentliche Einrichtungen aus der Metropolregion.</p>
+          </li>
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+            <h3 class="city-why__title">Zertifizierte Qualität</h3>
+            <p>DIN 77200-1 und ISO 9001, geprüft durch die DEKRA, dazu ausschließlich IHK-qualifizierte Sicherheitskräfte nach § 34a GewO.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 3. LEISTUNGEN IN NÜRNBERG ============ -->
+    <!-- The draft's 8 services, its copy, its order, its link targets — but in TWO
+         GROUPS, because the eight are not eight equal things and presenting them
+         as one flat list of peers was hiding a real distinction (client
+         2026-08-09, after a UX read of the section):
+
+           1–4  Werkschutz · Objektschutz · Baustellenbewachung · Brandwache
+                → their own /…-nuernberg/ COMBO page. These carry the local
+                  keyword volume (brandwache nürnberg alone is 20/mo against the
+                  others' 10) and a click keeps the visitor on a city-specific
+                  path. They are the cards.
+           5–8  Empfangsdienst · Veranstaltungsschutz · Kaufhausdetektei ·
+                Sicherheitstechnik
+                → the GENERIC service page, which will not contain the word
+                  Nürnberg. As equal peers, their "… in Nürnberg" label was
+                  promising a local page that does not exist — the same kind of
+                  implied-local claim the UWG rule at the top of this file exists
+                  to avoid. They stay as rows.
+
+         ⚠️ THE SPLIT REORDERS NOTHING. The draft already lists them in exactly
+         this order, so this only makes visible a grouping Chris had already
+         written. And every one of the eight KEEPS ITS DESCRIPTION (client:
+         "no me gusta que los chips pierdan su descripción") — the second group is
+         rows, not chips, precisely so the copy survives. ~760 characters of
+         concrete, crawlable text stays on the page.
+
+         The group label ("Ebenfalls verfügbar") is the only new text here — three
+         words of UI furniture, the same category as a section eyebrow. All eight
+         service labels and all eight descriptions are the draft's, verbatim.
+
+         Of the eight, only /brandwache-nuernberg/ exists so far (built in
+         parallel, 2026-08-09); 1–4 are Bloque 6 and 5–8 are Bloque 3. Linking
+         confirmed-but-unbuilt URLs is this project's convention
+         (docs/page-conventions.md §8.3), and the page's own primary conversion
+         never does it — every CTA points at #anfrage, the live form below.
+         ⚠️ Worth knowing when the other seven land: this grouping is NOT about
+         which pages exist, it is about which ones will be CITY-specific. Group 2
+         stays group 2 after /empfangsdienst/ is built, because that page still
+         will not be about Nürnberg. Do not promote a row to a card just because
+         its target went live. -->
+    <section class="section city-services">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Unsere Sicherheitsdienstleistungen in Nürnberg</h2>
+          <p>Vom dauerhaften Objektschutz über den Werkschutz bis zur kurzfristigen Brandwache: Alle FRANKONIA Leistungen stehen Ihnen auch im Großraum Nürnberg zur Verfügung.</p>
+        </div>
+
+        <!-- GROUP 1 — the four with their own Nürnberg page. Whole card is the
+             link, so the target is the card and not a word inside it (§3). -->
+        <ul class="city-services__featured" data-item-reveal=".city-services__card">
+          <li>
+            <a class="city-services__card" href="/werkschutz-nuernberg/">
+              <span class="city-services__card-name">Werkschutz in Nürnberg</span>
+              <span class="city-services__card-text">Pfortendienste, Rundgänge und Anlagen-Bedienung für Industrieanlagen und Betriebsstätten im Großraum.</span>
+              <svg class="icon city-services__card-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-services__card" href="/objektschutz-nuernberg/">
+              <span class="city-services__card-name">Objektschutz in Nürnberg</span>
+              <span class="city-services__card-text">Bestreifung, Zugangskontrolle und Alarmverfolgung für Bürogebäude, Logistikhallen und öffentliche Einrichtungen.</span>
+              <svg class="icon city-services__card-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-services__card" href="/baustellenbewachung-nuernberg/">
+              <span class="city-services__card-name">Baustellenbewachung in Nürnberg</span>
+              <span class="city-services__card-text">Schutz vor Diebstahl und Vandalismus auf Baustellen, mit Konzepten, die sich dem Baufortschritt anpassen.</span>
+              <svg class="icon city-services__card-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-services__card" href="/brandwache-nuernberg/">
+              <span class="city-services__card-name">Brandwache in Nürnberg</span>
+              <span class="city-services__card-text">Kurzfristige Brandsicherheitswachen bei BMA-Ausfall, Heißarbeiten und Veranstaltungen, auch nachts und am Wochenende.</span>
+              <svg class="icon city-services__card-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+        </ul>
+
+        <!-- GROUP 2 — the four whose page is the generic service page. Same rows
+             this section shipped with, descriptions intact; only their weight and
+             their honesty about the destination changed. -->
+        <div class="city-services__more">
+          <!-- ⚠️ "Ebenfalls verfügbar" and NOT "Ebenfalls im Großraum Nürnberg
+               verfügbar", which is what this label said for one draft of this
+               change. The rows below carry the draft's own labels VERBATIM, and
+               those already end in "in Nürnberg" — so a label naming the city too
+               made the pair read "Ebenfalls im Großraum Nürnberg verfügbar ·
+               Empfangsdienst in Nürnberg", i.e. the city three times in two lines.
+               The tempting fix was to strip " in Nürnberg" from these four labels
+               (they would scan far faster at 14–20 characters instead of 26–32),
+               and it is NOT done here on purpose: those labels are the draft's own
+               "einheitliche Benennung" and dropping the suffix also drops four
+               instances of the page's main keyword. It is the open question for
+               Chris — see docs/build-checklist.md. Until he answers, the label
+               gives way and the approved copy stays untouched. -->
+          <p class="city-services__more-label">Ebenfalls verfügbar</p>
+
+          <ul class="city-services__list" data-item-reveal="li">
+            <li>
+              <a class="city-services__row" href="/empfangsdienst/">
+                <span class="city-services__name">Empfangsdienst in Nürnberg</span>
+                <span class="city-services__text">Professioneller Empfang mit Sicherheitskompetenz für Unternehmenszentralen.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/veranstaltungsschutz/">
+                <span class="city-services__name">Veranstaltungsschutz in Nürnberg</span>
+                <span class="city-services__text">Geordnete Abläufe, Einlasskontrolle und Deeskalation für Events, Messen und Veranstaltungen.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/kaufhausdetektei/">
+                <span class="city-services__name">Kaufhausdetektei in Nürnberg</span>
+                <span class="city-services__text">Zivile Detektive gegen Ladendiebstahl, von der Königstraße bis in die Stadtteilzentren.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/sicherheitstechnik/">
+                <span class="city-services__name">Sicherheitstechnik in Nürnberg</span>
+                <span class="city-services__text">Videoüberwachung, Alarm- und Zutrittstechnik, geplant als Teil des Gesamtkonzepts.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 4. LOKALE EINSATZFELDER (KERN-LOKALCONTENT) ============ -->
+    <!-- The section that makes this page a CITY page rather than a service page
+         with a place name pasted in: five fields with real Nürnberg references
+         (Bayernhafen, Feucht, the Fürth border, the Messe, Königstraße). Every
+         word is the draft's.
+         ⚠️ The kicker "VOR ORT IM EINSATZ" is the draft's own copy, not UI
+         furniture — which is why this page has an eyebrow at all while
+         /werkschutz/ had all ten of its removed (docs/page-conventions.md §8.2:
+         those were furniture this build had added, none came from a draft).
+         Numbered, because five long blocks need an ordinal to be scannable; the
+         numerals are aria-hidden decoration on top of a real <ol>.
+         ⚠️ "Bayernhafen Nürnberg" stays. The 2026-08-05 removal of Bayernhafen
+         sitewide was about the BAMBERG client whose Freigabe never arrived (a
+         named reference and its logo); this is the public Nürnberg port as a
+         geographic description of where security work happens, in the client's
+         own copy of 04.08. Different claim entirely — but worth one confirmation
+         with Chris, given the name's history on this project. -->
+    <section class="section section--light city-fields" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <p class="section-eyebrow">Vor Ort im Einsatz</p>
+          <h2>Wo Sicherheitsdienste in Nürnberg gebraucht werden</h2>
+          <p>Nürnberg ist mit über einer halben Million Einwohnern und der gesamten Metropolregion ein Markt mit viel Industrie, viel Logistik, viel Publikumsverkehr, und entsprechend viel Angriffsfläche. Diese Einsatzfelder begegnen uns im Großraum Nürnberg am häufigsten.</p>
+        </div>
+
+        <!-- REBUILT 2026-08-09 (client: "cómo se puede mostrar de la mejor forma
+             posible" — an open UX read of the section, same as the Leistungen
+             pass earlier the same day). Copy is untouched, word for word; two
+             things changed.
+
+             1) EACH FIELD NOW CLOSES WITH A LINK TO THE SPECIFIC SERVICE IT
+                DESCRIBES. This is the real finding: the five fields are not loose
+                local colour, they each name — almost verbatim — one exact
+                FRANKONIA service, and the section had zero links, right below
+                the Leistungen section that exists specifically to route
+                visitors to those same services. Someone reading "Ladendiebstahl
+                in der Innenstadt" had no way to reach Kaufhausdetektei without
+                scrolling back up to guess which of the eight rows it was.
+                The five pairings, and why each is safe rather than invented:
+                  01 Hafen/Logistik    → Objektschutz-Nürnberg. The paragraph's own
+                     words ("Bestreifung, Zufahrtskontrolle") are section 3's own
+                     description of that service, nearly verbatim.
+                  02 Feucht/Fürth      → Revier- & Schließdienst. "Kontrollgänge zu
+                     variierenden Zeiten" is that service's defining trait
+                     (Nachtkontrollen/Verschlussrunden, same wording the Bamberg
+                     draft uses for it). This service is NOT in section 3's list of
+                     eight — the only place on this page it gets a link.
+                  03 Messe             → Veranstaltungsschutz. The paragraph names it
+                     outright ("Veranstaltungen").
+                  04 Innenstadt        → Kaufhausdetektei. Named outright
+                     ("Kaufhausdetektive").
+                  05 Baustellen        → Baustellenbewachung-Nürnberg. Named outright
+                     ("Baustellenbewachung").
+                ⚠️ Unlike the Leistungen split earlier today, this pairing is NOT
+                something the draft states — the docx's "→ URL" annotations only
+                exist in section 3. It is inferred from the copy, and 3 of 5 name
+                their service outright, so the risk is low; still worth Chris's
+                eyes. It does NOT repeat the homepage Sektion 12 mistake of
+                linking some mentioned terms while their siblings 404 (that
+                section left ALL of them as plain text for exactly that reason) —
+                on THIS page every one of section 3's eight destinations is
+                already linked despite being unbuilt (docs/page-conventions.md
+                §8.3), so linking the same destinations again here is the page's
+                own established practice, not a deviation from it.
+             2) ITEM 5 SPANS BOTH COLUMNS from 900px instead of sitting alone in a
+                half-empty row. MEASURED, not assumed: with 5 items in a 2-up
+                grid, item 5 left a bare gap from x=752 to x=1337 at 1440px (and
+                482–833 at 900px) — a real, visible hole, not a hypothetical one.
+                Its own content gets a max-width so the extra room doesn't just
+                stretch the line length; it reads as a deliberate closing item
+                rather than a leftover. -->
+        <ol class="city-fields__list" data-item-reveal="li">
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">01</span>
+            <h3 class="city-fields__title">Industrie und Logistik am Nürnberger Hafen</h3>
+            <p>Der Bayernhafen Nürnberg und die umliegenden Gewerbegebiete gehören zu den größten Logistikstandorten Süddeutschlands: hohe Warenwerte, durchgehender Lieferverkehr, weitläufige Areale. Hier zählen dokumentierte Bestreifung, konsequente Zufahrtskontrolle und Kräfte, die Sicherheitstechnik sachgemäß bedienen — Abläufe, die wir aus der täglichen Praxis an Logistikstandorten kennen.</p>
+            <a class="service-link city-fields__link" href="/objektschutz-nuernberg/">
+              Objektschutz in Nürnberg
+              <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">02</span>
+            <h3 class="city-fields__title">Gewerbegebiete Richtung Feucht und an der Grenze zu Fürth</h3>
+            <p>In den Gewerbegürteln im Nürnberger Süden Richtung Feucht sowie an der Stadtgrenze zu Fürth sitzen produzierende Betriebe, Speditionen und Großhändler dicht an dicht. Nach Feierabend sind viele Areale menschenleer, ein klassisches Ziel für Diebstahl und Vandalismus. Kontrollgänge zu variierenden Zeiten und sichtbare Präsenz schrecken ab, bevor etwas passiert.</p>
+            <a class="service-link city-fields__link" href="/revier-schliessdienst/">
+              Revier- &amp; Schließdienst
+              <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">03</span>
+            <h3 class="city-fields__title">Messe Nürnberg und Veranstaltungen</h3>
+            <p>Rund um das Messezentrum Nürnberg entsteht bei jeder Leitmesse ein temporärer Sicherheitsbedarf: Standbewachung über Nacht, Zugangskontrollen, Personalverstärkung. Dazu kommen Veranstaltungen im Stadtgebiet, vom Firmenevent bis zur Großveranstaltung wie dem Christkindlesmarkt, bei denen behördliche Auflagen und geschulte, deeskalierende Kräfte den Unterschied machen.</p>
+            <a class="service-link city-fields__link" href="/veranstaltungsschutz/">
+              Veranstaltungsschutz in Nürnberg
+              <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">04</span>
+            <h3 class="city-fields__title">Einzelhandel in der Innenstadt und Königstraße</h3>
+            <p>Zwischen Königstraße, Karolinenstraße und Hauptmarkt kämpft der Nürnberger Einzelhandel mit Ladendiebstahl und organisierten Banden, gerade in der Weihnachtszeit. Zivile Kaufhausdetektive und uniformierte Doormen verbessern die Inventur messbar und geben Ihrem Verkaufspersonal Sicherheit.</p>
+            <a class="service-link city-fields__link" href="/kaufhausdetektei/">
+              Kaufhausdetektei in Nürnberg
+              <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li class="city-fields__item city-fields__item--wide">
+            <span class="city-fields__num" aria-hidden="true">05</span>
+            <h3 class="city-fields__title">Baustellen im Großraum Nürnberg</h3>
+            <p>Ob Wohnungsbau, Gewerbeprojekte oder Infrastruktur: Im wachsenden Großraum Nürnberg stehen auf Baustellen Maschinen, Kraftstoff und Material im Wert von Hunderttausenden Euro, oft wochenlang ungesichert. Baustellenbewachung mit flexiblen Konzepten verhindert Verluste und Bauverzögerungen.</p>
+            <a class="service-link city-fields__link" href="/baustellenbewachung-nuernberg/">
+              Baustellenbewachung in Nürnberg
+              <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 5. BRANDWACHE NÜRNBERG ============ -->
+    <!-- A whole section for one keyword, because the draft makes it a
+         Pflichtabschnitt: "brandwache nürnberg" is the second-strongest term on
+         this page (20/mo) and it is the one urgent, same-day service in the
+         range. GEO shape, straight from the draft: H2 with city + keyword, the
+         answer in the first two sentences, then the three qualifying facts, then
+         the link to the combo page. -->
+    <section class="section city-callout">
+      <div class="container city-callout__layout">
+        <div class="section__intro city-callout__intro">
+          <!-- ⚠️ NOT from the draft — UI furniture, the same category as the
+               section eyebrows /werkschutz/ and /jobs/ carry (and the same
+               category as the ones the client had removed from those pages, so it
+               is reversible copy, not a claim). It repeats the H2's own words as a
+               label. Requested in the brief.
+               The shared `.section-eyebrow` component already ships the brief's
+               "optional tiny blue square before it" — a 6px square in
+               `--color-accent-strong`, which on a dark section is the CTA blue. So
+               this needed no new styling at all beyond centring it.
+               ⚠️ `.section-eyebrow` is `display: flex`, so the parent's
+               `text-align: center` does NOT move it — it needs its own
+               `justify-content: center`. That is the trap page-conventions.md §8.2
+               flags, and the reason the rule for it exists in page-city.css. -->
+          <p class="section-eyebrow city-callout__eyebrow">Brandwache Nürnberg</p>
+
+          <h2>Brandwache in Nürnberg, kurzfristig gestellt, wenn es zählt</h2>
+          <p class="city-callout__lede">Fällt in einem Nürnberger Betrieb die Brandmeldeanlage aus oder stehen Heißarbeiten an, fordern Behörde oder Versicherer eine Brandwache, oft von jetzt auf gleich. FRANKONIA stellt qualifizierte Brandsicherheitswachen im Großraum Nürnberg nach Absprache auch sehr kurzfristig: Die Einsatzleitung ist rund um die Uhr erreichbar.</p>
+        </div>
+
+        <!-- THREE STACKED MODULES (brief 2026-08-10), replacing the 3-up row this
+             section had for a few hours. Each is a horizontal panel: circular
+             blue-tinted icon container on the left, the draft's own line on the
+             right. Copy verbatim, unchanged.
+             Kept tight (16px apart) so the three read as ONE set of promises
+             rather than three separate blocks — the brief's own point.
+             ⚠️ ICONS: #icon-clock and #icon-badge already existed and map exactly
+             (availability; qualification/medal). The third had no glyph in the
+             sprite, so `#icon-document-check` was ADDED to it — a page with a
+             folded corner and a check. #icon-shield-check was the nearest existing
+             one and a shield reads as protection, not paperwork. New symbols go in
+             the sprite, never inlined at the call site (CLAUDE.md).
+             They are `aria-hidden`: each one repeats the sentence beside it, so a
+             screen reader loses nothing. -->
+        <ul class="city-callout__points" data-item-reveal="li">
+          <li>
+            <span class="city-callout__icon" aria-hidden="true">
+              <svg class="icon"><use href="#icon-clock"></use></svg>
+            </span>
+            Brandwachen bei BMA-Ausfall, Heißarbeiten und Veranstaltungen
+          </li>
+          <li>
+            <span class="city-callout__icon" aria-hidden="true">
+              <svg class="icon"><use href="#icon-badge"></use></svg>
+            </span>
+            Kräfte mit § 34a GewO und Brandschutzhelfer-Qualifikation
+          </li>
+          <li>
+            <span class="city-callout__icon" aria-hidden="true">
+              <svg class="icon"><use href="#icon-document-check"></use></svg>
+            </span>
+            Dokumentation für Behörde und Versicherung inklusive
+          </li>
+        </ul>
+
+        <!-- ⚠️ THE PHONE IS NEW HERE, and it is the strategic half of this
+             redesign rather than decoration. This is the ONE section on the page
+             about an emergency: a BMA-Ausfall is a today problem, and the
+             section's own approved copy ends on "Die Einsatzleitung ist rund um
+             die Uhr erreichbar" — a promise with no way to act on it. The page's
+             primary action is the form, which is a one-working-day process and
+             the WRONG action for someone whose fire alarm is down right now.
+             It is not invented: the page's own Brandwache FAQ answer already
+             publishes this number for exactly this case, and
+             /brandwache-nuernberg/ — the page this section links to, built in
+             parallel — makes "Jetzt anrufen" its hero's PRIMARY action. Same
+             wording reused so the two read as one path.
+             ⚠️ But SECONDARY here, not primary: on that page Brandwache is the
+             whole purpose; on this one it is one section of eleven, and
+             docs/page-conventions.md §8.2 keeps this page to two blue primaries
+             (the hero and the price box). `.btn--secondary` is the shared,
+             token-driven outline treatment — no new component, and it already
+             renders correctly on a dark section.
+             If Chris would rather this section stay link-only, deleting this one
+             <a> is the whole revert.
+             ⚠️ PROMOTED TO `.btn--primary` on 2026-08-10, per the brief ("make the
+             phone CTA the primary action"). That REVERSES my own call from a few
+             hours earlier, when I made it `.btn--secondary` to keep this page at
+             the two blue primaries docs/page-conventions.md §8.2 prescribes (the
+             hero and the price box). The client's instruction stands, and the
+             argument for it is real: this is the page's one emergency, and
+             /brandwache-nuernberg/ makes the same call in its own hero. So the
+             page now has THREE blue primaries — never two on one screen, which is
+             what §8.2's "un solo primario por pantalla" actually governs. -->
+        <div class="city-callout__actions" data-reveal>
+          <a class="btn btn--primary city-callout__call" href="{{phone.href}}">
+            <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+            Jetzt anrufen: {{phone.display}}
+          </a>
+
+          <a class="service-link city-callout__link" href="/brandwache-nuernberg/">
+            Alles zur Brandwache in Nürnberg
+            <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 6. KOSTEN IN NÜRNBERG ============ -->
+    <!-- Entirely the chassis: .service-price* was built generically on
+         /werkschutz/ precisely because docs/build-checklist.md counts this block
+         on 27 pages, and the shared Preis-Box is a partial. Not one line of new
+         CSS — the only city-specific rule is .city-rates for the four per-service
+         rows below, which a service page does not have.
+         GEO shape again: question H2, the number in the first sentence. -->
+    <section class="section section--light service-price" data-nav-theme="light">
+      <div class="container service-price__layout">
+        <div class="section__intro service-price__intro">
+          <h2>Was kostet ein Sicherheitsdienst in Nürnberg?</h2>
+          <p class="service-price__answer" data-reveal data-reveal-delay>Im Großraum Nürnberg bewegen sich seriöse Stundensätze für Sicherheitsdienstleistungen zwischen 26 und 32 Euro, je nach Qualifikation der Kräfte, Einsatzzeit und Auftragsumfang. Nacht-, Wochenend- und Feiertagseinsätze liegen durch tarifliche Zuschläge am oberen Ende der Spanne. Deutlich günstigere Angebote gehen fast immer zulasten von Qualifikation, Schichtbesetzung oder gar rechtlich konformer Bezahlung.</p>
+        </div>
+
+        <!-- The shared Preis-Box. `range` comes from content/values.json, so the
+             annual rate change stays ONE edit for all 27 pages that publish it. -->
+        <!-- include: price-box range="{{price.range}}" note="netto, Richtwerte für Einsätze im Großraum Nürnberg" -->
+
+        <!-- The draft's own "Typische Preisspannen in Nürnberg" line, split into
+             its four services so it can be read rather than parsed. Same ruled
+             rows as a service page's .service-price__factors — but a city page's
+             list is service → range, not one factor per line, so it does NOT reuse
+             that class: `.service-price__factors li` draws a blue `+` from a
+             ::before, which in front of "Objektschutz 26-32 €/Std." reads as a
+             list of extras rather than a rate table. `.city-rates` therefore
+             restates the two things it does need from that block: the ruled rows,
+             and `grid-column: 1` inside the shared Kosten grid. -->
+        <ul class="city-rates" data-item-reveal="li">
+          <li><span class="city-rates__service">Objektschutz</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+          <li><span class="city-rates__service">Werkschutz <span class="city-rates__note">(technik-geschulte Kräfte)</span></span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+          <li><span class="city-rates__service">Baustellenbewachung</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+          <li><span class="city-rates__service">Veranstaltungsschutz</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+        </ul>
+
+        <p class="service-price__hint">
+          <svg class="icon service-price__hint-icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <span>Richtwerte netto, final abhängig von Einsatzzeit, Dauer und Konzept. Ihr konkretes Angebot erhalten Sie unverbindlich innerhalb eines Werktages.</span>
+        </p>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 7. VERTRAUEN ============ -->
+    <!-- The draft: H2 with the city, the Nachweise paragraph, two testimonials,
+         the certification badges and the Google widget.
+         ⚠️ The draft says the two testimonials should be "gekürzt wie Demo".
+         They are published here IN FULL, verbatim, exactly as they already run on
+         the homepage and /referenzen/. Shortening a named real customer's quote
+         means editing a real person's words, and there is no shortened version in
+         any client document to copy — so the safe direction is the approved text,
+         complete. If Chris wants them trimmed, the trim has to come from him.
+         The two are the draft's own pick: Crispens/MORELO and Keller/CleanTech —
+         NOT Schleier/Sozialstiftung, which belongs to the Bamberg page.
+         ⚠️ `.testimonial--dark` is REQUIRED here and was a real bug before it
+         existed. css/testimonials.css holds "on white" colours, because both
+         earlier consumers put the card on a light surface; this section is dark
+         (the page's colours alternate), so without the modifier the customer's
+         NAME rendered black on a black card — invisible, on the one part of a
+         testimonial that has to be verifiable — and the card's 4%-grey fill
+         composited to near-black, so it had no edge either. Caught in a
+         screenshot, not by reading the rules. The variant lives in the shared
+         stylesheet, which is what that file's own header asks for. -->
+    <section class="section city-trust">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Zertifizierte Qualität, der auch Nürnberger Auftraggeber vertrauen können</h2>
+          <p>Vertrauen entsteht durch Nachweise. Deshalb lassen wir uns prüfen: nach DIN 77200-1 für stationäre Sicherheitsdienste und seit 2016 nach ISO 9001, beides durch die DEKRA. Dazu kommen unsere Google-Bewertungen und Referenzen aus ganz Franken, von MORELO Reisemobile über die Bayerische Bereitschaftspolizei bis zur Sozialstiftung Bamberg.</p>
+        </div>
+
+        <div class="city-trust__quotes" data-item-reveal=".testimonial" data-item-reveal-strong>
+          <blockquote class="testimonial testimonial--dark">
+            <header class="testimonial__header">
+              <div class="testimonial__person">
+                <img class="testimonial__avatar" src="/assets/images/testimonial-robert-crispens.jpg" width="240" height="240" alt="Robert Crispens" loading="lazy">
+                <div>
+                  <p class="testimonial__name">Robert Crispens</p>
+                  <p class="testimonial__role">Geschäftsführer, MORELO Reisemobile</p>
+                </div>
+              </div>
+              <img class="testimonial__google" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+            </header>
+            <p class="testimonial__quote">„Ich bin froh, mit FRANKONIA einen zuverlässigen Partner aus der Region gefunden zu haben: In puncto Sicherheit werden alle Leistungen persönlich auf unsere individuellen Bedürfnisse zugeschnitten. Es ist sehr beruhigend zu wissen, dass wir stets auf Qualität sowie professionelles Auftreten der Sicherheitskräfte vertrauen können.“</p>
+            <span class="testimonial__stars" role="img" aria-label="5 von 5 Sternen">★★★★★</span>
+          </blockquote>
+          <blockquote class="testimonial testimonial--dark">
+            <header class="testimonial__header">
+              <div class="testimonial__person">
+                <img class="testimonial__avatar" src="/assets/images/testimonial-peter-keller.jpg" width="240" height="240" alt="Peter Keller" loading="lazy">
+                <div>
+                  <p class="testimonial__name">Peter Keller</p>
+                  <p class="testimonial__role">Geschäftsführer, CleanTech Innovation Park</p>
+                </div>
+              </div>
+              <img class="testimonial__google" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+            </header>
+            <p class="testimonial__quote">„Im Cleantech Innovation Park entsteht ein lebendiger Treffpunkt für den Austausch von Wirtschaft und Forschung. Da sich unsere Infrastruktur mit der Zeit enorm weiterentwickeln wird, werden sich auch die Anforderungen an die Sicherheit des Geländes sowie der Gebäude verändern und spezifischer gestalten. Mit FRANKONIA haben wir einen zuverlässigen Partner an unserer Seite.“</p>
+            <span class="testimonial__stars" role="img" aria-label="5 von 5 Sternen">★★★★★</span>
+          </blockquote>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 7b. ZERTIFIZIERUNGEN ============ -->
+    <!-- ⚠️ ITS OWN WHITE SECTION since 2026-08-10 (client: "una sección blanca
+         literal — la transición de píxeles a sección blanca y después a la negra
+         de abajo, como pasa en toda la web"). It used to be the closing block of
+         the Vertrauen section above, on that section's black.
+         A first attempt made it a white CARD inside the dark section; that was
+         wrong, and not because of how it looked — it was a colour change with no
+         pixel seam, which is the one thing this page's rhythm is built on
+         (docs/page-conventions.md §4.4). As a real section it gets a seam on each
+         side like every other boundary here, and it needs no colour rules at all:
+         `.section--light` already re-declares every token `.trust-certs` consumes,
+         and page-service.css already gives `.service-link` its 4,88:1 blue there.
+         No heading of its own on purpose — the H2 two blocks up ("Zertifizierte
+         Qualität, der auch Nürnberger Auftraggeber vertrauen können") is this
+         content's heading, and repeating it would be saying it twice.
+
+         PROMOTED to page-service.css as `.trust-certs*` on 2026-08-09 — this page
+         was the THIRD consumer of that composition, which is exactly the trigger
+         CLAUDE.md had written down. /referenzen/ uses these class names too; the
+         values are unchanged, so both pages measure identically. -->
+    <section class="section section--light city-certs" data-nav-theme="light">
+      <div class="container">
+        <div class="trust-certs" data-reveal>
+          <div class="trust-certs__seals">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+          </div>
+
+          <ul class="trust-certs__list">
+            <li>
+              <strong>DIN 77200-1</strong>
+              für stationäre Sicherheitsdienste
+            </li>
+            <li>
+              <strong>DIN EN ISO 9001</strong>
+              seit 2016, geprüft durch die DEKRA
+            </li>
+            <li>
+              <strong>§ 34a GewO</strong>
+              ausschließlich IHK-qualifizierte Kräfte
+            </li>
+          </ul>
+
+          <p class="trust-certs__memberships">Referenzen aus ganz Franken, nachprüfbar: <a class="service-link" href="/referenzen/">Kundenliste und Ergebnisse ansehen<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></p>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 8. ERREICHBARKEIT & DIGITALE NACHWEISE ============ -->
+    <!-- ⚠️ THE SEAM ABOVE IS NEW (2026-08-10). Sections 7 and 8 used to be a dark
+         PAIR with nothing between them — tiles the colour of the section above
+         would have been black on black, i.e. nothing (docs/page-conventions.md
+         §9.2). Splitting the certifications out into their own white section put a
+         light block between them, so this boundary is a real colour change now and
+         carries `--white` tiles. If the certifications ever move back up, this seam
+         has to go with them. -->
+    <section class="section city-proof">
+      <div class="container">
+        <div class="section__intro">
+          <h2>So bleibt Ihr Sicherheitsdienst in Nürnberg jederzeit greifbar</h2>
+        </div>
+
+        <!-- THE /leistungen/ CHAPTER-STRIP TREATMENT (client 2026-08-10: "hacémela
+             con el mismo diseño de la segunda foto"). That page's `.lh-orient` block
+             is the reference: one horizontal rule across the three, vertical
+             hairlines between the columns, a drawing above a blue numeral, and the
+             statement set at heading size. Every value is taken from
+             `css/page-leistungen.css` rather than re-derived, so the two read as one
+             pattern — including its two documented traps (`align-content: start`
+             with `height: 100%`, and the drawing sized by HEIGHT so the three
+             columns' numerals land on the same line).
+
+             THREE DELIBERATE DIFFERENCES, all because the CONTENT differs:
+             · NO ARROW, and therefore no hover. /leistungen/'s three are LINKS to
+               chapters further down that page; these three are statements with
+               nowhere to go. An arrow here would promise navigation that does not
+               exist — the same reason Schwabach's pill has no arrow.
+             · NO description row. Those items are numeral → title → sentence; the
+               draft gives these three ONE line each ("3 Kacheln"), so the line takes
+               the title's size and there is no second text level. Splitting them
+               into a title plus a description would mean writing copy.
+             · SPRITE ICONS, not the isometric scenes. Those three drawings are
+               specific to that page's three service categories and cannot describe
+               "24/7", "Wachbuch" and "Report". A near-miss illustration is worse
+               than a precise icon — the same call /leistungen/ itself made when it
+               shipped with no icons rather than approximate ones.
+
+             · NO 01–03 NUMERALS. They were added with this treatment and removed
+               the same day (client: "saca los números de esa sección, dejá solo los
+               iconos"), which also settles the doubt noted when they went in: these
+               three are PARALLEL facts, not steps, so an ordinal was implying an
+               order the content does not have. The icon is now the only marker
+               above each statement. -->
+        <ul class="city-proof__grid" data-item-reveal="li">
+          <li class="city-proof__item">
+            <svg class="icon city-proof__icon" aria-hidden="true"><use href="#icon-clock"></use></svg>
+            <p class="city-proof__label">24/7 direkt erreichbare Einsatzleitung an 365 Tagen</p>
+          </li>
+          <li class="city-proof__item">
+            <svg class="icon city-proof__icon" aria-hidden="true"><use href="#icon-route"></use></svg>
+            <p class="city-proof__label">Digitales Wachbuch mit Checkpoint-Nachweis je Runde</p>
+          </li>
+          <li class="city-proof__item">
+            <svg class="icon city-proof__icon" aria-hidden="true"><use href="#icon-transparency"></use></svg>
+            <p class="city-proof__label">Regelmäßiger Report für Ihre Geschäftsführung</p>
+          </li>
+        </ul>
+
+        <!-- The draft's Abbinder, verbatim. It is written to be UWG-safe: it
+             promises fixed personnel IN the object and a reachable Einsatzleitung,
+             and deliberately makes NO claim about response times or travel
+             distances (Prüfkatalog F10). Do not add one. -->
+        <p class="city-proof__outro">Für laufende Aufträge in Nürnberg sind Ihre Sicherheitskräfte fest vor Ort im Objekt eingeteilt, koordiniert von einer Einsatzleitung, die Sie direkt erreichen, und dokumentiert in Systemen, die Sie jederzeit einsehen können.</p>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 9. FAQ ============ -->
+    <!-- Six place-specific questions, the draft's own, verbatim. The visible copy
+         and the FAQPage JSON-LD above must stay byte-identical — the one thing on
+         this page type that is easy to break with a small edit and impossible to
+         see (CLAUDE.md's own rule after the price migration).
+         Shared accordion in the homepage's card look (.faq__list--cards,
+         components.css). -->
+    <section class="section section--light city-faq service-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Sicherheitsdienst Nürnberg: die häufigsten Fragen</h2>
+        </div>
+
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
+          <details class="faq-item">
+            <summary><h3>Hat FRANKONIA einen Standort in Nürnberg?</h3></summary>
+            <p class="faq-item__answer">FRANKONIA koordiniert alle Einsätze zentral, Nürnberg ist eines unserer festen Einsatzgebiete mit laufenden Aufträgen. Ihre Sicherheitskräfte sind fest in Ihrem Objekt eingeteilt, mit dokumentierten Kontrollen und einem Ansprechpartner, den Sie direkt erreichen.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Was kostet ein Sicherheitsdienst in Nürnberg?</h3></summary>
+            <p class="faq-item__answer">Für Einsätze in Nürnberg liegen die Stundensätze in der Regel zwischen 26 und 32 Euro, abhängig von Qualifikation der Kräfte, Einsatzzeiten (Nacht-, Wochenend- und Feiertagszuschläge) und Auftragsdauer. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Wie schnell kann FRANKONIA in Nürnberg starten?</h3></summary>
+            <p class="faq-item__answer">Sehr kurzfristig: Unsere hocheffiziente interne Verwaltung macht Starts nach Absprache in wenigen Tagen möglich, in dringenden Fällen schneller. Die Einsatzleitung ist rund um die Uhr erreichbar, Ihr Angebot erhalten Sie innerhalb eines Werktages.</p>
+          </details>
+          <details class="faq-item">
+            <!-- ⚠️ The draft annotates all eight services in this answer with a
+                 "→ /url/", i.e. as internal links, and they are deliberately NOT
+                 rendered as links here. Two measured reasons:
+                 (1) eight inline anchors in one sentence measured 18px tall each
+                     against this project's 44px minimum, and the §7 fix (padding
+                     an inline-block) applied eight times inside one paragraph
+                     wrecks the line rhythm — WCAG 2.5.8's own exception for
+                     targets constrained by the line-height of a sentence exists
+                     for exactly this case;
+                 (2) they add nothing: every one of the eight is already a full,
+                     prominent row link two sections up ("Werkschutz in Nürnberg"
+                     etc.), so this would be the same eight targets a second time
+                     on the same page.
+                 The draft's linking intent is therefore satisfied by section 3,
+                 not lost. The one internal link this FAQ does keep is the
+                 Brandwache one below, which points at a page section 3 links with
+                 different anchor text and is the draft's own closing pointer.
+                 A FAQPage answer is plain text, so each JSON-LD copy above is its
+                 visible answer WITH ANY TAGS STRIPPED and nothing else changed —
+                 markup is the only permitted difference between the two, never a
+                 word. Verified after every edit by comparing the six rendered
+                 answers to the six JSON-LD strings. -->
+            <summary><h3>Welche Leistungen bietet FRANKONIA in Nürnberg an?</h3></summary>
+            <p class="faq-item__answer">In Nürnberg übernehmen wir das komplette Spektrum: Objektschutz, Werkschutz, Brandwache, Baustellenbewachung, Veranstaltungsschutz, Kaufhausdetektei und Empfangsdienst sowie ergänzende Sicherheitstechnik.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Stellt FRANKONIA auch kurzfristig eine Brandwache in Nürnberg?</h3></summary>
+            <!-- The two inline links here are single targets in a sentence, so
+                 they get the §7 treatment: `padding-block` on an inline-block
+                 (.city-faq .faq-item__answer a), which grows the hit area to 44px
+                 without moving the text. That is the same fix /jobs/ applied to
+                 its own FAQ link. -->
+            <p class="faq-item__answer">Ja, etwa bei Ausfall der Brandmeldeanlage oder für Heißarbeiten. Die Einsatzleitung ist rund um die Uhr erreichbar (<a href="{{phone.href}}">{{phone.display}}</a>), die Besetzung erfolgt nach Absprache auch am Wochenende. Details und Konditionen: <a href="/brandwache-nuernberg/">Brandwache Nürnberg</a>.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Was unterscheidet FRANKONIA von anderen Anbietern in Nürnberg?</h3></summary>
+            <p class="faq-item__answer">Sie bekommen beides: die Zertifizierungen und Prozesse eines großen Anbieters (DIN 77200-1, ISO 9001, DEKRA-geprüft) und die Zuverlässigkeit und Innovationskraft eines modernen Start-ups, mit festen Teams und digital nachweisbarer Leistung.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 10. ABSCHLUSS-CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The seam above this one is the FAQ's (white tiles, light → dark): the
+         form now follows the FAQ directly, since Umgebung moved below it. The
+         shared lead-form partial with this page's own field
+         prefix (`nb-`) — unique per page, or two forms in one document would
+         break every <label for>. The draft's separate Formulartitel ("Ihre
+         Anfrage für Nürnberg") is not rendered as a second heading: the section
+         H2 already says it, the same call /werkschutz/ made.
+         The form still submits nowhere sitewide (action="#", native validation
+         only) — docs/build-checklist.md Paso 4. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Jetzt Sicherheitsdienst für Nürnberg anfragen</h2>
+          <p class="conversion__intro-lede">Beschreiben Sie kurz Ihr Objekt, Ihre Baustelle oder Ihr Event in Nürnberg. Sie erhalten Ihr unverbindliches Angebot innerhalb eines Werktages, inklusive kostenfreier Beratung durch unsere Sicherheitsexperten.</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="nb" messageLabel="Ihr Objekt, Ihre Baustelle oder Ihr Event in Nürnberg" -->
+
+          <p class="conversion__form-alt">Lieber direkt sprechen? <a href="{{phone.href}}">{{phone.display}}</a></p>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 11. UMGEBUNG ============ -->
+    <!-- ⚠️ MOVED BELOW THE FORM and turned into a LIGHT section, 2026-08-10
+         (client: "esa sección hacela bien, centrada, y diferenciala de la de
+         abajo... no entiendo"). They were right that it read as broken, and the
+         cause was measurable: this section and the form were BOTH the same black,
+         touching at 0px with nothing between them, while one was left-aligned with
+         a 28px H2 and the other centred with a 60px one. Nothing told the eye that
+         one had ended.
+         Why there was no seam: both were dark, and two adjacent same-colour
+         sections get none (black tiles on black are nothing — §9.2). The rule is
+         right; the arrangement was not.
+
+         THE FIX IS THE ORDER, and it is the service template's own:
+         /werkschutz/ puts its equivalent block ("Verwandte Seiten") AFTER the
+         form, as a light section, with a seam on each side —
+         FAQ □ → Formular ■ → Verwandte □ → footer. This page now does the same.
+         That solves three things at once: a real separation (colour change plus a
+         seam), the form no longer has a row of EXITS immediately above it, and the
+         page closes the way the template does.
+
+         ⚠️ IT DEPARTS FROM THE DRAFT'S ORDER, deliberately and with the client's
+         explicit go-ahead. Webtext 13's section 10 is titled "Umgebung +
+         Abschluss-CTA" — it treats the two as ONE closing block, which is exactly
+         why they were built adjacent. But functionally they pull opposite ways: a
+         set of links away from the page, directly above the page's primary
+         conversion. The service drafts resolve the same tension the other way
+         (their 9-Punkte-Struktur ends "… FAQ → CTA → verwandte Seiten"), so there
+         is internal precedent for this order. No copy changed.
+
+         Small H2 per the draft, then the neighbours as tiles. Fürth and Erlangen
+         get their own pages (confirmed URLs, Bloque 5); Schwabach is a MENTION
+         with no link, exactly as the draft specifies — the same treatment the
+         homepage gives Kronach, Kulmbach, Lichtenfels and Hof, and the reason
+         /sicherheitsdienst-hof/ stopped being a linked 404 in August. Do not
+         "complete" the row by inventing a Schwabach page. -->
+    <section class="section section--light city-nearby" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro city-nearby__intro">
+          <h2 class="city-nearby__title">Sicherheitsdienst im Großraum Nürnberg und Umgebung</h2>
+          <p>Unser Einsatzgebiet endet nicht an der Nürnberger Stadtgrenze: Auch in Fürth, Erlangen und Schwabach übernehmen wir Objektschutz, Baustellenbewachung und mehr.</p>
+        </div>
+
+        <ul class="city-nearby__list" data-item-reveal="li">
+          <li>
+            <a class="city-nearby__tile" href="/sicherheitsdienst-fuerth/">
+              <svg class="icon city-nearby__pin" aria-hidden="true"><use href="#icon-pin"></use></svg>
+              <span class="city-nearby__name">Fürth</span>
+              <svg class="icon city-nearby__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-nearby__tile" href="/sicherheitsdienst-erlangen/">
+              <svg class="icon city-nearby__pin" aria-hidden="true"><use href="#icon-pin"></use></svg>
+              <span class="city-nearby__name">Erlangen</span>
+              <svg class="icon city-nearby__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <span class="city-nearby__tile city-nearby__tile--mention">
+              <svg class="icon city-nearby__pin" aria-hidden="true"><use href="#icon-pin"></use></svg>
+              <span class="city-nearby__name">Schwabach</span>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Pixel-dissolve seam before the footer — mandatory on every page
+       (docs/page-conventions.md §4.4). Empty div in the markup;
+       js/pixel-transition.js builds the tile band inside it at runtime and the
+       footer reserves its height (`.pixel-seam + .site-footer`,
+       page-service.css). `--white` tiles now: the section above the seam is
+       Umgebung, which became LIGHT when it moved below the form (see its own
+       note). It carried the default black tiles while the dark form sat above
+       it. -->
+  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

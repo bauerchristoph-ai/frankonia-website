@@ -36,6 +36,16 @@
   filter: blur(0);
 }
 
+/* Added by js/main.js once the reveal's own transition has ended — see the long
+   note there. `filter: none` renders identically to `blur(0)`, but it is the only
+   one of the two that lets the element OFF its compositing layer; a spent blur left
+   in place is what had 116 elements on the homepage permanently layerised, the
+   worst of them the box wrapping the live map. Nothing here is visible; do not fold
+   it back into .is-visible, which would kill the blur before it has played. */
+.u-reveal.is-settled {
+  filter: none;
+}
+
 /* Opt-in delay (client 2026-07-29): a reveal that should ease in AFTER a sibling
    that animates on its own (e.g. a section lede after its title's word cascade).
    Add data-reveal-delay next to data-reveal. --reveal-delay overrides the timing. */

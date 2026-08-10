@@ -121,8 +121,28 @@
     gsap.set(chars, {
       transformStyle: "preserve-3d",
       backfaceVisibility: "hidden",
-      willChange: "transform, opacity",
     });
+
+    // ⚠️ `will-change` IS SCOPED TO THE REVEAL WINDOW, and that is a performance
+    // fix, not tidiness (2026-08-08, client: the homepage "se tranca un poco" while
+    // scrolling past the map).
+    //
+    // This script splits EVERY `main h2` into one span per character, and it used to
+    // set will-change on all of them once, at load, forever. Measured on the German
+    // homepage: 437 spans permanently hinted, 425–479 compositing layers on the page,
+    // and a 3s trace at the FAQ spending 2678ms in **Layerize** — the compositor
+    // re-deciding the layer tree, with paint and layout a rounding error beside it.
+    // A/B at 4x CPU, parked past the map: 622ms blocking / 67ms median frame with the
+    // hint, 23ms / 50ms without it. It is the single most expensive thing on the page.
+    //
+    // will-change is a HINT WITH A COST — it asks the compositor to keep a layer
+    // ready, so hinting hundreds of elements that are nowhere near animating is worse
+    // than not hinting at all. It now goes on when the heading enters its own scroll
+    // range and comes off when it leaves, so at most the one or two headings actually
+    // revealing carry it. Nothing about the animation itself changed.
+    const hint = (on) =>
+      gsap.set(chars, { willChange: on ? "transform, opacity" : "auto" });
+
     const toVars = {
       opacity: 1,
       rotateX: 0,
@@ -141,6 +161,10 @@
     // the scrubbed reveal tied 1:1 to scroll.
     if (heading.closest("[data-system-story]")) {
       toVars.duration = 0.7;
+      // Plays once, so the hint has a real end: on when it starts, off when the
+      // tween is done. It can never run again.
+      toVars.onStart = () => hint(true);
+      toVars.onComplete = () => hint(false);
       toVars.scrollTrigger = {
         trigger: heading,
         start: "top 80%",
@@ -152,6 +176,10 @@
         start: "top 88%",
         end: "+=46%",
         scrub: 0.6,
+        // Scrubbed, so it can be re-entered from either direction — onToggle is the
+        // one callback that fires on every enter AND every leave, whichever way the
+        // visitor is scrolling, so the hint tracks the active range exactly.
+        onToggle: (self) => hint(self.isActive),
       };
     }
 

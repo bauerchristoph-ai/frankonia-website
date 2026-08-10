@@ -37,7 +37,65 @@
             <a class="site-nav__submenu-all" href="/leistungen/">Alle Leistungen →</a>
           </div>
         </li>
+
+        <!-- EINSATZGEBIETE — added 2026-08-10 (client: an "areas / coverage
+             areas" item that opens with the same down-caret as Leistungen and
+             lists the cities on hover). Second submenu on the site, and the
+             first one ever: everything it needs was already generic —
+             `.site-nav__item--has-submenu` is `position: relative` and the panel
+             is absolutely positioned inside it, so the CSS needed no change at
+             all. `js/main.js`'s initMobileSubmenu DID need one: it was a
+             singular querySelector and would have left this panel permanently
+             expanded on mobile (see the ⚠️ notes there).
+
+             LABEL: "Einsatzgebiete", not "Coverage Areas". The client named it
+             in English but this nav is entirely German (Leistungen · Referenzen
+             · Karriere · Kontakt), and Einsatzgebiete is the word the footer's
+             own "Alle Einsatzgebiete" link, the city pages' breadcrumb and the
+             /einsatzgebiete/ URL already use. header-en.html gets "Coverage
+             Areas" for the same reason in reverse.
+
+             POSITION: directly after Leistungen. What FRANKONIA does, then
+             where it does it — and it keeps the two caret items adjacent
+             instead of splitting them around Referenzen.
+
+             The ten cities are the footer's own list and order (Bamberg first,
+             then by region), which is the canonical one. ⚠️ Hof is NOT here:
+             /sicherheitsdienst-hof/ is not in the client's page set and was
+             removed sitewide on 2026-08-05 — Forchheim replaced it. Adding or
+             removing a city is now FOUR edits, not three: here, header-en.html,
+             footer-de.html and footer.html. -->
+        <li class="site-nav__item site-nav__item--has-submenu">
+          <a class="site-nav__link" href="/einsatzgebiete/">
+            Einsatzgebiete
+            <svg class="icon site-nav__caret" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+          </a>
+          <div class="site-nav__submenu">
+            <ul class="site-nav__submenu-list">
+              <li><a href="/sicherheitsdienst-bamberg/">Bamberg</a></li>
+              <li><a href="/sicherheitsdienst-nuernberg/">Nürnberg</a></li>
+              <li><a href="/sicherheitsdienst-wuerzburg/">Würzburg</a></li>
+              <li><a href="/sicherheitsdienst-erlangen/">Erlangen</a></li>
+              <li><a href="/sicherheitsdienst-fuerth/">Fürth</a></li>
+              <li><a href="/sicherheitsdienst-schweinfurt/">Schweinfurt</a></li>
+              <li><a href="/sicherheitsdienst-bayreuth/">Bayreuth</a></li>
+              <li><a href="/sicherheitsdienst-coburg/">Coburg</a></li>
+              <li><a href="/sicherheitsdienst-ansbach/">Ansbach</a></li>
+              <li><a href="/sicherheitsdienst-forchheim/">Forchheim</a></li>
+            </ul>
+            <a class="site-nav__submenu-all" href="/einsatzgebiete/">Alle Einsatzgebiete →</a>
+          </div>
+        </li>
+
         <li><a class="site-nav__link" href="/referenzen/">Referenzen</a></li>
+        <!-- Added 2026-08-10, when /ueber-uns/ was built. Placed straight after
+             Referenzen on purpose: those two are the nav's credibility pair —
+             proof from the clients, then proof about the company — and splitting
+             them with Karriere would break that reading. It is the SIXTH item, so
+             re-measure the row against the 1400px desktop breakpoint before adding
+             a seventh: that breakpoint has already moved 1024 → 1200 → 1320 → 1400
+             for exactly this reason. -->
+        <li><a class="site-nav__link" href="/ueber-uns/">Über uns</a></li>
         <!-- "Unser System" was REMOVED from the nav 2026-08-03 (client). It was
              the one item here that was not a page: it pointed at the homepage's
              #our-system section, and every other item is a real destination.

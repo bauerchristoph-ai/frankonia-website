@@ -122,3 +122,36 @@
     border-radius: var(--radius-sm);
   }
 }
+
+/* ---- .testimonial--dark: the same card on a DARK section -----------------
+   Added 2026-08-09 for /sicherheitsdienst-nuernberg/, whose Vertrauen section is
+   dark because the page's colours alternate and that section falls on a black
+   one. This is the variant this file's header asked for ("if this card is ever
+   needed on a dark section, add a variant HERE rather than re-declaring colours
+   at the call site") — so the fix is one modifier, not a copy of the card.
+
+   ⚠️ IT WAS A REAL BUG, caught in a screenshot and not by reading the rules:
+   without this, `.testimonial__name` is `--color-logo-black` and the customer's
+   NAME rendered black on a black card — invisible, on the one element of a
+   testimonial that has to be verifiable. The card fill was invisible too
+   (`rgb(59 73 86 / 0.04)` composites to about rgb(2 3 3) over #010101), so the
+   card had no edge either. Only the quote survived, because it inherits the
+   section's own text colour.
+
+   Only the three genuinely "on white" values are flipped. Deliberately NOT
+   touched: the gold stars (#F5B400 is high-contrast on black and is a graphic),
+   the Google mark, the avatar's fallback fill, and every space/radius value. */
+.testimonial--dark {
+  background-color: rgb(255 255 255 / 0.05);
+}
+
+/* Measured on #010101: 20,87:1. */
+.testimonial--dark .testimonial__name {
+  color: var(--color-white);
+}
+
+/* 0.7 white measured 10,49:1 on #010101 — the mirror of the 0.75 grey the light
+   variant uses, one step quieter than the name above it. */
+.testimonial--dark .testimonial__role {
+  color: rgb(255 255 255 / 0.7);
+}

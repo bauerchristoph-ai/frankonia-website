@@ -47,111 +47,187 @@
   hyphens: none;
 }
 
-/* ---- 1. Hero — foto de fondo a sangre ------------------------------------ */
-/* REBUILT 2026-08-03 (client: "el background va a ser la foto esa", HeroKarriere
-   .png). It was the service template's two-column hero (copy | portrait photo);
-   now the photo is the hero's background and the copy column is the whole hero —
-   the homepage's model, on a page that keeps the interior chrome (solid header +
-   breadcrumb above it).
+/* ---- 1. Hero — dos columnas: copy izquierda, foto derecha ---------------- */
+/* REBUILT 2026-08-07 (client: "poné de imagen de hero la imagen KarriereHero.png y
+   ponela a la derecha del hero, el contenido a la izquierda").
+   This is the third shape this hero has had, and each one was a client call: the
+   service template's copy | portrait split → a full-bleed background street photo
+   (2026-08-03) → this. Everything from the background version is gone rather than
+   left as dead rules: .jobs-hero__bg, both readability washes, the object-position
+   crop. Git has them.
+   The washes are not needed at all now, which is the real win of a side-by-side
+   layout: the copy sits on the section's own black, so nothing is ever fighting a
+   photograph for contrast.
 
-   Only the layout changes. Everything measured for this hero in the service
-   template still applies and is NOT overridden here: the H1's clamp (52px at
-   1440, the homepage hero's own), the lede's 32rem measure, the 18px blue ticks,
-   the 2.75rem DEKRA seals, and `min-height: calc(100svh - 8rem)` so the hero
-   fills the first screen below the 8rem of header + breadcrumb.
+   NOT overridden here, still coming from the chassis (page-service.css): the H1's
+   52px clamp, the lede's 32rem measure, the 18px blue ticks, the 2.75rem DEKRA
+   seals, and `min-height: calc(100svh - 8rem)` + `align-content: center` so the
+   hero fills the first screen below the 8rem of header + breadcrumb. */
 
-   The photo does NOT bleed up behind the header, deliberately: on an interior
-   page the breadcrumb sits between them (docs/page-conventions.md §8.2), and
-   pushing the image under a transparent header would put the nav over a bright
-   street scene. The header stays over the page's own black.
+/* Two columns from 1024px, copy first. Below that the base grid is one column and
+   the DOM order (copy, then photo) is the stacking order — the H1 has to open the
+   page.
+   THE PHOTO GETS THE ROOM (client 2026-08-07: "la imagen tiene que ser bastante más
+   grande, está muy chica"). Three things add up to it, because no single one was
+   enough on its own:
+     · even columns instead of 1.1fr / 0.9fr,
+     · the gap down from --space-9 (96px) to --space-8 (64px),
+     · and the photo BLEEDING through the container's right inset to the viewport
+       edge (see .jobs-hero__media below) — worth ~120px of width at 1440 on its own.
+   Measured at 1440: 512×341 → 688×459, i.e. +34 % in each direction.
+   ⚠️ What does NOT work here, and it is worth knowing why: making the FRAME taller
+   to fill the hero's 772px. `object-fit: cover` would then crop horizontally, and the
+   four people span ~67 % of this frame's width — at hero height in a ~570px column the
+   visible slice is the middle 43 %, which cuts the outer two people in half. Width is
+   the only lever that makes them bigger without losing anyone.
+   ⚠️ THE THREE-LINE H1 IS SOLVED, and the solution was neither of the two levers this
+   comment used to name (shrink the photo, or shrink the inset). Client 2026-08-10:
+   "no sean tres líneas el título, podríamos mover un poco la imagen a la derecha así
+   entra" — and that is exactly right, because the photo was NOT flush against
+   anything: measured, there were 103px (1440) to 107px (1512) of empty page between
+   its right edge and the viewport. So the photo MOVES right instead of shrinking; see
+   --jobs-hero-shift on .jobs-hero__media below. Copy gains the shift, the photo keeps
+   its width, and the H1 is two lines at every two-column width.
+   The distinction is the whole point and it cost a wrong answer once already (the
+   2026-08-10 "agrandala un poco más" pass): with a right-pinned element, changing the
+   column split RESIZES it; only a margin MOVES it. */
+/* ⚠️ THE TWO-COLUMN HERO STARTS AT 1280px, NOT 1024px, AND THE H1 IS WHY.
+   The heading is a fixed 48–52px and its longest line ("Dein Job bei FRANKONIA:")
+   needs ~595px (measured off a real render at 1512px, not estimated). Measured, two columns at the narrow end: the copy column lands at
+   464px at 1024 and 526px at 1152 whichever way the split is tuned — and the H1 breaks
+   to FOUR lines in both. It is not a split that can be fixed; the container simply
+   does not have 620px + a photo at those widths.
+   So 1024–1279px keeps the stacked layout it already uses below 1024: the copy gets
+   the full column (H1 back to two lines) and the photo goes full width — bigger there
+   than any two-column version of it, not smaller. The hero is taller in that band
+   (~1215px at 1024), which is exactly what it already does at 768 (1204px), so the
+   page is consistent with itself rather than special-cased.
+   Measured line counts, AFTER the 2026-08-10 shift (before it: 1280 → 3 · 1440 → 3 ·
+   1512 → 3): 1024 → 2 (stacked) · 1280 → 2 · 1400 → 2 · 1440 → 2 · 1600 → 2. */
+@media (min-width: 1280px) {
+  .jobs-hero__grid {
+    /* 1280–1439px: the COPY gets the bigger share, because this is still the band
+       where the H1 is the constraint (591px of copy → three lines; a photo-first
+       split here costs a fourth). The photo is correspondingly smaller, which is the
+       right trade — a four-line heading costs more than 80px of photograph.
+       1.15 → 1.2 with a 26px shift (2026-08-10): at 1280 the copy column was 590.6px
+       against the H1's 593.4 — three pixels short, so the heading broke to three lines
+       at the very bottom of this band and to two from ~1286px up. 26px is what this
+       split gives back, and it leaves 70px between the photo and the viewport. */
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    --jobs-hero-shift: 26px;
+    gap: var(--space-8);
+    align-items: center;
+  }
+}
 
-   No badge rule here either: the draft's hero chip was dropped for the same
-   reason the client dropped /werkschutz/'s (see the comment in pages/jobs.html),
-   and a dead rule is not kept waiting for it. */
-.jobs-hero {
-  /* .service-hero is `display: grid` from 1024px up; the background is absolutely
-     positioned, so it never becomes a grid item either way. */
-  position: relative;
-  /* If the photo fails to load, or before it arrives, the hero is still black
-     with white text on it — the copy never depends on the image. */
+/* From 1440px the photo takes the bigger share. It has been asked for bigger three
+   times (2026-08-07 "bastante más grande", "agrandala un pelín", 2026-08-10 "un poco
+   más"), and with the right edge now fixed on the page's content line the ONLY place
+   the extra width can come from is the left: the gap (48 → 32px) and the copy's share
+   (0.95 → 0.9). At 1512 that is 656 → 696px wide, left edge 749 → 709.
+
+   ⚠️ THE EXACT NUMBER THAT GOVERNS THIS SECTION, measured by rendering the string at
+   the H1's real font: **"Dein Job bei FRANKONIA:" is 593,4px at 52px.** So the copy
+   column must be ≥594px for a two-line heading, and for three passes the hero's whole
+   composition at 1440–1550px was that one number fighting the photo's width: 0.9/1.1
+   left the column at 540,7px (1440) and 569,5px (1512), i.e. 53 and 24px short, and
+   every fr step toward the photo cost the heading a line.
+   ⚠️ 0.9/1.1 → 1fr/1fr, WITH --jobs-hero-shift: 60px. Read the two together or the
+   split alone looks like the photo was shrunk — it was not. Even columns put the copy
+   at 600,8px (1440) / 632,8 (1512), clearing 594 at both, and the 60px negative margin
+   below hands the photo back exactly what the split took from it, so its rendered width
+   is unchanged (660,9 → 660,8px at 1440) and only its POSITION moves. That is the
+   client's own proposal and it works because the photo had 103px of unused page to its
+   right, not because anything was traded away.
+   ⚠️ 1440 is this project's reference width and it is also the worst case in this band:
+   the copy column grows with the viewport, so if 1440 clears 594 every width above it
+   does too. Check 1440 first when moving any of these numbers. */
+@media (min-width: 1440px) {
+  .jobs-hero__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    --jobs-hero-shift: 60px;
+    gap: var(--space-6);
+  }
+}
+
+/* A safety cap only: inside the two-column grid the track is what constrains the
+   copy (~640px at 1440), well under this. It matters on the single-column layout
+   below 1024px, where it keeps the hero from reading as a full-width banner. */
+.jobs-hero .service-hero__content {
+  max-width: 44rem;
+}
+
+/* NO frame: no radius, no border, no placeholder tint. The shot's own background is
+   black, so on this black section the photo blends instead of sitting in a visible
+   box — a radius would round nothing but black, and a light placeholder would flash
+   before the image arrives. The aspect-ratio is the whole job of this element: it
+   reserves the space so the hero does not reflow when the photo loads (no CLS),
+   together with width/height on the <img>. 3/2 matches the source (1536×1024)
+   exactly, so `cover` never actually crops anything. */
+/* 13 / 10, matching the exported crop exactly (1300×1000) so `cover` never crops
+   anything. It was 3 / 2, the source's own frame — the export is now cropped to the
+   GROUP instead (client 2026-08-07: "la imagen tiene que ser bastante más grande").
+   That is the other half of making them bigger, and the cheaper half: the four people
+   only spanned 78 % of the original frame's width and 92 % of its height, the rest
+   being empty backdrop, so trimming ~50px of air around them makes them render ~37 %
+   larger inside the same box — no layout change, no upscaling, and nothing lost
+   because what was cropped was black. The subject box was measured (a 98th-percentile
+   luminance scan per column/row), not eyeballed: x 168–1361, y 72–1018 of 1536×1024.
+   Taller frame also means the photo now fills more of the hero's 772px height. */
+/* --jobs-hero-shift MOVES the photo right; it does not resize it (client 2026-08-10:
+   "podríamos mover un poco la imagen a la derecha así entra"). The grid gives the copy
+   column the shift and this negative margin hands the photo the identical amount back,
+   so the photo's WIDTH is unchanged and only its left and right edges travel right by
+   the shift. Measured at 1440: copy 540,7 → 600,8px (clears the H1's 593,4), photo
+   660,9 → 660,8px, right edge 1336,8 → 1396,8 with 43px still between it and the
+   viewport.
+   ⚠️ It is NOT a bleed and must not become one. The 2026-08-07 bleed pulled the photo
+   all the way to the viewport edge and the client asked for it off ("despegarla del
+   borde derecho"); this keeps a real right margin, it just spends part of the container
+   inset. The budget is the inset itself — measured slack from the photo's old right
+   edge to the viewport is 94px (1280) to 112px (1600), so 26/60px leaves 70/52px. Any
+   larger value has to be re-measured against that, not guessed.
+   ⚠️ The `0px` fallback is load-bearing: below 1280px the grid is one column, the
+   variable is never declared, and the margin must be nothing at all. */
+.jobs-hero__media {
+  aspect-ratio: 13 / 10;
   background-color: var(--color-bg);
-  overflow: hidden;
+  margin-inline-end: calc(-1 * var(--jobs-hero-shift, 0px));
 }
 
-.jobs-hero__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  /* Not `pointer-events: none` on the wrapper — it sits under the content's own
-     stacking context, and the wash below is what covers the whole box. */
-}
+/* Bleeds through the container's own right inset to the viewport edge, which is
+   where a good part of the extra size comes from. The negative margin is tied to
+   the SAME two tokens the inset is built from (--container-padding +
+   --content-inset, page-service.css §1) rather than a fixed number, so it can never
+   over- or under-shoot at a width where the inset computes differently — the trap
+   documented for the homepage's own bleeding rows, where a fixed -1rem against a
+   12px container padding produced real horizontal scroll.
+   `overflow: hidden` on .jobs-hero (already there) is what keeps the bleed from
+   adding page-level scroll. Only from 1024px up: below that the photo is already
+   full-column width and a bleed would push it under the viewport edge. */
+/* NO BLEED (client 2026-08-07, asked and answered: "despegarla del borde derecho").
+   The photo used to pull through the container's right inset to the viewport edge —
+   107px of extra width at 1512px — which is what made it read as pinned to the screen
+   rather than placed in the layout. It now ends on the page's own content edge, the
+   same vertical line every section below it ends on (docs/page-conventions.md §1), so
+   there is a real margin to its right instead of none.
+   The cost was known when it was chosen: 763px → 656px of width at 1512, i.e. ~14 %.
+   The trade it buys back is the heading — the copy column keeps its 594px and the H1
+   stays on two lines at that width. */
 
-/* <picture> is INLINE, so an <img> at height: 100% inside it would resolve
-   against the picture's shrink-to-fit box rather than the hero. Same trap as the
-   service hero's photo frame and the Arbeitgeber cards. */
-.jobs-hero__bg picture,
-.jobs-hero__bg img {
+/* <picture> is INLINE, so an <img> at height: 100% inside it resolves against the
+   picture's shrink-to-fit box rather than the frame — the measured bug that left the
+   old service hero's photo 497px tall in a 676px frame. */
+.jobs-hero__media picture,
+.jobs-hero__media img {
   display: block;
   width: 100%;
   height: 100%;
 }
 
-.jobs-hero__bg img {
+.jobs-hero__media img {
   object-fit: cover;
-  /* The two guards sit at 51–84 % of the frame's width. At desktop widths the
-     image's 1.79 ratio is close to the hero's, so there is almost no crop; on a
-     phone `cover` crops hard horizontally, and this is what keeps them in frame
-     instead of showing the empty street on the left (which the wash covers
-     anyway). */
-  object-position: 65% center;
-}
-
-/* Readability wash — on a pseudo-element, never on the <img>, and never a flat
-   tint over the whole frame (that flattens the photo, the mistake the homepage
-   hero was corrected for twice). Two gradients:
-   (1) a left-side fade, because all the copy is on the left, clearing to fully
-       transparent at 62 % so the guards and the vehicle stay untouched;
-   (2) a short bottom fade, so the hero dissolves into the black page and the
-       pixel seam below it with no visible seam of its own.
-   No top fade is needed: the header does not sit over this photo. */
-.jobs-hero__bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.94) 0%,
-      rgba(0, 0, 0, 0.78) 28%,
-      rgba(0, 0, 0, 0.4) 50%,
-      /* Clears at 66%: the copy column is 44rem, so at 1440px the content ends at
-         ~56% of the width and the wash is fully clear just past it. It was briefly
-         pushed to 80% for the one-row tick layout, whose 1072px row reached 81% of
-         the viewport; with the ticks stacked as a list that width is gone and so is
-         the reason to veil the guards. The photo keeps its right two-thirds. */
-      rgba(0, 0, 0, 0) 66%
-    ),
-    linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 18%);
-}
-
-/* The copy sits above the photo and its wash. z-index on the grid, not on each
-   block, so the hero's own reveal animations (js/hero-reveal.js writes inline
-   transforms here) never create a competing stacking context. */
-.jobs-hero__grid {
-  position: relative;
-  z-index: 1;
-  /* One column at every width now — the photo column is gone. This overrides
-     .service-hero__grid's 1.15fr / 0.85fr split from 1024px up. */
-  grid-template-columns: minmax(0, 1fr);
-}
-
-/* The homepage hero's own column width. It went to 67rem for one pass, to fit the
-   three ticks in a single row (they measure 1066px at this type size, against the
-   homepage's short chips at 625px) — the client saw it and chose a stacked list
-   instead, so the column came back down. */
-.jobs-hero .service-hero__content {
-  max-width: 44rem;
 }
 
 /* ---- The three proof points: a LIST, not a row -------------------------- */
@@ -171,21 +247,22 @@
   gap: var(--space-3);
 }
 
-/* The H1 keeps its own, narrower measure. Without this it would take the full
-   54rem and rebreak — the two-line balance in the client's own reference
-   screenshot ("Dein Job bei FRANKONIA:" / "Sicherheit, auch für dich") is the
-   composition being matched, and it comes from a ~38rem measure. The lede already
-   caps itself at 32rem (page-service.css), so the three blocks are deliberately
-   three widths: title 38, lede 32, tick row 54. */
+/* The H1's own measure. Inside the two-column hero the track is ~640px at 1440, so
+   this is close to inert there — it earns its keep below 1024px, where the single
+   column is as wide as the container and the title would otherwise run the full
+   width while the lede stays at 32rem. It also preserves the two-line break
+   ("Dein Job bei FRANKONIA:" / "Sicherheit, auch für dich") that the client's own
+   reference screenshot shows. */
 .jobs-hero h1 {
   max-width: 38rem;
 }
 
-@media (min-width: 1024px) {
-  .jobs-hero__grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
+/* NOTE: a second `@media (min-width: 1024px) { .jobs-hero__grid {
+   grid-template-columns: minmax(0, 1fr) } }` used to sit here, from the full-bleed
+   version. It came AFTER the two-column rule at the top of this file with the same
+   specificity, so it silently cancelled it — the hero would have stayed one column
+   with the photo underneath at every width. Deleted 2026-08-07 with the rest of the
+   background hero. */
 
 /* ---- 2. Warum FRANKONIA als Arbeitgeber — tarjetas editoriales ----------- */
 /* REDESIGNED 2026-08-03 (client): this was four text columns on hairlines, the
@@ -244,13 +321,19 @@
   min-width: 0;
 }
 
-/* Same ratio for all four, per the brief. The photos are studio shots on white,
-   so the frame carries a faint tint: it reserves the space before the image
-   loads (no CLS — the ratio here plus width/height on the <img>) and keeps the
-   card from looking empty at that moment. */
+/* Same ratio for all four, per the brief. The frame's own colour is what fills the
+   reserved space before the image loads (the ratio here plus width/height on the
+   <img> is what makes that reservation CLS-free).
+   --color-bg (near-black), not the 4%-grey --color-bg-subtle it was: the client
+   replaced all four photos on 2026-08-07 with versions shot on a DARK navy
+   backdrop, so a light placeholder now flashes light-then-dark as each lazy image
+   arrives. A near-black hold is the closest of the tokens to the new photos; the
+   navy itself is not a project colour and inventing a hex for a placeholder is not
+   worth it. `.section--light` does not re-declare --color-bg, so this stays black
+   inside the white section. */
 .jobs-why__media {
   aspect-ratio: 4 / 3;
-  background-color: var(--color-bg-subtle);
+  background-color: var(--color-bg);
   /* The divider between photo and text. It is NOT the card's border — that one was
      removed 2026-08-05 so the shadow alone defines the card. This line separates
      two zones inside it, and with the outline gone it is the only thing keeping the
@@ -663,8 +746,19 @@
   color-scheme: light;
 }
 
+/* ⚠️ TWO-LEVEL SELECTORS FOR THE FILE INPUT, and it is not cosmetic. The input
+   carries `.form-field__input` as well, and lead-form.css styles
+   `.conversion__form .form-field__input` — (0,2,0). A single-class
+   `.jobs-form__file` is (0,1,0) and LOSES to it no matter which file loads later.
+   It went unnoticed for two days because lead-form's values for the shared
+   properties are identical (same underline, same transparent fill), so the field
+   looked exactly as intended while half this rule was doing nothing — and it
+   surfaced the moment a property lead-form ALSO sets had to differ here
+   (`color: transparent`, below: measured rgb(59,73,86), i.e. ignored).
+   `.jobs-form .jobs-form__file` is (0,2,0) and wins on order, page-jobs.css
+   loading after lead-form.css. */
 .jobs-form .form-field__select,
-.jobs-form__file {
+.jobs-form .jobs-form__file {
   padding: var(--space-2) 0;
   background-color: transparent;
   border: none;
@@ -673,13 +767,28 @@
   color: var(--color-gray);
 }
 
+/* Only the button, no "No file chosen" (client 2026-08-05: "sacame lo de no file
+   chosen, solo que quede el botón de Choose File").
+   `color: transparent` is the ONLY lever CSS has here: the browser paints that
+   text itself, as part of the control's own shadow content, and there is no
+   pseudo-element for it — `::file-selector-button` reaches the button and nothing
+   else. The button is unaffected because it sets its own colour explicitly below.
+   The text is still in the ACCESSIBILITY TREE (it is the input's value), so a
+   screen reader still hears which file is attached; only the sighted rendering
+   goes. That is also why js/jobs-file-name.js echoes the chosen name back
+   visually — without it, picking a CV would produce no visible change at all,
+   which is a worse control than the one the client asked to clean up. */
+.jobs-form .jobs-form__file {
+  color: transparent;
+}
+
 .jobs-form .form-field__select:hover,
-.jobs-form__file:hover {
+.jobs-form .jobs-form__file:hover {
   border-bottom-color: rgb(59 73 86 / 0.45);
 }
 
 .jobs-form .form-field__select:focus-visible,
-.jobs-form__file:focus-visible {
+.jobs-form .jobs-form__file:focus-visible {
   outline: none;
   border-bottom-color: var(--color-accent-strong);
   border-bottom-width: 2px;
@@ -713,6 +822,19 @@
 .jobs-form__file::file-selector-button:hover {
   background-color: rgb(59 73 86 / 0.06);
   border-color: rgb(59 73 86 / 0.5);
+}
+
+/* The chosen file's name, echoed back next to the button because the native text
+   is hidden above. js/jobs-file-name.js is the only thing that ever fills it, so
+   with no JS the field is simply the button on its own — exactly the state the
+   client asked for, nothing broken. `aria-hidden` in the markup: the input's own
+   value already announces the file, and this would be the second announcement. */
+.jobs-form__file-name {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray);
+  /* A long file name must not stretch the form's grid column. */
+  overflow-wrap: anywhere;
 }
 
 /* The shared .form-field__hint is sized for the site's dark surfaces; on the
@@ -750,29 +872,6 @@
      exist in the markup, so they were dead selectors describing behaviour they
      never produced. Deleted 2026-08-03 rather than renamed: page-service.css
      already does exactly this. Only the background photo needs phone rules. */
-
-  /* The copy is stacked top-to-bottom over the full photo now, not sitting in a
-     left column, so the wash runs VERTICALLY here — a horizontal fade would
-     leave the ticks and the CTA over the bright pavement.
-     Shape follows the homepage's own mobile wash (client 2026-07-31: "add a
-     controlled dark gradient... avoid making the entire image uniformly black"):
-     a multi-stop ramp rather than a flat tint, LIGHTEST where the biggest type
-     is and heaviest under the smallest. The first attempt had it backwards —
-     0.82 at the top, under the 34px H1, easing to 0.72 mid-hero where the 15px
-     ticks are — which both flattened the photo and helped the wrong text.
-     Unlike the homepage this hero's copy starts at the very top, so the top
-     cannot stay light; it just does not need to be the darkest point. */
-  .jobs-hero__bg::after {
-    background:
-      linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.6) 0%,
-        rgba(0, 0, 0, 0.68) 28%,
-        rgba(0, 0, 0, 0.76) 52%,
-        rgba(0, 0, 0, 0.84) 76%,
-        rgba(0, 0, 0, 0.92) 100%
-      );
-  }
 
   /* ---- The page's own rhythm on a phone ----------------------------------
      Measured at 390px before this pass: 11.287px, 13,4 screens — and 1.560px of
@@ -978,7 +1077,10 @@
      lead-form.css does this for input/textarea; these two are not in that
      selector list. */
   .jobs-form .form-field__select,
-  .jobs-form__file {
+  .jobs-form .jobs-form__file {
+    /* Same (0,2,0) reason as the base rule above: lead-form.css's phone block
+       styles `.conversion__form .form-field__input` at the same specificity, and
+       font-size/min-height/padding-block are exactly the properties it sets. */
     font-size: 1rem;
     min-height: 3rem;
     padding-block: var(--space-3) var(--space-2);

@@ -485,7 +485,19 @@
       });
   }
 
+  // On a HUB page the city tiles are the navigation to the city pages, so the
+  // click must reach the browser. Opt in with data-coverage-keep-links on the
+  // map element: the map then follows hover/focus instead of click. The
+  // homepage sets no attribute, so its behaviour is unchanged.
+  const keepLinks = mapEl.hasAttribute("data-coverage-keep-links");
+
   buttons.forEach((btn) => {
+    if (keepLinks) {
+      const drive = () => selectCity(btn.dataset.coverageCity);
+      btn.addEventListener("mouseenter", drive);
+      btn.addEventListener("focus", drive);
+      return;
+    }
     btn.addEventListener("click", (event) => {
       event.preventDefault();
       const id = btn.dataset.coverageCity;
@@ -503,5 +515,12 @@
 
   // "All" is the new default view (2026-07-21, client request) — was
   // selectCity("bamberg") before this change.
+  //
+  // A `__coverageApi` hook and a `data-coverage-default` opt-in briefly lived
+  // here (2026-08-09) so /einsatzgebiete/'s scroll-driven map journey could
+  // drive this map per scroll step. That journey was removed the next day
+  // (client) and this page no longer loads Leaflet at all, so both went with
+  // it rather than staying as dead API. Git has them if a second consumer ever
+  // needs the same hook.
   selectCity(ALL_ID);
 })();

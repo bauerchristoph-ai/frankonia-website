@@ -48,6 +48,19 @@
                                               /werkschutz/'s Konzept icons). Opt-in:
                                               without it nothing about a step
                                               changes, so /jobs/ is untouched.
+              (no attribute)                  `.is-arrived` lands on the step itself
+                                              when its marker finishes arriving and
+                                              comes off when it un-arrives — the hook
+                                              for a one-shot CSS animation on arrival
+                                              (/ueber-uns/'s ring). Always set; a page
+                                              that does not style it is unaffected.
+              data-steps-mark="<selector>"    one element per step whose highlight
+                                              wipes across as the step arrives
+                                              (client 2026-08-10 on
+                                              /brandwache-nuernberg/'s step titles).
+                                              Also opt-in. The element consumes
+                                              `--mark` in CSS; see the tween below
+                                              for why its fallback must be 1.
     Everything that is not the marker is that step's copy, staggered in.
 
   ⚠️ The list must carry `data-no-text-reveal` and must NOT carry
@@ -92,6 +105,10 @@
 
     var markerSel = list.getAttribute("data-steps-marker");
     var drawSel = list.getAttribute("data-steps-draw");
+    // data-steps-mark="<selector>" — one element per step whose highlight wipes
+    // across as that step arrives. Opt-in, like data-steps-draw: without it
+    // nothing about a step changes, so /werkschutz/ is untouched.
+    var markSel = list.getAttribute("data-steps-mark");
 
     var timeline = gsap.timeline({
       scrollTrigger: {
@@ -143,11 +160,39 @@
       // --- the marker lands -------------------------------------------------
       // A touch of overshoot so it LANDS rather than fades in. 1.4, not a
       // cartoon 4.
+      //
+      // `.is-arrived` on the STEP is added the moment that landing finishes and
+      // removed when it un-lands, so a page can hang a ONE-SHOT css animation off
+      // an arrival — the expanding ring around /ueber-uns/'s dots, the same
+      // treatment .pain-hook__node::after gives the homepage's checkpoints. It has
+      // to be a class rather than a tween because a scrubbed timeline has no
+      // "moment" a CSS animation could be tied to, and removing it on the way back
+      // up is what lets the ring replay the next time the visitor scrolls down.
+      // Nothing in the shipped CSS of any other consumer names this class, so
+      // /jobs/, /werkschutz/ and /brandwache-nuernberg/ are untouched — and since
+      // only JS ever adds it, no-JS and prefers-reduced-motion simply never see the
+      // ring, which is correct: it is decoration, not content.
+      var landed = {
+        onComplete: function () {
+          step.classList.add("is-arrived");
+        },
+        onReverseComplete: function () {
+          step.classList.remove("is-arrived");
+        },
+      };
+
       if (marker) {
         timeline.fromTo(
           marker,
           { opacity: 0, scale: 0.55 },
-          { opacity: 1, scale: 1, duration: 0.42, ease: "back.out(1.4)" }
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.42,
+            ease: "back.out(1.4)",
+            onComplete: landed.onComplete,
+            onReverseComplete: landed.onReverseComplete,
+          }
         );
       } else {
         // The marker is a pseudo-element: drive it through the step instead. The
@@ -155,7 +200,13 @@
         timeline.fromTo(
           step,
           { "--step-node": 0 },
-          { "--step-node": 1, duration: 0.42, ease: "back.out(1.4)" }
+          {
+            "--step-node": 1,
+            duration: 0.42,
+            ease: "back.out(1.4)",
+            onComplete: landed.onComplete,
+            onReverseComplete: landed.onReverseComplete,
+          }
         );
       }
 
@@ -199,6 +250,31 @@
             stagger: 0.035,
           },
           copy.length ? "<" : "-=0.3"
+        );
+      }
+
+      // --- the step's title highlights ---------------------------------------
+      // The marker wipe the site already uses on /werkschutz/'s Vorteile and the
+      // homepage's pain hook, driven from THIS timeline instead of its own so the
+      // fill sweeps as part of the step's one arrival rather than as a second
+      // effect that happens to land nearby.
+      // Position: just after the copy starts, so the words are there to be
+      // highlighted rather than appearing already filled.
+      // ⚠️ NOTHING IN CSS HIDES THE FILL. The consuming rule reads
+      // `calc(var(--mark, 1) * 100%)`, i.e. FILLED when the property was never
+      // written — which is what a no-JS visitor, a crawler and
+      // prefers-reduced-motion get, since this whole function returns before here
+      // in the last case. The 0 start state is written by GSAP at runtime and only
+      // for a step that is about to wipe. Same call .service-contrast__mark makes,
+      // and the same bug it fixed: a `var(--mark, 0)` default measured 0 % under
+      // forced reduced motion, i.e. the highlights simply vanished.
+      var mark = markSel ? step.querySelector(markSel) : null;
+      if (mark) {
+        timeline.fromTo(
+          mark,
+          { "--mark": 0 },
+          { "--mark": 1, duration: 0.55, ease: "power2.out" },
+          copy.length ? "<+0.18" : "-=0.2"
         );
       }
 

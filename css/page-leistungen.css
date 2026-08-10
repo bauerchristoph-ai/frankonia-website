@@ -1,0 +1,832 @@
+/* ==========================================================================
+   Leistungen hub (/leistungen/)
+   ==========================================================================
+   Page-scoped sheet. Everything structural comes from css/page-service.css,
+   the shared chassis (docs/page-conventions.md §9.1): the --content-inset rule,
+   the oversized `main h2`, the breadcrumb chevron, .section--light's token
+   re-declaration, .service-hero* and the whole .pixel-seam block. The closing
+   form is partials/lead-form.html.
+
+   REDESIGNED 2026-08-10 (client brief). The page used to be a hero plus eleven
+   identical .hub-tile boxes; it is now hero → orientation → three chapters, with
+   a three-tier card system. Four things about that are worth knowing before
+   editing:
+
+   1. ⚠️ .hub-* IS NOT TOUCHED. That block lives in the chassis and /einsatzgebiete/
+      drives its whole map journey off it (.eg-journey__panel extends .hub-tile).
+      This page's cards are a NEW, page-scoped .lh-card — restyling .hub-tile would
+      have silently redesigned the city hub too.
+   2. ONE card size. The brief originally asked for weight tiers and the client
+      reversed that the same day ("mismo tamaño todas"), so `--featured` and
+      `--compact` were deleted, not kept as unused modifiers. Chapters differ by
+      column count, never by card size.
+   3. ⚠️ THE REVEAL TARGETS THE <li>, NOT THE CARD, and the hover lift depends on
+      it. GSAP does not only write `transform` inline — it writes
+      `translate: none; rotate: none; scale: none;` inline as well, on every
+      element whose transform it animates. So on a GSAP-animated element BOTH
+      `transform: translateY(-4px)` and `translate: 0 -4px` from a stylesheet are
+      dead, which means the workaround CLAUDE.md recorded on 2026-08-09 (verified
+      in isolation, with a hand-written inline transform) does not survive contact
+      with GSAP. Revealing the wrapper leaves the card's own transform properties
+      free. Verified with a real pointer over CDP: the card lifts 236 -> 232px.
+   4. Blue is an ACCENT here, never a surface: numerals, arrows, rules and one
+      accent per illustration. The only blue fills on the page are the two
+      .btn--primary buttons the chassis already ships.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. HERO
+   ==========================================================================
+   One column of copy over a full-bleed photograph, ~70svh — not the chassis's
+   full screen, so the orientation layer below is already visible at the fold.
+   The three family scenes used to live in a second column here; they moved into
+   the orientation selectors on 2026-08-10 when the photo arrived. */
+
+.lh-hero {
+  background-color: var(--color-bg);
+}
+
+/* ---- .lh-hero--photo: the hero's own surface -----------------------------
+   Added 2026-08-10, client: "no me gusta que no haya un hero definido". The
+   hero and the orientation layer were both flat black with no seam between
+   them, so the hero had no edge and no material of its own — it just ran into
+   the next section. A photograph gives it both.
+
+   ⚠️ A MODIFIER, and that is not tidiness. `/einsatzgebiete/` loads this
+   stylesheet and its hero carries `.lh-hero` too (`service-hero lh-hero
+   eg-hero`), so anything put on the bare class restyles that page as well.
+   Everything below is scoped to --photo, which only this page has. */
+.lh-hero--photo {
+  position: relative;
+  /* If the photo fails or has not decoded yet, the hero is still black with
+     white copy — the copy never depends on the image. */
+  background-color: var(--color-bg);
+}
+
+.lh-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.lh-hero__bg picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.lh-hero__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Pushes the two people and the branded entrance into the RIGHT half, clear of
+     the copy column. The default centre put the left-hand man directly behind
+     the H1, where the wash then had to bury him. */
+  object-position: 68% 50%;
+}
+
+/* TWO washes, both on this layer and never on the <img> — the same split
+   /werkschutz/ and the homepage hero use, for the same reason:
+   · a left-to-right ramp so the copy sits on darkness while the right half of
+     the photograph stays readable as a photograph;
+   · a short bottom fade so the hero dissolves into the section below instead of
+     ending on a hard cut.
+   ⚠️ Two stacked washes do NOT read as the sum of their numbers — the
+   /werkschutz/ hero shipped flat for exactly that reason. The vertical one is
+   held at 0 through the middle of the frame and only closes at the very bottom. */
+.lh-hero__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(
+      to right,
+      rgb(1 1 1 / 0.94) 0%,
+      rgb(1 1 1 / 0.88) 34%,
+      rgb(1 1 1 / 0.55) 58%,
+      rgb(1 1 1 / 0.18) 78%,
+      rgb(1 1 1 / 0.06) 100%
+    ),
+    linear-gradient(
+      to bottom,
+      /* The photo starts at the section edge, directly under the breadcrumb, and
+         a hard horizontal cut across the page there reads as a mistake. This ramp
+         is what makes the image EMERGE from the page's own black instead. */
+      rgb(1 1 1 / 0.97) 0%,
+      rgb(1 1 1 / 0.6) 9%,
+      rgb(1 1 1 / 0) 26%,
+      rgb(1 1 1 / 0) 66%,
+      rgb(1 1 1 / 0.94) 100%
+    );
+}
+
+/* The copy has to sit above the photo layer. */
+.lh-hero--photo .service-hero__grid {
+  position: relative;
+  z-index: 1;
+}
+
+/* One column again: the families moved down into the orientation selectors, so
+   the copy is the only thing in the grid and the photo is behind it. */
+@media (min-width: 1024px) {
+  .lh-hero--photo .lh-hero__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* On a phone the copy spans the full width and would land on the two people, so
+   the ramp goes vertical instead of horizontal — the same call the homepage and
+   /werkschutz/ heroes both make at this breakpoint. */
+@media (max-width: 767.98px) {
+  .lh-hero__bg img { object-position: 62% 50%; }
+
+  .lh-hero__bg::after {
+    background-image: linear-gradient(
+      to bottom,
+      rgb(1 1 1 / 0.90) 0%,
+      rgb(1 1 1 / 0.82) 46%,
+      rgb(1 1 1 / 0.86) 72%,
+      rgb(1 1 1 / 0.96) 100%
+    );
+  }
+}
+
+@media (min-width: 1024px) {
+  /* ⚠️ RESTATES min-height and padding rather than inheriting them. The shared
+     `.service-hero` desktop rule sets `min-height: calc(100svh - 8rem)` and is
+     (0,1,0) — exactly this rule's specificity — so this only wins because
+     page-leistungen.css loads AFTER page-service.css. Keep that load order (see
+     the <head> of pages/leistungen.html); if this sheet ever moves above the
+     chassis, the hero silently goes back to a full screen.
+     70svh measured at 1440x900: hero 630px, so the orientation heading and the
+     first chapter numerals sit inside the first screen. */
+  .lh-hero {
+    min-height: 70svh;
+    padding-block: var(--space-7) var(--space-8);
+  }
+
+}
+
+/* ⚠️ `manual`, and it is NOT redundant. base.css sets `hyphens: none` on every
+   heading (auto-hyphenating a 52px display heading reads as a typo) — and `none`
+   suppresses SOFT HYPHENS as well, so the &shy; in the H1 markup was completely
+   inert and the word still broke as "Sicherheitsdienstleistunge / n". `manual`
+   restores exactly one behaviour: break at the &shy; the author put there, never
+   anywhere else. Verified rendered, not reasoned. */
+.lh-hero h1 {
+  -webkit-hyphens: manual;
+  hyphens: manual;
+}
+
+.lh-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.lh-hero__badge .icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--color-accent);
+  fill: none;
+  stroke: currentColor;
+}
+
+/* ---- The hero's family list: REMOVED ------------------------------------
+   `.lh-hero__families*` styled a three-row list in the hero's right column. That
+   column became the photograph on 2026-08-10 and the three families moved into the
+   orientation selectors, so every one of those rules was styling markup that no
+   longer exists. Deleted rather than left behind; git has them. */
+
+/* ---- The family illustrations --------------------------------------------
+   ⚠️ `.lh-iso*` IS GONE (2026-08-10). Three generated isometric scenes used to live
+   here — the CSS that coloured them per surface, the guides, the occlusion faces.
+   The client supplied their own artwork for the same three families, so the scenes
+   were replaced by <img> and every rule that styled them became dead. Git has them,
+   and docs/design-sources/leistungen-families.py still generates them if they are
+   ever wanted back.
+   Nothing of ours reaches inside an <img>, which is the point: the supplied files
+   keep their own line weights, their own blue and their own white fills, and cannot
+   be broken by a stylesheet the way a re-coloured inline SVG can (CLAUDE.md
+   2026-08-05, the Risiko card 03 incident). */
+
+/* ==========================================================================
+   2. ORIENTATION LAYER
+   ==========================================================================
+   Three chapter selectors between the hero and the eleven services. Keeps the
+   hero's black (no seam above it — black tiles on black are invisible, §9.2),
+   which is also what stops the page opening with a wall of white cards. */
+
+/* ⚠️ NO padding-top override here. This section used to sit directly under the
+   hero and carried `padding-top: var(--space-7)`; it now follows a pixel seam, and
+   the chassis's `.pixel-seam + .section` reserves `--space-9 + 200px` for the
+   dissolve band. That rule and a bare `.lh-orient` are both (0,1,0), and this
+   sheet loads later — so re-adding a padding-top here would win and drop 200px of
+   tiles straight onto the heading. */
+
+.lh-orient__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+}
+
+/* One row split into three, divided by hairlines — an editorial chapter strip,
+   not three cards. The divider is a border on the item, so it can never fall
+   between a wrapped pair the way an absolutely-placed rule would. */
+@media (min-width: 900px) {
+  .lh-orient__list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .lh-orient__list > li + li { border-left: 1px solid var(--color-border); }
+}
+
+/* The three isometric scenes live HERE now, not in the hero (2026-08-10). They
+   were saying the same three things the selectors say, one screen apart, and the
+   hero needed the room for its photograph. Each selector is now drawing + number
+   + title + sentence + arrow — which is also what turns these from three text
+   blocks into something worth calling a chapter selector. */
+.lh-orient__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  /* ⚠️ Not the default (`normal`, i.e. stretch). These items are `height: 100%`
+     in a stretched track, and stretch hands the leftover height to the auto rows
+     — so the column whose title wraps to two lines had LESS slack and its rows
+     sat 9px higher than its neighbours' (measured 1066 vs 1075). `start` pins
+     every row to the top, and the leftover height simply stays at the bottom. */
+  align-content: start;
+  column-gap: var(--space-4);
+  height: 100%;
+  padding: var(--space-5) 0;
+  color: inherit;
+  text-decoration: none;
+  border-top: 1px solid var(--color-border);
+  transition: border-color var(--duration-base) var(--easing-standard);
+}
+
+@media (min-width: 900px) {
+  .lh-orient__item {
+    padding: var(--space-6) var(--space-6) var(--space-5);
+    /* The top rule spans the three columns as one line; the vertical dividers
+       above turn it into a grid. */
+  }
+  .lh-orient__list > li:first-child .lh-orient__item { padding-left: 0; }
+}
+
+/* ⚠️ A FIXED BOX with `contain`, not a shared height. The three supplied drawings
+   have different proportions (1.52 / 1.19 / 0.96 — the camera one is nearly square
+   because the gear sits above it), so sizing by height alone would have made the
+   first one half again as wide as the third and shrunk the third's base to match
+   its tower. One box, `contain`, and each drawing fills whichever axis binds.
+   `object-position: left bottom` is the detail that makes the row read as one set:
+   every scene is an isometric plate, so aligning their BOTTOMS stands all three on
+   the same ground line, and aligning left keeps them on the text column's edge.
+   The box is also what keeps the numerals below them on one line. */
+.lh-orient__icon {
+  grid-column: 1;
+  display: block;
+  /* Bigger than the generated scenes they replaced (128x86 -> 144x101 at 1440):
+     these carry real detail — a gear, a bulb, signal arcs — and at the old size the
+     line work started to mush. The column is ~410px, so there is room. */
+  width: clamp(7.5rem, 10vw, 9rem);
+  height: clamp(5rem, 7vw, 6.5rem);
+  object-fit: contain;
+  object-position: left bottom;
+  margin-bottom: var(--space-4);
+}
+
+/* The number and the arrow share the top line; the title and text stack under
+   the number's column. */
+.lh-orient__num {
+  grid-column: 1;
+  display: block;
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ⚠️ NOT --color-accent on white: inside .section--light that token is blue-dark
+   (#5287C9), 3.71:1 — fine for a graphic, short of the 4.5:1 this 15px numeral
+   needs as text. Same deeper mix the chapter numerals use (measured 4.9:1). */
+.section--light .lh-orient__num {
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+}
+
+.lh-orient__title {
+  grid-column: 1;
+  font-size: clamp(1.375rem, 1.15rem + 0.7vw, 1.75rem);
+  font-weight: var(--font-weight-regular);
+  /* Body-ish metrics: base.css's flat -1px tracking is calibrated for 48px+ and
+     collides at this size (design-system §2). */
+  letter-spacing: normal;
+  line-height: var(--line-height-heading);
+  margin-bottom: var(--space-3);
+}
+
+.lh-orient__text {
+  grid-column: 1;
+  max-width: 26rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+}
+
+.lh-orient__arrow {
+  grid-column: 2;
+  /* -1: spans however many rows the item has. It used to be `1 / span 3` and the
+     scene made that four, which pushed the arrow out of the top line. */
+  grid-row: 1 / -1;
+  align-self: start;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-accent);
+  /* The sprite's fill/stroke live on its <g id="icon-defs"> wrapper and do NOT
+     survive <use> — without this the arrow is a filled black sliver. */
+  fill: none;
+  stroke: currentColor;
+  transition: transform var(--duration-base) var(--easing-standard);
+}
+
+/* Subtle by instruction: the arrow travels the way it points, the rule picks up
+   the accent. No lift, no fill — these are navigation, not buttons. */
+.lh-orient__item:hover,
+.lh-orient__item:focus-visible {
+  border-top-color: var(--color-accent);
+}
+
+.lh-orient__item:hover .lh-orient__arrow,
+.lh-orient__item:focus-visible .lh-orient__arrow {
+  transform: translate(3px, -3px);
+}
+
+/* ==========================================================================
+   3. CHAPTERS
+   ==========================================================================
+   Each of the draft's three groups, given a real chapter opening: blue numeral,
+   large heading, full-width rule. */
+
+/* ⚠️ The chassis reserves `--space-9 + 200px` after every seam, i.e. 296px, and
+   200 of that is the dissolve band itself — the tiles paint there, so it can
+   never shrink (js/pixel-transition.js fills the band it is given). What CAN go
+   is the 96px of section rhythm stacked on top of it, which is what put a 296px
+   band of empty white between the seam and the first chapter numeral. 232px
+   still clears the band by 32. Page-scoped: every other seam on the site keeps
+   the chassis value. */
+.pixel-seam + .lh-services {
+  padding-top: calc(var(--space-6) + 200px);
+}
+
+@media (max-width: 767.98px) {
+  /* The band is 120px on a phone, so the same arithmetic with the phone value. */
+  .pixel-seam + .lh-services {
+    padding-top: calc(var(--space-5) + 120px);
+  }
+}
+
+.lh-chapter + .lh-chapter {
+  margin-top: var(--space-9);
+}
+
+/* Native-scroll counterpart to data-scroll-offset in the markup (which is what
+   js/smooth-scroll.js uses while Lenis owns the scroll). Both are needed: one
+   for the enhanced path, one for no-JS and reduced motion. */
+.lh-chapter {
+  scroll-margin-top: 6rem;
+}
+
+.lh-chapter__head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--space-6);
+}
+
+.lh-chapter__num {
+  font-size: var(--font-size-md);
+  /* On this dark section --color-accent is blue-light, 6.8:1 on black — clears
+     4.5:1 as text with room to spare. */
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ⚠️ On white the same numeral needs the deeper mix: --color-accent resolves to
+   blue-dark inside .section--light, which is 3.71:1 — fine for a graphic, short of
+   the 4.5:1 that applies to this as text. The mix measures 4.9:1. */
+.section--light .lh-chapter__num {
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+}
+
+/* Bigger than the .hub-group__label it replaces (18px → 34px at 1440) but well
+   under the chassis's 60px `main h2` — this is a chapter inside a section, not
+   the section's own title, so page-conventions §2 is not in play. */
+.lh-chapter__title {
+  font-size: clamp(1.5rem, 1.15rem + 1.1vw, 2.125rem);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: normal;
+  line-height: var(--line-height-heading);
+}
+
+/* ==========================================================================
+   4. CARDS
+   ========================================================================== */
+
+.lh-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (min-width: 640px) {
+  .lh-cards--pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lh-cards--trio { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .lh-cards { gap: var(--space-6); }
+  .lh-cards--trio { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* The whole card is the link — one tap target, and it is why there is no
+   "Mehr erfahren" line any more: the arrow plus the card being clickable says
+   the same thing without eleven repetitions of the same three words. */
+/* ⚠️ THE CARDS SIT ON BLACK since the colour pass, and that changes what defines
+   their edge. On white they were white panels lifted by a soft two-layer shadow;
+   a shadow does almost no work on a dark surface, and a WHITE panel on black
+   glares — the exact finding the city hub already recorded for its own services
+   section. So on dark the card is a 4.5%-white fill plus a hairline, and the
+   shadow is dropped rather than kept as a value that paints nothing.
+   The white-panel version is still below, scoped to .section--light, because the
+   same component is one flip away from being needed on a light section again. */
+.lh-card {
+  display: grid;
+  /* head / title / text / arrow. The text row takes the slack so every arrow in
+     a row lands on the same line regardless of how long the copy is. */
+  grid-template-rows: auto auto 1fr auto;
+  height: 100%;
+  padding: var(--space-6);
+  background-color: rgb(255 255 255 / 0.045);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  /* 24px. The site has exactly one radius outside the token scale and this is
+     it — the price card and the Anwendungsfälle panels already use this literal
+     (CLAUDE.md 2026-08-05/08). Do not introduce a second off-scale value. */
+  border-radius: 1.5rem;
+  color: inherit;
+  text-decoration: none;
+  transition: translate var(--duration-base) var(--easing-standard),
+    background-color var(--duration-base) var(--easing-standard),
+    box-shadow var(--duration-base) var(--easing-standard),
+    border-color var(--duration-base) var(--easing-standard);
+}
+
+/* The white-panel variant, for whenever this card lands on a light section again.
+   Two shadow layers: a wide soft one for the lift and a tight contact shadow.
+   NOT --shadow-lg, which is a single 0.14 layer tuned for the nav submenu and
+   reads as a dropped shadow at this size. */
+.section--light .lh-card {
+  background-color: var(--color-white);
+  border-color: rgb(1 1 1 / 0.09);
+  box-shadow: 0 18px 48px rgb(1 1 1 / 0.07), 0 2px 6px rgb(1 1 1 / 0.04);
+}
+
+.lh-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.lh-card__icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  /* A graphic, so 3:1 applies and --color-accent (blue-dark on white, 3.71:1)
+     clears it — unlike the numeral beside it, which is text. */
+  color: var(--color-accent);
+  fill: none;
+  stroke: currentColor;
+}
+
+.lh-card__num {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The scroll-driven background mark (client 2026-08-10), the same one
+   .service-contrast__mark uses on /werkschutz/ — a fill painted behind the words,
+   not a rule under them. js/lh-card-marks.js animates --mark; everything else is
+   here.
+   ⚠️ FILLED BY DEFAULT. The zero-width start belongs to the live state only (rule
+   below): without JS, or under prefers-reduced-motion, the eleven titles have to
+   arrive already marked rather than plain — the exact bug .service-contrast__mark
+   shipped with once.
+   ⚠️ The mark is on a <span> INSIDE the h4, never on the h4 itself: a background
+   on the block would paint a bar the full width of the card instead of hugging the
+   words. `box-decoration-break: clone` is what keeps it hugging them across a line
+   break, and "Revier- & Schließdienst" wraps at most widths.
+   Colour: the documented deep mix, measured 4.87:1 against white text — which is
+   what lets this stay legible even where the title clamps down to 21px, below the
+   24px that would make 3:1 the applicable bar. */
+.lh-card__mark {
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--color-blue-dark) 85%, var(--color-logo-black)),
+    color-mix(in srgb, var(--color-blue-dark) 85%, var(--color-logo-black))
+  );
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 100% 100%;
+  padding-inline: 0.14em;
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  color: var(--color-white);
+}
+
+.lh-services--live .lh-card__mark {
+  background-size: calc(var(--mark, 0) * 100%) 100%;
+}
+
+.lh-card__title {
+  font-size: clamp(1.3125rem, 1.1rem + 0.62vw, 1.625rem);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: normal;
+  line-height: var(--line-height-heading);
+  margin-bottom: var(--space-3);
+}
+
+/* "(Raum Bamberg)" is a scope qualifier, not part of the service name — it reads
+   as a second line at the title's size and pushes the card taller than its row. */
+.lh-card__qualifier {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.lh-card__text {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
+
+.lh-card__arrow {
+  justify-self: end;
+  margin-top: var(--space-5);
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--color-blue-light);
+  fill: none;
+  stroke: currentColor;
+  transition: transform var(--duration-base) var(--easing-standard);
+}
+
+/* ⚠️ `translate`, not `transform` — see note 3 in this file's header.
+   On dark the lift has to be carried by the fill and the hairline: a bigger,
+   softer black shadow over a black section is invisible. */
+.lh-card:hover,
+.lh-card:focus-visible {
+  translate: 0 -4px;
+  background-color: rgb(255 255 255 / 0.075);
+  border-color: color-mix(in srgb, var(--color-blue-light) 55%, transparent);
+}
+
+.section--light .lh-card:hover,
+.section--light .lh-card:focus-visible {
+  background-color: var(--color-white);
+  box-shadow: 0 26px 60px rgb(1 1 1 / 0.10), 0 3px 8px rgb(1 1 1 / 0.05);
+  border-color: color-mix(in srgb, var(--color-blue-light) 45%, transparent);
+}
+
+.lh-card:hover .lh-card__arrow,
+.lh-card:focus-visible .lh-card__arrow {
+  transform: translate(5px, -5px);
+}
+
+/* ⚠️ NO SIZE TIERS — client 2026-08-10, reversing point 5 of their own earlier
+   brief: "mismo tamaño todas". There were two extra tiers here, `--featured`
+   (Objektschutz + Werkschutz, one step up in padding/type/icon) and `--compact`
+   (the three-up chapter, one step down). Both are gone, markup included, rather
+   than left as dead rules. All eleven cards are one card; only the column count
+   varies per chapter. */
+
+/* ==========================================================================
+   4b. TOUCH / PHONE COMPACTION
+   ==========================================================================
+   Measured, not assumed: at 390px the redesign first came out at 11.826px against
+   the old page's 9.538, and 4.154 of that was the eleven cards. The brief's rule
+   for this page is "cards more compact than desktop… do not create an extremely
+   long mobile page", so what shrinks here is padding and rhythm — no copy is cut,
+   nothing is dropped, and every description keeps its full text.
+   Same 767.98 boundary as the rest of the site's phone blocks. */
+@media (max-width: 767.98px) {
+  .lh-card { padding: var(--space-5); }
+  .lh-card__head { margin-bottom: var(--space-4); }
+  .lh-card__title { margin-bottom: var(--space-2); }
+
+  /* The arrow keeps its 28px — the brief wants it large and easy to hit even as
+     the card tightens. Only the space above it goes. */
+  .lh-card__arrow { margin-top: var(--space-4); }
+
+  /* A featured card is not featured in a single column: with nothing beside it
+     there is no hierarchy to read, only a taller box. The tier rules are already
+     scoped to 1024px+, so on a phone all eleven cards are one size by design. */
+  .lh-chapter + .lh-chapter { margin-top: var(--space-8); }
+
+  /* The supplied illustrations step down with everything else. */
+  .lh-orient__icon {
+    width: clamp(5rem, 22vw, 6.5rem);
+    height: clamp(3.5rem, 15vw, 4.5rem);
+  }
+}
+
+/* ==========================================================================
+   5. CLOSING CTA
+   ==========================================================================
+   ⚠️ NOTHING HERE ON PURPOSE. This section briefly carried a `.lh-cta` frame — an
+   inset panel at #0B0D10 with a 24px radius, "one step off the page's own black so
+   the panel reads as a distinct object". The client saw it and called it exactly
+   right: "tiene un fondo que no es del todo negro, es raro el color… tiene que ser
+   negro". A near-black next to the real black reads as a rendering fault, not as
+   elevation — the page has seven pixel seams doing the section separation already,
+   so the panel was solving a problem that was not there.
+   The whole block was deleted rather than just the fill: with the fill gone the
+   radius and the inset were painting nothing, and a rule that cannot be seen is a
+   rule the next person has to work out the purpose of. The section is now plain
+   `--color-bg` from `.conversion` in lead-form.css, which is untouched. */
+
+/* ---- Keyword section (GEO) ---------------------------------------------- */
+/* One long answer paragraph. Capped for a readable measure and set a step above
+   body size, because this is the section that has to be extractable by an
+   answer engine — it is why the section exists (wachdienst 880 + wachschutz
+   480). */
+/* Centred composition (client 2026-08-10). One column on the section's own axis:
+   accent rule → question → the direct answer, large → the rest, as running prose. */
+.lh-keyword__inner {
+  text-align: center;
+}
+
+/* ⚠️ Every child needs `margin-inline: auto` of its own, and this is the trap
+   page-conventions §6 already documents: a capped box inside a centred parent
+   centres its TEXT while the box itself stays pinned left. The chassis caps
+   `.section__intro > p` at 42rem, and these two paragraphs carry their own caps —
+   without the auto margins the section reads as a centred heading above
+   left-aligned copy, which looks like a mistake rather than a composition. */
+.lh-keyword__inner > * {
+  margin-inline: auto;
+}
+
+/* ⚠️ NO HYPHENATION in this block. base.css sets `hyphens: auto` on every <p>,
+   which is right for justified-ish running prose and wrong here: centred lines
+   already have two ragged edges, and German compounds broke as "Kontrollgän-ge"
+   and "Kom-bination" on consecutive centred lines, which reads as a rendering
+   fault rather than typography. Same call /referenzen/ makes for its own centred
+   result copy. The sitewide `overflow-wrap: break-word` still catches any word
+   too long for the column. */
+.lh-keyword__answer,
+.lh-keyword__text {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* The one piece of decoration, and it is a graphic: --color-accent is blue-dark
+   inside .section--light, 3.71:1 on white, which clears the 3:1 that applies. */
+.lh-keyword__rule {
+  display: block;
+  width: 3rem;
+  height: 2px;
+  margin-bottom: var(--space-5);
+  background-color: var(--color-accent);
+}
+
+/* In `ch` so the break follows the words, not a pixel width — this heading is the
+   longest H2 on the page and is the only thing setting the section's measure.
+   ⚠️ `margin-inline: auto` HERE TOO, and the rule two blocks up does NOT cover it:
+   the H2 is wrapped in `.section__intro`, so it is a grandchild of the centred
+   container, not a direct child. The chassis leaves `.section__intro` at
+   `max-width: none`, so the wrapper spans the full width and auto margins on it do
+   nothing — the capped H2 inside stayed pinned left and measured 219px off the
+   axis while the rule and both paragraphs sat dead centre. Measured with a Range
+   over the real text nodes; the element rect would not have shown it, because the
+   BOX is the thing that was off, not the text inside it. */
+.lh-keyword__inner h2 {
+  max-width: 34ch;
+  margin-inline: auto;
+  text-wrap: balance;
+}
+
+/* The draft's own first sentence, promoted. Large enough to read as the answer,
+   still short of the H2 so it never competes with the question it answers. */
+.lh-keyword__answer {
+  max-width: 38rem;
+  margin-top: var(--space-6);
+  font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.5rem);
+  line-height: var(--line-height-heading);
+  color: var(--color-text);
+  /* Stops "nach § 34a GewO." landing alone on a third line. */
+  text-wrap: balance;
+}
+
+.lh-keyword__text {
+  max-width: 42rem;
+  margin-top: var(--space-5);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  /* Was a hardcoded `rgb(255 255 255 / 0.82)` from when this section was dark, then
+     --color-text when it went white. Muted now that the sentence above carries the
+     answer: 4.60:1 on white, which passes at this size. */
+  color: var(--color-text-muted);
+}
+
+/* ---- Warum FRANKONIA -----------------------------------------------------
+   ⚠️ /leistungen/ IS A CONSUMER OF `.lh-why*` — twelve references in
+   pages/leistungen.html, section 4 ("Ein Partner, ein System, elf Leistungen").
+   A concurrent session deleted this block on 2026-08-10 with the note "Nothing on
+   THIS page used it" while migrating /einsatzgebiete/ to its own `.eg-why*`, and
+   the section rendered with no styles at all until it was rebuilt: raw <h3>
+   defaults (base.css's 800 weight and its −1px display tracking), no grid, no
+   accent. If you are pruning `.lh-*` again, grep BOTH hub pages first — they share
+   this stylesheet.
+
+   Rebuilt 2026-08-10 in the page's own language rather than restored: four ruled
+   blocks, each opening on the short blue accent the keyword section uses, so the
+   page has ONE accent vocabulary instead of a per-section invention. Ruled, not
+   carded — the eleven cards above are the page's card moment and a second card
+   grid four items long would compete with them. */
+/* Heading centred (client 2026-08-10), content left — the same split the city
+   hub's Vertrauen section and this page's own FAQ already use: a centred header
+   over left-aligned columns.
+   ⚠️ `margin-inline: auto` on the H2 ITSELF, not on `.section__intro`. The chassis
+   leaves that wrapper at `max-width: none`, so it is already full width and auto
+   margins on it do nothing — the capped heading inside would stay pinned left.
+   Same trap the keyword section hit two edits ago; measured, not assumed. */
+.lh-why .section__intro {
+  text-align: center;
+}
+
+.lh-why .section__intro h2 {
+  max-width: 26ch;
+  margin-inline: auto;
+  text-wrap: balance;
+}
+
+.lh-why__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-7);
+}
+
+/* 2-up early, 4-up from 1100px — the width this project already measured for a
+   four-across row (the Anwendungsfälle on /werkschutz/ and the city hub's own
+   Warum), not a fresh guess. */
+@media (min-width: 640px) {
+  .lh-why__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1100px) {
+  .lh-why__list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+}
+
+/* The accent is a pseudo-element, so the item stays a plain block and the rule
+   can never be mistaken for a border that something else might override.
+   --color-accent is blue-light on this dark section: 6.8:1, and it is a graphic
+   anyway, where 3:1 applies. */
+.lh-why__item::before {
+  content: "";
+  display: block;
+  width: 3rem;
+  height: 2px;
+  margin-bottom: var(--space-4);
+  background-color: var(--color-accent);
+}
+
+/* Body metrics on purpose: base.css tightens every heading by a flat −1px, which
+   is calibrated for 48px+ display sizes and reads as collision at 20px
+   (design-system §2 — a heading styled as body copy takes body metrics). This is
+   the rule the deleted version already followed and the raw fallback lost. */
+.lh-why__title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: normal;
+  line-height: var(--line-height-heading);
+  margin-bottom: var(--space-3);
+}
+
+.lh-why__text {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+}

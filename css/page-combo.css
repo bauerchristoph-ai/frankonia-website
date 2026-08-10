@@ -1,0 +1,514 @@
+/*
+  COMBO-PAGE TEMPLATE — the sixteen /<leistung>-<stadt>/ pages
+  (4 services × 4 cities: Brandwache · Objektschutz · Werkschutz ·
+  Baustellenbewachung, in Nürnberg · Würzburg · Erlangen · Fürth).
+  Built 2026-08-09 with the first of them, /brandwache-nuernberg/.
+
+  THIS FILE IS TINY ON PURPOSE, and that is the whole point of the page type.
+  docs/build-checklist.md calls the combos "puro ensamblado": a combo page is a
+  city page narrowed to one service, so it loads TWO layers of existing CSS
+  before this one and adds almost nothing:
+
+    css/page-service.css   the site CHASSIS (docs/page-conventions.md §9.1) —
+                           --content-inset, `main h2`, breadcrumb chevron,
+                           .section--light, .service-hero*, .service-link,
+                           .service-konzept* (the 3-step Ablauf), the entire
+                           Kosten block (.service-price* + the price-box
+                           partial), .service-related* and the whole
+                           .pixel-seam* block.
+    css/page-city.css      the GEO layer — the Einsatzgebiet badge, the hero's
+                           two-column grid, the city outline, the column of
+                           hero ticks, the numbered local blocks
+                           (.city-fields*), the Warum cards (.city-why*), the
+                           ruled service rows (.city-services*) and the phone
+                           rhythm under `body.page-city`.
+
+  ⚠️ SO A COMBO PAGE CARRIES `class="page-city page-combo"` ON <body>, and that
+  is not a cosmetic label: page-city.css's phone block (`--pixel-band-h: 80px`,
+  the reduced section padding and the matching seam reservations, the full-width
+  hero CTAs) is scoped to `.page-city`, and this page type wants every one of
+  those. `.page-combo` is here for the few overrides below.
+
+  ⚠️ AND IT MEANS THIS PAGE TYPE INHERITS CITY-PAGE DESIGN CHANGES. That is
+  deliberate — the Warum cards, the badge and the rows should be ONE design
+  across the 26 geo pages, not two similar ones — but it also means a change to
+  page-city.css lands on 26 pages, not 10. Measure both types after touching it.
+
+  REUSE MODEL FOR THE OTHER FIFTEEN: every class here is `.combo-*`, never
+  `.brandwache-*`. Building /objektschutz-nuernberg/ is a copy of the page file
+  with that draft's copy, meta and JSON-LD — and NOT ONE LINE of this file. The
+  four drafts deliberately vary their section 2 (Einsatzlagen / Objekt-Typen /
+  Industrie-Fokus / Bauphasen), but all four are "N blocks of title + paragraph",
+  which is `.city-fields*` either way.
+*/
+
+/* ==========================================================================
+   THE PAGE'S ICON FAMILY
+   ==========================================================================
+   Client brief 2026-08-10: three sections needed stronger visual anchors —
+   Einsatzlagen and Ablauf had none, and the Warum cards' icons were "too small
+   and visually timid". The brief's own constraint is the important one: the three
+   sections have to read as ONE system, same stroke weight, same size logic, same
+   blue, and the page must not become illustrated.
+
+   NO NEW LIBRARY, and only ONE new symbol. Every glyph but #icon-radio already
+   existed in partials/icon-sprite.html — the project's own icon system — which is
+   also why they belong to one family for free: one 24x24 grid, one drawing hand,
+   `fill: none; stroke: currentColor` inherited from the sprite's <g id="icon-defs">.
+
+   ONE SIZE, 44px (2.75rem), across all three sections — raised 28 → 40 → 44 over
+   three client passes on 2026-08-10, and kept as a single value because one size is
+   simpler to hold across the other fifteen pages than the tiers this started with.
+
+   ⚠️ THE STROKE IS THEREFORE NOT 1.5, AND THAT IS THE POINT OF THIS BLOCK.
+   An SVG `stroke-width` is in USER UNITS, so a symbol drawn at 1.5 on a 24-unit
+   grid renders thicker the bigger you draw it: 1.75px at 28, and **2.75px at 44**,
+   which stops looking like a line icon. The width that lands on the family's one
+   optical value is:
+
+       stroke-width = 1.75 x 24 / <rendered px>      → 0.95 at 44px
+
+   1.75px is that value, and it was measured twice: 1.6px matched across sizes but
+   read TIMID at 40px — the exact word the brief uses for what the Warum cards had
+   to stop being, because a bigger glyph at the same absolute line weight looks
+   lighter. 1.75px is still comfortably under 2px.
+   ⚠️ If a size ever changes here, recompute its stroke with that formula. Leaving
+   1.5 behind at a size it was not drawn for is the failure this exists to prevent.
+
+   ⚠️ COLOUR IS `--color-blue-light` — THE CTA's OWN #3D9AD3 — AND NOT
+   `--color-accent` (client 2026-08-10: "encargate que sea todo el mismo celeste,
+   que es el celeste del CTA"). That token is section-dependent: it resolves to
+   blue-DARK (#5287C9) inside a `.section--light`, which is what had the
+   Einsatzlagen and Warum icons rendering in a second, near-identical blue while
+   every button on the page used the CTA's. One literal token means one blue.
+   It is safe on both surfaces because an ICON IS A GRAPHIC, so the applicable
+   minimum is 3:1, not 4,5:1 — #3D9AD3 measures 3,11:1 on white and 6,8:1 on this
+   page's black. (That 3,11 is the same accepted brand caveat every primary button
+   on the site already ships with.) */
+.combo-icon {
+  display: block;
+  flex-shrink: 0;
+  color: var(--color-blue-light);
+  /* Restated because the sprite declares its paint on <g id="icon-defs"> and that
+     does NOT survive <use> — the trap is documented five times over in this
+     project. Required, not defensive. */
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---- Hyphenation --------------------------------------------------------- */
+/* base.css sets `hyphens: auto` on every p/li — right for running prose, wrong
+   for a short label in a three-column row, where a German compound breaks on
+   almost every line. Everything else on this page is already in page-city.css's
+   or page-service.css's own list. */
+.combo-steps__title {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* ==========================================================================
+   1. HERO — the Notfall variant
+   ==========================================================================
+   Same hero as a city page (`.service-hero.city-hero`, two columns from 1024px
+   with the city's outline on the right), with ONE structural difference, and it
+   comes from the draft rather than from taste: on this page type the PHONE is
+   the primary CTA and the form is the secondary one ("CTA primär: Jetzt
+   anrufen … · CTA sekundär: Unverbindliches Angebot einholen").
+
+   That inverts every other page on the site, where the blue button is the form
+   and the phone is the outline pill — because this is the one service a visitor
+   arrives at mid-incident (BMA-Ausfall, Heißarbeiten, an Auflage that starts
+   today). A form with a one-working-day promise is the wrong first action there.
+
+   Nothing here restyles the buttons: the phone simply takes `.btn--primary` and
+   the form link takes `.btn--secondary`, which components.css already documents
+   as fully token-driven and correct on a dark section. The only rule needed is
+   the icon fix below. */
+
+/* ⚠️ #icon-phone is the ONE FILLED symbol in the sprite that does not declare
+   its own paint — its fill/stroke live on the `<g id="icon-defs">` wrapper and
+   that does not survive `<use>`. Without this it renders as a black blob inside
+   a blue button. page-service.css makes the same correction for
+   `.service-hero__phone .icon`; that rule cannot be reused here because it also
+   carries the outline-pill treatment, which is exactly what this button is not.
+   (Every OTHER icon on this page is a stroke icon and is handled by
+   page-city.css — see its note on the sprite.) */
+.combo-hero__call .icon {
+  fill: currentColor;
+  stroke: none;
+}
+
+@media (max-width: 767.98px) {
+  /* `.btn` is `white-space: nowrap` and this label is a phone number, so on a
+     320px viewport it can still out-measure the width the container and the
+     editorial inset leave. page-city.css already makes both hero CTAs full width
+     on a phone; this is what lets the label wrap inside that width rather than
+     overflow it. */
+  .combo-hero__call {
+    white-space: normal;
+  }
+}
+
+/* ---- The two CTAs on ONE row ----
+   Client 2026-08-10: "quiero que los botones estén uno al lado del otro". Most of
+   that was won by dropping the draft's "Jetzt anrufen:" prefix from the label
+   (same instruction) — the pair went from 662px of min-content to 560, against the
+   ~640px the copy column has, so from 1152px up they simply fit and no rule is
+   needed.
+
+   The exception is the 1024–1151 band, and it is arithmetic rather than taste:
+   page-city.css splits the hero into two columns at 1024px (1fr / 0.62fr), which
+   leaves the copy column at 506px there — 54px short of the pair. Giving the
+   outline column a smaller share in that band buys the copy ~570px. The outline is
+   decorative and sized by HEIGHT (`.city-map` is width:auto with a max-height), so
+   a narrower column caps its width and loses nothing.
+   Below 1024 the hero is one column and the copy column is the full 40rem, so the
+   pair already fits; below 768 page-city.css stacks them full width on purpose. */
+@media (min-width: 1024px) and (max-width: 1151.98px) {
+  .combo-hero .city-hero__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.42fr);
+  }
+}
+
+/* ==========================================================================
+   2. EINSATZLAGEN — the icon IS the item's marker
+   ==========================================================================
+   Client 2026-08-10: bigger icons, and the 01–04 numerals gone. So the item went
+   from hairline → 01 → Titel → Absatz to hairline → icon → Titel → Absatz, and
+   the icon stopped being a marker beside an index and became the anchor itself.
+   Which is why it moves up to the 40px block tier, alongside the Warum cards:
+   this list gives one item as much room as a card does, and it is now the only
+   mark the item has.
+   ⚠️ The list also became a `<ul>` in the markup — it was an `<ol>` only because
+   those numerals existed. The two-column grid and the divider system are
+   untouched, as the original brief asked.
+
+   1.05 = 1.75 x 24 / 40, the family's optical stroke — see the note at the top.
+   The margin is what stops a 40px glyph from sitting on top of its own title;
+   `.city-fields__title` keeps its own --space-2 above it, so the gap is 20px. */
+.combo-fields__icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  stroke-width: 0.95;
+  margin-bottom: var(--space-3);
+}
+
+/* ==========================================================================
+   3. ABLAUF — the three steps
+   ==========================================================================
+   The chassis' `.service-konzept__steps` unchanged: the scroll-scrubbed rail
+   from js/steps-sequence.js, a square blue node per step, the connector drawing
+   from one node to the next. NO `data-steps-draw` here — that hook is for the
+   inline Figma line art on /werkschutz/, and these three steps have no artwork
+   in the draft. Without it the script simply lands the node and rises its copy,
+   which is the documented default.
+
+   The one thing the chassis has no slot for is a step LABEL: its step is
+   number + illustration + one sentence, and this draft's steps are
+   "Anrufen: Lage, Auflage, Zeitraum …", i.e. a name and then the sentence. The
+   name goes in its own element rather than being folded into the paragraph with
+   a <strong>, so it can carry real heading semantics inside the <ol>. */
+
+/* The chassis' step list carries a --space-8 bottom margin because on
+   /werkschutz/ two more blocks follow it inside the same section (the 30 % proof
+   sentence and the actions row). Nothing follows it here — the draft's Ablauf is
+   the H2 and the three steps, full stop — so that margin measured as 64px of
+   dead space on top of the section's own padding. */
+.combo-steps .service-konzept__steps {
+  margin-bottom: 0;
+}
+
+/* 40px (client 2026-08-10: "un poco más grandes y aireados arriba"), which also
+   collapses the family to ONE size — Einsatzlagen and the Warum cards are already
+   there. One size is simpler to hold across the other fifteen pages than three
+   tiers, and at ~380px per step column a 40px glyph is still well short of
+   competing with the rail above it. 1.05 = 1.75 x 24 / 40.
+   ⚠️ The margin-top is the "aireado" half of that request and it REPLACES a
+   negative one: the icon used to be pulled tight under its numeral. It now sits
+   24px below it (12px here plus the step's own --space-3 flex gap), so the rail's
+   node + numeral pair still reads as the structure while the icon reads as the
+   step's own mark instead of a third thing crowding the index. */
+.combo-steps__icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+/* ⚠️ WHITE HERE, and only here (client 2026-08-10: "los iconos … y blancos"). This
+   is the one section of the three that sits on the page's black, so white is
+   available at all — on the other two the icons sit on white cards and a white
+   glyph would be invisible. It also costs the section nothing in brand colour: the
+   rail, its three nodes, the numerals and the title highlight are all the CTA
+   celeste, so the blue still carries the block and the icons simply read at 21:1
+   instead of 6,8:1. */
+.combo-steps .combo-icon {
+  stroke-width: 0.95;
+  color: var(--color-white);
+}
+
+/* ---- The step title highlights as its step arrives ----
+   Client 2026-08-10: "que los títulos sean highlighteados con fondo celeste
+   mientras escroleo". It is the marker wipe the site already owns — the same
+   mechanism as `.service-contrast__mark` on /werkschutz/ and the homepage's pain
+   hook — driven per step from js/steps-sequence.js's own timeline
+   (`data-steps-mark`), so the fill sweeps as part of the step's single arrival
+   rather than as a second effect that happens to land nearby.
+
+   ⚠️ THE FILL IS THE CTA's CELESTE, AND THE TITLE'S SIZE IS WHAT MAKES THAT LEGAL.
+   Client 2026-08-10: every blue on the page has to be #3D9AD3. The text on this
+   fill has to stay WHITE — mid-wipe half of it is still sitting on the section's
+   black, so flipping it dark (the call /werkschutz/'s Leistungsumfang makes on its
+   own light section) would make it invisible for the whole sweep. And white on
+   #3D9AD3 is **3,11:1**, which fails the 4,5:1 that normal text needs.
+   So the title moved to a flat **1.5rem (24px)**, which is WCAG's own large-text
+   threshold at any weight — there the applicable minimum is 3:1 and 3,11 clears it.
+   It is the documented cheap way out for exactly this case
+   (docs/page-conventions.md §3), used here instead of overriding the client's
+   colour, and it is the same move `.service-related__title` already makes.
+   ⚠️ So the size is load-bearing: do NOT put it back on `--font-size-md` (a
+   18→20px clamp) without also changing the fill. Under 24px this becomes a real
+   contrast failure, and at 20px it was one — which is why this fill used to be the
+   deeper `color-mix(blue-dark 85%, black)` (4,80:1).
+
+   ⚠️ THE FALLBACK IS 1, NOT 0. `var(--mark, 1)` is what a no-JS visitor, a crawler
+   and prefers-reduced-motion get — a finished highlight. `var(--mark, 0)` is the
+   exact bug .service-contrast__mark shipped once: measured at 0 % under forced
+   reduced motion, i.e. the highlights vanished. GSAP writes the 0 start state at
+   runtime and only for a step it is about to wipe. */
+.combo-steps__mark {
+  background-image: linear-gradient(
+    var(--color-blue-light),
+    var(--color-blue-light)
+  );
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: calc(var(--mark, 1) * 100%) 100%;
+  padding-inline: 0.22em;
+  padding-block: 0.06em;
+  border-radius: 3px;
+  /* Survives a line break — "Wache steht" wraps in a narrow column, and without
+     this the second line would lose its fill. */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.combo-steps__title {
+  /* ⚠️ A FLAT 24px, AND IT IS A CONTRAST DECISION, not a size preference — see the
+     mark rule below. It was `--font-size-md`, a 18→20px clamp; at those sizes white
+     on the CTA celeste is normal text and fails 4,5:1. At 24px WCAG's large-text
+     threshold applies and 3,11:1 clears it at every viewport width. */
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: var(--line-height-tight);
+  /* The step is a centred flex column with a --space-3 gap, so this only needs
+     to close the gap to its own sentence, not to open one. */
+  margin-bottom: calc(-1 * var(--space-2));
+}
+
+/* ==========================================================================
+   4. WARUM FRANKONIA — three cards, not four
+   ==========================================================================
+   `.city-why*` verbatim (the raised white panels the client approved for the
+   city pages on 2026-08-09), with the column count corrected: that block's
+   ≥1100px rule is `repeat(4, …)` because a city page has four Warum blocks, and
+   every combo draft has THREE. Left alone, the third card would sit in a row of
+   four with a quarter of the row empty.
+
+   Three columns at 1100px is a ~355px card, i.e. between that block's own two
+   bands (~570px at 2-up, ~270px at 4-up), so the compacted padding and type the
+   4-up rule sets are kept — they read correctly at this width and restating the
+   2-up values here would be four declarations that only re-derive what
+   page-city.css already decided. Only the count and the gap change. */
+@media (min-width: 1100px) {
+  .combo-why .city-why__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* The 4-up rule tightens the gap to --space-5 to buy column width. Three
+       columns do not need that, so the 2-up band's gap comes back. */
+    gap: var(--space-7) var(--space-6);
+  }
+}
+
+/* ---- The card icons, enlarged ----
+   Client brief 2026-08-10: these three "are currently too small and visually
+   timid" — make them noticeably larger, give them hierarchy, keep them minimal
+   and line-based, and open up the spacing between icon, title and description.
+   The GLYPHS do not change (the brief asks to improve the treatment, not to swap
+   them) and neither does the card: no circle behind the icon, no fill, no extra
+   decoration.
+
+   28px → 40px, i.e. the largest of the three sections, because a card gives one
+   item the most room and this is the block where the icon has to be among the
+   first things the eye lands on. 1.05 = 1.75 x 24 / 40 — the same optical line
+   weight as the 28px and 32px icons above; leaving page-city.css's 1.5 here would
+   have rendered them at 2.5px, which at this size stops looking like a line icon.
+
+   ⚠️ Scoped to `.combo-why`, so the ten city pages keep their own 28px treatment.
+   Two-level selectors because page-city.css's `.city-why__icon` is (0,1,0) and
+   loads before this file — same specificity would win on order alone, but tying
+   it to the page type is what makes the scoping true rather than incidental. */
+.combo-why .city-why__icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  stroke-width: 0.95;
+  /* The CTA's celeste, NOT `--color-accent` — see the family note at the top of
+     this file. page-city.css sets that token here and it resolves to blue-dark in
+     this light section, i.e. a second blue. */
+  color: var(--color-blue-light);
+  /* 24px → 32px. The icon is a zone of its own now, not a mark leaning on the
+     title. */
+  margin-bottom: var(--space-6);
+}
+
+/* 12px → 16px, so title and description stop reading as one block once the icon
+   above them has weight. */
+.combo-why .city-why__item p {
+  margin-top: var(--space-4);
+}
+
+/* ==========================================================================
+   5. KOSTEN — INVERTED: dark section, white card
+   ==========================================================================
+   Client 2026-08-10, for this section only: "el fondo negro y la card la podés
+   hacer blanca o platinum". The section drops `.section--light` and
+   `data-nav-theme="light"` in the markup — which is most of the work, because the
+   chassis' tokens flip back on their own and the H2 and the answer paragraph
+   return to their dark-section colours with no rule here. What IS needed is the
+   card, which the chassis paints glossy black.
+
+   ⚠️ THIS IS ALSO WHAT UNBLOCKED THE PAGE'S COLOUR RHYTHM, so it is worth knowing
+   before anyone reverts it. The glossy black card forces its section to be light;
+   `.service-konzept*` (the Ablauf steps) only works on dark; `.city-why*`'s raised
+   panels only work on light. Those three constraints together used to strand
+   Warum + Kosten + FAQ as one three-section light run with no colour change in it
+   (it is written up in docs/page-conventions.md §11.2 as unavoidable — this is the
+   thing that avoided it). Putting the black card back means putting that run back,
+   and deleting the two seams around this section.
+
+   WHITE, not a new "platinum" grey: the lead form two sections below is already a
+   white card on this page's own black, so every value here is that card's
+   (`.conversion__form-wrap`, css/lead-form.css) — same border hairline, same
+   --radius-lg, same --shadow-lg. Two white cards on one page should be one
+   decision, not two similar ones. Nothing outside this section changes: 26 other
+   pages keep the black card. */
+.combo-price .service-price__box {
+  background-color: var(--color-white);
+  /* The chassis lightens the black fill with a faint diagonal white gradient.
+     On white it does nothing at all, so it goes rather than being left as a
+     declaration that paints nothing. */
+  background-image: none;
+  /* A white card on a dark section needs a real edge: the hairline defines it and
+     the shadow carries the depth. The chassis' inset white top highlight is the
+     black card's equivalent and is invisible here, so it is replaced rather than
+     kept alongside. */
+  border: 1px solid rgb(1 1 1 / 0.06);
+  box-shadow: var(--shadow-lg);
+  /* The card OWNS its text colour, same principle as the black version: it is a
+     light surface whatever section it sits in, and here it sits on black. Without
+     this the ticks' labels would inherit white and vanish. --color-gray is 9,2:1
+     on white (docs/design-system.md §7). */
+  color: var(--color-gray);
+}
+
+/* The button's sweep, which the chassis reuses from @keyframes btn-shine. It is a
+   22 %-white band — invisible on a white card, i.e. an animation running every 5s
+   forever and painting nothing. `content: none` removes the pseudo-element
+   outright rather than leaving it transparent. */
+.combo-price .service-price__box::after {
+  content: none;
+}
+
+/* ---- The card's own "on white" scale ----
+   ⚠️ The alphas are NOT the black card's mirrored. Its label sits at 0.6 white on
+   black; 0.6 of --color-gray on white measures ~3,2:1 and fails. The floor on this
+   surface is 0.75 (4,60:1) and these use 0.8 (5,25:1) — the measured scale is in
+   docs/page-conventions.md §10.4. */
+.combo-price .service-price__box-label,
+.combo-price .service-price__box-unit,
+.combo-price .service-price__box-note {
+  color: rgb(59 73 86 / 0.8);
+}
+
+/* The strongest thing in the card, so it takes the strongest value: 20,9:1. */
+.combo-price .service-price__box-value {
+  color: var(--color-logo-black);
+}
+
+.combo-price .service-price__box-list {
+  border-top-color: rgb(1 1 1 / 0.12);
+}
+
+/* The chassis' tick is solid white "because it sits on the elevated box". Here it
+   sits on white, so it takes the page's one blue — `--color-blue-light`, the CTA's
+   own (client 2026-08-10: "todo el mismo celeste"). It used to be the deeper mix at
+   4,88:1; #3D9AD3 is 3,11:1 on white, which is fine because A TICK IS A GRAPHIC and
+   the applicable minimum is 3:1. The label beside it carries the meaning and is
+   --color-gray at 9,2:1, so nothing depends on reading the tick's hue. */
+.combo-price .service-price__box-list .service-price__tick {
+  color: var(--color-blue-light);
+}
+
+/* ---- The copy sits at the MIDDLE of the section, not at its top ----
+   Client 2026-08-10: "hacéme el texto no alineado arriba pero al centro de la
+   sección". On a service page the left column is heading → answer → factor list →
+   Hinweis, so top-aligning it against the card is right — the two columns start
+   together and run down together. This page has no factors and no Hinweis (see the
+   markup: the draft states them inside its own sentence), so the left column is
+   just two paragraphs of copy against a ~690px card, and top-aligned it read as
+   the text having fallen to the top of an empty column.
+
+   Two declarations, and both are needed:
+   - `grid-row: 1 / -1` because the chassis places the intro in ROW 1 of a
+     three-row grid while the card spans all three. Centring inside row 1 alone
+     would be centring inside a box the same height as the text, i.e. a no-op;
+   - `align-self: center` then centres it against the full grid height, which on
+     this page is the card's height.
+   Desktop only: below 900px the layout is one column and the DOM order (intro,
+   then card) is the reading order, so there is nothing to centre against. */
+@media (min-width: 900px) {
+  .combo-price .service-price__intro {
+    grid-row: 1 / -1;
+    align-self: center;
+  }
+}
+
+/* ==========================================================================
+   7. ABSCHLUSS-CTA — the phone above the form
+   ==========================================================================
+   Same inversion as the hero, and the draft's own order: the closing section
+   opens on the number, and the form is for planned Wachen. The number sits in
+   the section lede, which is on the DARK section rather than inside the white
+   form card — so it is NOT the `.conversion__form-alt` link, whose colour is the
+   deep on-white mix, and it needs none of that: the base link colour is
+   blue-light, which is 6,8:1 on this black.
+
+   What it does need is a real hit area. §7's exception for links constrained by
+   the line-height of a sentence does not apply to this one: it is a phone number
+   on an emergency landing page, i.e. the page's primary action repeated. Padding
+   an inline-block grows the target without moving the line. */
+.combo-conversion__phone {
+  display: inline-block;
+  padding-block: 0.6rem;
+  font-weight: 500;
+  /* Keeps "+49 951 964352-0" from ever breaking across two lines, which is also
+     what makes the padded box a single sane target rather than two half ones. */
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   8. WEITERFÜHREND — one full-width list, not two columns
+   ==========================================================================
+   The chassis' closing navigation block (`.service-related*`), which on
+   /werkschutz/ holds two titled groups side by side. This draft's Weiterführend
+   is TWO links, and two links do not make two groups — so the block runs as one
+   list. Left in the two-column grid it would sit in the left half under a
+   full-width H2, with the right half empty.
+   Full-width ruled rows are also what the sibling city page already does with
+   its eight service rows, so the two pages close the same way. */
+@media (min-width: 768px) {
+  .combo-related .service-related__cols {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

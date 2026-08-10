@@ -97,7 +97,26 @@
   // edge to stay noisy despite the chunkier tiles.
   const TILE_SIZE = 40;
 
+  // Pulse mode (see below): each tile has an activation WINDOW instead of a
+  // one-way latch, so unlike the dissolve's jitter (tuned to spread across
+  // the whole 0-1 range) these three have to keep every tile's window
+  // comfortably inside [0, 1] — a window that hangs off either end would
+  // freeze mid-fade once the scrub reaches its start/end and stops updating
+  // (exactly what happened before this bound existed: the last row's tiles
+  // never finished fading out on a page without much scroll room after the
+  // seam, e.g. a short footer).
+  const PULSE_HALF_WIDTH = 0.14;
+  const PULSE_WIDTH_JITTER = 0.035;
+  const PULSE_POS_JITTER = 0.05;
+  const PULSE_MAX_HALF = PULSE_HALF_WIDTH + PULSE_WIDTH_JITTER + PULSE_POS_JITTER;
+
   seams.forEach((seam) => {
+    // "pulse" seams (data-pixel-seam-mode="pulse", .pixel-seam--pulse in CSS)
+    // are for a boundary between two sections of the SAME flat colour — see
+    // that class's own comment in page-service.css. Every other seam keeps
+    // the original one-way reveal latch below, untouched.
+    const mode = seam.getAttribute("data-pixel-seam-mode");
+
     const band = document.createElement("div");
     band.className = "pixel-seam__band";
     seam.appendChild(band);
@@ -137,24 +156,55 @@
       // bottom, deepest into Uniforms. Inverted so the LAST row reveals
       // first (near the start of the scroll range) and row 0 reveals
       // last — the opposite of the previous top-to-bottom mapping.
-      const idealProgress = rows > 1 ? 1 - row / (rows - 1) : 0;
+      //
+      // Pulse mode sweeps the other direction, top-to-bottom, since it has
+      // no "which side is invisible" constraint to satisfy — just a clean
+      // reading-direction sweep from the boundary downward. It also maps
+      // rows into a compressed [PULSE_MAX_HALF, 1 - PULSE_MAX_HALF] span
+      // instead of the full [0, 1] the wipe uses, so every row's window has
+      // room to complete before the range's own start/end (see the guard on
+      // PULSE_MAX_HALF above).
+      const idealProgress = mode === "pulse"
+        ? (rows > 1
+            ? PULSE_MAX_HALF + (row / (rows - 1)) * (1 - 2 * PULSE_MAX_HALF)
+            : 0.5)
+        : (rows > 1 ? 1 - row / (rows - 1) : 0);
 
       for (let col = 0; col < cols; col++) {
         const tile = document.createElement("div");
         tile.className = "pixel-seam__tile";
+        // The tile's own place in the grid, exposed to CSS. Nothing needs it for the
+        // dissolve itself — it is what lets a seam paint a BAND-WIDE background across
+        // its tiles (each tile shows the slice at its own offset), which is how
+        // .pixel-seam--photo continues the next section's blue glow instead of
+        // stepping out of it as a flat colour. Two lines, generic, no behaviour change
+        // for any seam that ignores them.
+        tile.style.setProperty("--pixel-row", row);
+        tile.style.setProperty("--pixel-col", col);
         band.appendChild(tile);
 
-        // Small per-tile jitter around this row's ideal progress (both
-        // vertical and a smaller horizontal component, matching the
-        // shader's 2D per-cell random(grid) — noise varies by column
-        // too, not just row) — bounded by `jitter`, so a tile can only
-        // ever be out of step with its row by roughly one row's worth
-        // of scroll, never scattered arbitrarily across the whole range.
-        const rowJitter = (Math.random() - 0.5) * jitter;
-        const colJitter = (Math.random() - 0.5) * jitter * 0.7;
-        const revealAt = Math.min(1, Math.max(0, idealProgress + rowJitter + colJitter));
-
-        tiles.push({ el: tile, revealAt, revealed: false });
+        if (mode === "pulse") {
+          // Own, smaller jitter budget than the wipe's `jitter` below — sized
+          // so centre + jitter + half-width can never exceed PULSE_MAX_HALF
+          // from either edge, which is the whole point of the margin baked
+          // into idealProgress above.
+          const posJitter = (Math.random() - 0.5) * 2 * PULSE_POS_JITTER * 0.7;
+          const colJitter = (Math.random() - 0.5) * 2 * PULSE_POS_JITTER * 0.3;
+          const center = Math.min(1, Math.max(0, idealProgress + posJitter + colJitter));
+          const halfWidth = PULSE_HALF_WIDTH + (Math.random() - 0.5) * 2 * PULSE_WIDTH_JITTER;
+          tiles.push({ el: tile, center, halfWidth, active: false });
+        } else {
+          // Small per-tile jitter around this row's ideal progress (both
+          // vertical and a smaller horizontal component, matching the
+          // shader's 2D per-cell random(grid) — noise varies by column
+          // too, not just row) — bounded by `jitter`, so a tile can only
+          // ever be out of step with its row by roughly one row's worth
+          // of scroll, never scattered arbitrarily across the whole range.
+          const rowJitter = (Math.random() - 0.5) * jitter;
+          const colJitter = (Math.random() - 0.5) * jitter * 0.7;
+          const revealAt = Math.min(1, Math.max(0, idealProgress + rowJitter + colJitter));
+          tiles.push({ el: tile, revealAt, revealed: false });
+        }
       }
     }
 
@@ -163,11 +213,36 @@
       // A modest range straddling the point where the seam crosses the
       // middle of the viewport — this is the "moment of transition",
       // not a whole section's scroll-through.
-      start: "top 80%",
-      end: "top 20%",
+      //
+      // Per-seam overrides (2026-08-07): the defaults assume the band sits in the
+      // FOLLOWING section's top, i.e. right at the boundary the visitor perceives.
+      // .pixel-seam--photo breaks that assumption — its band is 200px tall and sits
+      // at the bottom of the hero, so the seam element itself is a band-height below
+      // where the dissolve visually begins, and the whole range lands that much late:
+      // measured, the last ~40 % of it played out while the band was already leaving
+      // the top of the screen ("escroleo y después recién veo la transición").
+      start: seam.getAttribute("data-seam-start") || "top 80%",
+      end: seam.getAttribute("data-seam-end") || "top 20%",
       scrub: 0.3,
       onUpdate(self) {
         const progress = self.progress;
+        if (mode === "pulse") {
+          // Belt-and-suspenders on top of the margin baked into idealProgress:
+          // once the scrub is pinned at either end (a page with little scroll
+          // room left below the seam — e.g. a short footer — can leave it
+          // there for good, since onUpdate only fires again on further
+          // scroll), force every tile back to inactive so nothing is ever
+          // left frozen mid-fade.
+          const atEdge = progress <= 0.001 || progress >= 0.999;
+          tiles.forEach((tile) => {
+            const shouldBeActive = !atEdge && Math.abs(progress - tile.center) <= tile.halfWidth;
+            if (shouldBeActive !== tile.active) {
+              tile.active = shouldBeActive;
+              tile.el.classList.toggle("is-active", shouldBeActive);
+            }
+          });
+          return;
+        }
         tiles.forEach((tile) => {
           const shouldReveal = progress >= tile.revealAt;
           if (shouldReveal !== tile.revealed) {

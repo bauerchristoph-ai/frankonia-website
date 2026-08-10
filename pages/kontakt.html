@@ -155,16 +155,14 @@
        reasoning. -->
   <script src="/js/contact-map.js" defer></script>
 </head>
-<!-- data-nav-force-dark: this page is white end to end (client 2026-07-31),
-     so the header's default transparent/white-text look would be invisible.
-     The attribute makes initHeaderScrollTheme() (js/main.js) hold the header
-     in its light state permanently — frosted wash, black logo, grey nav —
-     instead of toggling it per [data-nav-theme="light"] section like the
-     homepage does. If the script never runs, the header stays white-on-white:
-     the .page-contact fallback in page-contact.css covers that case with a
-     plain CSS filter on the logo and grey nav links, so the header is
-     readable with or without JS. -->
-<body class="page-contact" data-nav-force-dark>
+<!-- data-nav-force-dark was REMOVED 2026-08-07. It held the header in its light
+     state permanently because the page was white from the very top; the first
+     section is black again, so the header goes back to toggling per
+     [data-nav-theme="light"] section like every other page — dark/transparent
+     over the black contact section, frosted light over the white map section.
+     The page-contact CSS fallbacks that recoloured the logo and nav for a white
+     header went with it; see page-contact.css. -->
+<body class="page-contact">
   <!-- include: icon-sprite -->
   <!-- include: header-de -->
   <main id="main">
@@ -225,22 +223,28 @@
         <!-- The primary action. Wider column, white card, shadow — the
              strongest object on the page. -->
         <div class="contact-form-card" data-reveal>
-          <!-- Webtext 25 §3 has TWO headings here and the page only ever
-               rendered the second one: an H2 for the section ("Schreiben Sie
-               uns, …") and a "Formulartitel" for the form itself ("Ihre
-               Nachricht an FRANKONIA"). Both are restored 2026-08-05 — the H2
-               as this block's heading, the Formulartitel demoted to <h3> right
-               above the fields, which is also the correct nesting (h1 page →
-               h2 block → h3 form).
+          <!-- Webtext 25 §3 has TWO headings here: an H2 for the section
+               ("Schreiben Sie uns, …") and a "Formulartitel" for the form
+               itself ("Ihre Nachricht an FRANKONIA"). Both were restored
+               2026-08-05; the Formulartitel was REMOVED again 2026-08-07 on
+               client instruction, to bring the card's height down.
+
+               ⚠️ That is approved copy from the doc leaving the page — the only
+               fragment of §3 not rendered now. Nothing else is lost: the H2 and
+               the lede above already say what the form is for, and every field
+               keeps its own <label>.
+
+               The <form> takes aria-labelledby pointing at that H2 so it is
+               still a NAMED form landmark for a screen reader — that naming is
+               what the removed <h3> was providing, and it costs no pixels.
+
                data-no-title-reveal because the card already eases in as one
                unit (data-reveal) — a per-character split on top of that reads
                as two effects fighting. -->
-          <h2 class="contact-form-card__title" data-no-title-reveal>Schreiben Sie uns, wir melden uns innerhalb eines Werktages</h2>
+          <h2 class="contact-form-card__title" id="kontakt-form-title" data-no-title-reveal>Schreiben Sie uns, wir melden uns innerhalb eines Werktages</h2>
           <p class="contact-form-card__lede">Beschreiben Sie kurz Ihr Anliegen: Objekt, Zeitraum, Standort. Alles Weitere klären unsere Sicherheitsexperten mit Ihnen persönlich, kostenfrei und unverbindlich.</p>
 
-          <h3 class="contact-form-card__form-title">Ihre Nachricht an FRANKONIA</h3>
-
-          <form class="contact-form" action="#" method="post">
+          <form class="contact-form" action="#" method="post" aria-labelledby="kontakt-form-title">
             <div class="form-field">
               <label class="form-field__label" for="kf-name">Name *</label>
               <input class="form-field__input" type="text" id="kf-name" name="name" autocomplete="name" required>
@@ -439,6 +443,19 @@
       </div>
     </section>
 
+    <!-- Pixel dissolve, black contact section -> white map section (client
+         2026-08-07: "cuando pasamos a la sección del mapa … haya el efecto de
+         los píxeles"). A real empty sibling BETWEEN the two sections, exactly
+         like the page->footer seam below: height 0, and js/pixel-transition.js
+         builds a band inside the top of the section that follows.
+
+         NO --white modifier here, deliberately: the tiles always match the
+         section ABOVE, which is black, so the default --color-bg tiles are
+         right and the dissolve reads as the dark section pixelating away over
+         the white one. .contact-location reserves the band's height as
+         padding-top (page-contact.css) so the heading is never covered. -->
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
     <!-- ============ ANFAHRT ============ -->
     <!-- Location map (client 2026-08-03: "a map of where is frankonia").
          Leaflet + CARTO's free light basemap, NOT a Google Maps iframe: an
@@ -455,7 +472,11 @@
          LocalBusiness JSON-LD `geo` block (geocoded once from Nominatim during
          this build, never at runtime). Keep the two in sync if the address
          ever changes. -->
-    <section class="section contact-location" aria-labelledby="anfahrt-title">
+    <!-- data-nav-theme="light": the one white section on the page, so the
+         sticky header switches to its frosted dark-text state while this is
+         behind it (initHeaderScrollTheme, js/main.js). Same mechanism the
+         homepage and every service page use for their white sections. -->
+    <section class="section contact-location" data-nav-theme="light" aria-labelledby="anfahrt-title">
       <div class="container">
         <div class="section__intro contact-location__intro" data-reveal>
           <h2 id="anfahrt-title">So finden Sie uns</h2>

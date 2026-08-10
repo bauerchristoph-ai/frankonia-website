@@ -39,7 +39,9 @@ que sale casi todo.
 7. [Teléfono](#7-teléfono)
 8. [Página de servicio](#8-página-de-servicio)
 9. [Página de empresa: reusar el chasis](#9-página-de-empresa-reusar-el-chasis)
-10. [Checklist de página nueva](#10-checklist-de-página-nueva)
+10. [Página de ciudad](#10-página-de-ciudad)
+11. [Página combo: servicio × ciudad](#11-página-combo-servicio--ciudad)
+12. [Checklist de página nueva](#12-checklist-de-página-nueva)
 
 ---
 
@@ -523,6 +525,43 @@ al lado del mapa es un `<a>` común, o sea consentimiento de dos clics.
 - El basemap claro (`light_all`) es para páginas blancas; la home usa el oscuro
   (`dark_all`). Los tiles de CARTO igual son una request a un tercero: si algún
   día hay banner de cookies, este mapa entra en la lista.
+
+### 4.7 Secuencia de pasos: los hooks de `js/steps-sequence.js`
+
+Un timeline de pasos scrubbeado (el marcador aterriza → su copy sube → recién
+entonces el riel dibuja hacia el siguiente). Cuatro páginas lo usan hoy —
+`/jobs/`, `/werkschutz/` (Konzept), `/brandwache-nuernberg/` (Ablauf) y
+`/ueber-uns/` (Meilensteine) — y **todo lo que agrega es opt-in**, así que sumar
+un consumidor no toca a los otros:
+
+| hook | qué hace |
+|---|---|
+| `data-steps-sequence` | en la lista. Los hijos elemento son los pasos |
+| `data-steps-marker="<sel>"` | el marcador es un elemento REAL; sin él se asume pseudo-elemento y se maneja por `--step-node` |
+| `data-steps-draw="<sel>"` | el line art inline de ese paso se dibuja en vez de aparecer |
+| `data-steps-mark="<sel>"` | el resaltado de ese título barre con la llegada del paso |
+| `.is-arrived` (sin atributo) | **la clase que el script pone en el paso** cuando su marcador terminó de aterrizar, y saca al volver para arriba |
+
+Los dos que se olvidan y cuestan una vuelta:
+
+- **`data-no-text-reveal` es obligatorio en la lista, y `data-item-reveal` no
+  puede estar.** Dos timelines sobre el mismo elemento es lo que hace que un
+  reveal se vea roto.
+- **Todo valor que el CSS consuma tiene que caer en el estado TERMINADO cuando la
+  propiedad no existe** — `var(--step-line, 1)`, `var(--mark, 1)`. Ese default ES
+  el contrato sin JS / con `prefers-reduced-motion`: el script sale temprano en
+  los dos casos y nunca escribe nada. Un fallback en 0 publica una sección vacía,
+  que es el bug con el que `.service-contrast__mark` salió una vez.
+
+**`.is-arrived` existe para animaciones de UNA sola pasada**, que un timeline
+scrubbeado no puede expresar: no hay "un momento" al que atar un `@keyframes`,
+y el scrub no tiene dirección propia. El único consumidor hoy es el aro que se
+expande alrededor de los puntos de `/ueber-uns/` — el mismo
+`.pain-hook__node::after` del homepage, valores copiados y no re-derivados, así
+que los dos se leen como un sistema. Que el script la SAQUE al volver para arriba
+es lo que permite que la animación se repita la próxima vez que bajás.
+⚠️ Sólo la agrega JS, así que sin JS y con reduced motion el aro simplemente no
+existe — correcto, es decoración, no contenido.
 
 ---
 
@@ -1424,7 +1463,849 @@ criterio que §8.2 ("Referenzen: solo lo que el cliente dio").
 
 ---
 
-## 10. Checklist de página nueva
+## 10. Página de ciudad
+
+Referencia: `pages/sicherheitsdienst-nuernberg.html` + `css/page-city.css`
+(2026-08-09). Son **10 páginas** y las 16 combo reusan varios de estos bloques.
+Se construyó Nürnberg primero porque su propio draft se titula "WICHTIGSTE
+STADTSEITE" (~1.240 búsquedas/mes combinadas, 720 solo en "sicherheitsdienst
+nürnberg"), porque `build-checklist.md` Bloque 4 la nombra, y porque su
+estructura es la **plantilla** de las otras nueve.
+
+### 10.1 La regla que domina este tipo de página: UWG, "kein Scheinstandort"
+
+FRANKONIA tiene **una** dirección real, en Bamberg. Una página de ciudad no
+puede insinuar una sucursal. El draft lo pone como requisito
+("Einsatzgebiets-Framing, kein Scheinstandort") y aterriza en cuatro
+decisiones concretas:
+
+1. El badge del hero dice **"Einsatzgebiet <Stadt>"**, nunca "Standort".
+2. El JSON-LD lleva `LocalBusiness` con el **NAP real de Bamberg** más
+   `areaServed: { City }`. **Nunca** una dirección en la ciudad de la página.
+3. La primera pregunta del FAQ es "¿Tienen sede en <Stadt>?" y se responde con
+   la verdad: coordinación central, esta ciudad es un Einsatzgebiet fijo.
+4. El Abbinder de la sección de Erreichbarkeit **no promete tiempos de
+   respuesta ni distancias** (Prüfkatalog F10). No agregarlos.
+
+⚠️ **Bamberg es la excepción y su draft es otra estructura**: es el único sitio
+con dirección real, así que ahí sí va el NAP completo con geo, el badge dice
+"Unser Zuhause: Sitz in Bamberg" y la sección 2 es una Zuhause-Story en vez de
+las 4 tarjetas de "Warum". Es una sección distinta, no una hoja distinta.
+
+### 10.2 Las 11 secciones, y de dónde sale cada una
+
+| # | Sección | De dónde |
+|---|---|---|
+| 1 | Hero (badge · H1 · subline · 3 tics · CTA doble · Google) | `.service-hero*` del chasis + `.city-hero*` |
+| 2 | Warum FRANKONIA in \<Stadt\> (4 bloques) | `.city-why*` |
+| 3 | Leistungen in \<Stadt\> (8 filas con link) | `.city-services*` |
+| 4 | Lokale Einsatzfelder (5 bloques, **el contenido local de verdad**) | `.city-fields*` |
+| 5 | Brandwache \<Stadt\> (Pflichtabschnitt) | `.city-callout*` |
+| 6 | Kosten in \<Stadt\> | **el bloque del chasis tal cual** (`.service-price*` + `include: price-box`) + `.city-rates` |
+| 7 | Vertrauen (2 testimonios + sellos) | `css/testimonials.css` + `.trust-certs*` del chasis |
+| 8 | Erreichbarkeit & digitale Nachweise (3 kacheln + Abbinder) | `.city-proof*` |
+| 9 | FAQ (6 preguntas ortoespecíficas) | `.faq__list--cards` compartido |
+| 10 | Umgebung (vecinas) | `.city-nearby*` |
+| 11 | Abschluss-CTA | `partials/lead-form.html` |
+
+Colores: hero ▪ Warum ▫ Leistungen ▪ Einsatzfelder ▫ Brandwache ▪ Kosten ▫
+Vertrauen ▪ Erreichbarkeit ▪ FAQ ▫ **Formular ▪ Umgebung ▫** → footer ▪.
+**10 seams**: el único par del mismo color es Vertrauen+Erreichbarkeit, y ahí no
+va seam (§9.2 — tiles negros sobre negro son nada).
+
+⚠️ **EL FORMULARIO VA ANTES DE UMGEBUNG, al revés que el draft** (cliente
+2026-08-10, después de pedir que le explicaran qué eran las dos secciones:
+"diferenciámelas… no entiendo"). Se construyó al revés primero y **el resultado
+era ilegible, y es medible**: las dos secciones eran el MISMO negro, se tocaban a
+**0px** sin nada en medio, y una era izquierda con H2 de 28px mientras la otra era
+centrada con uno de 60px. Nada le decía al ojo que una había terminado.
+- La causa de que no hubiera separador es correcta y sigue vigente: dos secciones
+  seguidas del mismo color no llevan seam. La regla estaba bien; el **orden** no.
+- **El draft las trata como UNA sección** — su punto 10 se titula "Umgebung +
+  Abschluss-CTA" — que es exactamente por qué se construyeron pegadas. Pero
+  funcionalmente tiran para lados opuestos: **un bloque de salidas justo encima de
+  la conversión primaria de la página.**
+- **La plantilla de servicio ya lo resuelve al revés**: `/werkschutz/` pone su
+  bloque equivalente ("Verwandte Seiten") DESPUÉS del formulario, como sección
+  clara, con seam a los dos lados — y su propio draft termina "… FAQ → CTA →
+  verwandte Seiten". Hay precedente interno para este orden, y **las otras nueve
+  ciudades deberían seguirlo.** Ninguna palabra de copy cambió.
+- Arregla tres cosas de una: separación real (cambio de color + seam), el
+  formulario deja de tener salidas encima, y la página cierra como la plantilla.
+- **Umgebung pasa a `.section--light` + `data-nav-theme="light"`**, y ⚠️ **su hover
+  era un lavado BLANCO** (`rgb(255 255 255 / 0.06)`), invisible sobre blanco — la
+  misma clase de bug que las filas de servicios, en la otra dirección. Ahora usa
+  `--color-accent-subtle`, el lavado celeste que la sección clara ya redeclara.
+  Medido en claro: título y nombre **20,87:1**, mención 4,6:1, pin en blue-dark.
+- **Y va CENTRADA** (misma instrucción): estaba a la izquierda, con las tres pills
+  en el tercio izquierdo de una fila de 1234px y el resto vacío. Medido: H2 y
+  párrafo a **0px del eje** en los seis anchos, pills centradas desde 768.
+  ⚠️ El `<p>` necesitó `margin-inline: auto` y selector de dos clases — **tercera
+  vez que aparece la misma trampa en esta página** (el header de Vertrauen y el
+  lede de Brandwache necesitaron lo mismo): `.section__intro > p` del chasis es
+  (0,1,1) y capa el párrafo en 672px pegados a la izquierda.
+- **Costo:** un seam más = **+200px** de reserva; la página pasó de 12.896 a
+  13.096px a 1440.
+- **Dos cosas de esa captura que NO eran bugs**, y conviene no volver a
+  investigarlas: el H2 gris y cortado a mitad es `title-reveal.js`, el reveal por
+  carácter atado al scroll que tienen todos los `<h2>` del sitio, congelado en una
+  captura estática; y el thumbnail de abajo a la derecha no es de la página — el
+  único elemento `position: fixed` del documento es el botón de WhatsApp.
+
+### 10.3 Sin foto, y no es un parche
+
+**No hay ni una foto de ciudad en el proyecto**, y el draft de Nürnberg
+**tampoco pide una**: su Hero-Aufbau enumera badge, H1, subline, tics, doble CTA
+y el widget de Google, y nada más. (El de Bamberg sí pide una.) Así que el hero
+no lleva fotografía, lo cual además le sale gratis: **esta página no tiene
+elemento LCP de imagen** — cero preload, cero decodificación.
+
+Lo que ocupa la columna derecha es **el contorno administrativo real de la
+ciudad**, como un `<path>` inline:
+
+- se genera **una vez, en desarrollo**, con
+  `docs/design-sources/city-outline.py <slug>`, desde los geojson que ya están
+  en el repo (`assets/data/coverage-boundaries/`, bajados de OSM/Nominatim en
+  julio). 3.566 puntos → 200, ~2,6KB de path;
+- es **honesto para un Einsatzgebiet**: un área, no una dirección. Un pin único
+  se leería como sucursal, que es justo lo que §10.1 prohíbe;
+- **cero requests y cero terceros**, al contrario que los mapas Leaflet de `/` y
+  `/kontakt/` (los tiles de CARTO son una llamada a un tercero y todavía no hay
+  banner de consentimiento);
+- se **dibuja al cargar**, no con el scroll: está arriba del fold, y un reveal
+  scrubbeado ahí es el bug que ya pagó el hero de `/referenzen/` (el título
+  quedaba a medio revelar hasta que scrolleabas). El `stroke-dasharray` es el
+  **largo medido** del path (7381 unidades para Nürnberg), no un número al
+  voleo — y el bloque entero va dentro de
+  `@media (prefers-reduced-motion: no-preference)` por §4.3;
+- **`display: none` abajo de 1024px**: apilado agregaría ~380px de scroll a la
+  primera pantalla por algo puramente decorativo. Es seguro justamente porque es
+  decorativo (`aria-hidden`, sin texto propio).
+
+### 10.4 Cosas medidas que la próxima ciudad no debería re-descubrir
+
+- **Los tics del hero van en COLUMNA, no en fila.** Los del draft son frases
+  enteras ("Feste Teams für laufende Aufträge, direkt vor Ort im Objekt"), y en
+  fila piden ~1000px contra los ~640 que tiene la columna de copy. Es la misma
+  medición que hizo `/jobs/`, donde el cliente eligió la lista. `.city-hero__points`
+  necesita **`align-items: flex-start`**: la regla compartida centra sus items
+  para el layout de fila, y en columna eso los centra horizontalmente.
+- **Las 4 cards de "Warum" son PANELES BLANCOS ELEVADOS, las mismas que los
+  Anwendungsfälle de `/werkschutz/`** (cliente 2026-08-09: "iguales a las cards de
+  werkschutz en donde hay 4 cards en una fila, que tengan drop shadow […] solo que
+  en este caso sin la ilustración grande"). Cada valor está **copiado** de
+  `.service-cases__card`, no re-derivado: borde `rgb(1 1 1 / 0.07)`, radio
+  **1.5rem**, sombra de dos capas (`0 18px 48px / 0.07` + `0 2px 6px / 0.04`),
+  padding `--space-6 / --space-7 / --space-5` por breakpoint, el mismo clamp de
+  `h3` en cada banda, y el mismo hover (−5px, borde a `rgb(61 154 211 / 0.35)`,
+  sombra más abierta). Medido a 900 / 1100 / 1440 / 1600: **las dos páginas dan
+  idéntico** en radio, borde, fondo, sombra, padding, ancho de card (216 / 290 /
+  326px) y tipografía. Son un diseño en dos archivos, no dos parecidos — si cambia
+  uno, cambia el otro.
+  - ⚠️ **Esto REVIERTE el "ruled, not carded" de §8.2 para este bloque.** Es
+    decisión del cliente y tiene precedente: los Anwendungsfälle de
+    `/werkschutz/` hicieron el mismo camino. No "restaurar" los filetes.
+  - **4 en una fila desde 1100px**, el número de `.service-cases__grid` y por su
+    razón (4 cards + 3 gaps necesitan el espacio; entre 900 y 1099 el 2x2 es mejor
+    que cuatro columnas ilegibles). El 1200 anterior venía de las cards de
+    `/jobs/`, que llevan FOTO — ahí el ancho de columna manda sobre el alto, que
+    no es este caso. La única diferencia deliberada con werkschutz: acá el 2-up
+    arranca a 640 y no a 900, porque sin ilustración la card mide la mitad.
+  - ⚠️⚠️ **EL HOVER USA `translate`, NO `transform`, Y ESO ES OBLIGATORIO.** Estos
+    items llevan `data-item-reveal`, y `js/item-reveal.js` anima `y` y `scale` con
+    GSAP — que escribe un `transform` **inline**, y un estilo inline le gana a
+    cualquier regla de hoja. Un `transform: translateY(-5px)` en el hover
+    simplemente **nunca se aplicaría** una vez que corrió el reveal. `translate` es
+    una propiedad aparte que se compone con `transform` (las propiedades
+    individuales se aplican antes), así que GSAP se queda con `transform` y el
+    hover con `translate`.
+    **Verificado en aislamiento, no razonado:** un elemento con
+    `transform: matrix(1,0,0,1,0,24)` inline **y** `translate: 0 -5px` de hoja
+    reporta las dos en el estilo computado y aterriza en `layout + 24 − 5`. Las dos
+    se aplican; ninguna borra a la otra.
+    Es el mismo problema que `page-service.css` resuelve componiendo desde
+    `--card-y`/`--card-s`, pero ese camino necesita un script propio que escriba
+    esas variables y esta página usa el primitivo genérico.
+    **Por la misma razón NO se copió el offset alterno de 28px** de las cards
+    pares del 2x2: es un `transform` en reposo, y ahí GSAP gana. En el 4-up
+    werkschutz lo cancela igual.
+  - No se copiaron tampoco: la ilustración grande (la excepción que pidió el
+    cliente), el numeral 01–04 (esas cards son un `<ol>` de casos numerados; estas
+    cuatro son razones, y numerarlas sería inventar un orden que el copy no tiene)
+    ni el header centrado de esa sección.
+- **Los 8 servicios van en DOS GRUPOS, no como 8 iguales** (cliente 2026-08-09,
+  después de leer la sección a nivel UX). Los ocho no son ocho cosas
+  equivalentes, y presentarlos como una lista plana escondía una distinción que
+  los datos hacen sola:
+
+  | | Cuáles | Destino | Cómo se muestra |
+  |---|---|---|---|
+  | Grupo 1 | Werkschutz · Objektschutz · Baustellenbewachung · Brandwache | su propia página `/…-<stadt>/` | **cards**, 4 en una fila |
+  | Grupo 2 | Empfangsdienst · Veranstaltungsschutz · Kaufhausdetektei · Sicherheitstechnik | la página de servicio **genérica** | **filas**, bajo una etiqueta |
+
+  Las razones, en orden: el grupo 1 carga el volumen local (brandwache <stadt>
+  solo mide 20/mes contra los 10 del resto) y un clic mantiene al visitante en el
+  camino de ciudad; y el grupo 2, como par igual, **prometía con su label una
+  página local que no existe** — la misma clase de afirmación implícita que la
+  regla UWG de §10.1 existe para evitar.
+  - ⚠️ **EL SPLIT NO REORDENA NADA.** El draft ya los lista exactamente en ese
+    orden (1–4 ciudad, 5–8 genéricos), así que esto sólo hace visible una
+    agrupación que Chris ya había escrito. Verificado en el markup.
+  - **Los 8 conservan su descripción**, y es la restricción que definió la forma
+    (cliente: "no me gusta que los chips pierdan su descripción"). El grupo 2 son
+    **filas y no chips** justamente para que sobrevivan ~760 caracteres de copy
+    concreto y crawleable. Lo secundario lo marca la POSICIÓN y la superficie, no
+    una reducción de información.
+  - Lo único de texto nuevo son las dos palabras de la etiqueta del grupo 2
+    ("Ebenfalls verfügbar"), de la misma categoría que un eyebrow. **No es un
+    `<h3>`**: etiqueta un set de links, no abre una subsección, y un tercer nivel
+    de heading metería en el outline un escalón que el contenido no tiene.
+  - ⚠️ **Las cards NO pueden ser idénticas a las de "Warum", y el motivo es
+    estructural.** Esas viven en una `.section--light` y son paneles BLANCOS; esta
+    sección es oscura. Un panel blanco acá es una plancha que encandila, y voltear
+    la sección a clara no está disponible: dejaría tres secciones claras seguidas y
+    cascadearía hasta Kosten, cuya caja de precio está construida como panel
+    oscuro DENTRO de una sección clara. Así que es el **gemelo oscuro**: mismo
+    radio de 1.5rem, mismo padding en cada breakpoint, misma escala de tipografía,
+    mismo lift de 5px, mismo borde que se calienta a azul. **Medido a 320 → 1600:
+    radio, padding y tamaño de nombre dan idénticos a la card de Warum en todos.**
+  - ⚠️ **En una superficie oscura la sombra casi no trabaja**, así que lo que le da
+    borde a la card es una **diferencia de relleno** (blanco al 4,5 %) más una
+    hairline un punto más clara; la sombra queda sólo como capa de contacto. Es la
+    misma conclusión a la que llegaron las risk cards de `/werkschutz/` sobre su
+    banda navy.
+  - El hover usa **`translate`**, por la misma razón medida que las cards de
+    "Warum" (GSAP escribe `transform` inline vía `item-reveal.js`). La rotación de
+    la flecha sí puede ser `transform`: GSAP nunca toca la flecha, sólo la card.
+- ⚠️ **El hover de las filas es un lavado, no el relleno negro** de
+  `.service-related__link`. Esta sección es oscura, y rellenar
+  `--color-logo-black` sobre negro es una fila que no hace nada al hover. Si
+  alguna vez este bloque cae en una `.section--light`, hay que darle el relleno
+  negro **y** pasar la etiqueta a blanco (la trampa que documenta
+  `page-service.css` en `.section--light .service-related__link:hover`).
+- ⚠️ **La lista de tarifas NO reusa `.service-price__factors`.** Ese bloque
+  dibuja un `+` azul por fila, y un `+` delante de "Objektschutz · 26-32 €/Std."
+  se lee como lista de extras. Pero **sí tiene que repetir el
+  `grid-column: 1`** de la grilla compartida de Kosten, o cae en la segunda
+  columna, debajo de la card de precio.
+- ⚠️ **Contraste, medido y fallado la primera vez**: el paréntesis de la fila de
+  tarifas estaba en `--color-gray` al 0.7 = **4,04:1**, abajo del 4,5:1 de texto
+  normal. La escala, para no volver a elegirlo a ojo: 0.7 → 4,04 · **0.75 →
+  4,60** (que es lo que da `--color-text-muted` en sección clara, o sea que
+  apenas pasa) · 0.8 → 5,25 · 0.82 → 5,55.
+- ⚠️ **El numeral de los Einsatzfelder NO usa `--color-accent`**: en
+  `.section--light` ese token es blue-dark (3,71:1), y esto es texto chico. Va la
+  mezcla profunda de §5, medida en **4,88:1**.
+- ⚠️ **Áreas táctiles: `min-height`, no `padding-block`.** Los dos
+  `.service-link` sueltos de la página miden 29px y 27px. Padear los dos con el
+  mismo valor **quedó corto en los dos y por distinto margen** (43px y 41px),
+  porque están a tamaños de tipografía distintos. `min-height: 44px` da 44
+  siempre, y `.service-link` ya es `inline-flex; align-items: center`.
+- ⚠️ **Los links dentro de una respuesta del FAQ son otra cosa.** El draft anota
+  los 8 servicios de una respuesta como links; **no se renderizan así**. Ocho
+  anchors en una frase miden 18px cada uno, y aplicar el arreglo de §7 ocho veces
+  en un párrafo destroza el renglón — WCAG 2.5.8 tiene una excepción explícita
+  para targets limitados por el line-height de una frase. Y sobre todo no
+  aportan: los 8 ya son filas completas dos secciones arriba. Un link **solo** en
+  una frase sí lleva el `padding-block` sobre `inline-block`.
+- **El bloque de Brandwache va CENTRADO en una columna, no en dos** (cliente
+  2026-08-10: "está muy fea y desbalanceada… tiene que ser clean y balanceada").
+  Era un 50/50 — H2 + respuesta a la izquierda, un panel con filete arriba, los 3
+  hechos y el link a la derecha, corrido 48px hacia abajo. **Por qué se veía
+  roto, medido a 1440 antes de tocarlo:** la columna izquierda medía **367px** y
+  la derecha **253px** (114 menos) y además arrancaba 48px más abajo, así que
+  terminaba 66px más arriba y dejaba un hueco en el cuadrante inferior derecho;
+  el H2 se iba a **3 líneas / 224px** y dominaba; el filete del panel no tenía
+  nada a la izquierda con qué alinearse; y de los 3 hechos el primero envolvía a
+  dos líneas y los otros a una, o sea una lista despareja 2+1+1.
+  La solución es **simetría, no mejores offsets**: header centrado, los 3 hechos
+  como fila de 3 debajo, y una fila de acciones centrada. Nada puede quedar
+  desbalanceado porque nada está al lado de nada.
+  - **No es un patrón nuevo en la página**: el header de Vertrauen y el FAQ ya
+    están centrados, así que es la tercera instancia de una decisión ya tomada.
+  - `.city-callout__panel` **se borró**, markup y CSS, no quedó como regla muerta.
+  - Los 3 hechos son **3 columnas desde 768px** (50–60 caracteres cada uno = una
+    línea por columna) y apilados abajo, donde 3 columnas darían ~110px.
+  - Cada hecho queda **alineado a la izquierda dentro de su columna**; lo que se
+    centra es la fila. Centrar tres frases de largos distintos les saca el borde
+    izquierdo común, que es la misma decisión que toma §8.2 para el contenido de
+    los paneles de comparación.
+  - ⚠️ **En teléfono NO va centrado.** El centrado equilibra dos columnas de
+    espacio en desktop; en 350px un H2 de 3 líneas centrado sobre un párrafo de
+    8 centrado se lee peor que el mismo copy alineado a la izquierda, y pierde el
+    borde que comparte el resto de la página. Misma decisión que tomó `/jobs/`
+    con su sección de pasos centrada.
+  - ⚠️ **El párrafo necesita DOS clases** (`.city-callout .city-callout__intro > p`):
+    el chasis pone `.section__intro > p { max-width: 42rem }` a (0,1,1), así que
+    una regla de una sola clase sólo empata y dejaría el párrafo en una caja de
+    672px pegada a la izquierda — título centrado sobre párrafo alineado a la
+    izquierda. Es la misma trampa de §6 y el mismo arreglo que el header de
+    Vertrauen.
+  - ⚠️ **SEGUNDA PASADA, el mismo día — la fila de 3 duró unas horas.** Un brief
+    detallado la reemplazó por **tres módulos apilados**, y agregó eyebrow,
+    heading más chico y el teléfono como acción primaria. Lo que sigue vigente de
+    arriba: el centrado, el borrado de `.city-callout__panel`, y que el copy no se
+    toca. Lo que cambió está abajo.
+
+  **Composición final (brief 2026-08-10):** eyebrow → heading → lede → 3 módulos
+  apilados → fila de CTA, todo centrado y con anchos controlados.
+  - **Eyebrow** (`.section-eyebrow`, compartido): el componente ya trae el
+    cuadradito azul de 6px que pedía el brief, así que no necesitó estilo nuevo —
+    sólo `justify-content: center` (es flex, el `text-align` del padre no lo mueve).
+    ⚠️ **No es copy del draft**: es mobiliario de UI, la misma categoría que los
+    eyebrows que se sacaron de `/werkschutz/`, y repite las palabras del propio H2.
+  - **Heading a 52px**, no a los 60 del clamp compartido. **52 no es un número
+    nuevo: es el clamp del H1 de hero del propio sitio** (§2, primera fila).
+    ⚠️ **Las cifras del brief se contradicen con su instrucción y NO se siguieron**:
+    pedía "64–78px", que es MÁS grande que lo que ya renderizaba (60px a 1440) y
+    más grande que cualquier cosa del sitio, mientras la frase de arriba pedía
+    reducir. Ganó la instrucción.
+    ⚠️ **Es la QUINTA excepción declarada a §2** (Vorteile 48 · Leistungsumfang 40 ·
+    case studies 34 · city-nearby 28 · ésta 52). Y ahora se ve un **patrón** que
+    vale más que la sexta excepción: **todas son headings CENTRADOS o que comparten
+    pantalla con el contenido de su propia sección.** §2 podría decir eso una vez
+    en vez de listar cinco casos.
+  - **Módulos**: paneles horizontales de 697px × 88px, radio `--radius-lg`, gap
+    16px, con contenedor circular de 44px azul al 12 % y el icono a 22px.
+    ⚠️ **La superficie es la MISMA de `.city-services__card`** (blanco al 4,5 % +
+    hairline al 9 %), copiada a propósito: una tercera superficie oscura distinta en
+    la misma página se leería como tres materiales.
+    ⚠️ **El radio es 16px y no los 18–22 del brief**: nada del scale de tokens cae
+    ahí, y el sitio ya carga **un solo** radio fuera de escala (los 24px). 16 está en
+    escala, a un paso del rango pedido, y mantiene ese contador en uno.
+  - **Iconos**: `#icon-clock` y `#icon-badge` ya existían y mapean exacto. El
+    tercero no tenía glifo, así que se **agregó `#icon-document-check` al sprite**
+    (página con esquina doblada + check) — `#icon-shield-check` era el más cercano y
+    un escudo se lee como protección, no como papeleo. Al sprite, nunca inline.
+  - **El teléfono es `.btn--primary`** (brief). ⚠️ Eso **revierte** la decisión de
+    unas horas antes, cuando se puso `--secondary` para mantener la página en los
+    dos primarios azules de §8.2. La página tiene **tres** ahora — nunca dos en la
+    misma pantalla, que es lo que esa regla realmente gobierna.
+  - **Ritmo vertical, medido**: 16 / 32 / 64 / 48px entre bloques (el brief pedía
+    20 / 30–36 / 55–70 / 40–48).
+    ⚠️ **Y acá hubo un bug medido que vale saber**: con un `gap` en el grid del
+    layout, **cada hueco era la suma de TRES espaciados** — el gap, el `margin-top`
+    del bloque, y el `margin-bottom: var(--space-8)` que `.section__intro` trae de
+    `components.css`. Medido: 192px donde el brief pedía 55–70, y 112 donde pedía
+    40–48. La solución es `gap: 0` + márgenes explícitos + anular el
+    `margin-bottom` del intro: **una sola fuente de espaciado por hueco.**
+  - ⚠️ **El lede necesita clase propia (`.city-callout__lede`), y no tenerla fue un
+    bug medido**: la regla era `.city-callout__intro > p`, y **el eyebrow también es
+    un `<p>` hijo directo de ese intro** — así que heredaba el `font-size` del lede
+    y renderizaba a **20px en mayúsculas** en vez de sus 12px, más el color y el
+    margen del lede.
+  - ⚠️ **El eyebrow necesita `max-width: fit-content` + `margin-inline: auto`**, y
+    también salió de medir: al ser un `<p>` del intro, el chasis le da
+    `max-width: 42rem`; una caja de 672px sin márgenes automáticos se pega a la
+    izquierda, y `justify-content: center` centra la etiqueta dentro de ESA caja.
+    Se iba **−92px a 1024, −274 a 1440 y −345 a 1600** mientras el H2 de abajo
+    estaba en el eje exacto.
+  - **En teléfono queda CENTRADO** (brief), lo que revierte el "no centrado en
+    teléfono" de la pasada anterior — y ahora cierra, porque el heading pasó de
+    35px a 30px a 390 y el wrap centrado es una forma más corta.
+  - **Costo honesto, y es el único punto del brief que NO se cumple:** el brief pide
+    "reduce the total height" y la sección **creció**. A 1440: 824px (original) →
+    1021 (fila de 3) → **1221px** (módulos apilados). Es aritmética, no descuido:
+    tres módulos de 88px con 16 de gap son **296px** contra los 96 de una fila de 3.
+    Las dos peticiones del brief — apilar los módulos y bajar la altura — no son
+    simultáneamente satisfacibles. La palanca, si la altura importa más, es volver
+    a la fila de 3 (está en git) o bajar los módulos a ~64px.
+  - **EL TELÉFONO ES NUEVO ACÁ, y es la mitad estratégica del rediseño.** Es la
+    ÚNICA sección de la página sobre una emergencia — un BMA-Ausfall es un
+    problema de hoy — y su propio copy aprobado termina en "Die Einsatzleitung ist
+    rund um die Uhr erreichbar", una promesa sin forma de accionarla. La acción
+    primaria de la página es el formulario, que es un proceso de un día hábil y la
+    acción EQUIVOCADA para alguien con la central de incendios caída ahora.
+    No es inventado: el propio FAQ de esta página ya publica el número para este
+    caso exacto, y `/brandwache-nuernberg/` hace de "Jetzt anrufen" la acción
+    **primaria** de su hero. Se reusa el mismo wording para que las dos se lean
+    como un solo camino.
+    ⚠️ Pero acá va **secundario**, con `.btn--secondary` (el outline compartido,
+    token-driven, ya correcto sobre oscuro): en esa página Brandwache es todo el
+    propósito, en ésta es una sección de once, y §8.2 mantiene la página en dos
+    primarios azules (hero y caja de precio).
+  - ⚠️ **`white-space: normal` en el botón de teléfono es obligatorio en teléfono**,
+    y omitirlo costó **13px de scroll horizontal real a 320px** (medido). `.btn` es
+    `white-space: nowrap`, así que "Jetzt anrufen: +49 951 964352-0" más el ícono y
+    el padding fija un min-content más ancho que los 280px disponibles — y
+    `width: 100%` no puede encoger una caja cuyo contenido no envuelve. Misma
+    trampa que ya documenta el CTA de la caja de precios.
+- **El header de Vertrauen va CENTRADO** (cliente 2026-08-09: "hacemelo
+  centrado"): H2 y lede sobre el eje del container. Es el mismo tratamiento que
+  ya tienen el FAQ de esta página y de `/werkschutz/`, y `.ref-intro--center` en
+  `/referenzen/`. El resto de la sección no se toca: **el contenido de las cards
+  queda a la izquierda** (centrar una cita de cuatro líneas le saca el borde
+  izquierdo por el que baja el ojo) y el bloque de certificaciones ya se centra
+  solo, así que la sección entera se lee centrada con dos reglas.
+  ⚠️ **`margin-inline: auto` en el lede NO es opcional**, y es la misma trampa de
+  §6: el chasis pone `.section__intro > p { max-width: 42rem }`, así que
+  `text-align: center` solo centra el TEXTO dentro de una caja de 672px que sigue
+  pegada al borde izquierdo — se lee como título centrado con párrafo alineado a
+  la izquierda. Al H2 se le da además `max-width: 36ch` para que una línea de
+  60px centrada rompa en un lugar razonable en vez de cruzar los 1234px del
+  container; en `ch` y no en px, porque tiene que servir para las otras nueve
+  ciudades (es la misma frase con otro nombre de ciudad).
+  **Verificado midiendo con un `Range` sobre los nodos de texto reales, no con el
+  rect del elemento** (que miente, justamente porque la caja del párrafo está
+  capada a 42rem): H2 y lede a **0px del eje** del container a 390 / 768 / 1024 /
+  1440 / 1600.
+- ⚠️ **CASI TODOS LOS HEADERS DE ESTA PÁGINA VAN CENTRADOS, y conviene tratarlo
+  como el default de una página de ciudad en vez de como seis pedidos suelto.** El
+  cliente los fue pidiendo de a uno a lo largo del 2026-08-09/10 — Vertrauen,
+  Brandwache, Erreichbarkeit, Umgebung, **Warum** y **Leistungen** — más el FAQ
+  (que ya lo centra el chasis) y el formulario (que lo centra `lead-form.css`).
+  **Quedan dos rangeados a la izquierda**: el strip de Einsatzfelder, y Kosten,
+  cuyo intro vive en la columna izquierda de un grid de dos columnas y no se puede
+  centrar sin romper esa maqueta. Empezar la próxima ciudad con los headers
+  centrados ahorra seis idas y vueltas.
+  ⚠️⚠️ **LA MISMA TRAMPA DE ESPECIFICIDAD APARECIÓ CINCO VECES EN UNA SOLA PÁGINA**,
+  así que la regla general está acá y no repetida por bloque: cuando un
+  `.section__intro` lleva H2 **y** párrafo, `text-align: center` NO alcanza — el
+  chasis pone `.section__intro > p { max-width: 42rem }` a **(0,1,1)**, así que una
+  regla de una sola clase empata y pierde por orden, y el párrafo se queda centrado
+  DENTRO de una caja de 672px todavía pegada al borde izquierdo. Se lee como título
+  centrado con párrafo a la izquierda, que es peor que no centrar nada. Hacen falta
+  las dos cosas: **selector de dos clases** (`.city-why .section__intro > p`, que es
+  (0,2,1)) y **`margin-inline: auto`** — el `text-align` centra el texto, los
+  márgenes automáticos centran la caja.
+  🔧 Seis reglas casi idénticas en `page-city.css` quieren ser **un modificador
+  `.city-centred`** sobre el intro cuando se construya la segunda ciudad; hoy no se
+  consolidaron porque cuatro de ellas cargan sus propios `max-width` medidos.
+  **Una sola sección centra además su CONTENIDO: Erreichbarkeit** (la tira de tres
+  hechos con icono). Se centra bien porque son frases de una línea; las demás llevan
+  citas o bloques de varias líneas, que necesitan un borde izquierdo al que el ojo
+  vuelva. Centrar el contenido de una tira así son **cuatro cosas, y una es un
+  borrado**: `text-align` en el item, `justify-self: center` en el icono (un grid item
+  ignora el `text-align` del padre, y un `<svg>` con ancho definido también),
+  `margin-inline: auto` en el párrafo de cierre capado — y hay que **BORRAR** el
+  `padding-left: 0` que la primera columna tenga para alinearse con el borde de
+  contenido: un padding asimétrico corre la caja, así que su contenido cae ~16px
+  fuera del centro de su propia columna mientras las otras caen en el suyo. Tres
+  columnas centradas comparten un padding, y a cambio la primera deja de arrancar en
+  el borde de §1 — con texto centrado el ancla es el centro de la columna.
+  Y `text-wrap: balance` en las frases: un texto centrado tiene dos bordes
+  irregulares, así que un corte desparejo se ve dos veces (medido: [3,4,3] → [3,3,2]
+  líneas a 1024).
+- **Las certificaciones son SU PROPIA SECCIÓN BLANCA** (cliente 2026-08-10: "una
+  sección blanca literal — la transición de píxeles a sección blanca y después a la
+  negra de abajo, como pasa en toda la web"). El bloque de DEKRA salió de la sección
+  de Vertrauen a una sección propia con **un pixel seam de cada lado**, igual que
+  cualquier otro cambio de color de la página. Los dos testimonios se quedan atrás,
+  sobre el negro, con su H2. Los seams pasaron de **9 a 11**.
+  ⚠️ **Un primer intento lo hizo una CARD BLANCA dentro de la sección oscura, y
+  estaba mal** — no por cómo se veía, sino porque era un cambio de color **sin
+  seam**, que es lo único sobre lo que está construido el ritmo de esta página
+  ([§4.4](#44-pixel-seam-antes-del-footer--obligatorio)). Además la card necesitaba
+  su propio flip de tokens y un arreglo de contraste para el link. Como
+  `.section--light` de verdad **no necesita ninguna de las dos cosas**: esa clase ya
+  re-declara todos los tokens que `.trust-certs` consume, y `page-service.css` ya le
+  da a `.service-link` dentro de una sección clara el azul profundo de 4,88:1. Lo
+  único que quedó en `page-city.css` son cuatro líneas que sacan el margen, el
+  padding y la hairline superiores — existían para separarlo de los testimonios
+  cuando compartían sección, y en una sección propia eso lo hace el padding de
+  `.section`.
+  **Medido dentro de la sección blanca**: nombre del estándar 20,87:1, descripciones
+  y línea de referencias 4,60:1, link 4,90:1. Los 12 seams construyen sus 180 tiles.
+  ⚠️ La sección **no lleva H2 propio**, a propósito: el H2 de Vertrauen dos bloques
+  arriba es el encabezado de este contenido, y repetirlo sería decirlo dos veces.
+  ⚠️ **El par oscuro 7+8 dejó de existir**: Vertrauen y Erreichbarkeit ya no son
+  adyacentes, así que ese borde ahora es un cambio de color real y lleva tiles
+  `--white`. Si las certificaciones vuelven arriba, ese seam se va con ellas.
+- **El tile del Wachbuch usa `#icon-route`, no `#icon-badge`** (cliente 2026-08-10).
+  ⚠️ `#icon-badge` **no se redibujó, porque no está mal**: es una medalla, y dos
+  secciones más arriba significa "Kräfte mit § 34a GewO und
+  Brandschutzhelfer-Qualifikation", que es exactamente para lo que sirve una medalla.
+  Estaba mal sólo en el tile del Wachbuch. Y tampoco es `#icon-document-check`, que es
+  la metáfora de papel obvia: ese símbolo YA está en esta página una sección arriba
+  ("Dokumentation für Behörde und Versicherung"), y dos hojas-con-check en una página
+  se leen como repetición. Una ruta con checkpoints es el único glifo del set que
+  carga el "je RUNDE".
+- **El H2 de Umgebung es chico, y es la CUARTA excepción declarada a §2.** El
+  draft lo pide con esas palabras ("H2 (klein)") y la sección es un pie de
+  navegación pegado al H2 de conversión. **La próxima excepción tiene que
+  replantear §2, no sumarse a la lista.**
+- Una vecina que el draft nombra **sin página propia** (Schwabach) va como
+  mención sin link, con el borde punteado y **sin flecha**, así que "esta va a
+  algún lado" nunca lo dice solo el color. Es lo mismo que hizo el homepage con
+  Hof y Kronach.
+
+### 10.5 Para armar la siguiente ciudad
+
+Copiar `pages/sicherheitsdienst-nuernberg.html` y cambiar: meta y JSON-LD
+(incluido `areaServed`), todo el copy del draft de esa ciudad, el `<path>` del
+contorno (`python3 docs/design-sources/city-outline.py <slug>`), las vecinas de
+la sección 10, el `note` de la Preis-Box, y el `prefix` del formulario (único por
+página). **`css/page-city.css` no se toca** — si el copy no entra, son más `<li>`.
+
+---
+
+## 11. Página combo: servicio × ciudad
+
+Referencia: `pages/brandwache-nuernberg.html` + `css/page-combo.css`
+(2026-08-09). Son **16 páginas** — 4 servicios (Brandwache · Objektschutz ·
+Werkschutz · Baustellenbewachung) × 4 ciudades (Nürnberg · Würzburg · Erlangen ·
+Fürth). [build-checklist.md](build-checklist.md) las llama "puro ensamblado" y
+tiene razón: **`css/page-combo.css` son cuatro reglas**.
+
+### 11.1 Tres capas de CSS, y la del medio es la de ciudad
+
+```
+css/page-service.css   el CHASIS (§9.1): inset, `main h2`, breadcrumb, seams,
+                       .section--light, .service-hero*, .service-konzept* (los
+                       3 pasos del Ablauf), todo el bloque de Kosten,
+                       .service-related*, .service-link
+css/page-city.css      la capa GEO: el badge de Einsatzgebiet, la grilla del
+                       hero a dos columnas, el contorno de la ciudad, la columna
+                       de tics, los bloques numerados (.city-fields*), las cards
+                       de Warum (.city-why*), las filas de servicio y el ritmo de
+                       teléfono de `body.page-city`
+css/page-combo.css     lo poco que agrega este tipo de página
+```
+
+⚠️ **El `<body>` lleva `class="page-city page-combo"`, y `page-city` no es una
+etiqueta**: el bloque de teléfono de `page-city.css` (banda de seam de 80px con
+sus reservas, padding de sección reducido, CTAs del hero a todo el ancho) está
+scopeado ahí y esta página lo quiere entero.
+
+⚠️ **Y significa que un cambio en `page-city.css` cae en 26 páginas, no en 10.**
+Es deliberado — el badge, las cards de Warum y las filas tienen que ser UN diseño
+en los dos tipos de página, no dos parecidos — pero hay que medir los dos tipos
+después de tocarla.
+
+### 11.2 Las 8 secciones y el ritmo de color
+
+| # | Sección | De dónde |
+|---|---|---|
+| 1 | Hero (H1 · subline · 3 tics · **teléfono como CTA primario**, sin badge) | `.service-hero.city-hero` + `.combo-hero` |
+| 2 | Einsatzlagen / Objekt-Typen / Bauphasen (N bloques) | `.city-fields*` |
+| 3 | Ablauf kompakt (3 pasos) | `.service-konzept*` del chasis + `js/steps-sequence.js` |
+| 4 | Warum FRANKONIA (3 cards) | `.city-why*` + `.combo-why` |
+| 5 | Kosten | el bloque del chasis + `include: price-box`, **invertido** (`.combo-price`) |
+| 6 | FAQ (6 preguntas) | `.faq__list--cards` compartido |
+| 7 | Abschluss-CTA | `partials/lead-form.html` |
+| 8 | Weiterführend | `.service-related*` del chasis + `.combo-related` |
+
+Colores: hero ▪ · Einsatzlagen ▫ · Ablauf ▪ · Warum ▫ · **Kosten ▪** · FAQ ▫ ·
+Formular ▪ · Weiterführend ▫ → footer. **Alterna hasta abajo, 8 seams**, y el tile
+siempre lleva el color de la sección de ARRIBA (sin modificador = tiles negros en
+un borde oscuro → claro, `.pixel-seam--white` en uno claro → oscuro).
+
+⚠️ **Alterna SÓLO porque la card de Kosten es blanca (cliente 2026-08-10:
+"el fondo negro y la card blanca o platinum, sólo en esta sección"), y conviene
+saberlo antes de revertirlo.** La card del chasis es negra brillosa, o sea obliga a
+que su sección sea clara; `.service-konzept*` (los 3 pasos) tiene el texto blanco
+escrito a mano y sólo funciona en oscuro; los paneles de `.city-why*` son cards
+blancas y sólo funcionan en claro. Con el hero y el formulario fijos en oscuro,
+esas tres restricciones juntas dejaban a **Warum + Kosten + FAQ como un único
+capítulo claro de tres secciones sin ningún cambio de color adentro** — y la única
+salida era inventar una segunda versión de alguno de los tres bloques. Invertir
+esta sección es lo que la evitó. **Si vuelve la card negra, vuelve ese bloque de
+tres y hay que borrar los dos seams que rodean a Kosten.**
+
+**La card blanca no es una superficie nueva**: es la misma relación que el
+formulario dos secciones más abajo (card blanca sobre la sección negra), así que
+`.combo-price` toma los valores de `.conversion__form-wrap` — mismo hairline, mismo
+`--radius-lg`, misma `--shadow-lg`. Dos cards blancas en una página tienen que ser
+una decisión, no dos parecidas. Lo que sí hay que reescribir son los colores de
+adentro, y **los alfas NO son los de la card negra espejados**: su label está a 0.6
+blanco sobre negro, y 0.6 de `--color-gray` sobre blanco mide ~3,2:1 y falla. El
+piso en blanco es 0.75 (4,60:1); acá van a 0.8. Medido: label/unit/note **5,25:1**,
+la cifra **20,87:1**, las filas de tics **9,24:1**.
+⚠️ Y el tick azul va con la mezcla profunda de §5, **no** `--color-accent`: esta
+sección ya no es `.section--light`, así que ese token resuelve a blue-light
+(3,11:1 sobre blanco).
+
+### 11.3 El hero de Notfall: el teléfono es el CTA primario
+
+En `/brandwache-nuernberg/` el botón azul es el **teléfono** y el formulario es el
+secundario (`.btn--secondary`, que components.css ya declara token-driven y
+correcto sobre oscuro). **Es instrucción del draft, no criterio local** — y es
+correcto para el único servicio al que se llega en medio de un incidente: un
+formulario que promete oferta en un día hábil es la acción equivocada cuando el
+Bauordnungsamt pide una Brandwache hoy. **Los otros tres combos de Nürnberg SÍ
+lideran con el formulario**, y esa diferencia también está en sus drafts.
+
+Dos cosas medidas alrededor de eso:
+
+- ⚠️ **`#icon-phone` es el único símbolo RELLENO del sprite que no declara su
+  propia pintura**, así que dentro de un botón azul sale como una mancha negra sin
+  `fill: currentColor; stroke: none`. La regla de `.service-hero__phone .icon` no
+  se puede reusar: trae además el tratamiento de píldora de contorno, que es justo
+  lo que este botón no es.
+- **La etiqueta del botón es EL NÚMERO SOLO, sin el "Jetzt anrufen:" del draft**
+  (cliente 2026-08-10), y eso es también lo que pone los dos botones en una fila.
+  Medido: con el prefijo el par pedía **662px** (313 + 325 + 24 de gap) contra los
+  **634–640** de la columna de copy, o sea se apilaba en TODO el escritorio; sin él
+  el primario baja a **211px** y el par entra con aire. La acción sigue siendo
+  inequívoca: icono de teléfono, `href="tel:"`, relleno azul.
+- ⚠️ **La banda 1024–1151 necesita su propia regla, y es aritmética.** `page-city.css`
+  parte el hero en dos columnas a 1024px (1fr / 0.62fr), lo que deja la columna de
+  copy en **506px** ahí — 54px cortos para el par. Darle menos share al contorno en
+  esa banda (`0.42fr`) le compra ~570px. El contorno es decorativo y está
+  dimensionado por ALTO (`width: auto` + `max-height`), así que una columna más
+  angosta sólo le capa el ancho y no se pierde nada. Verificado en una fila a
+  768 / 900 / 1024 / 1100 / 1151 / 1152 / 1280 / 1440 / 1600 / 1920; abajo de 768
+  `page-city.css` los apila a todo el ancho a propósito.
+- ⚠️ **Este hero NO lleva el badge de Einsatzgebiet** (cliente 2026-08-10), a
+  diferencia del de la página de ciudad. **Ningún dato se perdió** — la
+  Einsatzleitung 24/7 está en la FAQ 1, en el paso 03 del Ablauf y en el CTA de
+  cierre — y el encuadre UWG no depende de él acá: el requisito de "kein
+  Scheinstandort" es del draft de CIUDAD (Webtext 13), no del de esta combo
+  (Webtext 34), y lo que lo sostiene sigue en su lugar (el `LocalBusiness` lleva el
+  NAP real de Bamberg con `areaServed`, y la página no reclama oficina en la
+  ciudad). **La página de ciudad conserva el suyo.**
+
+### 11.4 Cosas medidas que la próxima combo no debería re-descubrir
+
+- **`.city-why__grid` es `repeat(4, …)` desde 1100px** porque una página de ciudad
+  tiene cuatro bloques de Warum; **todos los drafts de combo tienen TRES**. Sin el
+  override la tercera card queda en una fila de cuatro con un cuarto vacío.
+  A 1100px tres columnas dan una card de ~355px, entre las dos bandas de ese
+  bloque, así que el padding y la tipografía compactados del 4-up se quedan — sólo
+  cambian la cuenta y el gap.
+- **La lista de pasos del chasis trae `margin-bottom: --space-8`** porque en
+  `/werkschutz/` la siguen dos bloques dentro de la misma sección (la prueba del
+  30 % y la fila de acciones). Acá no la sigue nada: son 64px de espacio muerto
+  medidos, y hay que ponerla en 0.
+- **El Ablauf NO lleva `data-steps-draw`.** Ese hook es para el line art inline de
+  `/werkschutz/`, y estos tres pasos no tienen ilustración en el draft. Sin él el
+  script hace lo documentado: aterriza el nodo y sube su copy. Lo que sí es
+  obligatorio es `data-no-text-reveal` **y** la ausencia de `data-item-reveal`.
+- **La sección de Kosten no lleva `.service-price__factors`**, y eso es seguir el
+  copy: el draft mete los tres factores dentro de su propia frase, y partir una
+  frase aprobada en bullets es reescribirla. La grilla coloca sus hijos por columna
+  explícitamente, así que una lista ausente sólo deja su fila vacía.
+  **Consecuencia: la columna de texto se centra verticalmente** (cliente
+  2026-08-10). En una página de servicio la izquierda es título → respuesta →
+  factores → Hinweis y alinear arriba es lo correcto; acá son dos párrafos contra
+  una card de ~530px, y arriba se leía como texto caído al tope de una columna
+  vacía. ⚠️ Hacen falta **las dos** declaraciones: `grid-row: 1 / -1` (el chasis
+  pone el intro en la FILA 1 de una grilla de tres mientras la card las abarca las
+  tres, así que centrar dentro de la fila 1 es un no-op) y `align-self: center`.
+  Medido a 900 / 1024 / 1280 / 1440 / 1600: **0px** entre el centro del texto y el
+  de la card. Sólo ≥900px; abajo la columna es una sola y el orden del DOM es el de
+  lectura.
+- **El Weiterführend corre como UNA lista a todo el ancho**, no como las dos
+  columnas de `/werkschutz/`: dos links no hacen dos grupos, y en la grilla de dos
+  columnas quedaba en la mitad izquierda debajo de un H2 a todo el ancho.
+- ⚠️ **BUG DE CONTRASTE ENCONTRADO ACÁ Y ARREGLADO EN LA PÁGINA DE CIUDAD TAMBIÉN:**
+  los links dentro de una respuesta del FAQ heredaban `--color-link` = blue-light,
+  que sobre el relleno casi blanco de la card mide **2,87:1**. La regla
+  `.city-faq .faq-item__answer a` (page-city.css) ahora fija la mezcla profunda de
+  §5, **4,88:1**. ⚠️ `.section--light` no lo resuelve solo: re-declara
+  `--color-accent`, no `--color-link`.
+- **El texto de anclaje de un link que el draft escribe como URL suelta** (acá
+  "→ /ratgeber/brandwache-wann-vorgeschrieben/") se escribe con el nombre de la
+  página destino en sus propias palabras, y se marca como escrito para el build.
+  Misma convención que usó la página de ciudad.
+- **El contorno de la ciudad se reusa tal cual del `/sicherheitsdienst-<stadt>/`
+  correspondiente** — mismo `<path>`, mismo `stroke-dasharray` medido. Para las
+  otras tres ciudades: `python3 docs/design-sources/city-outline.py <slug>`.
+
+### 11.5 La familia de iconos: un peso de línea, tres tamaños
+
+Brief del cliente 2026-08-10 — tres secciones necesitaban anclas visuales
+(Einsatzlagen y Ablauf no tenían ninguna, y los iconos de las cards de Warum eran
+"too small and visually timid"), **con la condición de que las tres se lean como
+UN sistema**: mismo peso de trazo, misma lógica de tamaño, mismo azul, sin volver
+la página ilustrada.
+
+**Sin librería nueva y con UN solo símbolo nuevo.** Todos los glifos menos
+`#icon-radio` ya estaban en `partials/icon-sprite.html` — el sistema de iconos del
+proyecto — y por eso pertenecen a una familia gratis: una grilla de 24x24, una
+misma mano, `fill: none; stroke: currentColor` heredado de `<g id="icon-defs">`.
+
+| Sección | Glifos |
+|---|---|
+| Einsatzlagen | `alert` · `flame` · `crowd` · `factory` — **y se dibujan con el scroll** |
+| Ablauf | `phone` · `agree` · `guard` — **y el título se highlightea con el scroll** |
+| Warum (cards) | `contact` · `badge` · `shield-check` |
+
+**Un solo tamaño: 44px (2.75rem) con `stroke-width: 0.95`.** Subió 28 → 40 → 44 en
+tres pasadas del cliente el mismo día; un tamaño es más fácil de sostener en las
+otras quince páginas que los tiers con los que arrancó.
+
+**Color: `--color-blue-light` — el celeste del CTA — y NO `--color-accent`**
+(cliente 2026-08-10: "encargate que sea todo el mismo celeste, que es el celeste del
+CTA"). ⚠️ Ese token es dependiente de la sección: dentro de una `.section--light`
+resuelve a blue-DARK (#5287C9), que es lo que tenía a los iconos de Einsatzlagen y
+de las cards en un segundo azul casi idéntico mientras todos los botones usaban el
+del CTA. Un literal, un azul. Es seguro en las dos superficies porque **un icono es
+un GRÁFICO**, o sea el mínimo aplicable es 3:1 y no 4,5: #3D9AD3 mide **3,11:1**
+sobre blanco y 6,8:1 sobre el negro de esta página.
+
+⚠️ **Los del Ablauf son BLANCOS**, y sólo ésos: es la única de las tres secciones
+que está sobre el negro de la página, así que el blanco existe como opción — en las
+otras dos los iconos van sobre cards blancas. No le cuesta color de marca a la
+sección: el riel, sus tres nodos, los numerales y el highlight del título son todos
+el celeste del CTA.
+
+⚠️ **EL TRAZO SE FIJA POR TAMAÑO, y ése es el punto entero del bloque.** Un
+`stroke-width` de SVG está en UNIDADES DE USUARIO, así que un símbolo dibujado a
+1.5 sobre una grilla de 24 renderiza más grueso cuanto más grande se dibuja: 1,75px
+a 28 y **2,5px a 40**. Sin corregirlo, tres secciones a tres tamaños dan tres
+pesos de línea distintos — justo lo que el brief prohíbe. La fórmula:
+
+```
+stroke-width = 1.75 x 24 / <px renderizados>
+```
+
+**1,75px es el valor de la familia, y se midió dos veces:** 1,6px empataba en los
+tres tamaños pero a 40px se leía *timid*, que es literalmente la palabra que el
+brief usa para lo que las cards tenían que dejar de ser — un glifo más grande al
+mismo peso absoluto se ve más liviano. 1,75 sigue cómodo abajo de 2px (donde una
+línea empieza a leerse como marca rellena) y deja el tamaño de 28px en el 1.5
+nativo del sprite. **Verificado: los 10 iconos renderizan a 1,75px efectivos
+exactos.**
+
+Tres decisiones de colocación que no son cosméticas:
+
+- **Einsatzlagen: EL ICONO ES EL MARCADOR DEL ITEM** (cliente 2026-08-10: iconos
+  más grandes y sin numeral). El item pasó de hairline → 01 → Titel → párrafo a
+  hairline → icono → Titel → párrafo, así que el icono dejó de ser una marca al
+  lado de un índice y pasó a ser el ancla — y por eso sube al tier de 40px. La
+  grilla de dos columnas y los divisores no se tocan.
+  ⚠️ **La lista pasó a `<ul>`**: era `<ol>` sólo porque existían esos numerales.
+  Sin ellos, los cuatro son un CONJUNTO paralelo de situaciones, no una secuencia,
+  y un `<ol>` le seguiría contando a la tecnología asistiva un orden que la página
+  ya no muestra ni quiere decir.
+- **Ablauf: el icono va DEBAJO del numeral.** El nodo del riel y su 01/02/03 son lo
+  que hace que esto se lea como línea de tiempo; meter un glifo entre los dos la
+  rompe. Y como es un hijo elemento más del step, `js/steps-sequence.js` ya lo trata
+  como copy de ese paso y lo entra con su título y su frase — una sola llegada por
+  paso, sin hook extra.
+- **Ablauf: el icono va DEBAJO del numeral.** El nodo del riel y su 01/02/03 son lo
+  que hace que esto se lea como línea de tiempo; meter un glifo entre los dos la
+  rompe. Y como es un hijo elemento más del step, `js/steps-sequence.js` ya lo trata
+  como copy de ese paso y lo entra con su título y su frase — una sola llegada por
+  paso, sin hook extra. Desde el 2026-08-10 va con `margin-top` POSITIVO (antes era
+  negativo, pegado al numeral): 24px de aire arriba, pedido del cliente.
+- **Warum: sólo cambia el tratamiento, no los glifos** (el brief pide mejorar, no
+  reemplazar): 28 → 40px, `margin-bottom` 24 → 32px y título→texto 12 → 16px. Sin
+  círculo detrás, sin relleno. Scopeado a `.combo-why`, así que las diez páginas de
+  ciudad conservan sus 28px.
+
+#### Los títulos del Ablauf se HIGHLIGHTEAN con el scroll
+
+Cliente 2026-08-10: "que los títulos sean highlighteados con fondo celeste mientras
+escroleo, como hacemos en otras secciones". Es el mismo marcador que ya usan el
+Vorteile de `/werkschutz/` y el pain hook del homepage — con la diferencia de que
+acá lo maneja **el propio timeline de `js/steps-sequence.js`**, vía el hook nuevo
+`data-steps-mark="<selector>"`, así el relleno barre como parte de la ÚNICA llegada
+del paso en vez de ser un segundo efecto que aterriza cerca. Es opt-in igual que
+`data-steps-draw`, así que `/werkschutz/` y `/jobs/` no se tocan (verificado: 0
+marks en las dos).
+
+⚠️ **El `<span>` no es decoración.** `.combo-steps__title` es un FLEX ITEM del step,
+y un flex item se blockifica — `display: inline` en el h3 computa a `block` y el
+marcador barrería toda la columna en vez de abrazar las palabras.
+
+⚠️ **El relleno es el celeste del CTA, y EL TAMAÑO DEL TÍTULO ES LO QUE LO HACE
+LEGAL.** El texto tiene que quedarse BLANCO, porque a mitad del barrido la mitad
+todavía está sobre el negro de la sección — pasarlo a oscuro (lo que sí hace el
+Leistungsumfang de `/werkschutz/` sobre su sección clara) lo volvería invisible
+durante todo el barrido. Y blanco sobre #3D9AD3 mide **3,11:1**, que falla el 4,5:1
+de texto normal. Por eso el título pasó a un **1.5rem (24px) fijo**: ése es el
+umbral de "texto grande" de WCAG a cualquier peso, donde el mínimo aplicable es 3:1
+y el 3,11 pasa. Es la salida barata documentada para exactamente este caso
+([§3](#3-componentes-fijos)), usada en vez de pisar el color que pidió el cliente, y
+la misma jugada que ya hace `.service-related__title`.
+⚠️ **O sea el tamaño es load-bearing: no devolverlo a `--font-size-md`** (un clamp
+de 18→20px) sin cambiar también el relleno. Abajo de 24px esto pasa a ser una falla
+de contraste real — y a 20px lo era, que es por qué este relleno fue primero la
+mezcla profunda `color-mix(blue-dark 85%, black)` (4,80:1).
+
+⚠️ **El fallback es 1, no 0**: `calc(var(--mark, 1) * 100%)` es lo que reciben sin
+JS, un crawler y `prefers-reduced-motion` — el highlight terminado. Un
+`var(--mark, 0)` es exactamente el bug que `.service-contrast__mark` publicó una
+vez: medido en 0 % con reduced motion forzado, o sea los highlights desaparecían.
+GSAP escribe el estado inicial 0 en runtime y sólo para un paso que está por barrer.
+**Verificado con reduced motion y sin JS: los tres marcadores a `100% 100%` y
+`--mark` sin setear.**
+
+⚠️ **Los glifos de los pasos 02 y 03 se reemplazaron el 2026-08-10** (cliente: "no
+me gustan, mejoralos"), y en ninguno de los dos el problema era color ni tamaño:
+**no se LEÍAN**.
+- `#icon-plan` (una hoja de plano con barra lateral) salía como una caja recargada,
+  y **es compartido con `/leistungen/`**, así que esta página tomó un glifo propio en
+  vez de redibujar aquél: **`#icon-agree`**, un globo de diálogo con un check, o sea
+  una conversación que RESOLVIÓ algo — que es lo que significa abstimmen. Se eligió
+  sobre un portapapeles con check, que es la alternativa obvia: un portapapeles dice
+  "checklist", y este paso no es una lista sino un acuerdo con un tercero.
+- `#icon-radio` renderizaba como una tarjeta con renglones, no como una radio. Se
+  probaron cuatro variantes más (cuerpo más angosto, rejilla vertical, perilla de
+  canal, micrófono de pie) y la mejor **seguía necesitando un segundo para
+  decodificarse** — que es exactamente la falla que esta pasada de iconos vino a
+  arreglar. El paso 03 es **`#icon-guard`**: una persona dentro del escudo, o sea el
+  puesto CUBIERTO, que es toda la afirmación de ese paso.
+  ⚠️ El contorno del escudo es **el de `#icon-shield-check`, copiado exacto** y no
+  redibujado: los dos aparecen en esta página a dos secciones de distancia, así que
+  tienen que leerse como UN escudo con dos cosas distintas adentro (una persona acá,
+  un check allá) y no como dos escudos parecidos.
+
+El color es `--color-accent` en los tres casos y resuelve por sección: blue-dark en
+`.section--light` (3,71:1 sobre blanco) y blue-light sobre el Ablauf oscuro
+(6,8:1). Un icono es un gráfico, así que el mínimo aplicable es 3:1.
+
+#### Los iconos de Einsatzlagen se DIBUJAN con el scroll
+
+Cliente 2026-08-10: "quiero que se formen cuando escrolee, o sea que la línea se
+vaya trazando, como en otras ilustraciones". Es **el mismo primitivo**,
+`js/svg-draw.js` — el de la ilustración de riesgo de `/werkschutz/` — no una
+segunda implementación.
+
+⚠️ **Un `<use>` NO SE PUEDE DIBUJAR, y ése es el único trabajo real que hubo acá.**
+Un icono escrito como `<svg><use href="#icon-flame"></svg>` renderiza el símbolo del
+sprite a través de un shadow tree que el documento **no puede alcanzar**:
+`querySelectorAll` no encuentra ningún path, así que no hay nada que medir ni
+dashear. La solución mantiene el sprite como **única fuente de la geometría** en vez
+de pegarla una segunda vez en la página: el script **clona los hijos del símbolo y
+descarta el `<use>`, en runtime**, dentro de la función que ya había salido temprano
+con reduced motion, sin JS o sin GSAP. En cualquiera de esos casos el markup
+conserva su `<use>` y el icono renderiza como siempre.
+Dos detalles que hacen falta:
+
+- **el `viewBox` tiene que viajar también.** Un `<use>` toma su sistema de
+  coordenadas del símbolo; un `<svg>` pelado no tiene uno, así que la geometría de
+  24 unidades renderizaría a 24px en la esquina de una caja de 40;
+- **el filtro de trazos pasó a mirar el valor COMPUTADO** además del atributo. Una
+  ilustración provista trae `stroke="…"` en cada path, pero un símbolo del sprite no
+  trae ninguno: la pintura del sprite entero vive en su `<g id="icon-defs">` y el
+  call site la restatea por CSS. Leer sólo el atributo encontraba cero trazos en un
+  símbolo clonado. **Los rellenos siguen excluidos igual**, porque el default de SVG
+  es `stroke: none` — que es justo lo que mantiene pintando desde el primer frame la
+  oclusión de línea oculta de la card 03 de `/werkschutz/` (re-verificado: 72 trazos
+  sin dibujar → 0, y sus 5 rellenos intactos).
+
+Rango `top 84%` → `top 44%`, por icono. **Medido bajando la sección:** 15/15 sin
+dibujar antes de entrar → 13 → 9 → **0**, y el último termina con el item a 109px
+del borde superior, o sea entero a la vista.
+
+#### Lo único de la página que NO es el celeste del CTA
+
+**Cuatro `<a>` a `#4673AB`**: los tres links dentro de respuestas del FAQ y el de la
+Datenschutzerklärung del formulario. Son **texto de cuerpo de 15–16px sobre una
+superficie casi blanca**, donde #3D9AD3 mide **2,87:1** contra el piso de 4,5:1 — no
+hay umbral que los salve (no se puede poner un link dentro de una frase a 24px), así
+que ahí queda la mezcla profunda a 4,80:1. Todo el resto de la página —botones,
+iconos, tics del hero, tics de la caja de precio, numerales, riel, nodos, flechas,
+highlights y el teléfono del cierre— **es #3D9AD3, verificado computando el color de
+cada elemento de `<main>`**.
+
+### 11.6 Para armar la siguiente combo
+
+Copiar `pages/brandwache-nuernberg.html` y cambiar: meta y JSON-LD (incluido
+`areaServed`, el `Service` y el `FAQPage`), todo el copy del draft de esa
+combinación, el contorno si cambia la ciudad, el `note` de la Preis-Box, los links
+de Weiterführend y el `prefix` del formulario (único por página). **`page-combo.css`
+no se toca** — si el copy no entra, son más `<li>`. Ojo con dos cosas: las otras
+tres varían su sección 2 a propósito (Objekt-Typen / Industrie-Fokus / Bauphasen,
+todas "N bloques de título + párrafo", o sea el mismo `.city-fields*`), y **su hero
+lidera con el formulario**, no con el teléfono.
+
+---
+
+## 12. Checklist de página nueva
 
 - [ ] `<title>` 50–60 y `<meta name="description">` 140–160, únicos
 - [ ] canonical, Open Graph, Twitter, `robots`, `hreflang`, `<html lang>` real

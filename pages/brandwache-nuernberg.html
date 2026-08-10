@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- FIRST COMBO PAGE (2026-08-09), built from
+     NewVersionCopiesFrankonia/"2026-08-04 Webtext 34 Kombi Brandwache Nuernberg.docx"
+     (Stand 25.07.2026), verbatim, in German.
+
+     WHAT A COMBO PAGE IS: service × city, sixteen of them (4 services × 4
+     cities). docs/build-checklist.md Bloque 6 names THIS URL as the first one
+     and calls the type "puro ensamblado" — every block it needs already exists,
+     which is why css/page-combo.css is ~140 lines of comment around four rules.
+
+     WHY BRANDWACHE NÜRNBERG FIRST — the same two sources agree, exactly as they
+     did for the city page: the checklist names /brandwache-nuernberg/ as the
+     test combo, and the draft itself calls it "stärkste Kombi" (20/mo, the
+     highest of the sixteen) and doubles as the Google-Ads landing page for the
+     K2/K5 campaigns. It is also the only one of the four whose hero is a
+     NOTFALL variant, so building it first forces the template to handle the
+     awkward case (phone as primary CTA) rather than discovering it on page 14.
+
+     It also closes a 404 that is already live: /brandwache-nuernberg/ is linked
+     three times from /sicherheitsdienst-nuernberg/ (the service rows, the
+     Brandwache callout and the FAQ).
+
+     ⚠️ UWG / "kein Scheinstandort" (docs/page-conventions.md §10.1): the JSON-LD
+     carries the real Bamberg NAP with `areaServed: Nürnberg` and NO local
+     address, and nothing on this page promises a response time or a travel
+     distance (Prüfkatalog F10). The draft's own wording is careful about this —
+     "nach Absprache auch kurzfristig", never "in X Minuten". Do not "improve"
+     any of it into a speed claim.
+     (The hero's Einsatzgebiet badge, which used to be the first-glance version of
+     that disclosure, was removed on instruction 2026-08-10 — see the note at the
+     hero for why nothing factual or legal depends on it here.)
+
+     REUSE MODEL FOR THE OTHER FIFTEEN: every new class is `.combo-*`, never
+     `.brandwache-*`, and the stylesheet stack is chassis → city layer → combo
+     layer. See css/page-combo.css's header for what each one contributes. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title (60 chars) and description (145) are the draft's own, character
+       counts included — docs/page-conventions.md §12. -->
+  <title>Brandwache Nürnberg | Brandsicherheitswache 24/7 – FRANKONIA</title>
+  <meta name="description" content="Brandwache in Nürnberg: bei BMA-Ausfall, Heißarbeiten &amp; Events, qualifizierte Kräfte, dokumentiert für Behörde &amp; Versicherer. Jetzt 24/7 anrufen.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/brandwache-nuernberg/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/brandwache-nuernberg/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/brandwache-nuernberg/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Brandwache Nürnberg | Brandsicherheitswache 24/7 – FRANKONIA">
+  <meta property="og:description" content="Brandwache in Nürnberg: bei BMA-Ausfall, Heißarbeiten &amp; Events, qualifizierte Kräfte, dokumentiert für Behörde &amp; Versicherer. Jetzt 24/7 anrufen.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/brandwache-nuernberg/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- NO hero image preload: like the city page, this page has no photograph at
+       all, so it has NO LCP image — nothing to preload, decode or compress. The
+       hero's visual is the same inline outline of Nürnberg's administrative
+       boundary, which costs zero requests. See .city-hero__map below. -->
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "{{phone.display}}",
+      "email": "{{email}}",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 49.9019037,
+        "longitude": 10.9067377
+      },
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://frankonia-sicherheit.de/brandwache-nuernberg/#service",
+      "name": "Brandwache Nürnberg",
+      "serviceType": "Brandwache",
+      "description": "Brandsicherheitswachen im Großraum Nürnberg bei Ausfall der Brandmeldeanlage, bei Heißarbeiten und für behördliche Auflagen: Kräfte mit § 34a GewO und Brandschutzhelfer-Qualifikation, mit lückenloser Runden-Dokumentation für Behörde und Versicherer.",
+      "provider": {
+        "@id": "https://frankonia-sicherheit.de/#localbusiness"
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Nürnberg",
+        "containedInPlace": { "@type": "AdministrativeArea", "name": "Bayern" }
+      },
+      "offers": {
+        "@type": "Offer",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "priceCurrency": "EUR",
+          "minPrice": 26,
+          "maxPrice": 32,
+          "unitCode": "HUR"
+        }
+      },
+      "url": "https://frankonia-sicherheit.de/brandwache-nuernberg/"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/brandwache-nuernberg/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Wie kurzfristig gibt es eine Brandwache in Nürnberg?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nach Absprache auch sehr kurzfristig, etwa bei BMA-Ausfall am Wochenende. Die Einsatzleitung ist rund um die Uhr erreichbar: {{phone.display}}."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wer schreibt die Brandwache in Nürnberg vor?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Je nach Fall Bauordnungsamt oder Feuerwehr (BMA-Ausfall, Veranstaltungen), Ihr Versicherer (Heißarbeiten, Sonderlagen) oder die Baustellenordnung. Wir helfen bei der Einordnung — Details: Wann eine Brandwache vorgeschrieben ist."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Welche Qualifikation haben die Kräfte?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Mindestens § 34a GewO plus Brandschutzhelfer nach DGUV; zusätzliche Auflagen stimmen wir vor Einsatzbeginn ab. FRANKONIA ist DIN-77200-1- und ISO-9001-zertifiziert (DEKRA)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie lange dauert die Nachkontrolle nach Heißarbeiten?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Üblich sind mindestens zwei Stunden nach Ende der Arbeiten, verbindlich ist die Vorgabe in Ihrem Schweißerlaubnisschein bzw. von Ihrem Versicherer. Die Nachkontrolle gehört bei FRANKONIA zum Einsatz dazu und wird mitdokumentiert."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was passiert, wenn meine BMA länger ausfällt als geplant?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Die Wache läuft einfach weiter — Verlängerungen sind ein Anruf bei Ihrem Einsatzleiter. Sie zahlen nur die tatsächlich geleisteten Stunden."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Übernimmt FRANKONIA auch andere Sicherheitsleistungen in Nürnberg?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja — Objektschutz, Werkschutz, Baustellenbewachung und mehr: Sicherheitsdienst Nürnberg."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Einsatzgebiete",
+          "item": "https://frankonia-sicherheit.de/einsatzgebiete/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Nürnberg",
+          "item": "https://frankonia-sicherheit.de/sicherheitsdienst-nuernberg/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Brandwache",
+          "item": "https://frankonia-sicherheit.de/brandwache-nuernberg/"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+
+  <!-- Shared, in cascade order (css/page-combo.css's header explains what each
+       layer contributes): lead-form → page-service.css (the CHASSIS) →
+       page-city.css (the GEO layer) → this page type.
+       css/testimonials.css is deliberately NOT loaded: unlike the city page,
+       this draft has no Kundenstimmen section. -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-city.css">
+  <link rel="stylesheet" href="/css/page-combo.css">
+
+  <!-- The documented generic effect stack (docs/page-conventions.md §4.1), plus
+       js/steps-sequence.js for the three-step Ablauf — the same script that
+       drives /werkschutz/'s Sicherheitskonzept row. Deliberately NOT loaded:
+       every homepage-section script and the remaining service-page-only ones
+       (service-flow, service-contrast, case-cards, svg-draw), none of whose
+       markup exists here. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/steps-sequence.js" defer></script>
+  <script src="/js/svg-draw.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+</head>
+<!-- BOTH classes, and `page-city` is load-bearing rather than decorative: the
+     phone rhythm block in page-city.css (80px seam band + the matching
+     reservations, reduced section padding, full-width hero CTAs) is scoped to
+     it, and this page type wants all of it. See css/page-combo.css. -->
+<body class="page-city page-combo">
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Four levels, and the parent is the CITY page rather than /brandwache/:
+         the city page is what links here (three times), and "Einsatzgebiete ›
+         Nürnberg › Brandwache" reads without repeating the word Brandwache the
+         way a service-first trail would ("Leistungen › Brandwache › Brandwache
+         Nürnberg"). Matches the BreadcrumbList JSON-LD above.
+         /einsatzgebiete/ is a confirmed URL from guidelines §2.2 that is not
+         built yet (Bloque 7) — linking confirmed-but-unbuilt URLs is this
+         project's convention (docs/page-conventions.md §8.3), and the page's own
+         conversion never depends on one. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/einsatzgebiete/">Einsatzgebiete</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/sicherheitsdienst-nuernberg/">Nürnberg</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Brandwache</span></li>
+      </ol>
+    </nav>
+
+    <!-- ============ 1. HERO (NOTFALL-VARIANTE) ============ -->
+    <!-- H1 → subline → double CTA → 3 ticks → trust band. The class names
+         .hero__lead / .hero__actions / .hero__reassurance / .hero__trust are
+         load-bearing, not decoration: js/hero-reveal.js animates exactly those
+         four blocks in that order, so this page needs no per-page JS
+         (docs/page-conventions.md §4.1).
+
+         ⚠️ THE PHONE IS THE PRIMARY CTA HERE, which inverts every other page on
+         the site. It is the draft's explicit instruction ("CTA primär: Jetzt
+         anrufen … · CTA sekundär: Unverbindliches Angebot einholen") and it is
+         the right call for the one service people arrive at mid-incident: a form
+         that promises an offer within one working day is the wrong first action
+         when the Bauordnungsamt wants a Brandwache today. Do not "correct" it
+         back for consistency — the other three Nürnberg combos DO lead with the
+         form, and that difference is in their drafts too.
+         The label is the NUMBER ALONE, without the draft's "Jetzt anrufen:"
+         prefix (client 2026-08-10). That is also what puts the two buttons on one
+         row: the pair needed 662px against a ~640px column and wrapped at every
+         desktop width; the shorter label takes the primary from 313px to ~200 and
+         the pair now fits with room to spare. The action is still unambiguous —
+         phone icon, `tel:` href, blue fill.
+
+         The trust band (Google rating + the two DEKRA seals) is NOT in the
+         draft's Hero-Aufbau and is added here on purpose: this hero's third tick
+         claims qualified personnel and the seals are that claim's evidence,
+         which matters more on an emergency page than anywhere else. It is the
+         same band the city page and /werkschutz/ carry, unchanged. -->
+    <section class="service-hero city-hero combo-hero" data-hero-reveal>
+      <div class="container service-hero__grid city-hero__grid">
+        <div class="service-hero__content city-hero__content">
+          <!-- ⚠️ NO BADGE HERE, on instruction (client 2026-08-10: "sacá la pill de
+               Einsatzgebiet Nürnberg — Einsatzleitung 24/7 erreichbar"), which is
+               why this hero opens straight on its H1 while the city page's still
+               carries one. Two things worth knowing before anyone "restores" it:
+               · NO FACT LEFT THE PAGE. The 24/7 Einsatzleitung is stated in FAQ 1
+                 ("Die Einsatzleitung ist rund um die Uhr erreichbar: …"), in step
+                 03 of the Ablauf ("direkt erreichbarer Einsatzleiter") and in the
+                 closing CTA ("rund um die Uhr").
+               · The UWG framing is unaffected in substance. The badge was the
+                 first-glance "Einsatzgebiet, not Standort" disclosure, and this
+                 page's own draft (Webtext 34) does NOT carry the Scheinstandort
+                 requirement — that is the CITY draft's rule (Webtext 13), which is
+                 why the city page keeps its badge. What actually enforces it here
+                 is still in place: the LocalBusiness JSON-LD carries the real
+                 Bamberg NAP with `areaServed: Nürnberg` and no local address, and
+                 nothing on the page claims an office in the city.
+               Still worth one line to Chris, since it is the one disclosure the
+               first screen used to make in words. -->
+          <h1>Brandwache Nürnberg</h1>
+
+          <p class="hero__lead service-hero__lead">
+            BMA-Störung, Heißarbeiten oder Behörden-Auflage in Nürnberg? FRANKONIA stellt qualifizierte Brandsicherheitswachen, nach Absprache auch kurzfristig.
+          </p>
+
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary combo-hero__call" href="{{phone.href}}">
+              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+            <a class="btn btn--secondary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </div>
+
+          <!-- The draft's three lines, verbatim, and therefore a COLUMN rather
+               than the homepage hero's row of chips: these are full sentences,
+               which /jobs/ measured at ~1000px in a row against the ~700px a
+               hero copy column has. .city-hero__points is that column. -->
+          <ul class="hero__reassurance service-hero__points city-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Kräfte mit § 34a GewO und Brandschutzhelfer-Qualifikation
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Abstimmung mit Feuerwehr, Bauordnungsamt und Versicherer
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Lückenlose Runden-Dokumentation als Nachweis
+            </li>
+          </ul>
+
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- The same inline outline of Nürnberg's real administrative boundary
+             the city page carries — identical path, generated once by
+             docs/design-sources/city-outline.py from
+             assets/data/coverage-boundaries/nuremberg.geojson. Reused rather
+             than re-derived so the two pages are visibly the same place, and it
+             is still the honest visual for an EINSATZGEBIET: an area, not an
+             address (a single pin would read as a branch office, which §10.1
+             forbids). Zero requests, no third-party tiles, no consent question.
+             Run the script with the next city's slug for the Würzburg, Erlangen
+             and Fürth combos; never hand-edit the coordinates. -->
+        <div class="city-hero__map" aria-hidden="true">
+          <svg class="city-map" viewBox="0 0 1000 1432" fill="none" focusable="false">
+            <line class="city-map__guide" x1="500" y1="0" x2="500" y2="1432"></line>
+            <line class="city-map__guide" x1="0" y1="716" x2="1000" y2="716"></line>
+            <path class="city-map__area" d="M0.0 28.8 L22.2 39.5 L17.8 94.9 L68.0 124.0 L44.8 137.5 L48.0 185.9 L76.9 194.5 L76.4 209.1 L112.4 227.1 L125.1 227.9 L126.5 215.3 L160.6 219.8 L162.5 210.0 L177.6 219.0 L153.8 245.0 L154.9 287.7 L113.2 329.6 L126.0 333.0 L141.6 385.2 L153.2 383.8 L153.1 408.4 L165.7 407.1 L164.9 464.5 L159.6 474.3 L120.4 465.7 L125.0 487.6 L116.6 520.6 L105.9 512.9 L99.4 522.4 L90.1 589.8 L49.7 629.5 L26.1 629.6 L47.1 674.7 L34.9 676.4 L40.6 700.7 L12.0 716.2 L40.1 755.8 L38.2 780.8 L62.7 787.4 L76.9 832.3 L119.2 845.1 L133.0 828.5 L150.4 838.1 L118.6 889.1 L123.4 899.9 L140.1 885.7 L122.2 908.2 L165.6 941.4 L146.7 995.7 L158.2 1004.5 L107.0 1014.1 L87.4 1051.5 L41.3 1045.0 L39.4 1076.6 L24.5 1091.7 L16.7 1083.3 L22.2 1122.9 L39.0 1119.9 L58.0 1149.3 L82.2 1144.7 L122.8 1172.2 L133.4 1158.0 L184.7 1171.4 L198.6 1155.4 L245.7 1211.0 L251.4 1235.0 L245.2 1258.3 L220.8 1268.2 L232.7 1264.5 L238.1 1287.2 L220.2 1289.1 L222.1 1297.8 L252.4 1286.6 L267.9 1338.4 L284.0 1334.4 L288.1 1360.8 L336.7 1376.4 L359.7 1431.9 L375.1 1423.6 L366.7 1408.3 L382.6 1408.5 L369.3 1389.3 L382.6 1377.9 L399.4 1388.5 L400.4 1377.5 L455.7 1356.6 L442.1 1319.5 L459.0 1305.0 L466.5 1315.1 L475.8 1299.9 L481.2 1311.1 L505.2 1306.8 L524.9 1284.9 L537.6 1292.2 L549.0 1260.0 L593.8 1254.0 L590.8 1222.0 L545.3 1210.5 L533.3 1175.9 L529.6 1188.2 L495.0 1153.5 L523.8 1164.4 L526.5 1151.8 L544.1 1152.7 L567.0 1179.0 L596.6 1177.5 L524.4 1114.3 L497.3 1119.9 L541.2 1054.0 L543.2 1014.3 L622.3 1032.6 L642.5 1018.7 L698.2 1050.4 L783.0 1028.0 L816.2 1045.2 L892.7 1032.0 L829.5 874.9 L917.9 923.1 L835.3 867.1 L858.7 848.8 L929.5 866.7 L975.5 835.8 L972.6 823.1 L1000.0 819.8 L991.9 809.9 L942.6 812.6 L911.4 793.2 L910.5 770.1 L849.8 766.7 L843.0 805.0 L857.2 840.6 L836.3 863.1 L640.0 741.8 L655.9 699.5 L623.7 686.7 L621.6 673.7 L644.9 669.8 L660.6 642.5 L709.8 664.7 L740.7 643.8 L730.2 598.1 L668.5 615.4 L658.5 601.2 L690.1 595.0 L683.6 578.1 L709.8 560.0 L767.2 558.2 L816.3 539.8 L821.2 523.3 L888.6 501.2 L866.7 487.2 L850.4 443.2 L718.8 462.8 L712.9 396.8 L689.1 384.8 L686.1 364.6 L622.0 356.7 L612.6 348.3 L619.5 333.0 L597.2 340.0 L598.4 236.5 L581.1 230.1 L584.8 190.7 L557.7 175.9 L530.5 195.5 L530.7 219.6 L509.4 210.6 L476.7 225.9 L482.9 272.0 L387.8 252.6 L391.5 223.4 L355.6 241.8 L308.1 243.1 L307.5 203.8 L332.4 202.6 L347.7 183.9 L315.8 171.8 L339.8 169.6 L357.8 134.0 L381.6 150.4 L399.0 143.9 L333.8 111.5 L340.8 102.9 L355.2 111.5 L347.0 99.9 L307.1 87.4 L276.6 58.7 L255.1 74.9 L224.5 71.1 L195.9 58.9 L190.2 34.8 L172.6 39.3 L151.1 19.5 L129.5 19.6 L121.1 34.1 L79.1 18.5 L77.7 7.9 L12.7 0.0 L1.5 2.0 L0.0 28.8 Z"></path>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLOUR RHYTHM OF THIS PAGE — it alternates the whole way down, with a
+         pixel dissolve at every change:
+           hero ▪ · Einsatzlagen ▫ · Ablauf ▪ · Warum ▫ · Kosten ▪ · FAQ ▫ ·
+           Formular ▪ · Weiterführend ▫ → footer.
+         EIGHT seams, and tiles are always the colour of the section ABOVE, so
+         the outgoing section is what pixelates away: no modifier = black tiles
+         on a dark → light boundary, .pixel-seam--white on a light → dark one.
+         The band is built inside the section BELOW by js/pixel-transition.js and
+         every element after a seam reserves its height as real padding, so tiles
+         never sit over content — with or without JS.
+
+         ⚠️ IT ONLY ALTERNATES BECAUSE THE KOSTEN CARD IS WHITE (client
+         2026-08-10). The chassis' price card is glossy BLACK, which forces its
+         section to be light — and with .service-konzept* (dark only, hardcoded
+         white text) and .city-why*'s white panels (light only) on either side,
+         that used to strand Warum + Kosten + FAQ as one three-section light run
+         with no colour change in it. Inverting this one section removed the
+         constraint. If the black card ever comes back here, that run comes back
+         with it and these two seams have to go again. -->
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 2. TYPISCHE NÜRNBERGER EINSATZLAGEN ============ -->
+    <!-- The Eigencontent section — what stops this being /brandwache/ with a
+         place name pasted in. Four real local situations (Messe, Arena,
+         Innenstadt-Events, the Logistik-Lage), every word the draft's.
+         Rendered with the city page's own numbered blocks (.city-fields*): the
+         draft writes each one as "Titel: Satz", so the colon is the split, and
+         nothing is rewritten. Numbered because four 150–250 character blocks
+         need an ordinal to be scannable — the numerals are aria-hidden
+         decoration on top of a real <ol>.
+         ⚠️ The other three Nürnberg combos vary this section by design
+         (Objekt-Typen / Industrie-Fokus / Bauphasen). All three are still "N
+         blocks of title + paragraph", so all three reuse this same block. -->
+    <section class="section section--light city-fields combo-fields" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Wann Nürnberger Betriebe eine Brandwache brauchen</h2>
+        </div>
+
+        <!-- ONE LINE ICON PER CASE, and it is now the item's only marker: the
+             visible 01–04 are GONE (client 2026-08-10), so the icon carries the
+             anchor on its own and is drawn at the block tier, 40px.
+             ⚠️ THE LIST BECAME A <ul>. It was an <ol> only because those numerals
+             existed; with them gone these four are a parallel SET of situations,
+             not a sequence, and an <ol> would keep telling assistive tech about an
+             order the page no longer shows or means.
+
+             THE LINES DRAW THEMSELVES WITH THE SCROLL (client: "quiero que se
+             formen cuando escrolee, o sea que la línea se vaya trazando"), via the
+             existing js/svg-draw.js — the same primitive as /werkschutz/'s risk
+             illustration, not a second implementation.
+             ⚠️ That needed one change in that file, and it is worth knowing why: a
+             <use> renders the symbol through a shadow tree that the document cannot
+             reach into, so there were no paths to measure or dash. The script now
+             clones the symbol's children in at runtime and drops the <use> — the
+             sprite stays the one place the geometry lives, and with no JS, no GSAP
+             or reduced motion nothing is cloned at all and the <use> renders as it
+             always did.
+
+             All four glyphs come from the shared sprite — no new symbol was needed
+             here, which is also why they read as one family: same 24x24 grid, same
+             stroke, same drawing hand. #icon-alert is the project's warning-system
+             glyph (BMA-Ausfall is precisely a fault), #icon-flame the one drawn for
+             Brandwache itself, #icon-crowd the Veranstaltungsschutz glyph (a crowd
+             behind a barrier, i.e. event control rather than "people"),
+             #icon-factory the industrial one. aria-hidden: each repeats its <h3>. -->
+        <ul class="city-fields__list" data-item-reveal="li">
+          <li class="city-fields__item">
+            <svg class="icon combo-icon combo-fields__icon" aria-hidden="true" data-svg-draw data-svg-draw-start="top 84%" data-svg-draw-end="top 44%"><use href="#icon-alert"></use></svg>
+            <h3 class="city-fields__title">BMA-Ausfall im Gewerbeobjekt</h3>
+            <p>Störung oder Wartung der Brandmeldeanlage, die Behörde verlangt eine Ersatzmaßnahme, oft ab sofort. Wir besetzen, bis der Errichter fertig ist.</p>
+          </li>
+          <li class="city-fields__item">
+            <svg class="icon combo-icon combo-fields__icon" aria-hidden="true" data-svg-draw data-svg-draw-start="top 84%" data-svg-draw-end="top 44%"><use href="#icon-flame"></use></svg>
+            <h3 class="city-fields__title">Heißarbeiten auf Nürnberger Baustellen und Dächern</h3>
+            <p>Schweißen und Abdichten mit Auflage aus dem Schweißerlaubnisschein — Wache während der Arbeiten plus vorgeschriebene Nachkontrolle.</p>
+          </li>
+          <li class="city-fields__item">
+            <svg class="icon combo-icon combo-fields__icon" aria-hidden="true" data-svg-draw data-svg-draw-start="top 84%" data-svg-draw-end="top 44%"><use href="#icon-crowd"></use></svg>
+            <h3 class="city-fields__title">Messe- und Veranstaltungs-Auflagen</h3>
+            <p>Rund um Messe, Arena und Innenstadt-Events legt die Behörde Brandsicherheitswachen auf, wir stellen und stimmen direkt mit den Stellen ab.</p>
+          </li>
+          <li class="city-fields__item">
+            <svg class="icon combo-icon combo-fields__icon" aria-hidden="true" data-svg-draw data-svg-draw-start="top 84%" data-svg-draw-end="top 44%"><use href="#icon-factory"></use></svg>
+            <h3 class="city-fields__title">Logistik und Industrie</h3>
+            <p>Sprinkler bereichsweise außer Betrieb, erhöhte Brandlast im Lager — Wachen als Auflage des Versicherers.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 3. ABLAUF KOMPAKT ============ -->
+    <!-- The chassis' three-step block (.service-konzept*), which
+         docs/build-checklist.md counts on 11 pages and which was built
+         generically for exactly this. data-steps-sequence hands it to
+         js/steps-sequence.js: the node lands, its own copy rises under it, the
+         connector draws on to the next.
+         NO data-steps-draw — that hook is for /werkschutz/'s inline Figma
+         artwork, and this draft's steps have no illustration. Without it the
+         script's documented default applies and the steps simply land.
+         ⚠️ data-no-text-reveal and the absence of data-item-reveal are both
+         required: text-reveal.js only skips a subtree automatically when it sits
+         inside [data-reveal]/[data-item-reveal], and two timelines on one
+         element is what makes a reveal look broken. -->
+    <section class="section service-konzept combo-steps">
+      <div class="container service-konzept__inner">
+        <div class="section__intro service-konzept__intro">
+          <h2>So schnell steht Ihre Brandwache in Nürnberg</h2>
+        </div>
+
+        <!-- The icon sits BELOW the numeral, not above it: the node on the rail
+             and its 01/02/03 are what make this read as a timeline, and putting a
+             glyph between them would break that pair. Below the numeral it
+             anchors its own step without competing with the structure.
+             It is a plain element child of the step, so js/steps-sequence.js
+             already treats it as that step's copy and staggers it in with the
+             title and the sentence — one arrival per step, no extra hook. (No
+             `data-steps-draw` on the list, so nothing tries to draw it stroke by
+             stroke; that hook is for /werkschutz/'s inline artwork.)
+             #icon-phone is a STROKE symbol in the sprite like everything else —
+             the filled rendering is a per-call-site override (.combo-hero__call,
+             .service-hero__phone), so it belongs to this family unchanged.
+             ⚠️ Steps 02 and 03 were both REPLACED on 2026-08-10 (client: "no me
+             gustan, mejoralos"), and neither was a colour or size problem — both
+             failed to READ. #icon-plan (a plan sheet with a sidebar) came out as a
+             cluttered box, and it is shared with /leistungen/, so this page took a
+             glyph of its own rather than redrawing that one: #icon-agree, a speech
+             bubble with a check, i.e. a conversation that settled something, which
+             is what abstimmen means. #icon-radio rendered as a card with lines
+             instead of a radio; four further radio drafts still needed a beat to
+             decode, so step 03 is #icon-guard — a person inside the shield, the
+             post MANNED, which is that step's whole claim.
+
+             THE TITLES HIGHLIGHT AS THEY ARRIVE (client 2026-08-10: "que los
+             títulos sean highlighteados con fondo celeste mientras escroleo"),
+             through the same marker wipe /werkschutz/'s Vorteile and the homepage's
+             pain hook already use — driven from THIS timeline via `data-steps-mark`
+             so the fill sweeps as part of the step's one arrival instead of being a
+             second effect landing nearby.
+             ⚠️ The <span> is not decoration: `.combo-steps__title` is a FLEX ITEM of
+             the step, and a flex item is blockified — `display: inline` on the h3
+             would compute to block and the highlight would span the whole column
+             instead of hugging the words. -->
+        <ol class="service-konzept__steps" data-steps-sequence data-steps-mark=".combo-steps__mark" data-no-text-reveal>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">01</span>
+            <svg class="icon combo-icon combo-steps__icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+            <h3 class="combo-steps__title"><span class="combo-steps__mark">Anrufen</span></h3>
+            <p class="service-konzept__text">Lage, Auflage, Zeitraum, telefonisch geht es am schnellsten.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">02</span>
+            <svg class="icon combo-icon combo-steps__icon" aria-hidden="true"><use href="#icon-agree"></use></svg>
+            <h3 class="combo-steps__title"><span class="combo-steps__mark">Abstimmen</span></h3>
+            <p class="service-konzept__text">Qualifikation und Einsatzplan klären wir bei Bedarf direkt mit Behörde oder Versicherer.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">03</span>
+            <svg class="icon combo-icon combo-steps__icon" aria-hidden="true"><use href="#icon-guard"></use></svg>
+            <h3 class="combo-steps__title"><span class="combo-steps__mark">Wache steht</span></h3>
+            <p class="service-konzept__text">Dokumentierte Runden, Meldekette, direkt erreichbarer Einsatzleiter.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 4. WARUM FRANKONIA ============ -->
+    <!-- The city page's raised Warum panels (.city-why*, client-approved
+         2026-08-09), with three cards instead of four — see css/page-combo.css
+         for the one column-count override that needs.
+         Icons are the shared sprite's, chosen to match each claim: a person for
+         the fester Mitarbeiterstamm, a document-with-check for behördenfest
+         dokumentiert, the shield for the Ausrüstung. All three are stroke
+         symbols, which is what .city-why__icon's fill/stroke correction assumes.
+         ⚠️ The second was #icon-badge (a medal) until 2026-08-10 (client: "no me
+         gusta, mejoralo"). A medal reads as an award, not as paperwork, and this
+         card is about the Wachbuch surviving a Bauordnungsamt or Versicherer
+         audit. #icon-document-check — already in the sprite for the identical
+         claim on /sicherheitsdienst-nuernberg/'s Erreichbarkeit tile
+         ("Dokumentation für Behörde und Versicherung") — is the exact semantic
+         match, so no new symbol was needed. -->
+    <section class="section section--light city-why combo-why" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Bei einer Pflicht-Wache zählt jede Schicht, so sichern wir sie ab</h2>
+        </div>
+
+        <ul class="city-why__grid" data-item-reveal=".city-why__item">
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-contact"></use></svg>
+            <h3 class="city-why__title">Zuverlässig besetzt</h3>
+            <p>Fester Mitarbeiterstamm, eigene Einsatzleitung, dokumentierte Übergaben, jede Schicht nachweisbar besetzt. Eine unbesetzte Brandwache ist ein Auflagen-Verstoß mit Konsequenzen bis zum Nutzungsverbot.</p>
+          </li>
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-document-check"></use></svg>
+            <h3 class="city-why__title">Behördenfest dokumentiert</h3>
+            <p>Wachbuch mit Rundenprotokoll, Vorkommnissen und Übergaben, verwertbar für Bauordnungsamt, Feuerwehr und Versicherer.</p>
+          </li>
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+            <h3 class="city-why__title">Ausgerüstet nach Lage</h3>
+            <p>Feuerlöscher, Warnkleidung, Kommunikationsmittel, abgestimmt auf Ihre konkrete Auflage, nicht auf ein Standardpaket.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 5. KOSTEN (INVERTIDA) ============ -->
+    <!-- ⚠️ THIS SECTION IS DARK WITH A WHITE CARD, i.e. the inverse of every other
+         Kosten block on the site (client 2026-08-10: "en esta sección de
+         brandwache-nuernberg, si podés alterná los colores, el fondo negro y la
+         card la podés hacer blanca o platinum, solo en esta sección").
+         It is the client's call, and it also FIXES something this page shipped
+         with: the chassis' price card is glossy black, which is why the section
+         had to be light, which is why Warum + Kosten + FAQ were stuck as one
+         three-section light run with no colour change between them (that
+         constraint is written up in docs/page-conventions.md §11.2). With a white
+         card the page alternates cleanly the whole way down — hence the two seams
+         that did not exist before, one on each side of this section.
+         The white card is not a new surface either: it is the same relationship
+         the lead form two sections below already has (white card on the black
+         section), and it takes its border, radius and shadow from that card, so
+         the two read as one system. See .combo-price in css/page-combo.css.
+
+         The chassis' Kosten block otherwise unchanged, plus the shared Preis-Box
+         partial whose `range` comes from content/values.json — so the annual rate
+         change stays ONE edit across all ~27 pages that publish it.
+         ⚠️ NO .service-price__factors list here, and that is following the copy:
+         this draft states the three factors inside its own sentence
+         ("abhängig von Qualifikation, Einsatzzeit … und Vorlauf") rather than as
+         a list, and splitting an approved sentence into bullets would be
+         rewriting it. The Kosten grid places its items by column explicitly, so
+         an absent factor list simply leaves its row empty.
+         GEO shape, straight from the draft: question H2, the number in the first
+         sentence. -->
+    <section class="section service-price combo-price">
+      <div class="container service-price__layout">
+        <div class="section__intro service-price__intro">
+          <h2>Was kostet eine Brandwache in Nürnberg?</h2>
+          <p class="service-price__answer" data-reveal data-reveal-delay>In Nürnberg gelten dieselben transparenten Sätze wie im gesamten FRANKONIA Gebiet: 26 bis 32 Euro pro Stunde netto, abhängig von Qualifikation, Einsatzzeit (Nacht-/Wochenendzuschläge) und Vorlauf. Ihr Angebot erhalten Sie bei geplanten Wachen innerhalb eines Werktages, bei Notfällen nennen wir die Konditionen am Telefon.</p>
+        </div>
+
+        <!-- include: price-box range="{{price.range}}" note="netto, Richtwerte für Brandwachen im Großraum Nürnberg" -->
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 6. FAQ ============ -->
+    <!-- Six combo-specific questions, the draft's own, verbatim. The visible
+         copy and the FAQPage JSON-LD above must stay byte-identical — the one
+         thing on this page type that is easy to break with a small edit and
+         impossible to see. A FAQPage answer is plain text, so each JSON-LD copy
+         is its visible answer WITH THE TAGS STRIPPED and nothing else changed.
+         .city-faq is carried for its inline-link rule (see the two links below);
+         .service-faq for the chassis' centred FAQ header. -->
+    <section class="section section--light city-faq service-faq combo-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Brandwache Nürnberg: die häufigsten Fragen</h2>
+        </div>
+
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
+          <details class="faq-item">
+            <!-- The number is a single link in a sentence, so it gets §7's
+                 treatment (`padding-block` on an inline-block, via
+                 `.city-faq .faq-item__answer a`), which grows the hit area to
+                 44px without moving the text. -->
+            <summary><h3>Wie kurzfristig gibt es eine Brandwache in Nürnberg?</h3></summary>
+            <p class="faq-item__answer">Nach Absprache auch sehr kurzfristig, etwa bei BMA-Ausfall am Wochenende. Die Einsatzleitung ist rund um die Uhr erreichbar: <a href="{{phone.href}}">{{phone.display}}</a>.</p>
+          </details>
+          <details class="faq-item">
+            <!-- ⚠️ ANCHOR TEXT WRITTEN FOR THIS BUILD, flagged rather than
+                 silent: the draft ends this answer with a bare URL
+                 ("Details: → /ratgeber/brandwache-wann-vorgeschrieben/"), which
+                 cannot be rendered as-is. The label is the target page's own
+                 subject in its own words (Webtext 33: "Brandwache: Wann ist sie
+                 vorgeschrieben, und wer darf sie stellen?"). Same convention the
+                 city page used for the same pattern. That Ratgeber page is a
+                 confirmed URL that is not built yet (Bloque 9). -->
+            <summary><h3>Wer schreibt die Brandwache in Nürnberg vor?</h3></summary>
+            <p class="faq-item__answer">Je nach Fall Bauordnungsamt oder Feuerwehr (BMA-Ausfall, Veranstaltungen), Ihr Versicherer (Heißarbeiten, Sonderlagen) oder die Baustellenordnung. Wir helfen bei der Einordnung — Details: <a href="/ratgeber/brandwache-wann-vorgeschrieben/">Wann eine Brandwache vorgeschrieben ist</a>.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Welche Qualifikation haben die Kräfte?</h3></summary>
+            <p class="faq-item__answer">Mindestens § 34a GewO plus Brandschutzhelfer nach DGUV; zusätzliche Auflagen stimmen wir vor Einsatzbeginn ab. FRANKONIA ist DIN-77200-1- und ISO-9001-zertifiziert (DEKRA).</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Wie lange dauert die Nachkontrolle nach Heißarbeiten?</h3></summary>
+            <p class="faq-item__answer">Üblich sind mindestens zwei Stunden nach Ende der Arbeiten, verbindlich ist die Vorgabe in Ihrem Schweißerlaubnisschein bzw. von Ihrem Versicherer. Die Nachkontrolle gehört bei FRANKONIA zum Einsatz dazu und wird mitdokumentiert.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Was passiert, wenn meine BMA länger ausfällt als geplant?</h3></summary>
+            <p class="faq-item__answer">Die Wache läuft einfach weiter — Verlängerungen sind ein Anruf bei Ihrem Einsatzleiter. Sie zahlen nur die tatsächlich geleisteten Stunden.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Übernimmt FRANKONIA auch andere Sicherheitsleistungen in Nürnberg?</h3></summary>
+            <p class="faq-item__answer">Ja — Objektschutz, Werkschutz, Baustellenbewachung und mehr: <a href="/sicherheitsdienst-nuernberg/">Sicherheitsdienst Nürnberg</a>.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 7. ABSCHLUSS-CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The draft's closing section: the phone first ("+49 951 964352-0, rund um
+         die Uhr"), then the form for planned Wachen. The phone line sits ABOVE
+         the form rather than in the usual "Lieber direkt sprechen?" line under
+         it — same inversion as the hero, same reason, and it is the draft's own
+         order.
+         The shared lead-form partial with this page's own field prefix (`bwn-`),
+         unique per page or two forms in one document would break every
+         <label for>. The draft's Formulartitel ("Ihre Brandwache-Anfrage
+         Nürnberg") is not rendered as a second heading — the section H2 and the
+         lede already say it, the same call every other page made.
+         The form still submits nowhere sitewide (action="#", native validation
+         only) — docs/build-checklist.md Paso 4. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Brandwache für Nürnberg benötigt? Ein Anruf genügt</h2>
+          <p class="conversion__intro-lede"><a class="combo-conversion__phone" href="{{phone.href}}">{{phone.display}}</a>, rund um die Uhr. Für geplante Wachen: Formular, Angebot in einem Werktag.</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="bwn" messageLabel="Lage, Auflage und Zeitraum Ihrer Brandwache in Nürnberg" -->
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 8. WEITERFÜHREND ============ -->
+    <!-- The draft's own closing links, in its order: the service page first, the
+         city page second. The chassis' .service-related* block, i.e. the same
+         closing navigation /werkschutz/ ends on — one column here rather than
+         two, because two links do not make two groups.
+         /brandwache/ is a confirmed URL from guidelines §2.2 that is not built
+         yet (Bloque 2); /sicherheitsdienst-nuernberg/ is live and links back
+         here three times. -->
+    <section class="section section--light service-related combo-related" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Weiterführend</h2>
+        </div>
+
+        <div class="service-related__cols">
+          <div class="service-related__col">
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/brandwache/">Alles zur Brandwache<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-nuernberg/">Sicherheitsdienst Nürnberg<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Pixel-dissolve seam before the footer — mandatory on every page
+       (docs/page-conventions.md §4.4). Empty div in the markup;
+       js/pixel-transition.js builds the tile band inside it at runtime and the
+       footer reserves its height (`.pixel-seam + .site-footer`,
+       page-service.css). `--white` because the section above it is light. -->
+  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

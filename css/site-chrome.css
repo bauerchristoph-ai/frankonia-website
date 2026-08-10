@@ -691,8 +691,20 @@ a.site-nav__link {
 
   /* "All Services" — slightly emphasised (dark, bold, its own row under a
      hairline separator), not a large CTA. Left padding matches the service
-     links so it lines up with them. */
-  .site-nav__submenu-all {
+     links so it lines up with them.
+     ⚠️ `a.site-nav__submenu-all`, NOT the bare class, and this fixed a REAL BUG
+     that was LIVE (found 2026-08-10 while adding the Einsatzgebiete submenu, by
+     measuring the new panel and then checking the old one). This row sits inside
+     `.site-nav__list`, so the shared `.site-nav__list a` rule — (0,1,1), one
+     class + one element — beat the bare `.site-nav__submenu-all` (0,1,0) and
+     imposed its own `color: var(--color-text)` (WHITE) and
+     `display: inline-block`. Measured: `rgb(255, 255, 255)` on the white panel,
+     i.e. "Alle Leistungen →" has been invisible since this panel went light on
+     2026-07-22. The sibling city/service links never had the problem because
+     `.site-nav__submenu-list a` is also (0,1,1) and wins on source order.
+     Adding the element selector brings this to (0,1,1) too, and it is LATER in
+     the file, so it wins the same way. */
+  a.site-nav__submenu-all {
     display: block;
     margin-top: var(--space-3);
     padding: var(--space-3) var(--space-3) 0;

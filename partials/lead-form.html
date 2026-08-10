@@ -6,12 +6,12 @@
 <form class="conversion__form" action="#" method="post">
             <div class="form-field">
               <label class="form-field__label" for="{{prefix}}-name">Name *</label>
-              <input class="form-field__input" type="text" id="{{prefix}}-name" name="name" autocomplete="name" required>
+              <input class="form-field__input" type="text" id="{{prefix}}-name" name="name" autocomplete="name" {{nameRequired}}>
             </div>
 
             <div class="form-field">
               <label class="form-field__label" for="{{prefix}}-company">Unternehmen *</label>
-              <input class="form-field__input" type="text" id="{{prefix}}-company" name="company" autocomplete="organization" required>
+              <input class="form-field__input" type="text" id="{{prefix}}-company" name="company" autocomplete="organization" {{companyRequired}}>
             </div>
 
             <div class="form-field">

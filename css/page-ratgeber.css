@@ -1,0 +1,517 @@
+/* =============================================================================
+   Ratgeber — the hub (/ratgeber/) and the three articles
+   =============================================================================
+   ONE stylesheet for the whole section, because the hub and the articles are one
+   family and the articles are identical to each other in shape. Adding article
+   four is copy, not CSS.
+
+   Chassis is css/page-service.css (docs/page-conventions.md §9.1): the inset, the
+   `main h2` clamp, the breadcrumb chevron, `.section--light`, `.service-hero*`,
+   `.service-link` and the entire `.pixel-seam` block come from there and are NOT
+   restated here.
+   ============================================================================= */
+
+/* German compounds in narrow measures. `hyphens: auto` (base.css) is right for
+   running prose and wrong for a card teaser or a table cell, where the column is
+   narrow enough that it fires on nearly every line. The article's own <p> keeps
+   it — that IS running prose in a comfortable measure. */
+.rg-card__title,
+.rg-card__teaser,
+.rg-card__meta,
+.rg-topic__name,
+.rg-topic__what,
+.rg-table th,
+.rg-table td,
+.rg-byline,
+.rg-note {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* ---- 1. Hero ------------------------------------------------------------- */
+/* No photo on any page in this section, and that is the draft's own shape: the
+   hub's Hero-Aufbau is H1 + subline, and an article's is H1 + byline. So the
+   service template's two-column grid and its `min-height: calc(100svh - 8rem)`
+   both have to go — that min-height exists to hold a portrait photo, and without
+   one it leaves a screen of empty black under the copy. */
+.rg-hero .service-hero__grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1024px) {
+  .rg-hero {
+    min-height: 0;
+    padding-block: var(--space-9) var(--space-8);
+  }
+}
+
+/* The copy is capped rather than run to the container's full 1600px: a heading
+   and one line of supporting text across that width stop being readable. */
+.rg-hero .service-hero__content {
+  max-width: 48rem;
+}
+
+/* An ARTICLE headline is longer than a page title and has to stay a headline, so
+   it steps down from the hero clamp §2 makes mandatory. This is the same
+   reasoning the article H2s use below, applied to the H1: the hub keeps the full
+   hero scale, the articles do not. */
+.rg-hero--article h1 {
+  font-size: clamp(1.875rem, 1.25rem + 2.4vw, 3rem);
+  line-height: 1.14;
+  max-width: 22ch;
+}
+
+/* ---- 2. Byline ----------------------------------------------------------- */
+/* The E-E-A-T line. Deliberately quiet — it is provenance, not the lede — but it
+   is REAL TEXT and not only schema, because a visitor deciding whether to trust
+   a legal explainer looks for exactly this. */
+.rg-byline {
+  font-size: var(--font-size-sm);
+  color: rgb(255 255 255 / 0.7);
+  line-height: var(--line-height-base);
+}
+
+/* Date and reading time drop to their own line on a phone rather than wrapping
+   mid-byline, so the author never ends up orphaned from their own name. */
+.rg-byline__meta {
+  display: block;
+  margin-top: var(--space-1);
+  color: rgb(255 255 255 / 0.55);
+}
+
+@media (min-width: 640px) {
+  .rg-byline__meta {
+    display: inline;
+    margin-top: 0;
+  }
+}
+
+/* ---- 3. Hub: article cards ---------------------------------------------- */
+.rg-cards {
+  list-style: none;
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-5);
+}
+
+/* Three across only once each card has room for a two-line title plus a teaser.
+   Below that they stack: a three-up row of 200px cards turns every title into
+   four lines. */
+@media (min-width: 900px) {
+  .rg-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+}
+
+/* The whole card is the anchor (§3), so there is no "Weiterlesen" repeated three
+   times — the arrow says it once per card. Values are .service-cases__card's own,
+   copied deliberately so the two read as one card and not as two similar ones:
+   same hairline, same radius, same two-layer shadow. */
+.rg-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  padding-bottom: var(--space-8);
+  background-color: var(--color-white);
+  border: 1px solid rgb(1 1 1 / 0.07);
+  border-radius: 1.5rem;
+  box-shadow: 0 18px 48px rgb(1 1 1 / 0.07), 0 2px 6px rgb(1 1 1 / 0.04);
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow var(--duration-base) var(--easing-standard),
+              translate var(--duration-base) var(--easing-standard);
+}
+
+/* ⚠️ `translate`, not `transform` — and this needs BOTH halves to work. The card
+   is inside an element carrying data-item-reveal, and GSAP writes `transform`
+   INLINE, which beats any stylesheet rule. It also writes
+   `translate: none; rotate: none; scale: none;` inline, so `translate` alone does
+   not rescue it either. What makes this hover real is that data-item-reveal is on
+   the <li> WRAPPER, not on the card: GSAP animates the wrapper and the card keeps
+   its own properties. Move the hook onto .rg-card and this hover silently dies —
+   which is exactly what happened to /sicherheitsdienst-nuernberg/'s Warum cards. */
+.rg-card:hover,
+.rg-card:focus-visible {
+  translate: 0 -5px;
+  box-shadow: 0 26px 60px rgb(1 1 1 / 0.10), 0 3px 8px rgb(1 1 1 / 0.05);
+}
+
+.rg-card__title {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  line-height: 1.28;
+  color: var(--color-text);
+}
+
+.rg-card__teaser {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+  color: rgb(59 73 86 / 0.8);
+  /* Pushes the meta line to the card's foot, so the three dates sit on one line
+     across the row regardless of how long each teaser runs. */
+  flex: 1;
+}
+
+.rg-card__meta {
+  font-size: var(--font-size-sm);
+  color: rgb(59 73 86 / 0.7);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.4em;
+}
+
+.rg-card__arrow {
+  position: absolute;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  width: 1.75rem;
+  height: 1.75rem;
+  /* The CTA blue literally, NOT --color-accent: this is a .section--light, where
+     that token re-resolves to blue-dark and would give a second, almost-identical
+     blue. Safe here because an arrow is a GRAPHIC (3:1) and #3D9AD3 measures
+     3.11:1 on white. */
+  color: var(--color-blue-light);
+  /* The sprite's own paint lives on <g id="icon-defs"> and does not survive
+     <use>, so every arrow on this site has to restate it or it renders as a
+     filled black sliver. */
+  fill: none;
+  stroke: currentColor;
+  transition: rotate var(--duration-base) var(--easing-standard);
+}
+
+/* Points up-right at rest and turns into a straight right arrow on arrival —
+   the same motion .services__item-arrow and .service-related__arrow already use.
+   `rotate` rather than a `transform`, for the reason in the hover note above. */
+.rg-card:hover .rg-card__arrow,
+.rg-card:focus-visible .rg-card__arrow {
+  rotate: 45deg;
+}
+
+/* ---- 4. Hub: topic entries ---------------------------------------------- */
+/* Ruled rows, not a second set of cards. Two of these three point at an article
+   already shown above as a card, so making them cards too would read as the same
+   content twice rather than as a second way in. */
+.rg-topics__list {
+  list-style: none;
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+  max-width: 56rem;
+}
+
+.rg-topic {
+  position: relative;
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-5) var(--space-8) var(--space-5) 0;
+  border-top: 1px solid var(--color-border);
+  text-decoration: none;
+  color: inherit;
+  /* §7: the row is the target, so it clears 44px on its own at every width. */
+  min-height: 44px;
+  transition: background-color var(--duration-base) var(--easing-standard);
+}
+
+.rg-topics__list li:last-child .rg-topic {
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* The wash bleeds a little past the text on both sides so the row reads as a row
+   and not as a tinted paragraph. Tied to the same token the container's padding
+   uses, never a fixed number — a literal here is what gave the homepage's
+   bleeding rows real horizontal scroll on a phone. */
+.rg-topic:hover,
+.rg-topic:focus-visible {
+  background-color: rgb(255 255 255 / 0.04);
+}
+
+.rg-topic__name {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.rg-topic__what {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.rg-topic__arrow {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  translate: 0 -50%;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--color-blue-light);
+  fill: none;
+  stroke: currentColor;
+  transition: rotate var(--duration-base) var(--easing-standard);
+}
+
+.rg-topic:hover .rg-topic__arrow,
+.rg-topic:focus-visible .rg-topic__arrow {
+  /* Both values restated: `rotate` is one property, so a rule that wrote only the
+     angle would drop the -50% that centres it and the arrow would sit half a
+     glyph low. */
+  rotate: 45deg;
+}
+
+/* ---- 5. Article body ----------------------------------------------------- */
+/* The measure is the point: these are 3-4 sentence paragraphs of real prose and
+   they get a reading measure, not the container's 1600px.
+
+   ⚠️ SECOND COPY OF THIS TREATMENT ON THE SITE — .cs-article (css/page-case-study.css)
+   is the first, and the values here are copied from it deliberately rather than
+   re-derived, so the six article pages are one design and not two similar ones.
+   That file's own note says §2 should be revisited rather than a fourth exception
+   added; this is the moment. The consolidation is a shared `.article-body` in the
+   chassis plus a class swap on three finished case studies, and it was NOT done in
+   this pass because page-service.css was being edited by another session at the
+   time. Do it before article four. */
+.rg-article {
+  max-width: 44rem;
+}
+
+/* Article H2s step DOWN from the shared `main h2` clamp. Structural, not
+   cosmetic: an article has five or six H2s a screen apart, and at the 60px
+   section scale each one reads as a new page rather than the next chapter. The
+   page still has exactly one H1, so the hierarchy is intact. */
+.rg-article h2 {
+  font-size: clamp(1.5rem, 1.2rem + 1.1vw, 2.125rem);
+  line-height: 1.2;
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-4);
+}
+
+.rg-article > *:first-child { margin-top: 0; }
+
+.rg-article p {
+  font-size: var(--font-size-md);
+  line-height: 1.65;
+  margin-bottom: var(--space-4);
+}
+
+/* The two-sentence answer that opens every article. One step up from body copy,
+   because this is the passage an answer engine extracts and the one a skimming
+   visitor should land on first. */
+.rg-article .rg-lede {
+  font-size: var(--font-size-lg);
+  line-height: 1.5;
+  color: var(--color-text);
+  margin-bottom: var(--space-6);
+}
+
+/* Reference lines — the authority link and the one internal hub link. Quieter
+   than body copy, and set apart so a citation never reads as the argument. */
+.rg-source {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ⚠️ Links inside the article need the DEEP MIX, not --color-link. On this
+   near-white surface blue-light measures 2.87:1 against the 4.5:1 a 16px link
+   needs, and no size threshold saves a link inside a sentence. This mix is
+   4.90:1. Same fix .city-faq's answer links already carry. */
+.rg-article a,
+.rg-article .faq-item__answer a {
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+}
+
+.rg-note {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--space-4);
+}
+
+/* ---- 6. Comparison table ------------------------------------------------- */
+/* Genuinely tabular data — two options across five criteria — so it is a real
+   <table> with real header cells, not a grid of divs. */
+.rg-table__wrap {
+  margin-top: var(--space-5);
+}
+
+.rg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+}
+
+.rg-table th,
+.rg-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--space-4) var(--space-4) var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.rg-table thead th {
+  font-weight: 500;
+  color: var(--color-text);
+  border-bottom-width: 2px;
+}
+
+.rg-table tbody th {
+  font-weight: 500;
+  color: var(--color-text);
+  width: 26%;
+}
+
+.rg-table td {
+  color: rgb(59 73 86 / 0.85);
+}
+
+/* On a phone the table re-reads as stacked blocks — every cell announces which
+   column it belongs to through its own data-label, so the information survives
+   without any horizontal scroll. A table that scrolls sideways inside a page that
+   does not is how a reader loses the row they were on. */
+@media (max-width: 639.98px) {
+  .rg-table thead {
+    /* Not display:none — the column headings are still what each data-label
+       repeats, and they must stay in the accessibility tree. */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .rg-table,
+  .rg-table tbody,
+  .rg-table tr,
+  .rg-table th,
+  .rg-table td {
+    display: block;
+    width: auto;
+  }
+
+  .rg-table tr {
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .rg-table th,
+  .rg-table td {
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  .rg-table tbody th {
+    font-size: var(--font-size-md);
+    margin-bottom: var(--space-2);
+  }
+
+  .rg-table td {
+    padding-left: var(--space-4);
+    border-left: 2px solid var(--color-border);
+    margin-bottom: var(--space-3);
+  }
+
+  .rg-table td:last-child { margin-bottom: 0; }
+
+  .rg-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-bottom: 2px;
+  }
+}
+
+/* ---- 7. FAQ + closing actions ------------------------------------------- */
+/* The FAQ uses the shared .faq__list--cards modifier (components.css), the look
+   the client picked for the homepage and asked for again on /jobs/ and
+   /werkschutz/. Only the measure differs: inside a 44rem article it stays one
+   column, where those pages run it two-up across a full container. */
+.rg-faq {
+  margin-top: var(--space-6);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.rg-cta__actions,
+.rg-close__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-6);
+  margin-top: var(--space-6);
+}
+
+/* #icon-phone is the ONE filled symbol in the sprite that does not declare its
+   own paint, so inside a blue button it renders as a black smear without this. */
+.rg-cta__actions .btn--primary .icon {
+  fill: currentColor;
+  stroke: none;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* On a phone both actions go full width and stack — the same treatment every
+   other page's action pair gets at this width (§7). */
+@media (max-width: 639.98px) {
+  .rg-cta__actions,
+  .rg-close__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .rg-cta__actions .btn,
+  .rg-close__actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ---- 8. Article lists ---------------------------------------------------- */
+/* Ruled rows rather than bullets: two of the three articles use these for
+   "practice cases" and "example calculations", where each item opens with a bold
+   label followed by a full sentence — a bullet glyph in front of that reads as
+   noise, and the rule does the grouping work instead. */
+.rg-list,
+.rg-factors {
+  margin: var(--space-5) 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0;
+}
+
+.rg-list li,
+.rg-factors li {
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-md);
+  line-height: 1.65;
+}
+
+.rg-list li:last-child,
+.rg-factors li:last-child {
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* The five factors ARE numbered in the draft, so the <ol> shows its own numbers
+   instead of the label carrying "1." as text — the list element is what a screen
+   reader announces, and a hand-typed numeral would be announced twice. */
+.rg-factors {
+  list-style: decimal;
+  padding-left: var(--space-6);
+}
+
+.rg-factors li::marker {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.rg-list strong,
+.rg-factors strong {
+  color: var(--color-text);
+  font-weight: 500;
+}

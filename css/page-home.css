@@ -3828,14 +3828,41 @@ main h2 {
    (gray), where blue-light does not (see the caveat in tokens.css). Not
    merged into one shared component: two different contexts, two
    different safe colors, per that same caveat. */
+/* WHITE section since 2026-08-08 (client). Same two declarations .references and
+   .faq use for the homepage's other light sections — there is no .section--light
+   scope on this page (that lives in page-service.css, the interior-page chassis).
+   The padding-top reserves the incoming seam's band, exactly like those two.
+   Everything below that names a colour explicitly is here BECAUSE of that flip:
+   this block's values were all calculated against black. */
+.coverage {
+  background-color: var(--color-white);
+  color: var(--color-gray);
+  /* Matches .pixel-seam__band (200px / 120px mobile) — keep in sync. */
+  padding-top: calc(var(--space-9) + 200px);
+}
+@media (max-width: 767.98px) {
+  .coverage {
+    padding-top: calc(var(--space-9) + 120px);
+  }
+}
+
 .coverage__intro {
   max-width: 34rem;
   margin-inline: auto;
   text-align: center;
 }
 
+/* main h2 sets its own colour from --color-text (white), which the section's
+   `color` cannot override — a declaration beats inheritance. */
+.coverage h2 {
+  color: var(--color-logo-black);
+}
+
+/* --color-text-muted is white at 0.65 alpha: it disappears on white. The on-light
+   equivalent this file already uses elsewhere (rgb(59 73 86 / …), i.e. --color-gray
+   with alpha) at 0.78 measures 6.4:1 — comfortably past the 4.5:1 for body text. */
 .coverage__lede {
-  color: var(--color-text-muted);
+  color: rgb(59 73 86 / 0.78);
   margin-top: var(--space-3);
 }
 
@@ -3856,7 +3883,12 @@ main h2 {
 .coverage__map {
   width: 100%;
   height: 100%;
-  background-color: var(--color-bg-elevated);
+  /* Placeholder shown in the gaps until Leaflet's tiles land. It has to match
+     the BASEMAP, not the section: the tiles are CARTO dark_all, so the mid-grey
+     --color-bg-elevated it used to carry now flashes lighter-than-final inside a
+     white section before settling — the same "wrong placeholder tone" problem
+     the Jobs cards hit when their photos went dark. */
+  background-color: var(--color-bg);
 }
 
 /* Subtle loading cue (brief: "show a subtle loading state... do not
@@ -3958,14 +3990,21 @@ main h2 {
    places that have no city page. Deliberately NOT pills — a pill reads as
    tappable and these are plain text. One step quieter than the chips beside them
    so the hierarchy says "also here, no page yet", and centred to sit under the
-   two centred chip rows. 0.75 white is 7.4:1 on this section's black, so it is
-   still comfortably readable body text, not a footnote. */
+   two centred chip rows.
+   Was 0.75 WHITE (7.4:1 on the old black section); invisible once the section
+   went white 2026-08-08.
+   ⚠️ The alpha is at its FLOOR, not a look. This is 14px — normal text, so the
+   4.5:1 threshold applies, and the first attempt at 0.7 measured **4.02:1** and
+   failed. 0.78 is 4.98:1, the same on-light muted the lede uses. The "one step
+   quieter" the original had is carried by SIZE (14 vs 16px) and by sitting below
+   the chips, not by a lighter tone — on white there is no room left to go
+   lighter. Do not dim it further without re-measuring. */
 .coverage__mentions {
   margin-top: var(--space-3);
   max-width: 44rem;
   text-align: center;
   font-size: var(--font-size-sm);
-  color: rgb(255 255 255 / 0.75);
+  color: rgb(59 73 86 / 0.78);
   line-height: var(--line-height-base);
 }
 
@@ -3984,7 +4023,9 @@ main h2 {
   padding: var(--space-2) var(--space-4);
   border: 1.5px solid rgb(61 154 211 / 0.4);
   border-radius: var(--radius-pill);
-  color: var(--color-text);
+  /* Was --color-text (white) — invisible since the section went white
+     2026-08-08. --color-gray is 9.2:1 here. */
+  color: var(--color-gray);
   text-decoration: none;
   font-size: var(--font-size-sm);
   transition:
@@ -4006,12 +4047,35 @@ main h2 {
   width: 1.1em;
   height: 1.1em;
   flex-shrink: 0;
+  /* The file's fill is a fixed white, baked in — it is an <img>, so no CSS of
+     ours reaches inside it. On the white section (2026-08-08) that made the pin
+     vanish and left a gap where an icon should be. invert(1) is the same lever
+     the homepage's own pale logo band and the service template's client logos
+     already use for white artwork on a light surface — it turns pure white into
+     pure black, and this file is a flat single-colour silhouette, so nothing
+     else in it can shift. It inverts BACK inside an active/hover pill, whose
+     fill is blue with white text. */
+  filter: invert(1);
 }
 
+/* Inside a filled pill the label is white again, so the pin has to go back to
+   its own white. Two inversions cancel; this is cheaper and less brittle than
+   shipping a second copy of the file. */
+.coverage__pill:hover .coverage__pill-icon,
+.coverage__pill:focus-visible .coverage__pill-icon,
+.coverage__pill.is-active .coverage__pill-icon,
+.coverage__pill[aria-current="true"] .coverage__pill-icon,
+.coverage__pill[aria-pressed="true"] .coverage__pill-icon {
+  filter: none;
+}
+
+/* Hover was a 12%-blue wash with WHITE text — fine on black, unreadable on
+   white (1.6:1). On a light section the hover has to be the solid fill, which
+   is also what the active state uses, so hovering now previews selection. */
 .coverage__pill:hover,
 .coverage__pill:focus-visible {
   border-color: var(--color-blue-light);
-  background-color: rgb(61 154 211 / 0.12);
+  background-color: var(--color-blue-light);
   color: var(--color-white);
 }
 
@@ -4120,10 +4184,137 @@ main h2 {
   text-align: center;
 }
 
+.philosophy {
+  /* TWO frame variables, not one, and the split is not cosmetic — it is the same
+     trap /werkschutz/ documents at --contrast-frame-box / --contrast-frame-w:
+     Chrome ROUNDS border-width to whole CSS pixels (0.5px computes to 1px, at DPR
+     1 and 2 alike) while an SVG stroke has no such floor. So one number would be
+     describing two different things.
+       --phil-frame-box  the LAYOUT term: what the CSS border actually renders as,
+                         and therefore the box the drawn frame must sit on.
+       --phil-frame-w    the drawn stroke's weight. Sub-pixel allowed; on a 2x
+                         screen it is one device pixel at full colour, i.e.
+                         literally half the 1px version. */
+  --phil-frame-box: 1px;
+  --phil-frame-w: 0.5px;
+}
+
 .philosophy__grid {
   display: grid;
   gap: var(--space-7);
   margin-top: var(--space-8);
+}
+
+/* ---- The three cards (client 2026-08-08) ----
+   Was three bare text columns. Now a card each, in the same visual language as
+   /werkschutz/'s FRANKONIA panel — 1px brand-blue frame, 8px radius, a 3.5%-white
+   fill — so the two read as one system rather than two similar ideas.
+
+   ⚠️ THE BORDER IS ALSO THE DRAWN FRAME'S LAYOUT PLACEHOLDER. js/philosophy-cards.js
+   replaces it with an SVG that is absolutely positioned and therefore takes no
+   space; if the live state simply removed the border, every card's content would
+   jump a pixel up and left the instant the script ran. Only its COLOUR goes
+   transparent (rule below). It is also the no-JS / reduced-motion state: a
+   finished blue frame, which is exactly where the drawing ends.
+
+   height: 100% + the grid's default stretch is what keeps the cards in a row
+   equal even though their paragraphs differ by ~40 characters. */
+.philosophy__item {
+  position: relative;
+  height: 100%;
+  padding: var(--space-6);
+  border: var(--phil-frame-box) solid var(--color-accent);
+  border-radius: var(--radius-md);
+  background-color: rgb(255 255 255 / 0.035);
+  /* The fix for "hay cards más largas y más cortas" (client 2026-08-08), and the
+     cause was NOT the obvious one. Measured first: the three cards are already
+     exactly equal (grid stretch) and the three paragraphs are within one line of
+     each other (11 / 12 / 11). What was ragged is the LEFTOVER at the bottom —
+     1 / 38 / 32px — because the titles run 3 / 1 / 2 lines and push each
+     paragraph down by a different amount.
+     So the leftover is moved from BELOW the paragraph to ABOVE it: a flex column
+     with `margin-top: auto` on the text (rule further down) bottom-aligns all
+     three paragraphs, and the slack lands between title and text instead. In a
+     row of framed cards the bottom edge is what the eye compares, so that is the
+     edge worth aligning.
+     ⚠️ Tried first and REVERTED: subgrid, sharing a title row sized by the
+     tallest title so the paragraphs would start together. It aligned them
+     perfectly and looked worse — every short title got ~100px of dead space
+     under it, which reads as a hole in the middle of the card rather than as
+     rhythm. Aligning the tops is not the same as looking aligned. */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Built at runtime by js/philosophy-cards.js — there is no such element in the
+   markup, so a crawler and a no-JS visitor only ever see the CSS border above.
+   Its box is set BY THE SCRIPT in pixels, from the card's measured
+   getBoundingClientRect and its RENDERED border width; the values here are only
+   the pre-measurement placeholder.
+
+   ⚠️ `max-width: none` is REQUIRED and is not defensive. reset.css sets
+   `svg { max-width: 100% }` sitewide, and 100% here resolves against the
+   containing block — which for an absolutely positioned child is the card's
+   PADDING box, i.e. exactly the width this element has to exceed on both sides.
+   Without it the right edge of the stroke lands inside the border it replaces.
+   (Height is unaffected: the reset sets no max-height. That asymmetry is why the
+   bug looks like "only the right side is wrong".) */
+.philosophy__frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.philosophy__frame rect {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: var(--phil-frame-w);
+  /* Rounded joins so a corner arrives as a curve rather than a mitre while the
+     dash is still travelling through it. */
+  stroke-linejoin: round;
+}
+
+/* The frame hands over to the SVG. Colour only — the border keeps its pixel of
+   layout, which is what makes the handover invisible. */
+.philosophy--live .philosophy__item {
+  border-color: transparent;
+}
+
+/* The highlight on each card's load-bearing phrase.
+   ⚠️ The fill is NOT the CTA blue. This is a 16px paragraph, i.e. normal text at
+   the 4.5:1 threshold, and white on #3D9AD3 measures 3.11:1 — it fails. This is
+   the documented deeper mix (blue-dark 85% + black = #4673AB), 4.88:1 for white,
+   the same value /werkschutz/'s own marks use for the same reason. */
+.philosophy__mark {
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--color-blue-dark) 85%, var(--color-logo-black)),
+    color-mix(in srgb, var(--color-blue-dark) 85%, var(--color-logo-black))
+  );
+  background-repeat: no-repeat;
+  background-position: left center;
+  /* FILLED by default. This is what a no-JS visitor and prefers-reduced-motion
+     get, and getting it backwards is a real bug this project has already shipped
+     once: with the wipe in the default rule, forced reduced motion measured
+     mark = 0% and the highlights vanished entirely. The wipe belongs to the live
+     state below, never here. */
+  background-size: 100% 100%;
+  padding-inline: 0.14em;
+  border-radius: 3px;
+  /* So the highlight survives a line break as two clean boxes instead of one
+     stretched across the gap — these phrases wrap in a ~300px track. */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  color: var(--color-white);
+}
+
+/* Only once the script is driving it does the fill start at zero and wipe in. */
+.philosophy--live .philosophy__mark {
+  background-size: calc(var(--mark, 0) * 100%) 100%;
 }
 
 /* Three columns only where a column is still a comfortable measure. The
@@ -4152,19 +4343,61 @@ main h2 {
      display letter-spacing base.css applies to headings — same reasoning as the
      FAQ question (docs/design-system.md §2): the -1px tracking is calibrated for
      48px+ display sizes and reads as collision at this size. */
-  font-size: var(--font-size-md);
+  /* --font-size-md → --font-size-lg (21→25px) 2026-08-08, client. One step up the
+     shared scale, not a bespoke clamp: at md these read as bold body copy inside
+     a card rather than as the card's title. */
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-heading);
   letter-spacing: normal;
+  /* --space-4 → --space-3: with `margin-top: auto` on the paragraph below, the
+     minimum gap only has to be a floor for the card whose text already fills the
+     box; the other two get theirs from the slack. */
   margin-bottom: var(--space-3);
+  /* At the larger size the longest title runs to three lines in a ~357px card,
+     and it has a break opportunity right after the em dash — which left a short
+     orphan middle line ("Werkschutz —"). balance evens the three out. */
+  text-wrap: balance;
+}
+
+/* The mask the title slides up out of. ⚠️ It is applied by js/philosophy-cards.js
+   ONLY for the length of the slide and removed on complete — never put the
+   overflow on the base rule. Two reasons: without JS, on a script error or under
+   reduced motion the titles have to be plain fully-visible text; and a permanent
+   `overflow: hidden` on a heading is how a later edit (a longer word, a wrap at
+   some width) gets silently shaved with nothing to show for it. */
+.philosophy__item-title--masked {
+  overflow: hidden;
+  /* The descenders in "Wachdienst" / "langfristig" need room, or clipping at the
+     line box shaves them mid-slide. */
+  padding-bottom: 0.12em;
+}
+
+.philosophy__item-title-inner {
+  /* block, so yPercent has a box to move the whole line group against — on an
+     inline span it would resolve against the wrong height. */
+  display: block;
+  will-change: transform;
 }
 
 .philosophy__item-text {
   /* 0.78 rather than --color-text-muted's 0.65: this is the longest continuous
      prose on the homepage, and the muted token is calibrated for short labels.
-     0.78 on the page background measures ~13:1. */
+     0.78 on the page background measures ~13:1 — so the step down in size below
+     costs nothing in contrast. */
   color: rgb(255 255 255 / 0.78);
-  line-height: var(--line-height-base);
+  /* One step down the scale + tighter leading (client 2026-08-08: "es mucho
+     texto"). Not a word was cut — this is the same 65-72 words per card reading
+     as less. --font-size-sm bottoms out at 14px, which is the floor for body
+     copy on this project, so this is as small as it may go. */
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  /* Bottom-aligns the three paragraphs inside their equal-height cards: the auto
+     margin eats whatever vertical slack the card has left, so the slack sits
+     between title and text instead of below the text. See the note on
+     .philosophy__item for the measurement that made this the right edge to
+     align, and for the subgrid version that was tried and rejected. */
+  margin-top: auto;
   /* German compounds in a ~370px track; the sitewide hyphens: auto (base.css)
      is correct for running prose exactly like this, so it stays on. */
 }
@@ -4453,9 +4686,21 @@ main h2 {
   }
 }
 
-/* (The References/form -> Coverage seam was removed 2026-07-29 — the form
-   section is dark now and flows straight into the dark Coverage section, so
-   Coverage no longer reserves band-height top padding.) */
+/* (The References/form -> Coverage seam was removed 2026-07-29 and RESTORED
+   2026-08-08 when Coverage went white — .coverage reserves its own band-height
+   top padding again, up where that section is defined.) */
+
+/* White Coverage -> dark Philosophy seam (client 2026-08-08): the band sits in
+   Philosophy's top, so reserve band-height of extra top padding for its heading.
+   Same pattern as the two rules above; keep in sync with .pixel-seam__band. */
+.pixel-seam + .philosophy {
+  padding-top: calc(var(--space-9) + 200px);
+}
+@media (max-width: 767.98px) {
+  .pixel-seam + .philosophy {
+    padding-top: calc(var(--space-9) + 120px);
+  }
+}
 
 .pixel-seam__tile.is-revealed {
   opacity: 0;
@@ -4529,7 +4774,9 @@ main h2 {
     padding: var(--space-2) var(--space-4);
     font-family: inherit;
     font-size: var(--font-size-sm);
-    color: var(--color-text);
+    /* Was --color-text (white): invisible since the section went white
+       2026-08-08. Matches .coverage__pill, which this control collapses. */
+    color: var(--color-gray);
     background: none;
     /* Same 1.5px blue hairline the pills use, so the control reads as the same
        family — it IS the pill row, collapsed. */

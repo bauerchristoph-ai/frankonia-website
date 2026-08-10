@@ -179,28 +179,51 @@
          ⚠️ This hero no longer has a conversion action above the fold. The page
          still converts through the closing form (#anfrage) and the header CTA,
          but flagging it because the form is this site's primary page goal.
-         .hero__lead is deliberate: js/hero-reveal.js animates the H1's word masks
-         and then exactly that block. -->
+         MOTION: js/hero-reveal.js — the H1's words rise out of their masks and the
+         subline follows, ON LOAD.
+         ⚠️ It was briefly switched to js/title-reveal.js, the per-character
+         scroll-scrubbed reveal the homepage's <h2>s use (client 2026-08-07, asking
+         for "el efecto de aparición que tienen los otros títulos"), and REVERTED the
+         same day once it was seen in place: that reveal is scrubbed to scroll
+         position, and this H1 sits right at the fold, so the page opened with the
+         title half-revealed and stuck there until you scrolled. Client: "sacale el
+         efecto de aparición porque la idea es que aparezca ni bien entro, no con el
+         scroll". A hero title has to be finished at first paint — which is exactly
+         why hero-reveal plays on load and title-reveal does not.
+         .hero__lead is deliberate: hero-reveal animates the H1 and then exactly that
+         block, so the lede must NOT also carry data-reveal. -->
     <section class="service-hero ref-hero" data-hero-reveal>
       <div class="container service-hero__grid ref-hero__grid">
         <div class="service-hero__content ref-hero__content">
           <!-- The team cutout, centred above the title (client reference: the old
                WordPress Referenzen hero). Source was ~/Downloads/
-               titelbild_referenzenseite.psd — a 1920×1080 RGBA cutout, trimmed to
-               its alpha bounding box (1729×1073) and exported at that NATIVE width,
-               no upscaling: the photo is displayed large enough that a 1400px export
-               would have fallen under 2x on a retina screen.
-               WebP carries the REAL transparency, so the three of them float on the
-               section instead of sitting in a box. The JPEG fallback has no alpha,
-               so it is flattened onto the page background (#010101): a browser old
-               enough to lack WebP sees a black-backed photo on a black section,
-               which looks the same and weighs a fraction of an alpha PNG.
+               assets/images/ReferenzenHero.png (client, 2026-08-07), replacing the
+               cutout exported from titelbild_referenzenseite.psd — git has that one.
+               CROPPED from 1672×941 to 1360×825: the supplied file carries ~165px of
+               dead black on each side and 70px above the tallest head, which on the
+               page is invisible space that pushes the whole hero down and shrinks
+               the men inside their own box. Only empty black was removed — the
+               composition is untouched, 30px of headroom is kept so nobody touches
+               the frame, and the bottom is cut at 92%, where the jackets are
+               already down to luminance ~33, with a short CSS mask dissolving that
+               new edge — the file does NOT fade to nothing on its own (measured:
+               content runs to 98.9% of its height). It is far lighter than the old cutout (50KB WebP against
+               120KB) because it has no alpha channel.
+               ⚠️ It is a RECTANGULAR photo on solid black, not a transparent cutout —
+               so nothing here depends on alpha any more, and WebP and JPEG are the
+               same picture. It reads as floating on the section because the photo's
+               background is #000000 against the page's #010101: a one-value
+               difference nobody can see.
+               It also carries its OWN bottom fade (measured: the brightest pixel
+               falls 128 → 21 between 90% and 91.5% of its height), which is why the
+               CSS mask that used to dissolve the old cutout's hard bottom crop is
+               gone — two fades stacked would have eaten the men's jackets.
                eager + fetchpriority + the <link rel="preload"> in <head>: this is
-               the LCP element now. -->
+               the LCP element. -->
           <div class="ref-hero__media">
             <picture>
               <source srcset="/assets/images/referenzen-hero.webp" type="image/webp">
-              <img src="/assets/images/referenzen-hero.jpg" alt="Das FRANKONIA Führungsteam" width="1729" height="1073" loading="eager" fetchpriority="high">
+              <img src="/assets/images/referenzen-hero.jpg" alt="Das FRANKONIA Führungsteam" width="1360" height="825" loading="eager" fetchpriority="high">
             </picture>
           </div>
 
@@ -547,6 +570,46 @@
           <a class="service-link" href="/sicherheitsdienst-bamberg/">Sicherheitsdienst Bamberg<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
           <a class="service-link" href="/sicherheitsdienst-coburg/">Sicherheitsdienst Coburg<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
         </div>
+
+        <!-- ---- Zertifizierungen ------------------------------------------
+             MOVED here from the closing form section (client 2026-08-07: "sacá los
+             DEKRA de acá y ponelos debajo de la sección de los logos"). It reads
+             better here too: this section is already the proof section — who trusts
+             FRANKONIA — and the certifications are the same argument from the other
+             side, so the form below is left as just the form.
+             The client offered two texts for it. This is the STRUCTURED one (the
+             three standards with what each covers, as on /werkschutz/'s
+             Ansprechpartner block): on a page that is entirely evidence, three
+             named standards scan better than one sentence.
+             ⚠️ The membership line is kept UNDER it rather than dropped, because the
+             other option the client offered was the draft's own closing copy and it
+             is the only place on the whole site that still carries the WCB /
+             Deutscher Mittelstands-Bund membership — CLAUDE.md has flagged its
+             absence as a gap against guidelines §5 since 2026-07-17. Say the word
+             and it goes; it is one <p>. -->
+        <div class="trust-certs" data-reveal>
+          <div class="trust-certs__seals">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+          </div>
+
+          <ul class="trust-certs__list">
+            <li>
+              <strong>DIN 77200-1</strong>
+              für stationäre Sicherheitsdienste
+            </li>
+            <li>
+              <strong>DIN EN ISO 9001</strong>
+              seit 2016, geprüft durch die DEKRA
+            </li>
+            <li>
+              <strong>§ 34a GewO</strong>
+              ausschließlich IHK-qualifizierte Kräfte
+            </li>
+          </ul>
+
+          <p class="trust-certs__memberships">Mitglied im Wirtschaftsclub Bamberg und im Deutschen Mittelstands-Bund.</p>
+        </div>
       </div>
     </section>
 
@@ -570,10 +633,9 @@
          tiles at the top of this page. -->
     <section class="section section--light ref-cases" data-nav-theme="light">
       <div class="container">
-        <!-- Eyebrow removed 2026-08-05 (client — no eyebrows anywhere on this
-             page now). This heading stays LEFT-aligned: the client centred the
-             other three by name and did not include this one. -->
-        <div class="section__intro">
+        <!-- Eyebrow removed 2026-08-05, centred 2026-08-09 (client) — so ALL FOUR
+             section headings on this page are centred now, and none has an eyebrow. -->
+        <div class="section__intro ref-intro--center">
           <h2>Case Studies: So sind diese Ergebnisse entstanden</h2>
           <p class="ref-cases__note" data-reveal data-reveal-delay>Hinter jeder Zahl steht ein echtes Projekt: Ausgangslage, Vorgehen, Ergebnis. Zum Schutz unserer Kunden sind alle Case Studies vollständig anonymisiert.</p>
         </div>
@@ -621,14 +683,6 @@
           <p class="conversion__intro-lede">Starten Sie mit dem kostenfreien Sicherheitskonzept inklusive Begehung, Ihr unverbindliches Angebot folgt innerhalb eines Werktages.</p>
         </div>
 
-        <div class="ref-cta__certs" data-reveal>
-          <div class="ref-cta__seals">
-            <img class="ref-cta__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
-            <img class="ref-cta__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
-          </div>
-          <p class="ref-cta__memberships">Zertifiziert nach DIN 77200-1 und ISO 9001 (DEKRA-geprüft), Mitglied im Wirtschaftsclub Bamberg und im Deutschen Mittelstands-Bund.</p>
-        </div>
-
         <div class="conversion__form-wrap">
           <!-- Field ids are prefixed rf- so they stay unique per page
                (docs/page-conventions.md §6). -->
@@ -642,10 +696,16 @@
   </main>
 
   <!-- Pixel dissolve before the footer — mandatory on every page
-       (docs/page-conventions.md §4.4). The section above is the dark form panel,
-       so the tiles are the default black; the footer reserves the band's height
-       via `.pixel-seam + .site-footer` (page-service.css). -->
-  <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+       (docs/page-conventions.md §4.4). Both the form panel above and the footer
+       are flat black, so the normal wipe tile (opaque -> transparent) is
+       invisible either way it lands. Using `.pixel-seam--pulse` here instead
+       (client, 2026-08-10): tiles fade up to solid white and back down as the
+       sweep passes, rather than latching open — see that class's comment in
+       page-service.css. Scoped to THIS seam only for now, pending "if I like
+       it" before it becomes the default for a black-into-black boundary
+       anywhere else. The footer still reserves the band's height via
+       `.pixel-seam + .site-footer` (page-service.css). -->
+  <div class="pixel-seam pixel-seam--pulse" data-pixel-seam data-pixel-seam-mode="pulse" aria-hidden="true"></div>
 
   <!-- include: footer-de -->
   <!-- include: whatsapp-button -->

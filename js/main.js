@@ -58,49 +58,80 @@ function initNavToggle() {
  * hijacking that link's click.
  */
 function initMobileSubmenu() {
-  const item = document.querySelector(".site-nav__item--has-submenu");
-  if (!item) return;
-  const submenu = item.querySelector(".site-nav__submenu");
-  const link = item.querySelector(".site-nav__link");
-  if (!submenu || !link) return;
+  // ⚠️ querySelectorALL, and that is a fix, not a style choice. This used to be
+  // a singular querySelector, written when "Leistungen" was the only nav item
+  // with a submenu. The moment a second one existed (Einsatzgebiete, the ten
+  // city pages, 2026-08-10) that would have left the new submenu with NO
+  // toggle — i.e. permanently expanded on mobile, pushing the rest of the nav
+  // and the header CTA off the bottom of the open drawer, which is the exact
+  // bug this whole function was written to fix.
+  const items = document.querySelectorAll(".site-nav__item--has-submenu");
+  if (!items.length) return;
 
   // Matches site-chrome.css's own desktop-nav breakpoint — above it the submenu
   // is a hover/focus panel and this button has no business existing.
   const mobile = window.matchMedia("(max-width: 1399.98px)");
 
-  const id = submenu.id || "site-nav-submenu";
-  submenu.id = id;
+  items.forEach((item, i) => {
+    const submenu = item.querySelector(".site-nav__submenu");
+    const link = item.querySelector(".site-nav__link");
+    if (!submenu || !link) return;
 
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "site-nav__submenu-toggle";
-  btn.setAttribute("aria-controls", id);
-  btn.setAttribute("aria-expanded", "false");
-  // The label names what it discloses; the visible caret is decorative.
-  btn.setAttribute("aria-label", link.textContent.trim() + " – Untermenü");
+    // ⚠️ The fallback id is INDEXED. It used to be a bare "site-nav-submenu",
+    // which with two submenus would have given both panels the same id — so
+    // both toggles' aria-controls would point at whichever one the browser
+    // resolved first, and the second button would announce that it controls a
+    // region it does not.
+    const id = submenu.id || "site-nav-submenu-" + (i + 1);
+    submenu.id = id;
 
-  function setOpen(open) {
-    btn.setAttribute("aria-expanded", String(open));
-    item.classList.toggle("is-submenu-open", open);
-  }
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "site-nav__submenu-toggle";
+    btn.setAttribute("aria-controls", id);
+    btn.setAttribute("aria-expanded", "false");
+    // The label names what it discloses; the visible caret is decorative. Taken
+    // from the parent link's own text, so it stays correct per item and per
+    // language without this function knowing any labels.
+    btn.setAttribute("aria-label", link.textContent.trim() + " – Untermenü");
 
-  btn.addEventListener("click", () => {
-    setOpen(btn.getAttribute("aria-expanded") !== "true");
-  });
-
-  function apply() {
-    if (mobile.matches) {
-      if (!btn.isConnected) link.after(btn);
-      item.classList.add("has-js-submenu");
-      setOpen(false);
-    } else {
-      if (btn.isConnected) btn.remove();
-      item.classList.remove("has-js-submenu", "is-submenu-open");
+    function setOpen(open) {
+      btn.setAttribute("aria-expanded", String(open));
+      item.classList.toggle("is-submenu-open", open);
     }
-  }
 
-  apply();
-  mobile.addEventListener("change", apply);
+    btn.addEventListener("click", () => {
+      const opening = btn.getAttribute("aria-expanded") !== "true";
+      // Accordion: opening one closes the others. With two submenus of ten
+      // links each, letting both stand open puts 20 links plus five top-level
+      // items in the drawer — past one screen again, which is the whole point
+      // of collapsing them. Closing a sibling only ever touches state this
+      // function owns.
+      if (opening) {
+        items.forEach((other) => {
+          if (other === item) return;
+          other.classList.remove("is-submenu-open");
+          const otherBtn = other.querySelector(".site-nav__submenu-toggle");
+          if (otherBtn) otherBtn.setAttribute("aria-expanded", "false");
+        });
+      }
+      setOpen(opening);
+    });
+
+    function apply() {
+      if (mobile.matches) {
+        if (!btn.isConnected) link.after(btn);
+        item.classList.add("has-js-submenu");
+        setOpen(false);
+      } else {
+        if (btn.isConnected) btn.remove();
+        item.classList.remove("has-js-submenu", "is-submenu-open");
+      }
+    }
+
+    apply();
+    mobile.addEventListener("change", apply);
+  });
 }
 
 /**
@@ -128,11 +159,47 @@ function initScrollReveal() {
     return;
   }
 
+  // ⚠️ RETIRE THE BLUR ONCE IT HAS FINISHED, don't leave it at blur(0).
+  // `.u-reveal` blurs 6px → 0 (motion.css), and a `filter` of anything other than
+  // `none` keeps the element on its own compositing layer forever — blurring
+  // nothing, but still re-rasterised. Measured on the German homepage (2026-08-08,
+  // client: it "se tranca un poco" scrolling past the map): 116 elements sat on a
+  // spent filter and a 3s trace spent 2678ms in Layerize. The single worst one was
+  // .coverage__map-wrap — an 835k-pixel box wrapping the LIVE Leaflet map, held on
+  // its own layer by a blur of zero.
+  // `.is-settled` (motion.css) sets `filter: none`, which looks identical to
+  // blur(0) — so this is invisible, and it only ever runs AFTER the transition has
+  // played. The timeout is the fallback for when transitionend never fires (an
+  // element revealed while off-screen, a interrupted transition); it is generous on
+  // purpose, since being late costs nothing and being early would cut the blur off
+  // mid-animation.
+  const settle = (el) => {
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      el.classList.add("is-settled");
+    };
+    el.addEventListener(
+      "transitionend",
+      (e) => {
+        if (e.propertyName === "filter") finish();
+      },
+      { once: false }
+    );
+    setTimeout(finish, 2000);
+  };
+
+  const reveal = (el) => {
+    el.classList.add("is-visible");
+    settle(el);
+  };
+
   const observer = new IntersectionObserver(
     (entries, obs) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
+          reveal(entry.target);
           obs.unobserve(entry.target);
         }
       });
@@ -143,7 +210,7 @@ function initScrollReveal() {
   targets.forEach((el) => {
     el.classList.add("u-reveal");
     observer.observe(el);
-    setTimeout(() => el.classList.add("is-visible"), 3000);
+    setTimeout(() => reveal(el), 3000);
   });
 }
 

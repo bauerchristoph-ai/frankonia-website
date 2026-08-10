@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- Built 2026-08-10 from NewVersionCopiesFrankonia/"2026-08-04 Webtext 28 Ueber
+     uns.docx", verbatim. A NEW page — the old website had none.
+
+     THREE [ERGÄNZEN] GAPS from the draft, all client-side and all left open
+     rather than filled with invention:
+       - more leadership portraits beyond Steffen Walde
+       - screenshots / product names of the digital tools, pending Freigabe
+       - a team photo
+     Steffen Walde's own portrait does not exist in the project either, so his
+     block ships as a RESERVED FRAME with a bracketed label — the same pattern
+     /werkschutz/ uses for Alexander Jäger. It holds the real space, so there is
+     no layout shift when the photo lands, and no stock person is passed off as
+     the Geschäftsführer.
+
+     This page is also where the WCB / Deutscher Mittelstands-Bund membership
+     returns: CLAUDE.md has flagged its absence sitewide since 2026-07-17, when
+     the homepage's old "Zertifizierte Qualität" section was removed. It is the
+     draft's own copy in section 5.
+
+     Chassis: css/page-service.css. The six promises reuse .lh-why__* from
+     css/page-leistungen.css, which three other pages already load for the same
+     block — see the note in that file about promoting it. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Über FRANKONIA – zertifizierter Sicherheitsdienst Bamberg</title>
+  <meta name="description" content="FRANKONIA: inhabergeführter Sicherheitsdienst aus Bamberg, DEKRA-zertifiziert, mit festen Teams und digitalen Werkzeugen. Lernen Sie uns kennen.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/ueber-uns/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/ueber-uns/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/ueber-uns/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Über FRANKONIA – zertifizierter Sicherheitsdienst Bamberg">
+  <meta property="og:description" content="FRANKONIA: inhabergeführter Sicherheitsdienst aus Bamberg, DEKRA-zertifiziert, mit festen Teams und digitalen Werkzeugen. Lernen Sie uns kennen.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/ueber-uns/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- Schema per the draft: AboutPage + Organization (founding, leadership,
+       certificates) + BreadcrumbList. foundingDate 2016 and the founder are the
+       draft's own facts. -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "AboutPage",
+      "@id": "https://frankonia-sicherheit.de/ueber-uns/#aboutpage",
+      "url": "https://frankonia-sicherheit.de/ueber-uns/",
+      "name": "Über FRANKONIA – zertifizierter Sicherheitsdienst Bamberg",
+      "about": { "@id": "https://frankonia-sicherheit.de/#organization" }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "foundingDate": "2016",
+      "foundingLocation": { "@type": "Place", "name": "Bamberg" },
+      "founder": { "@type": "Person", "name": "Steffen Walde", "jobTitle": "Geschäftsführender Gesellschafter" },
+      "telephone": "{{phone.display}}",
+      "email": "{{email}}",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "hasCredential": [
+        { "@type": "EducationalOccupationalCredential", "name": "DIN 77200-1" },
+        { "@type": "EducationalOccupationalCredential", "name": "DIN EN ISO 9001" }
+      ],
+      "memberOf": [
+        { "@type": "Organization", "name": "Wirtschaftsclub Bamberg" },
+        { "@type": "Organization", "name": "Deutscher Mittelstands-Bund" }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://frankonia-sicherheit.de/" },
+        { "@type": "ListItem", "position": 2, "name": "Über uns", "item": "https://frankonia-sicherheit.de/ueber-uns/" }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-leistungen.css">
+  <link rel="stylesheet" href="/css/page-ueber-uns.css">
+
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+  <script src="/js/steps-sequence.js" defer></script>
+  <script src="/js/uu-promise-marks.js" defer></script>
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Über uns</span></li>
+      </ol>
+    </nav>
+
+    <!-- ============ 1. HERO ============ -->
+    <section class="service-hero uu-hero" data-hero-reveal>
+      <div class="container service-hero__grid">
+        <div class="service-hero__content hero__content">
+          <p class="lh-hero__badge">
+            <svg class="icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+            Inhabergeführt aus Bamberg, seit über zehn Jahren
+          </p>
+          <h1>Sicherheit, auf die Sie sich verlassen können</h1>
+          <p class="service-hero__lead hero__lead">Inhabergeführt aus Bamberg: über 300 Unternehmen vertrauen unseren Teams, weil Verantwortung bei uns einen Namen hat.</p>
+          <div class="service-hero__actions hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn hero__phone" href="{{phone.href}}">
+              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 2. DIE GESCHICHTE ============ -->
+    <section class="section section--light uu-story" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Vom Bamberger Sicherheitsdienst zum System für ganz Franken</h2>
+          <p>2016 in Bamberg gegründet, heute in ganz Franken im Einsatz, mit über einer Million geleisteter Einsatzstunden. Gewachsen sind wir über Empfehlungen: weil Schichten besetzt sind, Berichte ankommen und der Ansprechpartner abhebt.</p>
+        </div>
+        <!-- A real <ol>: these are five dated events in order, and the order is
+             the content. The years are visible text, not decorative markers.
+
+             Scrubbed to the scroll by js/steps-sequence.js — the same engine that
+             drives /brandwache-nuernberg/'s Ablauf and /werkschutz/'s Konzept, so
+             the dot lands, its year and label rise in under it, and only then does
+             the rail draw onward to the next one.
+             The dot is a REAL element (data-steps-marker), not the pseudo-element
+             driven by --step-node it used to be, and that is what makes the arrival
+             halo possible: a ::before/::after on the <li> was already carrying the
+             dot and the rail segment, so the expanding ring needed a third box of
+             its own (see page-ueber-uns.css).
+             ⚠️ data-no-text-reveal is required and data-item-reveal must NOT be
+             here — two timelines on one element is what makes a reveal look
+             broken. -->
+        <ol class="uu-miles" data-steps-sequence data-steps-marker=".uu-mile__dot" data-no-text-reveal>
+            <li class="uu-mile">
+              <span class="uu-mile__dot" aria-hidden="true"></span>
+              <span class="uu-mile__year">2016</span>
+              <span class="uu-mile__what">Gründung in Bamberg</span>
+            </li>
+            <li class="uu-mile">
+              <span class="uu-mile__dot" aria-hidden="true"></span>
+              <span class="uu-mile__year">2018</span>
+              <span class="uu-mile__what">Neustart — praktisch von null wieder aufgebaut</span>
+            </li>
+            <li class="uu-mile">
+              <span class="uu-mile__dot" aria-hidden="true"></span>
+              <span class="uu-mile__year">2020</span>
+              <span class="uu-mile__what">50 Mitarbeitende</span>
+            </li>
+            <li class="uu-mile">
+              <span class="uu-mile__dot" aria-hidden="true"></span>
+              <span class="uu-mile__year">2023</span>
+              <span class="uu-mile__what">100 Mitarbeitende</span>
+            </li>
+            <li class="uu-mile">
+              <span class="uu-mile__dot" aria-hidden="true"></span>
+              <span class="uu-mile__year">2024</span>
+              <span class="uu-mile__what">größter Sicherheitsdienst Bambergs</span>
+            </li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 3. FÜHRUNG ============ -->
+    <section class="section uu-lead">
+      <div class="container uu-lead__grid">
+        <!-- 2026-08-10: text and photo swapped (client: text left, Steffen
+             right) — DOM order now matches that, not just a visual `order`
+             flip, so tab order and the mobile stack (text first, then photo)
+             both follow the same reading order. -->
+        <div class="uu-lead__text">
+          <h2>Wer hinter FRANKONIA steht</h2>
+          <p>Steffen Walde, Betriebswirt (B.Sc.) und Geschäftsführender Gesellschafter, führt FRANKONIA seit der Gründung. Sein Anspruch: zertifizierte Qualität, übertariflich bezahlte Teams und Sicherheitskonzepte, die genau zum Objekt passen. Begehungen und Konzepte erstellen bei FRANKONIA erfahrene Sicherheitsexperten, nicht der Vertrieb.</p>
+        </div>
+        <!-- Real portrait, delivered 2026-08-10 — replaces the reserved 4:5
+             frame that used to hold this space (same call as Alexander Jäger's
+             on /werkschutz/, still reserved there). Pure black backdrop
+             (0,0,0 measured at every corner), matching --color-bg exactly, so
+             the frame carries no radius/border/tint — see .uu-lead__photo.
+             Enlarged same day (22rem → 30rem cap); re-exported at 480/960w so
+             a 2x screen at the new cap still gets a sharp source. -->
+        <div class="uu-lead__photo" data-reveal>
+          <picture>
+            <source type="image/webp" srcset="/assets/images/uu-lead-steffen-walde-480.webp 480w, /assets/images/uu-lead-steffen-walde-960.webp 960w" sizes="(min-width: 900px) 30rem, 70vw">
+            <img src="/assets/images/uu-lead-steffen-walde-960.jpg" srcset="/assets/images/uu-lead-steffen-walde-960.jpg 960w" sizes="(min-width: 900px) 30rem, 70vw" width="960" height="1200" alt="Steffen Walde, Geschäftsführender Gesellschafter von FRANKONIA" loading="lazy">
+          </picture>
+        </div>
+      </div>
+    </section>
+
+    <!-- Same dark surface as the section above, so no seam (page-conventions §9.2). -->
+    <!-- ============ 4. WOFÜR WIR STEHEN ============ -->
+    <!-- Page-scoped (.uu-promises*, page-ueber-uns.css) — this used to reuse
+         .lh-why* from /leistungen/, but that block is a 4-item row built for that
+         page's own four columns; six promises don't split into four evenly (the
+         old render left a two-item row stranded under two empty columns). Its own
+         block, 3-across, so it can be exactly what this content wants: numbered,
+         a background-mark title (client 2026-08-10: "el subrayado que se repite en
+         la web, de subrayar el fondo"), and js/uu-promise-marks.js firing that mark
+         per card as it scrolls in — the /leistungen/ card grid's own mechanism
+         (js/lh-card-marks.js), copied for a second consumer rather than shared yet.
+         See that file's own header for the no-JS contract. -->
+    <section class="section uu-promises">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Sechs Versprechen, an denen Sie uns messen können</h2>
+        </div>
+        <ol class="uu-promises__list" data-item-reveal=".uu-promises__item">
+            <li class="uu-promises__item">
+              <span class="uu-promises__num" aria-hidden="true">01</span>
+              <h3 class="uu-promises__title"><span class="uu-promises__mark">Professionelles Auftreten</span></h3>
+              <p class="uu-promises__text">Feste Stammkräfte, Mitsprache bei der Personalauswahl, Outfit passend zu Ihrem Unternehmen.</p>
+            </li>
+            <li class="uu-promises__item">
+              <span class="uu-promises__num" aria-hidden="true">02</span>
+              <h3 class="uu-promises__title"><span class="uu-promises__mark">Volle Transparenz</span></h3>
+              <p class="uu-promises__text">Digitales Wachbuch, Wächterkontrollsystem, Reports — Sie sehen, was auf Ihrem Objekt passiert.</p>
+            </li>
+            <li class="uu-promises__item">
+              <span class="uu-promises__num" aria-hidden="true">03</span>
+              <h3 class="uu-promises__title"><span class="uu-promises__mark">Zuverlässigkeit als Prozess</span></h3>
+              <p class="uu-promises__text">Einarbeitung nach Checkliste, cloud-basierte Objektdaten, regelmäßige Schulungen.</p>
+            </li>
+            <li class="uu-promises__item">
+              <span class="uu-promises__num" aria-hidden="true">04</span>
+              <h3 class="uu-promises__title"><span class="uu-promises__mark">Erreichbarkeit</span></h3>
+              <p class="uu-promises__text">Ein fester Ansprechpartner, 24/7 direkt, keine Warteschleifen.</p>
+            </li>
+            <li class="uu-promises__item">
+              <span class="uu-promises__num" aria-hidden="true">05</span>
+              <h3 class="uu-promises__title"><span class="uu-promises__mark">Nachweisbare Ergebnisse</span></h3>
+              <p class="uu-promises__text">GF-Reports und aktualisierte Sicherheitskonzepte machen Sicherheit messbar.</p>
+            </li>
+            <li class="uu-promises__item">
+              <span class="uu-promises__num" aria-hidden="true">06</span>
+              <h3 class="uu-promises__title"><span class="uu-promises__mark">100 % Verantwortung</span></h3>
+              <p class="uu-promises__text">Direkter Feedback-Kanal, jede Maßnahme nachverfolgt bis zur Erledigung.</p>
+            </li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 5. ZERTIFIKATE & MITGLIEDSCHAFTEN ============ -->
+    <section class="section section--light uu-zert" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Unsere Qualität können Sie nachprüfen</h2>
+        </div>
+
+        <!-- The SHARED .trust-certs block (css/page-service.css), the same
+             composition /referenzen/ publishes — client 2026-08-10, pointing at
+             that page. Seals first and large, then one column per standard with
+             the standard's own name leading, then the memberships line. Third
+             consumer of the block, so nothing was copied: it is one design in one
+             file.
+
+             ⚠️ THE COPY IS THIS PAGE'S OWN, not /referenzen/'s. That page words
+             the same three facts slightly differently ("für stationäre
+             Sicherheitsdienste", "geprüft durch die DEKRA"); these are Webtext 28's
+             words, only split into name + supporting line.
+             The one real edit is the third item: the draft writes it as
+             "Ausschließlich IHK-qualifizierte Kräfte nach § 34a GewO" and this
+             puts the standard first to match its two siblings. Same words, order
+             changed — flagged for Chris. -->
+        <div class="trust-certs uu-certs" data-reveal>
+          <div class="trust-certs__seals">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+          </div>
+
+          <ul class="trust-certs__list">
+            <li>
+              <strong>DIN 77200-1</strong>
+              für stationäre Sicherheitsdienstleistungen
+            </li>
+            <li>
+              <strong>DIN EN ISO 9001</strong>
+              seit 2016, beides DEKRA-geprüft
+            </li>
+            <li>
+              <strong>§ 34a GewO</strong>
+              ausschließlich IHK-qualifizierte Kräfte
+            </li>
+          </ul>
+
+          <p class="trust-certs__memberships">Mitglied im Wirtschaftsclub Bamberg und im Deutschen Mittelstands-Bund</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 6. INNOVATION & DIGITALE WERKZEUGE ============ -->
+    <!-- Same light surface as Zertifikate above, so the two read as one chapter
+         and there is no seam between them. -->
+    <section class="section section--light uu-inno" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Ein Sicherheitsdienst, der digital arbeitet</h2>
+          <p>Digitales Wachbuch in Echtzeit, Wächterkontrollsystem mit Checkpoints, cloud-basierte Objektdokumentation, monatliche GF-Reports und ein direkter Feedback-Kanal für Beschwerden — FRANKONIA investiert in Werkzeuge, die unsere Arbeit für Sie sichtbar und überprüfbar machen.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 7. TEAM & KARRIERE-BRÜCKE ============ -->
+    <section class="section uu-team">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Menschen, die bleiben, der eigentliche FRANKONIA Unterschied</h2>
+          <p>Überdurchschnittliche Bezahlung, Dienstplanung mit Rücksicht auf Privatleben und ein Arbeitgeber, der erreichbar ist: Das hält unsere Fluktuation niedrig, und genau davon profitieren Sie als Kunde mit eingespielten, festen Teams.</p>
+        </div>
+        <p class="uu-team__link">
+          Sie wollen Teil davon werden?
+          <a class="service-link" href="/jobs/">Offene Stellen ansehen
+            <svg class="service-link__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+          </a>
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ 8. ABSCHLUSS-CTA ============ -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form" data-reveal>
+        <div class="section__intro conversion__intro">
+          <h2>Lernen Sie uns kennen, unverbindlich und kostenfrei</h2>
+          <p class="conversion__intro-lede">Der einfachste Weg, FRANKONIA zu prüfen: Fordern Sie ein Angebot an und erleben Sie, wie wir arbeiten, vom ersten Rückruf an. Antwort innerhalb eines Werktages.</p>
+        </div>
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="uu" messageLabel="Ihr Objekt und Ihre Anforderung" -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>
