@@ -34,9 +34,43 @@ function initNavToggle() {
 
   toggle.addEventListener("click", () => {
     const isOpen = toggle.getAttribute("aria-expanded") === "true";
-    toggle.setAttribute("aria-expanded", String(!isOpen));
-    nav.hidden = isOpen;
+    const open = !isOpen;
+    toggle.setAttribute("aria-expanded", String(open));
+    nav.hidden = !open;
+    setNavScrollLock(open);
   });
+
+  // Leaving mobile with the panel still open would strand the lock: the CSS
+  // rule that hides overflow lives in the same max-width query as the panel, so
+  // it stops applying — but lenis.stop() does not, and nothing would ever call
+  // start() again, leaving a page that cannot scroll and no visible menu to
+  // close. Same breakpoint as the panel and as initMobileSubmenu().
+  const mobile = window.matchMedia("(max-width: 1399.98px)");
+  const onChange = (e) => {
+    if (e.matches) return;
+    toggle.setAttribute("aria-expanded", "false");
+    nav.hidden = true;
+    setNavScrollLock(false);
+  };
+  if (mobile.addEventListener) mobile.addEventListener("change", onChange);
+  else if (mobile.addListener) mobile.addListener(onChange);
+}
+
+/* The mobile menu became a full-screen panel (site-chrome.css, 2026-08-10), so
+   the page behind it must not scroll while it is open — otherwise flicking the
+   panel scrolls the page underneath and the visitor closes the menu onto a
+   different part of the page than they left.
+   Two mechanisms because this site has two scrollers: Lenis owns the scroll
+   position when it is running, and `overflow: hidden` is the fallback for the
+   cases where it is not (prefers-reduced-motion, no JS-driven smooth scroll, a
+   script error before smooth-scroll.js ran). Both are no-ops when unneeded, and
+   the panel itself is `overflow-y: auto` so its OWN content still scrolls. */
+function setNavScrollLock(locked) {
+  document.documentElement.classList.toggle("nav-open", locked);
+  const lenis = window.__lenis;
+  if (!lenis) return;
+  if (locked) lenis.stop();
+  else lenis.start();
 }
 
 /**

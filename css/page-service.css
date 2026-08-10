@@ -1556,6 +1556,18 @@ main h2 {
   color: var(--color-text-muted);
 }
 
+/* The blue outline is the STEPPED layout's active-card affordance, and the base
+   layout has no active state, so it has nothing to draw here.
+   ⚠️ It must be display:none and not merely unstyled. An inline <svg> with no
+   width/height attributes and no positioning is an in-flow replaced element at
+   its CSS default 300x150 — measured on a 390px phone it rendered 230x150 as the
+   step's FIRST child, pushing every duty's title 150px below its own thumbnail
+   (client, 2026-08-10: "está desfasado en mobile"). The stepped block below
+   turns it back on with `display: block` — the two always move together. */
+.service-flow__outline {
+  display: none;
+}
+
 .service-flow__frame {
   margin: 0;
   border-radius: var(--radius-lg);
@@ -1777,6 +1789,7 @@ main h2 {
      as attributes. Inset by half the stroke width, or the line would be clipped in half
      by the svg's own edge. */
   .service-flow--stepped .service-flow__outline {
+    display: block;
     position: absolute;
     inset: 0;
     width: 100%;

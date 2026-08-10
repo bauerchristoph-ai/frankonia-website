@@ -302,6 +302,71 @@
   padding: var(--space-5) var(--container-padding);
 }
 
+/* ---- Mobile menu: FULL-SCREEN panel (client 2026-08-10: "el menu quiero que
+   se abra y tape todo y que el texto esté un poco más grande") ----
+   It used to be a dropdown hanging off the header (`absolute; top: 100%`), so it
+   was only as tall as its own content — measured at 390x844 it covered 456px and
+   the hero's trust band and CTA showed underneath it.
+
+   Scoped to its own max-width query rather than edited into the base rule above,
+   because `.site-nav__list a` is SHARED with the desktop row: bumping the font
+   size on the base rule would enlarge the desktop nav too. 1399.98px is the
+   project's existing desktop-nav breakpoint — the same number js/main.js's
+   initMobileSubmenu() matches on, so the submenu toggle and this panel always
+   appear together. */
+@media (max-width: 1399.98px) {
+  .site-nav {
+    position: fixed;
+    inset: 0;
+    border-bottom: none;
+    /* Clears the 76px header row (measured at 390px) so the first link starts
+       below the logo, plus a step of air. The logo and the X sit ON TOP of this
+       panel via the z-index pair below — the panel's background runs edge to
+       edge behind them, which is what makes it read as full-screen. */
+    padding: calc(4.75rem + var(--space-5)) var(--container-padding) var(--space-7);
+    /* "Leistungen" discloses ten service links, so an expanded submenu can run
+       past the fold on a short phone. `contain` keeps that scroll inside the
+       panel instead of chaining to the page behind it. */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Both are earlier siblings of .site-nav inside .site-header__inner, so with
+     everything at z-index auto the positioned panel would paint OVER them and
+     the visitor would lose both the logo and the button that closes the menu. */
+  .site-header__logo,
+  .nav-toggle {
+    position: relative;
+    z-index: 1;
+  }
+
+  .site-nav__list {
+    gap: var(--space-5);
+  }
+
+  .site-nav__list a {
+    font-size: var(--font-size-md);
+    /* 44px is the touch-target minimum this project measures against. At 18px
+       over a 28.8px line-height the links came out 38.8px, and enlarging the
+       type alone would have left them there — the injected submenu toggle beside
+       them is already 44x44, so they were also visibly inconsistent. The links
+       are flex/inline-flex already (they carry a caret), so a min-height plus
+       centring is enough; no display change and no extra padding that would
+       shift the text off its own baseline. */
+    min-height: 44px;
+    align-items: center;
+  }
+
+  /* Set by initNavToggle() (js/main.js) while the full-screen panel is open, so
+     the page behind it cannot scroll. Only ever applied by JS — the same
+     contract as every other hiding class on this site, so no-JS never gets a
+     locked page it cannot unlock. */
+  .nav-open,
+  .nav-open body {
+    overflow: hidden;
+  }
+}
+
 .site-nav__list {
   display: flex;
   flex-direction: column;
