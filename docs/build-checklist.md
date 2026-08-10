@@ -218,10 +218,62 @@ formulario compartido.*
 
 ### Bloque 3 — Los 9 servicios restantes
 - [ ] Sicherheitstechnik · Brandwache · Kaufhausdetektei · Veranstaltungsschutz ·
-      Sicherheitskonzept · Baustellenbewachung · Revier-Schliessdienst ·
-      Empfangsdienst · Interventionsdienst
+      Baustellenbewachung · Revier-Schliessdienst · Empfangsdienst ·
+      Interventionsdienst
 
 *Las 10 fotos de servicio ya están. Esto es ensamblado.*
+
+- [x] `/sicherheitskonzept/` — **2026-08-10**, Webtext 08 verbatim, alemán, 11
+      secciones, 10 seams. **Era el 404 más enlazado del sitio después de las
+      legales: seis páginas apuntaban acá** (homepage, `/leistungen/`,
+      `/angebot/`, `/werkschutz/` y dos case studies).
+      ⚠️ **NO es una réplica de la plantilla de servicio** aunque el draft la
+      llame "Leistungsseite": es una página HÍBRIDA y el propio draft lo dice —
+      las secciones 2 y 3 existen para capturar la consulta informativa
+      ("sicherheitskonzept", 880/mes) con la respuesta en las dos primeras frases
+      bajo un H2 escrito como pregunta, y de ahí en adelante convierte.
+      Reutiliza casi todo: chasis `page-service.css`, las 4 cards de Anlass son
+      `.lh-why__*` (**quinto consumidor** — ese bloque ya tendría que estar en el
+      chasis), la cita es `.testimonial`, los sellos `.trust-certs*`, el FAQ
+      `.faq__list--cards`, el formulario el partial, y los 5 pasos los mueve
+      `js/steps-sequence.js`. `page-sicherheitskonzept.css` sólo agrega la lista
+      de tics, el riel de 5 pasos, las kacheln de resultado y los dos bloques CTA.
+      Medida a 520/768/900/1100/1440: **sin scroll horizontal**, un solo `<h1>`,
+      sin saltos de nivel, FAQ visible ↔ `FAQPage` **5/5 byte-idénticas**, 0
+      placeholders sin resolver, y **cero 404 dentro de `<main>`** salvo
+      `/datenschutz/` (el link de consentimiento del formulario, pendiente en las
+      13 páginas que lo llevan). Sin JS: **8.700 caracteres** de texto real y 27
+      headings en `<main>`.
+  - [ ] ⚠️ **SIN FOTO DE HERO.** El draft pide una "Begehungs-Situation,
+        Sicherheitsexperte mit Kunde am Objekt (Echtfoto)" y no existe en el
+        proyecto: **todas las landscape ya son el hero de otra página**, y reusar
+        el apretón de manos interino de `/leistungen/` haría que dos páginas se
+        vean iguales. Va con hero de sólo copy, la misma forma que `/ratgeber/` y
+        `/einsatzgebiete/`. **Se suma a la pregunta de heros que ya va a Chris.**
+  - [ ] ⚠️ **La sección 6b va como MARCO RESERVADO.** El propio `[UMSETZUNG]` del
+        draft dice que el PDF de muestra existe pero hay que **anonimizarlo
+        entero antes de publicar** (Auftraggeber, direcciones, contactos, número
+        de cliente — Prüfkatalog O4). La ESTRUCTURA de 18 páginas sí se publica,
+        porque es copy aprobado; la vista previa es un placeholder etiquetado.
+        **No publicar ese PDF hasta que Chris confirme la anonimización.**
+  - [ ] ⚠️ **El bloque de Alexander Jäger (sección 8) es la MISMA pregunta abierta
+        que la de `/werkschutz/`**: se queda el contacto con nombre o no, y si se
+        queda falta su retrato. Lo que decida Chris aplica a las dos páginas.
+        Su teléfono y su e-mail ahora salen de `content/values.json`
+        (`phoneJaeger` + **`emailJaeger`, agregado en esta pasada**);
+        ⚠️ `pages/werkschutz.html` todavía tiene el e-mail escrito a mano — pasarlo
+        al token cuando esa página deje de estar en movimiento.
+  - [ ] ⚠️ **Cinco links de servicio y dos de ciudad del draft no existen todavía**
+        (`/objektschutz/`, `/brandwache/`, `/sicherheitstechnik/`,
+        `/revier-schliessdienst/`, `/veranstaltungsschutz/`, Bamberg, Würzburg).
+        Ninguno sale como 404: los de servicio resuelven a `/leistungen/` y los de
+        ciudad a `/einsatzgebiete/`. Un `href` cada uno cuando salgan.
+  - [x] **Bug de contraste propio, encontrado midiendo y arreglado:** la etiqueta
+        del marco de muestra usaba `--color-text-muted` (`rgb(59 73 86 / 0.75)`),
+        que da **4,60:1 sobre blanco puro** pero **4,39:1 sobre el relleno del 5 %**
+        del propio marco — bajo el mínimo. A 0.88 mide **6,16:1**.
+        ⚠️ **La lección general, medida:** el muted al 0.75 es seguro sobre blanco
+        y NO lo es sobre un relleno translúcido del mismo tono.
 
 ### Bloque 4 — Primera ciudad (1 página)
 - [x] `/sicherheitsdienst-nuernberg/` — **2026-08-09**, la más importante (su

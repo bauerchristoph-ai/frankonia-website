@@ -286,6 +286,7 @@
    max-width 22rem → 30rem the same day (client: "la foto tiene que ser más
    grande") — re-exported at 480/960w to match, see the <picture> markup. */
 .uu-lead__photo {
+  position: relative;
   aspect-ratio: 4 / 5;
   max-width: 30rem;
 }
@@ -297,11 +298,85 @@
   object-fit: cover;
 }
 
+/* The bottom edge fades into the section instead of ending on a hard cut
+   (client 2026-08-10: "el corte inferior es muy seco"). `cover` crops the
+   portrait at mid-thigh, and a straight edge there reads as a photo that ran
+   out rather than as a figure standing on the page.
+
+   ⚠️ On a PSEUDO-ELEMENT, never on the <img> — the same rule the hero washes on
+   /jobs/ and /werkschutz/ follow. A filter or mask on the image itself would
+   also fade whatever sits behind it, and it would fight `object-fit`.
+
+   The ramp holds fully transparent through the top 58 % so it never touches the
+   subject, and only the last third does the work. It lands on --color-bg (not a
+   literal black) so it always matches the section it dissolves into — if this
+   block is ever moved onto a different surface, the fade follows it. */
+.uu-lead__photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    to bottom,
+    rgb(1 1 1 / 0) 58%,
+    rgb(1 1 1 / 0.35) 78%,
+    rgb(1 1 1 / 0.8) 92%,
+    var(--color-bg) 100%
+  );
+}
+
 .uu-lead__text p {
   margin-top: var(--space-4);
   max-width: 46rem;
   color: var(--color-text-muted);
   line-height: var(--line-height-base);
+}
+
+/* ---- The Führung -> Versprechen boundary: a SOFT GLOW SEAM ----------------
+   Client 2026-08-10, after rejecting the pulse tiles that were here first ("no me
+   gustaron los píxeles […] quiero algo smooth"). Both sections are the same black, so
+   a pixel dissolve has nothing to dissolve BETWEEN — the tile matches both sides,
+   which is why `--pulse` had to make them white and why it read as flashing.
+
+   This is instead the SAME light-at-the-edges idea as the navy band below: each
+   section paints a gradient on the edge that faces the other, so together they form
+   one continuous soft lift centred on the boundary. Both sides start at the same alpha
+   AT the line, which is what keeps it seamless — there is no step to see.
+
+   Why it is two background gradients and not one positioned overlay:
+     · No element, so nothing to reserve layout for — a faint gradient is fine behind
+       text, unlike a tile band, which is why this costs 0px of page height where the
+       pulse seam cost 200 (the reservation on `.pixel-seam + .section`).
+     · A background paints BEHIND the section's own content automatically, so there is
+       no z-index game and no risk of tinting the heading.
+     · Nothing animates, so there is no mid-state to freeze, and no-JS and
+       prefers-reduced-motion get it identically with no special handling.
+   The 0.14 edge alpha was PICKED BY COMPARISON, not guessed: rendered at 0.09 / 0.14 /
+   0.20 against this exact boundary and looked at. 0.09 peaks at rgb(6,14,19) over the
+   page's black and reads as nothing — i.e. no better than deleting the seam; 0.20
+   (rgb(12,31,42)) starts reading as a coloured BAND rather than a seam. 0.14 peaks at
+   rgb(9,22,30): unmistakably a transition, still restrained.
+   ⚠️ Keep the two first stops EQUAL. They are the two halves of one glow; if they
+   drift apart a hard line appears exactly where this is supposed to be invisible.
+   ⚠️ `.uu-lead` has a `--white` seam above it whose tiles dissolve over the page's
+   black — this gradient is `to top`, so it never reaches that edge and cannot
+   interfere. */
+.uu-lead {
+  background-image: linear-gradient(
+    to top,
+    rgb(61 154 211 / 0.14) 0,
+    rgb(61 154 211 / 0.06) 60px,
+    rgb(61 154 211 / 0) 150px
+  );
+}
+
+.uu-promises {
+  background-image: linear-gradient(
+    to bottom,
+    rgb(61 154 211 / 0.14) 0,
+    rgb(61 154 211 / 0.06) 60px,
+    rgb(61 154 211 / 0) 150px
+  );
 }
 
 /* ---- Sechs Versprechen ---------------------------------------------------
@@ -460,11 +535,65 @@
 }
 
 /* ---- Innovation & digitale Werkzeuge ------------------------------------ */
-/* Same centring as .uu-zert right above it (client 2026-08-10), so the two
-   light sections read as one continuous, centred chapter.
+/* NAVY BAND (client 2026-08-10: "estaría bueno que esté el navy blue porque eso lo
+   asociamos a innovación"). Values are LITERALLY the homepage Konzept band's and
+   /werkschutz/'s Risiko band's — #00091F lit by the brand blue at 0.38 → 0.16 → 0
+   over the first and last 340px, top and bottom — copied rather than re-derived, so
+   all three are ONE surface instead of three similar navies. Keep them in sync.
+
+   This is the page's THIRD surface (black / white / navy), and that is the point
+   beyond the client's ask: the page had alternated two colours for its whole length,
+   which is why several sections read as a title floating in space.
+
+   ⚠️ TWO THINGS THAT TRAVEL WITH THIS BAND, both documented elsewhere and both easy
+   to miss:
+     - The seam BELOW it needs `.pixel-seam--navy`, never black and never a flat
+       navy — the band's bottom 340px is lit, so a plain tile reads as "two navies".
+     - No `data-nav-theme="light"`: navy is a dark surface, so the header keeps its
+       white-text state. Setting it would flip the nav to dark text on navy.
+   ⚠️ The navy currently also means Konzept (homepage) and Risiko (/werkschutz/), so
+   this makes it a third meaning for the same surface. Deliberate, client's call.
    ⚠️ Two classes, not one — same specificity trap: page-service.css styles
    `.section__intro` generically and a single-class selector loses on source
    order. `text-align` centres the TEXT; `margin-inline: auto` centres the BOX. */
+/* ⚠️ THE RAMP IS COMPRESSED HERE, and this is the one place this band deviates from
+   `.service-risk`'s literal values (client 2026-08-10: "que el azul navy tenga más
+   height y que el celeste esté más contra los bordes"). Measured why it was needed:
+   at 780px tall with a 340px ramp from BOTH ends, the two glows nearly met — only
+   ~100px of the section, 13 %, was ever unlit navy, so the whole band read blue
+   instead of navy with lit edges. The ramp now ends at 190px, which leaves a deep
+   navy core of ~528px (58 %).
+   ⚠️ THE EDGE VALUE STAYS 0.38 AND MUST STAY 0.38: `.pixel-seam--navy`'s tile is a
+   flat #00091F + blue 0.38, i.e. it is matched to this band's lit EDGE. Change the
+   knee or the end freely; change the first stop and the seam below stops matching. */
+.uu-inno {
+  background-color: #00091F;
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgb(61 154 211 / 0.38) 0,
+      rgb(61 154 211 / 0.16) 80px,
+      rgb(61 154 211 / 0) 190px
+    ),
+    linear-gradient(
+      to top,
+      rgb(61 154 211 / 0.38) 0,
+      rgb(61 154 211 / 0.16) 80px,
+      rgb(61 154 211 / 0) 190px
+    );
+  color: var(--color-white);
+  /* More band (same client note). The extra sits BELOW the content, where the section
+     had its dead space anyway. */
+  padding-bottom: calc(var(--space-9) + var(--space-8));
+}
+
+/* ⚠️ Two classes, because page-service.css's `.pixel-seam + .section` reserving the
+   dissolve band is also (0,2,0) — a single-class selector would tie and lose. The
+   200px is the band and is NOT optional; only the extra beyond it is this section's. */
+.pixel-seam + .uu-inno {
+  padding-top: calc(var(--space-9) + 200px + var(--space-8));
+}
+
 .uu-inno .section__intro { text-align: center; }
 
 .uu-inno .section__intro h2 {
@@ -476,7 +605,103 @@
   margin-inline: auto;
 }
 
+/* The five named tools, one item each (client 2026-08-10: break the run-on
+   sentence out). Centred icon over a centred label — the same treatment the city
+   page's Erreichbarkeit strip uses, and centring is right HERE specifically because
+   these are one-line labels under a glyph; it is the case where a centred column
+   reads as a badge rather than as ragged prose.
+
+   ⚠️ FIVE ITEMS DO NOT DIVIDE INTO A GRID, and that is the whole layout problem:
+   3-up strands two, 2-up strands one — the exact stranded-row bug the six promises
+   had in four columns. So the last item SPANS the full row below the 5-across
+   breakpoint, which is the fix the city page's own five-item strip already uses. */
+.uu-tools {
+  list-style: none;
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-7) var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .uu-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* The odd one out closes the set instead of hanging in a half-empty row. */
+  .uu-tools__item:last-child { grid-column: 1 / -1; }
+}
+
+/* Five across only from 1200px, and that is measured, not conventional:
+   "Wächterkontrollsystem" is a single unbreakable-looking 21-character word, and
+   below this width a fifth of the content column is too narrow to set it without
+   leaning on hyphenation for every label. */
+@media (min-width: 1200px) {
+  .uu-tools {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-5);
+  }
+
+  .uu-tools__item:last-child { grid-column: auto; }
+}
+
+.uu-tools__item {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: var(--space-4);
+  text-align: center;
+}
+
+/* ⚠️ `justify-self` on the SVG, not `text-align` on the parent: the item is a grid
+   container, so the icon is a grid item, and a sized <svg> does not respond to its
+   parent's text-align. Same trap the city page's centred strip hit. */
+.uu-tools__icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  justify-self: center;
+  /* ⚠️ MANDATORY, and the first render proved it again: the sprite's own
+     `fill: none; stroke: currentColor` live on its wrapper <g id="icon-defs">, and a
+     <use> instantiates the symbol in a shadow tree that the wrapper's presentation
+     attributes do NOT reach. Without these five lines all five icons rendered as
+     solid BLACK BLOBS. Same bug this project has now hit on .service-link__arrow,
+     .service-related__arrow and .btn__arrow. */
+  fill: none;
+  stroke: currentColor;
+  /* 1.05, not 1.5, and it is arithmetic: stroke-width is in USER UNITS on a 24
+     viewBox, so at 40px a 1.5 stroke renders 2.5px. 1.75 x 24 / 40 = 1.05 gives the
+     1.75px optical weight the rest of the site's 40px icons use
+     (page-conventions §11.5). */
+  stroke-width: 1.05;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* The CTA blue. Measured by sampling the REAL rendered backdrop where the icons
+     actually sit — rgb(8,28,55), the gradient already mostly decayed by that depth
+     — which gives 5.47:1. Worst case is the lit top of the band at rgb(23,64,99),
+     still 3.46:1, and these are graphics needing 3:1. Both pass; the pixel sample
+     is the honest number because reasoning from the token alone would have used the
+     flat navy and overstated it. */
+  color: var(--color-blue-light);
+}
+
+.uu-tools__name {
+  /* Body metrics: a label, not a heading (design-system §2). */
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: rgb(255 255 255 / 0.86);
+  /* Centred text with two ragged edges should not also hyphenate — the same call
+     /referenzen/ and the timeline labels make. The 1200px floor above is what
+     guarantees the longest word still fits without it. */
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
 /* ---- Team / Karriere ------------------------------------------------------
+   WHITE since 2026-08-10 (client: "el fondo de esta sección blanca"), so it
+   carries `.section--light` + `data-nav-theme="light"` and sits between two new
+   seams. It needed no colour rules of its own: `.section--light` re-declares
+   every token this block consumes, and page-service.css already gives
+   `.service-link` inside a light section the deeper blue mix (4.9:1) — the exact
+   contrast bug that was found in production on /referenzen/ once and fixed at the
+   shared source.
+
    Client 2026-08-10: "esto centrame" — the heading, its paragraph, AND the
    "Sie wollen Teil davon werden?" line below, so the whole section reads as one
    centred block rather than a left-ranged heading over a left-ranged closing

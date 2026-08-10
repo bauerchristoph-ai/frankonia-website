@@ -99,6 +99,291 @@ strategically and optimize it carefully," not "remove all animation."
 > única copia de la fuente de verdad actual y no tiene historial — conviene
 > commitearla antes de empezar a migrar.
 
+**2026-08-10, MISMO DÍA — LA BANDA NAVY: MÁS ALTA Y CON EL CELESTE PEGADO A LOS
+BORDES** (cliente: "me gustaría que el azul navy tenga más height y que el celeste
+esté más contra los bordes, o sea que esté bien en los límites").
+
+- ⚠️ **EL DIAGNÓSTICO ERA ARITMÉTICO, y explica por qué la banda se veía celeste en
+  vez de navy:** la sección medía 780px con una rampa de **340px desde LOS DOS
+  extremos**, así que los dos degradados casi se tocaban — quedaban ~100px, el 13 %,
+  de navy sin iluminar. La banda entera leía azul.
+- **Rampa comprimida a 190px** (knee 80, era 150/340) y **+128px de alto**
+  (`--space-8` arriba y abajo). Medido con un perfil de luminancia bajando la banda:
+  borde `rgb(23,64,99)` → decae → **plano `rgb(0,9,31)` de y=200 a y=720**, o sea
+  **528px de núcleo navy puro (58 %)** contra los 100px de antes, y vuelve a subir al
+  borde inferior. El celeste queda confinado a los ~190px exteriores de cada lado.
+- ⚠️ **ES LA ÚNICA DESVIACIÓN DE LOS VALORES LITERALES DE `.service-risk`**, y el
+  primer stop NO se puede tocar: **`0.38` en el borde tiene que quedarse en 0.38**
+  porque el tile de `.pixel-seam--navy` es un #00091F + celeste 0.38 plano, o sea está
+  casado con el borde ILUMINADO de esta banda. El knee y el final se mueven libres.
+  Verificado al píxel: borde inferior de la banda `rgb(23,64,99)` y el tile compone
+  exactamente `rgb(23,64,99)`.
+  ⚠️ **Nota de medición, mía:** una primera sonda leyó `rgb(17,50,81)` en el borde y
+  parecía un desajuste — estaba muestreando ~30px arriba por redondeo de la posición
+  de scroll, no 2px. Con la rampa ahora comprimida esos 30px valen mucho más que
+  antes. **Medir el borde a 1px, y con los tiles del seam ocultos.**
+- **El padding superior necesita DOS clases**: `.pixel-seam + .section` de
+  page-service.css también es (0,2,0), así que `.uu-inno` sola empataba y perdía. Los
+  200px de banda no son opcionales; sólo el extra es de esta sección.
+- **Ganancia lateral: el contraste de los iconos MEJORÓ.** Ahora caen sobre el navy
+  profundo `rgb(0,9,31)` en vez del `rgb(8,28,55)` iluminado → el celeste del CTA mide
+  **6,39:1** (era 5,47) y los labels blancos **19,83:1**.
+- ⚠️ **Costo, dicho en números:** la tinta de la sección baja de 53 % a **45 %** (mismo
+  contenido en una caja más alta) y la página pasa de 8.297 a **8.425px** a 1440. Es
+  exactamente lo que se pidió; si algún día molesta, la palanca es el
+  `padding-bottom`, no la rampa.
+- **Medido a 320 → 1920:** sin scroll horizontal, los 8 seams con sus tiles, un solo
+  `<h1>`. El núcleo navy nunca baja de 505px (a 1200, el ancho donde la tira pasa a 5
+  columnas y la sección es más compacta). Sin JS y con `prefers-reduced-motion` la
+  banda mide lo mismo y los 8 seams construyen 0 tiles.
+
+**2026-08-10, MISMO DÍA — EL BORDE FÜHRUNG → VERSPRECHEN ES UN GLOW SEAM, NO PÍXELES**
+(cliente, después de ver el pulso: "no me gustaron los píxeles […] quiero algo smooth").
+Se le pasaron cuatro opciones por texto y eligió ésta.
+
+- ⚠️ **POR QUÉ EL PULSO NO ERA LA HERRAMIENTA ACÁ.** Un dissolve de píxeles pixela un
+  color para revelar OTRO, y los dos lados de este borde son el mismo negro, así que el
+  tile coincide con ambos. `--pulse` lo esquiva haciendo los tiles BLANCOS, que es
+  justamente por qué se leía como parpadeo y no como disolución. Sigue siendo correcto
+  en el borde del footer (una despedida breve al final); es equivocado a mitad de página.
+- **La solución NO tiene elemento: son dos gradientes de fondo en los bordes que se
+  miran** (`.uu-lead` con `to top`, `.uu-promises` con `to bottom`), que juntos arman un
+  solo lift suave centrado en la línea. **Es la misma idea de luz-en-los-bordes que la
+  banda navy una sección más abajo**, así que la página tiene UN vocabulario de borde en
+  vez de dos compitiendo.
+- **Tres cosas que gana por ser background y no un overlay posicionado:**
+  · **cuesta 0px de layout** — un gradiente tenue va bien detrás de texto, al contrario
+    que una banda de tiles, así que se fueron los 200px que reservaba
+    `.pixel-seam + .section`: `.uu-promises` volvió de 296 a 96 de padding-top y la
+    página bajó de 8.425 a **8.225px**;
+  · un background pinta DETRÁS del contenido solo, sin juegos de z-index y sin riesgo de
+    teñir el H2 (verificado: sigue en `rgb(255,255,255)`);
+  · **nada anima**, así que no hay estado intermedio que se congele y sin JS / con
+    `prefers-reduced-motion` es idéntico, sin tratamiento especial.
+- ⚠️ **Los dos primeros stops tienen que ser IGUALES** — son las dos mitades de un mismo
+  glow. Verificado con un perfil de píxeles cruzando el borde: sube simétrico
+  `rgb(1,1,1)` → `rgb(9,22,30)` y baja igual, y **a −2px y +2px mide 9,22,30 contra
+  9,21,29**, o sea sin escalón donde justamente tiene que ser invisible.
+- **El 0.14 del borde se ELIGIÓ COMPARANDO, no a ojo:** renderizado a 0.09 / 0.14 / 0.20
+  sobre este borde exacto y mirado. 0.09 pica en `rgb(6,14,19)` y no se lee — o sea no es
+  mejor que borrar el seam; 0.20 (`rgb(12,31,42)`) empieza a leerse como BANDA de color y
+  no como costura. 0.14 pica en `rgb(9,22,30)`: inequívocamente una transición, y
+  contenida.
+- **Seams 8 → 7.** El pulso del footer sigue auto-detectándose y no se tocó.
+- **Medido a 320 → 1920:** sin scroll horizontal, glow presente en los dos lados en
+  todos los anchos, un solo `<h1>`. Sin JS y con reduced motion: glow presente, 0 tiles
+  en los 7 seams y los 6 marcadores intactos.
+
+**2026-08-10, MISMO DÍA — [SUPERSEDIDO EL MISMO DÍA, ver arriba] SEAM DE PULSO ENTRE FÜHRUNG Y VERSPRECHEN: DOS SECCIONES
+NEGRAS AHORA SÍ TIENEN TRANSICIÓN** (cliente: "hacéme una transición de píxeles
+blancos como hicimos cuando tenemos dos secciones negras").
+
+- ⚠️ **ESTO SUPERSEDE page-conventions §9.2 PARA ESTE BORDE.** Esa regla dice que dos
+  secciones del mismo color no llevan seam, y el motivo era correcto: un tile de wipe
+  ahí es del mismo color que los dos lados, así que termine como termine no se ve
+  nada. `--pulse` es la respuesta que el sitio ya encontró para exactamente ese caso —
+  tiles blancos que suben y vuelven a bajar mientras la ventana de scroll los pasa, en
+  vez de quedar latcheados. **La regla vieja no está mal, está incompleta: sin seam
+  cuando NO hay modo pulso disponible.**
+- ⚠️ **HACEN FALTA LAS DOS COSAS, y cada una sola no sirve:**
+  · **la CLASE `pixel-seam--pulse`** es lo que la CSS mira para el tile blanco, su
+    `opacity: 0` por defecto y la transición;
+  · **el ATRIBUTO `data-pixel-seam-mode="pulse"`** es lo que cambia el TIMING del
+    script. `js/pixel-transition.js` **auto-detecta este caso sólo en el ÚLTIMO seam**
+    (main → footer), donde los dos lados pintan su propio fondo opaco y la comparación
+    es exacta; en cualquier otro borde hay que declararlo, que es justo para lo que
+    ese atributo existe. Un seam con la clase pero sin el atributo correría el wipe
+    normal — tiles blancos latcheando entre dos negros, o sea el bug al revés.
+- **Verificado que el pulso realmente sube y baja** (el riesgo era dejar tiles
+  congelados encendidos en un extremo): recorriendo su rango, tiles encendidos
+  **0 → 0 → 40 → 73 → 73 → 72 → 35 → 3**, y capturado en el pico. El seam del footer
+  sigue auto-detectando su propio pulso: **8 seams, 2 de pulso**.
+- **Costo: la sección siguiente reserva la banda** (`.pixel-seam + .section` →
+  `--space-9 + 200px`, medido 296px), así que la página pasa de 8.097 a **8.297px** a
+  1440. Es el precio obligatorio: sin la reserva los tiles caerían sobre contenido real.
+- **Ritmo de color, 8 seams:** hero ▪ · Geschichte ▫ · Führung ▪ · **pulso** ·
+  Versprechen ▪ · Zertifikate ▫ · Innovation ▰ · Team ▫ · Formular ▪ · pulso → footer.
+- **Medido a 320 → 1920:** sin scroll horizontal, los 8 seams construyen tiles en
+  todos, un solo `<h1>`. Sin JS y con `prefers-reduced-motion`: **0 tiles en los 8**,
+  que es el contrato — el div va vacío en el markup y el script no construye nada.
+
+**2026-08-10, MISMO DÍA — INNOVATION PASA A BANDA NAVY Y LOS CINCO SISTEMAS SALEN DE
+LA FRASE CORRIDA; EL HERO GANA SU TRUST BAND.** Salió de una revisión pedida por el
+cliente ("qué te parece esta sección, agregarías alguna imagen, o algo que veas
+flaqueando"), medida en vez de opinada: la sección de Innovation era la más vacía de
+la página con **37 % de tinta** y el hero el único del sitio sin foto NI trust band.
+
+- **Innovation: banda NAVY** (cliente: "estaría bueno que esté el navy blue porque eso
+  lo asociamos a innovación"). Valores **literales** de la banda Konzept del homepage
+  y de la Risiko de `/werkschutz/` — #00091F iluminado por el celeste al
+  0,38 → 0,16 → 0 en los primeros y últimos 340px — copiados, no re-derivados, así que
+  las tres son UNA superficie. **Es la tercera superficie de la página** (negro /
+  blanco / navy), que es lo que la saca de ser una alternancia de dos colores a lo
+  largo de 10 pantallas.
+  - ⚠️ **El seam de abajo pasó a `.pixel-seam--navy`** — ni negro ni un navy plano: los
+    últimos 340px de la banda están iluminados, así que un tile plano se lee como "dos
+    navies". Es el bug que `/werkschutz/` ya pagó una vez; el modificador ya existía.
+  - ⚠️ **Sin `data-nav-theme="light"`**: navy es superficie oscura, el header conserva
+    su nav blanco.
+- **Los cinco sistemas son cinco items, no una frase.** El draft los escribe en una
+  sola línea corrida, que es lo que dejaba la sección vacía y enterraba cinco productos
+  nombrados a mitad de oración (pérdida real de GEO: un motor de respuestas extrae
+  mucho mejor cinco items que una enumeración interna).
+  ⚠️ **ES UNA EDICIÓN DE COPY Y NECESITA EL OK DE CHRIS.** Verificado reensamblando
+  los cinco labels + el lede y diffeando contra el docx: **las únicas diferencias son
+  las tres que se anotaron** — `cloud-basierte` → `Cloud-basierte`, `monatliche` →
+  `Monatliche`, y `ein direkter` → `Direkter` (cae el artículo para que los cinco se
+  lean como labels paralelos), más el `und` y la raya que unían la enumeración. **Cero
+  palabras agregadas, ninguna otra cambiada.** El `[ERGÄNZEN: ggf. Screenshots/Namen
+  der Systeme nach Freigabe]` del propio draft sigue abierto y ESTA es su sección.
+  - **Iconos: cuatro ya estaban y uno se dibujó.** `#icon-route` es literalmente una
+    ruta con un marcador por checkpoint, `#icon-calendar` carga el "monatlich",
+    `#icon-document-check` el Wachbuch y `#icon-agree` el canal de feedback.
+    **`#icon-cloud` es nuevo**, y a propósito es una nube PELADA: con flecha diría
+    "subir", que es otra afirmación. Dimensionado para abarcar y ≈ 5→18 y no el medio
+    de la caja — dibujado más chico renderizaba visiblemente más liviano que sus
+    hermanos de la misma fila; comparado renderizado a 24 / 40 / 56px contra
+    `#icon-calendar` antes de elegirlo, no juzgado por el path.
+  - ⚠️⚠️ **LOS CINCO ICONOS SALIERON COMO MANCHAS NEGRAS EN EL PRIMER RENDER**, y es la
+    trampa del `<use>` que este archivo ya documenta tres veces: el
+    `fill: none; stroke: currentColor` del sprite vive en su `<g id="icon-defs">` y NO
+    sobrevive al `<use>`. Hay que restatearlo en CSS, siempre.
+    Y el trazo va en **1.05, no 1.5**: `stroke-width` está en unidades de usuario sobre
+    un viewBox de 24, así que a 40px un 1.5 renderiza 2,5px — 1,75 × 24 / 40 = 1,05 da
+    el peso óptico de 1,75px que usa el resto de los iconos de 40px del sitio.
+  - ⚠️ **CINCO ITEMS NO ENTRAN EN NINGUNA GRILLA**: 3 columnas deja dos huérfanos, 2
+    deja uno — el mismo bug de fila abandonada que tenían las seis promesas en cuatro
+    columnas. El último item **abarca la fila completa** por debajo del corte de
+    5-en-línea, que es el arreglo que ya usa la tira de cinco de la página de ciudad.
+    **5 en línea sólo desde 1200px, y es medido**: "Wächterkontrollsystem" son 21
+    caracteres y por debajo de ese ancho un quinto de la columna no lo sostiene sin
+    apoyarse en hyphenación en todos los labels.
+  - **Contraste muestreando el píxel real del render** (no razonando sobre el token):
+    el backdrop donde caen los iconos es `rgb(8,28,55)` → el celeste del CTA mide
+    **5,47:1**, y en el peor caso (el tope iluminado de la banda, `rgb(23,64,99)`)
+    **3,46:1** — son gráficos, piden 3:1. H2 y lede **10,75:1**, labels **8,41:1**.
+  - **Tinta 37 % → 53 %**, sección 724 → 780px. Honesto: cinco labels de tres palabras
+    no llenan una pantalla. El resto sale de las screenshots del `[ERGÄNZEN]` cuando
+    lleguen, o de aceptar que esta sección no tiene que medir una pantalla.
+- **El hero gana la TRUST BAND, sin un archivo nuevo.** Era el único hero del sitio sin
+  foto ni banda de confianza, en la página cuyo tema es justamente si confiar en la
+  empresa. Es el bloque de `/jobs/` con sus assets ya presentes: la píldora de Google
+  con **4,7 / 97** (la única cifra confirmada por el cliente) y los dos sellos DEKRA
+  reales, que esta página ya renderiza más abajo. **Tinta 52 % → 63 % y el hero NO
+  creció** (685px, la banda entró en el aire que ya tenía).
+  - ⚠️ **PRIMERO LO ESCRIBÍ CON LAS CLASES DEL HOMEPAGE Y EXPLOTÓ.** `.hero__badges` /
+    `.hero__badge` viven en **page-home.css, que esta página no carga**, así que los dos
+    sellos salieron a su tamaño intrínseco de 399x600 y **el hero pasó de 685 a
+    1687px**. Los nombres del chasis son `.service-hero__badges` / `.service-hero__seal`.
+    El wrapper conserva **las dos** clases a propósito: `.hero__trust` es la que anima
+    `js/hero-reveal.js`, `.service-hero__trust` la que la estiliza.
+  - Va DESPUÉS de las acciones, que es el orden documentado del homepage
+    (H1 → lede → CTA → trust) y el orden en que ese script anima los cuatro bloques.
+- ✅ **Se cerró el pendiente del seam del footer que quedó anotado la pasada anterior**,
+  y no acá: otra sesión hizo que `js/pixel-transition.js` **detecte** el caso
+  negro-sobre-negro en el último seam y agregue `--pulse` solo. Esta página lo hereda
+  gratis — verificado, el séptimo seam computa `pixel-seam--pulse`.
+- **Ritmo de color final, 7 seams, cada uno con el tile correcto:** hero ▪ · Geschichte
+  ▫ · Führung ▪ · Versprechen ▪ · Zertifikate ▫ · **Innovation ▰ (navy)** · Team ▫ ·
+  Formular ▪ → footer (pulse).
+- **Medido a 320 / 390 / 640 / 768 / 900 / 1024 / 1200 / 1440 / 1600 / 1920:** sin
+  scroll horizontal en ninguno, un solo `<h1>`, sin saltos de nivel, los 7 seams
+  construyen tiles en todos, sellos del hero a 44px (32 en teléfono, el valor del
+  chasis), y los cinco iconos con `fill: none` y trazo celeste. Sin JS y con
+  `prefers-reduced-motion`: los cinco items en opacidad 1, los seis marcadores al
+  100 % y los iconos correctos.
+- ⚠️ **LO QUE SIGUE ABIERTO Y ES DEL CLIENTE:** la sección Team (46 % de tinta) habla
+  de personas y no tiene ninguna — el draft ya pide un Team-Foto y **no existe** en el
+  proyecto (todas las landscape son el hero de otra página). Hay que pedirle a Chris
+  una **foto grupal horizontal, ≥1600px de ancho**. Deliberadamente **no** se puso un
+  frame reservado con label entre corchetes: la sección hoy se ve intencional y un
+  placeholder la haría ver inacabada — distinto del retrato de Steffen, cuya sección
+  ERA sobre una persona y sin él quedaba un párrafo pelado.
+
+**2026-08-10, MISMO DÍA — BUG PROPIO EN LOS MARCADORES DE LAS SEIS PROMESAS: LA
+SEGUNDA FILA QUEDABA CONGELADA A MITAD DE PALABRA.** Encontrado midiendo al revisar
+la sección, no razonando.
+
+- ⚠️ **UN TRIGGER POR ITEM ES CORRECTO EN UNA LISTA VERTICAL Y ES UN BUG EN UNA
+  GRILLA QUE ENTRA EN UNA PANTALLA.** Salió copiando el patrón de
+  `js/lh-card-marks.js` (`start: "top 88%"` → `end: "top 55%"` por card), que en
+  `/leistungen/` funciona porque sus once cards se aproximan y se pasan de a una.
+  Acá son seis en dos filas que se ven juntas, y la fila 2 está ~330px más abajo que
+  la 1: **medido en las dos posiciones donde un lector realmente para** — borde
+  superior de la sección en el tope del viewport, y sección centrada — los tres
+  marcadores de la fila 2 quedaban en **56 % y 43 %**, o sea resaltados cortados a
+  mitad de palabra ("Erreich|barkeit", "Nachweisba|re", "100 % Ver|antwortung"). Se
+  lee como falla de render, no como efecto.
+- **Arreglado estructuralmente, no moviendo números: UN trigger sobre la LISTA con
+  stagger de 0,12 entre los seis** (`start: "top 85%"` → `end: "top 45%"`). El rango
+  termina cuando el tope de la LISTA pasa el 45 % del viewport, que ocurre bastante
+  antes de que la sección se asiente — así que **cualquier posición de reposo tiene
+  los seis al 100 %**, verificado en cinco posiciones. Y el stagger conserva la
+  secuencia 01 → 06.
+- **Verificado que sigue barriendo de verdad** (el riesgo del arreglo era que
+  completara antes de ser visible): muestreando el rango, `0/0/0/0/0/0` → `47/23/0…`
+  → `96/72/48/24/0` → `100/100/97/73/49/25` → los seis, con la lista visible en
+  pantalla todo el tiempo. Sin JS y con `prefers-reduced-motion` siguen los seis al
+  100 % y sin la clase `--live`.
+- ⚠️ **La lección general, anotada en el propio archivo:** en este sitio un marcador
+  scrubbeado tiene que estar COMPLETO cuando su sección queda quieta. Si el bloque
+  entra entero en una pantalla, el trigger va en el contenedor con stagger; si es una
+  lista que se recorre, va por item. `js/lh-card-marks.js` no se tocó — su caso es el
+  segundo.
+
+**2026-08-10, MISMO DÍA — INNOVATION PASA A NEGRA Y TEAM A BLANCA: LA PÁGINA AHORA
+ALTERNA HASTA ABAJO, CON 7 SEAMS** (cliente: "haceme el fondo de esta sección negra"
+sobre Innovation, "y el fondo de esta sección blanca" sobre Team). El copy no cambió.
+
+- ⚠️ **UN CAMBIO DE COLOR CUESTA UN SEAM, y este pedido cuesta TRES ediciones de
+  seam, no dos de clase.** Es la regla sobre la que está construido el ritmo de todo
+  el sitio, y acá salió así:
+  1. **Seam NUEVO entre Zertifikate y Innovation** — antes compartían la superficie
+    blanca y el comentario del markup decía explícitamente que por eso no había
+    seam. Tiles **blancos** (claro arriba).
+  2. **El seam que ya existía entre Innovation y Team cambió de dirección**:
+    `pixel-seam--white` → `pixel-seam`, o sea tiles **negros** (oscuro arriba).
+  3. **Seam NUEVO entre Team y el formulario** — el formulario siempre es oscuro, así
+    que Team en blanco crea un borde de color que antes no existía. Tiles
+    **blancos**.
+  El chasis ya reservaba la banda en los tres casos (`.pixel-seam + .section` da
+  `--space-9 + 200px`, y **`.pixel-seam + .conversion` da 200px** — esa regla ya
+  estaba en page-service.css, así que el seam nuevo antes del formulario no necesitó
+  CSS). **Seams 4 → 7 dentro de la página** (6 en `<main>` más el del footer).
+- **Ni Innovation ni Team necesitaron una sola regla de color propia**, y eso es la
+  prueba de que el chasis funciona: Innovation sólo consume tokens, así que sacarle
+  `.section--light` le devuelve todos a su valor oscuro; y Team los recibe al
+  ganarla. **El `.service-link` de "Offene Stellen ansehen" tomó solo la mezcla
+  profunda de azul sobre claro** — medido `color(srgb 0.273 0.45 0.67)` = **4,90:1**,
+  que es exactamente el arreglo compartido que este archivo documenta después de
+  haber estado roto en vivo en `/referenzen/`.
+- **`data-nav-theme="light"` se movió con las superficies**: sale de Innovation,
+  entra en Team. Ahora las tres claras son `.uu-story`, `.uu-zert` y `.uu-team`.
+- ✅ **EL SWITCH CLARO/OSCURO DEL HEADER ESTÁ VERIFICADO EN ESTA PÁGINA, y eso cierra
+  el caveat que este archivo arrastra desde julio** ("necesita eventos de scroll
+  reales, `npm run dev`"). Medido con scroll real de Lenis, parando el header dentro
+  de cada sección: sobre blanco (`story` / `zert` / `team`) el header toma
+  `site-header--dark` con el nav en `rgb(59, 73, 86)`; sobre negro (`lead` /
+  `promises` / `inno` / `conversion`) vuelve al nav blanco. **7 de 7 correctas.**
+- **Ritmo final: hero ▪ · Geschichte ▫ · Führung ▪ · Versprechen ▪ · Zertifikate ▫ ·
+  Innovation ▪ · Team ▫ · Formular ▪ → footer.** Führung y Versprechen siguen
+  compartiendo superficie sin seam entre ellas (§9.2, dos negros no se disuelven).
+- **Medido a 320 / 390 / 768 / 900 / 1024 / 1280 / 1440 / 1600 / 1920:** sin scroll
+  horizontal en ninguno, los 7 seams construyen sus tiles (39 en teléfono → 240 a
+  1920) **con el color correcto según la dirección en los 7**, un solo `<h1>`, sin
+  saltos de nivel de heading. Contraste sobre las dos superficies nuevas: H2 y
+  párrafo de Innovation **20,87:1** sobre negro; H2 de Team 20,87:1, su párrafo
+  **6,03:1**, la línea de cierre **4,60:1** y el link **4,90:1** sobre blanco.
+  Sin JS y con `prefers-reduced-motion`: 0 tiles en los 7 seams (son decoración) y
+  las dos superficies correctas igual.
+- ⚠️ **PENDIENTE PRE-EXISTENTE, encontrado midiendo y NO tocado porque es otra
+  decisión:** el seam del footer tiene tiles **negros** entre el formulario (negro) y
+  el footer (negro), o sea es invisible. Es exactamente el caso para el que existe
+  `.pixel-seam--pulse`, que ya tienen `/referenzen/` y `/einsatzgebiete/` — y
+  page-service.css dice que **un TERCER consumidor debería volverlo el default en vez
+  de optar a mano una tercera vez**. Esta página es ese tercero. Decidirlo antes de
+  tocarlo; no lo cambié porque el pedido era otro borde.
+
 **2026-08-10, MISMO DÍA — LA SECCIÓN "MENSCHEN, DIE BLEIBEN" SE CENTRÓ ENTERA**
 (cliente: "esto centrame", sobre el título, el párrafo y la línea de cierre "Sie
 wollen Teil davon werden? Offene Stellen ansehen"). Mismo tratamiento que ya
@@ -3613,6 +3898,49 @@ July version was built with is gone, on purpose. What changed:
   - Verificado por scroll real, con `A` = `is-active` y `#` = borde dibujado:
     `A# .- .- .- .- .-` → `.- A# .- .- .- .-` → `.- .- A# .- .- .-`, y **forzando hover en
     la card 1 mientras la 3 es la activa, la 3 sigue siendo la única marcada**.
+- **2026-08-10 — el marcador del título pasa al CELESTE DEL CTA con la letra BLANCA, y el
+  título quedó fijo en 24px** (cliente: "no me gusta el subrayado de estas cards, quiero
+  que sea celeste y con la letra blanca"). ⚠️ **Revierte el tint del 22 % con texto oscuro
+  de ayer** — la decisión posterior manda; la entrada de abajo queda como historia.
+  - ⚠️ **EL TAMAÑO DEL TÍTULO ES LO QUE HACE LEGAL ESTO, no es una preferencia.** Blanco
+    sobre #3D9AD3 mide **3,11:1** — alcanza el 3:1 de texto GRANDE y falla el 4,5:1 de
+    texto normal. El umbral de WCAG es 24px a cualquier peso, y el clamp que tenía
+    (`clamp(1.15rem, 0.5rem + 0.9vw, 1.5rem)`) **recién llegaba a 24px pasando los
+    ~1778px de viewport** — computaba 21px a 1440. O sea que en todos los anchos donde
+    este proyecto mide, blanco sobre celeste habría sido una falla real. Ahora es
+    `font-size: 1.5rem` plano. Mismo arreglo y misma razón que `.combo-steps__title` de
+    `/brandwache-nuernberg/`. **No devolverle el clamp sin cambiar el relleno.**
+  - ⚠️⚠️ **EL DELAY DEL CAMBIO DE COLOR ES ESTRUCTURAL, y es la única diferencia real con
+    los títulos del Ablauf de `/brandwache-nuernberg/`: acá la card es BLANCA.** Allá la
+    sección es negra, así que el blanco se lee sobre las dos superficies; acá, si el color
+    y el relleno cambian juntos, la primera mitad del barrido es **blanco sobre blanco** y
+    la palabra desaparece. El color va con `transition-delay: 150ms` contra un barrido de
+    250ms.
+    **Medido muestreando frame por frame una activación real:** la tipografía se queda
+    casi-negra (6,72:1 contra el relleno) hasta que el relleno está al **98,4 %**, y
+    cruza a blanco mientras está entre 99,7 % y 100 %. **Ningún frame tiene letras
+    visibles sobre blanco pelado.** Que 150ms caiga tan tarde en el barrido es por
+    `--easing-premium`: expo-out llega a su valor muy temprano.
+  - **El crossfade es corto a propósito, 60ms y no los 120 con los que salió:** a mitad
+    del fade la tipografía es un gris medio sobre celeste, y a 120ms ese estado de bajo
+    contraste duraba **~80ms contra ~30 ahora**. Alargarlo reabre esa ventana.
+  - **Y el delay es asimétrico**: la regla base lo deja en `0s`, así que al DESactivarse
+    el texto vuelve a oscuro de inmediato — que es justo cuando el relleno se está yendo.
+  - ⚠️ `--color-blue-light` literal, **no** `--color-accent`: la sección es
+    `.section--light`, donde ese token resuelve a blue-dark (#5287C9) — el "segundo
+    celeste" que este archivo ya pagó una vez.
+  - **Medido**: relleno `rgb(61, 154, 211)` exacto (o sea el del CTA, muestreado del
+    render), blanco encima **3,11:1**, título inactivo casi-negro sobre blanco
+    **20,87:1**. La lista **sigue entrando en una pantalla** pese a los ~23px que costó
+    el título más grande: **667px a 1152x800, 658 a 1440x900, 683 a 1920x1080**, con
+    `shift: none` a 1440x900 / 1512x900 / 1280x800 / 1920x1080. Sin scroll horizontal a
+    390 / 768 / 1024 / 1151 / 1152 / 1440 / 1920, y por debajo de 1152 **nada cambió**
+    (título 16px, sin marcador — todas estas reglas viven dentro de
+    `.service-flow--stepped`).
+  - **Sin JS y con `prefers-reduced-motion`: cero títulos blancos**, los seis en
+    `rgb(1, 1, 1)` y sin layout stepped. Eso es lo que cierra el riesgo de
+    blanco-sobre-blanco: `color: var(--color-white)` sólo existe bajo
+    `.service-flow--stepped … .is-active`, dos clases que en esos estados no existen.
 - **2026-08-09 — la card activa: marcador claro y borde parejo** (client: "está feísima como
   quedó esta card seleccionada, y además tiene que hacer el contraste suficiente para que se
   lea el texto por tema accesibilidad… más linda, más clean y más pro, y que el borde sea

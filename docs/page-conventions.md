@@ -473,6 +473,26 @@ la sección de abajo** (el footer) y los cuadraditos son del color de la secció
 
 Dos cosas que hay que acertar:
 
+⚠️ **Cuando arriba y abajo son el mismo negro, el tile no se ve** — y eso pasa en
+toda página cuya última sección es oscura (la del formulario, típicamente). Ahí el
+seam del footer no hace un barrido sino un **pulso**: los cuadraditos suben a blanco
+sólido y bajan a medida que la ventana de scroll los cruza.
+
+**No hay que declararlo.** Desde 2026-08-10 `js/pixel-transition.js` mide la
+condición en el borde `main → footer` — la superficie de arriba, el footer y el
+propio tile resolviendo al mismo color — y agrega `.pixel-seam--pulse` solo. Si esa
+última sección pasa a ser clara, vuelve solo a ser un barrido. Hoy da pulso en
+`/referenzen/`, `/einsatzgebiete/`, `/leistungen/` y `/ueber-uns/`.
+
+⚠️ **La detección está acotada a ESE borde a propósito.** Una primera versión
+comparaba las superficies de todos los seams y se equivocó en el homepage: el fondo
+propio de una sección suele ser transparente, así que hero → trust band midió
+"negro contra negro" cuando el blanco sobre el que disuelve vive en un HIJO de la
+sección siguiente. En el borde del footer no hay nada que adivinar: los dos lados
+pintan su propio fondo opaco. Para un seam a mitad de página que quiera este look
+queda `data-pixel-seam-mode="pulse"` como escotilla.
+
+
 | | |
 |---|---|
 | **Color del tile** | El del fondo de la sección de arriba. Página blanca → `.pixel-seam--white`. Página negra → sin modificador (el default es `--color-bg`). Si la de arriba es `.section--subtle` va `.pixel-seam--subtle` (#090909): un negro apenas distinto se nota y se lee como "dos negros". **Si la de arriba tiene un degradado en su borde inferior, el tile tiene que llevar el mismo stack, no el color plano** — `.pixel-seam--konzept` (home) y `.pixel-seam--navy` (`/werkschutz/`, banda navy del Risiko) le dan al tile el `#00091F` + `--color-blue-light` a 0.38 de la propia sección, en vez de hardcodear el hex compuesto. Mantené el 0.38 en sincro con el primer stop de la sección. |

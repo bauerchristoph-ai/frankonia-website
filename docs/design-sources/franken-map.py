@@ -48,7 +48,25 @@ TARGET_W = 1000.0
 # per segment and reads smooth). A city, at the scale of all Franconia, renders
 # 8–40px across: past ~55 points nothing it adds is visible, and the raw files
 # carry 1143–3955 each. That difference is the whole 256KB → ~20KB.
-REGION_MAX_POINTS = 320
+# ⚠️ THE REGION OUTLINE COMES FROM A DIFFERENT FILE THAN THE CITIES, and that
+# is deliberate. assets/data/coverage-boundaries/franken.geojson is a RUNTIME
+# asset: the homepage's Leaflet map draws it as a background wash at zoom 8-9
+# and it is deliberately crushed to 8KB — CLAUDE.md says in so many words not to
+# re-export it at full detail. At hero size that same file reads as straight
+# cuts (client 2026-08-10: "están muy rectos los cortes"), because its segments
+# are ~3.2km, i.e. 5-6px here.
+# So the hero uses its own higher-fidelity copy, re-fetched once from Nominatim
+# (the same one-off process, 1 req/s and a real User-Agent) and kept in
+# docs/design-sources/ — a BUILD-TIME source, not shipped, since the output of
+# this script is inlined into the page anyway. The runtime file is untouched, so
+# the homepage map is unaffected.
+REGION_SOURCE = "docs/design-sources/franken-detail.geojson"
+
+# No further simplification of the region: the detail file is already cut to
+# ~0.69km segments, which at the map's rendered width (~540px for ~350km, so
+# 1px ≈ 0.6km) is about 1.2px per segment — the limit of what the screen can
+# show. Simplifying again here is what made the first version look faceted.
+REGION_MAX_POINTS = 100000
 CITY_MAX_POINTS = 55
 
 # The card icons (see the end of main()). Rendered ~44px, so they can carry a
@@ -58,32 +76,50 @@ CARD_ICON_MAX_POINTS = 90
 ICON_BOX = 100
 ICON_PAD = 6
 
-# Tour/label data. `label` is what the visitor reads; only the four
-# well-separated big cities carry one, because Nürnberg, Fürth, Erlangen and
-# Forchheim sit within ~20km of each other and four labels there collide into
-# noise (measured on the first render). The other six are pin-only — the pin is
-# what communicates at this scale, and the ten names are all real text in the
-# tiles further down the page either way.
+# ALL TEN CARRY A LABEL since 2026-08-10 (client: "acá poneme todos los
+# nombres"). Six of them were pin-only before, because Nürnberg, Fürth, Erlangen
+# and Forchheim sit within ~20km and four labels there collided into noise.
+#
+# What makes ten work is the `side` column: the four in that cluster ALTERNATE,
+# so consecutive labels run away from each other instead of stacking. Their
+# measured positions in the 1000x800 viewBox are
+#     forchheim (633, 396) · erlangen (607, 460) · fuerth (603, 503) ·
+#     nuremberg (637, 529)
+# i.e. vertical gaps of 64 / 43 / 25 units against a ~28-unit label height — so
+# the two that are only 25 apart (Fürth, Nürnberg) MUST be on opposite sides.
+# ⚠️ Verify with the real rendered bounding boxes after any change here, not by
+# eye: the check is in the build report and it is a two-minute measurement.
+#
+# `major` is only the pin SIZE — the four regional centres read a step stronger.
+# It used to double as "has a label", which is why it looked like a hierarchy
+# decision; it is not one any more.
 CITIES = [
-    # slug,          label (None = pin only), label anchor
-    ("bamberg",      "Bamberg",   "start"),
-    ("nuremberg",    "Nürnberg",  "start"),
-    ("wuerzburg",    "Würzburg",  "end"),
-    ("bayreuth",     "Bayreuth",  "start"),
-    ("erlangen",     None,        None),
-    ("fuerth",       None,        None),
-    ("forchheim",    None,        None),
-    ("schweinfurt",  None,        None),
-    ("coburg",       None,        None),
-    ("ansbach",      None,        None),
+    # slug,          label,         side,    major
+    ("bamberg",      "Bamberg",     "start", True),
+    ("nuremberg",    "Nürnberg",    "start", True),
+    ("wuerzburg",    "Würzburg",    "end",   True),
+    ("bayreuth",     "Bayreuth",    "start", True),
+    # ⚠️ Erlangen RIGHT and Fürth LEFT, not both left. They are 43 viewBox units
+    # apart vertically, which is only ~15px once the map is a phone's 350px wide,
+    # against an 18px label — so on the same side they overlapped (measured, and
+    # shrinking the type does NOT fix it: the separation is fixed in viewBox
+    # units while the label box shrinks with the font, so they stay in contact).
+    # Opposite sides makes them diverge horizontally instead.
+    ("erlangen",     "Erlangen",    "start", False),
+    ("fuerth",       "Fürth",       "end",   False),
+    ("forchheim",    "Forchheim",   "start", False),
+    ("schweinfurt",  "Schweinfurt", "start", False),
+    ("coburg",       "Coburg",      "start", False),
+    ("ansbach",      "Ansbach",     "start", False),
 ]
 
 
-def load_polygons(slug):
+def load_polygons(path_or_slug):
     """-> list of polygons; each polygon is a list of rings; each ring a list of
-    [lon, lat]. Handles both file shapes in this folder: a bare Feature (the
-    cities) and a FeatureCollection (franken.geojson's three regions)."""
-    with open(f"{BASE}/{slug}.geojson") as fh:
+    [lon, lat]. Handles both file shapes in play: a bare Feature (the cities)
+    and a FeatureCollection (the three regions)."""
+    path = path_or_slug if path_or_slug.endswith(".geojson") else f"{BASE}/{path_or_slug}.geojson"
+    with open(path) as fh:
         data = json.load(fh)
     feats = data["features"] if data.get("type") == "FeatureCollection" else [data]
     polys = []
@@ -136,8 +172,8 @@ def fit(polys, budget):
 
 
 def main():
-    regions = load_polygons("franken")
-    cities = {slug: load_polygons(slug) for slug, _, _ in CITIES}
+    regions = load_polygons(REGION_SOURCE)
+    cities = {slug: load_polygons(slug) for slug, _, _, _ in CITIES}
 
     # ---- ONE shared projection + ONE shared box, for everything ----
     region_pts = [p for poly in regions for ring in poly for p in ring]
@@ -217,34 +253,35 @@ def main():
         out.append(f'    <path class="eg-map-svg__region" data-region="{name}" d="{d_attr([poly])}"/>')
     out.append("  </g>")
 
-    # 2. The cities. Halo FIRST so it sits behind the shape: at this scale a
-    #    city polygon is 8-40px across and its blue fill alone does not read,
-    #    which the first render made obvious. The halo is what carries the
-    #    "highlight"; the polygon is the real, honest shape inside it.
+    # 2. The cities: real polygon, then pin, then label.
+    #    NO HALO any more (client 2026-08-10: "no pongas el círculo ese
+    #    transparente que está en todos los locations, el icono sí"). It was
+    #    added when the region carried a fill and a city's own blue disappeared
+    #    against it; with the region reduced to a bare outline the city polygons
+    #    are the only filled shapes on the map and read on their own.
     out.append('  <g class="eg-map-svg__cities">')
-    for slug, label, anchor in CITIES:
+    for slug, label, anchor, major in CITIES:
         polys = fit(cities[slug], CITY_MAX_POINTS)
         cx, cy = centroid(cities[slug])
-        big = label is not None
         out.append(f'    <g class="eg-map-svg__city" data-city="{slug}">')
-        out.append(f'      <circle class="eg-map-svg__halo" cx="{cx:.1f}" cy="{cy:.1f}" r="{28 if big else 20}"/>')
         out.append(f'      <path class="eg-map-svg__shape" d="{d_attr(polys)}"/>')
         # ⚠️ A <use>'s x/y place the BOX's top-left corner, not the artwork's
         # anchor — so the pin has to be offset by where its own tip sits inside
         # its 350x350 viewBox: (174.5, 328) = (0.499, 0.937) of the box. Without
         # this every pin floats up and left of the city it marks, by roughly its
         # own size, which at this scale is the whole city.
-        size = 34 if big else 26
+        size = 34 if major else 26
         out.append(f'      <use class="eg-map-svg__pin" href="#eg-pin" '
                    f'x="{cx - size * 0.499:.1f}" y="{cy - size * 0.937:.1f}" '
                    f'width="{size}" height="{size}"/>')
         if label:
-            dx = 22 if anchor == "start" else -22
+            dx = 20 if anchor == "start" else -20
             out.append(f'      <text class="eg-map-svg__label" x="{cx + dx:.1f}" y="{cy + 5:.1f}" '
                        f'text-anchor="{anchor}">{label}</text>')
         out.append("    </g>")
     out.append("  </g>")
     out.append("</svg>")
+    print("\n".join(out))
 
     # ---- The card icons -------------------------------------------------
     # A second, independent output: one tiny SVG per city, each showing THAT
@@ -259,7 +296,7 @@ def main():
     # decision docs/design-sources/city-outline.py already makes for the city
     # pages' hero outlines.
     print("\n\n<!-- ==== CARD ICONS: one per city, own fitted viewBox ==== -->")
-    for slug, _, _ in CITIES:
+    for slug, _, _, _ in CITIES:
         polys = fit(cities[slug], CARD_ICON_MAX_POINTS)
         pts = [p for poly in polys for ring in poly for p in ring]
         lat_c = (min(p[1] for p in pts) + max(p[1] for p in pts)) / 2

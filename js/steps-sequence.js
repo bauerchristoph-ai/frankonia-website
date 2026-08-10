@@ -110,6 +110,17 @@
     // nothing about a step changes, so /werkschutz/ is untouched.
     var markSel = list.getAttribute("data-steps-mark");
 
+    // data-steps-start / data-steps-end — optional per-list overrides of the
+    // scroll range, the same escape hatch js/pixel-transition.js and
+    // js/item-reveal.js already carry. The DEFAULTS ARE UNCHANGED, so every list
+    // that does not set them behaves exactly as before.
+    //
+    // ⚠️ WHEN YOU NEED THEM: the default range is half a viewport, which is right
+    // for a THREE-step row whose steps share a line. A taller list — five stacked
+    // steps, ~700px at 1440 — is longer than the range itself, so the sequence
+    // finishes while its last step is still below the fold: it animates where
+    // nobody can see it. The rule of thumb is that the range should span the
+    // list's own height, e.g. "top 85%" -> "bottom 70%" for a vertical rail.
     var timeline = gsap.timeline({
       scrollTrigger: {
         trigger: list,
@@ -117,8 +128,8 @@
         // middle of the screen: half a viewport for the whole sequence. Shorter
         // and the rail draws itself in one flick; longer and the last step is
         // still empty when the section is centred.
-        start: "top 88%",
-        end: "top 38%",
+        start: list.getAttribute("data-steps-start") || "top 88%",
+        end: list.getAttribute("data-steps-end") || "top 38%",
         scrub: 0.7,
       },
     });

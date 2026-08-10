@@ -86,6 +86,15 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <!-- Built 2026-08-10, the last non-replica page of the 52-text set. Priority
+       with the service pages: six pages link it and it is the page the whole
+       "concept before contract" argument rests on. -->
+  <url>
+    <loc>https://frankonia-sicherheit.de/sicherheitskonzept/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
   <!-- Ratgeber, built 2026-08-10. The hub sits with the other hubs; the three
        articles are dated editorial pieces, so yearly like the case studies. -->
   <url>

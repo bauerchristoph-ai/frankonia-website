@@ -1,0 +1,451 @@
+/* =============================================================================
+   Sicherheitskonzept (/sicherheitskonzept/)
+   =============================================================================
+   Chassis is css/page-service.css (docs/page-conventions.md §9.1). The four
+   Anlass blocks reuse `.lh-why__*` (css/page-leistungen.css), the quote reuses
+   the shared `.testimonial`, the certificates the shared `.trust-certs*`, the FAQ
+   the shared `.faq__list--cards` and the form the shared partial. This file only
+   holds what is genuinely new here: the tick list, the five-step rail, the result
+   tiles, the sample frame and the two CTA blocks.
+   ============================================================================= */
+
+/* German compounds in narrow measures. `hyphens: auto` (base.css) is right for
+   running prose and wrong for a tick row or a step title, where the column is
+   narrow enough that it fires on nearly every line. */
+.sk-checks span,
+.sk-step__title,
+.sk-step__when,
+.sk-results__label,
+.sk-sample__label,
+.sk-note p {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* ---- 1. Hero ------------------------------------------------------------- */
+/* No photo (see the markup header for why), so the service template's two-column
+   grid and its `min-height: calc(100svh - 8rem)` both have to go — that
+   min-height exists to hold a portrait photo and without one it leaves a screen
+   of empty black under the ticks. */
+.sk-hero .service-hero__grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1024px) {
+  .sk-hero {
+    min-height: 0;
+    padding-block: var(--space-9) var(--space-8);
+  }
+}
+
+.sk-hero .service-hero__content {
+  max-width: 52rem;
+}
+
+/* The three hero ticks are the draft's own full sentences, not the short chips
+   the homepage hero uses, so they stack instead of sharing a row — the same call
+   /jobs/ made after measuring that its own three needed 1066px in a 704px
+   column. `flex-start` matters: the shared rule centres its items for the row
+   layout, which in a column would centre them horizontally. */
+.sk-hero .service-hero__points {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+/* ---- 2. Tick lists ------------------------------------------------------- */
+/* Used three times on this page (the six Bausteine, the three Beratung points,
+   the three Kosten points). One component, one look.
+   Ruled rows rather than bullets: every item opens with a bold label and runs to
+   a full clause, where a bullet glyph reads as noise. */
+.sk-checks {
+  list-style: none;
+  margin: var(--space-7) 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+}
+
+.sk-checks li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  line-height: var(--line-height-base);
+  color: var(--color-text-muted);
+}
+
+.sk-checks li:last-child {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sk-checks strong {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+/* ⚠️ `--color-blue-light` literally, NOT `--color-accent`. Two of the three lists
+   sit inside a `.section--light`, where that token re-resolves to blue-dark and
+   would give a second, almost-identical blue against the one every button uses.
+   Safe on both surfaces because a tick is a GRAPHIC (3:1 applies) and #3D9AD3
+   measures 3.11:1 on white and 6.8:1 on the page black.
+   The sprite's own paint lives on <g id="icon-defs"> and does not survive <use>,
+   so fill/stroke have to be restated or this renders as a filled black sliver. */
+.sk-checks__tick {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.2em;
+  color: var(--color-blue-light);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.25;
+}
+
+/* The six Bausteine go two-up once there is room. The other two lists are three
+   items of one line each and stay single-column, which is why this is a
+   modifier rather than the default. */
+@media (min-width: 900px) {
+  .sk-checks--grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-8);
+  }
+
+  /* In two columns the first item of EACH column needs its own top rule, or the
+     right column starts with a floating row. :nth-child(2) is that item. */
+  .sk-checks--grid li:nth-child(2) {
+    border-top: 1px solid var(--color-border);
+  }
+}
+
+/* ---- 3. Abgrenzung note -------------------------------------------------- */
+/* A quiet aside, not an alert: it disambiguates the word, it does not warn.
+   Filled rather than outlined so it reads as a different KIND of block from the
+   ruled lists around it. */
+.sk-note {
+  margin-top: var(--space-7);
+  max-width: 46rem;
+  padding: var(--space-5) var(--space-6);
+  border-left: 2px solid var(--color-blue-light);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background-color: rgb(255 255 255 / 0.04);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-base);
+}
+
+.sk-note strong { color: var(--color-text); font-weight: 500; }
+
+/* On a light section the same block needs its fill inverted — 4 % white on white
+   is nothing. */
+.section--light .sk-note {
+  background-color: rgb(59 73 86 / 0.05);
+}
+
+/* ---- 4. The five steps --------------------------------------------------- */
+/* A VERTICAL rail at every width. Five steps that each carry a sentence plus a
+   time cannot share a row without becoming five narrow columns of four-line
+   text — which is why this does not use the three-step horizontal block.
+   `--step-node` and `--step-line` are written on the <li> by
+   js/steps-sequence.js and BOTH DEFAULT TO 1 here, so the finished rail is the
+   no-JS / reduced-motion state. */
+.sk-steps {
+  --sk-dot: 12px;
+  list-style: none;
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-7);
+  max-width: 52rem;
+}
+
+.sk-step {
+  position: relative;
+  padding-left: var(--space-8);
+}
+
+/* The node. A square, matching .service-konzept__step's own call — it suits this
+   site's drawing-sheet language better than a dot and it is what the other rails
+   already use. */
+.sk-step::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: var(--sk-dot);
+  height: var(--sk-dot);
+  background-color: var(--color-blue-light);
+  opacity: var(--step-node, 1);
+  transform: scale(var(--step-node, 1));
+}
+
+/* The segment from THIS node to the next — never past the last, the same
+   :not(:last-child) rule every other rail on this site follows. */
+.sk-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  /* Half the node, minus half the 1px line, so it sits dead centre. */
+  left: calc(var(--sk-dot) / 2 - 0.5px);
+  top: calc(6px + var(--sk-dot) + 8px);
+  bottom: calc(-1 * (var(--space-7) + 4px));
+  width: 1px;
+  background-color: var(--color-blue-light);
+  transform: scaleY(var(--step-line, 1));
+  transform-origin: top center;
+  opacity: 0.45;
+}
+
+.sk-step__num {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.sk-step__title {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--color-text);
+}
+
+/* The time indication rides with the title but never competes with it: it is a
+   qualifier, so it drops a size and loses the weight. Its own line on a phone,
+   inline once there is room. */
+.sk-step__when {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 640px) {
+  .sk-step__when { display: inline; }
+  .sk-step__when::before { content: "· "; }
+}
+
+.sk-step__text {
+  margin-top: var(--space-2);
+  line-height: var(--line-height-base);
+  color: var(--color-text-muted);
+}
+
+/* ---- 5. Result tiles ----------------------------------------------------- */
+/* The heading is centred (client 2026-08-10), which is right on its own merits:
+   the three figures under it are centred too, so a left-ranged title above them
+   read as a heading that belonged to something else.
+   ⚠️ TWO CLASSES, and the auto margins are not optional. page-service.css styles
+   `.section__intro` generically, so a single-class selector ties and loses on
+   source order; and `text-align` centres the TEXT while the auto margins centre
+   the BOX — with only one of the two you get a centred title in a box that is
+   still hard against the left edge. This project has now hit that trap in seven
+   places. */
+.sk-results-sec .section__intro {
+  text-align: center;
+}
+
+.sk-results-sec .section__intro h2 {
+  max-width: 26ch;
+  margin-inline: auto;
+}
+
+/* Values copied from .ref-results (css/page-referenzen.css) deliberately, so the
+   two pages publish ONE component rather than two similar ones. No card, no
+   fill, no shadow: the affordance is the "Zur Case Study" row plus the hover,
+   matching how .service-link behaves on the chassis. */
+.sk-results {
+  list-style: none;
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .sk-results { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-7); }
+}
+
+.sk-results__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color var(--duration-base) var(--easing-standard);
+}
+
+.sk-results__link:hover,
+.sk-results__link:focus-visible {
+  background-color: rgb(59 73 86 / 0.05);
+}
+
+.sk-results .stat__value {
+  font-size: clamp(2.5rem, 1.6rem + 3.5vw, 4.5rem);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-accent-strong);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.05;
+}
+
+.sk-results__label {
+  display: block;
+  color: rgb(59 73 86 / 0.75);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+}
+
+/* ⚠️ The DEEP MIX, not --color-accent. This is 15px text on a near-white
+   surface, where blue-dark measures 3.71:1 against the 4.5:1 a normal-size link
+   needs. The mix is 4.90:1. Same fix .section--light .service-link carries. */
+.sk-results__more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+}
+
+.sk-results__more .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  transition: rotate var(--duration-base) var(--easing-standard);
+}
+
+.sk-results__link:hover .sk-results__more .icon,
+.sk-results__link:focus-visible .sk-results__more .icon {
+  rotate: 45deg;
+}
+
+.sk-quote {
+  margin-top: var(--space-8);
+  max-width: 46rem;
+  margin-inline: auto;
+}
+
+/* ---- 6. Sample document -------------------------------------------------- */
+/* Copy on one side, the document on the other (client 2026-08-10). Text gets the
+   wider column: it carries the H2, a long paragraph and the CTA, while the other
+   side holds one A4 page — an even split would stretch the measure for nothing.
+   `center` rather than `start`, so a short document sits level with the middle of
+   the copy instead of hanging off its first line. */
+.sk-sample__grid {
+  display: grid;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .sk-sample__grid {
+    grid-template-columns: 1fr 0.7fr;
+    gap: var(--space-9);
+  }
+}
+
+/* ⚠️ The chassis caps `.section__intro > p` at 42rem, which is wider than this
+   column — so the cap never binds here and the paragraph simply follows the
+   column. Nothing to override; noted so nobody adds a second cap. */
+
+/* Reserved, not faked — the draft's [UMSETZUNG] note requires the real PDF to be
+   anonymised first. A4 portrait, so the space it holds is the space the preview
+   will need and nothing shifts when it lands. Centred inside its own column at
+   every width, so it reads as a document standing beside the text rather than as
+   a block pinned to an edge. */
+.sk-sample__frame {
+  aspect-ratio: 1 / 1.414;
+  max-width: 22rem;
+  width: 100%;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  background-color: rgb(59 73 86 / 0.05);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+/* ⚠️ NOT --color-text-muted here, and the reason is measured. That token is
+   `rgb(59 73 86 / 0.75)`, which gives 4.60:1 on pure white — fine — but this
+   label sits on the frame's own 5 % fill, and over that same-hue tint it drops to
+   4.39:1, under the 4.5 minimum for 15px text. 0.88 puts it at 5.4:1.
+   The general lesson: 0.75 muted text is safe on white and NOT safe on a
+   same-hue translucent fill. Sampled from the rendered pixels, not computed from
+   the CSS — an ancestor-walking probe reports 1.00:1 for this pair. */
+.sk-sample__label {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: rgb(59 73 86 / 0.88);
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* ---- 7. CTA blocks ------------------------------------------------------- */
+.sk-actions {
+  margin-top: var(--space-7);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+/* The Kosten section's own box: one line of reassurance and the button. Filled,
+   because it is the page's closing argument before the trust section and it has
+   to read as a block rather than as one more paragraph. */
+.sk-cta-box {
+  margin-top: var(--space-8);
+  max-width: 46rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-6);
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: rgb(255 255 255 / 0.04);
+}
+
+.sk-cta-box__line {
+  color: var(--color-text);
+  font-size: var(--font-size-md);
+}
+
+/* On a phone both go full width and stack — the same treatment every other
+   action pair on the site gets at this width (§7). */
+@media (max-width: 639.98px) {
+  .sk-actions,
+  .sk-cta-box {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sk-actions .btn,
+  .sk-cta-box .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ---- 8. Trust ------------------------------------------------------------ */
+/* This block closes the section rather than following other content, so it drops
+   the top rule and padding .trust-certs carries on /referenzen/. */
+.sk-certs {
+  margin-top: var(--space-8);
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* ⚠️ The phone and mail links inside the Trust paragraph need the DEEP MIX. On
+   this near-white surface --color-link resolves to blue-light at 2.87:1, and no
+   size threshold saves a link inside a sentence. This mix is 4.90:1. */
+.sk-trust .section__intro a {
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+}

@@ -118,6 +118,21 @@
         t._link.setAttribute("stroke-dasharray", t._linkLen);
         t._link.setAttribute("stroke-dashoffset", t._linkLen);
       }
+      /* ⚠️ THE BOX AND THE DOT HAVE TO BE HIDDEN HERE TOO, not only by
+         paintTips (client 2026-08-10: "los veo ya los tooltips y después
+         desaparecen y aparecen de nuevo cuando paso… queda un corte raro").
+         Until this line, prepTips retracted the LINE but left the box and the
+         dot at their CSS default, which is opacity 1. A scrubbed ScrollTrigger
+         only calls onUpdate once you are INSIDE its range, so every tooltip in
+         the section sat fully visible while you scrolled up to it, blinked out
+         the moment the trigger went live at progress ~0, and only then faded
+         back in. Preparing them at 0 makes the first paint continuous.
+         This stays inside the JS-only-enhances contract: prepTips is only ever
+         called from the enhanced matchMedia branch, and both cleanup paths
+         clearProps these back — so no JS, reduced motion and <1024px all keep
+         the CSS default of fully visible tooltips. */
+      if (t._box) gsap.set(t._box, { opacity: 0 });
+      if (t._dot) gsap.set(t._dot, { opacity: 0 });
     });
     /* opacity ONLY on the box — a GSAP `y` would set a CSS transform that
        overrides the box's SVG transform="translate(x y)" and snap it to 0,0. */
@@ -232,9 +247,10 @@
        scrub: true (was 0.6) — the icon must stop the instant scrolling stops.
        Lenis already interpolates the scroll position, so this stays smooth
        without adding lag. */
-    ScrollTrigger.create({
-      trigger: L1, start: "top 70%", end: "bottom 20%", scrub: true, invalidateOnRefresh: true,
-      onUpdate: function (self) {
+    /* Named so it can serve BOTH onUpdate and onRefresh: onUpdate alone only runs
+       once you are inside the range, which would leave a visitor who lands past
+       this layer looking at the hidden state prepTips just set. */
+    function paintWalkthrough(self) {
         var p = self.progress;
         if (reveal) reveal.setAttribute("stroke-dashoffset", revLen * (1 - p));
         // Active = the reached checkpoint with the largest fraction.
@@ -255,7 +271,12 @@
         // as the reveal above, so the figure sits at the tip of the line being
         // drawn. Linear + scrubbed → reversible, no jumps.
         placeWalker(p);
-      },
+    }
+
+    ScrollTrigger.create({
+      trigger: L1, start: "top 70%", end: "bottom 20%", scrub: true, invalidateOnRefresh: true,
+      onUpdate: paintWalkthrough,
+      onRefresh: paintWalkthrough,
     });
 
     /* Each stage flags itself .is-active once it has scrolled into view — that one
@@ -327,6 +348,12 @@
         scrub: true,
         invalidateOnRefresh: true,
         onUpdate: function (self) { paintTips(t, self.progress, cfg.base, cfg.stagger); },
+        /* onUpdate alone only ever runs once you move INSIDE the range, so a
+           visitor who lands past this layer (a /#konzept deep link, or a
+           refresh once the images settle the offsets) would keep the hidden
+           state prepTips just set. Painting on refresh makes the state a
+           function of the scroll position rather than of how you got there. */
+        onRefresh: function (self) { paintTips(t, self.progress, cfg.base, cfg.stagger); },
       });
     });
 

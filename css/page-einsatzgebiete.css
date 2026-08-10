@@ -43,11 +43,14 @@
 
 @media (min-width: 1024px) {
   .eg-hero__grid {
-    /* Not an even split. The copy column carries a 52px H1, a lede and the CTA;
-       the map is a shape that reads fine a little narrower, and at 50/50 the H1
-       broke to three lines (the same trade /jobs/'s hero documents). */
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    gap: var(--space-9);
+    /* The map side is now the WIDER of the two (client 2026-08-10: "el mapa un
+       poco más grande"). The copy column still carries a 52px H1, a lede and the
+       CTA, so the split only shifts one notch — 1.05/0.95 → 0.92/1.08 — and the
+       gap comes in a step, which is where most of the width actually comes from.
+       Measured at 1440: map 540 → 640px. Going further starts breaking the H1
+       to three lines, which is the trade /jobs/'s hero documents. */
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: var(--space-8);
   }
 }
 
@@ -70,26 +73,29 @@
    a script error / a crawler / prefers-reduced-motion all get the complete
    map. Nothing below may set opacity: 0 or a dash. */
 
+/* ⚠️ NO FILL — outline only (client 2026-08-10: "que en ningún momento se fill
+   todo de celeste, que sean solo los contornos"). It used to carry a 5 % wash,
+   and js/eg-hero-map.js used to animate that to 1, which flooded the whole
+   region solid blue mid-timeline. The fill is gone from both places; the city
+   polygons are now the only filled shapes on the map. */
 .eg-map-svg__region {
-  fill: var(--color-blue-light);
-  fill-opacity: 0.05;
+  fill: none;
   stroke: var(--color-blue-light);
-  stroke-opacity: 0.55;
-  stroke-width: 2;
+  stroke-opacity: 0.7;
+  /* 1.6, down from 2: the outline carries ~2700 points now instead of 470, so a
+     heavy stroke closes up the fine detail it was re-fetched for. */
+  stroke-width: 1.6;
   stroke-linejoin: round;
-  /* Franconia's border is genuinely ragged; without this the simplified path's
-     corners spike at the sharp turns. */
+  /* Franconia's border is genuinely ragged; without this its sharp turns spike. */
   stroke-linecap: round;
 }
 
-/* The halo is what makes a city READ at this scale, and that is measured, not
-   decorative: across all of Franconia a city polygon renders 8–40px wide, so
-   its blue fill alone disappears (the first render made that obvious). The
-   halo carries the highlight; the polygon inside it is the real, honest shape. */
-.eg-map-svg__halo {
-  fill: var(--color-blue-light);
-  fill-opacity: 0.18;
-}
+/* `.eg-map-svg__halo` — a translucent disc behind each city — was REMOVED
+   2026-08-10 (client: "el círculo transparente sacalo"). It existed only
+   because the region carried a fill and a small city's own blue vanished
+   against it; with the region reduced to a bare outline the city polygons are
+   the only filled shapes on the map and carry themselves. Markup, CSS and the
+   JS tween all went together — git has them. */
 
 .eg-map-svg__shape {
   fill: var(--color-blue-light);
@@ -108,9 +114,10 @@
   color: var(--color-white);
 }
 
-/* Only the four well-separated big cities carry a label — Nürnberg, Fürth,
-   Erlangen and Forchheim are within ~20km and four labels there collide.
-   All ten names are real text in the tiles further down either way.
+/* ALL TEN cities carry a label since 2026-08-10 (client: "poneme todos los
+   nombres"). The four in the Nürnberg cluster survive it by ALTERNATING sides
+   — see the CITIES table in docs/design-sources/franken-map.py, which owns
+   that placement and explains the measured gaps.
 
    ⚠️ THE UNIT HERE IS A viewBox UNIT, NOT A SCREEN PIXEL, and getting that
    backwards is a measured bug this rule already had once. The viewBox is 1000
@@ -140,21 +147,24 @@
 
 /* FOUR TIERS, and every number is derived from the map's MEASURED rendered
    width at that breakpoint, not chosen by eye. The label has to land near 15px
-   on screen everywhere, and `units = 15 × 1000 / renderedWidth`:
+   on screen everywhere, and `units = 15 × 1000 / renderedWidth`.
+   RE-MEASURED 2026-08-10 after the map was widened (the column split went
+   1.05/0.95 → 0.92/1.08 and the gap came in a step, so every width below moved):
 
      viewport   map width   units   → on screen
-     ≥1280      540–608     28        15–17px
-     1024–1279  368–480     40        15–19px   ← the narrow two-column band
-     600–1023   450–544     32        14–17px
-     <600       280–350     46        13–16px
+     ≥1280      555–708     28        15.5–19.8px
+     1024–1279  435–555     34        14.8–18.7px  ← the narrow two-column band
+     600–1023   544         32        17.4px
+     <600       280–350     46        12.9–16.1px
 
-   ⚠️ The 1024–1279 band is the one that is easy to miss and it shipped wrong
-   once: the two-column split starts at 1024, so the map column is at its
+   ⚠️ The 1024–1279 band is the one that is easy to miss and it has now shipped
+   wrong twice: the two-column split starts at 1024, so the map column is at its
    NARROWEST there — narrower than on a phone, where it spans the full width.
-   Measured 12.2px before this tier existed. Anything that changes the column
-   split has to re-check this table. */
+   12.2px before this tier existed, then 20.6px when the map grew and the tier
+   was left at 40. ANY change to the column split or the gap has to re-measure
+   this table; the numbers do not follow from the breakpoints on their own. */
 @media (min-width: 1024px) and (max-width: 1279.98px) {
-  .eg-map-svg__label { font-size: 40px; stroke-width: 6; }
+  .eg-map-svg__label { font-size: 34px; stroke-width: 5; }
 }
 
 @media (min-width: 600px) and (max-width: 1023.98px) {

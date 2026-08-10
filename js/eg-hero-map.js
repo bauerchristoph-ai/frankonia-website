@@ -12,12 +12,11 @@
   is inline in pages/einsatzgebiete.html; regenerate and paste, never hand-edit
   its path data.
 
-  Sequence, one timeline, three beats that overlap rather than queue:
+  Sequence, one timeline, two beats that overlap rather than queue:
     1. the three Regierungsbezirke draw, as stroke-dashoffset, staggered;
-    2. each region's own fill fades in behind its finished line;
-    3. per city: halo scales up, the real polygon fills, the pin drops in with
-       a small overshoot, the four labels fade — all staggered west-to-east so
-       it reads as sweeping across the region rather than blinking on.
+    2. per city: the real polygon fills, the pin drops in with a small
+       overshoot, the label fades — all staggered west-to-east so it reads as
+       sweeping across the region rather than blinking on.
 
   ⚠️ WHY NOT js/svg-draw.js, the site's existing drawing primitive: that one
   dashes EVERY stroked path in its target and reveals them as one staggered
@@ -58,13 +57,15 @@
 
   // West-to-east, so the highlight sweeps across the map instead of firing in
   // the DOM's own (tour) order, which jumps around geographically.
+  // The pin's x is the only per-city coordinate left in the markup now that the
+  // halo circle is gone; it is offset by half the pin's width, which is a
+  // constant per size tier and so does not change the ordering.
   cities.sort((a, b) => {
-    const ax = a.querySelector(".eg-map-svg__halo").getAttribute("cx");
-    const bx = b.querySelector(".eg-map-svg__halo").getAttribute("cx");
+    const ax = a.querySelector(".eg-map-svg__pin").getAttribute("x");
+    const bx = b.querySelector(".eg-map-svg__pin").getAttribute("x");
     return parseFloat(ax) - parseFloat(bx);
   });
 
-  const halos = cities.map((c) => c.querySelector(".eg-map-svg__halo"));
   const shapes = cities.map((c) => c.querySelector(".eg-map-svg__shape"));
   const pins = cities.map((c) => c.querySelector(".eg-map-svg__pin"));
   const labels = cities.map((c) => c.querySelector(".eg-map-svg__label")).filter(Boolean);
@@ -82,12 +83,17 @@
   // the finished map, so the page looks right) which is exactly why it is easy
   // to miss: the only symptom is that nothing ever animates.
   const len = (i, el) => el.getTotalLength();
+  // ⚠️ ONLY THE DASH. `fillOpacity` used to be animated here too, and it was a
+  // real bug the client caught in a screenshot: it went 0 → 1, i.e. the whole
+  // of Franconia flooded SOLID blue mid-timeline and then snapped back to the
+  // stylesheet's value when clearProps ran. The regions have no fill at all now
+  // (client 2026-08-10: "que en ningún momento se fill todo de celeste, que
+  // sean solo los contornos") — the city polygons are the only filled shapes on
+  // the map now. Nothing here may touch a region's fill again.
   gsap.set(regions, {
     strokeDasharray: len,
     strokeDashoffset: len,
-    fillOpacity: 0,
   });
-  gsap.set(halos, { scale: 0, transformOrigin: "center", opacity: 0 });
   gsap.set(shapes, { opacity: 0 });
   // The pin's own transform-origin is its TIP (bottom centre), so scaling from
   // 0 reads as dropping onto the city rather than inflating around it.
@@ -108,15 +114,10 @@
     ease: "power1.inOut",
     stagger: { amount: 0.45 },
   })
-    // `<` starts this with the PREVIOUS tween rather than after it, and the
-    // offset means the fill arrives while the line is still travelling — the
-    // shape reads as filling in behind its own edge.
-    .to(regions, { fillOpacity: 1, duration: 0.9, stagger: { amount: 0.45 } }, "<0.55")
-
-    // The cities begin before the outline finishes, for the same reason: three
-    // fully-queued beats read as three separate animations.
-    .to(halos, { scale: 1, opacity: 1, duration: 0.7, stagger: { amount: 0.55 } }, "-=0.5")
-    .to(shapes, { opacity: 1, duration: 0.5, stagger: { amount: 0.55 } }, "<0.1")
+    // The cities begin before the outline finishes: three fully-queued beats
+    // read as three separate animations rather than one movement. `-=` overlaps
+    // this back into the tail of the draw.
+    .to(shapes, { opacity: 1, duration: 0.6, stagger: { amount: 0.55 } }, "-=0.5")
     .to(
       pins,
       {
@@ -140,8 +141,8 @@
     // paying for. The final values are identical to the CSS resting state, so
     // clearing them is invisible.
     .add(() => {
-      gsap.set(regions, { clearProps: "strokeDasharray,strokeDashoffset,fillOpacity" });
-      gsap.set([...halos, ...shapes, ...pins, ...labels], {
+      gsap.set(regions, { clearProps: "strokeDasharray,strokeDashoffset" });
+      gsap.set([...shapes, ...pins, ...labels], {
         clearProps: "transform,opacity,scale,x",
       });
       svg.classList.remove("eg-map-svg--live");

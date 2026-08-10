@@ -698,14 +698,15 @@
   <!-- Pixel dissolve before the footer — mandatory on every page
        (docs/page-conventions.md §4.4). Both the form panel above and the footer
        are flat black, so the normal wipe tile (opaque -> transparent) is
-       invisible either way it lands. Using `.pixel-seam--pulse` here instead
-       (client, 2026-08-10): tiles fade up to solid white and back down as the
-       sweep passes, rather than latching open — see that class's comment in
-       page-service.css. Scoped to THIS seam only for now, pending "if I like
-       it" before it becomes the default for a black-into-black boundary
-       anywhere else. The footer still reserves the band's height via
-       `.pixel-seam + .site-footer` (page-service.css). -->
-  <div class="pixel-seam pixel-seam--pulse" data-pixel-seam data-pixel-seam-mode="pulse" aria-hidden="true"></div>
+         both sides of this one are the same flat black, so a normal wipe tile is
+         invisible either way it lands. js/pixel-transition.js measures that at
+         runtime — the surface above, the footer below and the tile all resolving
+         to the same colour — and switches this seam to the pulse (tiles fade up
+         to solid white and back down as the sweep passes). Nothing is declared
+         here: turn the last section light and it goes back to being a wipe on its
+         own. The footer still reserves the band's height either way
+         (`.pixel-seam + .site-footer`, page-service.css). -->
+  <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
 
   <!-- include: footer-de -->
   <!-- include: whatsapp-button -->

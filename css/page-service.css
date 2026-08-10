@@ -1824,7 +1824,16 @@ main h2 {
      Paid for by the room the label freed: the list dropped 138px, and this costs
      ~24px back, so all six duties still fit on one screen from 1440x900 up. */
   .service-flow--stepped .service-flow__step h3 {
-    font-size: clamp(1.15rem, 0.5rem + 0.9vw, 1.5rem);
+    /* ⚠️ A FLAT 1.5rem (24px), NOT the clamp it used to carry, and that is a CONTRAST
+       decision rather than a size preference (client 2026-08-10: "quiero que sea celeste y
+       con la letra blanca"). White on the CTA's #3D9AD3 measures **3,11:1** — enough for
+       the 3:1 that applies to LARGE text, short of the 4,5:1 for normal text. WCAG's
+       large-text threshold is 24px at any weight, and the old clamp only reached 24px past
+       a ~1778px viewport (it computed ~21px at 1440), so at every width this project
+       measures at, a white-on-celeste title would have been a real failure.
+       Same fix, same reason as `.combo-steps__title` on /brandwache-nuernberg/.
+       **Do not put the clamp back without changing the fill.** */
+    font-size: 1.5rem;
     color: var(--color-text);
     /* `inline` matters: the title's highlight is a background on this text, and a flex
        or block box would paint it across the card's full width instead of hugging the
@@ -1847,27 +1856,20 @@ main h2 {
      width, `box-decoration-break: clone` so it survives a line break, and a small
      inline padding plus a radius so it reads as a marker pen rather than a block.
 
-     ⚠️ THE TEXT STAYS DARK — it does not go white like the Vorteile marks do, and that is
-     a contrast decision, not a style one. Those sit at 22px+ where white on the deep mix
-     works; this title is ~21px REGULAR, which is under the 24px large-text threshold, so
-     it needs 4.5:1 and white on #3D9AD3 would be 3,11:1. Near-black on #3D9AD3 measures
-     **6,76:1**, so keeping the title dark is what lets it use the CTA's own blue at all.
-
      background-size, not a compositor property, but it paints inside the title's own box
      and cannot move anything around it. */
   .service-flow--stepped .service-flow__step-title {
-    /* A HIGHLIGHTER TINT, not a solid block (client 2026-08-09: "está feísima… quiero las
-       cards más lindas, más clean y más pro, y que tenga el contraste suficiente para que
-       se lea"). The solid #3D9AD3 behind near-black type was the loudest thing in the
-       column and it put the title at 6,72:1; this tint composites to rgb(212 233 245) on
-       white, where the title measures **~15:1**. Same marker idea, far cleaner, and the
-       accessibility question disappears instead of being argued.
-       ⚠️ NOT `--color-accent-subtle`: this is a `.section--light`, which re-declares that
-       token to 8 % of blue-DARK — as a highlighter it is nearly invisible. This is an
-       explicit tint of the CTA blue the client asked for. */
+    /* SOLID CELESTE — the CTA's own blue, with the title going white on top (client
+       2026-08-10: "no me gusta el subrayado de estas cards, quiero que sea celeste y con la
+       letra blanca"). This replaces the 22 % tint with dark type that shipped 2026-08-09;
+       the client's later call wins. The legality of it rests entirely on the title being
+       pinned at 24px — see the h3 rule above.
+       ⚠️ `--color-blue-light`, NOT `--color-accent`: this is a `.section--light`, where that
+       token re-resolves to blue-DARK (#5287C9) — a different blue from every button on the
+       site, which is exactly the "second celeste" bug this project has already paid for. */
     background-image: linear-gradient(
-      rgb(61 154 211 / 0.22),
-      rgb(61 154 211 / 0.22)
+      var(--color-blue-light),
+      var(--color-blue-light)
     );
     background-repeat: no-repeat;
     background-position: left center;
@@ -1877,7 +1879,11 @@ main h2 {
     border-radius: 4px;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
-    transition: background-size var(--duration-base) var(--easing-premium);
+    transition:
+      background-size var(--duration-base) var(--easing-premium),
+      /* Leaving the fill is the moment the text MUST already be dark again, so the reverse
+         direction gets no delay at all — the forward one does, on the .is-active rule. */
+      color 60ms var(--easing-standard) 0s;
   }
 
 
@@ -1969,8 +1975,24 @@ main h2 {
      which. */
 
 
+  /* ⚠️ THE COLOUR SWITCH IS DELAYED, AND THAT DELAY IS LOAD-BEARING — not polish.
+     The card is WHITE, so white type has nothing behind it until the fill arrives: flip the
+     two together and the first half of the sweep is white-on-white, i.e. the word briefly
+     disappears. (This is the one thing that makes this section different from the Ablauf
+     titles on /brandwache-nuernberg/, where the section is black and white type is legible
+     over both surfaces.)
+     Measured by sampling every frame of a real activation: the type holds near-black
+     (6,72:1 against the fill) until the fill is at **98,1 %**, then crosses to white over
+     60ms while the fill sits between 98,9 % and 100 %. So there is no frame where a
+     visible run of letters is on bare white — expo-out reaches its value very early, which
+     is what makes a 150ms delay land that late in the sweep.
+     ⚠️ The crossfade is deliberately SHORT (60ms, not the 120 it started at): mid-fade the
+     type is a mid-grey on celeste, and at 120ms that low-contrast state lasted ~80ms
+     against ~30 now. Lengthening it re-opens that window. */
   .service-flow--stepped .service-flow__step.is-active .service-flow__step-title {
     background-size: 100% 100%;
+    color: var(--color-white);
+    transition-delay: 0s, 150ms;
   }
 
   .service-flow--stepped .service-flow__step.is-active .service-flow__outline rect {
@@ -4081,16 +4103,23 @@ main h2 {
    `.pixel-seam--white` tile on the site uses (client 2026-08-10: "poca
    opacidad, lo quiero blanco, como el resto").
 
-   TWO CONSUMERS since 2026-08-10, both the main→footer boundary: /referenzen/
-   (where it was first asked for) and /einsatzgebiete/ (client: "la transición
-   de píxeles que hay cuando la sección es negra y el footer también, que
-   aplicamos en la otra sección que pasaba lo mismo"). That is the trigger this
-   file's own convention names for promoting a one-off: a THIRD black-into-black
-   seam should make this the default for that case rather than opting in by hand
-   a third time. The condition to check is literal — the section above and the
-   footer both resolving to the same flat black (--color-bg / --color-logo-black
-   are the same hex), which is what leaves a normal wipe tile with nothing to
-   dissolve between. */
+   APPLIED AUTOMATICALLY SINCE 2026-08-10, not opted into. It was hand-picked on
+   the two pages that hit it first and this comment said a third should make it
+   the default — /leistungen/ was the third, and the client asked for exactly
+   that ("la idea es que aplique a cuando pasa esto"). js/pixel-transition.js now
+   measures the condition at the main→footer boundary: the surface above, the
+   footer below and the tile itself all resolving to the same colour. Three
+   pages match today (/referenzen/, /einsatzgebiete/, /leistungen/, /ueber-uns/ —
+   four); every page whose last section is light keeps its white wipe untouched.
+   The hand-applied classes were REMOVED from the two original pages so there is
+   one mechanism: a declared pulse would have survived that page's last section
+   turning light.
+   ⚠️ The detection is deliberately scoped to that one boundary. A first pass
+   tested every seam and got the homepage wrong — a section's own background is
+   usually transparent, so hero → trust-band measured as black-into-black when
+   the white it dissolves over actually lives on a CHILD of the next section.
+   data-pixel-seam-mode="pulse" remains as the escape hatch for a mid-page seam
+   that wants this look. */
 .pixel-seam--pulse .pixel-seam__tile {
   background-color: var(--color-white);
   opacity: 0;

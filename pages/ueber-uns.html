@@ -144,6 +144,54 @@
               {{phone.display}}
             </a>
           </div>
+
+          <!-- TRUST BAND (added 2026-08-10). This was the only hero on the site with
+               neither a photo nor a trust band — /werkschutz/, /jobs/ and
+               /brandwache-nuernberg/ all carry this exact block — on the one page
+               whose whole subject is whether to trust the company.
+               Markup and assets are the ones already in use: the Google pill with
+               4,7 / 97 (the single client-confirmed figure on the site) and the two
+               real DEKRA seals, which this page already renders further down. No new
+               file and no new CSS — page-service.css styles .service-hero__trust.
+               ⚠️ It goes AFTER the actions, which is both the homepage's documented
+               order (H1 -> lede -> CTA -> trust) and the order js/hero-reveal.js
+               animates these four blocks in; moving it above the CTAs would play the
+               cascade out of reading order. -->
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">4,7</span>
+                <span class="review-card__count">97 Bewertungen</span>
+              </span>
+            </div>
+            <!-- ⚠️ .service-hero__badges / __seal, NOT the homepage's .hero__badges /
+                 .hero__badge. Those two live in page-home.css, which this page does
+                 not load, so the first attempt rendered both seals at their intrinsic
+                 399x600 and took the hero from 685px to 1687px. The wrapper keeps
+                 BOTH .hero__trust and .service-hero__trust on purpose: the first is
+                 what js/hero-reveal.js animates, the second is what styles it. -->
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -231,7 +279,22 @@
       </div>
     </section>
 
-    <!-- Same dark surface as the section above, so no seam (page-conventions §9.2). -->
+    <!-- Führung (black) -> Versprechen (black): a SOFT GLOW SEAM, and there is no
+         element here on purpose (client 2026-08-10: the pulse tiles were rejected —
+         "no me gustaron los píxeles […] quiero algo smooth").
+         A pixel dissolve cannot work at this boundary: it pixelates one colour away to
+         reveal another, and both sides are the same black, so the tile matches both.
+         `--pulse` got around that by making the tiles WHITE, which is exactly why it
+         read as flashing rather than dissolving — right for the footer's brief goodbye,
+         wrong mid-page.
+         The glow lives as a background gradient on the two sections' facing edges
+         instead (see .uu-lead / .uu-promises in page-ueber-uns.css) — the same
+         light-at-the-edges idea the navy band one section below already uses, so the
+         page has ONE vocabulary for a boundary rather than two competing ones. Pure
+         CSS: nothing to freeze mid-state, identical with no JS and under
+         prefers-reduced-motion, and it costs no layout because a faint gradient needs
+         none of the 200px a tile band has to reserve. -->
+
     <!-- ============ 4. WOFÜR WIR STEHEN ============ -->
     <!-- Page-scoped (.uu-promises*, page-ueber-uns.css) — this used to reuse
          .lh-why* from /leistungen/, but that block is a 4-item row built for that
@@ -333,22 +396,78 @@
       </div>
     </section>
 
+    <!-- Zertifikate (white) -> Innovation (navy): a colour change, so it pays for
+         a dissolve band. White tiles, because the tile is always the colour of the
+         section ABOVE. -->
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
     <!-- ============ 6. INNOVATION & DIGITALE WERKZEUGE ============ -->
-    <!-- Same light surface as Zertifikate above, so the two read as one chapter
-         and there is no seam between them. -->
-    <section class="section section--light uu-inno" data-nav-theme="light">
+    <!-- NAVY BAND since 2026-08-10 (client: "en la sección de innovation estaría
+         bueno que esté el navy blue porque eso lo asociamos a innovación"). It went
+         black earlier the same day and then to navy; the navy is the page's THIRD
+         surface, which is what stops the page reading as one long black/white
+         alternation. Values are the homepage Konzept band's own, see
+         page-ueber-uns.css.
+
+         THE FIVE TOOLS ARE NOW FIVE ITEMS, not one sentence (see that file for the
+         layout reasoning). The draft writes them as a single run-on line, which made
+         this the emptiest section on the page (37 % ink) and buried five named,
+         individually-searchable products mid-sentence.
+         ⚠️ COPY: no word is changed or added, but this IS an edit and needs Chris's
+         sign-off — the five phrases are lifted verbatim, the closing claim is
+         promoted to the lede, and what goes is the joining "und" plus the em dash.
+         Three labels also take label case: "cloud-basierte" -> "Cloud-basierte",
+         "monatliche" -> "Monatliche", and "ein direkter Feedback-Kanal" -> "Direkter
+         Feedback-Kanal" (the article drops so all five read as parallel labels).
+         The draft's own [ERGÄNZEN: ggf. Screenshots/Namen der Systeme nach Freigabe]
+         is still open, and THIS is the section it belongs to. -->
+    <section class="section uu-inno">
       <div class="container">
         <div class="section__intro">
           <h2>Ein Sicherheitsdienst, der digital arbeitet</h2>
-          <p>Digitales Wachbuch in Echtzeit, Wächterkontrollsystem mit Checkpoints, cloud-basierte Objektdokumentation, monatliche GF-Reports und ein direkter Feedback-Kanal für Beschwerden — FRANKONIA investiert in Werkzeuge, die unsere Arbeit für Sie sichtbar und überprüfbar machen.</p>
+          <p>FRANKONIA investiert in Werkzeuge, die unsere Arbeit für Sie sichtbar und überprüfbar machen.</p>
         </div>
+        <!-- A real <ul>: five parallel tools, no order between them, so no numerals
+             (unlike the six promises, which are numbered). Each icon is a truthful
+             glyph for its own tool — #icon-route is literally a route with a marker
+             per checkpoint, #icon-calendar carries "monatlich" — and #icon-cloud was
+             drawn for this one label. A near-miss icon is worse than none here, the
+             rule the eleven service tiles on /leistungen/ already follow. -->
+        <ul class="uu-tools" data-item-reveal=".uu-tools__item">
+          <li class="uu-tools__item">
+            <svg class="uu-tools__icon icon" aria-hidden="true"><use href="#icon-document-check"></use></svg>
+            <p class="uu-tools__name">Digitales Wachbuch in Echtzeit</p>
+          </li>
+          <li class="uu-tools__item">
+            <svg class="uu-tools__icon icon" aria-hidden="true"><use href="#icon-route"></use></svg>
+            <p class="uu-tools__name">Wächterkontrollsystem mit Checkpoints</p>
+          </li>
+          <li class="uu-tools__item">
+            <svg class="uu-tools__icon icon" aria-hidden="true"><use href="#icon-cloud"></use></svg>
+            <p class="uu-tools__name">Cloud-basierte Objektdokumentation</p>
+          </li>
+          <li class="uu-tools__item">
+            <svg class="uu-tools__icon icon" aria-hidden="true"><use href="#icon-calendar"></use></svg>
+            <p class="uu-tools__name">Monatliche GF-Reports</p>
+          </li>
+          <li class="uu-tools__item">
+            <svg class="uu-tools__icon icon" aria-hidden="true"><use href="#icon-agree"></use></svg>
+            <p class="uu-tools__name">Direkter Feedback-Kanal für Beschwerden</p>
+          </li>
+        </ul>
       </div>
     </section>
 
-    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- Innovation (navy) -> Team (white). ⚠️ NAVY tiles, not black and not a flat
+         navy: the band's bottom 340px is LIT by its own gradient, so a tile in plain
+         #00091F reads as "two navies" against it. `.pixel-seam--navy` (page-service
+         .css) gives the tile the section's own two-layer stack, and exists because
+         /werkschutz/ paid for exactly this bug once. -->
+    <div class="pixel-seam pixel-seam--navy" data-pixel-seam aria-hidden="true"></div>
 
     <!-- ============ 7. TEAM & KARRIERE-BRÜCKE ============ -->
-    <section class="section uu-team">
+    <!-- WHITE since 2026-08-10 (client: "y el fondo de esta sección blanca"). -->
+    <section class="section section--light uu-team" data-nav-theme="light">
       <div class="container">
         <div class="section__intro">
           <h2>Menschen, die bleiben, der eigentliche FRANKONIA Unterschied</h2>
@@ -362,6 +481,12 @@
         </p>
       </div>
     </section>
+
+    <!-- Team (white) -> the form section (always dark): a new colour change, so a
+         new seam. White tiles. The chassis already reserves the band on
+         `.pixel-seam + .conversion` (200px), so the form's own panel padding is
+         never underneath a tile. -->
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
 
     <!-- ============ 8. ABSCHLUSS-CTA ============ -->
     <section id="anfrage" class="conversion">

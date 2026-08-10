@@ -110,16 +110,78 @@
   const PULSE_POS_JITTER = 0.05;
   const PULSE_MAX_HALF = PULSE_HALF_WIDTH + PULSE_WIDTH_JITTER + PULSE_POS_JITTER;
 
-  seams.forEach((seam) => {
-    // "pulse" seams (data-pixel-seam-mode="pulse", .pixel-seam--pulse in CSS)
-    // are for a boundary between two sections of the SAME flat colour — see
-    // that class's own comment in page-service.css. Every other seam keeps
-    // the original one-way reveal latch below, untouched.
-    const mode = seam.getAttribute("data-pixel-seam-mode");
+  // The painted background of `el`, walking up until something is actually
+  // opaque: most sections on this site set no background of their own and simply
+  // show the page's, so `backgroundColor` on the section itself is transparent.
+  function surfaceColor(el) {
+    let node = el;
+    while (node && node.nodeType === 1) {
+      const bg = getComputedStyle(node).backgroundColor;
+      // Anything with a real alpha counts; rgba(...,0) and `transparent` do not.
+      if (bg && bg !== "transparent" && !/,\s*0\s*\)$/.test(bg)) return bg;
+      node = node.parentElement;
+    }
+    return getComputedStyle(document.body).backgroundColor;
+  }
 
+  seams.forEach((seam) => {
     const band = document.createElement("div");
     band.className = "pixel-seam__band";
     seam.appendChild(band);
+
+    // "pulse" seams are for a boundary between two surfaces of the SAME flat
+    // colour: a wipe tile there is the same colour as both sides, so whichever
+    // way it latches nothing is ever visible. See .pixel-seam--pulse's own
+    // comment in page-service.css for the look.
+    //
+    // DETECTED, not declared (client 2026-08-10: "la idea es que aplique a
+    // cuando pasa esto"). It was opted into by hand on the two pages that hit it
+    // first; that file's own note said a third one should make it automatic
+    // rather than a third hand-edit, and /leistungen/ was the third.
+    //
+    // ⚠️ SCOPED TO THE LAST SEAM, the one between the page's final section and
+    // the footer — which is the boundary the client described ("las páginas que
+    // tengan de última sección la del form"). A first pass tested every seam by
+    // comparing the surfaces around it, and that is wrong here: a section's own
+    // background is usually transparent (the page's black shows through), so the
+    // homepage's hero → trust-band seam measured as black-into-black and turned
+    // into a pulse, when in fact the white it dissolves over lives on a CHILD of
+    // the next section and that dissolve is one of the page's best moments.
+    // Deciding "what is painted at this exact boundary" in general means walking
+    // down a subtree and guessing which descendant is the surface. At the footer
+    // boundary there is nothing to guess: both sides paint their own opaque
+    // background, so the comparison is exact.
+    // An explicit data-pixel-seam-mode still wins, for a seam that wants pulse
+    // anywhere else.
+    let mode = seam.getAttribute("data-pixel-seam-mode");
+    const below = seam.nextElementSibling;
+    if (!mode && below && below.classList.contains("site-footer")) {
+      // A real tile, so the tile colour comes from the cascade rather than from
+      // re-deriving which modifier is on the element. This is also what keeps the
+      // rule self-limiting: a seam with any tile modifier (--white, --navy,
+      // --photo …) differs from at least one side and never matches.
+      const probe = document.createElement("div");
+      probe.className = "pixel-seam__tile";
+      band.appendChild(probe);
+      const tileColor = getComputedStyle(probe).backgroundColor;
+      band.removeChild(probe);
+
+      // The last seam sits AFTER </main>, so the element before it is <main>
+      // itself — the surface that matters is its final section.
+      let above = seam.previousElementSibling;
+      if (above && above.tagName === "MAIN") above = above.lastElementChild;
+
+      if (above) {
+        const a = surfaceColor(above);
+        const b = surfaceColor(below);
+        if (a === b && a === tileColor) {
+          mode = "pulse";
+          // The class is what the CSS keys on; the attribute alone would not
+          // reach it.
+          seam.classList.add("pixel-seam--pulse");
+        }
+      }
+    }
 
     const rect = band.getBoundingClientRect();
     // ceil, not round (fixed 2026-07-30): the tiles are a FIXED pixel size, so
