@@ -55,9 +55,15 @@
 }
 
 /* The copy column is capped rather than run to the container's full 1600px:
-   an H1 and a subline across that width stop reading as an article opening. */
+   an H1 and a subline across that width stop reading as an article opening.
+   ⚠️ 44rem, NOT 46 — it is `.cs-article`'s own measure, so once that column is
+   centred the badge, H1, lede, the three result ticks and every article paragraph
+   still share ONE left line down the page. At 46rem this column would be 32px
+   wider, putting its left edge 16px further left than the article's: close enough
+   to read as a misalignment rather than a choice. The two measures move together. */
 .cs-hero__inner {
-  max-width: 46rem;
+  max-width: 44rem;
+  margin-inline: auto;
 }
 
 /* Badge "Case Study · Anonymisiert". The word "Anonymisiert" is load-bearing
@@ -154,6 +160,16 @@
    measure, not the container's width. */
 .cs-article {
   max-width: 44rem;
+  /* CENTRED on the page (client 2026-08-10). These three pages were measured with
+     the identical defect as the Ratgeber articles — at 1512 the column ran
+     x=107→811, 700.8px of empty white to its right — and they are centred in the
+     same pass ON PURPOSE: the header comment on .rg-article says the two files'
+     values were copied rather than re-derived so the six article pages are one
+     design and not two similar ones. Centring three of six would fork exactly the
+     thing that decision protects.
+     ⚠️ The COLUMN is centred, not the text: `text-align` stays `start`, because
+     centred running prose over a whole article is a readability failure. */
+  margin-inline: auto;
 }
 
 /* Section titles inside the article step DOWN from the shared `main h2` clamp.
@@ -254,6 +270,11 @@
    its CTA, and the two "Weiterführend" links. */
 .cs-pitch__inner {
   max-width: 44rem;
+  /* Centred with the hero and the article — it was already on their 44rem measure,
+     so this is the one declaration that keeps the whole page on a single axis.
+     Found by measuring after centring the article: the pitch was still sitting on
+     the old editorial inset at x=103 while everything above it had moved to 368. */
+  margin-inline: auto;
 }
 
 .cs-pitch p {

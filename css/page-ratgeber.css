@@ -46,9 +46,16 @@
 }
 
 /* The copy is capped rather than run to the container's full 1600px: a heading
-   and one line of supporting text across that width stop being readable. */
+   and one line of supporting text across that width stop being readable.
+   ⚠️ 44rem, NOT 48 — and the number matters more than it looks. It is `.rg-article`'s
+   own measure, so once that column is centred (see §5) the H1, the byline and every
+   article paragraph still share ONE left line down the page. At 48rem the hero
+   column would be 64px wider than the article's, so its left edge would land 32px
+   further left — a mismatch small enough to read as a render fault rather than a
+   design. Change one measure and you must change the other. */
 .rg-hero .service-hero__content {
-  max-width: 48rem;
+  max-width: 44rem;
+  margin-inline: auto;
 }
 
 /* An ARTICLE headline is longer than a page title and has to stay a headline, so
@@ -277,6 +284,19 @@
    time. Do it before article four. */
 .rg-article {
   max-width: 44rem;
+  /* CENTRED on the page (client 2026-08-10). Measured before: at 1512 the column
+     ran x=107→811 with 700.8px of empty white to its right, i.e. 296.8px off the
+     container axis — the whole reading column pinned to one side of the screen.
+     ⚠️ This centres the COLUMN, not the text: `text-align` stays `start`, because
+     five paragraphs of centred running prose is a readability failure, not a
+     layout. If centred TEXT was ever the ask, that is a separate decision.
+     ⚠️ DEVIATION FROM page-conventions §1 on these pages, stated so nobody
+     "fixes" it back: §1 puts content on the editorial `--content-inset` at both
+     sides, which is what made the H1, the byline and every article paragraph
+     share one left line at x=103 (1440). A centred column moves that line to
+     ~368, so the hero's own measure has to follow it — see .rg-hero
+     .service-hero__content below. The two rules are ONE decision. */
+  margin-inline: auto;
 }
 
 /* Article H2s step DOWN from the shared `main h2` clamp. Structural, not
@@ -445,6 +465,62 @@
   margin-top: var(--space-6);
 }
 
+/* ---- The centred closing block, ALL FOUR Ratgeber pages ------------------- */
+/* Client 2026-08-10, in two steps: first the hub's `.rg-cta`, then the three
+   articles' `.rg-close` ("están todas alineadas a la izquierda y quedan mal").
+   ⚠️ THIS REVERSES the note this block carried a few hours earlier, which said
+   `.rg-close` should stay ranged left. That reasoning — "it sits on the article's
+   44rem measure" — was simply WRONG: `.rg-close` is its own section with a plain
+   `.container`, so it inherits nothing from `.rg-body`'s measure. Measured at
+   1440 before the change: heading and lede started at x=104 with ~650px of empty
+   black to their right. Do not "restore" the left alignment.
+   One rule set for both blocks rather than a second copy — this composition now
+   has four consumers, which is this project's own threshold for promoting instead
+   of duplicating.
+   Three declarations, and each covers a case the others cannot:
+   · `text-align` on the intro centres the TEXT;
+   · `margin-inline: auto` centres the CAJA — the chassis caps `.section__intro >
+     p` at 42rem, and a capped box stays pinned to the left edge without it. The
+     selector needs TWO classes because that chassis rule is (0,1,1); a single
+     class ties and loses on source order.
+   · `justify-content: center` for the actions, because they are a SIBLING of the
+     intro, not a child, and a block-level flex row already spans the full
+     container — so what has to move is its CONTENT, not its box. `text-align`
+     does not move flex children. */
+.rg-cta .section__intro,
+.rg-close .section__intro {
+  text-align: center;
+}
+
+.rg-cta .section__intro h2,
+.rg-cta .section__intro > p,
+.rg-close .section__intro h2,
+.rg-close .section__intro > p {
+  /* The h2 also takes a cap: the chassis deliberately leaves it at
+     `max-width: none` for left-aligned headings, and centred it would otherwise
+     run the full container on wide screens. In `ch` so it follows the heading's
+     own clamp rather than a pixel guess. */
+  margin-inline: auto;
+}
+
+.rg-cta .section__intro h2,
+.rg-close .section__intro h2 {
+  max-width: 30ch;
+  /* A centred line has TWO ragged edges, so an uneven break reads twice as badly
+     as it does ranged left.
+     ⚠️ Honest note: verified computing as `balance`, and on these four headings
+     it changes NO break today — Brandwache's "Auflage auf dem / Tisch und wenig
+     Zeit?" was already the balanced optimum. It is here for the next copy edit,
+     not for a fix it made. Don't delete it thinking it does nothing; don't claim
+     it fixed a break either. */
+  text-wrap: balance;
+}
+
+.rg-cta .rg-cta__actions,
+.rg-close .rg-close__actions {
+  justify-content: center;
+}
+
 /* #icon-phone is the ONE filled symbol in the sprite that does not declare its
    own paint, so inside a blue button it renders as a black smear without this. */
 .rg-cta__actions .btn--primary .icon {
@@ -466,6 +542,20 @@
   .rg-cta__actions .btn,
   .rg-close__actions .btn {
     width: 100%;
+    justify-content: center;
+  }
+
+  /* ⚠️ At this width the centred closing blocks need their SECONDARY link
+     centred too, and the `justify-content: center` on the wrapper above CANNOT
+     do it: the wrapper switches to `flex-direction: column` here, so its main
+     axis is now vertical and that declaration only affects vertical packing.
+     `align-items: stretch` makes the link full-width, so what has to be centred
+     is the link's OWN content — and .service-link is itself inline-flex, so it
+     takes justify-content directly. Without this the link renders hard left
+     under centred copy, which reads as a render fault rather than a layout.
+     Caught in a screenshot, not by reading the rules. */
+  .rg-cta .rg-cta__actions .service-link,
+  .rg-close .rg-close__actions .service-link {
     justify-content: center;
   }
 }

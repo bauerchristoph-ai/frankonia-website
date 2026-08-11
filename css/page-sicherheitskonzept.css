@@ -443,6 +443,30 @@
   border-top: 0;
 }
 
+/* Centred heading AND lede (client 2026-08-10). ⚠️ Two things are required and
+   each one alone looks like a bug — the trap this project has now paid five
+   times on /sicherheitsdienst-nuernberg/ alone:
+   · TWO classes, because the chassis styles `.section__intro > p` at (0,1,1);
+     a single-class selector ties and loses on source order.
+   · `margin-inline: auto` as well as `text-align`. text-align centres the TEXT
+     inside its box; the box itself is capped (42rem for the lede) and stays
+     pinned to the left edge without the auto margins. With only one of the two
+     you get a centred heading over a left-hugging paragraph.
+   The h2 gets its own cap in `ch` so it breaks at its comma instead of running
+   the full column — the chassis deliberately leaves it at max-width: none. */
+.sk-trust .section__intro {
+  text-align: center;
+}
+
+.sk-trust .section__intro h2 {
+  max-width: 34ch;
+  margin-inline: auto;
+}
+
+.sk-trust .section__intro > p {
+  margin-inline: auto;
+}
+
 /* ⚠️ The phone and mail links inside the Trust paragraph need the DEEP MIX. On
    this near-white surface --color-link resolves to blue-light at 2.87:1, and no
    size threshold saves a link inside a sentence. This mix is 4.90:1. */
