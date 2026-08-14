@@ -64,7 +64,7 @@
         {
           "@type": "Question",
           "name": "Was kostet ein Sicherheitsdienst?",
-          "acceptedAnswer": { "@type": "Answer", "text": "In der Regel 26 bis 32 Euro pro Stunde netto, je nach Leistung, Qualifikation und Einsatzzeit. Die Spannen je Leistung stehen offen auf jeder Leistungsseite — Ihr konkreter Preis steht im Angebot." }
+          "acceptedAnswer": { "@type": "Answer", "text": "In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde netto, je nach Leistung, Qualifikation und Einsatzzeit. Die Spannen je Leistung stehen offen auf jeder Leistungsseite — Ihr konkreter Preis steht im Angebot." }
         }
       ]
     }
@@ -119,7 +119,7 @@
     <section id="anfrage" class="service-hero ag-hero">
       <div class="container ag-hero__grid">
         <div class="ag-hero__pitch">
-          <p class="ag-hero__badge">
+          <p class="hero-badge">
             <svg class="icon" aria-hidden="true"><use href="#icon-clock"></use></svg>
             Antwort innerhalb eines Werktages, garantiert
           </p>
@@ -295,19 +295,17 @@
             </details>
             <details class="faq-item">
               <summary><h3>Wie schnell kann FRANKONIA starten?</h3></summary>
-              <p>Nach Angebotsannahme je nach Leistung oft kurzfristig — Brandwachen und dringende Einsätze nach Absprache auch sofort: +49 951 964352-0.</p>
+              <p>Nach Angebotsannahme je nach Leistung oft kurzfristig — Brandwachen und dringende Einsätze nach Absprache auch sofort: <a href="{{phone.href}}">{{phone.display}}</a>.</p>
             </details>
             <details class="faq-item">
               <summary><h3>Was kostet ein Sicherheitsdienst?</h3></summary>
-              <p>In der Regel 26 bis 32 Euro pro Stunde netto, je nach Leistung, Qualifikation und Einsatzzeit. Die Spannen je Leistung stehen offen auf jeder Leistungsseite — Ihr konkreter Preis steht im Angebot.</p>
+              <p>In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde netto, je nach Leistung, Qualifikation und Einsatzzeit. Die Spannen je Leistung stehen offen auf jeder Leistungsseite — Ihr konkreter Preis steht im Angebot.</p>
             </details>
         </div>
       </div>
     </section>
 
   </main>
-
-  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
 
   <!-- include: footer-de -->
   <!-- include: whatsapp-button -->

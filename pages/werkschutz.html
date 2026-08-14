@@ -143,7 +143,7 @@
           "name": "Was kostet Werkschutz pro Stunde?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Werkschutz kostet in der Regel zwischen 26 und 32 Euro pro Stunde, abhängig von Qualifikation, Einsatzzeiten (tarifliche Zuschläge) und Aufgabenumfang. Ein durchgehend besetzter 24/7-Posten wird individuell kalkuliert — Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
+            "text": "Werkschutz kostet in der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde, abhängig von Qualifikation, Einsatzzeiten (tarifliche Zuschläge) und Aufgabenumfang. Ein durchgehend besetzter 24/7-Posten wird individuell kalkuliert — Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
           }
         },
         {
@@ -301,6 +301,11 @@
                full text in the Ansprechpartner section and the FAQ. The chip was
                the third place on one screen saying it, and it pushed the H1 down.
                Same as the homepage hero, which opens directly with its H1. -->
+          <!-- Hero badge, verbatim from Webtext 03 (client rule G9). -->
+          <p class="hero-badge">
+            <svg class="icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+            DEKRA-zertifiziert nach DIN 77200-1 und ISO 9001
+          </p>
           <h1>Werkschutz für Industrie &amp; Produktion in Franken</h1>
 
           <p class="hero__lead service-hero__lead">
@@ -309,8 +314,8 @@
 
           <div class="hero__actions service-hero__actions">
             <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
-            <a class="btn service-hero__phone" href="tel:+499519643520">
-              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+            <a class="btn btn--secondary service-hero__phone" href="tel:+499519643520">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
               +49 951 964352-0
             </a>
           </div>
@@ -366,8 +371,8 @@
                 </span>
               </span>
               <span class="review-card__score">
-                <span class="review-card__value">4,7</span>
-                <span class="review-card__count">97 Bewertungen</span>
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
               </span>
             </div>
 
@@ -1790,7 +1795,18 @@
 
         <!-- Evidence, not an advertisement: one sentence, hairline-bounded, no
              chart and no invented company name. The draft's exact wording. -->
-        <p class="service-konzept__proof" data-reveal>Bei einem Großkunden hat ein neues Einsatzkonzept <span class="service-konzept__figure">30 %</span> Personalkosten eingespart, bei gleicher Sicherheit.</p>
+        <div class="service-konzept__proof" data-reveal>
+          <p class="service-konzept__proof-text">Bei einem Großkunden hat ein neues Einsatzkonzept <span class="service-konzept__figure">30 %</span> Personalkosten eingespart, bei gleicher Sicherheit.</p>
+          <!-- Client 2026-08-14, the general rule from Change Request 4: wherever a
+               RESULT is shown, it links to the case study that documents it instead
+               of naming the customer. This sentence was already anonymous ("Bei
+               einem Großkunden") — what it was missing is the link. Its case study
+               is the 30 % one, whose own H1 is "30 % Personalkosten gespart". Same
+               label and arrow the three result tiles use on the homepage,
+               /referenzen/ and /sicherheitskonzept/, so the site makes the same
+               promise in the same words everywhere. -->
+          <a class="service-link service-konzept__proof-link" href="/referenzen/case-study-sicherheitskonzept/">Zur Case Study<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        </div>
 
         <div class="service-konzept__actions" data-reveal>
           <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
@@ -1826,7 +1842,7 @@
       <div class="container service-price__layout">
         <div class="section__intro service-price__intro">
           <h2>Was kostet Werkschutz?</h2>
-          <p class="service-price__answer" data-reveal data-reveal-delay>Werkschutz kostet in der Regel zwischen 26 und 32 Euro pro Stunde netto, zuzüglich tariflicher Zuschläge — geleistet von technik-geschulten, oft zusätzlich qualifizierten Kräften. Die genaue Lage in der Spanne bestimmen:</p>
+          <p class="service-price__answer" data-reveal data-reveal-delay>Werkschutz kostet in der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde netto, zuzüglich tariflicher Zuschläge — geleistet von technik-geschulten, oft zusätzlich qualifizierten Kräften. Die genaue Lage in der Spanne bestimmen:</p>
         </div>
 
         <!-- Preis-Box: the page's second conversion point. Real <p>/<a>, no JS — the
@@ -1887,14 +1903,22 @@
           <h2>Vom ersten Gespräch bis zur laufenden Schicht: feste Ansprechpartner</h2>
         </div>
 
-        <!-- 🔴 RESERVED PORTRAIT FRAME — no photo of Alexander Jäger exists in
-             this project, and the client's decision (2026-08-03, asked directly)
-             is to keep the frame reserved rather than put another person's photo
-             next to his name: at that size, beside his name and role, any visitor
-             would read it as him. The frame holds the real 4:5 space so dropping
-             the portrait in later is a two-line edit and shifts no layout. Its
-             label is UI furniture, not client copy, and is deliberately bracketed
-             so it can never be mistaken for content. -->
+        <!-- ✅ THE SECTION ITSELF IS SETTLED (client 2026-08-13, Q2: "Keep it —
+             always. The Alexander Jäger contact section stays on every page where
+             the documents specify it"). That closes the open question this page and
+             /sicherheitskonzept/ both carried about whether to keep a named
+             contact. Do not remove it, here or on the service pages still to come.
+
+             🔴 STILL RESERVED: THE PORTRAIT. No photo of Alexander Jäger exists in
+             the project, and the client's decision (2026-08-03, asked directly) is
+             to keep the frame reserved rather than put another person's photo next
+             to his name: at that size, beside his name and role, any visitor would
+             read it as him. The frame holds the real 4:5 space so dropping the
+             portrait in later is a two-line edit and shifts no layout. Its label is
+             UI furniture, not client copy, and is deliberately bracketed so it can
+             never be mistaken for content.
+             Q2 keeps the section but does NOT supply the photo — it is still on the
+             list of material Chris owes us. -->
         <figure class="service-contact__portrait" data-reveal>
           <p class="service-contact__portrait-note">
             <svg class="icon" aria-hidden="true"><use href="#icon-contact"></use></svg>
@@ -1956,7 +1980,7 @@
         <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
           <details class="faq-item">
             <summary><h3>Was kostet Werkschutz pro Stunde?</h3></summary>
-            <p class="faq-item__answer">Werkschutz kostet in der Regel zwischen 26 und 32 Euro pro Stunde, abhängig von Qualifikation, Einsatzzeiten (tarifliche Zuschläge) und Aufgabenumfang. Ein durchgehend besetzter 24/7-Posten wird individuell kalkuliert — Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
+            <p class="faq-item__answer">Werkschutz kostet in der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde, abhängig von Qualifikation, Einsatzzeiten (tarifliche Zuschläge) und Aufgabenumfang. Ein durchgehend besetzter 24/7-Posten wird individuell kalkuliert — Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
           </details>
           <details class="faq-item">
             <summary><h3>Welche Aufgaben hat der Werkschutz?</h3></summary>
@@ -2042,15 +2066,6 @@
     </section>
 
   </main>
-
-  <!-- Pixel-dissolve seam before the footer — mandatory on every page
-       (docs/page-conventions.md §4.4, client 2026-07-31). Empty div in the
-       markup; js/pixel-transition.js builds the tile band inside it at runtime
-       and the footer already reserves its height (see `.pixel-seam +
-       .site-footer` in page-service.css). No `--white` modifier here: the
-       section above the seam is white (.service-related), so the tiles are
-       white too — see the note on the first seam above. -->
-  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
 
   <!-- include: footer-de -->
   <!-- include: whatsapp-button -->

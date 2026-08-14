@@ -640,7 +640,37 @@ formulario compartido.*
 - [ ] 3 artículos: § 34a · Costos · Brandwache
 
 ### Bloque 10 — Legales
-- [ ] 🔴 `/impressum/` y `/datenschutz/` — **son las 2 únicas páginas sin texto**
+- [x] ✅ **`/impressum/` — CONSTRUIDA 2026-08-14** (feedback del cliente 2026-08-13,
+      Q1: "take it 1:1 from the current live site"). Texto traído de la página
+      viva, **verbatim**, no del paste (que había aplanado la jerarquía de
+      headings). Las dos sociedades (Sicherheitsdienst KG y Werkschutz KG) más el
+      Haftungsausschluss completo.
+      **Única desviación, estructural y no textual:** la página viva salta
+      h1 → h3 → h4; acá es h1 → h2 → h3, porque "1:1" es sobre el TEXTO y no una
+      licencia para reproducir un defecto de accesibilidad.
+      ⚠️ **DOS COSAS PARA EL ABOGADO DE CHRIS, publicadas tal cual:** el enlace ODR
+      es `http://` (no https) y la plataforma ODR de la UE se dio de baja en 2025,
+      así que esa frase puede estar obsoleta entera; y "finden **sie**" va en
+      minúscula donde corresponde el "Sie" formal. Ninguna de las dos es nuestra
+      para cambiar.
+- [x] ✅ **`/datenschutz/` — SHELL CONSTRUIDA 2026-08-14** (Q1: "we will integrate
+      an automatic privacy-policy scanner… Plan the page as a shell for now").
+      **Cierra el único enlace roto del sitio con consecuencia legal**: el checkbox
+      de consentimiento del formulario compartido decía "Ich habe die
+      Datenschutzerklärung gelesen und stimme zu" y ese enlace daba 404 en las 13
+      páginas que llevan el formulario.
+      **Nada del `<main>` es texto legal inventado**: sólo el Verantwortlicher
+      (verificable desde el Impressum) y un aviso interino que dice que el
+      documento se está finalizando y a dónde escribir mientras tanto.
+      ⚠️ **DOS PENDIENTES CUANDO LLEGUE EL SCANNER:** (1) **el CSP lo va a
+      bloquear** — `vercel.json` publica `script-src 'self'` sin terceros, así que
+      un scanner servido como `<script>` externo (eRecht24, Usercentrics y todos)
+      se bloquea en silencio y la página queda vacía; hay que agregar su host a
+      `script-src` y a `connect-src`. (2) **sacar el `noindex`**, que está puesto a
+      propósito mientras el texto sea un placeholder. El destino de la inyección es
+      `#datenschutz-inhalt`.
+      ⚠️ Por el `noindex`, `/datenschutz/` **NO está en sitemap.xml** — agregarla el
+      mismo día que se saque.
 
 ---
 
@@ -686,5 +716,5 @@ lanzamientos con todo lo demás listo.
 | | Por qué importa |
 |---|---|
 | 🔴 ¿Vamos con el sistema de textos del Paso 2? | define si son 49 páginas a mano o generadas |
-| 🔴 ¿Forchheim o Hof? | frena las páginas de ciudad |
+| ✅ ¿Forchheim o Hof? | **Resuelto por el cliente, Change Request 8 (2026-08-14):** Forchheim es ciudad enlazada (tiene página); Hof, Kronach, Kulmbach, Lichtenfels y Schwandorf son Einsatzgebiete **sin** página propia — van como pastillas sin link y marcados en el mapa del homepage. Son 10 páginas de ciudad, no 11 |
 | 🔴 ¿El sitio en inglés se completa? | son 49 páginas o casi 100 |

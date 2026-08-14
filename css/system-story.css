@@ -185,11 +185,12 @@
   padding-top: var(--space-9);
 }
 
-/* MOBILE — the six cards are a horizontal swipe carousel below 768px, NOT a
-   vertical stack. See section 4 at the bottom of this file for the whole block;
-   only the section/intro rhythm lives here. (Superseded 2026-08-03: the
-   "52svh stacked cards" pass of 2026-07-30 that used to sit here.) */
-@media (max-width: 767.98px) {
+/* MOBILE + TABLET — the six cards are a horizontal swipe carousel below 1024px,
+   NOT a vertical stack. See section 4 at the bottom of this file for the whole
+   block; only the section/intro rhythm lives here. (Superseded 2026-08-03: the
+   "52svh stacked cards" pass of 2026-07-30 that used to sit here.)
+   767.98 -> 1023.98 on 2026-08-14, client — see section 4's own header. */
+@media (max-width: 1023.98px) {
   .system-story {
     padding-top: var(--space-9);
     /* The stack's own padding-bottom used to close the section; the carousel
@@ -777,7 +778,7 @@
    the desktop layout + peek-stack now, releasing the whole stack as one unit.) */
 
 /* ---------------------------------------------------------------------------
-   4. MOBILE CAROUSEL  (<= 767.98px, client 2026-08-03)
+   4. MOBILE + TABLET CAROUSEL  (<= 1023.98px; phone 2026-08-03, tablet 2026-08-14)
 
    Six full-bleed image cards stacked vertically ran ~3100px on a phone — five
    screens of the same shape, repeated. The same six cards are now one horizontal
@@ -790,13 +791,24 @@
    specific to THESE cards. Retune the strip itself (card width, edge, gap) in
    that file or via its --swipe-* variables, not by re-adding overflow rules here.
 
+   ⚠️ EXTENDED TO THE TABLET BAND 2026-08-14 (client: on a tablet the cards were
+   "neither animated like desktop nor like mobile, just stacked"). The gap was
+   real and it was a gap between two ranges, not a bug in either: the pinned
+   peek-stack starts at 1024 and this carousel stopped at 768, so 768-1023.98
+   fell through to the base vertical list. Three things had to move together, or
+   the band gets half a carousel — this query, the pinned branch in
+   js/system-story.js, and the OPT-IN in css/swipe-carousel.css, which is what
+   actually makes the strip a strip. The opt-in is the attribute
+   `data-swipe-tablet` on .system-story__stack in pages/index.html; the other two
+   sections sharing that file deliberately do not have it.
+
    DESKTOP IS UNTOUCHED: every selector here is inside this media query, and the
    pinned peek-stack (.system-story--enhanced, >=1024px) never sees it. These
    selectors are two-level (.system-story .system-story__x) on purpose — they
    have to outrank the `max-width: 1023.98px` de-enhance block above, which is
-   also two-level and also matches phone widths.
+   also two-level and now covers exactly the same range.
    --------------------------------------------------------------------------- */
-@media (max-width: 767.98px) {
+@media (max-width: 1023.98px) {
   /* Width/snap come from [data-swipe-carousel] > *; this is the card's SHAPE.
      A controlled 4/5 instead of the source images' very tall portrait: ~419px on
      a 390px phone, roughly one third of what the old stack spent per card.

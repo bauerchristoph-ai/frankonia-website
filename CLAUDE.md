@@ -99,6 +99,1050 @@ strategically and optimize it carefully," not "remove all animation."
 > única copia de la fuente de verdad actual y no tiene historial — conviene
 > commitearla antes de empezar a migrar.
 
+**2026-08-14 — FEEDBACK 3.4 `/sicherheitskonzept/`, PUNTO 1 ("Hero is missing"): NO
+SE CONSTRUYÓ NADA, YA ESTABA. El cliente estaba viendo un preview viejo** — su
+captura es exactamente el estado PRE-Q3/Q4 de esta misma fecha (tres líneas de tics
+sin icono, sin widget de Google, sin sellos, sin maqueta, y el CTA con la etiqueta
+anterior a G3). **Verificado midiendo el DOM renderizado a 1440, no leyendo este
+archivo**: badge 463x24, H1, subline, los dos CTA en 48px, los **3 tics con su check
+azul de 18px a 6,76:1** (`fill: none; stroke: currentColor`, o sea el bug de los
+checks negros invisibles está arreglado), la píldora de Google con 4,7 / 97, los 2
+sellos DEKRA cargados y la maqueta del documento (SVG de 40 formas, 352x456) —
+`hScroll` 0. Captura guardada en el scratchpad de la sesión.
+⚠️ **Si vuelve a reportarse, pedirle un refresh del deploy antes de tocar código.**
+⚠️ **Lo único que difiere de su documento es la ETIQUETA del CTA** — el doc pide
+"Kostenfreies Sicherheitskonzept anfordern" y la página dice "Unverbindliches Angebot
+einholen": eso lo fijó **G3** (una etiqueta que promete un concepto no puede apuntar a
+un formulario, y mandarla a esta misma página sería un enlace a sí misma), decidido
+por el propio cliente. No "corregirlo" hacia el doc.
+
+**2026-08-14 — FEEDBACK 3.6 `/referenzen/`, PUNTOS 2 y 3.** Dos ediciones de
+markup en `pages/referenzen.html`, ni una línea de CSS.
+
+- **Punto 2 — la fila de links del cierre queda con DOS hubs**: "Alle Leistungen im
+  Überblick" (`/leistungen/`) y **"Alle Einsatzgebiete im Überblick"**
+  (`/einsatzgebiete/`). Se fueron los dos links de ciudad
+  (`/sicherheitsdienst-bamberg/`, `/sicherheitsdienst-coburg/`) que estaban ahí
+  porque el roster es mayormente Bamberg y Coburg.
+  - ✅ **Ganancia lateral: cerró dos 404 planificados.** Ninguna de las dos páginas
+    de ciudad está construida (Bloque 5) y los dos hubs sí, así que la fila ahora
+    resuelve **completa** — verificado sirviendo el build: `/leistungen/` 200 y
+    `/einsatzgebiete/` 200.
+  - ⚠️ **Bamberg y Coburg siguen enlazados desde el nav y el footer**, que son
+    chrome compartido de las 21 páginas. El pedido es sobre las tejas del cierre de
+    ESTA página; no se tocó el chrome.
+- **Punto 3 — las dos membresías van enlazadas**, sin cambiar una palabra de la
+  frase ("Mitglied im Wirtschaftsclub Bamberg und im Deutschen Mittelstands-Bund.").
+  - ⚠️⚠️ **EL DOCUMENTO DE FEEDBACK DICE "same URLs as 3.5.4" Y ESAS URLS NO ESTÁN
+    EN EL REPO** — no hay ningún archivo de feedback acá, y `/ueber-uns/` (que es
+    donde vive la otra copia de esta frase) todavía la tiene sin enlazar, o sea 3.5.4
+    tampoco está aplicado. **Así que las dos URLs se verificaron contra los sitios
+    vivos antes de publicarlas, no se dedujeron del nombre**:
+    `wirtschaftsclub-bamberg.de` devuelve "Wirtschaftsclub Bamberg e.V." y
+    `www.mittelstandsbund.de` devuelve "Deutscher Mittelstands-Bund (DMB) e.V.".
+    Vale que Chris las confirme igual contra las de 3.5.4.
+  - ⚠️ **`dmb.de` es OTRA organización** (el Mieterbund — chequeado, redirige a
+    `mieterbund.de`). No "acortar" la segunda URL a eso.
+  - **La primera va SIN `www.`** porque su host `www` hace 301 al dominio pelado;
+    enlazar el destino ahorra un salto.
+  - `target="_blank" rel="noopener"` + un `.visually-hidden` "(öffnet in einem neuen
+    Tab)" por link, que es el patrón que este sitio ya usa para un link externo
+    dentro de prosa (`/kontakt/`, "Route in Google Maps öffnen").
+  - **Contraste medido, no deducido**: la sección es oscura, así que el
+    `--color-link` (blue-light) mide **6,72:1 sobre `rgb(1,1,1)`** y va subrayado —
+    ninguno de los dos arreglos de §7 hacía falta acá (esos existen para blue-light
+    sobre superficie CLARA, donde da 3,11:1).
+  - **Áreas táctiles**: son links inline dentro de una frase (16–17px de alto), que
+    es la excepción explícita de WCAG 2.5.8 para targets limitados por el
+    line-height — el mismo criterio ya documentado para los 8 links de FAQ de la
+    página de ciudad. No se les puso padding.
+- **Medido a 390 / 600 / 768 / 1440**: sin scroll horizontal en ninguno, la fila de
+  links centrada al eje (0px de desvío) y en **una sola fila hasta 600**, dos a 390
+  con **51px de alto** cada link (≥44), el párrafo en 1 línea hasta 600 y 2 a 390, y
+  **cada link entero en una sola línea** (`getClientRects()` = 1) en los cuatro
+  anchos, o sea ninguno se parte al medio.
+  ⚠️ **Nota de medición, mía:** el `<pre>` que inyecté para volcar los resultados
+  reportó **1.575px de scroll horizontal inexistente** — un `<pre>` no envuelve, así
+  que mis propias líneas largas ensancharon el documento. Re-medido sobre la página
+  sin inyectar nada: `scrollWidth` = 390 exacto, y lo único fuera de pantalla es el
+  honeypot del formulario en `left: -9999`. **No medir overflow en una página donde
+  metiste un `<pre>`.**
+- ⚠️ **Punto 1 (el hero) NO se tocó, es una pregunta y no una corrección**: el
+  **badge YA ESTÁ** (lo puso la pasada de G9 el mismo día, verbatim del Webtext 27);
+  lo que sigue faltando contra el documento es el par de CTA y el widget de Google.
+- ⚠️ **PENDIENTE, es una línea: `/ueber-uns/` publica la MISMA frase de membresías
+  sin enlazar** (`.trust-certs__memberships`, línea 394). Hoy el sitio la tiene
+  enlazada en un lado y pelada en el otro. No se aplicó porque el pedido decía
+  "referenzen"; es copiar el mismo `<p>`.
+
+**2026-08-14 — LAS DOS MEMBRESÍAS AHORA SON LINKS TAMBIÉN EN `/ueber-uns/`**
+(feedback, punto 4). `/referenzen/` ya los tenía de una pasada anterior del mismo día;
+esta cierra la otra página que publica la frase. **`/sicherheitsdienst-nuernberg/` NO
+entra**: reusa la misma clase (`.trust-certs__memberships`) para otra frase, con un
+`.service-link` a `/referenzen/`.
+
+- **URLs re-verificadas antes de publicarlas en una segunda página**, no copiadas a
+  ciegas: las dos dan **HTTP 200** y los `<title>` son "Wirtschaftsclub Bamberg e.V." y
+  "Deutscher Mittelstands-Bund (DMB) e.V.". Dominio pelado para el Wirtschaftsclub (su
+  host `www` hace 301 al pelado) y `www.` para el DMB. ⚠️ **`dmb.de` es OTRA
+  organización** (el Mieterbund) — nunca "acortar" el segundo link a eso.
+- ⚠️ **UN LINK NUEVO ACÁ NO ERA GRATIS, y es la trampa de siempre:** `.section--light`
+  re-declara `--color-accent` pero **NO `--color-link`** (verificado, 0 ocurrencias),
+  así que sobre blanco el link heredaba blue-light = **3,11:1** con texto de 15px.
+  Regla nueva en `page-service.css` con la mezcla profunda documentada = **4,90:1**.
+  **Scopeada a `.section--light` a propósito**: en `/referenzen/` la misma frase vive
+  sobre la sección OSCURA `.ref-clients`, donde blue-light ya mide 6,72:1 y está bien
+  — esa página queda intacta. Y lleva `:not(.service-link)` para no pisar dos veces el
+  link de la página de Nürnberg.
+- Cada link declara en texto sólo-para-lectores que abre pestaña nueva, con
+  `target="_blank" rel="noopener"` — valores copiados de `/referenzen/` para que las
+  dos páginas sean una decisión y no dos parecidas. **Ni una palabra de la frase
+  cambió**, y esta página conserva su falta de punto final.
+- ⚠️ **Nota de medición, mía otra vez:** mi sonda de contraste reportó **20,95:1** para
+  esos links. Es el falso positivo que este archivo ya documenta — `color-mix()`
+  computa como `color(srgb 0.27 0.45 0.67)` y un parser que lee esos decimales como
+  0–255 ve un casi-negro. **Calcular a mano cuando el color computado no es `rgb()`.**
+
+**2026-08-14 — EL SUBMIT DEL FORMULARIO SE SALÍA DE SU PROPIA CARD** (feedback,
+tablet punto 2: "make sure the hero CTA stays visible/inside the layout", con captura
+de `/angebot/`). **Un arreglo de dos declaraciones en `css/lead-form.css`, o sea en las
+12 páginas que usan el formulario compartido.**
+
+- ⚠️ **CUARTA VEZ que la misma omisión causa el mismo bug en este repo**, y esta vez
+  del lado del submit: `.btn` es `white-space: nowrap`, así que con
+  `justify-self: start` el min-content del botón **es toda su etiqueta** — no puede
+  achicarse, y en una columna angosta simplemente se sale.
+- **La banda rota es 900–1090px, medida**: `.ag-hero__grid` parte en dos columnas
+  desde 900px y ahí el interior de la card queda en **287px contra los 361px del
+  botón**, o sea **75px afuera de la card blanca** (+50 a 960, +33 a 1000, +23 a
+  1024, y recién entra solo desde ~1100). **Por debajo de 900 nunca se vio** porque
+  la grilla es de una columna y la card mide 620px — por eso el bug sobrevivió.
+- **El arreglo es `white-space: normal` + `max-width: 100%`**: con la etiqueta
+  envolviendo, el min-content pasa a ser la palabra más larga, así que `fit-content`
+  resuelve al espacio realmente disponible. Medido después: **285px a 900, 310 a 960,
+  337 a 1024 — todos dentro** — y **361px de 1100 en adelante, o sea sin ningún cambio
+  donde hay lugar** (verificado a 1280 y 1440 en las 6 páginas con formulario).
+- ✅ **ARREGLÓ DE PASO UN BUG EN TELÉFONO QUE NADIE HABÍA VISTO, y está probado, no
+  deducido**: a 390px el bloque de teléfono da `width: 100%`, pero con `nowrap` la
+  etiqueta **desbordaba el propio botón**. Medido en el homepage inyectando el valor
+  viejo: caja **308x48 con 331px de contenido, +23px afuera**; con `normal`, caja
+  **308x60 y contenido 304, sin desborde**. Pasa en 4 páginas (homepage,
+  `/werkschutz/`, `/referenzen/`, `/sicherheitskonzept/`), que ahora muestran el
+  submit en dos líneas dentro de la píldora. **Los 60px de alto NO son una regresión,
+  son el arreglo.**
+- ⚠️ **VISTO MIDIENDO Y NO TOCADO, es del cliente decidirlo:** en `/angebot/`, entre
+  900 y 1100px el H1 rompe en **5 líneas** ("Ihr / unverbindliches / Angebot, in /
+  einem Werktag / auf dem Tisch"). Subir el corte de dos columnas de 900 a ~1100
+  arreglaría eso **y** el botón de una sola vez (apilado, la card mide 620 y el H1 dos
+  líneas), **pero rompe un requisito aprobado**: el split existe a 900 para que pitch
+  y formulario entren en la primera pantalla — el "kein Scrollen nötig" del draft,
+  anotado en `page-angebot.css`. Por eso se arregló el BOTÓN y no el breakpoint.
+
+**2026-08-14 — FEEDBACK, PUNTOS 2, 3 y 14 (y una regresión propia del mismo día).**
+
+- **Punto 2 — `/einsatzgebiete/`, el párrafo "Ihr Standort ist nicht dabei?"**: la lista
+  pasa a **"auch Hof, Kulmbach, Lichtenfels, Kronach, Kitzingen, Haßfurt, Schwabach oder
+  Schwandorf"** — entra Schwandorf y el orden es el del cliente (Kronach sube al cuarto
+  lugar), no el que tenía la página.
+- **Punto 3 — la FAQ "Gibt es Leistungen, die nicht überall verfügbar sind?"** ahora dice
+  que el **Interventionsdienst** también es sólo Raum Bamberg, junto al Revier- und
+  Schließdienst (y por eso "läuft" pasa a **"laufen"**). ⚠️ Editada en **las dos copias**
+  —visible y `FAQPage`— con un reemplazo que **aborta si no encuentra exactamente 2**
+  apariciones; verificado después sobre el build: **3/3 byte-idénticas**.
+  ✅ **Chequeado que la afirmación nueva no contradiga nada**: Interventionsdienst sólo
+  aparece en listados de servicios (nav, footer, `/leistungen/`, homepage, tabla de
+  precios del Ratgeber) y en **ninguna** página de ciudad, así que no había ninguna
+  promesa de cobertura que ahora quede falsa.
+- **Punto 14 — los aspectos ya no se repiten dentro del dibujo de 3 pasos.** Debajo de
+  1024px `js/konzept-seq.js` construía chips con **punto + línea + TEXTO** sobre el cubo,
+  y ese texto era el mismo de la `<ul>` de abajo. Ahora el chip es **sólo punto + línea**
+  (lo que el cliente pidió animar) y las palabras viven una sola vez, en la lista. El
+  gris→blanco se conserva: lo maneja el mismo índice, que marca `is-active` en el chip y
+  en el `<li>` a la vez. `.kz-mtip__body/__name/__sub` se **borraron** (markup y CSS).
+  ⚠️ La línea pasó de 14 a **28px**: sin caja al final, la línea ES la llamada, y a 14px
+  se leía como un pelito pegado al punto. **En escritorio no se tocó nada** — ahí la
+  lista está en `display: none` y no había duplicación.
+- ⚠️⚠️ **REGRESIÓN PROPIA, encontrada midiendo el DOM renderizado: 12 chips donde iban
+  13.** La causa es la pasada de copy de más arriba: al partir "Brandmeldeanlage (BMA)"
+  en dos `<text class="kz-tip__label">`, el emparejamiento chip↔lista —que es **por
+  texto**— se rompió, porque leía el label con `querySelector` y obtenía sólo
+  "Brandmeldeanlage". Ese tip perdía su chip **en silencio** (el propio código dice que
+  un término sin tip "se saltea en vez de emparejar mal"). Arreglado uniendo TODAS las
+  líneas del label con un espacio. **Lección: en esta sección el label vive dos veces Y
+  ADEMÁS se usa como clave de emparejamiento — cambiar cómo se parte un label es
+  cambiar una clave.**
+- **Verificado sobre el DOM ya construido** (768px homepage, 390px einsatzgebiete): 13
+  chips, **0 con texto**, 13 con punto+línea, las 3 listas con `is-synced`, y los dos
+  textos nuevos presentes.
+  ⚠️ **Nota de entorno, costó tiempo:** ese día Chrome **hacía el trabajo pero no
+  cerraba** (escribía el DOM completo y el proceso quedaba vivo), así que cualquier
+  `chrome … | sed` devolvía VACÍO y parecía que Chrome no arrancaba. El workaround es
+  volcar a un ARCHIVO, esperar, y matar el proceso. Y `timeout` **no existe en macOS**
+  (es `gtimeout`), así que dos corridas "fallidas" en realidad nunca ejecutaron Chrome.
+
+**2026-08-14 — COPY NUEVO EN EL GRÁFICO DE 3 PASOS DEL HOMEPAGE** (feedback del
+cliente, punto 11: "content fix — only the label was updated so far"). Es la sección
+`.konzept-seq`, y **sólo existe en el homepage** — `/werkschutz/` tiene su propio
+bloque compacto `.service-konzept*` con otro copy, no se toca. Nada de layout cambió;
+lo único estructural es la línea del label más largo (abajo).
+
+- **Paso 1 cambió título Y descripción**: "Rundgang vor Ort" → **"Ortsbegehung"**,
+  y "Wir verstehen Ihr Objekt und Ihre Abläufe." → **"Wir erfassen Objekt, Umfeld und
+  Abläufe vor Ort."** Pasos 2 y 3 conservan su título ("Risikoanalyse",
+  "Sicherheitskonzept") y cambian sólo la descripción.
+- ⚠️ **INTERPRETACIÓN A CONFIRMAR CON CHRIS:** para el paso 3 el cliente escribió una
+  sola frase, "Maßnahmenkonzept aus Personal, Technik und Organisation.", sin decir si
+  es título o descripción. Se aplicó como **descripción**: los tres títulos son
+  sustantivos de una palabra (Ortsbegehung · Risikoanalyse · Sicherheitskonzept) y esa
+  frase son 56 caracteres con punto final. Si era el título, es mover una línea.
+- ⚠️ **LOS 7 CHIPS VIVEN DOS VECES, y hay que editar LAS DOS** — misma clase de trampa
+  que el texto del FAQ: los `<text class="kz-tip__label">` del SVG (lo que se ve de
+  1024px arriba) y la `<ul class="konzept-seq__terms">` (lo que se ve por debajo, y lo
+  que crawlea Google, porque el SVG entero es `aria-hidden`). Renombrados: Kameras →
+  **Videoüberwachung / Lückenlose Abdeckung**, Außenpatrouille → **Streifendienst /
+  Optimierte Routen**, **Zutrittskontrolle / Pforte & Schrankenanlage**, **Alarmanlage
+  / Einbruch- & Überfallmeldung**, Brandmelder → **Brandmeldeanlage (BMA)**;
+  Wachpersonal y Sensoren quedan igual.
+- ⚠️ **CADA RENAME SE QUEDÓ EN SU PROPIA ANCLA DEL DIBUJO, no se reordenaron los tips.**
+  Cada uno es una leader line que apunta a un objeto concreto del isométrico (la cámara,
+  la ruta, la barrera), así que el orden del SVG lo fija el dibujo, no el copy. **La
+  lista HTML sí** toma el orden del cliente (Personal primero, después Technik), que es
+  justo lo que nombra la descripción nueva del paso — y ahí es gratis porque es una
+  lista, no un diagrama.
+- ⚠️⚠️ **"Brandmeldeanlage (BMA)" EN UNA LÍNEA SE SALÍA DE LA PANTALLA, medido:** el tip
+  arranca en el borde derecho del cubo (viewBox x=1050) y hacia afuera, así que a una
+  línea medía 230px a 1440 y quedaba **42px PASADO el viewport** (25 a 1024, 34 a 1280;
+  1920 era el único ancho donde entraba) — o sea cortado, porque ahí nada scrollea
+  horizontal. Partido en dos líneas de label, la línea más ancha pasa a
+  "Brandmeldeanlage": **170px a 1440 con 18px de margen, 118px a 1024 con 16px.** Es el
+  mismo stack multilínea que los otros tips ya usan para sus subs y **no cambia una
+  palabra**. Los offsets 39/80 lo dejan dentro del 0..1110 del SVG (termina en 918) y a
+  132 unidades de Wachpersonal — el aire que fijó la pasada del 2026-08-04.
+- **Medido a 1024 / 1152 / 1280 / 1366 / 1440 / 1600 / 1920 en modo enhanced real** (sin
+  forzar reduced motion, si no el layout de dos columnas ni existe): **cero labels
+  pasados del viewport, cero fuera de pantalla, sin scroll horizontal**. Los tres labels
+  nuevos del lado izquierdo miden 174 / 171 / 154px contra los 171 del "Kritischer
+  Bereich" que ya estaba, o sea entran en el sobre que la sección ya tenía. En mobile
+  (320 → 900) los 7 chips sin desbordar, en 3 filas.
+- ⚠️ **Encontrado midiendo y NO arreglado (es otra decisión, pre-existente):** en
+  **escritorio con `prefers-reduced-motion`** la sección cae al layout apilado — ahí el
+  SVG vuelve a `overflow: hidden` y recorta sus propios labels a dos o tres letras
+  ("...ereich", "Kontrol..."), pero la `<ul>` de reemplazo está en `display: none`
+  porque esa regla es sólo por ANCHO (`min-width: 1024px`), no por modo. O sea ese
+  visitante no ve las anotaciones por ningún lado. El arreglo es condicionar esas dos
+  reglas a `--enhanced` en vez de al ancho; no se tocó porque el pedido era el copy.
+
+**2026-08-14 — FEEDBACK CONSOLIDADO DEL CLIENTE (review del 2026-08-13), SECCIÓN 1:
+LAS RESPUESTAS A LAS PREGUNTAS ABIERTAS (Q1–Q8).** Es el documento que reemplaza
+todos los change-requests anteriores. Acá va sólo lo aplicado en esta pasada; el
+feedback página por página viene en secciones siguientes.
+
+- **Q8 — NO HAY VERSIÓN EN INGLÉS. La página se BORRÓ, no se ocultó** ("take the
+  outdated English homepage down before anything gets indexed"). Se fueron
+  `pages/en/index.html`, `partials/header-en.html` y **los dos partials ingleses
+  `header.html` y `footer.html`** (los cuatro estaban trackeados; git los tiene).
+  - **Borrar el archivo es la mitad del trabajo.** También salieron el
+    `hreflang="en"` del homepage, **la entrada `/en/` del sitemap** (un sitemap que
+    sigue anunciando una URL borrada es exactamente cómo se indexa igual) y se
+    agregó un **301 `/en/*` → `/` en `vercel.json`**, que es la forma correcta de
+    "bajar" una página que pudo haberse enlazado.
+  - ✅ **Ganancia lateral, un bug real de SEO que estaba en vivo:** `/kontakt/`
+    publicaba `hreflang="en"` apuntando a **`/en/kontakt/`, una página que nunca
+    existió** — un hreflang a un 404, en vivo desde julio.
+  - **La urgencia era menor de lo que parecía y conviene saberlo:** `vercel.json`
+    ya manda `X-Robots-Tag: noindex, nofollow` en `*.vercel.app`, así que el
+    preview nunca fue indexable. El borrado igual corresponde.
+  - **El `hreflang="de"` + `x-default` autorreferenciales se QUEDAN** en las 21
+    páginas: son válidos en un sitio monolingüe y sólo declaran el idioma. Sacarlos
+    sería churn en 21 archivos sin ganancia.
+  - ✅ **Se cerró de paso el riesgo "dos footers" que este archivo documentaba**:
+    ya no hay dos partials que mantener en sincro, hay uno.
+
+- **Q1 — `/impressum/` y `/datenschutz/` CONSTRUIDAS. Eran los dos 404 más
+  enlazados del sitio** (footer de las 21 páginas), y `/datenschutz/` además es
+  **el único enlace roto con consecuencia legal**: el checkbox de consentimiento
+  del formulario compartido pide confirmar que se leyó un documento que no abría.
+  - **El Impressum se trajo de la página VIVA, no del paste**, porque el paste
+    había aplanado la jerarquía de headings. ⚠️ **Única desviación, y es
+    estructural: la página viva salta h1 → h3 → h4.** Acá es h1 → h2 → h3 — "1:1"
+    es una instrucción sobre el TEXTO, no una licencia para reproducir un defecto
+    de accesibilidad que las reglas propias de este archivo prohíben.
+  - ⚠️ **DOS COSAS PARA EL ABOGADO, publicadas verbatim y NO corregidas:** el
+    enlace ODR es `http://` y **la plataforma ODR de la UE se dio de baja en
+    2025**, así que la frase entera puede estar obsoleta; y "finden **sie**" va en
+    minúscula donde corresponde el "Sie" formal. Son texto legal del cliente.
+  - **`/datenschutz/` es una SHELL y no inventa una sola línea de texto legal.**
+    Publica sólo el Verantwortlicher (verificable desde el Impressum) y un aviso
+    interino. ⚠️ **Cuando llegue el scanner automático, el CSP lo va a bloquear**:
+    `script-src 'self'` sin terceros, así que un scanner servido como `<script>`
+    externo se bloquea en silencio y la página queda vacía — hay que agregar su
+    host. Y hay que **sacar el `noindex`**, que está puesto a propósito mientras el
+    texto sea placeholder (por eso tampoco está en el sitemap).
+  - ⚠️ **`css/page-legal.css` es la TERCERA copia de la columna de prosa de 44rem
+    con el H2 escalonado** (`.cs-article`, `.rg-article`, y ahora `.legal-doc`), o
+    sea que la promoción a una clase compartida **ya está vencida** por la regla
+    propia del proyecto. NO se hizo en esta pasada a propósito: implica editar seis
+    páginas vivas y ya revisadas por el cliente en plena ronda de feedback. Los
+    valores se copiaron literales para que las ocho páginas sigan siendo un diseño
+    y no tres parecidos; la migración está escrita en la cabecera de ese archivo.
+  - ⚠️ **NO es una quinta excepción a §2.** §2 habla del título de SECCIÓN de una
+    página compuesta; el heading de capítulo de un documento es otra cosa, y el
+    código ya traza esa línea dos veces. Lo que corresponde es que §2 nombre la
+    distinción, no que se sume una excepción más.
+  - ⚠️ **BUG DE 50px A 320px, y es una trampa que este repo ya pagó una vez:
+    `hyphens: none` SUPRIME TAMBIÉN LOS SOFT HYPHENS.** El `&shy;` del cliente
+    dentro de "Bewachungsunternehmen&shy;identifikationsnummer" (42 caracteres)
+    quedó completamente inerte y esa palabra fijaba un min-content de 350px en una
+    columna de 280. **`hyphens: manual`** es el valor que significa lo que se
+    quería: honrar el `&shy;` del autor y no adivinar nada más.
+  - **Las dos páginas NO cargan `text-reveal.js` ni `title-reveal.js`, y es una
+    decisión medida:** con ellos, **95 elementos de texto** quedaban en
+    `opacity: 0` esperando el scroll. Correcto en una página de marketing y
+    equivocado en un documento de referencia — a un Impressum se llega a buscar un
+    dato con Ctrl+F o a imprimirlo, y ninguna de las dos cosas encuentra texto
+    oculto. No cargarlos es mejor que cargarlos y optar por salir: lo que no
+    esconde nada no puede quedarse escondido.
+
+- **Q7 — Brose Bamberg y Bodo Freimuth Tiefbau VUELVEN a `/referenzen/`.** Cierra
+  la duda que este archivo dejó abierta el 2026-08-05 (el draft del 04.08 los
+  seguía listando después de que se quitaran): era una pregunta de Freigabe y la
+  respuesta es que se quedan. Cada uno en **la posición del draft**, no apendeados:
+  Freimuth tercero en Baustellenbewachung, Brose primero en Veranstaltungsschutz.
+  - ⚠️ **Los dos van como NOMBRE, no como logo, porque no existe archivo de logo
+    para ninguno** — buscado en todo el repo, no sólo en `client-logos/`. Eso ES
+    "as before": el set de logos nunca los tuvo. Dos `<span>` → dos `<img>` el día
+    que llegue el arte; vale pedírselo a Chris.
+  - ⚠️⚠️ **AGREGAR UN ITEM A UN MARQUEE LE CAMBIA LA VELOCIDAD, y hay que
+    re-derivar la duración.** Una duración no es una velocidad: sumar una empresa a
+    un grupo de 4 alarga el track un 25 % con la duración fija, así que la fila se
+    acelera un 25 %. Medido: Baustellenbewachung saltó a **14,52 px/s** (escritorio)
+    y **15,23** (teléfono) contra los ~11,5 de sus hermanas — una fila visiblemente
+    corriendo más que las otras dos. Corregido desde el half-track medido, no
+    estimado: **180 → 227s** y **115 → 152s**. Re-medido: **11,51 y 11,52 px/s**.
+    Veranstaltungsschutz ganó a Brose y **no necesitó cambio** — 10 items contra 9
+    la movió de 10,4 a 11,5, o sea hacia el objetivo y no lejos de él.
+  - **Verificado**: 35 empresas (30 logos + 5 nombres), grupos pares en las tres
+    filas y slack positivo en todas, o sea los tres loops siguen sin costura.
+  - ⚠️ **El draft tiene 35 empresas, no 36** — el número viejo de este archivo
+    estaba mal; contado sobre el docx (20 + 5 + 10).
+
+- **Q3 + Q4 — `/sicherheitskonzept/`: hero de dos columnas con maqueta del
+  documento, y el PDF de muestra PUBLICADO.**
+  - **El hero pasó a ser el estándar del homepage** (badge, H1, subline, doble CTA,
+    tics, **widget de Google** + los dos sellos DEKRA) **más una maqueta dibujada
+    del documento** como visual, en vez de foto. Eso **supersede el pedido del
+    draft de una "Begehungs-Situation (Echtfoto)"** — no hay que seguir buscando esa
+    foto.
+  - **La maqueta es SVG inline en `partials/sk-doc.html`, un partial y no dos
+    copias**, porque se usa dos veces (hero y preview de la sección 6b) y tiene que
+    ser el mismo dibujo. Dibujada y no una captura del PDF: nítida a cualquier DPR,
+    **cero requests en el critical path** (esta página no tiene elemento LCP de
+    imagen) y sus colores salen de custom properties, así que la misma pieza
+    funciona sobre el hero negro y sobre la sección blanca.
+    **El contenido es el del documento real**, no inventado: el chip "ANONYMISIERTE
+    MUSTERVERSION", "Muster GmbH · Werksgelände" y "Seite 1 von 18".
+    ⚠️ **SIN COLORES DE SEMÁFORO**: la página 7 real gradúa 16 riesgos en
+    Grün/Gelb/Rot (5/7/4), y reproducirlo literal metería tres tonos nuevos en una
+    paleta de cinco por un gráfico decorativo. La matriz va en **cuatro tintes del
+    celeste de marca**.
+  - ⚠️⚠️ **UN COMENTARIO HTML NO PUEDE CONTENER `-->`, y me costó dos pasadas.**
+    Escribí el marcador de include completo dentro del comentario del partial: eso
+    **cerró el comentario antes de tiempo y volcó el resto como texto visible en la
+    página**, al lado de la card. Lo peor es que la frase que explicaba el bug
+    volvió a contener la secuencia y lo reprodujo. Se detecta en captura, no en el
+    build — `build.js` no tiene por qué quejarse. **Referirse al marcador por
+    nombre, nunca escribirlo con sus delimitadores.**
+  - ⚠️ **LA ANONIMIZACIÓN DEL PDF SE VERIFICÓ ANTES DE PUBLICAR, no se dio por
+    buena** — el archivo va a una URL pública. Se extrajo el texto de las 18 páginas
+    (sin librerías: streams FlateDecode + los CMaps ToUnicode) y se buscó cada
+    nombre de cliente real que el sitio conoce: **cero coincidencias**. Queda dato
+    ficticio en todo el documento ("Muster GmbH", "Max Mustermann",
+    "KD-MUSTER-000001", teléfono "0000 – 000000") bajo una portada que lo declara.
+    Los únicos datos reales son los de FRANKONIA, que es la autora. **Re-correr ese
+    chequeo con cualquier archivo de reemplazo.**
+  - **El archivo se movió a `assets/documents/frankonia-sicherheitskonzept-muster.pdf`**
+    (venía como `SecurityConcept.PDF`, con la extensión en mayúscula). ⚠️ Se copió,
+    se comparó **SHA-256** y recién ahí se borró el original — el nombre destino
+    difiere en más que mayúsculas, pero la regla de este repo es no hacer
+    escribir-después-borrar sobre archivos del cliente.
+  - **La sección 6b dejó de ser un frame reservado**: ahora la maqueta ES el
+    preview y toda la hoja es el enlace al PDF. ⚠️ Se le sacó el
+    `aspect-ratio: 1/1.414` que tenía el placeholder: existía para reservar espacio
+    A4 de un preview que no existía, y el preview trae su propio ratio — dejar los
+    dos deja aire muerto debajo de la hoja, que es justo como se veía la primera
+    versión de esta card.
+  - ✅ **DOS BUGS PRE-EXISTENTES ENCONTRADOS MIDIENDO, los dos en vivo desde que la
+    página se construyó:**
+    1. **Los tres tics del hero eran invisibles.** Llevaban `.hero__reassurance-item`
+       y un `<svg class="icon">` pelado — **nombres de clase del HOMEPAGE, y
+       `page-home.css` no se carga en esta página**, así que no los estilaba nada:
+       medido `fill: rgb(0,0,0); stroke: none`, o sea tres checks NEGROS sobre un
+       hero negro, y el `<li>` nunca se volvía fila flex (43px de alto cada uno, sin
+       icono). Arreglado con los nombres del chasis que la página sí carga
+       (`.service-hero__point` / `.service-hero__point-icon`). ⚠️ `.hero__reassurance`
+       se queda en el `<ul>`: es el hook que anima `js/hero-reveal.js`.
+    2. **25px de scroll horizontal a 320px.** El bloque de teléfono ponía
+       `width: 100%` en los CTA pero **le faltaba `white-space: normal`, que es la
+       mitad que carga el peso** — `.btn` es `nowrap` y el ancho no reduce el
+       min-content de la etiqueta (~325px contra 296 disponibles), así que el botón
+       empujaba h2, párrafo y todo. Es la **tercera** vez que esta misma omisión
+       causa el mismo bug (page-service.css y page-city.css ya la documentan).
+  - ⚠️ **PENDIENTE, encontrado y NO arreglado: `/angebot/` tiene el mismo bug de
+    320px** (28px). Es otra página y su feedback viene en una sección posterior.
+
+- **Q2 — la sección de Alexander Jäger SE QUEDA, siempre**, en todas las páginas
+  donde los documentos la piden. Verificado que sigue en `/werkschutz/` y
+  `/sicherheitskonzept/`. Cierra la pregunta abierta que las dos páginas
+  arrastraban. **Su retrato sigue faltando.**
+
+- **Q3 (resto) — los heroes de mapa YA ESTABAN.** El cliente aprobó la animación
+  del contorno para `/einsatzgebiete/`, las páginas de ciudad y las combo: las tres
+  ya la tienen (`/einsatzgebiete/` desde el 2026-08-10, `/sicherheitsdienst-nuernberg/`
+  y `/brandwache-nuernberg/` desde antes). No hubo nada que construir.
+
+- **Medido después de todo, las 21 páginas a 1440 y las tocadas a
+  320/390/768/1024/1440/1920:** sin scroll horizontal en ninguna, un solo `<h1>`,
+  sin saltos de nivel de heading, 0 placeholders sin resolver, y los seams
+  construyen tiles en todas. Sin JS y con `prefers-reduced-motion` las páginas
+  nuevas rinden completas con **0 elementos ocultos y 0 tiles**. Los enlaces
+  internos rotos que quedan son **exactamente los planificados de siempre**
+  (servicios y ciudades sin construir): **`/impressum/` y `/datenschutz/` salieron
+  de esa lista**, que era el objetivo.
+  ⚠️ **Dos avisos de contraste que aparecen en las mediciones y NO son nuevos ni
+  reales:** el 3,11:1 del botón primario es el caveat sitewide ya aceptado, y el
+  "1:1" de la píldora de Google es **un falso positivo de mi propia sonda** — al
+  subir por ancestros buscando un fondo opaco se pasa de largo la card. Muestreado
+  como corresponde: **9,24:1 y 5,25:1**. El 1,84:1 de las estrellas ★★★★★ de los
+  testimonios es pre-existente y está igual en el homepage.
+
+**2026-08-14 — REGLA GLOBAL G1: UN SOLO DISEÑO DE SECONDARY CTA EN TODO EL SITIO**
+(cliente: "definí UN diseño fijo para el secondary CTA y usalo en todas las páginas
+… y que el border sea un poquito más fino", con una foto del botón de Instagram del
+homepage como referencia). Toca `components.css` y **16 CTAs en 14 páginas**.
+
+- ⚠️ **HABÍA CUATRO PÍLDORAS DE CONTORNO CASI IGUALES, y ése era el problema real —
+  no el estilo de ninguna de ellas.** Medido antes de tocar nada: `.hero__phone`
+  (borde blanco 35 %, texto 85 %), `.service-hero__phone` (**los mismos valores,
+  copiados literalmente en otro archivo**), `.btn--secondary` (borde
+  `--color-border-strong`, 42 %) y `.social__cta .btn--secondary` (override local a
+  blanco pleno). Las cuatro resuelven ahora en **una sola regla**; las otras tres
+  se BORRARON, no se sobreescribieron.
+- **La que gana es la del cliente**: el pill de Instagram — borde blanco SÓLIDO, sin
+  relleno, texto blanco. O sea el override local del homepage **se promovió a base**,
+  que es la única de las cuatro deleciones que es una promoción y no una remoción.
+- ⚠️ **GANANCIA DE CONTRASTE QUE NO SE BUSCÓ, y era una falla real:** el borde al
+  35 % medía **~2,6:1 sobre negro**, por debajo del 3:1 que pide WCAG 1.4.11 para el
+  límite de un componente de interfaz. Blanco sólido mide **21:1**. Unificar hacia
+  arriba arregla eso de paso.
+- ⚠️⚠️ **`1.5px` NO EXISTE: CHROME REDONDEA `border-width` A PÍXELES CSS ENTEROS.**
+  Se escribió 1.5px primero y **computa `1px`, medido a deviceScaleFactor 1 Y 2** —
+  o sea una pantalla retina tampoco lo salva. Es la misma trampa que `page-service.css`
+  ya documenta para el marco de 0.5px de `/werkschutz/`. **1px es el piso**; más fino
+  sólo se consigue con un trazo SVG (`.service-contrast__frame`). No devolverle un
+  valor fraccionario pensando que renderiza.
+- ⚠️ **El `padding-block` de `.btn--secondary` lleva +1px, y NO es decoración:** un
+  borde se come la caja por LOS DOS lados, así que bajar 2px → 1px dejó la píldora en
+  **46px contra los 48 del primario**. Medido. La decisión del cliente de 2026-07-22
+  ("los dos botones del mismo tamaño") sigue vigente, así que los 2px se devuelven
+  como padding. **Si cambia el padding o el borde de `.btn`, re-medir esto.**
+- **Sobre sección clara el diseño es el mismo con los dos colores invertidos**
+  (`.section--light .btn--secondary`, negro sobre blanco). Sin eso sería blanco sobre
+  blanco; el único consumidor hoy es el cierre de `/ratgeber/`.
+- **`.btn__icon` nuevo en components.css: UNA regla reemplaza CUATRO copias**
+  page-scoped del mismo fix de `#icon-phone` (`.hero__phone .icon`,
+  `.service-hero__phone .icon`, `.city-callout__call .icon`, `.combo-hero__call .icon`).
+  ⚠️ Deliberadamente **no** se aplicó a todo `.icon` dentro de `.btn`: `.btn__arrow`
+  es un icono de trazo y un `fill` general lo borraría.
+- **Páginas que GANARON un secondary CTA** (no tenían ninguno): `/einsatzgebiete/`,
+  `/jobs/`, las **3 case studies** y los **3 artículos del Ratgeber**.
+  - ⚠️ **`/jobs/` CONTRADICE SU PROPIO DRAFT APROBADO**: el Webtext 29 dice textual
+    "kein Telefon-CTA: Bewerbungen laufen über die Seite". Se le planteó el conflicto
+    al cliente y eligió G1. **Es el único lugar del sitio donde una regla global
+    posterior pisa el draft de una página**; queda anotado en el markup con la línea
+    exacta a borrar si Recruiting lo quiere de vuelta.
+  - **Las case studies perdieron el `.btn--lg` del primario** en la misma edición: un
+    primario grande al lado de un secundario de tamaño base es un par desparejo, que
+    es justo lo que el hero del homepage arregló en la otra dirección.
+- ⚠️ **`/ratgeber/` (hub): los dos CTAs INTERCAMBIARON ROLES.** Era la única página
+  donde el teléfono era el botón azul; ahora "Schreiben Sie uns" es el primario y el
+  teléfono la píldora de contorno, como en las otras nueve. **Ningún destino cambió.**
+  **A confirmar con Chris**: el draft cierra con "rufen Sie an oder schreiben Sie
+  uns", así que si el teléfono tiene que seguir siendo la acción más fuerte ahí, se
+  intercambian las dos clases y esa página pasa a ser la excepción documentada.
+- **`/referenzen/`, `/kontakt/` y `/angebot/` NO se tocaron**, por decisión del
+  cliente: no tienen fila de CTA en absoluto (su único `.btn--primary` es el submit
+  del formulario), así que agregarles un secundario habría significado inventarles
+  una composición nueva.
+- **Medido en las 19 páginas construidas, a 1440 y 390**: **exactamente DOS firmas**
+  de secundario en todo el sitio — `(1px, blanco, blanco, transparente)` en oscuro y
+  `(1px, #010101, #010101, transparente)` en claro — primario y secundario **los dos
+  en 48px** en las 16 filas, sin scroll horizontal en ningún ancho, y el glifo del
+  teléfono `fill: currentColor; stroke: none` en los 14 que lo llevan. Hover
+  verificado **con puntero real** en las dos superficies: el wash entra
+  (`rgba(255,255,255,0.08)` / `rgba(1,1,1,0.06)`) y **borde y texto no se mueven** —
+  el salto a azul que hacía la variante vieja se fue.
+- ⚠️ **LA ÚNICA DIVERGENCIA QUE QUEDA, y es de TAMAÑO, no de diseño:** en teléfono el
+  pill del hero del homepage mide **44px** contra los 48 del resto, porque
+  `.hero__phone` conserva su compactación móvil pedida explícitamente por el cliente
+  ("no lo hagas otro botón grande a todo el ancho… reducí el ancho para que envuelva
+  al contenido"). Borde, relleno y color son idénticos. **No revertir esa
+  compactación sin preguntar** — es una instrucción del cliente, no un descuido.
+- **Comentario obsoleto corregido de paso** en `page-city.css`: decía que el teléfono
+  del `.city-callout` es `.btn--secondary` "secundario y no primario"; el markup dice
+  `btn--primary` desde hace tiempo. Ese botón **no** entró en G1 a propósito — es un
+  callout de mitad de página, no la fila de CTA, y la página ya tiene su píldora en el
+  hero; convertirlo pondría el mismo número dos veces en el mismo tratamiento.
+- ⚠️ **Dos lecciones de medición, mías:** (1) **hoverear el CONTENEDOR de la fila y
+  leer SU computed style no dice nada del botón** — una primera pasada reportó "el
+  hover no aplica" en las cuatro páginas por eso; hay que apuntar el puntero al
+  `.btn--secondary` mismo. (2) **el `clip` de `Page.captureScreenshot` está en
+  coordenadas de PÁGINA, no de viewport** — sin sumarle `scrollX/scrollY` las capturas
+  salen de una zona equivocada y parecen un bug de layout.
+
+**2026-08-14, MISMO DÍA — REGLAS GLOBALES G10 (los precios se editan en UN lugar) y
+G11 (verificar el checkbox de consentimiento). G11 era una VERIFICACIÓN y pasó;
+G10 era mitad hecho y mitad no.**
+
+- **G10 — el rango 26-32 ya estaba centralizado, TODO LO DEMÁS no.** Auditadas las
+  21 páginas: **28 valores hardcodeados en 7 páginas**. `content/values.json` tenía
+  `price.range`, pero la prosa escribía el número a mano ("zwischen 26 und 32 Euro")
+  porque el token es `26-32` con guion y la frase alemana necesita las dos mitades
+  sueltas. De ahí salieron `price.min` y `price.max`.
+  - **Lo que faltaba centralizar, y ahora está**: los recargos del Lohntarifvertrag
+    (**23 % noche / 26 % domingo / 100 % feriado**, más la ventana "20–6 Uhr"), los
+    **tres ejemplos calculados** del Ratgeber de costos (5.500–6.800 €/mes,
+    1.550–1.900 €, 1.850–2.300 €, y las 60 y 72 horas), y **el año del `<title>`**
+    de esa misma página ("Preise & Faktoren 2026").
+  - ⚠️ **`min`/`max` y `range` son el mismo número en dos formatos** (prosa contra
+    píldora). No hay derivación: al actualizar hay que mover los tres.
+  - ⚠️ **Los `example.*` son DERIVADOS de la tarifa y los recargos y NO se
+    recalculan solos.** Centralizarlos los pone en un lugar; recomputarlos sigue
+    siendo manual. Está dicho en el propio `_comment` de la clave.
+  - ⚠️ **El texto de cada FAQ existe DOS veces** (visible y `FAQPage`), así que las
+    dos copias tienen que llevar el MISMO token o el precio que ve Google se separa
+    del que ve el visitante. **Verificado después: 59/59 byte-idénticas.**
+  - ✅ **Probado de punta a punta, no deducido:** en un árbol aparte se simuló la
+    actualización anual (**26-32 → 29-35**, noche 23 → 25 %, domingo 26 → 28 %, año
+    2026 → 2027), se buildeó y **todas las páginas siguieron el cambio con CERO
+    valores viejos en la salida**. Eso es literalmente el "5-minute content edit"
+    que pide la regla.
+  - **`price.general` NO era una clave muerta** — la consume `/angebot/`. Se
+    chequeó antes de tocarla, después del caso de `whatsapp` en G12.
+- **G11 — la frase renderiza bien en las 12 páginas con formulario, y el markup
+  nunca fue el problema.** "Ich habe die Datenschutzerklärung gelesen und stimme
+  zu." sale de UN solo lugar (`partials/lead-form.html`; `/kontakt/` tiene su propio
+  form con la misma frase). Medido a 390 y 1440: la palabra presente, el link
+  visible, **4,90:1** y subrayado en las 12.
+  - **Confirmado con PÍXELES y mirando la captura, no con `getComputedStyle`**: el
+    recorte 5× del link da 235 colores con tinta `#4673AB` sobre blanco a **4,88:1**,
+    y la línea completa se lee "☐ Ich habe die Datenschutzerklärung gelesen und
+    stimme zu. *". Es la lección de `/angebot/` aplicada por defecto.
+  - ⚠️ **Por qué el cliente vio "falta la palabra": era el CONTRASTE, no el HTML.**
+    El link heredaba blue-light (3,11:1 sobre la tarjeta blanca) y se lavaba hasta
+    parecer ausente. **Si alguien vuelve a reportarlo, mirar el color antes que el
+    markup.**
+  - ⚠️ **SÓLO SE PROBÓ EN CHROMIUM** — es el único motor disponible acá, así que
+    "en todos los navegadores" no está verificado empíricamente. Lo que sí se hizo
+    es descartar las causas que divergen entre motores: no hay `overflow` que
+    recorte, ni `position: absolute`, ni pseudo-elemento encima, ni override
+    page-scoped que esconda el link; y el `display: inline-block` que algunos
+    motores necesitan para no recortar la caja padded ya está puesto. Vale una
+    mirada real en Safari y Firefox.
+
+**2026-08-14, MISMO DÍA — REGLA GLOBAL G9: EL BADGE DEL HERO LO DEFINE EL
+DOCUMENTO. Faltaba en 6 páginas, y 4 de esas 6 se habían sacado por pedido
+explícito del propio cliente.**
+
+- **La lista salió de auditar los 52 `.docx` contra las 21 páginas, no de leer este
+  archivo.** Resultado: **15 documentos especifican un `Badge:`**, 8 ya lo
+  renderizaban bien y **6 no lo tenían** — `/werkschutz/`, `/einsatzgebiete/`,
+  `/kontakt/`, `/referenzen/`, `/jobs/` y `/brandwache-nuernberg/` (el cliente
+  nombró dos de esos seis; los otros cuatro los encontró la auditoría).
+  **Las 4 páginas del Ratgeber no especifican badge**, así que su ausencia es
+  correcta y se dejaron como están.
+- ⚠️⚠️ **CUATRO DE LAS SEIS SE HABÍAN QUITADO POR INSTRUCCIÓN DEL CLIENTE**, cada
+  una con su razón anotada: `/werkschutz/` y `/jobs/` el 2026-08-03 (el chip repetía
+  lo que ya dicen los dos sellos DEKRA del mismo hero), `/brandwache-nuernberg/` el
+  08-10 ("sacá la pill") y `/kontakt/` el 08-06 (la página decía 24/7 dos veces).
+  **G9 es posterior y gana**, igual que G6 sobre la píldora compacta del homepage.
+  **Cada una lleva en su markup un comentario con las dos mitades de la historia —
+  por qué se sacó y por qué volvió — para que nadie la borre otra vez "limpiando".**
+- ✅ **El argumento que justificaba sacar el de `/werkschutz/` ya estaba superado por
+  la práctica, y eso se verificó midiendo**: `/leistungen/`, `/ueber-uns/` y
+  `/sicherheitskonzept/` **ya publican chip Y sellos DEKRA en el mismo hero**. O sea
+  restaurarlo es lo consistente, no una regresión.
+- ⚠️ **`/kontakt/` vuelve a decir "24/7 erreichbar" DOS VECES** (badge +
+  Highlight-Box), que es exactamente la duplicación que el cliente resolvió en
+  agosto quedándose con la de abajo. **No se borró el badge de nuevo** — eso es lo
+  que G9 pide. Queda anotado en la página y avisado al cliente: si molesta, se saca
+  de uno de los dos lados, y es decisión suya cuál.
+- **Se promovió `.hero-badge` a components.css en vez de escribir seis copias.**
+  `.lh-hero__badge` y `.ag-hero__badge` eran **byte-idénticos**, así que los dos se
+  borraron y sus 4 páginas usan el compartido — **cero cambio visual**, verificado.
+  ⚠️ **Sobreviven dos tratamientos de FAMILIA a propósito**: `.city-hero__badge`
+  (píldora, ciudad y combo) y `.cs-hero__badge` (label en mayúsculas, las 3 case
+  studies). G9 pide que el badge ESTÉ, no que los tres estilos se fusionen — si
+  alguna vez hay que unificarlos es una decisión aparte. Por eso
+  `/brandwache-nuernberg/` recibió la **píldora de su familia**, la misma que ya
+  tiene `/sicherheitsdienst-nuernberg/`, y no un cuarto estilo nuevo.
+  ⚠️ **`.hero__badge` de page-home.css NO es este componente** — dimensiona la
+  IMAGEN de un sello DEKRA. Nombre casi igual, cosa distinta. No fusionarlas.
+- **Medido a 390 y 1440 en las 11 páginas con badge**: los 11 renderizan, contraste
+  **19,30–20,87:1**, icono visible en todos, **sin scroll horizontal**, y el aire
+  hasta el H1 es 16px (24px en las dos píldoras de ciudad, que es el valor de esa
+  familia). Tres envuelven a dos líneas a 390 — texto largo en una columna angosta,
+  esperable. **Verificado también que los 14 textos son verbatim del `.docx`.**
+- ⚠️ **Falsa alarma que casi reporto como bug:** una sonda contó **2 `<h1>` en el
+  homepage**. El segundo estaba **dentro de un comentario HTML** ("hero-reveal.js
+  handles the hero `<h1>` only"). Sacando comentarios primero: **21 páginas, 1 `<h1>`
+  cada una**. Contar tags sin descartar comentarios da falsos positivos.
+
+**2026-08-14, MISMO DÍA — REGLAS GLOBALES G6 (una sola medida en el hero móvil) y
+G7 (se va la transición formulario → footer, en las 21 páginas).**
+
+- **G6 — el defecto sólo existe en un teléfono GRANDE, y por eso había sobrevivido.**
+  Medido antes de tocar nada, a 390 / 430 / 600 / 767: a 390 y 430 casi todo ya
+  coincidía; el problema aparece de 600 para arriba, donde los CTAs llenan la
+  columna y el subline se queda en su tope de 32rem. **Spread de 48px a 600 y de
+  192–208px a 767**, en las 8 páginas interiores. Hay que medir a 767, no a 390.
+  - **El homepage era un caso aparte y peor**: su píldora de teléfono medía
+    **175px contra un primario de 358** (spread 183px a 390, **514px a 767**),
+    porque conservaba su compactación móvil.
+  - ⚠️⚠️ **ESO REVIERTE UNA INSTRUCCIÓN EXPLÍCITA DEL PROPIO CLIENTE** ("no lo
+    hagas otro botón grande a todo el ancho… reducí el ancho para que envuelva al
+    contenido"), que este archivo marcaba como **"no revertir sin preguntar"**. Se
+    preguntó, con los números; eligió G6. **La píldora del homepage ahora es
+    full-width y 3rem de alto como el resto. No volver a compactarla sin preguntar
+    de nuevo.**
+  - **Cuatro topes borrados, todos sólo bajo 767.98px**: `max-width: 31ch` del
+    lede del homepage, `32rem` de `.service-hero__lead`, `38rem` de `.jobs-hero h1`
+    y el `width: auto` de `.hero__phone`. En escritorio los cuatro siguen — un lede
+    de 512px al lado de una foto es una columna legible, no un defecto.
+  - ⚠️ **La regla del chasis necesita DOS clases**: `.jobs-hero h1` y los topes por
+    página son (0,1,1) y sus hojas cargan DESPUÉS de `page-service.css`, así que un
+    selector de una clase empata y **pierde por orden**.
+    `.service-hero .service-hero__content h1` es (0,2,1) y gana.
+  - **Medido después, las 9 páginas a 390 / 430 / 600 / 767: spread 0px en las 36
+    combinaciones.** H1, subline, primario y secundario exactamente iguales.
+  - ⚠️ **El badge de Google sube un paso de padding pero NO al valor de escritorio
+    en teléfono**, y la razón está medida: comparte una fila de 358px con los dos
+    sellos DEKRA, y a 12/16px la fila desbordaba. Queda **8/12px en teléfono y
+    12/16px de 768 para arriba** — badge 257 + sellos 59 = 316 sobre 358
+    disponibles, y a 320px la fila envuelve como ya lo hacía.
+- **G7 — el seam entre el formulario y el footer se fue de las 21 páginas.** El
+  cliente tiene razón sobre por qué no aportaba nada: la última sección casi
+  siempre es oscura (la del formulario) y el footer también, **así que ese borde no
+  separaba dos colores y no había nada que disolver**. Los **88 seams de mitad de
+  página se quedan intactos** — un seam existe donde hay un cambio de color real.
+  - ⚠️ **Borrar el `<div>` es la mitad del trabajo.** El footer reservaba la altura
+    de la banda con `.pixel-seam + .site-footer` en **cinco hojas**
+    (page-home, page-service, page-contact, page-jobs, page-city). Al ser selectores
+    de hermano adyacente ya no pueden matchear, así que no dejan hueco muerto — pero
+    quedaban como reglas que nadie puede disparar, y se borraron. **Verificado: el
+    `padding-top` del footer vuelve a 96px (`--space-9`).**
+  - ⚠️ **La auto-detección de "pulse" quedó INALCANZABLE y se dejó a propósito, con
+    nota.** Sólo se dispara cuando el hermano siguiente del seam es el footer, que
+    es justo el borde que se eliminó. Sigue siendo correcta el día que alguien
+    ponga un seam ahí, y `data-pixel-seam-mode="pulse"` explícito sigue andando
+    (hoy no lo usa ninguna página).
+  - ✅ **El bug de resize que el cliente marcó como "arreglar sólo si es barato"
+    está ARREGLADO, y era real:** `js/pixel-transition.js` medía la banda **una
+    sola vez** y derivaba de ahí la cantidad de columnas, sin ningún listener de
+    resize. Achicando y volviendo a agrandar, el seam se quedaba con la grilla
+    chica. Ahora la construcción de tiles es una función que se vuelve a correr en
+    el `refresh` de ScrollTrigger, **sólo si el ancho cambió de verdad** — sin ese
+    guard cada refresh re-randomizaría los umbrales y la disolución se rebarajaría
+    a mitad de scroll. **Medido: 1440 → 36 columnas / 180 tiles → 390 → 10 / 30 →
+    de vuelta a 1440 → 36 / 180.** Antes se quedaba en 10.
+- **Barrido final en 17 páginas a 390 / 767 / 1440**: sin scroll horizontal en
+  ninguna, **cero seams antes del footer**, los 88 de mitad de página presentes, y
+  un solo `<h1>` por página.
+
+**2026-08-14, MISMO DÍA — REGLAS GLOBALES G4 (todo teléfono es un `tel:`) y G5
+(el rating siempre "4,7", y de una sola fuente). Encontró UN BUG EN VIVO que no
+tenía nada que ver con lo pedido: en `/angebot/` la línea "Lieber direkt sprechen?"
+era BLANCO SOBRE BLANCO, o sea invisible.**
+
+- **G4 — seis números pasaron a link, y la lista salió de medir, no de leer.** Una
+  sonda buscó todo número de teléfono que NO estuviera dentro de un `<a href="tel:">`:
+  `/angebot/` (la mini-FAQ, la que nombró el cliente), el artículo de Brandwache (la
+  otra que nombró), **más cuatro que no estaban en el pedido** — las dos respuestas
+  de FAQ del homepage, el cierre de `/einsatzgebiete/` y el lede de `/ratgeber/`.
+  - ⚠️ **Los DOS números del Impressum se dejaron a propósito: son FAX** (`-90`, no
+    `-0`). Un `tel:` sobre un fax es un enlace que no sirve para nada.
+  - ⚠️ **NO se tocó el JSON-LD, y ésa es la parte delicada.** El texto de cada FAQ
+    existe dos veces —visible y dentro del `FAQPage`— y tienen que quedar
+    byte-idénticas. Envolver el número en un `<a>` cambia el MARKUP y no el TEXTO,
+    así que la copia del schema se queda igual. **Verificado sobre el build: 59 de
+    59 respuestas byte-idénticas en las 12 páginas con FAQ.**
+- ⚠️ **UN LINK NUEVO EN PROSA NO ES GRATIS: hereda `--color-link` (blue-light), que
+  mide 3,11:1 sobre blanco y 2,87:1 sobre el relleno de una card de FAQ — los dos
+  por debajo del 4,5:1 que pide un link de 16px dentro de una frase.** Y como
+  `inline` mide 18px de alto, tampoco llega a los 44 de área táctil. O sea: cumplir
+  G4 sin tocar CSS habría publicado seis fallos de accesibilidad.
+  - **La regla se PROMOVIÓ a components.css** (`.faq-item a:not(.btn)` +
+    `.section--light p a[href^="tel:"]:not(.btn)`), y con eso se borraron **tres
+    copias page-scoped** que ya decían lo mismo: `page-city.css`, `page-ratgeber.css`
+    y una copia sólo-móvil en `page-jobs.css`.
+  - ⚠️ **`.faq-item a`, NO `.faq-item__answer a`, y esto lo descubrió la medición:
+    el markup de las respuestas NO es uniforme.** Casi todas envuelven en
+    `.faq-item__answer`, pero **`/angebot/` mete un `<p>` pelado dentro del
+    `<details>`**, así que el selector angosto se salteaba esa página en silencio —
+    medido, seguía en 2,87:1 y `display: inline` después de "arreglarlo". Verificado
+    que ningún `<summary>` del sitio contiene un `<a>`, así que no puede filtrarse a
+    la fila de la pregunta.
+  - **El segundo selector existe porque un teléfono en prosa no está en ninguna FAQ**
+    (`/einsatzgebiete/` y `/ratgeber/`). Los dos excluyen `.btn`: el CTA secundario
+    también es un `tel:` y ya tiene su color y sus 48px (G1).
+- ⚠️⚠️ **EL BUG QUE APARECIÓ DE PASO, y estaba EN PRODUCCIÓN:** `.ag-hero__alt` en
+  `/angebot/` —la línea "Lieber direkt sprechen? … 24/7 erreichbar"— usaba
+  `--color-text` / `--color-text-muted`, o sea los tokens del tema OSCURO (blancos),
+  **pero vive DENTRO de `.conversion__form-wrap`, la card BLANCA del formulario**.
+  Esa card no es `.section--light`, así que nunca re-declara esos tokens.
+  **Confirmado muestreando píxeles, no leyendo el CSS: un recorte 4× de la caja del
+  link daba UN solo color, `rgb(255,255,255)`, 64.496 píxeles.** Después del
+  arreglo: 307 colores y el link en `#4673AB` a **4,88:1**.
+  Es el espejo exacto de la regla que page-service.css ya documenta para la card de
+  precio oscura: **un panel que se pinta su propia superficie tiene que pintarse
+  también su propio color de texto.** Los valores se copiaron de
+  `.conversion__form-alt` (lead-form.css), que es LA MISMA línea bajo el formulario
+  compartido — dos tratamientos parecidos serían el problema, no la solución.
+- **G5 — el defecto real era UNO y estaba en el homepage: `4.7` con PUNTO.** Los
+  otros seis badges ya decían `4,7`. O sea el sitio publicaba su única cifra
+  confirmada en dos formatos, y justo en la página más vista.
+  - **"Pull the value dynamically": `content/values.json` ya tenía el objeto
+    `rating`** (`value: "4,7"`, `count: "97"`) y cuatro páginas ya lo consumían. Las
+    otras cuatro (homepage, `/jobs/`, `/ueber-uns/`, `/werkschutz/`) lo tenían
+    hardcodeado y ahora usan los tokens. **Actualizar el rating es una línea en un
+    archivo y se propaga a las ocho.** Un pull EN VIVO desde Google es otra cosa —
+    necesita la Places API con key, facturación y su gate de consentimiento, o sea
+    no entra en las restricciones actuales del proyecto. Decisión del cliente.
+  - ⚠️ **El `ratingValue` del JSON-LD se queda con PUNTO (`4.7`) en las 5 páginas
+    que lo publican, y NO es una inconsistencia: schema.org exige el punto como
+    separador decimal.** Es el mismo número en dos formatos a propósito. No
+    "unificarlo" con la coma.
+  - **Las estrellas ya estaban**: los 7 `.review-card` traen su
+    `.review-card__stars` con el fill al 94 % (= 4,7/5), así que el nice-to-have
+    opcional de G5 ya estaba cubierto. El único rating sin estrellas es el
+    `.ag-metric` de `/angebot/`, que es una teja de métrica y no un badge.
+- **Medido sobre un build propio, en las 15 páginas**: los **13 links inline**
+  (nuevos y viejos) pasan los dos umbrales — **≥44px de alto y ≥4,5:1** — y **cero
+  scroll horizontal** a 1440. Incluye las cuatro páginas cuyas reglas page-scoped se
+  borraron, así que la promoción no rompió nada.
+  - ⚠️ **Los dos links del FAQ del homepage miden 0px hasta que se despliega la
+    lista**: `.faq__list` arranca con `is-clamped` (el "ver más"). Sacando esa clase
+    miden **48,1px**. No es un defecto; es el estado plegado.
+- ⚠️⚠️ **DOS TRAMPAS DE ENTORNO QUE COSTARON TIEMPO Y VAN A VOLVER:**
+  1. **`dist/` NO es confiable como objetivo de verificación en este repo.** Hay otra
+     sesión buildeando en paralelo y iCloud creando copias de conflicto
+     (`css 2`, `angebot 2`, `assets 3`…). Una primera pasada de paridad de FAQ
+     reportó **42 mismatches** — todos falsos, incluidas páginas que no había tocado:
+     estaba leyendo un `dist/` a medio escribir. **Buildear a un árbol propio**
+     (`rsync` a un scratch + `node build.js` ahí) y medir eso.
+  2. **`build.js` ahora MINIFICA el CSS y lo bundlea en `css/app.css`.** Buscar un
+     comentario propio en la salida devuelve 0 y parece que la regla no se aplicó —
+     el minificador borra comentarios. **Grepear la DECLARACIÓN, no el comentario.**
+
+**2026-08-14, MISMO DÍA — REGLAS GLOBALES G2 (orden de los CTA del hero) y G3
+(destino según la ETIQUETA).** Auditados los **43 botones** del sitio, no sólo las
+páginas que el cliente nombró. La plantilla quedó escrita en
+[docs/page-conventions.md §3](docs/page-conventions.md) (el par de CTA) y **§11.3 /
+§11.3b** (orden y destinos).
+
+- **G2 — el orden ya estaba bien en 8 de los 9 heroes**, así que lo que hizo falta no
+  fue reordenar nada sino dejar la excepción POR ESCRITO. Default: primario
+  "Unverbindliches Angebot einholen", secundario el teléfono. ⚠️ **La inversión
+  (teléfono primario) queda ACOTADA A BRANDWACHE** — `/brandwache-nuernberg/` hoy y
+  `/brandwache/` cuando exista. El cliente lo subrayó explícitamente; **no
+  extenderla a las otras tres combos de Nürnberg**, que lideran con el formulario por
+  sus propios drafts.
+  - ⚠️ **`/brandwache/` TODAVÍA NO EXISTE** — es uno de los 404 planificados que ya
+    enlazan el nav y el footer. Decisión del cliente: anotar la excepción para cuando
+    se construya, no construir la página ahora. Está en §11.3.
+  - **`/jobs/` queda fuera de G2 a propósito**: su primario es "Jetzt unverbindlich
+    bewerben", que no es el par oferta/teléfono del que habla la regla — es una
+    página de reclutamiento y su acción es postularse. Ya tiene el secundario de
+    teléfono desde G1.
+  - **Los CTA de CIERRE del Ratgeber tampoco entran**: G2 dice "hero", y esas cuatro
+    páginas no tienen CTA en el hero.
+- **G3 — el defecto que nombró el cliente era real y ya estaba PREVISTO en este
+  archivo.** Las 3 case studies mandaban "Kostenfreies Sicherheitskonzept anfordern"
+  a `/#sicherheitsanalyse`. Era deliberado en su momento — `/sicherheitskonzept/` no
+  existía y publicar el botón de conversión PRIMARIO como 404 era peor — y la entrada
+  del 2026-08-05 lo dejó anotado textual: *"Cuando se construya `/sicherheitskonzept/`
+  es una línea por página."* **Esta es esa línea, tres veces.**
+- ⚠️⚠️ **EL COROLARIO QUE NO ERA OBVIO: G3 VUELVE ESA ETIQUETA INUTILIZABLE EN SU
+  PROPIA PÁGINA DESTINO.** `/sicherheitskonzept/` tenía **cuatro** CTAs con ese texto
+  apuntando a su propio `#anfrage`. Las dos reglas la aprietan desde los dos lados —
+  G2 fija la etiqueta del primario del hero, y G3 dice que sólo "Unverbindliches
+  Angebot einholen" puede llevar a un formulario — y mandarlas a
+  `/sicherheitskonzept/` sería un enlace a sí misma. O sea **lo que tenía que cambiar
+  era la ETIQUETA, no el destino**: las cuatro pasaron a "Unverbindliches Angebot
+  einholen" → `#anfrage`.
+  - **Las cuatro y no sólo la del hero, y fue decisión del cliente** (se le preguntó
+    con las tres salidas): con una etiqueta en el hero y otra en los tres CTAs de más
+    abajo, la página usaría dos palabras distintas para un mismo destino.
+  - ⚠️ **El H2 sobre el formulario sigue diciendo "Jetzt kostenfreies
+    Sicherheitskonzept anfordern", y está bien: es un ENCABEZADO, no un CTA.**
+    Ninguna de las dos reglas lo toca, y es lo que mantiene la promesa de la página en
+    sus propias palabras. No "corregirlo" por consistencia con los botones.
+- **Verificado por auditoría automática de los 43 botones** (etiqueta ↔ destino, sobre
+  el markup fuente y descartando comentarios): **cero violaciones de G3**, orden de
+  hero correcto en los 9, y Brandwache invertida como corresponde. Links internos de
+  `dist/` re-chequeados: `/sicherheitskonzept/` resuelve, así que los tres CTAs nuevos
+  no son 404 (los ~18 rotos por página que reporta la sonda son los planificados de
+  siempre, del nav y el footer compartidos — `/objektschutz/`, las 9 ciudades,
+  `/brandwache/`…).
+- ⚠️ **Redundancia menor que dejó la corrección, NO tocada:** dos de las tres case
+  studies ya tenían un `.cs-related__link` a `/sicherheitskonzept/` en su bloque
+  "Weiterführend", así que ahora el CTA primario y un link de más abajo van al mismo
+  lado. Es borrar un `<li>` en dos archivos, pero es contenido y no se sacó sin
+  pedido.
+
+**2026-08-14 — `/kontakt/`: VUELVE LA FRASE 24/7 DEL TELÉFONO, VUELVEN LOS SELLOS
+DEKRA, Y EL CAMPO TELÉFONO PASA A OBLIGATORIO** (cliente, Kontakt 2/3/4).
+
+- ⚠️⚠️ **DOS DE LOS TRES REVIERTEN DECISIONES DEL PROPIO CLIENTE QUE ESTE ARCHIVO
+  MARCABA COMO "NO REPONER".** La entrada del 2026-08-05 decía textual, sobre los
+  fragmentos que faltaban en esta página: *"NO son un olvido, son decisiones del
+  cliente, reconfirmadas… **No reponerlos 'para completar el doc'**"*. El cliente
+  ahora pidió dos de ellos por escrito, así que **la instrucción posterior gana** y
+  esa nota queda superseded para esas dos líneas.
+  **El tercer fragmento — el "bei Angebotsanfragen inklusive kostenfreier
+  Erstberatung" del e-mail — NO se pidió y sigue afuera.** No reponerlo de arriba.
+- **La frase del teléfono va COMPLETA** ("Rund um die Uhr erreichbar, an 365 Tagen
+  im Jahr.") y **se conserva la segunda oración** (el gancho de Brandwache), que es
+  lo único que no dice ninguna otra parte de la página. ⚠️ Con esto la página
+  vuelve a afirmar 24/7 **dos veces** (acá y en la Highlight-Box) — que es
+  exactamente lo que el cliente había resuelto en agosto quedándose con la de
+  abajo. Es su decisión; si vuelve a molestar, la que se edita es la Highlight-Box,
+  que es el bloque agregado después.
+- **Los sellos DEKRA vuelven con el bloque EXACTO que se había borrado**
+  (`.contact-cert*`, markup y CSS recuperados de git), no con un diseño nuevo — así
+  esta página vuelve a lo ya aprobado en vez de estrenar una tercera variante.
+  Van **después de la Highlight-Box**, que no existía cuando se quitaron: leen como
+  el cierre de la columna y no como un cuarto item compitiendo con las tres tejas.
+  ✅ Cierra de paso algo que este archivo había marcado como pérdida real: la
+  afirmación de certificación había desaparecido **por completo** de `/kontakt/`.
+  - ⚠️ **UNA desviación del restore, y es de legibilidad: 2.25rem → 2.75rem.** Al
+    tamaño original renderizan **24x44 px** y el wordmark DEKRA adentro de un sello
+    399x600 no se lee — un símbolo de certificación que nadie puede identificar no
+    hace el trabajo que se pidió. 2,75rem es **el más chico que el sello tiene en
+    todo el sitio** (las trust bands de hero), así que sigue siendo discreto.
+    Medido: **29x44 y ratio 0,665 = 399/600 exacto**, o sea sin deformar (la regla
+    del proyecto: los sellos se escalan, nunca se recortan ni distorsionan).
+- **El campo Telefon es `required`, y el label lleva el " *"**: `required` solo lo
+  anuncia el lector de pantalla, y quien ve la página se entera recién cuando el
+  formulario se niega a enviarse. ⚠️ Ahora el form pide e-mail **y** teléfono —
+  es lo que especifica el Webtext 25 y el cliente lo pidió dos veces; si alguna vez
+  se ve como caída de envíos, revertirlo es decisión suya, no un bug.
+- **Medido a 320 / 390 / 768 / 1024 / 1440:** sin scroll horizontal, los 5 campos
+  obligatorios correctos (`name, email, phone, message, privacy`), los dos sellos
+  a 29x44 sin deformar, y la fila de sellos envuelve sola en teléfono (101px de
+  alto a 320, 44 en escritorio).
+
+**2026-08-14 — UNA SOLA FUENTE DE DATOS PARA LOS EINSATZGEBIETE, Y LOS 5 SIN
+PÁGINA ENTRAN AL MAPA DE `/einsatzgebiete/`** (cliente, Einsatzgebiete 1: "add the
+missing locations (Hof, Kronach, Kulmbach, Lichtenfels, Schwandorf — no links) and
+build it so the map/pill list updates automatically … single data source").
+
+- ⚠️ **LA MISMA LISTA ESTABA ESCRITA A MANO EN CINCO LUGARES Y YA HABÍA
+  DIVERGIDO** — `partials/coverage-chips.html`, la segunda fila de chips dentro de
+  `pages/index.html`, `partials/footer-de.html`, la tabla `CITIES` de
+  `docs/design-sources/franken-map.py` y el objeto `coverageLocations` de
+  `js/coverage-map.js`. Esa divergencia es el 404 de Hof que el footer publicó en
+  TODAS las páginas hasta el 2026-08-05. Ahora la lista es **`content/coverage.json`**
+  y esos cinco la consumen.
+- **`build.js` gana UN mecanismo, no un lenguaje de plantillas:** marcadores
+  `<!-- coverage: chips|mentions|footer row="N" -->` que emiten exactamente el
+  markup que antes se escribía a mano. **Sigue siendo HTML estático** — y eso es
+  justamente por qué se resuelve en build y no en el browser: estos pills son
+  enlaces internos crawleables y no pueden depender de JS.
+  ⚠️ El `row` es un campo del DATO, no un slice del markup — la división 6+4 que
+  espeja al footer sobrevive sin lógica en la plantilla.
+- **`href: null` es lo que hace cumplir "no links"**: el renderer de `mentions`
+  emite `<button>` y el de `footer`/`chips` sólo acepta entradas CON href. O sea
+  una ubicación sin página **no puede** volver a aparecer como link en el footer.
+  El día que exista `/sicherheitsdienst-hof/`, se le pone la URL y sube sola.
+- **El mapa Leaflet del homepage ahora hace `fetch` de esa misma lista**
+  (`/assets/data/coverage-locations.json`, que genera el build). Es un request de
+  ~1,5KB en un mapa que ya baja un geojson por ciudad y que sólo carga al entrar
+  en viewport. Si falla, el mapa no se construye — es enhancement, y los links de
+  al lado funcionan igual.
+- ⚠️ **EL SVG DEL HERO DE `/einsatzgebiete/` NO ES AUTOMÁTICO, a propósito**: es
+  arte vectorial inline, generado una vez en desarrollo
+  (`python3 docs/design-sources/franken-map.py`, que ahora lee el JSON) y pegado.
+  Agregar una ciudad = una entrada + su geojson + `npm run build`; el hero además
+  pide re-correr y pegar. Está escrito en el `_comment` del propio JSON.
+- ✅ **Probado de punta a punta, no deducido:** se agregó una ubicación de prueba
+  ("Testhausen"), se buildeó, y apareció **sola en los chips del homepage, en el
+  footer de todas las páginas y en los datos del mapa**; después se revirtió y
+  desapareció de las tres. Es el mismo tipo de prueba que cerró G10.
+- ⚠️⚠️ **LAS ETIQUETAS DEL MAPA CHOCABAN EN TELÉFONO, y la causa no es obvia: el
+  `font-size` de esas labels está en UNIDADES DEL viewBox** (28 en escritorio, 46
+  en teléfono) para compensar que el SVG se dibuja más chico. Con 5 labels más,
+  a 46 unidades había **tres pares superpuestos a 390** (Schweinfurt×Lichtenfels,
+  Ansbach×Schwandorf, Hof×Kronach) y **cero en todos los anchos mayores** — la caja
+  crece mientras la geometría del mapa no. Arreglado con dos palancas: **el `side`
+  de Schweinfurt y Ansbach** (que no cuesta legibilidad) y **46 → 40 unidades sólo
+  en el tier de teléfono** (~14px en pantalla). Medido después: **cero
+  superposiciones y nada fuera del marco a 320 / 390 / 430 / 599 / 600 / 768 /
+  1024 / 1280 / 1440 / 1920**.
+- ⚠️ **Schwandorf cae FUERA del contorno de Franconia** (Oberpfalz) pero **dentro
+  del viewBox** — verificado contra el bbox de las tres regiones antes de dibujar,
+  porque si hubiera caído afuera habría que reproyectar el mapa entero. Se ve como
+  un pin al sudeste del contorno, que es lo correcto y lo mismo que hace el mapa
+  del homepage.
+- ⚠️ **Bug latente arreglado de paso en `js/eg-hero-map.js`: el stagger de las
+  labels era POR ELEMENTO (`0.08`), así que cada ubicación nueva alargaba la
+  animación del hero.** Con 15 el timeline pasaba de 3,67s a **4,07s — medido, no
+  estimado** (se corrió el archivo viejo y el nuevo y se leyó `totalDuration()`).
+  Ahora es `{ amount: 0.72 }`, el spread TOTAL que tenían las 10 labels: mismo
+  barrido hoy y **no crece nunca más**. Es la convención que el resto del repo ya
+  usa (`js/svg-draw.js`, `js/steps-sequence.js`).
+- ⚠️ **Nota de medición, para no volver a perseguirlo:** bajo
+  `--virtual-time-budget` el ticker de GSAP (rAF) avanza de forma inconsistente —
+  dos corridas idénticas dieron "termina a los 5s" y "no termina nunca". El estado
+  final se verifica **llevando el timeline a `progress(1)` y leyendo**: 15 pins,
+  15 labels y 15 shapes en opacidad 1, dash de las 3 regiones limpiado y la clase
+  `--live` retirada. Con `prefers-reduced-motion` el mapa se dibuja completo sin
+  que el script toque nada.
+- ⚠️ **PARA CHRIS:** el `eg-note` de esa página dice "Ihr Standort ist nicht dabei?
+  … auch Hof, Kulmbach, Lichtenfels, Kitzingen, Haßfurt, Kronach oder Schwabach" —
+  cuatro de esos ahora SÍ están en el mapa, así que la frase quedó a contramano de
+  lo que se ve. Es copy del draft y no se tocó.
+
+**2026-08-14 — LA SECCIÓN DE FILOSOFÍA (SEO) DEJA DE SER 2-UP EN TABLET: TRES
+CARDS APILADAS Y ANCHAS** (cliente, Change Request 18: "¿es el layout actual el
+mejor? considerá centrar la card de abajo" → después, viéndolo: "mejor una abajo de
+la otra y que sean más horizontales, con un width coherente para tablet").
+
+- ⚠️ **EL PROBLEMA ES QUE SON TRES CARDS EN DOS COLUMNAS**, así que la tercera
+  quedaba sola en su propia fila debajo de la izquierda — una L, que es la captura
+  que mandó el cliente. De un huérfano se sale centrándolo o dejando de tener filas;
+  el cliente eligió lo segundo. **Revierte la banda `768–1199.98` que era
+  `repeat(2, …)`.**
+- **El cap de 44rem es lo que hace que apilar funcione, y no es un número redondo:**
+  a 1199 una card a todo el container mide ~1100px y estos párrafos son de ~500
+  caracteres, o sea **~140 caracteres por línea**. 44rem es la medida que el proyecto
+  ya usa para prosa de artículo (`.cs-article`, `.rg-article`) y deja la card en
+  **704px con ~88 caracteres por línea**: ancha y horizontal, todavía legible. La
+  sección existe para ser LEÍDA (es el bloque de SEO/GEO de la página).
+- ✅ **Ganancia lateral:** el título de la card 1 pasó de tres líneas (y cortado en
+  la captura del cliente) a **una sola**.
+- ⚠️ **COSTO MEDIDO, y crece con el ancho:** la sección va de 1466 → **1392px a 768**
+  (o sea más CORTA en tablet, que es donde se pidió), pero 1298 → **1426 a 1024** y
+  1288 → **1506 a 1199**. Apilado a ancho fijo no se acorta cuando crece el viewport;
+  2-up sí. Si esos ~200px del extremo alto molestan, la palanca es subir el cap en
+  esa banda, y se paga en largo de línea.
+- **De 1200 para arriba no cambió nada** (las 3 columnas siguen igual) y en teléfono
+  tampoco (el cap es inerte, el container es más angosto).
+- **Medido a 390 / 767 / 768 / 834 / 900 / 1024 / 1100 / 1199 / 1200 / 1440:** tres
+  filas en toda la banda, card centrada al eje (0px de desvío), sin scroll horizontal,
+  y los marcos dibujados por `js/philosophy-cards.js` se re-miden solos al tamaño
+  nuevo (703x239 dentro de una card de 704x240, o sea el medio trazo de inset).
+
+**2026-08-14 — "25.000 €" PARTÍA EL € A OTRA LÍNEA EN LAS KACHELN DE RESULTADOS**
+(cliente, Change Request 17: "esto no puede pasar… hacé los números un poco más
+chicos o usá 25K €"). Toca las TRES páginas que publican ese bloque: homepage,
+`/referenzen/` y `/sicherheitskonzept/`.
+
+- ⚠️ **LA CAUSA ES QUE LA CIFRA SE DIMENSIONA CON EL VIEWPORT Y LA COLUMNA MIDE UN
+  TERCIO DE ÉL.** A 768 las Kacheln pasan a 3-up **de un paso**: la columna cae de
+  ~670px a ~180 mientras el clamp sigue subiendo con `vw`. Medido: "25.000 €" pedía
+  **204px en una columna de 182** (homepage) y **de 150** en las otras dos, cuyo
+  `<li>` lleva además 24px de padding a cada lado para el divisor.
+- **Se eligió la primera opción del cliente (números más chicos), NO "25K €"**, por
+  dos razones concretas: una cifra alemana conserva su notación, y `initStatCountUp()`
+  anima los dígitos — "25K" o deja de contar o cuenta hasta 25.
+- **El arreglo son DOS mitades y hacen falta las dos:** un `&nbsp;` entre cifra y
+  unidad (que es además la regla tipográfica, DIN 5008) **prohíbe** el corte, y el
+  tamaño garantiza que no tenga que haberlo. **El NBSP sobrevive al count-up**: esa
+  función recompone `prefijo + número + sufijo` y el sufijo se captura tal cual —
+  verificado con la animación corriendo (`"25.000 €"`, una línea).
+- **La banda es 768–1199.98**, no 768–1023: en `/referenzen/` y `/sicherheitskonzept/`
+  seguía partiendo hasta ~1200, que es donde la columna finalmente alcanza a la
+  tipografía. Abajo de 768 (una Kachel por fila) y de 1200 para arriba **nada cambió**.
+- **Un solo valor para las tres copias** (`clamp(2.25rem, 6.7vw - 0.9rem, 4.15rem)`),
+  calibrado contra la MÁS ANGOSTA de las tres. Da 37 / 41 / 46 / 54 / 66px a 768 / 834
+  / 900 / 1023 / 1199, siempre con ~8–20 % de aire, y **empalma con el clamp base a
+  1200** (66 → 68px). ⚠️ Son tres copias del mismo componente en tres hojas — el
+  razonamiento completo está en `page-home.css`; **mantener las tres en sincro**.
+- **Medido en las 3 páginas a 320 / 375 / 390 / 640 / 767 / 768 / 834 / 900 / 1000 /
+  1023 / 1024 / 1100 / 1199 / 1200 / 1280 / 1440 / 1920:** las 9 cifras en **UNA línea
+  en todos los anchos**, sin scroll horizontal, y capturas en teléfono, tablet y
+  escritorio para verlo y no deducirlo.
+
+**2026-08-14 — EL CONFIGURADOR DE OUTFITS: LAS PASTILLAS AHORA LLEGAN HASTA 1024,
+NO HASTA 768** (cliente, Change Request 16: "on tablet use pills (like suggested
+for mobile) instead of the current selector — otherwise you can't click through the
+outfits and see the model fully at the same time"). Es **un solo número**: la query
+del bloque de `page-home.css` pasó de `max-width: 767.98px` a `max-width: 1023.98px`.
+
+- ⚠️ **LA BANDA 768–1023 NUNCA TUVO TRATAMIENTO PROPIO, y ése era el bug.** El
+  bloque de teléfono cortaba en 767.98 y el split de escritorio arranca en 1024, así
+  que la tablet caía en el layout BASE: las siete filas rayadas a todo el ancho
+  apiladas ARRIBA del visor, que es exactamente la captura que mandó el cliente.
+- **La queja se midió, no se interpretó.** De la primera pastilla al pie de la foto
+  había **1227px a 768x1024 y 1238 a 1023x900**, o sea el control y su resultado no
+  entraban juntos en ninguna pantalla de tablet. Ahora **836px en los dos**, que sí
+  entra — y las 7 pastillas caen **en UNA sola fila** (en teléfono son 2). La sección
+  baja de 1768 a **1489px** a 768.
+- **La lista rayada no está mal: está mal EN UNA COLUMNA.** Sigue siendo el
+  tratamiento de ≥1024, donde el picker vive en su propia columna AL LADO del modelo
+  y las dos cosas se ven a la vez. Apilada no puede.
+- **El razonamiento del `:hover` ya era cierto para tablet**: una tablet es táctil, y
+  en táctil el hover queda latcheado después de un tap — la fila recién tocada se veía
+  seleccionada al lado de la selección real. Sólo la query estaba equivocada.
+- ⚠️ **Se hereda el centrado del teléfono** (H2, lede y fila de pastillas), o sea la
+  tablet pasa de título rangeado a la izquierda a composición centrada. Es lo que pide
+  "usá el tratamiento de mobile", y es coherente con el modelo, que en una columna ya
+  estaba centrado. Si el cliente lo quiere a la izquierda en tablet, son dos reglas.
+- **Medido a 390 / 768 / 834 / 1023 / 1024:** teléfono **idéntico** al build anterior
+  (669px de span, 2 filas de pastillas) y **1024 idéntico también** (lista, dos
+  columnas, 482px) — el cambio sólo toca la banda intermedia. Objetivo táctil mínimo
+  **44px**, sin scroll horizontal en ninguno. Click real en tablet: la pastilla cambia
+  la foto (`polo-front` → `winterjacke-front`), queda **exactamente una** con
+  `aria-pressed="true"`, y el toggle de pose sigue funcionando (`winterjacke-angled`).
+- **`js/outfits.js` no se tocó** — no sabe nada de anchos, y no tuvo que saberlo.
+
+**2026-08-14 — LOS 5 EINSATZGEBIETE SIN PÁGINA PASAN A PASTILLAS Y AL MAPA**
+(cliente, Change Request 8: "must not just be listed as plain text below — render
+them as pills AND mark them on the map… they get no own city pages (render without
+links), but they must be visible"). Hof, Kronach, Kulmbach, Lichtenfels, Schwandorf.
+
+- ⚠️ **REVIERTE la nota del 2026-08-05 que decía "Kept a plain `<p>`, not pills: a
+  pill reads as tappable, and none of these are".** La objeción no se ignoró, se
+  resolvió: **ahora SÍ son tappables** — cada una es un `<button>` que lleva el mapa
+  a su propio contorno, exactamente el precedente del toggle "Alle", que es la
+  pastilla sin página que este sitio ya tenía. **Lo que ninguna es, es un link.**
+  Si alguna vez una consigue página, sube a la lista enlazada de
+  `partials/coverage-chips.html` y se lleva su entrada del footer.
+- **El lead-in se queda como frase** ("Außerdem im Einsatz in:"), así el texto
+  crawleable sigue leyéndose como prosa y no como cinco sustantivos sueltos.
+  `.coverage__mentions` ahora estiliza SÓLO esa línea.
+- **Los 4 contornos que faltaban se bajaron una vez de Nominatim**, mismo proceso
+  verificado que los diez: polígono de CIUDAD, nunca el "Landkreis" homónimo
+  (los cuatro tienen uno), confirmado comprobando que el polígono **contiene** las
+  coordenadas del pueblo — es el chequeo que el incidente de Fürth dejó como regla.
+  Hof ya tenía el suyo desde julio.
+  ⚠️ **A diferencia de los diez, estos cuatro van SIMPLIFICADOS** (Douglas-Peucker,
+  10 m — menos de un píxel de pantalla al zoom 13, que es el tope al que se dibuja
+  una ciudad sola): **266 KB crudos → 60 KB**, y la vista "Alle" los baja todos de
+  entrada. Re-bajarlos a full detail sólo si el mapa alguna vez pasa de zoom 13.
+- ⚠️ **Schwandorf es el único fuera de Franconia** (Oberpfalz), así que su polígono
+  cae afuera del wash de `franken.geojson`. Es correcto — el H2 dice "in Franken und
+  ganz Bayern" — y **no costó zoom**: medido contra el build anterior, la vista
+  "Alle" queda en **tileZoom 8 y la distancia Bamberg↔Nürnberg en 128px, idénticas**,
+  porque el anillo de la región ya fijaba los bounds.
+- **Medido a 1440 / 768 / 390:** 15 marcadores y **15/15 dentro del viewport del
+  mapa**, 16 pastillas (10 `<a>` + 6 `<button>`), click en una mention actualiza el
+  overlay, deja `aria-pressed="true"` y **exactamente una** pastilla activa, sin
+  scroll horizontal. En teléfono el desplegable de `js/coverage-select.js` los toma
+  solo (11 → **16 entradas**, mínimo 44px de target) — no necesitó una línea de JS.
+- **Ni una regla de CSS nueva**: las pastillas nuevas consumen `.coverage__pill` tal
+  cual, que es lo que hace que se lean como el mismo sistema.
+
 **2026-08-10, MISMO DÍA — LA BANDA NAVY: MÁS ALTA Y CON EL CELESTE PEGADO A LOS
 BORDES** (cliente: "me gustaría que el azul navy tenga más height y que el celeste
 esté más contra los bordes, o sea que esté bien en los límites").
@@ -7625,8 +8669,19 @@ either elsewhere:
 Typography: system font stack — "Helvetica Neue" (macOS/iOS) falling back
 to Arial elsewhere (client request, 2026-07-17; see `--font-family-base`
 in `css/tokens.css` for the full reasoning) — Regular (400) for body,
-Extra Bold (800) for headings, same weight tokens as before, just no
-longer backed by a self-hosted file. Real Helvetica can't legally be
+**Bold (700)** for headings, no longer backed by a self-hosted file.
+⚠️ **`--font-weight-bold` was 800 until 2026-08-14 and that was a real
+rendering bug, not just an unreachable ideal.** The CI spec says "Extra Bold
+800", which was honest while the site was set in self-hosted Open Sans (a
+variable font with a genuine 800). This stack has no 800 at normal width:
+HelveticaNeue.ttc tops out at Bold 700, and its ONLY faces ≥800 are
+*Condensed Bold* and *Condensed Black (900)* — both condensed. So a request
+for 800 has no normal-width face to match: Chrome clamps to 700, WebKit
+substitutes **Helvetica Neue Condensed Black**, and the client saw exactly
+that ("one section headline appears to use a different font"). 700 is a real
+face in every fallback, so it now renders identically everywhere — and it is
+still "bold" for WCAG's large-text threshold, which several contrast
+decisions depend on (see `.service-related__title`). Real Helvetica can't legally be
 self-hosted without a paid Monotype license, and no such files exist in
 this project, so there's deliberately no `@font-face` anymore — this is
 the standard web-safe workaround, not a placeholder pending a "real"

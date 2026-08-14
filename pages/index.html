@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="de">
-<!-- German homepage, served at / (the default/primary language, client
-     2026-07-22 bilingual setup). The English homepage lives at /en/
-     (pages/en/index.html, lang="en"). Copy here is a first-pass German
-     DRAFT for Christoph to review — service names (Werkschutz, Objektschutz…)
-     stay German by definition, proper nouns and legal codes (DIN 77200,
-     §34a GewO) unchanged. Both pages cross-link via hreflang and the header
-     switcher (partials/header-de.html). -->
+<!-- German homepage, served at /. THE SITE IS GERMAN-ONLY (client 2026-08-13,
+     Q8: "No English version. Please take the outdated English homepage down
+     before anything gets indexed"). The old /en/ homepage, partials/header-en.html
+     and the English partials/header.html + partials/footer.html were all DELETED
+     in that pass — git has them. This page therefore no longer publishes an
+     `hreflang="en"` alternate, and /en/ is gone from sitemap.xml.
+     The self-referencing `hreflang="de"` + `x-default` pair stays: it is valid
+     on a single-language site and simply states which language this is.
+     Service names (Werkschutz, Objektschutz…) stay German by definition; proper
+     nouns and legal codes (DIN 77200, §34a GewO) unchanged. -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +17,6 @@
   <meta name="description" content="DEKRA-zertifizierter Sicherheitsdienst aus Bamberg: Objektschutz, Werkschutz, Brandwache &amp; mehr. Fester Ansprechpartner, 24/7 erreichbar. Angebot in 1 Werktag.">
   <link rel="canonical" href="https://frankonia-sicherheit.de/">
   <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/">
-  <link rel="alternate" hreflang="en" href="https://frankonia-sicherheit.de/en/">
   <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/">
 
   <!-- Open Graph -->
@@ -148,7 +150,7 @@
           "name": "Was kostet ein Sicherheitsdienst pro Stunde?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Ein professioneller Sicherheitsdienst kostet in der Regel zwischen 26 und 32 Euro pro Stunde, zuzüglich tariflicher Zuschläge für Nacht, Wochenende und Feiertage. Wo Ihr Auftrag in der Spanne liegt, bestimmen Qualifikation, Leistungsumfang und Startzeitraum — dafür bekommen Sie ein durchdachtes System mit digitalen Nachweisen statt bloßer Stunden. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
+            "text": "Ein professioneller Sicherheitsdienst kostet in der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde, zuzüglich tariflicher Zuschläge für Nacht, Wochenende und Feiertage. Wo Ihr Auftrag in der Spanne liegt, bestimmen Qualifikation, Leistungsumfang und Startzeitraum — dafür bekommen Sie ein durchdachtes System mit digitalen Nachweisen statt bloßer Stunden. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
           }
         },
         {
@@ -307,8 +309,9 @@
   <script src="/js/sticky-story.js" defer></script>
   <script src="/js/pain-hook-journey.js" defer></script>
   <script src="/js/system-story.js" defer></script>
-  <!-- MOBILE swipe-strip controls (counter, progress line, keyboard) for every
-       [data-swipe-carousel] on the page — <768px only. Deliberately NOT part of
+  <!-- Swipe-strip controls (counter, progress line, keyboard) for every
+       [data-swipe-carousel] on the page — <768px, or <1024px for a strip that
+       carries data-swipe-tablet (today only "Unser System"). Deliberately NOT part of
        system-story.js/social-carousel.js: those are the desktop GSAP/3D
        sequences and return early without their dependencies, while the strips
        are native CSS scroll-snap that must keep working regardless. -->
@@ -421,8 +424,8 @@
                  (page-home.css) turns the shared .btn pill into an outline
                  and de-emphasizes it so it never competes with the blue CTA. -->
             <a class="btn btn--primary" href="#sicherheitsanalyse">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
-            <a class="btn hero__phone" href="tel:+499519643520">
-              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+            <a class="btn btn--secondary hero__phone" href="tel:+499519643520">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
               +49 951 964352-0
             </a>
           </div>
@@ -478,8 +481,12 @@
                   </span>
                 </span>
                 <span class="review-card__score">
-                  <span class="review-card__value">4.7</span>
-                  <span class="review-card__count">97 Bewertungen</span>
+                  <!-- ⚠️ Read "4.7" with a DOT until 2026-08-14 (client rule G5): the site
+                       published its one confirmed figure in two formats. Tokens now — the
+                       value lives in content/values.json. The JSON-LD ratingValue above keeps
+                       a dot on purpose: schema.org requires a period. -->
+                  <span class="review-card__value">{{rating.value}}</span>
+                  <span class="review-card__count">{{rating.count}} Bewertungen</span>
                 </span>
               </div>
             </div>
@@ -802,8 +809,8 @@
         </div>
         <ul class="konzept__points" data-item-reveal=".konzept__point">
           <li class="konzept__point"><svg class="icon konzept__tick" aria-hidden="true"><use href="#icon-check"></use></svg><span>Begehung und Risiko-Bewertung vor Ort — kostenfrei</span></li>
-          <li class="konzept__point"><svg class="icon konzept__tick" aria-hidden="true"><use href="#icon-check"></use></svg><span>Konzept-Empfehlung: Personal, Technik oder eine Kombination</span></li>
-          <li class="konzept__point"><svg class="icon konzept__tick" aria-hidden="true"><use href="#icon-check"></use></svg><span>Ergebnisse, die sich rechnen: bis zu 30 % Kosten gespart</span></li>
+          <li class="konzept__point"><svg class="icon konzept__tick" aria-hidden="true"><use href="#icon-check"></use></svg><span>Konzept-Empfehlung: Personal, Technik oder eine Kombination aus beidem</span></li>
+          <li class="konzept__point"><svg class="icon konzept__tick" aria-hidden="true"><use href="#icon-check"></use></svg><span>Ergebnisse, die sich rechnen: Kunden sparten mit unseren Konzepten bis zu 30 % Kosten</span></li>
         </ul>
       </div>
 
@@ -897,8 +904,8 @@
               </div>
               <div class="konzept-seq__label konzept-seq__label--walk">
                 <span class="konzept-seq__num">Schritt 1</span>
-                <span class="konzept-seq__ttl">Rundgang vor Ort</span>
-                <p>Wir verstehen Ihr Objekt und Ihre Abläufe.</p>
+                <span class="konzept-seq__ttl">Ortsbegehung</span>
+                <p>Wir erfassen Objekt, Umfeld und Abläufe vor Ort.</p>
               </div>
                 <ul class="konzept-seq__terms">
                   <li><span class="konzept-seq__term-name">Hauptzugang</span><span class="konzept-seq__term-sub">Besucher- und Zufahrtskontrolle</span></li>
@@ -1039,7 +1046,7 @@
               <div class="konzept-seq__label">
                 <span class="konzept-seq__num">Schritt 2</span>
                 <span class="konzept-seq__ttl">Risikoanalyse</span>
-                <p>Wir erkennen Schwachstellen und Abdeckungslücken.</p>
+                <p>Wir bewerten Gefährdungen, Schwachstellen und Abdeckungslücken.</p>
               </div>
                 <ul class="konzept-seq__terms">
                   <li><span class="konzept-seq__term-name">Schwachstelle</span><span class="konzept-seq__term-sub">Ungesicherter Zugangspunkt</span></li>
@@ -1165,7 +1172,7 @@
                              corner up-left without crossing the camera itself. -->
                         <path class="kz-tip__link" d="M 276 466 L 157.5 244.1 Q 150 230 132 230 L 7 230"></path>
                         <circle class="kz-tip__dot" cx="276" cy="466" r="6"></circle>
-                        <g class="kz-tip__box" transform="translate(-250 240)"><text class="kz-tip__label" x="0" y="-2">Kameras</text><text class="kz-tip__sub" x="0" y="41">360° Überwachung</text></g>
+                        <g class="kz-tip__box" transform="translate(-250 240)"><text class="kz-tip__label" x="0" y="-2">Videoüberwachung</text><text class="kz-tip__sub" x="0" y="41">Lückenlose Abdeckung</text></g>
                       </g>
                       <!-- The three right-hand labels below were moved OFF the cube's outline
                            (client 2026-08-04: "que los textos no se choquen con el diagrama").
@@ -1197,7 +1204,7 @@
                       <g class="kz-tip">
                         <path class="kz-tip__link" d="M 688 436 L 959 239.4 Q 972 230 988 230 L 1034 230"></path>
                         <circle class="kz-tip__dot" cx="688" cy="436" r="6"></circle>
-                        <g class="kz-tip__box" transform="translate(1050 240)"><text class="kz-tip__label" x="0" y="-2">Außenpatrouille</text><text class="kz-tip__sub" x="0" y="41">Optimierte Route</text></g>
+                        <g class="kz-tip__box" transform="translate(1050 240)"><text class="kz-tip__label" x="0" y="-2">Streifendienst</text><text class="kz-tip__sub" x="0" y="41">Optimierte Routen</text></g>
                       </g>
                       <g class="kz-tip">
                         <path class="kz-tip__link" d="M 950 566 L 1011.7 585.2 Q 1027 590 1043 590 L 1089 590"></path>
@@ -1227,12 +1234,21 @@
                       <g class="kz-tip">
                         <path class="kz-tip__link" d="M 643 572 L 959.4 818.2 Q 972 828 988 828 L 1034 828"></path>
                         <circle class="kz-tip__dot" cx="643" cy="572" r="6"></circle>
-                        <g class="kz-tip__box" transform="translate(1050 838)"><text class="kz-tip__label" x="0" y="-2">Brandmelder</text><text class="kz-tip__sub" x="0" y="41">Frühwarnung</text></g>
+                        <!-- The name is the only two-line LABEL in the diagram, and it is measured, not a
+                             style choice: as one line "Brandmeldeanlage (BMA)" is 230px at 1440 starting
+                             at the cube's right edge, which put it 42px PAST the viewport (25px at 1024,
+                             34px at 1280, 1920 was the only width where it fit) — i.e. cut off, since
+                             nothing here scrolls sideways. Split it and the widest line is
+                             "Brandmeldeanlage". Same multi-line stack the other tips already use for
+                             their subs, and the client's wording is untouched. The 39/80 offsets keep
+                             the block inside the SVG's own 0..1110 box (ends at 918) and leave 132 units
+                             to Wachpersonal below — the gap the 2026-08-04 pass settled on. -->
+                        <g class="kz-tip__box" transform="translate(1050 838)"><text class="kz-tip__label" x="0" y="-2">Brandmeldeanlage</text><text class="kz-tip__label" x="0" y="39">(BMA)</text><text class="kz-tip__sub" x="0" y="80">Frühwarnung</text></g>
                       </g>
                       <g class="kz-tip">
                         <path class="kz-tip__link" d="M 458 724 L 166 739.2 Q 150 740 132 740 L 6 740"></path>
                         <circle class="kz-tip__dot" cx="458" cy="724" r="6"></circle>
-                        <g class="kz-tip__box" transform="translate(-250 750)"><text class="kz-tip__label" x="0" y="-2">Alarmanlage</text><text class="kz-tip__sub" x="0" y="41">Einbruchmeldung</text></g>
+                        <g class="kz-tip__box" transform="translate(-250 750)"><text class="kz-tip__label" x="0" y="-2">Alarmanlage</text><text class="kz-tip__sub" x="0" y="41">Einbruch- &amp; Überfallmeldung</text></g>
                       </g>
                       <!-- Both bottom labels dropped 2026-08-04 (client: "están muy pegadas a
                            las de arriba"). The crowding was a knock-on of the two labels added
@@ -1254,7 +1270,7 @@
                       <g class="kz-tip">
                         <path class="kz-tip__link" d="M 420 852 L 223.7 971.7 Q 210 980 192 980 L 73 980"></path>
                         <circle class="kz-tip__dot" cx="420" cy="852" r="6"></circle>
-                        <g class="kz-tip__box" transform="translate(-250 990)"><text class="kz-tip__label" x="0" y="-2">Zutrittskontrolle</text><text class="kz-tip__sub" x="0" y="41">Gate &amp; ID-System</text></g>
+                        <g class="kz-tip__box" transform="translate(-250 990)"><text class="kz-tip__label" x="0" y="-2">Zutrittskontrolle</text><text class="kz-tip__sub" x="0" y="41">Pforte &amp; Schrankenanlage</text></g>
                       </g>
                       <g class="kz-tip">
                         <path class="kz-tip__link" d="M 705 902 L 957.8 1032.6 Q 972 1040 988 1040 L 1034 1040"></path>
@@ -1268,16 +1284,21 @@
               <div class="konzept-seq__label">
                 <span class="konzept-seq__num">Schritt 3</span>
                 <span class="konzept-seq__ttl">Sicherheitskonzept</span>
-                <p>Personal, Technik oder die richtige Kombination.</p>
+                <p>Maßnahmenkonzept aus Personal, Technik und Organisation.</p>
               </div>
+                <!-- Order is the client's own (2026-08-14): Personal first, then Technik —
+                     the same two-part split the step's description now names. The SVG tips
+                     above keep their own positions instead, because each one is a leader line
+                     anchored to the thing it points at in the drawing; this list is free to
+                     read in the order the copy argues. Both must keep the SAME seven pairs. -->
                 <ul class="konzept-seq__terms">
-                  <li><span class="konzept-seq__term-name">Kameras</span><span class="konzept-seq__term-sub">360° Überwachung</span></li>
-                  <li><span class="konzept-seq__term-name">Außenpatrouille</span><span class="konzept-seq__term-sub">Optimierte Route</span></li>
-                  <li><span class="konzept-seq__term-name">Sensoren</span><span class="konzept-seq__term-sub">Perimeterschutz</span></li>
-                  <li><span class="konzept-seq__term-name">Brandmelder</span><span class="konzept-seq__term-sub">Frühwarnung</span></li>
-                  <li><span class="konzept-seq__term-name">Alarmanlage</span><span class="konzept-seq__term-sub">Einbruchmeldung</span></li>
-                  <li><span class="konzept-seq__term-name">Zutrittskontrolle</span><span class="konzept-seq__term-sub">Gate &amp; ID-System</span></li>
                   <li><span class="konzept-seq__term-name">Wachpersonal</span><span class="konzept-seq__term-sub">Feste Positionen</span></li>
+                  <li><span class="konzept-seq__term-name">Streifendienst</span><span class="konzept-seq__term-sub">Optimierte Routen</span></li>
+                  <li><span class="konzept-seq__term-name">Zutrittskontrolle</span><span class="konzept-seq__term-sub">Pforte &amp; Schrankenanlage</span></li>
+                  <li><span class="konzept-seq__term-name">Videoüberwachung</span><span class="konzept-seq__term-sub">Lückenlose Abdeckung</span></li>
+                  <li><span class="konzept-seq__term-name">Alarmanlage</span><span class="konzept-seq__term-sub">Einbruch- &amp; Überfallmeldung</span></li>
+                  <li><span class="konzept-seq__term-name">Brandmeldeanlage (BMA)</span><span class="konzept-seq__term-sub">Frühwarnung</span></li>
+                  <li><span class="konzept-seq__term-name">Sensoren</span><span class="konzept-seq__term-sub">Perimeterschutz</span></li>
                 </ul>
             </div>
 
@@ -1333,7 +1354,12 @@
             <h2 class="system-story__intro-title">Weniger Aufwand, mehr Sicherheit, durch ein klar definiertes System</h2>
           </header>
 
-          <div class="system-story__stack" data-system-stack data-swipe-carousel data-swipe-label="Sechs Karten zu unserem System, horizontal scrollbar">
+          <!-- data-swipe-tablet (client 2026-08-14): keep the swipe strip through
+               the tablet band, where these six cards used to fall back to a plain
+               vertical list — the peek-stack only starts at 1024. It is opt-in
+               because css/swipe-carousel.css is shared with the Social reel and the
+               References testimonials, and both have their own tablet layouts. -->
+          <div class="system-story__stack" data-system-stack data-swipe-carousel data-swipe-tablet data-swipe-label="Sechs Karten zu unserem System, horizontal scrollbar">
 
             <article class="system-story__card" data-system-card>
               <div class="system-story__card-inner">
@@ -1737,7 +1763,7 @@
                  (the outfit name) is the real accessible label; a screen
                  reader user doesn't need this repeated. -->
             <div class="outfits__names" role="group" aria-label="Choose outfit" data-item-reveal=".outfits__name-btn" data-item-reveal-strong data-item-reveal-end="bottom 78%">
-              <button type="button" class="outfits__name-btn" data-outfit-index="0" aria-pressed="true">Polo<span class="outfits__name-detail" aria-hidden="true">→ Für den täglichen Empfang und Front-Office-Dienst</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+              <button type="button" class="outfits__name-btn" data-outfit-index="0" aria-pressed="true">Polo<span class="outfits__name-detail" aria-hidden="true">→ Für den täglichen Empfang und Einsätze bei warmem Wetter</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
               <button type="button" class="outfits__name-btn" data-outfit-index="1" aria-pressed="false">Pullover<span class="outfits__name-detail" aria-hidden="true">→ Für allgemeine Einsätze vor Ort bei mildem Wetter</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
               <button type="button" class="outfits__name-btn" data-outfit-index="2" aria-pressed="false">Weste<span class="outfits__name-detail" aria-hidden="true">→ Für gut sichtbare Außen- und Streifeneinsätze</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
               <button type="button" class="outfits__name-btn" data-outfit-index="3" aria-pressed="false">Softshelljacke<span class="outfits__name-detail" aria-hidden="true">→ Für Außeneinsätze bei wechselndem Wetter</span><svg class="outfits__name-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
@@ -1920,18 +1946,48 @@
           <p class="references__lede" data-reveal data-reveal-delay>Echte Zahlen aus den Sicherheitsprogrammen, die wir täglich für unsere Kunden umsetzen.</p>
         </div>
 
+        <!-- ANONYMISED + LINKED 2026-08-14 (client): the named client under each
+             figure ("— MORELO Reisemobile", "— Sozialstiftung Bamberg",
+             "— CleanTech Innovation Park") is GONE, and each tile is now a link
+             to its own case study. Same change /referenzen/ already made
+             2026-08-05 from Webtext 27 ("bewusst anonymisiert und NICHT den
+             Testimonial-Kunden zugeordnet") — the two sections publish the same
+             three results, so they had to stop disagreeing about attribution.
+             The three testimonials further down still name their people: that is
+             deliberate and independent of these tiles.
+             Whole tile is the anchor, so it is ONE tab stop per result rather
+             than a figure plus a separate "mehr" link. `.stat__value` keeps its
+             class so initStatCountUp() still animates the figure. -->
         <ul class="references__results" data-reveal>
           <li class="stat">
-            <span class="stat__value">25.000 €</span>
-            <span class="stat__label">Jährliche Einsparungen durch ein maßgeschneidertes Sicherheitskonzept<br>— MORELO Reisemobile</span>
+            <a class="references__result-link" href="/referenzen/case-study-sicherheitstechnik/">
+              <span class="stat__value">25.000&nbsp;€</span>
+              <span class="stat__label">Jährliche Einsparungen durch ein maßgeschneidertes Sicherheitskonzept</span>
+              <span class="references__result-cta">
+                Zur Case Study
+                <svg class="icon references__result-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </span>
+            </a>
           </li>
           <li class="stat">
-            <span class="stat__value">30 %</span>
-            <span class="stat__label">Personal-Einsparung beim Großkunden durch ein neues Einsatzkonzept<br>— Sozialstiftung Bamberg</span>
+            <a class="references__result-link" href="/referenzen/case-study-sicherheitskonzept/">
+              <span class="stat__value">30&nbsp;%</span>
+              <span class="stat__label">Personal-Einsparung beim Großkunden durch ein neues Einsatzkonzept</span>
+              <span class="references__result-cta">
+                Zur Case Study
+                <svg class="icon references__result-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </span>
+            </a>
           </li>
           <li class="stat">
-            <span class="stat__value">20 %</span>
-            <span class="stat__label">Kostenersparnis bei gleichbleibender Sicherheit durch Schichtsystem-Optimierung<br>— CleanTech Innovation Park</span>
+            <a class="references__result-link" href="/referenzen/case-study-schichtsystem/">
+              <span class="stat__value">20&nbsp;%</span>
+              <span class="stat__label">Kostenersparnis bei gleichbleibender Sicherheit durch Schichtsystem-Optimierung</span>
+              <span class="references__result-cta">
+                Zur Case Study
+                <svg class="icon references__result-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </span>
+            </a>
           </li>
         </ul>
 
@@ -2194,33 +2250,39 @@
         <div class="coverage__rows" data-coverage-rows data-coverage-label="Einsatzgebiet" data-reveal>
           <!-- include: coverage-chips -->
           <ul class="coverage__list">
-            <li><a class="coverage__pill" data-coverage-city="bayreuth" href="/sicherheitsdienst-bayreuth/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Bayreuth</a></li>
-            <li><a class="coverage__pill" data-coverage-city="coburg" href="/sicherheitsdienst-coburg/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Coburg</a></li>
-            <li><a class="coverage__pill" data-coverage-city="ansbach" href="/sicherheitsdienst-ansbach/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Ansbach</a></li>
-            <!-- Forchheim ADDED 2026-08-05 (Change Request 2.1 + Webtext 01
-                 Sektion 11, "Forchheim (ergänzen!)"). Its city page is Webtext 21
-                 and is not built yet, so this link joins the other nine in
-                 pointing at a planned page — unlike Hof below, Forchheim IS in
-                 the client's 49-page set, which is the whole distinction. Its
-                 boundary was fetched once from Nominatim into
-                 assets/data/coverage-boundaries/forchheim.geojson (the city
-                 polygon, deliberately NOT "Landkreis Forchheim"). -->
-            <li><a class="coverage__pill" data-coverage-city="forchheim" href="/sicherheitsdienst-forchheim/"><img class="coverage__pill-icon" src="/assets/icons/icon-location.svg" alt="" width="16" height="16" loading="lazy">Forchheim</a></li>
+            <!-- coverage: chips row="2" -->
           </ul>
 
           <!-- Nennungen ohne Link (Webtext 01 Sektion 11 + Change Request 1.3).
-               Hof MOVED here from the linked list: it was pointing at
+               Hof MOVED here from the linked list 2026-08-05: it was pointing at
                /sicherheitsdienst-hof/, which is not in the 49-page set, so that
                was a linked 404 in production ("Do not ship a linked 404" — 2.2,
                and Chris's own resolution: "Hof is part of our service area but
                has no city page so it contains no link"). Kronach, Kulmbach,
-               Lichtenfels and Schwandorf are new mentions, same status.
-               Real crawlable text, so the local signal is intact without
-               promising a page that does not exist. Kept a plain <p>, not pills:
-               a pill reads as tappable, and none of these are. -->
-          <p class="coverage__mentions">
-            Außerdem im Einsatz in Hof, Kronach, Kulmbach, Lichtenfels und Schwandorf.
-          </p>
+               Lichtenfels and Schwandorf have the same status.
+
+               PILLS SINCE 2026-08-14 (client, Change Request 8: "must not just
+               be listed as plain text below — render them as pills AND mark
+               them on the map. They get no own city pages (render without
+               links), but they must be visible"). This REVERSES the earlier
+               "kept a plain <p>, not pills: a pill reads as tappable, and none
+               of these are" — and the objection is answered rather than
+               overruled, because they ARE tappable now: each one is a real
+               <button> that drives the map to its own boundary, exactly like
+               the "Alle" toggle, which is this site's existing precedent for a
+               pill with no page behind it. What none of them is, is a link.
+
+               ⚠️ <button>, never <a> — the whole point of the request is that
+               these five have no page. If a city page is ever built for one of
+               them, it moves up into the linked list in coverage-chips.html and
+               out of this one, and it takes its footer entry with it.
+
+               The lead-in keeps the sentence's own words, so the crawlable
+               local signal reads as prose rather than as five loose nouns. -->
+          <p class="coverage__mentions" id="coverage-mentions-label">Außerdem im Einsatz in:</p>
+          <ul class="coverage__list" aria-labelledby="coverage-mentions-label">
+            <!-- coverage: mentions -->
+          </ul>
         </div>
       </div>
     </section>
@@ -2297,7 +2359,7 @@
         <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
           <details class="faq-item">
             <summary><h3>Was kostet ein Sicherheitsdienst pro Stunde?</h3></summary>
-            <p class="faq-item__answer">Ein professioneller Sicherheitsdienst kostet in der Regel zwischen 26 und 32 Euro pro Stunde, zuzüglich tariflicher Zuschläge für Nacht, Wochenende und Feiertage. Wo Ihr Auftrag in der Spanne liegt, bestimmen Qualifikation, Leistungsumfang und Startzeitraum — dafür bekommen Sie ein durchdachtes System mit digitalen Nachweisen statt bloßer Stunden. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
+            <p class="faq-item__answer">Ein professioneller Sicherheitsdienst kostet in der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde, zuzüglich tariflicher Zuschläge für Nacht, Wochenende und Feiertage. Wo Ihr Auftrag in der Spanne liegt, bestimmen Qualifikation, Leistungsumfang und Startzeitraum — dafür bekommen Sie ein durchdachtes System mit digitalen Nachweisen statt bloßer Stunden. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
           </details>
           <details class="faq-item">
             <summary><h3>Ist FRANKONIA offiziell zertifiziert?</h3></summary>
@@ -2317,7 +2379,7 @@
           </details>
           <details class="faq-item">
             <summary><h3>Wie schnell erhalte ich ein Angebot?</h3></summary>
-            <p class="faq-item__answer">Sie erhalten Ihr unverbindliches Angebot innerhalb eines Werktages. Tragen Sie sich in das Anfrage-Formular ein oder rufen Sie direkt an: +49 951 964352-0 — Ihr fester Ansprechpartner ist rund um die Uhr erreichbar.</p>
+            <p class="faq-item__answer">Sie erhalten Ihr unverbindliches Angebot innerhalb eines Werktages. Tragen Sie sich in das Anfrage-Formular ein oder rufen Sie direkt an: <a href="{{phone.href}}">{{phone.display}}</a> — Ihr fester Ansprechpartner ist rund um die Uhr erreichbar.</p>
           </details>
           <details class="faq-item">
             <summary><h3>Welche Qualifikation haben die FRANKONIA Sicherheitskräfte?</h3></summary>
@@ -2329,7 +2391,7 @@
           </details>
           <details class="faq-item">
             <summary><h3>Übernimmt FRANKONIA auch kurzfristige Einsätze?</h3></summary>
-            <p class="faq-item__answer">Ja, zum Beispiel Brandwachen bei Ausfall einer Brandmeldeanlage, kurzfristige Baustellenbewachung oder Verstärkung bei Veranstaltungen. Mit eigener Einsatzleitung und einem festen Mitarbeiterstamm sind schnelle Starts nach Absprache möglich — rufen Sie bei dringendem Bedarf direkt an: +49 951 964352-0.</p>
+            <p class="faq-item__answer">Ja, zum Beispiel Brandwachen bei Ausfall einer Brandmeldeanlage, kurzfristige Baustellenbewachung oder Verstärkung bei Veranstaltungen. Mit eigener Einsatzleitung und einem festen Mitarbeiterstamm sind schnelle Starts nach Absprache möglich — rufen Sie bei dringendem Bedarf direkt an: <a href="{{phone.href}}">{{phone.display}}</a>.</p>
           </details>
           <details class="faq-item">
             <summary><h3>Wie stellt FRANKONIA professionelles Auftreten sicher?</h3></summary>
@@ -2353,16 +2415,6 @@
     </section>
 
   </main>
-
-  <!-- Pixel-transition seam (FAQ -> footer), client 2026-07-24. PURE-WHITE
-       tiles (.pixel-seam--white = #FFFFFF, matching FAQ's own
-       background: var(--color-white)) dissolving over the blue footer the band
-       sits inside. Was --light (#FAFAFA), which read as a greyish second white
-       against FAQ's true #FFFFFF top edge (client 2026-07-26, "two whites"
-       fix). Placed between </main> and the footer so the band lands in the
-       footer's reserved top padding — see `.pixel-seam + .site-footer` in
-       page-home.css. Built by js/pixel-transition.js. -->
-  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
 
   <!-- include: footer-de -->
   <!-- include: whatsapp-button -->

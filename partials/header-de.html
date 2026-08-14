@@ -15,6 +15,20 @@
     </button>
 
     <nav id="primary-nav" class="site-nav" aria-label="Hauptnavigation">
+      <!-- The panel's OWN close control (client 2026-08-14: "there is no way to
+           close the expanded tablet menu"). The hamburger does toggle, and it is
+           painted over the panel on purpose — but it lives OUTSIDE this element,
+           so whether it is visible depends on the header's current theme and on
+           the stacking around it, and on a light section it was rendering black
+           on the panel's black (see the .nav-open rules in site-chrome.css,
+           fixed in the same pass). A control INSIDE the panel takes its colour
+           from the panel and cannot be lost that way.
+           First child, so it is also the first tab stop once the panel opens.
+           Hidden at the desktop breakpoint, where this element is the nav row. -->
+      <button type="button" class="nav-close" data-nav-close>
+        <svg class="icon nav-close__icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+        <span class="visually-hidden">Menü schließen</span>
+      </button>
       <ul class="site-nav__list">
         <li class="site-nav__item site-nav__item--has-submenu">
           <a class="site-nav__link" href="/leistungen/">
@@ -115,10 +129,12 @@
       </ul>
 
       <div class="site-nav__actions">
-        <!-- Language switch removed from the nav (client 2026-07-27): the site
-             reads as German-only; the English version (/en/) still exists and is
-             connected via the <head> hreflang alternates, so Google can still
-             surface / offer the English page in search. No in-page toggle. -->
+        <!-- No language switch, and now nothing to switch TO: the site is
+             GERMAN-ONLY (client 2026-08-13, Q8 — the /en/ homepage, its header
+             partial and the English footer were deleted, the hreflang="en"
+             alternates and the sitemap entry with them, and /en/* 301-redirects
+             to / in vercel.json). The switch itself had already been dropped
+             from the nav on 2026-07-27. Do not re-add either half. -->
         <a class="btn btn--primary" href="/#sicherheitsanalyse">Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
       </div>
     </nav>

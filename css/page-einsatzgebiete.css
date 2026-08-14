@@ -172,7 +172,16 @@
 }
 
 @media (max-width: 599.98px) {
-  .eg-map-svg__label { font-size: 46px; stroke-width: 7; }
+  /* 46 -> 40 (2026-08-14). FIVE MORE LABELS LANDED ON THIS MAP (Hof, Kronach,
+     Kulmbach, Lichtenfels, Schwandorf), and the northern cluster is where they
+     went: Lichtenfels and Kulmbach are 8 viewBox units apart vertically, Kronach
+     and Coburg 30. A label box here is measured in viewBox units, so at 46 the
+     phone had three colliding pairs while every wider tier had none — the box
+     grows while the map's own geometry does not. 40 units on a 350px-wide map is
+     ~14px on screen, still inside map-label territory, and it is what clears
+     Hof x Kronach; the other two pairs were fixed by flipping a side in
+     content/coverage.json instead, which costs no legibility at all. */
+  .eg-map-svg__label { font-size: 40px; stroke-width: 6; }
 }
 
 /* The map is capped below the two-column split so it does not become the

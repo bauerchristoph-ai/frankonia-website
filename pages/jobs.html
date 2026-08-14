@@ -259,11 +259,16 @@
     <!-- ============ 1. HERO ============ -->
     <!-- Draft: Recruiting-Hero, Du-Ansprache, badge → H1 → subline → 3 proof
          points → Bewerbungs-CTA as an anchor to the form.
-         ⚠️ ONE CTA ONLY, no phone pill next to it — the draft is explicit:
-         "kein Telefon-CTA: Bewerbungen laufen über die Seite". That is the one
-         place this hero departs from the service-hero formula, and it is a
-         deliberate instruction, not an omission. The site-wide phone number is
-         still in the header, the footer and the WhatsApp button.
+         ⚠️⚠️ THIS HERO HAD ONE CTA AND NO PHONE PILL UNTIL 2026-08-14, AND THAT
+         WAS AN EXPLICIT DRAFT INSTRUCTION: "kein Telefon-CTA: Bewerbungen laufen
+         über die Seite" (Webtext 29 Jobs). Client rule G1 — one fixed secondary
+         CTA, on every page, with the clickable phone number — was put to the
+         client against exactly that conflict and the client chose G1, so the
+         pill is here now. Recording it because it is the one place on the site
+         where a later global rule overrides a page's own approved draft: if
+         Recruiting ever wants applications funnelled through the form only
+         again, this is the line to delete, and the draft is the argument for it.
+         The Du-Ansprache and everything else on this page still follow Webtext 29.
          .hero__lead / .hero__reassurance / .hero__actions / .hero__trust class
          names are intentional: js/hero-reveal.js animates exactly those blocks,
          in that order, and this page reuses it with no per-page JS. -->
@@ -290,6 +295,11 @@
                Springer-Chaos"). Nothing factual left the page. The chip's CSS is
                not kept here as a dead rule either (same call page-service.css made
                when its own badge went); git has both. -->
+          <!-- Hero badge, verbatim from Webtext 29 (client rule G9). -->
+          <p class="hero-badge">
+            <svg class="icon" aria-hidden="true"><use href="#icon-euro"></use></svg>
+            &Uuml;bertarifliche Bezahlung, festes Team statt Springer-Dasein
+          </p>
           <h1>Dein Job bei FRANKONIA: Sicherheit, auch für dich</h1>
 
           <p class="hero__lead service-hero__lead">
@@ -298,6 +308,10 @@
 
           <div class="hero__actions service-hero__actions">
             <a class="btn btn--primary" href="#bewerbung">Jetzt unverbindlich bewerben<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn btn--secondary service-hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
           </div>
 
           <ul class="hero__reassurance service-hero__points">
@@ -344,8 +358,8 @@
                 </span>
               </span>
               <span class="review-card__score">
-                <span class="review-card__value">4,7</span>
-                <span class="review-card__count">97 Bewertungen</span>
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
               </span>
             </div>
 
@@ -550,6 +564,20 @@
             </div>
           </li>
         </ol>
+
+        <!-- Client 2026-08-14, point 2: "there must be a way to apply directly
+             from the job listings". This is the one section on the page where a
+             visitor decides "that rung is me", and until now the next action was
+             two sections away — the ladder ended on rung 05 and nothing followed.
+             Same label and destination as the hero's primary CTA (#bewerbung, the
+             form at the foot of this page), deliberately not a new wording: the
+             page should ask for the application in one voice.
+             No lead-in sentence: every word on this page comes from the client's
+             draft, and inventing one here to introduce a button would be the only
+             unsourced copy in the section. -->
+        <div class="jobs-levels__actions" data-reveal>
+          <a class="btn btn--primary" href="#bewerbung">Jetzt unverbindlich bewerben<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        </div>
       </div>
     </section>
 
@@ -783,12 +811,6 @@
     </section>
 
   </main>
-
-  <!-- Pixel dissolve before the footer — mandatory on every page
-       (docs/page-conventions.md §4.4). The section above is white, so the tiles
-       are white; the footer reserves the band's height via
-       `.pixel-seam + .site-footer` (page-service.css). -->
-  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
 
   <!-- include: footer-de -->
   <!-- include: whatsapp-button -->

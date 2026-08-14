@@ -4,7 +4,9 @@
    Chassis is css/page-service.css. This file holds every block only this page
    has: the milestone timeline, the six promises, the leadership row and the
    certificate list. page-leistungen.css is still linked for one shared piece,
-   .lh-hero__badge in the hero — the six promises used to reuse its .lh-why*
+   the hero badge — which since 2026-08-14 is the shared `.hero-badge`
+   (components.css), NOT the old `.lh-hero__badge` this line used to name; the six
+   promises used to reuse its .lh-why*
    too, but that block was built for /leistungen/'s own four columns; see
    .uu-promises below for why it took its own block instead.
    ========================================================================== */

@@ -2,8 +2,10 @@
   Coverage Areas — interactive Leaflet map (client brief, 2026-07-21).
   Leaflet.js + OpenStreetMap raster tiles, no account/API key/token/
   billing of any kind. Real administrative boundaries (not circles) for
-  all 10 FRANKONIA coverage cities, drawn as a GeoJSON polygon/multipolygon
-  layer that swaps in as each city is selected via its pill button or
+  every FRANKONIA coverage area — the 10 cities that have their own page
+  plus, since 2026-08-14, the 5 that do not (Hof, Kronach, Kulmbach,
+  Lichtenfels, Schwandorf) — drawn as a GeoJSON polygon/multipolygon
+  layer that swaps in as each one is selected via its pill button or
   its map marker.
 
   Homepage-only, its own <script defer> tag (same pattern as
@@ -41,9 +43,53 @@
   todas"), not an oversight.
 */
 
-(function initCoverageMap() {
-  if (typeof L === "undefined") return;
+// ---------------------------------------------------------------------------
+// The locations come from ONE file (client 2026-08-14, Einsatzgebiete 1:
+// "single data source"). content/coverage.json is the source; build.js
+// publishes exactly the fields the browser needs to
+// /assets/data/coverage-locations.json and renders the pill lists from the same
+// file at build time — so the map and the pills cannot disagree, which is what
+// the hand-maintained copies did (Hof was a linked 404 in the footer while the
+// homepage had already demoted it).
+//
+// FETCHED, not inlined, because that keeps the pills as real static HTML: the
+// alternative — rendering the list in the browser — would make crawlable
+// internal links depend on JavaScript, which this project does not do.
+// The cost is one small request (~1.5KB), on a map that already fetches a
+// boundary file per city and only loads at all when it scrolls into view.
+// If it fails, the map simply does not build — it is an enhancement, and the
+// city links beside it work regardless.
+const COVERAGE_DATA_URL = "/assets/data/coverage-locations.json";
 
+(function bootstrapCoverageMap() {
+  if (typeof L === "undefined") return;
+  if (!document.getElementById("coverage-map")) return;
+
+  fetch(COVERAGE_DATA_URL)
+    .then((res) => {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.json();
+    })
+    .then((list) => {
+      // Keyed by id, which is also the data-coverage-city value on every pill
+      // and the .geojson filename — one identifier, three surfaces.
+      const byId = {};
+      list.forEach((loc) => {
+        byId[loc.id] = {
+          name: loc.name,
+          center: loc.center,
+          boundaryUrl: loc.boundaryUrl,
+        };
+      });
+      initCoverageMap(byId);
+    })
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.warn("[coverage-map] locations unavailable:", err);
+    });
+})();
+
+function initCoverageMap(coverageLocations) {
   const mapEl = document.getElementById("coverage-map");
   if (!mapEl) return;
 
@@ -77,78 +123,12 @@
   // needed to contain every polygon first.
   const ALL_MAX_ZOOM = 11;
 
-  // Leaflet coordinates: [latitude, longitude]. GeoJSON files (fetched
-  // separately, see boundaryUrl) keep the GeoJSON spec's own
-  // [longitude, latitude] order internally — nothing here reverses that.
-  const coverageLocations = {
-    bamberg: {
-      name: "Bamberg",
-      center: [49.8917, 10.886],
-      boundaryUrl: "/assets/data/coverage-boundaries/bamberg.geojson",
-    },
-    nuremberg: {
-      // German spelling, on instruction (Change Request 1.4, 2026-08-04) — this
-      // string is user-visible twice: the marker's title tooltip and the map
-      // overlay's city line. The object KEY stays `nuremberg` because it is also
-      // the data-coverage-city value and the geojson filename; only the label
-      // changed. Consistent with this project's rule that city proper nouns keep
-      // their German spelling even in English contexts (Würzburg, Fürth).
-      name: "Nürnberg",
-      center: [49.4521, 11.0767],
-      boundaryUrl: "/assets/data/coverage-boundaries/nuremberg.geojson",
-    },
-    wuerzburg: {
-      name: "Würzburg",
-      center: [49.7913, 9.9534],
-      boundaryUrl: "/assets/data/coverage-boundaries/wuerzburg.geojson",
-    },
-    erlangen: {
-      name: "Erlangen",
-      center: [49.5897, 11.0119],
-      boundaryUrl: "/assets/data/coverage-boundaries/erlangen.geojson",
-    },
-    fuerth: {
-      name: "Fürth",
-      center: [49.4771, 10.9887],
-      boundaryUrl: "/assets/data/coverage-boundaries/fuerth.geojson",
-    },
-    schweinfurt: {
-      name: "Schweinfurt",
-      center: [50.0442, 10.234],
-      boundaryUrl: "/assets/data/coverage-boundaries/schweinfurt.geojson",
-    },
-    bayreuth: {
-      name: "Bayreuth",
-      center: [49.9456, 11.5789],
-      boundaryUrl: "/assets/data/coverage-boundaries/bayreuth.geojson",
-    },
-    coburg: {
-      name: "Coburg",
-      center: [50.2612, 10.9649],
-      boundaryUrl: "/assets/data/coverage-boundaries/coburg.geojson",
-    },
-    ansbach: {
-      name: "Ansbach",
-      center: [49.3004, 10.5719],
-      boundaryUrl: "/assets/data/coverage-boundaries/ansbach.geojson",
-    },
-    // Added 2026-08-05 (Change Request 2.1). Boundary fetched once from
-    // Nominatim, same one-off process as the original ten: the CITY polygon
-    // ("Forchheim, Landkreis Forchheim, Bayern, 91301"), explicitly not the
-    // surrounding "Landkreis Forchheim", which Nominatim also returns and which
-    // is a different administrative area. Centre is [lat, lon] for Leaflet —
-    // the .geojson keeps GeoJSON's own [lon, lat] order, untouched.
-    forchheim: {
-      name: "Forchheim",
-      center: [49.7123, 11.0664],
-      boundaryUrl: "/assets/data/coverage-boundaries/forchheim.geojson",
-    },
-    hof: {
-      name: "Hof",
-      center: [50.3135, 11.9128],
-      boundaryUrl: "/assets/data/coverage-boundaries/hof.geojson",
-    },
-  };
+  // ⚠️ THE coverageLocations OBJECT USED TO BE WRITTEN OUT HERE — fifteen
+  // entries of name + centre + boundary path. It is the PARAMETER of this
+  // function now, built from content/coverage.json by the bootstrap above.
+  // Leaflet's own order is [latitude, longitude] and that is what the data file
+  // uses; the .geojson files keep GeoJSON's [lon, lat] and nothing reverses it.
+  // Everything below is unchanged and still reads `coverageLocations[id]`.
 
   // ---- Coverage region (client 2026-08-03) ----
   // A soft area behind the city polygons, so the map says "we cover this whole
@@ -523,4 +503,4 @@
   // it rather than staying as dead API. Git has them if a second consumer ever
   // needs the same hook.
   selectCity(ALL_ID);
-})();
+}

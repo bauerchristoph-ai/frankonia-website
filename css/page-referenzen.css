@@ -217,6 +217,20 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ⚠️ 768–1199.98: "25.000 €" broke the € onto its own line (client 2026-08-14,
+   Change Request 17). The tiles go 3-up at 768 while the figure is still sized
+   off the VIEWPORT, so the column drops to ~160px here — narrower than the
+   homepage's because this <li> also carries 24px of inline padding for its
+   divider — while the font keeps climbing with vw. Same value in all three
+   copies of this component (page-home.css, page-sicherheitskonzept.css); the
+   full reasoning and the measured columns are written up in page-home.css.
+   The NBSP in the markup is the other half of the fix. */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  .ref-results .stat__value {
+    font-size: clamp(2.25rem, 6.7vw - 0.9rem, 4.15rem);
+  }
+}
+
 .ref-results__label {
   display: block;
   color: rgb(59 73 86 / 0.75);
@@ -439,14 +453,25 @@
 }
 
 /* The three rows move at the SAME SPEED, which means three different durations:
-   the duration covers half the track, and half a track is ~3700px on the
-   21-company row against ~1800px on the two short ones. One shared duration would
-   make the long row visibly crawl. ~11px/s, the pace the homepage marquee
-   actually moves at. The middle row runs in reverse so the three do not read as
-   one block sliding sideways, and the two 1800px rows differ slightly so they
-   never sync up. */
+   the duration covers half the track, and the three half-tracks are very
+   different lengths. One shared duration would make the long row visibly crawl.
+   ~11px/s, the pace the homepage marquee actually moves at. The middle row runs
+   in reverse so the three do not read as one block sliding sideways, and the
+   rows differ slightly so they never sync up.
+
+   ⚠️ A DURATION IS NOT A SPEED — RE-DERIVE IT WHENEVER THE ROSTER CHANGES.
+   Adding one company to a 4-item group lengthens that track by 25 % while the
+   duration stays put, so the row silently speeds up by 25 %. That is exactly
+   what restoring Bodo Freimuth Tiefbau did on 2026-08-14: measured
+   14.52 px/s desktop and 15.23 px/s mobile against ~11.5 on its siblings, i.e.
+   one row visibly outrunning the other two.
+   Corrected from the measured half-track, not estimated: desktop 2613px / 11.5
+   = 227s, mobile 1751px / 11.5 = 152s. Re-measured after: 11.51 and 11.52 px/s.
+   Veranstaltungsschutz gained Brose Bamberg in the same pass and needed NO
+   change — 10 items against 9 is +11 %, which moved it 10.4 → 11.5 px/s, onto
+   the target rather than off it. */
 .ref-marquee--objektschutz  { --ref-marquee-duration: 270s; }
-.ref-marquee--baustelle     { --ref-marquee-duration: 180s; }
+.ref-marquee--baustelle     { --ref-marquee-duration: 227s; }
 .ref-marquee--veranstaltung { --ref-marquee-duration: 245s; }
 
 .ref-marquee--baustelle .ref-marquee__track {
@@ -693,7 +718,9 @@
      hold the ~11px/s pace — the same correction the homepage's marquee needed
      below 1024px. */
   .ref-marquee--objektschutz  { --ref-marquee-duration: 190s; }
-  .ref-marquee--baustelle     { --ref-marquee-duration: 115s; }
+  /* 115s → 152s, re-derived from the measured 1751px half-track after Bodo
+     Freimuth Tiefbau was restored — see the desktop block's note. */
+  .ref-marquee--baustelle     { --ref-marquee-duration: 152s; }
   .ref-marquee--veranstaltung { --ref-marquee-duration: 175s; }
 
   .ref-results,

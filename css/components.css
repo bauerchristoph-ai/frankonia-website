@@ -145,20 +145,94 @@
   transform: rotate(45deg);
 }
 
+/* ---- Secondary CTA — THE ONE SECONDARY BUTTON DESIGN ON THE SITE ----
+   (client rule G1, 2026-08-14: "define ONE fixed design for the secondary CTA
+   and use it on every page".) Before this the site had FOUR near-identical
+   outline pills: .hero__phone (border white 35%, text 85%),
+   .service-hero__phone (the same values, copied), this variant at
+   --color-border-strong (42%), and .social__cta's local solid-white override.
+   All four are gone; every one of them now resolves here.
+
+   The reference the client gave is the Instagram pill from the homepage's
+   social reel — SOLID white border, no fill, solid white text. That is what
+   this is. The muted alphas the two hero pills used are deliberately NOT kept:
+   at 35% the stroke measured ~2.6:1 on black, under the 3:1 WCAG 1.4.11 floor
+   for a UI boundary, so unifying upward fixes a real contrast miss as well.
+   Solid white is 21:1 on the page background.
+
+   ⚠️ border-width 1px, not .btn's own 2px (client, same message: "que el border
+   sea un poquito más fino"). Scoped to this variant on purpose — the primary
+   button's border is transparent, so putting 1px on .btn would shrink every blue
+   button for no visible gain.
+   ⚠️ 1px IS THE FLOOR, and it was written as 1.5px first: CHROME ROUNDS
+   border-width TO WHOLE CSS PIXELS, so 1.5px computes back as 1px — measured at
+   deviceScaleFactor 1 AND 2, i.e. a retina screen does not rescue it either.
+   This is the same trap page-service.css already documents for the 0.5px frame
+   on /werkschutz/. Do not "restore" a fractional value here thinking it renders:
+   the only way past 1px is an SVG stroke, which is what .service-contrast__frame
+   does and what this would need if the client ever asks for finer still.
+
+   ⚠️ padding-block is 1px larger than .btn's own var(--space-3), and that is
+   NOT decoration — it is what keeps this button the same height as the primary
+   next to it. A border eats into the box on BOTH edges, so dropping 2px → 1px
+   made the pill 46px against the primary's 48px. Measured. The client's
+   "both buttons the same size, intermediate" (2026-07-22) is what the homepage
+   hero pair was built on, so the 2px is given back as padding rather than
+   accepted. If .btn's base padding or border ever changes, recheck this.
+
+   Hover is the homepage hero's own behaviour — a faint white wash, border and
+   text unchanged — NOT the blue swap this variant used to do. An outline pill
+   on a dark surface keeps its stroke look on hover (same as .footer-pill);
+   turning the border blue made the secondary read as a second brand colour
+   arriving on hover. */
 .btn--secondary {
   background-color: transparent;
-  border-color: var(--color-border-strong);
-  color: var(--color-text);
+  border-width: 1px;
+  border-color: var(--color-white);
+  color: var(--color-white);
+  padding-block: calc(var(--space-3) + 1px);
 }
 
-.btn--secondary:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+.btn--secondary:hover,
+.btn--secondary:focus-visible {
+  background-color: rgb(255 255 255 / 0.08);
+  border-color: var(--color-white);
+  color: var(--color-white);
 }
 
-/* No separate "on-dark" button variant: .btn--secondary is fully
-   token-driven (--color-border-strong / --color-text), so it already
-   renders correctly against the site's dark theme by default. */
+/* On a white section the design is identical — same pill, same 1.5px stroke,
+   same transparent fill — with the two colours inverted, which is exactly what
+   .section--light does for every other component on this site. Without it the
+   button would be white-on-white, i.e. invisible; the one place this currently
+   lands is the /ratgeber/ hub's closing CTA.
+   (0,2,0) so it beats the base rule regardless of file order. */
+.section--light .btn--secondary {
+  border-color: var(--color-logo-black);
+  color: var(--color-logo-black);
+}
+
+.section--light .btn--secondary:hover,
+.section--light .btn--secondary:focus-visible {
+  background-color: rgb(1 1 1 / 0.06);
+  border-color: var(--color-logo-black);
+  color: var(--color-logo-black);
+}
+
+/* ---- The phone glyph inside a button ----
+   ⚠️ #icon-phone is the one symbol in the sprite that is FILLED and does not
+   declare its own paint: the `fill: none; stroke: currentColor` it needs lives
+   on the sprite's `<g id="icon-defs">` wrapper, and that does not survive
+   `<use>`. Left alone it renders as a black blob inside a blue button and as a
+   thin hollow outline inside an outline one.
+   This single rule replaces four page-scoped copies of the same fix
+   (.hero__phone .icon, .service-hero__phone .icon, .city-callout__call .icon,
+   .combo-hero__call .icon) — put .btn__icon on the phone <svg> in any button
+   and it is handled. Deliberately NOT applied to .icon inside .btn generally:
+   .btn__arrow is a stroke icon and a blanket fill would erase it. */
+.btn__icon {
+  fill: currentColor;
+  stroke: none;
+}
 
 /* Compact spacing for tight contexts (e.g. the header). Padding only.
    Horizontal side narrowed alongside .btn's own default, 2026-07-17 —
@@ -411,9 +485,16 @@
    white, is untouched — only size and boldness change here). Doesn't
    touch the base .review-card rules, so the full-size card elsewhere
    (.trust__review) is unaffected. */
+/* ⚠️ PADDING AND GAP BOTH STEPPED UP ONE (client rule G6, 2026-08-14: "give the
+   Google rating badge a bit more padding/whitespace"). It was --space-2/--space-3
+   (8/12px), which on a pill holding a logo, five stars, "4,7" and "97 Bewertungen"
+   left the text almost touching the rounded corner. Now 12/16px with a 12px gap.
+   The badge is an inline-flex pill, so this grows it in both axes and nothing
+   around it has a fixed height that could clip — verified in the three heroes
+   that carry it at 390 / 767 / 1440. */
 .review-card--sm {
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
 }
 
 .review-card--sm .review-card__logo {
@@ -639,10 +720,79 @@
   transform: rotate(45deg);
 }
 
+/* ---- Hero badge (the chip above an H1) -----------------------------------
+   PROMOTED HERE 2026-08-14 while implementing client rule G9 ("render the badge
+   on all subpages as specified in the page documents"). Six pages were missing
+   theirs, and adding six more copies of a rule that already existed twice —
+   `.lh-hero__badge` (page-leistungen.css) and `.ag-hero__badge`
+   (page-angebot.css), which were BYTE-IDENTICAL — was the wrong direction.
+   Both are deleted; their four pages now use this class and render identically.
+
+   ⚠️ TWO OTHER BADGE LOOKS SURVIVE ON PURPOSE, and they are NOT drift:
+   · `.city-hero__badge` (page-city.css) is a bordered PILL, shared by the city
+     and combo family.
+   · `.cs-hero__badge` (page-case-study.css) is a small uppercase label with a
+     dot, shared by the three case studies.
+   Each is a family treatment its pages already shipped and the client approved.
+   G9 asks for badges to be PRESENT, not for the three looks to be merged — if
+   they ever should be, that is one decision to take deliberately, not a side
+   effect of adding six chips.
+
+   ⚠️ NAME COLLISION TO KNOW ABOUT: `.hero__badge` in page-home.css is NOT this
+   component — it sizes a DEKRA seal IMAGE in the homepage trust band. Different
+   thing, confusingly similar name. Do not merge them. */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
 .faq-item__answer {
   margin-top: var(--space-4);
   color: var(--color-text-muted);
   max-width: 42rem;
+}
+
+/* ---- Inline links inside prose on a light surface -------------------------
+   PROMOTED HERE 2026-08-14, when client rule G4 (every phone number is a tel:
+   link — body copy, FAQ answers and CTAs alike) made the homepage, /angebot/,
+   /einsatzgebiete/ and /ratgeber/ new consumers of a fix that already existed as
+   three separate page-scoped copies: `.city-faq .faq-item__answer a`
+   (page-city.css), `.rg-article .faq-item__answer a` (page-ratgeber.css) and a
+   phone-only copy in page-jobs.css. All three are deleted; this is the one rule.
+
+   ⚠️ THE COLOUR IS NOT OPTIONAL AND IT IS NOT `--color-link`. base.css sets
+   links to blue-light (#3D9AD3): 6,8:1 on a dark section, but **2,87:1** on the
+   near-white fill an FAQ card has and **3,11:1** on plain white — both plain
+   failures of the 4,5:1 a 16px link needs, and no size threshold rescues a link
+   inside a sentence. The deep mix docs/page-conventions.md §5 prescribes measures
+   **4,9:1** and reads as the same blue. `.section--light` does NOT fix this by
+   itself: that scope re-declares `--color-accent`, not `--color-link`.
+
+   ⚠️ TWO SELECTORS, AND EACH COVERS A CASE THE OTHER MISSES — measured, not
+   assumed:
+   · `.faq-item a` and not `.faq-item__answer a`, because the answer markup is NOT
+     uniform: most pages wrap it in `.faq-item__answer`, but /angebot/ puts a bare
+     <p> straight inside `<details class="faq-item">`, so the narrower selector
+     silently skipped that page. Verified no `<summary>` anywhere holds an anchor,
+     so this cannot leak onto a question row.
+   · `.section--light … a[href^="tel:"]`, because a phone number in ordinary body
+     copy is not in an FAQ at all — /einsatzgebiete/ and /ratgeber/ both have one
+     now, and both measured 3,11:1 at 18px tall before this.
+   Both exclude `.btn`: the secondary CTA is a phone link too, and it carries its
+   own colour and its own 48px height (§3).
+
+   ⚠️ The touch target is `padding-block` on an `inline-block`, never a
+   `min-height`: the hit area has to grow without moving the sentence around it
+   (§7). 0.75rem, not 0.5 — 0.5rem was measured at 42px, just under the minimum. */
+.faq-item a:not(.btn),
+.section--light p a[href^="tel:"]:not(.btn) {
+  display: inline-block;
+  padding-block: 0.75rem;
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
 }
 
 /* ---- Card-style FAQ: .faq__list--cards -----------------------------------

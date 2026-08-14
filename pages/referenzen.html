@@ -227,6 +227,11 @@
             </picture>
           </div>
 
+          <!-- Hero badge, verbatim from Webtext 27 (client rule G9). -->
+          <p class="hero-badge">
+            <svg class="icon" aria-hidden="true"><use href="#icon-building"></use></svg>
+            &Uuml;ber 300 Unternehmen und Einrichtungen vertrauen FRANKONIA
+          </p>
           <h1>Unsere Kunden und ihre Ergebnisse</h1>
 
           <p class="hero__lead service-hero__lead ref-hero__lead">
@@ -277,7 +282,7 @@
         <ul class="ref-results" data-item-reveal=".stat" data-item-reveal-strong>
           <li class="stat">
             <a class="ref-results__link" href="/referenzen/case-study-sicherheitstechnik/">
-              <span class="stat__value">25.000 €</span>
+              <span class="stat__value">25.000&nbsp;€</span>
               <span class="stat__label">
                 <span class="ref-results__label">Ersparnis durch geprüfte Sicherheitstechnik: Kauf statt teurer Dauermiete</span>
               </span>
@@ -289,7 +294,7 @@
           </li>
           <li class="stat">
             <a class="ref-results__link" href="/referenzen/case-study-sicherheitskonzept/">
-              <span class="stat__value">30 %</span>
+              <span class="stat__value">30&nbsp;%</span>
               <span class="stat__label">
                 <span class="ref-results__label">Personalkosten-Einsparung beim Großkunden durch ein neues Sicherheitskonzept</span>
               </span>
@@ -301,7 +306,7 @@
           </li>
           <li class="stat">
             <a class="ref-results__link" href="/referenzen/case-study-schichtsystem/">
-              <span class="stat__value">20 %</span>
+              <span class="stat__value">20&nbsp;%</span>
               <span class="stat__label">
                 <span class="ref-results__label">Kostenersparnis bei gleichbleibender Sicherheit durch Schichtsystem-Optimierung</span>
               </span>
@@ -383,9 +388,19 @@
 
     <!-- ============ 4. KUNDENLISTEN NACH BEREICH ============ -->
     <!-- The roster from the old Referenzen page, as the draft supplies it: three
-         Bereich groups, in the draft's own order — 34 of the 36 companies it
-         lists: Brose Bamberg and Bodo Freimuth Tiefbau were both removed on the
-         client's instruction 2026-08-04.
+         Bereich groups, in the draft's own order — ALL 36 companies it lists.
+         ✅ Brose Bamberg and Bodo Freimuth Tiefbau are BACK (client 2026-08-13, Q7:
+         "Put both back into the references (logos and mentions as before)"). They
+         had been pulled on 2026-08-04, which this file flagged at the time as
+         worth confirming because the 04.08 draft still listed both — it was a
+         Freigabe question, and the answer is that they stay.
+         Each is placed at the draft's own position, not appended: Bodo Freimuth
+         Tiefbau third in Baustellenbewachung, Brose Bamberg first in
+         Veranstaltungsschutz.
+         ⚠️ BOTH RIDE AS NAMES, NOT LOGOS, because no logo file exists for either —
+         checked the whole repo, not just assets/images/client-logos/. That IS
+         "as before": the logo set never contained them. Two <span> → two <img>
+         the day artwork arrives; worth asking Chris for it.
          ONE AUTO-SCROLLING ROW PER BEREICH (client 2026-08-03: "tiene que
          aparecer los logos de las empresas y quiero una linea para cada uno y que
          vayan pasando como en la homepage") — the same CSS marquee mechanism as
@@ -394,7 +409,7 @@
          here, and the separate static logo row above them, are both gone: the
          rows now carry the logos, so a standalone row would have shown the same
          marks twice.
-         ⚠️ 31 of the 34 have a logo file; the other 3 ride the same row as their
+         ⚠️ 30 of the 35 have a logo file; the other 5 ride the same row as their
          company NAME set in type, so no client is dropped from the list and the
          short Baustellenbewachung row still has enough items to loop. Swapping a
          name for a logo later is one <span> → one <img>.
@@ -412,7 +427,7 @@
         <ul class="ref-clients__groups">
           <li class="ref-clients__group">
             <h3 class="ref-clients__group-title">Werk- und Objektschutz</h3>
-            <!-- 21 companies: one group is already far wider than the row, so two groups is all the loop needs. -->
+            <!-- 20 companies: one group is already far wider than the row, so two groups is all the loop needs. -->
             <div class="ref-marquee ref-marquee--objektschutz">
               <div class="ref-marquee__track">
                 <div class="ref-marquee__group">
@@ -464,42 +479,51 @@
           </li>
           <li class="ref-clients__group">
             <h3 class="ref-clients__group-title">Baustellenbewachung</h3>
-            <!-- Only 5 companies: FOUR groups, not two. translateX(-50%) shifts by half the track, so the loop is seamless as long as HALF the track still fills the row — one 5-item group does not, two do. -->
+            <!-- Only 5 companies (Bodo Freimuth Tiefbau restored 2026-08-14), so SIX groups, not two.
+                 translateX(-50%) shifts by half the track, so the loop is seamless only while HALF the
+                 track still fills the row — one short group does not. The count must also stay EVEN, or
+                 half of it lands mid-group and the row visibly jumps on every cycle. -->
             <div class="ref-marquee ref-marquee--baustelle">
               <div class="ref-marquee__track">
                 <div class="ref-marquee__group">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bayernwerk.png" width="983" height="160" alt="Bayernwerk Logo" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bayerische-landessiedlung.png" width="622" height="160" alt="Bayerische Landessiedlung Logo" loading="lazy">
+                  <span class="ref-marquee__name">Bodo Freimuth Tiefbau</span>
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/ibis-bamberg.png" width="160" height="160" alt="ibis Bamberg Logo" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/postler.png" width="205" height="160" alt="Postler Logo" loading="lazy">
                 </div>
                 <div class="ref-marquee__group" aria-hidden="true">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bayernwerk.png" width="983" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bayerische-landessiedlung.png" width="622" height="160" alt="" loading="lazy">
+                  <span class="ref-marquee__name">Bodo Freimuth Tiefbau</span>
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/ibis-bamberg.png" width="160" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/postler.png" width="205" height="160" alt="" loading="lazy">
                 </div>
                 <div class="ref-marquee__group" aria-hidden="true">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bayernwerk.png" width="983" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bayerische-landessiedlung.png" width="622" height="160" alt="" loading="lazy">
+                  <span class="ref-marquee__name">Bodo Freimuth Tiefbau</span>
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/ibis-bamberg.png" width="160" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/postler.png" width="205" height="160" alt="" loading="lazy">
                 </div>
                 <div class="ref-marquee__group" aria-hidden="true">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bayernwerk.png" width="983" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bayerische-landessiedlung.png" width="622" height="160" alt="" loading="lazy">
+                  <span class="ref-marquee__name">Bodo Freimuth Tiefbau</span>
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/ibis-bamberg.png" width="160" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/postler.png" width="205" height="160" alt="" loading="lazy">
                 </div>
                 <div class="ref-marquee__group" aria-hidden="true">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bayernwerk.png" width="983" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bayerische-landessiedlung.png" width="622" height="160" alt="" loading="lazy">
+                  <span class="ref-marquee__name">Bodo Freimuth Tiefbau</span>
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/ibis-bamberg.png" width="160" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/postler.png" width="205" height="160" alt="" loading="lazy">
                 </div>
                 <div class="ref-marquee__group" aria-hidden="true">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bayernwerk.png" width="983" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bayerische-landessiedlung.png" width="622" height="160" alt="" loading="lazy">
+                  <span class="ref-marquee__name">Bodo Freimuth Tiefbau</span>
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/ibis-bamberg.png" width="160" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/postler.png" width="205" height="160" alt="" loading="lazy">
                 </div>
@@ -508,10 +532,11 @@
           </li>
           <li class="ref-clients__group">
             <h3 class="ref-clients__group-title">Veranstaltungsschutz</h3>
-            <!-- 10 companies: one group fills the row, so two groups is enough. -->
+            <!-- 10 companies (Brose Bamberg restored 2026-08-14): one group fills the row, so the four groups here are more than the loop needs. -->
             <div class="ref-marquee ref-marquee--veranstaltung">
               <div class="ref-marquee__track">
                 <div class="ref-marquee__group">
+                  <span class="ref-marquee__name">Brose Bamberg</span>
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bbc-coburg.png" width="160" height="160" alt="BBC Coburg Logo" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/stadt-coburg.png" width="168" height="160" alt="Stadt Coburg Logo" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/landkreis-coburg.png" width="136" height="160" alt="Landkreis Coburg Logo" loading="lazy">
@@ -523,6 +548,7 @@
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/wirtschaftsclub-bamberg.png" width="320" height="160" alt="Wirtschaftsclub Bamberg Logo" loading="lazy">
                 </div>
                 <div class="ref-marquee__group" aria-hidden="true">
+                  <span class="ref-marquee__name">Brose Bamberg</span>
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bbc-coburg.png" width="160" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/stadt-coburg.png" width="168" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/landkreis-coburg.png" width="136" height="160" alt="" loading="lazy">
@@ -534,6 +560,7 @@
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/wirtschaftsclub-bamberg.png" width="320" height="160" alt="" loading="lazy">
                 </div>
                 <div class="ref-marquee__group" aria-hidden="true">
+                  <span class="ref-marquee__name">Brose Bamberg</span>
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bbc-coburg.png" width="160" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/stadt-coburg.png" width="168" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/landkreis-coburg.png" width="136" height="160" alt="" loading="lazy">
@@ -545,6 +572,7 @@
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/wirtschaftsclub-bamberg.png" width="320" height="160" alt="" loading="lazy">
                 </div>
                 <div class="ref-marquee__group" aria-hidden="true">
+                  <span class="ref-marquee__name">Brose Bamberg</span>
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/bbc-coburg.png" width="160" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/stadt-coburg.png" width="168" height="160" alt="" loading="lazy">
                   <img class="ref-marquee__logo" src="/assets/images/client-logos/landkreis-coburg.png" width="136" height="160" alt="" loading="lazy">
@@ -560,15 +588,18 @@
           </li>
         </ul>
 
-        <!-- The draft's internal links for this page: /leistungen/ and the
-             Bamberg/Coburg city pages as Referenz-Bezüge (the roster is heavily
-             Bamberg and Coburg). Real links to confirmed URLs from guidelines
-             §2.2 — /leistungen/ and both city pages are in the build queue
-             (docs/build-checklist.md, Bloques 4/5/7), not built yet. -->
+        <!-- Two HUB links only — client 2026-08-14 (Referenzen, punto 2): "link
+             only 'Alle Leistungen im Überblick' and 'Alle Einsatzgebiete im
+             Überblick' — do not link Bamberg and Coburg individually". So the
+             two city links that used to sit here (/sicherheitsdienst-bamberg/,
+             /sicherheitsdienst-coburg/, added because the roster is heavily
+             Bamberg and Coburg) are GONE, replaced by the coverage hub.
+             ⚠️ It also closes two planned 404s: neither city page is built
+             (docs/build-checklist.md, Bloque 5), while both hubs are live —
+             so this row now resolves completely. -->
         <div class="ref-clients__links">
           <a class="service-link" href="/leistungen/">Alle Leistungen im Überblick<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
-          <a class="service-link" href="/sicherheitsdienst-bamberg/">Sicherheitsdienst Bamberg<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
-          <a class="service-link" href="/sicherheitsdienst-coburg/">Sicherheitsdienst Coburg<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          <a class="service-link" href="/einsatzgebiete/">Alle Einsatzgebiete im Überblick<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
         </div>
 
         <!-- ---- Zertifizierungen ------------------------------------------
@@ -608,7 +639,16 @@
             </li>
           </ul>
 
-          <p class="trust-certs__memberships">Mitglied im Wirtschaftsclub Bamberg und im Deutschen Mittelstands-Bund.</p>
+          <!-- Both memberships are LINKED — client 2026-08-14 (Referenzen, punto 3).
+               ⚠️ The two URLs were verified against the live sites before publishing
+               them, not guessed from the names: wirtschaftsclub-bamberg.de returns
+               "Wirtschaftsclub Bamberg e.V." and www.mittelstandsbund.de returns
+               "Deutscher Mittelstands-Bund (DMB) e.V.". Written WITHOUT `www.` for
+               the first one because its www host 301s to the bare domain — linking
+               the redirect target saves a hop. (dmb.de is a DIFFERENT organisation,
+               the Mieterbund — do not "shorten" the second URL to it.)
+               Not one word of the sentence changed. -->
+          <p class="trust-certs__memberships">Mitglied im <a href="https://wirtschaftsclub-bamberg.de/" target="_blank" rel="noopener">Wirtschaftsclub Bamberg<span class="visually-hidden"> (öffnet in einem neuen Tab)</span></a> und im <a href="https://www.mittelstandsbund.de/" target="_blank" rel="noopener">Deutschen Mittelstands-Bund<span class="visually-hidden"> (öffnet in einem neuen Tab)</span></a>.</p>
         </div>
       </div>
     </section>
@@ -695,20 +735,7 @@
 
   </main>
 
-  <!-- Pixel dissolve before the footer — mandatory on every page
-       (docs/page-conventions.md §4.4). Both the form panel above and the footer
-       are flat black, so the normal wipe tile (opaque -> transparent) is
-         both sides of this one are the same flat black, so a normal wipe tile is
-         invisible either way it lands. js/pixel-transition.js measures that at
-         runtime — the surface above, the footer below and the tile all resolving
-         to the same colour — and switches this seam to the pulse (tiles fade up
-         to solid white and back down as the sweep passes). Nothing is declared
-         here: turn the last section light and it goes back to being a wipe on its
-         own. The footer still reserves the band's height either way
-         (`.pixel-seam + .site-footer`, page-service.css). -->
-  <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
-
-  <!-- include: footer-de -->
+<!-- include: footer-de -->
   <!-- include: whatsapp-button -->
 </body>
 </html>

@@ -365,6 +365,92 @@
   .nav-open body {
     overflow: hidden;
   }
+
+  /* ---- The panel's own close control (client 2026-08-14) -------------------
+     Anchored to the panel, not to the header row, and coloured from
+     currentColor — so it is legible for the same reason the links beside it
+     are, whatever state the header happens to be in. Sits on the header row's
+     own line, at the container's inset, so it reads as the X the hamburger
+     turned into rather than as a second, unrelated button.
+     44px target with the icon drawn at 18px: the same pair the hamburger uses
+     (--nav-toggle-target / --nav-toggle-icon further down), so the two are one
+     control at one size. */
+  .nav-close {
+    position: absolute;
+    top: var(--space-4);
+    inset-inline-end: var(--container-padding);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    /* Same optical pull as the hamburger's: flushing the 44px BOX to the
+       container inset would leave the drawn 18px icon 13px further in than
+       everything else in the panel. Derived, not hardcoded. */
+    margin-inline-end: calc((1.125rem - 2.75rem) / 2);
+  }
+
+  .nav-close__icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    /* The sprite's fill/stroke live on its <g id="icon-defs"> wrapper and do NOT
+       survive <use> — the trap that has rendered a filled black sliver in this
+       project three times now. */
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  .nav-close:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* ---- ⚠️ REAL BUG, found while tracing the report above ------------------
+     Over a light section the header switches to its dark-INK state
+     (.site-header--dark, set by initHeaderScrollTheme): the white logo is
+     inverted with `filter: brightness(0)` and the hamburger's bars are painted
+     --color-gray. Correct over white — and wrong the moment the full-screen
+     panel opens, because what is behind the header row then is the PANEL, which
+     is --color-bg (near-black). Result: a black logo and a #3B4956 X on black,
+     i.e. the close control disappears exactly when it is needed. Measured as a
+     contrast ratio it is 1.06:1 for the logo and 1.36:1 for the bars.
+     While the panel is open the header row is over the panel, so it goes back to
+     light-on-dark. `.nav-open` is on <html>, so these outrank the plain
+     .site-header--dark rules on specificity, not on order. */
+  .nav-open .site-header--dark .site-header__logo img {
+    filter: none;
+  }
+  .nav-open .site-header--dark .nav-toggle__bar,
+  .nav-open .site-header--dark .nav-toggle__bar::before,
+  .nav-open .site-header--dark .nav-toggle__bar::after {
+    background-color: var(--color-text);
+  }
+  .nav-open .site-header--dark .site-nav__list a,
+  .nav-open .site-header--dark .site-nav__caret {
+    color: var(--color-text);
+  }
+  /* The frosted white wash belongs to a header floating over a light page; over
+     the panel it is a pale film across the top of a black sheet. */
+  .nav-open .site-header--dark::before {
+    opacity: 0;
+  }
+}
+
+/* The panel IS the nav row at the desktop breakpoint, so its close control must
+   not exist there. Outside the mobile query on purpose: `.nav-close` is only
+   ever laid out by the block above. */
+@media (min-width: 1400px) {
+  .nav-close {
+    display: none;
+  }
 }
 
 .site-nav__list {

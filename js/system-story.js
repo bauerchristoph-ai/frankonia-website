@@ -248,8 +248,13 @@
      — holding the page hostage is exactly what a reduced-motion visitor is
      asking not to have.
      ========================================================================== */
+  /* 767.98 -> 1023.98 on 2026-08-14 (client): the tablet band used to get neither
+     this nor the >=1024px peek-stack, so the six cards were a plain vertical
+     list there. Widening this alone would NOT have been enough — the strip it
+     scrubs only exists because .system-story__stack opts into the tablet band in
+     css/swipe-carousel.css. Keep the three ranges in step. */
   mm.add(
-    "(max-width: 767.98px) and (prefers-reduced-motion: no-preference)",
+    "(max-width: 1023.98px) and (prefers-reduced-motion: no-preference)",
     function () {
       var stack = story.querySelector("[data-system-stack]");
       var track = story.querySelector(".system-story__track");

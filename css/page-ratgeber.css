@@ -339,8 +339,10 @@
    near-white surface blue-light measures 2.87:1 against the 4.5:1 a 16px link
    needs, and no size threshold saves a link inside a sentence. This mix is
    4.90:1. Same fix .city-faq's answer links already carry. */
-.rg-article a,
-.rg-article .faq-item__answer a {
+/* ⚠️ `.rg-article .faq-item__answer a` was dropped from this selector on
+   2026-08-14 — components.css owns FAQ-answer links now. What stays is
+   `.rg-article a`, i.e. links in the ARTICLE PROSE, which nothing shared covers. */
+.rg-article a {
   color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
 }
 
@@ -521,14 +523,13 @@
   justify-content: center;
 }
 
-/* #icon-phone is the ONE filled symbol in the sprite that does not declare its
-   own paint, so inside a blue button it renders as a black smear without this. */
-.rg-cta__actions .btn--primary .icon {
-  fill: currentColor;
-  stroke: none;
-  width: 1.125rem;
-  height: 1.125rem;
-}
+/* The #icon-phone fill fix that used to sit here is GONE — it is the shared
+   `.btn__icon` rule in components.css now (client rule G1, 2026-08-14).
+   ⚠️ Its `width/height: 1.125rem` went with it, deliberately: that made the
+   glyph smaller than the 1.25em every other phone pill on the site renders, and
+   G1 is precisely about these four buttons being ONE design rather than four
+   near-copies. The phone button on this page is `.btn--secondary` now, so this
+   selector no longer matched it either way. */
 
 /* On a phone both actions go full width and stack — the same treatment every
    other page's action pair gets at this width (§7). */

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- /datenschutz/ — A SHELL, on the client's explicit instruction (feedback
+     2026-08-13, Q1: "Datenschutz: we will integrate an automatic privacy-policy
+     scanner that keeps the text up to date — details follow later. Plan the
+     /datenschutz/ page as a shell for now").
+
+     ⚠️ WHY THIS PAGE EXISTS AT ALL RATHER THAN WAITING FOR THE SCANNER: /datenschutz/
+     was already linked from the footer of all 19 pages AND from the consent
+     checkbox of the shared lead form ("Ich habe die Datenschutzerklärung gelesen
+     und stimme zu"). A consent checkbox whose privacy link 404s is not a cosmetic
+     gap — it is the one broken link on this site with a legal consequence, since
+     the visitor is being asked to confirm they read a document that cannot be
+     opened. The shell closes that.
+
+     ⚠️ NOTHING IN <main> IS INVENTED LEGAL TEXT, and that is deliberate. The page
+     states only what is independently verifiable from the Impressum: WHO the
+     controller is and how to reach them. It makes no claim about cookies, tools,
+     legal bases, retention periods or third-country transfers — writing those
+     ourselves would be drafting law for a client who has told us a tool is coming
+     to do exactly that.
+
+     ⚠️⚠️ TWO THINGS THE NEXT PERSON HAS TO DO WHEN THE SCANNER ARRIVES:
+
+     1. THE CSP WILL BLOCK IT. vercel.json ships `script-src 'self'` with no
+        third-party hosts, so a scanner delivered as an external <script> (which is
+        how eRecht24, Usercentrics and the rest all work) is silently blocked and
+        the page just stays empty. Its host has to be added to `script-src`, and
+        to `connect-src` if it fetches its text at runtime. Expect to debug this if
+        nobody reads this comment.
+
+     2. REMOVE THE `noindex`. It is set below ON PURPOSE while the text is a
+        placeholder — a thin, incomplete privacy page is not something to put in
+        an index — but the finished policy should be indexable like the Impressum.
+
+     The scanner's output goes inside #datenschutz-inhalt, replacing the interim
+     notice. Everything above and below that div is page chrome and stays. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Datenschutzerklärung – FRANKONIA Sicherheitsdienst</title>
+  <meta name="description" content="Datenschutzerklärung der FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG, Bamberg: Verantwortlicher, Kontakt für datenschutzrechtliche Anfragen und Ihre Rechte.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/datenschutz/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/datenschutz/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/datenschutz/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Datenschutzerklärung – FRANKONIA Sicherheitsdienst">
+  <meta property="og:description" content="Verantwortlicher und Kontakt für datenschutzrechtliche Anfragen bei FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG in Bamberg.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/datenschutz/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- ⚠️ `noindex` WHILE THIS IS A SHELL — see the file header. `follow` stays, so
+       the internal links out of here still pass. FLIP THIS TO
+       "index,follow,max-image-preview:large" the day the real policy lands. -->
+  <meta name="robots" content="noindex,follow">
+
+  <!-- No FAQPage, no Service: a privacy notice is not a product. Organization +
+       BreadcrumbList only, and the Organization node is the site's own so this
+       page does not assert a second, competing description of the company. -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://frankonia-sicherheit.de/" },
+        { "@type": "ListItem", "position": 2, "name": "Datenschutz", "item": "https://frankonia-sicherheit.de/datenschutz/" }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-legal.css">
+
+  <!-- Same short stack as /impressum/, for the same reason — see the long note in
+       that file. No text-reveal, no title-reveal: a privacy notice is a reference
+       document, and hidden-until-scrolled text defeats Ctrl+F and printing. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Datenschutz</span></li>
+      </ol>
+    </nav>
+
+    <!-- ============ 1. HERO ============ -->
+    <section class="service-hero legal-hero" data-hero-reveal>
+      <div class="container service-hero__grid">
+        <div class="service-hero__content hero__content">
+          <h1>Datenschutzerklärung</h1>
+          <p class="service-hero__lead hero__lead">Wie FRANKONIA mit personenbezogenen Daten umgeht — und an wen Sie sich mit Fragen dazu wenden.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 2. VERANTWORTLICHER + PLATZHALTER ============ -->
+    <section class="section section--light legal" data-nav-theme="light">
+      <div class="container">
+        <div class="legal-doc">
+
+          <!-- The controller block is REAL, FINAL CONTENT and can stay when the
+               scanner lands (most scanners emit their own "Verantwortlicher"
+               section — if this one does, delete this block rather than shipping
+               the same details twice). Every value here comes from the Impressum,
+               so nothing is asserted that is not already published. -->
+          <h2>Verantwortlicher</h2>
+          <p>Verantwortlich für die Datenverarbeitung auf dieser Website im Sinne der Datenschutz-Grundverordnung (DSGVO) ist:</p>
+
+          <address class="legal-address">
+            FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG<br>
+            {{address.street}}<br>
+            {{address.postal}} {{address.city}}
+          </address>
+
+          <p class="legal-contact">
+            Tel. <a href="{{phone.href}}">{{phone.display}}</a><br>
+            E-Mail: <a href="mailto:{{email}}">{{email}}</a>
+          </p>
+
+          <p>Die vollständigen Anbieterangaben beider Gesellschaften finden Sie im <a href="/impressum/">Impressum</a>.</p>
+
+          <!-- ============ THE SCANNER'S TARGET ============ -->
+          <!-- ⚠️ THE AUTOMATED PRIVACY POLICY GOES IN HERE. Replace the whole
+               .legal-notice block below with the scanner's output; keep the
+               wrapper div and its id, since that is what the integration will
+               address. Do not delete the <h2> — the injected text usually starts
+               at heading level 3 or lower and this page needs a section title
+               either way. -->
+          <h2>Ihre Daten auf dieser Website</h2>
+
+          <div id="datenschutz-inhalt" data-legal-scanner-target>
+
+            <!-- INTERIM NOTICE — placeholder, not legal text. It says only that
+                 the document is being finalised and how to reach a human in the
+                 meantime, which is the one thing a data subject actually needs
+                 from this page while it is incomplete. It deliberately makes NO
+                 statement about cookies, analytics, hosting, legal bases or
+                 retention: those are the scanner's job, and guessing them would
+                 be worse than saying nothing. -->
+            <div class="legal-notice" role="note">
+              <p class="legal-notice__label">
+                <svg class="icon" aria-hidden="true"><use href="#icon-clock"></use></svg>
+                Hinweis: Diese Erklärung wird derzeit finalisiert
+              </p>
+              <p>Die ausführliche Datenschutzerklärung für diese Website wird gerade fertiggestellt und anschließend automatisiert gepflegt, damit sie dauerhaft aktuell bleibt.</p>
+              <p>Bis dahin gilt: Für Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit sowie für Widerspruch und Widerruf einer Einwilligung wenden Sie sich bitte direkt an die oben genannten Kontaktdaten. Wir beantworten datenschutzrechtliche Anfragen innerhalb der gesetzlichen Fristen.</p>
+              <p>Sie haben außerdem das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren. Zuständig ist für uns das Bayerische Landesamt für Datenschutzaufsicht (BayLDA), Promenade 27, 91522 Ansbach.</p>
+            </div>
+
+          </div>
+
+          <p class="legal-crosslink">
+            <a class="service-link" href="/impressum/">
+              Zum Impressum
+              <svg class="service-link__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </p>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

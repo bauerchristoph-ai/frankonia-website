@@ -1,0 +1,272 @@
+/* ==========================================================================
+   page-legal.css — /impressum/ and /datenschutz/
+   ==========================================================================
+   Loaded AFTER css/page-service.css, which is the page CHASSIS here exactly as
+   it is for /referenzen/ and the case studies (docs/page-conventions.md §9.1):
+   --content-inset on both sides, the breadcrumb chevron, `.section--light`'s
+   token flip, `.service-hero*`, `.service-link`, and the whole `.pixel-seam`
+   block all come from there. This file only holds what a legal document needs
+   on top of that, which is not much: a reading column, a few label→value
+   blocks, and one notice panel.
+
+   ⚠️ THE PROSE COLUMN BELOW IS THE THIRD COPY OF ONE DECISION, AND THAT MEANS
+   IT IS NOW DUE FOR PROMOTION. `.cs-article` (page-case-study.css, 3 pages) and
+   `.rg-article` (page-ratgeber.css, 3 pages) already declare an identical
+   44rem centred column with an identical stepped-down H2 clamp; `.legal-doc` is
+   the same decision a third time, and this project's own rule is that a THIRD
+   consumer promotes a pattern to the shared file instead of copying it again.
+   It was NOT promoted in this pass on purpose: doing it means editing six live,
+   client-reviewed pages during a feedback round, which deserves its own
+   verification pass rather than riding along with two new legal pages. The
+   migration, for whoever picks it up: add a shared `.prose-doc` to
+   page-service.css, delete the three duplicated blocks, and add the class to
+   the 6 existing article pages' wrapper divs (3 × case-study-*.html,
+   3 × ratgeber/*.html) plus the 2 pages here.
+   The VALUES were copied literally rather than re-derived, so that until then
+   the eight pages are one design and not three similar ones.
+
+   ⚠️ AND IT IS NOT A NEW EXCEPTION TO page-conventions §2. §2 ("one size for
+   every section title") is about the section titles of a composed marketing
+   page. An article's chapter headings are a different thing, and the codebase
+   already draws that line twice. The right fix is for §2 to name the
+   distinction — section title vs. document heading — rather than for this to
+   be logged as a fifth exception.
+   ========================================================================== */
+
+/* ---- 1. Hero ------------------------------------------------------------- */
+/* Compact, and the two-class selector is deliberate. page-service.css sets
+   `.service-hero { min-height: calc(100svh - 8rem) }` inside its ≥1024px block,
+   which is (0,1,0) — the same specificity as a bare `.legal-hero`. This file
+   loads later so a single class would in fact win today, but that makes the
+   result depend on stylesheet ORDER, and this exact trap has already bitten
+   three times on the service hero (see the `--bleed` note in page-service.css).
+   (0,2,0) wins on specificity and cannot be broken by a reorder.
+
+   A full-screen hero is wrong here for a simple reason: there is nothing in it
+   but a title and one line. Reserving a whole viewport for that pushes the
+   actual § 5 TMG details — the only reason anyone opens this page — below the
+   fold. */
+.service-hero.legal-hero {
+  min-height: 0;
+  padding-block: var(--space-8) var(--space-9);
+}
+
+@media (min-width: 1024px) {
+  .service-hero.legal-hero {
+    min-height: 0;
+    padding-block: var(--space-9);
+  }
+}
+
+/* The lede is capped shorter than the shared 32rem hero measure: one sentence
+   of housekeeping copy should not run the width of a display heading. */
+.legal-hero .service-hero__lead {
+  max-width: 34rem;
+}
+
+/* ---- 2. The document column --------------------------------------------- */
+/* Values copied from `.cs-article` / `.rg-article` — see the file header. The
+   COLUMN is centred, never the text: `text-align` stays at its inherited
+   `start`, because centred running prose is a readability failure and a legal
+   notice is the last place to try it. */
+.legal-doc {
+  max-width: 44rem;
+  margin-inline: auto;
+}
+
+/* Document headings step DOWN from the shared oversized `main h2` clamp. At the
+   60px section scale, six of these a screen apart each read as a new page
+   rather than as the next clause of one document. Beats `main h2` on
+   specificity — (0,1,1) against (0,0,2) — so no !important and no reordering. */
+.legal-doc h2 {
+  font-size: clamp(1.5rem, 1.2rem + 1.1vw, 2.125rem);
+  line-height: 1.2;
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-4);
+}
+
+/* h3 is a real sub-level of its h2 and has to look like one. Body weight and
+   normal tracking, not display metrics: design-system §2's rule is that a
+   heading typographed at body scale takes body metrics — base.css tightens
+   every heading by a flat −1px, which is ~−2 % at 60px and a visible collision
+   at 19px. */
+.legal-doc h3 {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  letter-spacing: normal;
+  line-height: var(--line-height-base);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-3);
+}
+
+.legal-doc > *:first-child {
+  margin-top: 0;
+}
+
+.legal-doc p {
+  font-size: var(--font-size-base);
+  line-height: 1.7;
+  margin-bottom: var(--space-4);
+}
+
+/* ⚠️ LINK COLOUR IS A CONTRAST FIX, NOT A PREFERENCE — and this page is almost
+   nothing but links. base.css sets `--color-link: var(--color-accent)`, and
+   inside `.section--light` that token re-resolves to blue-dark (#5287C9), which
+   measures 3.71:1 on white: enough for a graphic, NOT the 4.5:1 that body-size
+   text needs. This is the identical defect that shipped live in the FAQ answers
+   and on /referenzen/. The deeper mix is the documented fix (#4673AB, 4.88:1).
+   The underline stays: a link must never be identified by colour alone. */
+.legal-doc a {
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+}
+
+.legal-doc a:hover,
+.legal-doc a:focus-visible {
+  color: var(--color-logo-black);
+}
+
+/* ---- 3. Address, contact and ID blocks ---------------------------------- */
+/* <address> is the correct element for the postal address of the page's owner,
+   which is exactly what this is. Browsers italicise it by default. */
+.legal-address {
+  font-style: normal;
+  font-size: var(--font-size-base);
+  line-height: 1.7;
+  margin-bottom: var(--space-4);
+}
+
+.legal-contact {
+  font-size: var(--font-size-base);
+  line-height: 1.7;
+  margin-bottom: var(--space-4);
+}
+
+/* Every contact link becomes a real 44px target instead of a 27px line of text.
+   The mechanism matters: as `<br>`-separated inline-flex boxes each 44px tall,
+   consecutive links push their own lines apart to 44px, so the targets grow
+   WITHOUT overlapping each other. Padding plus negative margin — the trick used
+   for inline links elsewhere on the site — would have made two stacked links
+   overlap by 16px, and overlapping targets are worse than small ones.
+   Prose links inside a sentence (the ODR URL, the cross-links) are deliberately
+   NOT included: those fall under WCAG 2.5.8's explicit exception for targets
+   constrained by the line-height of a sentence. */
+.legal-contact a,
+.legal-address a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+/* Label → value pairs, which is what a <dl> means. Two columns once there is
+   room for them, stacked below that. */
+.legal-ids {
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-base);
+  line-height: 1.7;
+}
+
+/* ⚠️ `manual`, NOT `none` — and the difference is a real 50px of horizontal page
+   scroll at 320px, measured.
+   "Bewachungsunternehmenidentifikationsnummer" is 42 characters. base.css sets
+   `hyphens: auto` on body copy, which is right for prose and wrong for a legal
+   identifier: it breaks the word wherever the dictionary likes. The markup
+   carries the client's own `&shy;` at the compound seam, so the intent is "break
+   HERE and nowhere else" — but `hyphens: none` suppresses soft hyphens as well
+   as automatic ones, which left the &shy; completely inert and the 42-character
+   word setting a 350px min-content width inside a 280px column.
+   `manual` is the value that means exactly the intent: honour an author-placed
+   &shy;, never guess. Same trap as the /leistungen/ H1, documented in CLAUDE.md;
+   it is easy to reach for `none` because the word "none" sounds like "no
+   automatic hyphenation". */
+.legal-ids dt {
+  hyphens: manual;
+  color: var(--color-text-muted);
+}
+
+.legal-ids dd {
+  margin: 0 0 var(--space-3);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 640px) {
+  .legal-ids {
+    display: grid;
+    /* max-content, not 1fr: the label column should be exactly as wide as the
+       longest label, so the two values line up without a stretched gap. */
+    grid-template-columns: max-content 1fr;
+    column-gap: var(--space-4);
+    row-gap: var(--space-2);
+  }
+
+  .legal-ids dd {
+    margin-bottom: 0;
+  }
+}
+
+/* A real divider between the two legal entities. Without it the second block
+   reads as a continuation of the first, which would make two VAT IDs and two
+   Bewachungs-IDs look like they belong to one legal person — the one factual
+   misreading this page must not invite. */
+.legal-rule {
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  margin: var(--space-8) 0 var(--space-7);
+}
+
+/* ---- 4. Interim notice (/datenschutz/ only) ----------------------------- */
+/* Reads as a temporary state, not as body copy: a tinted panel with a labelled
+   heading, so nobody mistakes it for the actual privacy policy. It is replaced
+   wholesale when the client's scanner lands — see the comment in
+   pages/datenschutz.html. */
+.legal-notice {
+  background-color: var(--color-accent-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.legal-notice > *:last-child {
+  margin-bottom: 0;
+}
+
+/* The deep mix again, for the same reason as the links above: this is 16px
+   text, so 4.5:1 applies and the plain accent token would measure 3.71:1. */
+.legal-notice__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 500;
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+  margin-bottom: var(--space-3);
+}
+
+/* ⚠️ RESTATE fill/stroke on any sprite icon. The sprite's own
+   `fill: none; stroke: currentColor` lives on its `<g id="icon-defs">` wrapper
+   and DOES NOT survive `<use>` — an icon without this renders as a black blob.
+   Documented four times over in CLAUDE.md; it catches everyone once. */
+.legal-notice__label .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+}
+
+/* ---- 5. Cross-link between the two legal pages -------------------------- */
+.legal-crosslink {
+  margin-top: var(--space-8);
+  margin-bottom: 0;
+}
+
+/* ---- 6. Phone ----------------------------------------------------------- */
+@media (max-width: 767.98px) {
+  .service-hero.legal-hero {
+    padding-block: var(--space-6) var(--space-7);
+  }
+
+  /* The document column is already narrower than the container at this width,
+     so it needs no cap — but the H2 clamp bottoms out at 24px, which against a
+     16px body is the right amount of contrast for a phone. Nothing to override. */
+}

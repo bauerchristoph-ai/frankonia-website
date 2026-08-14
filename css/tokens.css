@@ -118,7 +118,36 @@
      a spare rather than deleted. */
   --font-family-base: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-weight-regular: 400;
-  --font-weight-bold: 800;
+  /* ⚠️ 800 -> 700 on 2026-08-14, and it is a RENDERING BUG FIX, not a taste
+     change (client: "one section headline appears to use a different font —
+     please check/unify", pointing at .service-related__title, the one label on
+     the site that is uppercase AND bold AND tracked, so it showed first).
+
+     800 is unreachable in this font stack, and asking for it invites a
+     SUBSTITUTION. Read off the actual system files rather than assumed:
+     HelveticaNeue.ttc ships UltraLight 100 / Thin 200 / Light 300 / Regular 400
+     / Medium 500 / Bold 700 at normal width — nothing heavier — and its only
+     faces at or above 800 are "Condensed Bold" and "Condensed Black" (900),
+     both at width class 3, i.e. CONDENSED. Arial is Regular 400 / Bold 700
+     (Arial Black is a separate family, not a face of Arial). So at 800 there is
+     no normal-width face to match: Chrome clamps to Bold 700, and WebKit has
+     long resolved it to Helvetica Neue Condensed Black — a narrower, much
+     heavier face. That IS a different typeface on the page, and it explains why
+     it looks wrong in one browser and fine in another.
+
+     Root cause, and it is already half-documented right below for weight 300:
+     "Extra Bold 800" is the client's CI spec from when the site was set in
+     self-hosted Open Sans, which really does ship an 800. The 2026-07-17 switch
+     to the system Helvetica/Arial stack made both 800 and 300 requests rather
+     than guarantees; 300 was flagged at the time, 800 was not.
+
+     700 is a real face in every fallback in the stack, so the rendering is now
+     the same everywhere. Chrome/Edge/Firefox are pixel-identical (they were
+     already drawing 700); only the WebKit substitution goes away. It also stays
+     "bold" for WCAG's large-text threshold (>=18.66px bold), which several
+     contrast decisions on this site depend on — see .service-related__title in
+     page-service.css, whose flat 20px exists for exactly that reason. */
+  --font-weight-bold: 700;
   /* Documented exception to the client's CI guidelines ("Regular 400 and
      Extra Bold 800 only, no other weights") — added 2026-07-15, explicit
      client request for the big section-title treatment ("main h2" in

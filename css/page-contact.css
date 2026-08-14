@@ -824,6 +824,41 @@
   line-height: var(--line-height-base);
 }
 
+/* ---- DEKRA certification row ---- */
+/* RESTORED 2026-08-14 (client: "add the DEKRA certification symbols/seals"),
+   byte-for-byte the rule that was deleted on 2026-08-04 when the same client
+   asked for a lighter left column. Later instruction wins; restoring the old
+   rule rather than designing a second one is what keeps this page's seals
+   identical to what was approved before.
+   Real DEKRA seals, used as supplied (never cropped or recoloured — CLAUDE.md).
+   Source files are 399x600 portrait; height is fixed and width left auto so the
+   ratio cannot drift. */
+.contact-cert {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  /* Sits under the Highlight-Box now (which did not exist in the earlier
+     version), so it needs its own separation from it. */
+  margin-top: var(--space-5);
+}
+
+/* 2.75rem — the hero trust bands' size, and the SMALLEST the seals are used at
+   anywhere else on the site (.trust-certs runs 5–7rem). The block that was
+   deleted in August used 2.25rem, and restoring that exactly is what this rule
+   first did; measured, it renders 24x36px, at which the DEKRA wordmark inside a
+   399x600 seal is not readable — a certification symbol nobody can identify does
+   not do the job the client asked for. 44px tall is still modest: it supports the
+   decision without competing with the phone tile above it or the form beside it. */
+.contact-cert__seal {
+  height: 2.75rem;
+  width: auto;
+}
+
+.contact-cert__text {
+  font-size: var(--font-size-sm);
+  color: rgb(59 73 86 / 0.75);
+}
+
 /* (The "Lieber direkt sprechen? …" line under the form is gone entirely —
    client 2026-07-31. The card ends on the submit button. The phone is still
    one tap away in the contact card above and in the footer.) */
@@ -1024,9 +1059,6 @@
      1. black first section -> white map section. Plain .pixel-seam, i.e. the
         default black tiles, because the tiles always match the section ABOVE.
      2. white map section -> black footer. .pixel-seam--white, as before. */
-.pixel-seam + .site-footer {
-  padding-top: calc(var(--space-9) + 200px);
-}
 
 .pixel-seam + .contact-location {
   padding-top: calc(var(--space-8) + 200px);
@@ -1037,9 +1069,6 @@
     height: 120px;
   }
 
-  .pixel-seam + .site-footer {
-    padding-top: calc(var(--space-9) + 120px);
-  }
 
   /* The phone's own section rhythm (the 2026-08-04 mobile pass trimmed this
      section's top padding to --space-6) plus the shorter mobile band. */
@@ -1137,6 +1166,14 @@
   .contact-form__submit {
     justify-self: stretch;
     width: 100%;
+  }
+
+  /* Two seals plus a 46-character caption do not fit one phone line; wrapping
+     puts the caption under the pair instead of squeezing it to two words.
+     (Restored with the block itself, 2026-08-14.) */
+  .contact-cert {
+    flex-wrap: wrap;
+    gap: var(--space-3);
   }
 
   /* The form is the primary action and comes first in the DOM, so the gap

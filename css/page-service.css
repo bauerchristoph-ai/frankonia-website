@@ -532,24 +532,18 @@ main h2 {
   margin-top: var(--space-6);
 }
 
-/* Outline phone pill — same treatment as the homepage hero's secondary action
-   (.hero__phone), so the primary/secondary relationship reads identically on
-   both. icon-phone is a FILLED icon, hence the explicit fill/stroke. */
-.service-hero__phone {
-  background-color: transparent;
-  border-color: rgb(255 255 255 / 0.35);
-  color: rgb(255 255 255 / 0.85);
-}
-
-.service-hero__phone .icon {
-  fill: currentColor;
-  stroke: none;
-}
-
-.service-hero__phone:hover,
-.service-hero__phone:focus-visible {
-  background-color: rgb(255 255 255 / 0.08);
-}
+/* ⚠️ .service-hero__phone NO LONGER CARRIES ANY APPEARANCE (client rule G1,
+   2026-08-14: one fixed secondary-CTA design sitewide). It was a verbatim copy
+   of .hero__phone's colours — border white 35%, text white 85%, a local
+   `.icon { fill: currentColor }` fix and a hover wash — which is precisely the
+   duplication the rule exists to end: two files describing one design, free to
+   drift. The markup is `btn btn--secondary service-hero__phone` now and every
+   one of those declarations comes from components.css.
+   ⚠️ The class now has NO rule anywhere — it is kept in the markup purely as a
+   name for what the element is. Mobile sizing was never its job: the phone
+   breakpoint at the foot of this file stacks and stretches
+   `.service-hero__actions .btn`, which covers both buttons in the row. Do not
+   re-add colour here, and do not assume this selector is doing something. */
 
 /* Trust band: rating pill then the two DEKRA seals, exactly as the homepage
    hero's own .hero__trust / .hero__badges / .hero__badge — same order, same
@@ -2785,6 +2779,14 @@ main h2 {
    no chart, no invented company name. The figure is an INLINE number inside the
    approved sentence rather than a display number with the sentence repeated
    underneath — so the claim appears exactly once and reads exactly as written. */
+/* Was the <p> itself until 2026-08-14; it is now the hairline-bounded BOX and
+   the sentence moved into .service-konzept__proof-text inside it, so the block
+   can also carry the "Zur Case Study" link the client's general rule asks for
+   (see the markup comment in werkschutz.html). Everything typographic stayed on
+   this element — those properties all inherit, so the sentence renders exactly
+   as before; only max-width/margins/borders were ever about the box.
+   The link is optional: a service page whose result has no case study just
+   leaves it out and the box is a paragraph again. */
 .service-konzept__proof {
   /* 56ch, not 44 (client 2026-08-06: "si puede quedar en dos renglones en vez de
      tres mejor"). The sentence is ~104 characters; at 44ch it broke to three
@@ -2801,6 +2803,26 @@ main h2 {
   /* A sentence with a 2em number in it wraps badly against auto-hyphenation. */
   -webkit-hyphens: none;
   hyphens: none;
+}
+
+.service-konzept__proof-text {
+  margin: 0;
+}
+
+/* Centred under the sentence, inside the same hairlines, so the evidence and the
+   proof behind it read as one unit rather than as a stray link. `.service-link`
+   brings the blue, the arrow and the 44px target; this only places it.
+   flex, because .service-link is inline-flex — `text-align` on the parent does
+   not centre a flex item's own box the way it centres text. */
+.service-konzept__proof-link {
+  display: inline-flex;
+  margin-top: var(--space-4);
+}
+
+.service-konzept__proof:has(.service-konzept__proof-link) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .service-konzept__figure {
@@ -3938,6 +3960,20 @@ main h2 {
   hyphens: none;
 }
 
+/* The two membership names are LINKS since 2026-08-14 (client punto 4), and on a
+   white section they need this: `.section--light` re-declares --color-accent but NOT
+   --color-link, so an inline link here inherits blue-light, which is 3.11:1 on white
+   — under the 4.5:1 this text needs at --font-size-sm. The documented deep mix is
+   4.88:1 and reads as the same blue. Only on light: `/referenzen/` carries the same
+   sentence on the DARK .ref-clients section, where blue-light is already 6.8:1 and
+   correct, so that page is deliberately untouched.
+   :not(.service-link) because `/sicherheitsdienst-nuernberg/` reuses this class for a
+   different sentence whose link is a .service-link — that one gets its own colour from
+   `.section--light .service-link` and must not be caught twice. */
+.section--light .trust-certs__memberships a:not(.service-link) {
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+}
+
 /* Three across once there is room. Each keeps its own top rule, so they read as
    three columns of one row rather than three stacked blocks. */
 @media (min-width: 700px) {
@@ -4157,9 +4193,6 @@ main h2 {
   padding-top: 200px;
 }
 
-.pixel-seam + .site-footer {
-  padding-top: calc(var(--space-9) + 200px);
-}
 
 @media (max-width: 767.98px) {
   .pixel-seam__band {
@@ -4179,9 +4212,6 @@ main h2 {
     padding-top: 120px;
   }
 
-  .pixel-seam + .site-footer {
-    padding-top: calc(var(--space-9) + 120px);
-  }
 }
 
 /* ==========================================================================
@@ -4693,4 +4723,33 @@ main h2 {
 .hub-tile:hover .hub-tile__arrow,
 .hub-tile:focus-visible .hub-tile__arrow {
   transform: translate(2px, -2px);
+}
+
+/* ==========================================================================
+   G6 — ONE CONTENT WIDTH IN THE HERO ON MOBILE (client rule, 2026-08-14)
+   ==========================================================================
+   "On wider mobile viewports the H1/subline stay too narrow while the primary
+   CTA goes full-width and the secondary does not — headline, subline and both
+   CTAs should use the same content width."
+
+   Measured before, at a 767px viewport: the CTAs filled the 704px column while
+   the subline sat at its 32rem (512px) cap — a 192px spread — and /jobs/ capped
+   its H1 at 38rem (608px) and the city hero at 640px on top of that. At 390 and
+   430 none of these bind, which is why this only ever showed on a large phone.
+
+   ⚠️ TWO CLASSES, not one. `.jobs-hero h1` and the other per-page caps are
+   (0,1,1) and their stylesheets load AFTER this chassis, so a single-class
+   selector here ties and loses on order. `.service-hero .service-hero__content h1`
+   is (0,2,1) and wins outright — every hero on the site carries `.service-hero`.
+
+   ⚠️ Scoped to ≤767.98px on purpose: these caps are all correct on desktop,
+   where a 512px measure next to a photo is a readable column and not a defect.
+   The homepage keeps its own copy of this decision in page-home.css (its hero is
+   `.hero`, not `.service-hero`) — one rule per chassis, same call. */
+@media (max-width: 767.98px) {
+  .service-hero .service-hero__content,
+  .service-hero .service-hero__content h1,
+  .service-hero .service-hero__lead {
+    max-width: none;
+  }
 }

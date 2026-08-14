@@ -127,18 +127,14 @@
    as fully token-driven and correct on a dark section. The only rule needed is
    the icon fix below. */
 
-/* ⚠️ #icon-phone is the ONE FILLED symbol in the sprite that does not declare
-   its own paint — its fill/stroke live on the `<g id="icon-defs">` wrapper and
-   that does not survive `<use>`. Without this it renders as a black blob inside
-   a blue button. page-service.css makes the same correction for
-   `.service-hero__phone .icon`; that rule cannot be reused here because it also
-   carries the outline-pill treatment, which is exactly what this button is not.
-   (Every OTHER icon on this page is a stroke icon and is handled by
-   page-city.css — see its note on the sprite.) */
-.combo-hero__call .icon {
-  fill: currentColor;
-  stroke: none;
-}
+/* The #icon-phone fill fix that used to sit here is GONE — it is the shared
+   `.btn__icon` rule in components.css now (client rule G1, 2026-08-14). The
+   note it carried is still the reason that rule exists: #icon-phone is the ONE
+   FILLED symbol in the sprite that does not declare its own paint (fill/stroke
+   live on the `<g id="icon-defs">` wrapper, which does not survive `<use>`), so
+   without it the glyph renders as a black blob inside this blue button. What
+   changed is that the fix no longer has to be re-declared per placement: it is
+   keyed to `.btn__icon`, which this button's <svg> now carries. */
 
 @media (max-width: 767.98px) {
   /* `.btn` is `white-space: nowrap` and this label is a phone number, so on a

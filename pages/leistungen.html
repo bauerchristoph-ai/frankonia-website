@@ -63,7 +63,7 @@
         {
           "@type": "Question",
           "name": "Was kostet ein Sicherheitsdienst von FRANKONIA?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Je nach Leistung in der Regel zwischen 26 und 32 Euro pro Stunde netto — Details und Einflussfaktoren stehen transparent auf jeder Leistungsseite. Ihr konkretes, unverbindliches Angebot erhalten Sie innerhalb eines Werktages." }
+          "acceptedAnswer": { "@type": "Answer", "text": "Je nach Leistung in der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde netto — Details und Einflussfaktoren stehen transparent auf jeder Leistungsseite. Ihr konkretes, unverbindliches Angebot erhalten Sie innerhalb eines Werktages." }
         },
         {
           "@type": "Question",
@@ -152,7 +152,7 @@
 
       <div class="container service-hero__grid lh-hero__grid">
         <div class="service-hero__content hero__content">
-          <p class="lh-hero__badge">
+          <p class="hero-badge">
             <svg class="icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
             DEKRA-zertifiziert nach DIN 77200-1 und ISO 9001
           </p>
@@ -167,8 +167,8 @@
           <p class="service-hero__lead hero__lead">Elf Leistungen, ein Anspruch: professionelle Sicherheit für Unternehmen, Objekte, Baustellen und Events in ganz Franken.</p>
           <div class="service-hero__actions hero__actions">
             <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
-            <a class="btn hero__phone" href="{{phone.href}}">
-              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+            <a class="btn btn--secondary hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
               {{phone.display}}
             </a>
           </div>
@@ -477,7 +477,7 @@
         <div class="faq__list faq__list--cards" data-item-reveal=".faq-item">
             <details class="faq-item">
               <summary><h3>Was kostet ein Sicherheitsdienst von FRANKONIA?</h3></summary>
-              <p>Je nach Leistung in der Regel zwischen 26 und 32 Euro pro Stunde netto — Details und Einflussfaktoren stehen transparent auf jeder Leistungsseite. Ihr konkretes, unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
+              <p>Je nach Leistung in der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde netto — Details und Einflussfaktoren stehen transparent auf jeder Leistungsseite. Ihr konkretes, unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
             </details>
             <details class="faq-item">
               <summary><h3>Kann ich mehrere Leistungen kombinieren?</h3></summary>
@@ -518,8 +518,6 @@
     </section>
 
   </main>
-
-  <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
 
   <!-- include: footer-de -->
   <!-- include: whatsapp-button -->

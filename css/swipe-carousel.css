@@ -102,7 +102,72 @@
     /* Never fly past two cards on one flick — each swipe is one step. */
     scroll-snap-stop: always;
   }
+}
 
+/* ---------------------------------------------------------------------------
+   TABLET (768-1023.98px) — OPT-IN, one section at a time.
+
+   Client 2026-08-14, about the six "Unser System" cards: on a tablet they were
+   "neither animated like desktop nor like mobile, just stacked" — the pinned
+   peek-stack starts at 1024 and the strip stopped at 768, so the band in between
+   fell through to the plain vertical list. This closes that gap.
+
+   ⚠️ IT IS AN OPT-IN, and that is the whole point: this file is shared by THREE
+   sections, and the other two have deliberate tablet layouts of their own — the
+   References testimonials are three equal columns from 768px (client 2026-07-28)
+   and the Social reel is a centred row of three. Widening the query for everyone
+   would have silently rebuilt both. A section joins by putting
+   `data-swipe-tablet` on its strip; today only .system-story__stack has it.
+
+   ⚠️ THE TWO RULES BELOW ARE A VERBATIM COPY of the two structural rules above —
+   plain CSS has no way to share a declaration block between two media queries,
+   and the alternative (widen the query, then restate each opted-out section's
+   own layout here) would couple this file to sections it must not know about.
+   KEEP THEM IN SYNC; the comments live on the originals.
+   Not repeated, on purpose: `:focus-visible` and the scrollbar-hiding rule stay
+   in the phone query only because they are inert on an element that is not a
+   scroller, and the injected .swipe-* UI below already covers this whole range.
+   --------------------------------------------------------------------------- */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  [data-swipe-carousel][data-swipe-tablet] {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: flex-start;
+    gap: var(--swipe-gap);
+    margin-block: 0;
+    margin-inline: var(--swipe-bleed);
+    padding: 0 calc(100vw - var(--swipe-card) - var(--swipe-edge)) 0 var(--swipe-edge);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline-start: var(--swipe-edge);
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  [data-swipe-carousel][data-swipe-tablet]::-webkit-scrollbar {
+    display: none;
+  }
+  [data-swipe-carousel][data-swipe-tablet]:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  [data-swipe-carousel][data-swipe-tablet] > * {
+    flex: 0 0 var(--swipe-card);
+    width: var(--swipe-card);
+    max-width: none;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+}
+
+/* The injected UI covers the WHOLE strip range rather than just phones: these
+   three elements do not exist in the markup at all — js/swipe-carousel.js builds
+   them, and only for a strip that is actually live at the current width. So there
+   is nothing here for a non-strip section to inherit by accident. */
+@media (max-width: 1023.98px) {
   /* ---- Counter row: "01 / 03" (injected) ----------------------------------
      Numbers only. There are deliberately no prev/next buttons (client
      2026-08-03): the peeking next card is the affordance, and the count plus the

@@ -21,7 +21,13 @@
             <span class="sticky-story__metric-label">Jahre im Sicherheitsgewerbe</span>
           </li>
           <li class="sticky-story__metric">
-            <span class="sticky-story__metric-value"><span data-count-to="{{rating.countTo}}" data-decimals="1">{{rating.countTo}}</span><span class="sticky-story__metric-star" aria-hidden="true"></span></span>
+            <!-- Two DIFFERENT tokens on purpose, and mixing them up is the bug the
+                 client reported (G5, 2026-08-14): the visible text is `rating.value`
+                 = "4,7", the German format every other badge on the site shows, while
+                 `data-count-to` has to stay `rating.countTo` = "4.7" because the
+                 script reads it with parseFloat, which only accepts a period. This
+                 rendered "4.7" until now because BOTH slots used countTo. -->
+            <span class="sticky-story__metric-value"><span data-count-to="{{rating.countTo}}" data-decimals="1">{{rating.value}}</span><span class="sticky-story__metric-star" aria-hidden="true"></span></span>
             <span class="sticky-story__metric-label">Google-Bewertungen ({{rating.count}})</span>
           </li>
           </ul>

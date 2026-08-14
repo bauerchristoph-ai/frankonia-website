@@ -23,12 +23,17 @@
 }
 
 /* ---- 1. Hero ------------------------------------------------------------- */
-/* No photo (see the markup header for why), so the service template's two-column
-   grid and its `min-height: calc(100svh - 8rem)` both have to go — that
-   min-height exists to hold a portrait photo and without one it leaves a screen
-   of empty black under the ticks. */
+/* TWO COLUMNS from 1024px (client 2026-08-13, Q3): copy left, a drawn mockup of
+   the security-concept document right, plus the homepage's Google trust band.
+   ⚠️ This REPLACES the single-column rule that stood here while the page had no
+   hero visual at all. It was edited in place rather than overridden further down,
+   because a leftover `grid-template-columns: minmax(0, 1fr)` at the same
+   specificity is exactly how /jobs/ once kept a stacked hero at every width after
+   its two-column layout landed — the old rule simply won by source order. If the
+   mockup is ever dropped, edit THIS rule back; do not add a competing one. */
 .sk-hero .service-hero__grid {
   grid-template-columns: minmax(0, 1fr);
+  align-items: center;
 }
 
 @media (min-width: 1024px) {
@@ -36,11 +41,119 @@
     min-height: 0;
     padding-block: var(--space-9) var(--space-8);
   }
+
+  /* 0.66fr, not an even split: the left column carries a badge, the H1, a lede,
+     two buttons, three full-sentence ticks and the trust band, and the document
+     is a supporting visual rather than the subject. */
+  .sk-hero .service-hero__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.66fr);
+    gap: var(--space-8);
+  }
 }
 
+/* Was 52rem, which was right while the copy had the whole container. Beside a
+   second column it has to be the column, or the cap fights the grid. */
 .sk-hero .service-hero__content {
-  max-width: 52rem;
+  max-width: 46rem;
 }
+
+/* ---- 1b. The document mockup -------------------------------------------- */
+/* Sized by WIDTH with the SVG's own viewBox holding the ratio, so there is no
+   aspect-ratio to keep in sync with the artwork.
+   On a phone it sits under the copy at roughly half size: the hero there already
+   runs badge → H1 → lede → 2 CTAs → 3 ticks → trust band, and a full-size
+   document would push all of that up by ~400px for something decorative. */
+.sk-hero__media {
+  display: flex;
+  justify-content: center;
+}
+
+.sk-doc {
+  width: 100%;
+  max-width: 14rem;
+  height: auto;
+  /* The mockup's own type. Inherited from the page otherwise, which is what we
+     want — this keeps it on the site's font stack rather than the SVG default. */
+  font-family: var(--font-family-base);
+}
+
+@media (min-width: 1024px) {
+  .sk-doc {
+    max-width: 22rem;
+  }
+}
+
+/* The two sheets fanned behind. Translucent white rather than a second opaque
+   sheet: on the hero's black they read as depth, and they cannot clash with
+   whatever the front sheet does. */
+.sk-doc__behind rect {
+  fill: rgb(255 255 255 / 0.14);
+}
+
+.sk-doc__sheet {
+  fill: var(--color-white);
+}
+
+/* Brand blue for the two things that are "FRANKONIA" on the page — the logo bar
+   and the chapter numerals. Everything else is neutral, exactly like the real
+   document. */
+.sk-doc__mark,
+.sk-doc__num {
+  fill: var(--color-blue-light);
+}
+
+/* Skeleton text. Same slate the site uses for body copy, at an alpha that reads
+   as "text at a distance" rather than as grey boxes. */
+.sk-doc__line {
+  fill: rgb(59 73 86 / 0.22);
+}
+
+.sk-doc__rule {
+  stroke: rgb(59 73 86 / 0.16);
+  stroke-width: 1;
+}
+
+.sk-doc__chip {
+  fill: rgb(61 154 211 / 0.14);
+}
+
+/* ⚠️ The deep mix, not the accent token. This is 7px type on a pale blue tint;
+   #3D9AD3 would be about 2.4:1 there. #4673AB measures ~4.6:1 on that
+   composite. The mockup is decorative and aria-hidden, so WCAG does not strictly
+   bind — but a sighted visitor still reads it, and illegible text in a document
+   mockup defeats the point of drawing a document. */
+.sk-doc__chip-text {
+  font-size: 7px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  fill: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+}
+
+.sk-doc__title {
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  fill: var(--color-logo-black);
+}
+
+.sk-doc__sub {
+  font-size: 9.5px;
+  fill: rgb(59 73 86 / 0.8);
+}
+
+.sk-doc__foot {
+  font-size: 8px;
+  fill: rgb(59 73 86 / 0.6);
+}
+
+/* Four tints of ONE hue. The real document grades its 16 risks Grün / Gelb / Rot
+   (5 / 7 / 4 on page 7); reproducing that literally would add three hues to a
+   five-colour palette for a decorative graphic. Tints of the brand blue still
+   read as a graded matrix. */
+.sk-doc__matrix .t1 { fill: rgb(61 154 211 / 0.14); }
+.sk-doc__matrix .t2 { fill: rgb(61 154 211 / 0.30); }
+.sk-doc__matrix .t3 { fill: rgb(61 154 211 / 0.52); }
+.sk-doc__matrix .t4 { fill: rgb(61 154 211 / 0.78); }
 
 /* The three hero ticks are the draft's own full sentences, not the short chips
    the homepage hero uses, so they stack instead of sharing a row — the same call
@@ -293,6 +406,19 @@
   line-height: 1.05;
 }
 
+/* ⚠️ 768–1199.98: "25.000 €" broke the € onto its own line (client 2026-08-14,
+   Change Request 17). The tiles go 3-up at 768 while the figure is still sized
+   off the VIEWPORT, so the column drops to ~160px here while the font keeps
+   climbing with vw. Same value in all three copies of this component
+   (page-home.css, page-referenzen.css); the full reasoning and the measured
+   columns are written up in page-home.css. The NBSP in the markup is the other
+   half of the fix. */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  .sk-results .stat__value {
+    font-size: clamp(2.25rem, 6.7vw - 0.9rem, 4.15rem);
+  }
+}
+
 .sk-results__label {
   display: block;
   color: rgb(59 73 86 / 0.75);
@@ -354,38 +480,117 @@
    column — so the cap never binds here and the paragraph simply follows the
    column. Nothing to override; noted so nobody adds a second cap. */
 
-/* Reserved, not faked — the draft's [UMSETZUNG] note requires the real PDF to be
-   anonymised first. A4 portrait, so the space it holds is the space the preview
-   will need and nothing shifts when it lands. Centred inside its own column at
-   every width, so it reads as a document standing beside the text rather than as
-   a block pinned to an edge. */
+/* ✅ NO LONGER A RESERVED FRAME — the anonymised sample PDF arrived 2026-08-14
+   (client Q4) and this is now the real download, previewing the real document.
+   ⚠️ The `aspect-ratio: 1 / 1.414` the placeholder carried is GONE, on purpose.
+   It existed to hold A4-shaped space for a preview that did not exist yet; the
+   preview is here now and brings its own ratio (the SVG's viewBox), so keeping a
+   second ratio on the wrapper would fight it and leave dead space under the sheet
+   for the caption to float in. That empty-card look is exactly what the first
+   build of this card had. The 22rem cap stays. */
 .sk-sample__frame {
-  aspect-ratio: 1 / 1.414;
   max-width: 22rem;
   width: 100%;
   margin-inline: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-5);
-  background-color: rgb(59 73 86 / 0.05);
-  border: 1px dashed var(--color-border);
-  border-radius: var(--radius-md);
 }
 
-/* ⚠️ NOT --color-text-muted here, and the reason is measured. That token is
-   `rgb(59 73 86 / 0.75)`, which gives 4.60:1 on pure white — fine — but this
-   label sits on the frame's own 5 % fill, and over that same-hue tint it drops to
-   4.39:1, under the 4.5 minimum for 15px text. 0.88 puts it at 5.4:1.
-   The general lesson: 0.75 muted text is safe on white and NOT safe on a
-   same-hue translucent fill. Sampled from the rendered pixels, not computed from
-   the CSS — an ancestor-walking probe reports 1.00:1 for this pair. */
-.sk-sample__label {
+.sk-sample__doc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  text-decoration: none;
+  color: inherit;
+  transition: transform var(--duration-base) var(--easing-standard);
+}
+
+/* ⚠️ `translate`, not `transform`, is NOT needed here and a plain transform is
+   correct — this element is not a GSAP target. Its PARENT (.sk-sample__frame)
+   carries data-reveal, which is the pattern that keeps the two from fighting:
+   GSAP animates the wrapper and writes `translate/rotate/scale: none` inline on
+   THAT element, leaving the card's own transform untouched. Pointing data-reveal
+   at the card instead is what killed the hover on .city-why__item across two
+   pages. Keep the attribute on the wrapper. */
+.sk-sample__doc:hover,
+.sk-sample__doc:focus-visible {
+  transform: translateY(-4px);
+}
+
+/* ---- The mockup on a LIGHT section ---- */
+/* The hero's values assume black behind the sheet. Three of them have to flip
+   here or the drawing disappears into the section. */
+.sk-sample__doc .sk-doc {
+  max-width: 100%;
+  /* The sheet is white on a white section, so its edge has to come from
+     somewhere. A drop-shadow filter on the SVG is the only way to shadow a shape
+     rather than its box — and it is static, never animated, so it does not
+     reintroduce the spent-filter layerisation cost documented in CLAUDE.md. */
+  filter: drop-shadow(0 18px 40px rgb(1 1 1 / 0.13));
+  transition: filter var(--duration-base) var(--easing-standard);
+}
+
+.sk-sample__doc:hover .sk-doc,
+.sk-sample__doc:focus-visible .sk-doc {
+  filter: drop-shadow(0 26px 52px rgb(1 1 1 / 0.18));
+}
+
+/* Translucent WHITE sheets behind are invisible on a white section; on light,
+   the fan has to be a shade of the section's own ink instead. */
+.section--light .sk-doc__behind rect {
+  fill: rgb(59 73 86 / 0.13);
+}
+
+/* And the front sheet needs a hairline, for the same reason as the shadow. */
+.section--light .sk-doc__sheet {
+  stroke: rgb(1 1 1 / 0.08);
+  stroke-width: 1;
+}
+
+.sk-sample__doc-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
   text-align: center;
+}
+
+.sk-sample__doc-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  color: var(--color-logo-black);
+}
+
+/* ⚠️ 0.88, not --color-text-muted, and the reason is measured — the note kept from
+   the placeholder version because it still applies to any text in this card.
+   That token is `rgb(59 73 86 / 0.75)`, which gives 4.60:1 on pure white, but it
+   drops to 4.39:1 over a same-hue translucent fill, under the 4.5 minimum for
+   15px text. The general lesson: 0.75 muted text is safe on white and NOT safe on
+   a same-hue tint. Sample the rendered pixels — an ancestor-walking probe reports
+   1.00:1 for that pair. */
+.sk-sample__doc-meta {
   font-size: var(--font-size-sm);
   color: rgb(59 73 86 / 0.88);
   -webkit-hyphens: none;
   hyphens: none;
+}
+
+.sk-sample__doc-arrow {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+  stroke-width: 1.75;
+  transition: transform var(--duration-base) var(--easing-standard);
+}
+
+/* Up-right at rest, rotating to a straight right arrow on hover — the same
+   45° move every other arrow on the site makes. */
+.sk-sample__doc:hover .sk-sample__doc-arrow,
+.sk-sample__doc:focus-visible .sk-sample__doc-arrow {
+  transform: rotate(45deg);
 }
 
 /* ---- 7. CTA blocks ------------------------------------------------------- */
@@ -431,6 +636,18 @@
   .sk-cta-box .btn {
     width: 100%;
     justify-content: center;
+    /* ⚠️ `white-space: normal` IS THE LOAD-BEARING HALF, and it was missing here —
+       25px of real horizontal page scroll at 320px, measured, present since this
+       page was built. `.btn` sets `white-space: nowrap`, and `width: 100%` does
+       nothing about a nowrap label's MIN-CONTENT width: "Unverbindliches Angebot
+       einholen" needs ~325px against the 296px a 320px viewport leaves after
+       container padding, so the button pushed the whole section — h2, paragraph
+       and all — 25px wide.
+       page-service.css already applies exactly this pair to
+       .service-hero__actions .btn and .service-konzept__actions .btn, and
+       page-city.css's own copy carries the same warning. This is the third place
+       the same omission has cost the same bug. */
+    white-space: normal;
   }
 }
 
@@ -472,4 +689,43 @@
    size threshold saves a link inside a sentence. This mix is 4.90:1. */
 .sk-trust .section__intro a {
   color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+}
+
+/* ---- Heading measure: the H2 and its lede share a column ------------------
+   ⚠️ THE CHASSIS CAPS THE LEDE AND NOT THE HEADING, and that asymmetry is the
+   whole bug (client 2026-08-14, Sicherheitskonzept 3: "headline/text length
+   mismatch: balance the column widths (headline can take 2 lines)").
+   `.section__intro > p` is capped at 42rem by page-service.css while the h2 has
+   no cap at all, so the heading stretches to the full container while the
+   paragraph under it stops at 672px. Measured at 1440 before the fix — heading
+   text vs paragraph box:
+       sk-when   1138 vs 672  (+466px, the worst)
+       sk-parts   984 vs 672  (+312px, the one the client screenshotted)
+       sk-price   917 vs 672  (+245px)
+       sk-advice  863 vs 672  (+191px, already two lines)
+   Everything else on the page already balances (sk-sample -23px, sk-trust -1px),
+   which is why this is four selectors and not a blanket `main h2` rule: those
+   sections are right as they are and a global cap would re-break them.
+
+   ⚠️ 54rem, AND THE VALUE WAS MEASURED, NOT PICKED. The obvious choice is 42rem —
+   the lede's own cap, so the two columns are literally equal — and it is wrong
+   here: base.css sets `text-wrap: balance` on headings, so at 42rem the browser
+   balances "Wann ist ein Sicherheitskonzept notwendig?" and the Beratung heading
+   into THREE short lines (~492px), which is both more lines than the client asked
+   for ("headline can take 2 lines") and a heading block visibly NARROWER than the
+   text under it — the same imbalance mirrored. Measured at 1440, longest rendered
+   line and line count per cap:
+       42/46/50rem   sk-when 492/3L · sk-advice 528/3L   ✗ three lines
+       54rem         sk-parts 524/2L · sk-when 810/2L ·
+                     sk-advice 863/2L · sk-price 524/2L  ✓ all two lines
+       58rem         sk-price back to 917/1L             ✗ the original bug
+   At 54rem the rendered lines run 524–863 against the lede's 672, i.e. two sit a
+   little narrower and two a little wider — balanced in the way the eye reads it,
+   against the +466px it was. Below ~1024px nothing changes: the container is
+   already narrower than the cap. */
+.sk-parts .section__intro h2,
+.sk-when .section__intro h2,
+.sk-price .section__intro h2,
+.sk-advice .section__intro h2 {
+  max-width: 54rem;
 }

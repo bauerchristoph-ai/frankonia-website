@@ -12,19 +12,24 @@
      H2s are phrased as the visitor's own question with the answer in the first
      two sentences under it, and why nothing is allowed above them.
 
-     ⚠️ NO HERO PHOTO. The draft asks for a "Begehungs-Situation, Sicherheitsexperte
-     mit Kunde am Objekt (Echtfoto)" and no such photo exists in the project. Every
-     landscape shot already IS the hero of another page, and reusing /leistungen/'s
-     interim handshake would make two pages look like the same page. Ships as a
-     copy-only hero, the same shape /ratgeber/ and /einsatzgebiete/ use — and it
-     joins the open hero question already going to Chris.
+     ✅ THE HERO QUESTION IS ANSWERED (client 2026-08-13, Q3), and the answer was
+     not a photo: "standard hero (badge, H1, subline, dual CTA, checkmarks, Google
+     widget — like the homepage), with a stylized mockup/preview of the
+     security-concept document as the hero visual instead of a photo." So the hero
+     is two columns now, it carries the homepage's Google + DEKRA trust band, and
+     the visual is the drawn document (partials/sk-doc.html). The draft's original
+     ask for a "Begehungs-Situation … (Echtfoto)" is superseded — do not go looking
+     for that photo.
 
-     ⚠️ SECTION 6b SHIPS AS A RESERVED FRAME. The draft's own [UMSETZUNG] note says
-     the sample PDF exists but must be fully anonymised before publication
-     (Auftraggeber, addresses, contacts, customer number — Prüfkatalog O4). The
-     18-page STRUCTURE is published as real text, because that is approved copy;
-     the preview itself is a labelled placeholder. Do not publish that PDF until
-     Chris confirms the anonymisation.
+     ✅ SECTION 6b IS NO LONGER A RESERVED FRAME (client Q4): the fully anonymised
+     18-page sample arrived and ships at
+     /assets/documents/frankonia-sicherheitskonzept-muster.pdf, previewed by the
+     same document mockup and linked from the card.
+     ⚠️ ITS ANONYMISATION WAS VERIFIED BEFORE PUBLISHING, not taken on trust — all
+     18 pages were text-extracted and searched for every real client name the site
+     knows; zero hits, placeholder data throughout ("Muster GmbH", "Max
+     Mustermann", "KD-MUSTER-000001", telephone "0000 – 000000"). Re-run that check
+     on any replacement file, because this one goes to a public URL.
 
      ⚠️ FIVE OF THE DRAFT'S INTERNAL LINKS DO NOT EXIST YET (/objektschutz/,
      /brandwache/, /sicherheitstechnik/, /revier-schliessdienst/,
@@ -33,10 +38,13 @@
      /einsatzgebiete/, both of which list and describe the destinations. Same rule
      the three Ratgeber articles follow. One href each when they ship.
 
-     ⚠️ THE ALEXANDER JÄGER BLOCK (section 8) is the draft's own copy, and it is
-     the SAME open question already raised for /werkschutz/: keep the named contact
-     or not, and if yes, his portrait is still missing. Whatever Chris decides
-     applies to both pages.
+     ✅ THE ALEXANDER JÄGER BLOCK (section 8) IS SETTLED — it stays (client
+     2026-08-13, Q2: "Keep it — always … stays on every page where the documents
+     specify it"). That closes the question this page and /werkschutz/ both carried
+     about whether to keep a named contact. Do not remove it.
+     🔴 What Q2 did NOT supply is his PORTRAIT, which is still missing — /werkschutz/
+     holds a reserved 4:5 frame for it; this page's block is text-only, so nothing
+     here is waiting on the photo.
 
      Chassis: css/page-service.css (§9.1). The four Anlass cards reuse .lh-why__*
      and the certificates block the shared .trust-certs*. -->
@@ -165,36 +173,137 @@
     </nav>
 
     <!-- ============ 1. HERO ============ -->
+    <!-- TWO COLUMNS since 2026-08-13 (client Q3): "standard hero (badge, H1,
+         subline, dual CTA, checkmarks, Google widget — like the homepage), with a
+         stylized mockup/preview of the security-concept document as the hero
+         visual instead of a photo."
+         Two things arrived in that pass — the Google trust band and the document
+         mockup — and the hero went from one column to two to hold them. -->
+    <!-- ⚠️ ALL FOUR BUTTON CTAs ON THIS PAGE WERE RELABELLED 2026-08-14 (client
+         rules G2 + G3). They read "Kostenfreies Sicherheitskonzept anfordern" and
+         all four pointed at this page's own #anfrage form. Two rules made that
+         untenable at once: G2 fixes the hero primary's label as "Unverbindliches
+         Angebot einholen", and G3 says only that label may lead to a request form —
+         "Kostenfreies Sicherheitskonzept anfordern" must always link to
+         /sicherheitskonzept/, which from THIS page is a self-link and therefore a
+         no-op. So the label had to go, not the target.
+         Relabelling all four rather than only the hero was the client's own call
+         (asked directly): with one label in the hero and another on the three CTAs
+         below it, the page would have used two different words for one destination.
+         The H2 above the form still reads "Jetzt kostenfreies Sicherheitskonzept
+         anfordern" — that is a HEADING, not a CTA, so no rule touches it, and it is
+         what keeps the page's own promise in the visitor's words. -->
     <section class="service-hero sk-hero" data-hero-reveal>
       <div class="container service-hero__grid">
         <div class="service-hero__content hero__content">
-          <p class="lh-hero__badge">
+          <p class="hero-badge">
             <svg class="icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
             Von Sicherheitsexperten erstellt: aus der Praxis, nicht der Theorie
           </p>
           <h1>Sicherheitskonzept für Unternehmen erstellen lassen</h1>
           <p class="service-hero__lead hero__lead">Begehung, Risikoanalyse und Maßnahmenplan für Ihr Objekt, komplett kostenfrei.</p>
           <div class="service-hero__actions hero__actions">
-            <a class="btn btn--primary" href="#anfrage">Kostenfreies Sicherheitskonzept anfordern<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
-            <a class="btn hero__phone" href="{{phone.href}}">
-              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn btn--secondary hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
               {{phone.display}}
             </a>
           </div>
+          <!-- ⚠️ BUG FIXED 2026-08-14, and it had been live since this page was
+               built: these three ticks used to carry .hero__reassurance-item and a
+               bare <svg class="icon">. Both of those are HOMEPAGE class names, and
+               page-home.css is not loaded here — so nothing styled them. Measured
+               before the fix: the icons computed `fill: rgb(0,0,0); stroke: none`,
+               i.e. three solid BLACK checkmarks on a black hero (invisible), and
+               the <li> never became a flex row, so each tick rendered as a bare
+               line of text 43px tall with no icon beside it.
+               Two class names, both from page-service.css which this page DOES
+               load, fix all of it: .service-hero__point makes the row a flex
+               line-up, .service-hero__point-icon restates the `fill: none;
+               stroke: currentColor` that the sprite's <g id="icon-defs"> wrapper
+               never passes through <use>.
+               ⚠️ .hero__reassurance STAYS on the <ul> — that is the hook
+               js/hero-reveal.js animates, and renaming it would drop the ticks out
+               of the hero cascade. Only the <li> and the <svg> changed. -->
           <ul class="service-hero__points hero__reassurance">
-            <li class="hero__reassurance-item">
-              <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <li class="service-hero__point">
+              <svg class="service-hero__point-icon icon" aria-hidden="true"><use href="#icon-check"></use></svg>
               Begehung und Risikoanalyse durch erfahrene Sicherheitsexperten
             </li>
-            <li class="hero__reassurance-item">
-              <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <li class="service-hero__point">
+              <svg class="service-hero__point-icon icon" aria-hidden="true"><use href="#icon-check"></use></svg>
               Schriftliches Konzept: Maßnahmen, Besetzung, Technik
             </li>
-            <li class="hero__reassurance-item">
-              <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <li class="service-hero__point">
+              <svg class="service-hero__point-icon icon" aria-hidden="true"><use href="#icon-check"></use></svg>
               Wirtschaftlich gedacht: Kunden sparten mit unseren Konzepten bis zu 30 % Kosten
             </li>
           </ul>
+
+          <!-- The homepage's own trust band, assembled from parts that already
+               exist — no new asset and no new CSS: page-service.css styles
+               .service-hero__trust / __badges / __seal, components.css the review
+               card. The same block /jobs/ and /ueber-uns/ carry.
+               ⚠️ BOTH .hero__trust AND .service-hero__trust: the first is what
+               js/hero-reveal.js animates, the second is what styles it. Dropping
+               either gives a band that is unstyled or that never arrives.
+               ⚠️ It goes AFTER the reassurance list — the documented homepage order
+               (H1 → lede → CTA → ticks → trust), which is also the order
+               hero-reveal.js plays these four blocks in. Higher up and the cascade
+               runs out of reading order. -->
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- The document mockup ---- -->
+        <!-- INLINE SVG, not an image and not a screenshot of the real PDF. Three
+             reasons it is drawn rather than rendered:
+             · it stays crisp at every size and DPR, and a picture of a document
+               page is the one thing that must never look soft;
+             · no request on the critical path — like /einsatzgebiete/'s map hero,
+               this page has no LCP image at all;
+             · its colours come from CSS custom properties, so the same mockup
+               works on this dark hero and would work on a light section.
+             The CONTENT is the real document's, not invented: the title block, the
+             "ANONYMISIERTE MUSTERVERSION" chip, "Muster GmbH", the numbered chapter
+             rows and "Seite 1 von 18" all match the PDF now shipping at
+             /assets/documents/frankonia-sicherheitskonzept-muster.pdf.
+             ⚠️ NO TRAFFIC-LIGHT COLOURS. The real page 7 grades risks Grün/Gelb/Rot
+             (5 / 7 / 4 of 16), and reproducing that literally would introduce three
+             new hues into the hero of a site with a strict five-colour palette. The
+             matrix is drawn in tints of the brand blue instead: it still reads as an
+             analysis grid, and it invents no colour system.
+             aria-hidden, because it is decoration — every fact it depicts is in the
+             copy beside it and in section 6b, as real text. -->
+        <div class="sk-hero__media">
+          <!-- include: sk-doc -->
         </div>
       </div>
     </section>
@@ -337,7 +446,7 @@
           </li>
         </ol>
         <div class="sk-actions" data-reveal>
-          <a class="btn btn--primary" href="#anfrage">Kostenfreies Sicherheitskonzept anfordern<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
         </div>
       </div>
     </section>
@@ -383,7 +492,7 @@
           <li>
             <a class="sk-results__link" href="/referenzen/case-study-sicherheitstechnik/">
               <span class="stat">
-                <span class="stat__value">25.000 €</span>
+                <span class="stat__value">25.000&nbsp;€</span>
               </span>
               <span class="sk-results__label">Ersparnis durch geprüfte Sicherheitstechnik: Kauf statt teurer Dauermiete</span>
               <span class="sk-results__more">Zur Case Study
@@ -394,7 +503,7 @@
           <li>
             <a class="sk-results__link" href="/referenzen/case-study-sicherheitskonzept/">
               <span class="stat">
-                <span class="stat__value">30 %</span>
+                <span class="stat__value">30&nbsp;%</span>
               </span>
               <span class="sk-results__label">Personalkosten-Einsparung beim Großkunden durch ein neues Sicherheitskonzept</span>
               <span class="sk-results__more">Zur Case Study
@@ -405,7 +514,7 @@
           <li>
             <a class="sk-results__link" href="/referenzen/case-study-schichtsystem/">
               <span class="stat">
-                <span class="stat__value">20 %</span>
+                <span class="stat__value">20&nbsp;%</span>
               </span>
               <span class="sk-results__label">Kostenersparnis bei gleichbleibender Sicherheit durch Schichtsystem-Optimierung</span>
               <span class="sk-results__more">Zur Case Study
@@ -449,15 +558,46 @@
               <p>Werfen Sie einen Blick in ein echtes, anonymisiertes FRANKONIA Sicherheitskonzept — 18 Seiten, erstellt mit unserer eigens entwickelten, KI-gestützten Sicherheitskonzept-Software. Der Aufbau: Einsatzort &amp; Rahmenbedingungen, Objekt- und Umfeldanalyse, Gefährdungs- und Risikoanalyse, Sicherheitsziele, Maßnahmenkonzept aus Personal, Technik und Organisation, Personalqualifikation und Notfallmanagement.</p>
             </div>
             <div class="sk-actions" data-reveal>
-              <a class="btn btn--primary" href="#anfrage">Kostenfreies Sicherheitskonzept anfordern<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+              <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
             </div>
           </div>
-          <!-- RESERVED FRAME. The draft's [UMSETZUNG] note: the sample PDF exists but
-               must be fully anonymised first (Prüfkatalog O4). It reserves the real
-               space so nothing shifts when the preview lands, and it does not fake a
-               document that has not been cleared. -->
+          <!-- ✅ THE RESERVED FRAME IS GONE — the sample document ARRIVED
+               (client 2026-08-13, Q4: "We will deliver a fully anonymized 18-page
+               PDF of a real FRANKONIA security concept… It will be offered as a
+               download on /sicherheitskonzept/"). It ships at
+               /assets/documents/frankonia-sicherheitskonzept-muster.pdf.
+
+               ⚠️ THE ANONYMISATION WAS VERIFIED BEFORE PUBLISHING, not taken on
+               trust, because this file goes to a public URL. All 18 pages were text-
+               extracted and searched for every real client name the site knows
+               (MORELO, Brose, Bayernwerk, Sozialstiftung, CleanTech, Liapor, ADAC,
+               ALDI, Stadtwerke, Freimuth, …): zero hits. What is left is
+               placeholder data throughout — "Muster GmbH", "MUSTERKUNDE",
+               "Industriestraße 1, 96000 Musterstadt", "Max Mustermann",
+               "KD-MUSTER-000001", telephone "0000 – 000000" — under a cover line
+               that says so: "ANONYMISIERTE MUSTERVERSION — alle Kundendaten durch
+               fiktive Angaben ersetzt". The only real contact details in it are
+               FRANKONIA's own, which is correct: they are the author.
+               Confirmed 18 pages, A4, lang=de. Re-run that check on any replacement.
+
+               Opens in a new tab rather than force-downloading: an 18-page PDF is
+               something to look through, and every browser shows it inline. The
+               link states type, length and that it is anonymised, so nobody has to
+               click to find out what they are getting. -->
           <div class="sk-sample__frame" data-reveal>
-            <p class="sk-sample__label">[Muster-Vorschau folgt: anonymisiertes Konzept, 18 Seiten]</p>
+            <a class="sk-sample__doc" href="/assets/documents/frankonia-sicherheitskonzept-muster.pdf" target="_blank" rel="noopener">
+              <!-- The mockup IS the preview here, so the card shows the document
+                   it is offering instead of an icon standing in for one. Same
+                   partial as the hero — one drawing, two call sites. -->
+              <!-- include: sk-doc -->
+              <span class="sk-sample__doc-text">
+                <span class="sk-sample__doc-title">
+                  Musterkonzept ansehen
+                  <svg class="sk-sample__doc-arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+                </span>
+                <span class="sk-sample__doc-meta">PDF · 18 Seiten · vollständig anonymisiert</span>
+              </span>
+            </a>
           </div>
         </div>
       </div>
@@ -488,7 +628,7 @@
         </ul>
         <div class="sk-cta-box" data-reveal>
           <p class="sk-cta-box__line">Erstgespräch 30 Minuten, kostenfrei</p>
-          <a class="btn btn--primary" href="#anfrage">Kostenfreies Sicherheitskonzept anfordern<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
         </div>
       </div>
     </section>
@@ -519,8 +659,16 @@
               <strong>DIN EN ISO 9001</strong>
               zertifiziert, DEKRA-geprüft
             </li>
+            <!-- "Über 10 Jahre Erfahrung", not "Über zehn Jahre" (client
+                 2026-08-14). The two rows beside it lead with a standard's
+                 NUMBER (77200-1, 9001), so a spelled-out numeral was the odd one
+                 in a row of three, and "Erfahrung" is what makes the claim read
+                 as a credential rather than as a duration. Only this badge
+                 changed: the same fact appears in this page's prose ("mit über
+                 zehn Jahren Einsatzpraxis") and there the spelled-out form is
+                 correct German for running text. -->
             <li>
-              <strong>Über zehn Jahre</strong>
+              <strong>Über 10 Jahre Erfahrung</strong>
               Konzepte, die im Alltag funktionieren
             </li>
           </ul>
@@ -632,8 +780,6 @@
     </section>
 
   </main>
-
-  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
 
   <!-- include: footer-de -->
   <!-- include: whatsapp-button -->

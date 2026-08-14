@@ -131,7 +131,15 @@
       },
       "<0.15"
     )
-    .to(labels, { opacity: 1, x: 0, duration: 0.5, stagger: 0.08 }, "-=0.35")
+    // ⚠️ `amount` (a TOTAL spread), not a per-element delay. It was `0.08` per
+    // label, which is fine at a fixed city count and wrong the moment the list
+    // is data-driven: the 2026-08-14 pass added five locations and that alone
+    // stretched the hero's animation from ~4.0s to ~4.4s, and every future one
+    // would add another 0.08. 0.72 is exactly what ten labels used to span, so
+    // the sweep looks the same today and cannot creep tomorrow. Same call the
+    // rest of this codebase already makes for scenes of unknown size
+    // (js/svg-draw.js, js/steps-sequence.js).
+    .to(labels, { opacity: 1, x: 0, duration: 0.5, stagger: { amount: 0.72 } }, "-=0.35")
 
     // ⚠️ CLEAR THE INLINE PROPS AT THE END, do not leave them at their final
     // values. Two reasons, both measured on this project before: a spent

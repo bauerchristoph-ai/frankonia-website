@@ -1,0 +1,104 @@
+<!-- The FRANKONIA Sicherheitskonzept document mockup, used twice on
+     /sicherheitskonzept/: as the hero visual (client 2026-08-13, Q3) and as the
+     clickable preview on the sample-download card in section 6b (Q4).
+
+     A PARTIAL, not two copies of 40 lines of SVG. It is the same document in both
+     places, so it has to stay the same drawing — and the build resolves the
+     "include: sk-doc" marker at compile time, so the browser still receives plain
+     inline SVG with no runtime cost.
+
+     ⚠️ NEVER SPELL AN INCLUDE MARKER OUT IN FULL INSIDE A COMMENT. An HTML comment
+     ends at the first close-comment sequence, so writing the marker with its
+     delimiters closed this comment early and dumped the rest of it onto the page
+     as visible body text, right beside the document card. Caught in a screenshot;
+     the build has no reason to complain. Refer to the marker by name, as above.
+     (The same trap bites twice: the sentence explaining it must not contain the
+     sequence either.)
+
+     INLINE SVG, not an image and not a screenshot of the real PDF:
+     · crisp at every size and DPR, and a picture of a document page is the one
+       thing that must never look soft;
+     · no request on the critical path — like /einsatzgebiete/'s map hero, this
+       page has no LCP image at all;
+     · its colours come from CSS custom properties and section context, so the
+       one drawing works on the dark hero AND on the white sample section.
+
+     The CONTENT is the real document's, not invented: the title block, the
+     "ANONYMISIERTE MUSTERVERSION" chip, "Muster GmbH · Werksgelände", the numbered
+     chapter rows and "Seite 1 von 18" all match the PDF that ships at
+     /assets/documents/frankonia-sicherheitskonzept-muster.pdf.
+
+     ⚠️ NO TRAFFIC-LIGHT COLOURS. The real page 7 grades its 16 risks Grün / Gelb /
+     Rot (5 / 7 / 4), and reproducing that literally would put three new hues into
+     a site with a strict five-colour palette, for a decorative graphic. The matrix
+     is drawn in four tints of the brand blue instead — it still reads as a graded
+     analysis grid and invents no colour system.
+
+     aria-hidden at both call sites: it is decoration. Every fact it depicts is
+     real text elsewhere on the page. -->
+<svg class="sk-doc" viewBox="0 0 340 440" role="presentation" focusable="false" aria-hidden="true">
+  <!-- Two sheets fanned behind, so the stack reads as a multi-page document
+       rather than a single page. Rotated about their own centres, back to front. -->
+  <g class="sk-doc__behind">
+    <rect x="30" y="22" width="280" height="396" rx="7" transform="rotate(5 170 220)"/>
+    <rect x="26" y="16" width="280" height="396" rx="7" transform="rotate(2.5 170 220)"/>
+  </g>
+
+  <!-- Front sheet. 280 x 396 is 1 : 1.414 — real A4, the page size of the actual
+       PDF (595 x 842 pt). -->
+  <rect class="sk-doc__sheet" x="20" y="10" width="280" height="396" rx="7"/>
+
+  <rect class="sk-doc__mark" x="44" y="34" width="46" height="7" rx="2"/>
+  <rect class="sk-doc__line" x="96" y="35" width="34" height="5" rx="2"/>
+  <line class="sk-doc__rule" x1="44" y1="56" x2="276" y2="56"/>
+
+  <rect class="sk-doc__chip" x="44" y="70" width="150" height="16" rx="8"/>
+  <text class="sk-doc__chip-text" x="53" y="81.5">ANONYMISIERTE MUSTERVERSION</text>
+
+  <text class="sk-doc__title" x="44" y="120">Sicherheitskonzept</text>
+  <text class="sk-doc__sub" x="44" y="140">Muster GmbH · Werksgelände</text>
+
+  <line class="sk-doc__rule" x1="44" y1="158" x2="276" y2="158"/>
+
+  <g class="sk-doc__rows">
+    <rect class="sk-doc__num"  x="44" y="172" width="9"   height="6" rx="3"/>
+    <rect class="sk-doc__line" x="60" y="172" width="150" height="6" rx="3"/>
+    <rect class="sk-doc__num"  x="44" y="188" width="9"   height="6" rx="3"/>
+    <rect class="sk-doc__line" x="60" y="188" width="188" height="6" rx="3"/>
+    <rect class="sk-doc__num"  x="44" y="204" width="9"   height="6" rx="3"/>
+    <rect class="sk-doc__line" x="60" y="204" width="132" height="6" rx="3"/>
+    <rect class="sk-doc__num"  x="44" y="220" width="9"   height="6" rx="3"/>
+    <rect class="sk-doc__line" x="60" y="220" width="172" height="6" rx="3"/>
+  </g>
+
+  <g class="sk-doc__matrix">
+    <rect class="t1" x="44"  y="250" width="20" height="20" rx="3"/>
+    <rect class="t1" x="68"  y="250" width="20" height="20" rx="3"/>
+    <rect class="t2" x="92"  y="250" width="20" height="20" rx="3"/>
+    <rect class="t3" x="116" y="250" width="20" height="20" rx="3"/>
+    <rect class="t1" x="44"  y="274" width="20" height="20" rx="3"/>
+    <rect class="t2" x="68"  y="274" width="20" height="20" rx="3"/>
+    <rect class="t3" x="92"  y="274" width="20" height="20" rx="3"/>
+    <rect class="t4" x="116" y="274" width="20" height="20" rx="3"/>
+    <rect class="t2" x="44"  y="298" width="20" height="20" rx="3"/>
+    <rect class="t3" x="68"  y="298" width="20" height="20" rx="3"/>
+    <rect class="t4" x="92"  y="298" width="20" height="20" rx="3"/>
+    <rect class="t4" x="116" y="298" width="20" height="20" rx="3"/>
+    <rect class="t3" x="44"  y="322" width="20" height="20" rx="3"/>
+    <rect class="t3" x="68"  y="322" width="20" height="20" rx="3"/>
+    <rect class="t4" x="92"  y="322" width="20" height="20" rx="3"/>
+    <rect class="t4" x="116" y="322" width="20" height="20" rx="3"/>
+  </g>
+
+  <g class="sk-doc__rows">
+    <rect class="sk-doc__line" x="152" y="254" width="106" height="6" rx="3"/>
+    <rect class="sk-doc__line" x="152" y="270" width="88"  height="6" rx="3"/>
+    <rect class="sk-doc__line" x="152" y="286" width="118" height="6" rx="3"/>
+    <rect class="sk-doc__line" x="152" y="302" width="72"  height="6" rx="3"/>
+    <rect class="sk-doc__line" x="152" y="318" width="100" height="6" rx="3"/>
+    <rect class="sk-doc__line" x="152" y="334" width="84"  height="6" rx="3"/>
+  </g>
+
+  <line class="sk-doc__rule" x1="44" y1="364" x2="276" y2="364"/>
+  <text class="sk-doc__foot" x="44" y="382">Seite 1 von 18</text>
+</svg>

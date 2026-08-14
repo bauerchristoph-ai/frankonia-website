@@ -268,6 +268,22 @@
   /* Match the nav CTA button's pill radius (client 2026-07-24). */
   border-radius: var(--radius-pill);
   margin-top: var(--space-2);
+  /* ⚠️ THESE TWO ARE WHAT KEEPS THE BUTTON INSIDE ITS CARD, and their absence is a
+     bug this project has now paid for four times: `.btn` is white-space: nowrap
+     (components.css), so with `justify-self: start` the button's min-content IS its
+     whole label — it cannot shrink, and in a narrow column it simply overflows.
+     Measured on /angebot/ (client 2026-08-14, tablet point 2 — "make sure the hero
+     CTA stays visible/inside the layout"): that form sits in a 1fr column from
+     900px, where the card's inner width is 287px against this button's 361px, so it
+     hung 75px OUT of the white card (+50 at 960, +33 at 1000, +23 at 1024, clear
+     again from ~1100). Below 900 the grid is one column and it never showed.
+     `white-space: normal` lets the label wrap, which makes min-content the longest
+     WORD instead of the whole label, so fit-content resolves to the space actually
+     available; `max-width: 100%` is the backstop. Nothing changes where there is
+     room — the button still sizes to its content on one line (verified 1280/1440),
+     and .btn already centres its own content, so a wrapped label stays centred. */
+  max-width: 100%;
+  white-space: normal;
 }
 
 @media (min-width: 1024px) {

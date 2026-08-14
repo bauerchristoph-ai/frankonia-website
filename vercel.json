@@ -3,6 +3,18 @@
   "cleanUrls": true,
   "buildCommand": "node build.js",
   "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/en",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/en/:path*",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

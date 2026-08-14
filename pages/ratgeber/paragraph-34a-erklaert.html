@@ -278,6 +278,15 @@
         </div>
         <div class="rg-close__actions" data-reveal>
           <a class="btn btn--primary" href="/jobs/">Offene Stellen ansehen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          <!-- Secondary CTA, client rule G1 (2026-08-14): every page carries the
+               same outline phone pill next to its primary action. This block had
+               only a primary button and a quiet "Alle Ratgeber-Artikel" text link,
+               which is navigation, not a second way to act — so the pill is ADDED
+               here rather than converted from that link, and the link stays. -->
+          <a class="btn btn--secondary" href="{{phone.href}}">
+            <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+            {{phone.display}}
+          </a>
           <a class="service-link" href="/ratgeber/">Alle Ratgeber-Artikel
             <svg class="service-link__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
           </a>
@@ -286,8 +295,6 @@
     </section>
 
   </main>
-
-  <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
 
   <!-- include: footer-de -->
   <!-- include: whatsapp-button -->

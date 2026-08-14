@@ -143,6 +143,149 @@ salía 60px contra los 52px de la home — se veía distinto al lado.
 Piezas que se ven igual en todo el sitio. Si una página la necesita distinta,
 primero preguntá — es más probable que sea un error que una excepción.
 
+### Los precios NO se escriben en una página (regla G10)
+
+**Todo número de precio del sitio vive en `content/values.json` → `price`.** El
+cliente los ajusta una vez por año y la actualización tiene que ser una edición de
+contenido de cinco minutos, no una cacería por 7 páginas.
+
+| clave | qué es |
+|---|---|
+| `price.min` / `price.max` | el rango por hora en prosa ("zwischen 26 und 32 Euro") |
+| `price.range` / `price.unit` | el mismo par unido con guion, para la Preis-Box |
+| `price.general` | el rango en la línea de `/angebot/` |
+| `price.surcharge.night` / `.nightWindow` / `.sunday` / `.holiday` | los recargos del Lohntarifvertrag |
+| `price.example.*` | los ejemplos calculados del Ratgeber de costos |
+| `price.guideYear` | el año en el `<title>` y el `og:title` del Ratgeber de costos |
+
+⚠️ **`min`/`max` y `range` son el MISMO número en dos formatos** (prosa contra
+píldora). Al actualizar hay que mover los tres — no hay derivación automática.
+
+⚠️ **Los `example.*` son DERIVADOS** (tarifa × horas + recargos). No se recalculan
+solos: cuando cambia la tarifa hay que recomputarlos a mano. Están centralizados
+para que se editen en un lugar, no para que se actualicen mágicamente.
+
+⚠️ **El texto de una FAQ existe DOS veces** — visible y en el `FAQPage`. Las dos
+copias tienen que llevar el MISMO token, o el precio que ve Google se separa del
+que ve el visitante. Verificado: 59/59 respuestas byte-idénticas después de
+tokenizar.
+
+**Probado de punta a punta**, no deducido: se cambió `26-32 → 29-35`, noche
+23 → 25 %, domingo 26 → 28 % y el año 2026 → 2027 en un árbol aparte, se buildeó y
+**todas las páginas siguieron el cambio, con cero valores viejos** en la salida.
+
+### El checkbox de consentimiento (regla G11)
+
+La frase es **"Ich habe die Datenschutzerklärung gelesen und stimme zu."** con
+`Datenschutzerklärung` como link a `/datenschutz/`, y vive UNA sola vez, en
+`partials/lead-form.html` (`/kontakt/` tiene su propio formulario con la misma
+frase). **12 formularios, una redacción.**
+
+⚠️ **El síntoma histórico era "falta la palabra enlazada", y NO era el markup** —
+ése siempre estuvo bien. Era el CONTRASTE: el link heredaba blue-light, que sobre
+la tarjeta blanca del formulario mide 3,11:1 y se lavaba hasta parecer ausente. Hoy
+usa la mezcla profunda de §5 y mide **4,88:1 muestreado en píxeles**, subrayado.
+Si alguien vuelve a reportar que "falta la palabra", **mirar el color antes que el
+HTML**.
+
+### El badge del hero: lo dice el DOCUMENTO, no la página (regla G9)
+
+**Si el `.docx` de la página especifica un `Badge:`, va — y con su texto verbatim.**
+Se auditaron los 52 documentos contra las 21 páginas: **15 especifican badge y 6 no
+lo estaban renderizando**. Las **4 páginas del Ratgeber no especifican ninguno**, y
+por eso siguen sin badge — ausencia correcta, no un olvido.
+
+**Un solo componente para el caso normal: `.hero-badge` (components.css).** Nació
+de fusionar `.lh-hero__badge` y `.ag-hero__badge`, que eran **byte-idénticos**.
+Antes de agregar un badge nuevo, usar éste.
+
+⚠️ **Sobreviven DOS tratamientos de familia, y no son drift:**
+
+| clase | quién la usa | forma |
+|---|---|---|
+| `.hero-badge` | el caso normal (8 páginas) | texto + icono, sin píldora |
+| `.city-hero__badge` | ciudad y combo | píldora con borde |
+| `.cs-hero__badge` | las 3 case studies | label chico en mayúsculas con punto |
+
+Una página nueva toma **el tratamiento de su familia**, no inventa un tercero.
+
+⚠️ **Colisión de nombres:** `.hero__badge` en page-home.css **no es esto** — dimensiona
+la IMAGEN de un sello DEKRA en la trust band del homepage. No fusionarlas.
+
+⚠️⚠️ **G9 REVIERTE CUATRO REMOCIONES QUE PIDIÓ EL PROPIO CLIENTE** (`/werkschutz/`
+y `/jobs/` en 2026-08-03, `/brandwache-nuernberg/` el 08-10, `/kontakt/` el 08-06).
+La regla nueva gana, igual que G6 sobre la píldora compacta. **Antes de volver a
+sacar un badge, leer el comentario que cada página tiene en su markup** — dice por
+qué se quitó y por qué volvió.
+⚠️ **`/kontakt/` vuelve a decir "24/7" dos veces** (badge + Highlight-Box), que es
+exactamente la duplicación que el cliente había resuelto en agosto. Está anotado en
+la página y avisado al cliente: si molesta, se saca de UNO de los dos lados.
+
+### Un teléfono SIEMPRE es un `tel:` (regla G4), y eso arrastra CSS
+
+En CTAs, en respuestas de FAQ y **en prosa corrida**. Dos excepciones y una trampa:
+
+- **Un FAX no lleva `tel:`.** Los dos del Impressum terminan en `-90`; un `tel:`
+  sobre un fax es un enlace que no marca nada.
+- **El JSON-LD no se toca.** El texto de cada FAQ vive dos veces —visible y dentro
+  del `FAQPage`— y tienen que quedar **byte-idénticas**. Envolver el número en un
+  `<a>` cambia el markup, no el texto, así que la copia del schema queda igual.
+  Verificarlo después es un diff de texto plano, no una lectura a ojo.
+- ⚠️ **UN LINK NUEVO EN PROSA HEREDA `--color-link` (blue-light) Y ESO ES UNA FALLA
+  DE ACCESIBILIDAD**: 3,11:1 sobre blanco, 2,87:1 sobre el relleno de una card de
+  FAQ, contra el 4,5:1 que pide un link de 16px dentro de una frase; y `inline` mide
+  18px contra los 44 de área táctil. Lo cubre **una regla compartida en
+  components.css** — `.faq-item a:not(.btn)` y
+  `.section--light p a[href^="tel:"]:not(.btn)` — con la mezcla profunda de §5
+  (4,9:1), `display: inline-block` y `padding-block: 0.75rem`. No hace falta CSS por
+  página; si hace falta, es que la superficie es nueva y hay que medirla.
+- ⚠️ **El selector es `.faq-item a`, no `.faq-item__answer a`: el markup de las
+  respuestas NO es uniforme.** Casi todas envuelven en `.faq-item__answer`;
+  `/angebot/` mete un `<p>` pelado dentro del `<details>`. El selector angosto se
+  saltea esa página **en silencio** — se ve bien y mide mal.
+
+### El rating de Google: "4,7" con coma, y de una sola fuente (regla G5)
+
+`content/values.json` → `rating.value` / `rating.count`. **Ningún badge escribe el
+número a mano.** Las estrellas ya vienen con `.review-card` (`--94`, o sea 4,7/5).
+
+⚠️ **El `ratingValue` del JSON-LD lleva PUNTO (`4.7`) y eso es correcto**:
+schema.org exige el punto como separador decimal. Mismo número, dos formatos, a
+propósito. No unificarlo.
+
+⚠️ Un pull EN VIVO desde Google necesitaría la Places API con key, facturación y
+gate de consentimiento — fuera de las restricciones del proyecto hoy. "Dinámico"
+acá significa una línea en `values.json` que se propaga a las ocho apariciones.
+
+### CTAs: hay UN primario y UN secundario, y no se rediseñan por página
+
+Regla G1 del cliente (2026-08-14). Toda fila de CTA es el mismo par:
+
+- **Primario** — `.btn.btn--primary`: relleno celeste (`--color-blue-light`), texto
+  blanco, flecha diagonal, el barrido de brillo.
+- **Secundario** — `.btn.btn--secondary`: **sin relleno, borde blanco sólido de
+  1px, texto blanco**, y el mismo alto que el primario. En `.section--light` los dos
+  colores se invierten a negro; nada más cambia. Contenido: **el número de teléfono**
+  salvo que la página tenga una segunda acción real (Instagram en el homepage, el
+  formulario en las páginas Brandwache).
+
+⚠️ **Ningún archivo page-scoped puede redeclarar el color, el borde o el hover de
+`.btn--secondary`.** Antes de G1 había cuatro píldoras de contorno casi iguales
+—`.hero__phone`, `.service-hero__phone`, la variante compartida y un override local
+del homepage— y llevaban un año divergiendo. Todas viven en components.css ahora.
+Si una página parece necesitar otra, es un pedido del cliente, no un ajuste.
+
+⚠️ **`border-width` no acepta fracciones en Chrome: `1.5px` computa `1px`**, medido a
+DPR 1 y 2. 1px es el piso de un borde CSS; más fino sólo con un trazo SVG.
+
+⚠️ **El glifo del teléfono necesita `.btn__icon`.** `#icon-phone` es el único símbolo
+relleno del sprite que no declara su propia pintura (vive en `<g id="icon-defs">` y
+no sobrevive al `<use>`), así que sin esa clase sale como mancha negra dentro de un
+botón azul. Una regla en components.css cubre todos los casos.
+
+El **orden** dentro del hero y el **destino** de cada etiqueta son las reglas G2 y
+G3 — ver §11.3 y §11.3b.
+
 ### Breadcrumbs
 
 Trail con **chevrones**, no con barras (cliente 2026-07-31, imagen de
@@ -348,7 +491,7 @@ reescribe.
 | Texto | párrafos, `h3`/`h4`, `li` sueltos | automático (`text-reveal.js`) |
 | Bloque completo | un bloque entra como una unidad | `data-reveal` |
 | Hero | entrada al cargar, no al scrollear | `data-hero-reveal` (ver 4.1) o CSS propio |
-| Pixel seam | disolución de píxeles entre secciones y antes del footer | `<div data-pixel-seam>` |
+| Pixel seam | disolución de píxeles en cada cambio de color de sección (**nunca antes del footer**, §4.4) | `<div data-pixel-seam>` |
 | Imagen fija con máscara | columna de fotos que se queda quieta y cada una se despeja para dejar ver la siguiente | `data-service-flow` + `service-flow.js` |
 | Tira que se desliza (solo teléfono) | una card a la vez con la siguiente asomando, en vez de N apiladas | `data-swipe-carousel` + `swipe-carousel.css/js` (ver §7.1) |
 
@@ -446,7 +589,7 @@ nav y el CTA solo desde 1400px. Tres cosas que conviene no re-descubrir:
   los delays puestos, tocar la hamburguesa hacía que el último ítem y el CTA
   tardaran ~0,9 s en terminar de aparecer. Medido, no supuesto.
 
-### 4.4 Pixel seam antes del footer — obligatorio
+### 4.4 Pixel seam entre secciones — y NO antes del footer
 
 **Regla fija (cliente 2026-07-31): toda página termina con el efecto de píxeles
 justo antes del footer.** Es el mismo mecanismo que usa la homepage entre
@@ -456,12 +599,20 @@ secciones, y es lo último que ve el visitante en cualquier página.
 color, va un seam en **cada** borde, no solo antes del footer — ver §8.2. El
 mecanismo es idéntico, solo cambia cuántos hay y de qué color son los tiles.
 
-Un `<div>` vacío entre `</main>` y el footer:
+⚠️ **REGLA G7 (cliente, 2026-08-14): NO VA UN SEAM ANTES DEL FOOTER.** Se sacó de
+las 21 páginas — "eliminá la transición que usamos cuando es de negro a negro, no
+sirve de nada". La última sección de una página es casi siempre oscura (la del
+formulario) y el footer también, así que ese borde no separaba dos colores: no
+había nada que disolver. Lo que sigue describe el mecanismo, que es **el mismo para
+los seams de mitad de página**, que sí se quedan — un seam existe donde hay un
+cambio de color real.
+
+Un `<div>` vacío entre las dos secciones cuyo color cambia:
 
 ```html
-</main>
+</section>
 <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
-<!-- include: footer-de -->
+<section class="section section--light"> …
 ```
 
 Cómo funciona, en dos frases: el script mide el `div`, arma adentro una banda de
@@ -473,30 +624,35 @@ la sección de abajo** (el footer) y los cuadraditos son del color de la secció
 
 Dos cosas que hay que acertar:
 
-⚠️ **Cuando arriba y abajo son el mismo negro, el tile no se ve** — y eso pasa en
-toda página cuya última sección es oscura (la del formulario, típicamente). Ahí el
-seam del footer no hace un barrido sino un **pulso**: los cuadraditos suben a blanco
-sólido y bajan a medida que la ventana de scroll los cruza.
+⚠️ **Cuando arriba y abajo son el mismo negro, el tile no se ve.** Eso pasaba en
+toda página cuya última sección es oscura (la del formulario), y durante unos días
+la respuesta fue un **pulso** — los cuadraditos subían a blanco sólido y bajaban al
+cruzarlos la ventana de scroll — detectado solo por `js/pixel-transition.js` en el
+borde `main → footer`.
 
-**No hay que declararlo.** Desde 2026-08-10 `js/pixel-transition.js` mide la
-condición en el borde `main → footer` — la superficie de arriba, el footer y el
-propio tile resolviendo al mismo color — y agrega `.pixel-seam--pulse` solo. Si esa
-última sección pasa a ser clara, vuelve solo a ser un barrido. Hoy da pulso en
-`/referenzen/`, `/einsatzgebiete/`, `/leistungen/` y `/ueber-uns/`.
+**Eso ya no existe: la regla G7 borró ese seam en vez de hacerlo visible** (cliente
+2026-08-14). La conclusión que queda es la general: **un borde entre dos superficies
+del mismo color no lleva seam.** El código de pulso sigue en la hoja y en el script
+(`.pixel-seam--pulse`, `data-pixel-seam-mode="pulse"`) como escotilla para un seam a
+mitad de página que alguna vez la quiera, pero **hoy no hay ninguno** — verificado
+midiendo las 21 páginas: cero seams con el mismo color de los dos lados.
 
-⚠️ **La detección está acotada a ESE borde a propósito.** Una primera versión
-comparaba las superficies de todos los seams y se equivocó en el homepage: el fondo
-propio de una sección suele ser transparente, así que hero → trust band midió
-"negro contra negro" cuando el blanco sobre el que disuelve vive en un HIJO de la
-sección siguiente. En el borde del footer no hay nada que adivinar: los dos lados
-pintan su propio fondo opaco. Para un seam a mitad de página que quiera este look
-queda `data-pixel-seam-mode="pulse"` como escotilla.
+⚠️⚠️ **NO BORRES UN SEAM PORQUE UNA SONDA DIGA "NEGRO CONTRA NEGRO": EL HOMEPAGE
+TIENE UN FALSO POSITIVO Y ES UNO DE SUS MEJORES MOMENTOS.** El fondo propio de una
+sección suele ser transparente (se ve el negro de la página), así que comparar
+`background-color` de sección contra sección hace que hero → sticky-story mida
+"negro contra negro" — cuando el blanco sobre el que esos tiles disuelven vive en
+un **HIJO** de la sección siguiente (`.sticky-story__scene`). Comprobado con
+hit-test sobre el render, no leyendo el CSS: **lo que hay detrás de esa banda es
+`rgb(255,255,255)`, y empieza exactamente en el tope de la banda.**
+La forma correcta de decidirlo es esa — `elementFromPoint` en el centro de la banda
+y subir hasta el primer fondo opaco —, no `getComputedStyle` de los dos hermanos.
 
 
 | | |
 |---|---|
 | **Color del tile** | El del fondo de la sección de arriba. Página blanca → `.pixel-seam--white`. Página negra → sin modificador (el default es `--color-bg`). Si la de arriba es `.section--subtle` va `.pixel-seam--subtle` (#090909): un negro apenas distinto se nota y se lee como "dos negros". **Si la de arriba tiene un degradado en su borde inferior, el tile tiene que llevar el mismo stack, no el color plano** — `.pixel-seam--konzept` (home) y `.pixel-seam--navy` (`/werkschutz/`, banda navy del Risiko) le dan al tile el `#00091F` + `--color-blue-light` a 0.38 de la propia sección, en vez de hardcodear el hex compuesto. Mantené el 0.38 en sincro con el primer stop de la sección. |
-| **Padding del que sigue** | Lo que va **después** del seam tiene que reservar la altura de la banda o los tiles tapan contenido real: `.pixel-seam + .site-footer`, y en una página que alterna también `.pixel-seam + .section` y `.pixel-seam + .conversion` (la sección del formulario no es `.section` y su padding vive en el panel interno). `calc(var(--space-9) + 200px)`, 120px en teléfono. |
+| **Padding del que sigue** | Lo que va **después** del seam tiene que reservar la altura de la banda o los tiles tapan contenido real: `.pixel-seam + .section` y `.pixel-seam + .conversion` (la sección del formulario no es `.section` y su padding vive en el panel interno). `calc(var(--space-9) + 200px)`, 120px en teléfono. ✅ **Al ser selectores de hermano adyacente, la regla G7 no dejó ningún hueco muerto**: borrado el `<div>`, el padding reservado deja de aplicar solo — medido, `main → footer` da 0px de separación extra en las 21 páginas. Por eso `.pixel-seam + .site-footer` ya no aparece en ninguna hoja. |
 
 El CSS del seam vive en `page-home.css`, que ninguna otra página carga, así que
 hay que copiar el bloque a la hoja de la página (está en `page-contact.css`,
@@ -848,6 +1004,42 @@ Mínimos, todos verificados con medición y no a ojo:
   contra un padding de container que a 390px son 12px da 4px de scroll
   horizontal. Medido también.
 
+### 7.0 UNA sola medida en el hero (regla G6, 2026-08-14)
+
+En teléfono, **H1, subline y los DOS CTAs comparten el mismo ancho de contenido**.
+Sin excepciones — el bloque entero es una columna con un borde izquierdo y uno
+derecho, no cuatro elementos de anchos parecidos.
+
+Medido antes de la regla, y de ahí salió: a 767px los CTAs llenaban la columna de
+704px mientras el subline se quedaba en su tope de 32rem (512px) — **192px de
+diferencia** — y el homepage tenía además su píldora de teléfono compacta en 175px
+contra un primario de 358 (**183px a 390px, 514px a 767px**). A 390 y 430 casi nada
+de eso se nota, que es por qué sobrevivió tanto: **sólo aparece en un teléfono
+grande**, y hay que medir ahí.
+
+Los topes que había que sacar, todos sólo bajo `767.98px`:
+
+| dónde | qué era |
+|---|---|
+| `.hero__lead` (homepage) | `max-width: 31ch` (~310px) |
+| `.service-hero__lead` | `max-width: 32rem` |
+| `.jobs-hero h1` | `max-width: 38rem` |
+| `.hero__phone` (homepage) | `width: auto` + altura y tipografía reducidas |
+
+⚠️ **La regla del chasis necesita DOS clases.** `.jobs-hero h1` y los otros topes
+por página son (0,1,1) y sus hojas cargan **después** de `page-service.css`, así
+que un selector de una clase empata y pierde por orden.
+`.service-hero .service-hero__content h1` es (0,2,1) y gana.
+
+⚠️ **Esto revierte una instrucción anterior del propio cliente** sobre la píldora
+compacta del homepage ("reducí el ancho para que envuelva al contenido"). Se le
+preguntó y eligió G6. **No devolverla a compacta sin preguntar otra vez.**
+
+⚠️ **El badge de Google sube un paso de padding, pero NO al valor de escritorio en
+teléfono**: comparte una fila de 358px con los dos sellos DEKRA y a 12/16px la fila
+desbordaba. 8/12px en teléfono, 12/16px de 768 para arriba. Medido: badge 257 +
+sellos 59 = 316 en 358 disponibles.
+
 ### 7.1 Una fila de tarjetas en un teléfono: la tira que se desliza
 
 **No la apiles: es la tira compartida.** `css/swipe-carousel.css` +
@@ -1115,11 +1307,24 @@ Las secciones 5, 7 y 8 son genéricas a propósito porque
     aspect-ratio e **ignore la columna del grid**: 43px de scroll horizontal a
     1024px. Va `width: 100%` + `max-width` + `height`, y `aspect-ratio: auto`
     para dejar claro que manda la altura;
-  - `<picture>` es **inline**, así que un `<img>` con `height: 100%` adentro se
-    mide contra la caja shrink-to-fit del picture, no contra el marco: la foto
-    quedó 497px en un marco de 676px, con una franja oscura debajo. Cualquier
-    componente que meta el `<img>` en un `<picture>` (por el WebP) necesita
+  - un `<img>` con `height: 100%` dentro de un `<picture>` **no se mide contra el
+    marco**, porque su bloque contenedor es el picture: la foto quedó 497px en un
+    marco de 676px, con una franja oscura debajo. Cualquier componente que meta el
+    `<img>` en un `<picture>` (por el WebP) necesita
     `picture { display: block; width: 100%; height: 100% }`.
+    ⚠️ **Corregido 2026-08-14: la causa NO es que el `<picture>` sea inline**, y
+    creerlo es lo que dejó pasar una segunda instancia del mismo bug durante meses.
+    `reset.css` ya pone `display: block` en todo `picture`, así que una sonda ve
+    `display: block` computado y concluye que está sano — **lo que falta es el
+    `height`**: en `auto` el porcentaje del `<img>` queda indefinido, cae a `auto` y
+    la foto se dimensiona por su propio ratio intrínseco. Se ve perfecta mientras la
+    foto coincida con el `aspect-ratio` del marco y deja una franja del fondo del
+    marco en cuanto no coincida. Así apareció en el preview de Leistungen de la home
+    (`.services__preview-media`): el marco es `820 / 1227` y **5 de las 10 fotos de
+    servicio no miden 1227 de alto** (1217–1225), o sea franja gris
+    `--color-bg-elevated` de 1,1 a 5,5px en esas cinco y ninguna en las otras cinco
+    — reportado por el cliente como "some service images show a grey bar". **Las
+    tres declaraciones van juntas siempre; `display: block` sola no alcanza.**
 - **Hero: dos variantes, según la foto que exista.** Con una foto **apaisada**
   (3:2) va full-bleed como la home: `.service-hero__bg` absoluto detrás de una
   capa de contenido con `z-index: 1`, grid de una columna y el copy capado en
@@ -1915,7 +2120,7 @@ ciudad**, como un `<path>` inline:
   ⚠️ **Un primer intento lo hizo una CARD BLANCA dentro de la sección oscura, y
   estaba mal** — no por cómo se veía, sino porque era un cambio de color **sin
   seam**, que es lo único sobre lo que está construido el ritmo de esta página
-  ([§4.4](#44-pixel-seam-antes-del-footer--obligatorio)). Además la card necesitaba
+  ([§4.4](#44-pixel-seam-entre-secciones--y-no-antes-del-footer)). Además la card necesitaba
   su propio flip de tokens y un arreglo de contraste para el link. Como
   `.section--light` de verdad **no necesita ninguna de las dos cosas**: esa clase ya
   re-declara todos los tokens que `.trust-certs` consume, y `page-service.css` ya le
@@ -2038,12 +2243,43 @@ sección ya no es `.section--light`, así que ese token resuelve a blue-light
 ### 11.3 El hero de Notfall: el teléfono es el CTA primario
 
 En `/brandwache-nuernberg/` el botón azul es el **teléfono** y el formulario es el
-secundario (`.btn--secondary`, que components.css ya declara token-driven y
-correcto sobre oscuro). **Es instrucción del draft, no criterio local** — y es
-correcto para el único servicio al que se llega en medio de un incidente: un
-formulario que promete oferta en un día hábil es la acción equivocada cuando el
-Bauordnungsamt pide una Brandwache hoy. **Los otros tres combos de Nürnberg SÍ
-lideran con el formulario**, y esa diferencia también está en sus drafts.
+secundario (`.btn--secondary`, la píldora de contorno única del sitio — ver §3).
+**Es instrucción del draft, no criterio local** — y es correcto para el único
+servicio al que se llega en medio de un incidente: un formulario que promete oferta
+en un día hábil es la acción equivocada cuando el Bauordnungsamt pide una Brandwache
+hoy. **Los otros tres combos de Nürnberg SÍ lideran con el formulario**, y esa
+diferencia también está en sus drafts.
+
+> ⚠️ **AHORA ES REGLA GLOBAL, NO UNA PARTICULARIDAD DE ESTA PÁGINA (cliente, regla
+> G2, 2026-08-14).** El orden por defecto de TODO hero del sitio es **primario =
+> "Unverbindliches Angebot einholen", secundario = el teléfono**. La inversión de
+> arriba es la **única excepción admitida, y está acotada a Brandwache**:
+> `/brandwache/` (todavía sin construir) y las combos ciudad × Brandwache como
+> `/brandwache-nuernberg/`. **No extenderla a ningún otro servicio ni a ninguna otra
+> combo** — el propio cliente subrayó que tiene que quedar limitada a Brandwache.
+> Cuando se construya `/brandwache/`, ese hero nace con el teléfono en
+> `.btn--primary` y el formulario en `.btn--secondary`, igual que la combo.
+
+### 11.3b El destino de un CTA lo fija su ETIQUETA (regla G3, 2026-08-14)
+
+Dos etiquetas, dos destinos, y no se cruzan:
+
+| etiqueta | destino |
+|---|---|
+| **Unverbindliches Angebot einholen** | el formulario de solicitud (`#anfrage`, `#sicherheitsanalyse`, `/angebot/`) |
+| **Kostenfreies Sicherheitskonzept anfordern** | **`/sicherheitskonzept/`**, nunca el ancla del formulario del homepage |
+
+⚠️ Estaba mal en las **tres case studies**, que mandaban esa segunda etiqueta a
+`/#sicherheitsanalyse`. Era deliberado cuando se construyeron —
+`/sicherheitskonzept/` no existía y publicar el botón de conversión primario como un
+404 era peor— y quedó anotado entonces como "una línea por página cuando exista".
+Ya existe; ya está corregido.
+
+⚠️ **Corolario que se paga en la página destino:** en `/sicherheitskonzept/` esa
+etiqueta no puede usarse, porque su destino sería un enlace a sí misma. Sus cuatro
+CTAs pasaron a "Unverbindliches Angebot einholen" apuntando a su propio `#anfrage`.
+**El H2 sobre el formulario sigue diciendo "Jetzt kostenfreies Sicherheitskonzept
+anfordern": es un ENCABEZADO, no un CTA, y ninguna de las dos reglas lo toca.**
 
 Dos cosas medidas alrededor de eso:
 
@@ -2340,8 +2576,9 @@ lidera con el formulario**, no con el teléfono.
 - [ ] `hyphens: none` en ledes, listas, celdas y cards (§7)
 - [ ] Stack de efectos cargado + hooks (`data-reveal` / `data-item-reveal`)
       puestos, y entrada CSS para lo que está arriba del fold
-- [ ] **Pixel seam antes del footer**, con el color de tile correcto y el
-      `padding-top` del footer reservado
+- [ ] **Un pixel seam en cada cambio de color de sección**, con el color de tile
+      correcto y el `padding-top` reservado por la sección que sigue.
+      ⚠️ **NUNCA antes del footer** (regla G7) — ese borde no cambia de color
 - [ ] Formulario: `css/lead-form.css` linkeado (no copiar el CSS), honeypot
       incluido, `id` de campos únicos, y la sección compuesta como en §6
 - [ ] Si es página de servicio: los 12 bloques y las decisiones fijas de §8

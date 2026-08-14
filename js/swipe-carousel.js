@@ -40,14 +40,21 @@
 (function () {
   "use strict";
 
+  /* Two ranges, chosen PER STRIP — a strip carrying `data-swipe-tablet` stays a
+     strip through the tablet band, everything else stops at the phone
+     breakpoint. It has to be per strip and not one global query because the
+     three sections on this page disagree about the tablet band on purpose: see
+     the opt-in block in css/swipe-carousel.css. Both values mirror that file's
+     media queries — keep the two in step, or the counter and the progress line
+     will appear at a width where the strip is not a strip, or vice versa. */
   var MQ = "(max-width: 767.98px)";
+  var MQ_TABLET = "(max-width: 1023.98px)";
 
   var strips = Array.prototype.slice.call(
     document.querySelectorAll("[data-swipe-carousel]")
   );
   if (!strips.length) return;
 
-  var mq = window.matchMedia(MQ);
   var reduceMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   function pad2(n) { return (n < 10 ? "0" : "") + n; }
@@ -64,6 +71,9 @@
   function Strip(scroller) {
     var sel = scroller.getAttribute("data-swipe-items");
     this.scroller = scroller;
+    this.mq = window.matchMedia(
+      scroller.hasAttribute("data-swipe-tablet") ? MQ_TABLET : MQ
+    );
     this.cards = Array.prototype.slice.call(
       sel ? scroller.querySelectorAll(sel) : scroller.children
     );
@@ -214,12 +224,27 @@
 
   function apply() {
     instances.forEach(function (s) {
-      if (mq.matches) s.build();
+      if (s.mq.matches) s.build();
       else s.destroy();
     });
   }
 
   apply();
-  if (mq.addEventListener) mq.addEventListener("change", apply);
-  else if (mq.addListener) mq.addListener(apply);
+
+  /* Listen on every DISTINCT query in use, not on one shared handle: with two
+     ranges live, crossing either boundary has to re-evaluate all of them. The
+     handler already asks each strip about its own query, so a duplicate call is
+     harmless — build() and destroy() both no-op when there is nothing to do. */
+  instances
+    .map(function (s) { return s.mq; })
+    /* By media STRING, not object identity — matchMedia hands back a fresh
+       object per call, so two strips on the same range are two objects. */
+    .filter(function (m, i, all) {
+      for (var j = 0; j < i; j++) if (all[j].media === m.media) return false;
+      return true;
+    })
+    .forEach(function (m) {
+      if (m.addEventListener) m.addEventListener("change", apply);
+      else if (m.addListener) m.addListener(apply);
+    });
 })();

@@ -59,6 +59,15 @@ const PARAM_RE = /([\w.-]+)="([^"]*)"/g;
 // then from content/values.json.
 const VAR_RE = /\{\{\s*([\w.]+)\s*\}\}/g;
 
+// A coverage-list marker:
+//     <!-- coverage: chips row="1" -->
+//     <!-- coverage: mentions -->
+//     <!-- coverage: footer row="2" -->
+// Renders the entries of content/coverage.json as real <li> markup at BUILD
+// time — see COVERAGE_FILE below for why this exists and why it is not a
+// templating language.
+const COVERAGE_RE = /<!--\s*coverage:\s*([\w-]+)((?:\s+[\w.-]+="[^"]*")*)\s*-->/g;
+
 // ---------------------------------------------------------------------------
 // Shared values (content/values.json)
 // ---------------------------------------------------------------------------
@@ -84,6 +93,107 @@ function loadValues() {
   } catch (err) {
     throw new Error(`content/values.json is not valid JSON — ${err.message}`);
   }
+}
+
+// ---------------------------------------------------------------------------
+// Coverage locations (content/coverage.json)
+// ---------------------------------------------------------------------------
+// ONE list of Einsatzgebiete, rendered into every surface that shows them
+// (client 2026-08-14, Einsatzgebiete 1: "single data source"). Before this the
+// same cities were typed out in five places and had already drifted — Hof was a
+// linked 404 in the footer for weeks while the homepage had already demoted it.
+//
+// Like the values mechanism above, this is NOT a template language: it is one
+// data file with a fixed set of renderers, each emitting the exact markup that
+// used to be hand-written. No expressions, no conditionals in markup, no loops
+// a page can author. The output is still complete static HTML — which is the
+// whole reason this happens at build time and not in the browser: these pills
+// are crawlable internal links and must not depend on JavaScript.
+const COVERAGE_FILE = path.join(ROOT, "content", "coverage.json");
+// Where the same list is published for the runtime Leaflet map to fetch.
+// Generated, never hand-edited — js/coverage-map.js reads THIS, so the map and
+// the pills can never disagree.
+const COVERAGE_RUNTIME_OUT = path.join(DIST_DIR, "assets", "data", "coverage-locations.json");
+
+function loadCoverage() {
+  if (!fs.existsSync(COVERAGE_FILE)) return [];
+  let data;
+  try {
+    data = JSON.parse(fs.readFileSync(COVERAGE_FILE, "utf8"));
+  } catch (err) {
+    throw new Error(`content/coverage.json is not valid JSON — ${err.message}`);
+  }
+  const list = Array.isArray(data.locations) ? data.locations : [];
+  for (const loc of list) {
+    if (!loc.id || !loc.name || !Array.isArray(loc.center)) {
+      throw new Error(
+        `content/coverage.json: every location needs id, name and center — got ${JSON.stringify(loc)}`
+      );
+    }
+  }
+  return list;
+}
+
+const PIN_ICON =
+  '<img class="%CLS%-icon" src="/assets/icons/icon-location.svg" alt="" ' +
+  'width="16" height="16" loading="lazy">';
+
+// Each renderer returns the <li> markup for one location, so a page's own list
+// element, classes and wrapper stay in the page where they can be read.
+const COVERAGE_RENDERERS = {
+  // Homepage map chips: a real link per city page…
+  chips(loc) {
+    const icon = PIN_ICON.replace("%CLS%", "coverage__pill");
+    return (
+      `<li><a class="coverage__pill" data-coverage-city="${loc.id}" ` +
+      `href="${loc.href}">${icon}${loc.name}</a></li>`
+    );
+  },
+  // …and a real BUTTON for a location with no page of its own. Never an <a>:
+  // "render without links" (client) plus "do not ship a linked 404" (2.2). It
+  // still drives the map, exactly like the "Alle" toggle.
+  mentions(loc) {
+    const icon = PIN_ICON.replace("%CLS%", "coverage__pill");
+    return (
+      `<li><button type="button" class="coverage__pill" data-coverage-city="${loc.id}" ` +
+      `aria-pressed="false">${icon}${loc.name}</button></li>`
+    );
+  },
+  // The footer's own city list: links only, no map hooks (the footer is on
+  // every page, most of which have no map).
+  footer(loc) {
+    const icon = PIN_ICON.replace("%CLS%", "footer-pill");
+    return `<li><a class="footer-pill" href="${loc.href}">${icon}${loc.name}</a></li>`;
+  },
+};
+
+function resolveCoverage(content, sourceLabel, locations) {
+  return content.replace(COVERAGE_RE, (_match, name, rawParams) => {
+    const render = COVERAGE_RENDERERS[name];
+    if (!render) {
+      throw new Error(
+        `${sourceLabel}: unknown coverage list "${name}" — expected one of ` +
+          Object.keys(COVERAGE_RENDERERS).join(", ")
+      );
+    }
+    const params = {};
+    let m;
+    while ((m = PARAM_RE.exec(rawParams)) !== null) params[m[1]] = m[2];
+
+    // "mentions" is by definition the ones without a page; every other list is
+    // links, so it can only ever contain the ones that have one.
+    let list = locations.filter((loc) =>
+      name === "mentions" ? !loc.href : Boolean(loc.href)
+    );
+    if (params.row) list = list.filter((loc) => String(loc.row) === params.row);
+    if (!list.length) {
+      throw new Error(
+        `${sourceLabel}: coverage list "${name}"${params.row ? ` row ${params.row}` : ""} matched no locations`
+      );
+    }
+    // One item per line, indented to sit inside the <ul> it was written in.
+    return list.map((loc) => render(loc)).join("\n            ");
+  });
 }
 
 // "phone.display" -> values.phone.display
@@ -180,11 +290,15 @@ function buildPages() {
   }
 
   const values = loadValues();
+  const coverage = loadCoverage();
 
   for (const pageFile of pageFiles) {
     const sourceLabel = path.relative(ROOT, pageFile);
     let content = fs.readFileSync(pageFile, "utf8");
     content = resolveIncludes(content, sourceLabel, values);
+    // AFTER the includes, so a marker inside a partial (the footer's city list)
+    // is rendered too — the partial arrives as ordinary content by this point.
+    content = resolveCoverage(content, sourceLabel, coverage);
     // Then the page's own placeholders (the ones outside any include).
     content = resolveVars(content, [values], sourceLabel);
 
@@ -210,6 +324,28 @@ function buildPassthrough() {
     if (!fs.existsSync(src)) continue;
     copyRecursive(src, path.join(DIST_DIR, to));
   }
+}
+
+// Publishes the coverage list for the runtime map. Only the fields the browser
+// needs — the map cares about the id, the name it shows in its overlay and the
+// centre it flies to; `map` (label side / pin size) is for the generated hero
+// SVG and `row`/`href` are for the pills, so neither ships.
+// Runs AFTER buildPassthrough(), which copies assets/ verbatim: writing it
+// second is what keeps a stale hand-made copy from winning.
+function buildCoverageData() {
+  const locations = loadCoverage();
+  if (!locations.length) return;
+  const payload = locations.map((loc) => ({
+    id: loc.id,
+    name: loc.name,
+    center: loc.center,
+    boundaryUrl: `/assets/data/coverage-boundaries/${loc.boundary || loc.id}.geojson`,
+  }));
+  fs.mkdirSync(path.dirname(COVERAGE_RUNTIME_OUT), { recursive: true });
+  fs.writeFileSync(COVERAGE_RUNTIME_OUT, JSON.stringify(payload), "utf8");
+  console.log(
+    `build: content/coverage.json -> ${path.relative(ROOT, COVERAGE_RUNTIME_OUT)} (${payload.length} locations)`
+  );
 }
 
 // Conservative, safe CSS minification: strip /* comments */, then trim each
@@ -271,6 +407,7 @@ function build() {
   fs.mkdirSync(DIST_DIR, { recursive: true });
   const count = buildPages();
   buildPassthrough();
+  buildCoverageData();
   buildCss();
   console.log(`build: done — ${count} page(s) compiled, assets copied to dist/.`);
 }

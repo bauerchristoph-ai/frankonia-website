@@ -10,8 +10,11 @@
   <title>Kontakt: 24/7 erreichbar – FRANKONIA Sicherheitsdienst</title>
   <meta name="description" content="FRANKONIA Sicherheitsdienst Bamberg: 24/7 erreichbar unter +49 951 964352-0. Unverbindliches Angebot in einem Werktag, kostenfreie Beratung inklusive.">
   <link rel="canonical" href="https://frankonia-sicherheit.de/kontakt/">
+  <!-- ⚠️ The `hreflang="en"` alternate that used to sit here pointed at
+       /en/kontakt/, a page that NEVER EXISTED — an hreflang to a 404, live since
+       July. Removed 2026-08-13 with the rest of the English version (client Q8:
+       "No English version"). -->
   <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/kontakt/">
-  <link rel="alternate" hreflang="en" href="https://frankonia-sicherheit.de/en/kontakt/">
   <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/kontakt/">
 
   <!-- Open Graph -->
@@ -208,14 +211,26 @@
              CSS load-in instead (.contact-intro > *, page-contact.css) — the
              same reasoning as the homepage's load-time hero cascade, minus the
              GSAP dependency. -->
-        <!-- The "Ihr fester Ansprechpartner — 24/7 erreichbar" pill that used to
-             open this column was removed 2026-08-06 (client): the page said 24/7
-             twice, here and in the Highlight-Box further down, and the client
-             chose to keep the lower one. Nothing factual left the page — the box
-             states it in full, and the <title>/meta/LocalBusiness opening hours
-             are untouched. The pill's CSS went with it rather than being left as
-             a dead rule; git has it. -->
+        <!-- ⚠️ THIS BADGE HAS BEEN REMOVED AND RESTORED, and the next person needs
+             both halves of that story.
+             REMOVED 2026-08-06 (client): the page stated 24/7 twice — here and in
+             the Highlight-Box further down — and the client chose to keep the
+             lower one.
+             RESTORED 2026-08-14 under client rule G9 ("render the badge on all
+             subpages as specified in the page documents"). Webtext 25 does specify
+             it, verbatim, and G9 is the later instruction, so it wins — the same
+             way G6 overrode the compact homepage phone pill.
+             ⚠️ THAT MEANS THE 2026-08-06 DUPLICATION IS BACK BY DESIGN: this page
+             now says "24/7 erreichbar" in the badge AND in the Highlight-Box. If
+             the client would rather not repeat it, the fix is to drop it from ONE
+             of the two — do not silently delete the badge again, because that is
+             what G9 asks for. Flagged to the client with this pass. -->
         <div class="contact-intro">
+          <!-- Hero badge, verbatim from Webtext 25 (client rule G9). -->
+          <p class="hero-badge">
+            <svg class="icon" aria-hidden="true"><use href="#icon-clock"></use></svg>
+            Ihr fester Ansprechpartner &mdash; 24/7 erreichbar
+          </p>
           <h1>Kontakt zu FRANKONIA</h1>
           <p class="contact-intro__lead">Rufen Sie an oder schreiben Sie uns — Angebot innerhalb eines Werktages, Beratung kostenfrei.</p>
         </div>
@@ -261,8 +276,18 @@
             </div>
 
             <div class="form-field">
-              <label class="form-field__label" for="kf-phone">Telefon</label>
-              <input class="form-field__input" type="tel" id="kf-phone" name="phone" autocomplete="tel">
+              <!-- ⚠️ REQUIRED since 2026-08-14 (client, Kontakt 4: "the phone
+                   field must be required (as specified in Webtext 25) — currently
+                   it is optional"), and it is the second time they have asked.
+                   The label carries the same " *" every other required field on
+                   this site uses, because `required` alone is only announced to a
+                   screen reader — a sighted visitor learns about it when the form
+                   refuses to submit, which is the worst moment to find out.
+                   ⚠️ This form now asks for e-mail AND phone. That is the draft's
+                   own spec; if the extra required field ever shows up as a drop in
+                   submissions, it is a client decision to reverse, not a bug. -->
+              <label class="form-field__label" for="kf-phone">Telefon *</label>
+              <input class="form-field__input" type="tel" id="kf-phone" name="phone" autocomplete="tel" required>
             </div>
 
             <div class="form-field contact-form__field--full">
@@ -339,17 +364,23 @@
                 <span class="contact-method__body">
                   <span class="contact-method__label">Telefon</span>
                   <span class="contact-method__value">+49 951 964352-0</span>
-                  <!-- Shortened 2026-08-03 (client): the first half of the
-                       draft's sentence ("Rund um die Uhr erreichbar, an 365
-                       Tagen im Jahr") repeats the 24/7 claim the Highlight-Box
-                       below this list already makes (it used to point at the
-                       hero badge, removed 2026-08-06 — the reason still holds,
-                       just against a different block), so only the part nothing
-                       else on the page says is kept —
-                       the short-notice/urgent hook, which is what converts
-                       someone who needs a Brandwache tonight. Full sentence in
-                       content-de/2026-07-27 Webtext 25 Kontakt.docx, § 2. -->
-                  <span class="contact-method__text">Auch für kurzfristige und dringende Einsätze (z.&nbsp;B. Brandwache).</span>
+                  <!-- ⚠️ THE DRAFT'S FULL SENTENCE IS BACK (client 2026-08-14,
+                       Kontakt 2: 'add "Rund um die Uhr erreichbar, an 365 Tagen
+                       im Jahr."'). It had been cut on 2026-08-03 and the cut was
+                       reconfirmed on 08-05 ("ninguno, quedó bien así"), because
+                       that half repeats the 24/7 claim the Highlight-Box below
+                       already makes. The client has now asked for it twice in
+                       writing, so the later instruction wins and this file's own
+                       "no reponerlos" note is superseded for THIS line.
+                       The second sentence — the short-notice/Brandwache hook —
+                       stays: it is the part nothing else on the page says, and it
+                       is what converts someone who needs a Brandwache tonight.
+                       ⚠️ The page now states 24/7 in two places (here and the
+                       Highlight-Box). That is the client's call, not an
+                       oversight; if it ever reads as repetition, the Highlight-Box
+                       is the one to edit — it is the block that was added later.
+                       Wording verbatim from Webtext 25, § 2. -->
+                  <span class="contact-method__text">Rund um die Uhr erreichbar, an 365 Tagen im Jahr. Auch für kurzfristige und dringende Einsätze (z.&nbsp;B. Brandwache).</span>
                 </span>
                 <svg class="contact-method__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
               </a>
@@ -424,16 +455,45 @@
             <p class="contact-highlight__text">Einsatz- und Bereichsleiter sind als direkte Ansprechpartner rund um die Uhr für Sie da: keine Warteschleifen, keine Weiterleitungen.</p>
           </div>
 
+          <!-- ⚠️ THE DEKRA ROW IS BACK (client 2026-08-14, Kontakt 3: "add the
+               DEKRA certification symbols/seals"). It was removed on 2026-08-04 —
+               same client, opposite instruction: the left column was said to
+               compete with the form. The later instruction wins, and this restores
+               the exact block that was deleted (markup + .contact-cert* in
+               page-contact.css), not a new design of it.
+               It also closes something this file flagged as a real loss at the
+               time: the certification claim had left /kontakt/ entirely.
+
+               Placed AFTER the Highlight-Box, which did not exist when this block
+               was removed — the seals are the evidence under the page's claims,
+               so they read as the column's closing line rather than as a fourth
+               item competing with the three contact tiles.
+
+               Real DEKRA artwork, used as supplied: proportional resizing only,
+               never cropped or recoloured (CLAUDE.md). 399x600 portrait sources
+               with the height fixed and width auto, so the ratio cannot drift.
+               2.25rem, deliberately smaller than every other seal pair on the
+               site — this row supports the decision, it does not compete with the
+               phone tile above it or the form beside it. -->
+          <div class="contact-cert" data-reveal>
+            <img class="contact-cert__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="contact-cert__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            <p class="contact-cert__text">DEKRA-zertifiziert nach DIN 77200-1 und ISO 9001</p>
+          </div>
+
           <!-- REMOVED 2026-08-04 (client brief: the left column "combines
                introductory content, three contact methods, DEKRA certifications
                and a secondary services CTA" and competes with the form):
-               - the DEKRA row (both seals + "DEKRA-zertifiziert nach DIN 77200-1
-                 und ISO 9001"). ⚠️ That takes the certification claim OFF this
-                 page entirely — it appeared nowhere else on /kontakt/. It is
-                 still on /werkschutz/ (hero trust band, Ansprechpartner strip,
-                 FAQ), on /referenzen/ and on /jobs/, and the guidelines' §5
-                 minimum is about the homepage, so no rule is broken — but it is a
-                 trust element leaving a page, flagged in the checklist.
+               - ✅ the DEKRA row — RESTORED 2026-08-14 on the client's own later
+                 instruction ("add the DEKRA certification symbols/seals"); it is
+                 the block right above this comment. What follows was the reason
+                 for its removal, kept because it is also the argument for keeping
+                 the restored version small: ⚠️ taking it out took the
+                 certification claim OFF this page entirely — it appeared nowhere
+                 else on /kontakt/. It is also on /werkschutz/ (hero trust band,
+                 Ansprechpartner strip, FAQ), on /referenzen/ and on /jobs/, and
+                 the guidelines' §5 minimum is about the homepage, so no rule was
+                 broken — but it was a trust element leaving a page.
                - the "Alle Leistungen im Überblick" link to /leistungen/. The
                  draft's "Interne Links" line asks for /leistungen/,
                  /angebot/ and /sicherheitskonzept/ from this page; none of the
@@ -500,21 +560,6 @@
     </section>
 
   </main>
-
-  <!-- Pixel-seam (page -> footer), client 2026-07-31: "always before the
-       footer I want the pixel effect". Same placement and same tile colour as
-       the homepage's FAQ -> footer seam: the div is a real sibling between
-       </main> and the footer, and the band it builds sits inside the footer's
-       top, so the tiles must match the section ABOVE (this page is white end
-       to end -> .pixel-seam--white) and dissolve over the footer's black.
-       The footer reserves the band's height as extra top padding via
-       `.pixel-seam + .site-footer` (page-contact.css), so the band never
-       covers real footer content.
-
-       Empty by default — js/pixel-transition.js appends the tiles at runtime
-       and bails entirely under prefers-reduced-motion, so with no JS the two
-       simply meet with nothing between them. -->
-  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
 
   <!-- include: footer-de -->
   <!-- include: whatsapp-button -->

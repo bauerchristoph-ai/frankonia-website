@@ -219,23 +219,31 @@
       <div class="container">
         <div class="section__intro">
           <h2>Ihre Frage ist nicht dabei?</h2>
-          <p>Rufen Sie an oder schreiben Sie uns, unsere Sicherheitsexperten antworten kostenfrei, auch wenn (noch) kein Auftrag dahintersteht: {{phone.display}}. Die besten Fragen beantworten wir hier im Ratgeber.</p>
+          <p>Rufen Sie an oder schreiben Sie uns, unsere Sicherheitsexperten antworten kostenfrei, auch wenn (noch) kein Auftrag dahintersteht: <a href="{{phone.href}}">{{phone.display}}</a>. Die besten Fragen beantworten wir hier im Ratgeber.</p>
         </div>
+        <!-- ⚠️ THE TWO ACTIONS SWAPPED ROLES on 2026-08-14 (client rule G1: one
+             fixed secondary-CTA design, and the secondary is the clickable phone
+             number). Both destinations are unchanged — this page still offers
+             exactly "rufen Sie an oder schreiben Sie uns", in that order of
+             mention — but the phone is now the outline pill and "Schreiben Sie
+             uns" the filled one, which is the arrangement every other page on
+             the site uses. Before this, /ratgeber/ was the ONE page where the
+             phone was the blue button, so the same number rendered as a primary
+             here and as a secondary everywhere else.
+             Worth confirming with Chris: the draft's close leads with calling,
+             so if the phone must stay the strongest action on this page, swap
+             the two classes back and this becomes the documented exception. -->
         <div class="rg-cta__actions" data-reveal>
-          <a class="btn btn--primary" href="{{phone.href}}">
+          <a class="btn btn--primary" href="/kontakt/">Schreiben Sie uns<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          <a class="btn btn--secondary" href="{{phone.href}}">
             <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
             {{phone.display}}
-          </a>
-          <a class="service-link" href="/kontakt/">Schreiben Sie uns
-            <svg class="service-link__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
           </a>
         </div>
       </div>
     </section>
 
   </main>
-
-  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
 
   <!-- include: footer-de -->
   <!-- include: whatsapp-button -->

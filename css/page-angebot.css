@@ -25,6 +25,50 @@
   align-items: start;
 }
 
+/* ---- TABLET PORTRAIT (768–899.98): two columns here too ---------------------
+   Client 2026-08-14: "make sure the hero CTA stays visible/inside the layout".
+   Measured before touching anything — on an iPad portrait the stacked layout put
+   the submit button, which is this page's whole job, BELOW THE FOLD:
+
+     768x1024   hero 1205px, CTA bottom 1141  ->  117px past the screen
+     834x1112   hero 1212px, CTA bottom 1147  ->   35px past it
+
+   The grid already knows how to fix this; its own comment two rules up says the
+   side-by-side layout exists so "both are in the first screen, which is the
+   draft's 'kein Scrollen nötig'". It just started 132px too late.
+   Measured after: hero 957px / CTA bottom 846 at 768x1024, and 877 / 788 at
+   834x1112 — the whole hero, submit and phone line included, inside one screen.
+
+   ⚠️ I expected this NOT to work and the measurement said otherwise: the worry
+   was that a 283px copy column would explode the H1. It does go to five lines,
+   but the stacked form was costing far more height than the narrow headline
+   does. Worth remembering before "fixing" this back.
+   ⚠️ Tried and REJECTED, also measured: single-column form fields in this band,
+   to stop "UNTERNEHMEN *" wrapping in a 294px column. It adds ~200px to the form
+   and puts the CTA back under the fold at 768 (1043 > 1024). The fields stay
+   two-up.
+
+   ⚠️ NO submit-button override here, and that is a MEASURED result, not an
+   oversight. The reflex on this project is that a narrower column overflows a
+   `.btn`, because `.btn` is `white-space: nowrap` and this label's min-content is
+   ~361px — the omission page-service.css, page-city.css and page-jobs.css each
+   document their own instance of. It does not apply to THIS button: the shared
+   `.conversion__submit` (lead-form.css) already sets `white-space: normal` and
+   the form grid stretches it, so it wraps to two lines and sizes to its column
+   on its own. A `width: 100%` override was written here first and then removed
+   after measuring it with and without: byte-identical, 255px wide and inside the
+   card's padding either way. Do not re-add it.
+
+   Deliberately capped at 899.98 so that EVERYTHING from 900px up — the split,
+   the 96px gap, the submit — is byte-identical to before. */
+@media (min-width: 768px) and (max-width: 899.98px) {
+  .ag-hero__grid {
+    grid-template-columns: 0.85fr 1fr;
+    /* --space-9 (96px) would eat a third of the 641px content width here. */
+    gap: var(--space-6);
+  }
+}
+
 @media (min-width: 900px) {
   .ag-hero__grid {
     /* The form gets the wider column — it is the page's one job. */
@@ -33,16 +77,10 @@
   }
 }
 
-.ag-hero__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-}
+/* (.ag-hero__badge promoted to the shared .hero-badge in components.css, 2026-08-14 —
+   the two were byte-identical. The `.icon` rule below still applies.) */
 
-.ag-hero__badge .icon {
+.hero-badge .icon {
   width: 1.125rem;
   height: 1.125rem;
   color: var(--color-accent);
@@ -90,15 +128,35 @@
   width: 100%;
 }
 
+/* ⚠️ THIS LINE WAS INVISIBLE IN PRODUCTION until 2026-08-14 — white on white.
+   Found by pixel-sampling while implementing client rule G4 (every phone number
+   is a clickable tel: link), which is how a 4× crop of the link's own box came
+   back as ONE colour, rgb(255,255,255), 64.496 pixels of it.
+   Cause: `--color-text` / `--color-text-muted` are the DARK-theme tokens, i.e.
+   white — correct for the hero around it, wrong here, because this paragraph
+   lives INSIDE `.conversion__form-wrap`, the white form card. That card is not a
+   `.section--light`, so it never re-declares those tokens and they stayed white.
+   It is the mirror of the rule page-service.css already documents for the dark
+   price box: a panel that sets its own surface must also set its own text colour.
+   Values are `.conversion__form-alt`'s (lead-form.css) copied deliberately — that
+   is the SAME "Lieber direkt sprechen?" line under the shared form, so the two
+   should be one treatment and not two similar ones. Measured after: body copy
+   6,26:1 and the link 4,90:1 on the white card. */
 .ag-hero__alt {
   margin-top: var(--space-4);
   text-align: center;
   font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
+  color: rgb(59 73 86 / 0.75);
 }
 
 .ag-hero__alt a {
-  color: var(--color-text);
+  /* The deep mix (§5), not blue-dark and not blue-light: on this white card they
+     measure 3,71:1 and 3,11:1, both short of the 4,5:1 a 16px link needs. */
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+  font-weight: 500;
+  /* 44px touch target without moving the sentence (§7). */
+  display: inline-block;
+  padding-block: 0.75rem;
 }
 
 /* ---- The three steps ---------------------------------------------------- */

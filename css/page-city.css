@@ -1017,10 +1017,15 @@
    The phone first, then the quieter text link. Centred, and on one line at
    desktop so the section ends on a single balanced gesture rather than on a link
    hanging under an empty column.
-   The phone is `.btn--secondary`, the SHARED outline treatment (components.css)
-   — token-driven, already correct on a dark section, no new component. Why the
-   phone is here at all, and why it is secondary rather than primary, is argued at
-   the markup. */
+   ⚠️ THIS COMMENT WAS STALE and is corrected here (2026-08-14): it claimed the
+   phone is `.btn--secondary`, "secondary rather than primary". The markup says
+   `btn btn--primary city-callout__call` and has for some time — the filled blue
+   button. Believe the markup.
+   Deliberately NOT changed by the G1 pass: this is a mid-page section callout,
+   not the page's CTA row, and the page's own secondary CTA — the outline phone
+   pill in the hero — already follows the one fixed design. Flipping this one to
+   secondary as well would put the same number on the page twice in the same
+   outline treatment. */
 .city-callout__actions {
   display: flex;
   flex-wrap: wrap;
@@ -1033,14 +1038,10 @@
   margin-top: var(--space-7);
 }
 
-/* #icon-phone is one of the two symbols on the site rendered as a FILL rather
-   than a stroke (page-service.css does the same for the hero's phone pill), so
-   this matches how the number reads everywhere else — including
-   /brandwache-nuernberg/'s own "Jetzt anrufen" button, which this one mirrors. */
-.city-callout__call .icon {
-  fill: currentColor;
-  stroke: none;
-}
+/* The #icon-phone fill fix that used to sit here is GONE — it is the shared
+   `.btn__icon` rule in components.css now (client rule G1, 2026-08-14), which
+   replaced four identical page-scoped copies of it. The <svg> in the markup
+   carries `btn__icon icon`. */
 
 /* The link needs no top margin: it is a flex sibling of the phone, not a block
    under a list. The 44px floor above still applies.
@@ -1420,11 +1421,10 @@
    `.conversion__form-alt a` and `.service-related__title` already use.
    `.section--light` does NOT solve this on its own: it re-declares
    `--color-accent`, not `--color-link`. */
-.city-faq .faq-item__answer a {
-  display: inline-block;
-  padding-block: 0.75rem;
-  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
-}
+/* (rule deleted — it is `.faq-item__answer a` in components.css since
+   2026-08-14, shared by all five pages that needed it. The reasoning above is
+   why that rule exists; it is kept here because this page is where the failure
+   was first measured.) */
 
 /* ==========================================================================
    9. UMGEBUNG — neighbour tiles
@@ -1644,10 +1644,6 @@ a.city-nearby__tile:focus-visible .city-nearby__arrow {
 
   .page-city .pixel-seam + .conversion {
     padding-top: 80px;
-  }
-
-  .page-city .pixel-seam + .site-footer {
-    padding-top: calc(var(--space-8) + 80px);
   }
 
   /* The hero is the exception that keeps its generous end of the trade-off: it

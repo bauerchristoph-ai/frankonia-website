@@ -336,6 +336,15 @@
                  nothing on the page claims an office in the city.
                Still worth one line to Chris, since it is the one disclosure the
                first screen used to make in words. -->
+          <!-- Hero badge, verbatim from Webtext 34 (client rule G9). It was removed
+               2026-08-10 ("sacá la pill"); G9 restores it, and the client named this
+               page as one of the ones missing a badge. Uses .city-hero__badge, the
+               pill /sicherheitsdienst-nuernberg/ already carries — same family, one
+               treatment, no new look introduced. -->
+          <p class="city-hero__badge">
+            <svg class="icon city-hero__badge-icon" aria-hidden="true"><use href="#icon-pin"></use></svg>
+            Einsatzgebiet N&uuml;rnberg &mdash; Einsatzleitung 24/7 erreichbar
+          </p>
           <h1>Brandwache Nürnberg</h1>
 
           <p class="hero__lead service-hero__lead">
@@ -344,7 +353,7 @@
 
           <div class="hero__actions service-hero__actions">
             <a class="btn btn--primary combo-hero__call" href="{{phone.href}}">
-              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
               {{phone.display}}
             </a>
             <a class="btn btn--secondary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
@@ -666,7 +675,7 @@
       <div class="container service-price__layout">
         <div class="section__intro service-price__intro">
           <h2>Was kostet eine Brandwache in Nürnberg?</h2>
-          <p class="service-price__answer" data-reveal data-reveal-delay>In Nürnberg gelten dieselben transparenten Sätze wie im gesamten FRANKONIA Gebiet: 26 bis 32 Euro pro Stunde netto, abhängig von Qualifikation, Einsatzzeit (Nacht-/Wochenendzuschläge) und Vorlauf. Ihr Angebot erhalten Sie bei geplanten Wachen innerhalb eines Werktages, bei Notfällen nennen wir die Konditionen am Telefon.</p>
+          <p class="service-price__answer" data-reveal data-reveal-delay>In Nürnberg gelten dieselben transparenten Sätze wie im gesamten FRANKONIA Gebiet: {{price.min}} bis {{price.max}} Euro pro Stunde netto, abhängig von Qualifikation, Einsatzzeit (Nacht-/Wochenendzuschläge) und Vorlauf. Ihr Angebot erhalten Sie bei geplanten Wachen innerhalb eines Werktages, bei Notfällen nennen wir die Konditionen am Telefon.</p>
         </div>
 
         <!-- include: price-box range="{{price.range}}" note="netto, Richtwerte für Brandwachen im Großraum Nürnberg" -->
@@ -786,13 +795,6 @@
     </section>
 
   </main>
-
-  <!-- Pixel-dissolve seam before the footer — mandatory on every page
-       (docs/page-conventions.md §4.4). Empty div in the markup;
-       js/pixel-transition.js builds the tile band inside it at runtime and the
-       footer reserves its height (`.pixel-seam + .site-footer`,
-       page-service.css). `--white` because the section above it is light. -->
-  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
 
   <!-- include: footer-de -->
   <!-- include: whatsapp-button -->

@@ -2,28 +2,20 @@
 <!--
   Manually maintained per CLAUDE.md / guidelines §2.6 — update whenever a
   page ships, don't generate entries for pages that don't exist yet.
-  Bilingual homepage added 2026-07-22: German at / (default/x-default),
-  English at /en/, cross-linked via xhtml:link hreflang alternates.
+  THE SITE IS GERMAN-ONLY (client 2026-08-13, Q8). The /en/ entry and every
+  `hreflang="en"` alternate were removed in that pass, together with the page
+  itself — a sitemap that still advertised /en/ is exactly how a deleted page
+  gets crawled and indexed anyway.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://frankonia-sicherheit.de/</loc>
     <xhtml:link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://frankonia-sicherheit.de/en/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/"/>
-    <lastmod>2026-07-25</lastmod>
+    <lastmod>2026-08-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/en/</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://frankonia-sicherheit.de/en/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/"/>
-    <lastmod>2026-07-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
   </url>
   <!--
     Hub pages (Webtexte 23/24), built 2026-08-09. Priority 0.9, above the
@@ -164,5 +156,21 @@
     <lastmod>2026-08-05</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
+  </url>
+  <!--
+    Legal pages, built 2026-08-14 (client review 2026-08-13, Q1). Priority 0.1:
+    both were live 404s
+    linked from every page's footer, so they need to exist and be crawlable, but
+    neither should ever compete with a service page for attention.
+    ⚠️ /datenschutz/ IS DELIBERATELY NOT LISTED. It currently ships
+    `robots: noindex` because its text is a placeholder awaiting the client's
+    automated privacy scanner, and listing a noindex URL in a sitemap sends two
+    contradictory signals. ADD IT HERE the same day that noindex comes off.
+  -->
+  <url>
+    <loc>https://frankonia-sicherheit.de/impressum/</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.1</priority>
   </url>
 </urlset>

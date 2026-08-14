@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- /impressum/ — built 2026-08-13 from the CLIENT'S OWN LIVE PAGE, on their
+     instruction (feedback 2026-08-13, Q1: "Impressum: please take it 1:1 from
+     the current live site: https://frankonia-sicherheit.de/impressum/").
+
+     ⚠️ EVERY VISIBLE LINE HERE IS THAT PAGE'S TEXT, VERBATIM. It was fetched from
+     the live URL rather than retyped from the pasted brief, because the paste had
+     flattened the heading structure. Do not "improve" the wording, the spelling or
+     the punctuation of anything in <main> — this is a legal notice under § 5 TMG
+     and it is the client's (and their lawyer's) text, not copy we own.
+
+     THREE DELIBERATE DEPARTURES, all structural rather than textual:
+
+     1. HEADING LEVELS ARE CORRECTED. The live page runs h1 → h3 → h4, skipping
+        h2 entirely. CLAUDE.md's per-page SEO rules make "never skip heading
+        levels" mandatory, and "1:1" is an instruction about the TEXT, not a
+        licence to reproduce an accessibility defect. So: h1 Impressum →
+        h2 per legal entity → h3 "Vertreten durch:" → h2 Haftungsausschluss →
+        h3 per disclaimer section. Same strings, same order, valid outline.
+
+     2. THE REPEATING FACTS USE PLACEHOLDERS ({{address.street}}, {{phone.display}},
+        {{email}}) so the address and the main switchboard number cannot drift from
+        the other 19 pages. Verified they render byte-identical to the live text.
+        Everything that appears ONLY here — the fax number, Steffen Walde's direct
+        line, both Bewachungs-IDs, both VAT IDs, the Werkschutz e-mail addresses —
+        is written literally, because content/values.json is for facts that repeat
+        across the site and a one-page fact does not belong in it.
+
+     3. TWO POINTS WORTH A LAWYER'S EYE, PUBLISHED AS-IS AND NOT SILENTLY FIXED:
+        · the ODR sentence links `http://ec.europa.eu/consumers/odr` — plain HTTP,
+          and the EU's ODR platform was itself wound down in 2025, so this whole
+          sentence may now be obsolete rather than merely out of date;
+        · "Unsere E-Mail-Adresse finden sie oben im Impressum." — "sie" is
+          lowercase in the client's own text where the formal "Sie" is meant.
+        Both are flagged for Chris. Neither is ours to change. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impressum – FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG</title>
+  <meta name="description" content="Impressum von FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG und FRANKONIA Werkschutz GmbH &amp; Co. KG, Neuerbstraße 19 in 96052 Bamberg: Anbieterangaben nach § 5 TMG.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/impressum/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/impressum/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/impressum/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Impressum – FRANKONIA Sicherheitsdienst">
+  <meta property="og:description" content="Anbieterangaben nach § 5 TMG für FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG und FRANKONIA Werkschutz GmbH &amp; Co. KG in Bamberg.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/impressum/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots: indexable on purpose. A § 5 TMG notice has to be permanently and
+       easily findable, and a `noindex` on the one page the law says must be
+       reachable is the wrong instinct — it is thin content, not hidden content. -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- BOTH legal entities are emitted, because both are named on this page and
+       both really operate from this address. Only the Sicherheitsdienst carries
+       the site's own @id (#organization) — the Werkschutz KG is a separate legal
+       person and is deliberately NOT wired up as the provider of anything. -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "vatID": "DE306230283",
+      "email": "{{email}}",
+      "telephone": "{{phone.display}}",
+      "faxNumber": "+49 951 964352-90",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "Organization",
+      "name": "FRANKONIA Werkschutz GmbH & Co. KG",
+      "vatID": "DE358111627",
+      "email": "info@frankonia-werkschutz.de",
+      "telephone": "{{phone.display}}",
+      "faxNumber": "+49 951 964352-90",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://frankonia-sicherheit.de/" },
+        { "@type": "ListItem", "position": 2, "name": "Impressum", "item": "https://frankonia-sicherheit.de/impressum/" }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-legal.css">
+
+  <!-- ⚠️ DELIBERATELY SHORT MOTION STACK — js/text-reveal.js AND js/title-reveal.js
+       ARE BOTH OMITTED, and that is a decision, not an oversight.
+       Measured with them loaded: 95 text elements inside the document sat at
+       `opacity: 0` waiting to be scrolled to. That is normal, correct behaviour on
+       a marketing page and the wrong behaviour here — a § 5 TMG notice is a
+       REFERENCE document. People arrive at it to look one fact up, often with
+       Ctrl+F or by printing, and neither finds text that is still hidden. It also
+       avoids 95 spent `blur(0px)` filters, each of which keeps its element on its
+       own compositor layer (the sitewide layerisation cost documented in CLAUDE.md
+       for 2026-08-08 — text-reveal is the one reveal that still ends on a blur it
+       never clears).
+       Not loading them is better than loading them and adding an opt-out
+       attribute: nothing to hide means nothing that can stay hidden.
+       hero-reveal stays (the H1 is above the fold, plays once, and every page's
+       hero does it), as do smooth-scroll and the seam builder. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Impressum</span></li>
+      </ol>
+    </nav>
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- Compact on purpose: no badge, no CTA, no trust band, no phone pill. This
+         page exists to be read once when someone is looking for who is behind the
+         site; selling anything on it would be the wrong instinct, and the § 5 TMG
+         details are three lines below anyway. -->
+    <section class="service-hero legal-hero" data-hero-reveal>
+      <div class="container service-hero__grid">
+        <div class="service-hero__content hero__content">
+          <h1>Impressum</h1>
+          <p class="service-hero__lead hero__lead">Angaben gemäß § 5 TMG für die beiden Gesellschaften der FRANKONIA-Gruppe.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 2. ANBIETERANGABEN + HAFTUNGSAUSSCHLUSS ============ -->
+    <!-- One white section for the whole document. White because this is several
+         hundred words of legal prose and dark-on-light is the readable direction
+         for that; `data-nav-theme="light"` flips the sticky header to its
+         dark-text state over it, like every other light section on the site. -->
+    <section class="section section--light legal" data-nav-theme="light">
+      <div class="container">
+        <div class="legal-doc">
+
+          <!-- ---- Entity 1 ---- -->
+          <h2>FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG</h2>
+
+          <!-- The postal address is a real <address>, which is what that element
+               is actually for. `font-style: normal` is reset in page-legal.css —
+               browsers italicise <address> by default. -->
+          <address class="legal-address">
+            {{address.street}}<br>
+            {{address.postal}} {{address.city}}
+          </address>
+
+          <p class="legal-contact">
+            Tel. <a href="{{phone.href}}">{{phone.display}}</a><br>
+            Fax +49 951 964352-90
+          </p>
+
+          <p class="legal-contact">
+            E-Mail:<br>
+            <a href="mailto:{{email}}">{{email}}</a>
+          </p>
+
+          <h3>Vertreten durch:</h3>
+
+          <p class="legal-contact">
+            Steffen Walde<br>
+            Geschäftsführender Gesellschafter<br>
+            Betriebswirt (B.Sc.)
+          </p>
+
+          <p class="legal-contact">
+            Tel. <a href="tel:+4995196435210">+49 951 964352-10</a><br>
+            E-Mail: <a href="mailto:s.walde@frankonia-sicherheit.de">s.walde@frankonia-sicherheit.de</a>
+          </p>
+
+          <!-- A definition list, not two paragraphs: these are label→value pairs
+               and that is exactly what <dl> means. The soft hyphen inside
+               "Bewachungsunternehmen&shy;identifikationsnummer" is the client's
+               own — it is a 42-character compound (measured) and it needs a
+               break opportunity on a phone. base.css sets `hyphens: auto` on body copy,
+               which would break it somewhere arbitrary; page-legal.css turns that
+               off for this list so the &shy; is the ONLY place it may break. -->
+          <dl class="legal-ids">
+            <dt>Bewachungsunternehmen&shy;identifikationsnummer:</dt>
+            <dd>137</dd>
+            <dt>Umsatzsteuer ID:</dt>
+            <dd>DE306230283</dd>
+          </dl>
+
+          <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="http://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer">http://ec.europa.eu/consumers/odr</a> Hinweis auf EU-Streitschlichtung</p>
+
+          <p>Unsere E-Mail-Adresse finden sie oben im Impressum.</p>
+
+          <!-- ---- Entity 2 ---- -->
+          <!-- A rule between the two companies, because without it the second
+               block reads as a continuation of the first and the two VAT IDs look
+               like they belong to one legal person. -->
+          <hr class="legal-rule">
+
+          <h2>FRANKONIA Werkschutz GmbH &amp; Co. KG</h2>
+
+          <address class="legal-address">
+            {{address.street}}<br>
+            {{address.postal}} {{address.city}}
+          </address>
+
+          <p class="legal-contact">
+            Tel. <a href="{{phone.href}}">{{phone.display}}</a><br>
+            Fax +49 951 964352-90
+          </p>
+
+          <p class="legal-contact">
+            E-Mail:<br>
+            <a href="mailto:info@frankonia-werkschutz.de">info@frankonia-werkschutz.de</a>
+          </p>
+
+          <h3>Vertreten durch:</h3>
+
+          <p class="legal-contact">
+            Steffen Walde<br>
+            Geschäftsführender Gesellschafter<br>
+            Betriebswirt (B.Sc.)
+          </p>
+
+          <p class="legal-contact">
+            Tel. <a href="tel:+4995196435210">+49 951 964352-10</a><br>
+            E-Mail: <a href="mailto:s.walde@frankonia-werkschutz.de">s.walde@frankonia-werkschutz.de</a>
+          </p>
+
+          <dl class="legal-ids">
+            <dt>Bewachungsunternehmen&shy;identifikationsnummer:</dt>
+            <dd>16453</dd>
+            <dt>Umsatzsteuer ID:</dt>
+            <dd>DE358111627</dd>
+          </dl>
+
+          <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="http://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer">http://ec.europa.eu/consumers/odr</a> Hinweis auf EU-Streitschlichtung</p>
+
+          <p>Unsere E-Mail-Adresse finden sie oben im Impressum.</p>
+
+          <!-- ---- Disclaimer ---- -->
+          <hr class="legal-rule">
+
+          <h2>Haftungsausschluss (Disclaimer)</h2>
+
+          <h3>Haftung für Inhalte</h3>
+          <p>Als Dienstanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Dienstanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen. Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.</p>
+
+          <h3>Haftung für Links</h3>
+          <p>Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen.</p>
+
+          <h3>Urheberrecht</h3>
+          <p>Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet. Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen.</p>
+
+          <!-- Sideways link to the other legal page. Not in the client's text —
+               it is navigation, and the footer already carries both — but a
+               visitor who lands here from a consent checkbox is usually looking
+               for the other one. -->
+          <p class="legal-crosslink">
+            <a class="service-link" href="/datenschutz/">
+              Zur Datenschutzerklärung
+              <svg class="service-link__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </p>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

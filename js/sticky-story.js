@@ -60,9 +60,16 @@
       // previous cubic ease.
       var eased = 1 - Math.pow(1 - p, 4);
       var v = target * eased;
-      var text = decimals > 0
-        ? v.toFixed(decimals)
-        : Math.round(v).toLocaleString(locale);
+      // toLocaleString on BOTH branches, not just the integer one. toFixed always
+      // emits a PERIOD, so on this de-DE page the Google rating counted up to "4.7"
+      // and overwrote the "4,7" the markup ships — the visible half of the client's
+      // G5 report (2026-08-14). Pinning min/max fraction digits to `decimals` rounds
+      // the integer case exactly as Math.round did, so 300+ / 1.000.000+ / 10+ are
+      // byte-identical to before; the rating is the only counter with decimals.
+      var text = v.toLocaleString(locale, {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
       node.textContent = text + suffix;
       if (p < 1) requestAnimationFrame(tick);
     }

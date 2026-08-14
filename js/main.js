@@ -32,12 +32,49 @@ function initNavToggle() {
 
   nav.hidden = true;
 
-  toggle.addEventListener("click", () => {
-    const isOpen = toggle.getAttribute("aria-expanded") === "true";
-    const open = !isOpen;
+  /* The hidden label used to say "Menü öffnen" in both states, so a screen
+     reader announced "open menu" on the control that closes it. Read once from
+     the markup so the wording stays in the partial with the rest of the copy. */
+  const toggleLabel = toggle.querySelector(".visually-hidden");
+  const labelOpen = toggleLabel ? toggleLabel.textContent : "";
+  const closeBtn = nav.querySelector("[data-nav-close]");
+  const labelClose = closeBtn
+    ? closeBtn.querySelector(".visually-hidden").textContent
+    : labelOpen;
+
+  function setOpen(open) {
     toggle.setAttribute("aria-expanded", String(open));
     nav.hidden = !open;
+    if (toggleLabel) toggleLabel.textContent = open ? labelClose : labelOpen;
     setNavScrollLock(open);
+  }
+
+  toggle.addEventListener("click", () => {
+    const open = toggle.getAttribute("aria-expanded") !== "true";
+    setOpen(open);
+    /* Opening moves focus INTO the panel, onto its own close control — a
+       keyboard or screen-reader user would otherwise still be standing on the
+       hamburger with a full-screen panel they have not entered. Closing hands
+       focus back to the hamburger, which is where it came from. */
+    if (open && closeBtn) closeBtn.focus();
+  });
+
+  /* The panel's own X (client 2026-08-14). Same path as the toggle, so there is
+     one open/closed routine and the two controls cannot disagree. */
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      setOpen(false);
+      toggle.focus();
+    });
+  }
+
+  /* Escape closes it — the standard exit from anything that covers the page, and
+     the last resort if a control is ever hard to see again. */
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (toggle.getAttribute("aria-expanded") !== "true") return;
+    setOpen(false);
+    toggle.focus();
   });
 
   // Leaving mobile with the panel still open would strand the lock: the CSS
@@ -48,9 +85,9 @@ function initNavToggle() {
   const mobile = window.matchMedia("(max-width: 1399.98px)");
   const onChange = (e) => {
     if (e.matches) return;
-    toggle.setAttribute("aria-expanded", "false");
-    nav.hidden = true;
-    setNavScrollLock(false);
+    // Through setOpen, so the toggle's label is reset with everything else —
+    // crossing to desktop with the panel open used to leave it reading "close".
+    setOpen(false);
   };
   if (mobile.addEventListener) mobile.addEventListener("change", onChange);
   else if (mobile.addListener) mobile.addListener(onChange);

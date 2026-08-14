@@ -5,10 +5,14 @@
 
   REAL NUMBER as of 2026-08-05 (Change Request 2.3, "RESOLVED"):
   +49 172 7866338 (Steffen) -> https://wa.me/491727866338
-  Format for any future change: digits only, no "+", no spaces, no leading
-  zero after the country code. This one href is the only place the number
-  appears, which is the "keep the number easily configurable" the change
-  request asks for — do not duplicate it into a page.
+
+  ⚠️ THE NUMBER LIVES IN content/values.json (`whatsapp`), NOT HERE — changed
+  2026-08-14 while verifying client rule G12. That key already existed and held
+  exactly this URL, but nothing consumed it: the href below was hardcoded, so the
+  config file held a second, dead copy of the number. Anyone updating the obvious
+  place would have changed nothing, and the two could drift apart silently.
+  One value, one file now. Format, for any future change: digits only, no "+",
+  no spaces, no leading zero after the country code.
 
   aria-label is German because every page that ships this partial is German
   (the /en/ variant is not the live site); it used to say "Contact via
@@ -16,7 +20,7 @@
 -->
 <a
   class="whatsapp-button"
-  href="https://wa.me/491727866338"
+  href="{{whatsapp}}"
   target="_blank"
   rel="noopener noreferrer"
   aria-label="Kontakt über WhatsApp (öffnet in neuem Tab)"

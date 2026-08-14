@@ -1,0 +1,163 @@
+{
+  "_comment": [
+    "THE COVERAGE LOCATIONS — ONE LIST, EVERY SURFACE THAT SHOWS THEM.",
+    "Client 2026-08-14 (Einsatzgebiete 1): 'build it so the map/pill list updates",
+    "automatically when we add new coverage locations (single data source)'.",
+    "",
+    "Before this file the same list was maintained by hand in FOUR places and they",
+    "had already drifted: partials/coverage-chips.html, the second chip row inside",
+    "pages/index.html, partials/footer-de.html, the CITIES table in",
+    "docs/design-sources/franken-map.py and the coverageLocations object in",
+    "js/coverage-map.js. Adding a city meant five edits and remembering all five.",
+    "",
+    "WHO READS THIS FILE:",
+    "  build.js .................. renders the pill lists into real static HTML at",
+    "                              build time (<!-- coverage: … --> markers), and",
+    "                              copies this list to dist/assets/data/",
+    "                              coverage-locations.json for the runtime map.",
+    "  js/coverage-map.js ........ fetches that published copy and builds the",
+    "                              Leaflet markers/boundaries from it.",
+    "  docs/design-sources/",
+    "  franken-map.py ............ reads it to regenerate /einsatzgebiete/'s inline",
+    "                              hero SVG (dev-time; paste the output).",
+    "",
+    "TO ADD A LOCATION: add an entry here, drop its boundary geojson in",
+    "assets/data/coverage-boundaries/, run `npm run build`. The pills and both",
+    "Leaflet maps follow automatically. The /einsatzgebiete/ hero SVG is the one",
+    "surface that is NOT automatic — it is inline vector art, so re-run",
+    "franken-map.py and paste. That is deliberate: it is generated once in",
+    "development, never at runtime (CLAUDE.md).",
+    "",
+    "FIELDS:",
+    "  href .... null means NO CITY PAGE. Those render as <button> pills that only",
+    "            drive the map, never as links — 'render without links' is the",
+    "            client's own instruction and 'do not ship a linked 404' is the",
+    "            standing rule. Give it a URL the day the page exists and it",
+    "            promotes itself everywhere.",
+    "  row ..... which of the two chip rows it belongs to (the footer-matching",
+    "            split). Ignored for entries without an href.",
+    "  center .. [latitude, longitude], Leaflet's order. The .geojson files keep",
+    "            GeoJSON's own [lon, lat] — nothing reverses that.",
+    "  map ..... the /einsatzgebiete/ hero SVG only. `side` is which way the label",
+    "            runs from the pin ('start' = to the right, 'end' = to the left) and",
+    "            exists to keep neighbouring labels from colliding; `major` is pin",
+    "            SIZE, for the four regional centres."
+  ],
+  "locations": [
+    {
+      "id": "bamberg",
+      "name": "Bamberg",
+      "href": "/sicherheitsdienst-bamberg/",
+      "row": 1,
+      "center": [49.8917, 10.886],
+      "map": { "side": "start", "major": true }
+    },
+    {
+      "id": "nuremberg",
+      "name": "Nürnberg",
+      "href": "/sicherheitsdienst-nuernberg/",
+      "row": 1,
+      "center": [49.4521, 11.0767],
+      "map": { "side": "start", "major": true }
+    },
+    {
+      "id": "wuerzburg",
+      "name": "Würzburg",
+      "href": "/sicherheitsdienst-wuerzburg/",
+      "row": 1,
+      "center": [49.7913, 9.9534],
+      "map": { "side": "end", "major": true }
+    },
+    {
+      "id": "erlangen",
+      "name": "Erlangen",
+      "href": "/sicherheitsdienst-erlangen/",
+      "row": 1,
+      "center": [49.5897, 11.0119],
+      "map": { "side": "start", "major": false }
+    },
+    {
+      "id": "fuerth",
+      "name": "Fürth",
+      "href": "/sicherheitsdienst-fuerth/",
+      "row": 1,
+      "center": [49.4771, 10.9887],
+      "map": { "side": "end", "major": false }
+    },
+    {
+      "id": "schweinfurt",
+      "name": "Schweinfurt",
+      "href": "/sicherheitsdienst-schweinfurt/",
+      "row": 1,
+      "center": [50.0442, 10.234],
+      "map": { "side": "end", "major": false }
+    },
+    {
+      "id": "bayreuth",
+      "name": "Bayreuth",
+      "href": "/sicherheitsdienst-bayreuth/",
+      "row": 2,
+      "center": [49.9456, 11.5789],
+      "map": { "side": "start", "major": true }
+    },
+    {
+      "id": "coburg",
+      "name": "Coburg",
+      "href": "/sicherheitsdienst-coburg/",
+      "row": 2,
+      "center": [50.2612, 10.9649],
+      "map": { "side": "end", "major": false }
+    },
+    {
+      "id": "ansbach",
+      "name": "Ansbach",
+      "href": "/sicherheitsdienst-ansbach/",
+      "row": 2,
+      "center": [49.3004, 10.5719],
+      "map": { "side": "end", "major": false }
+    },
+    {
+      "id": "forchheim",
+      "name": "Forchheim",
+      "href": "/sicherheitsdienst-forchheim/",
+      "row": 2,
+      "center": [49.7123, 11.0664],
+      "map": { "side": "start", "major": false }
+    },
+    {
+      "id": "hof",
+      "name": "Hof",
+      "href": null,
+      "center": [50.3135, 11.9128],
+      "map": { "side": "start", "major": false }
+    },
+    {
+      "id": "kronach",
+      "name": "Kronach",
+      "href": null,
+      "center": [50.2405, 11.3244],
+      "map": { "side": "start", "major": false }
+    },
+    {
+      "id": "kulmbach",
+      "name": "Kulmbach",
+      "href": null,
+      "center": [50.1039, 11.4517],
+      "map": { "side": "start", "major": false }
+    },
+    {
+      "id": "lichtenfels",
+      "name": "Lichtenfels",
+      "href": null,
+      "center": [50.1462, 11.0638],
+      "map": { "side": "end", "major": false }
+    },
+    {
+      "id": "schwandorf",
+      "name": "Schwandorf",
+      "href": null,
+      "center": [49.3304, 12.1077],
+      "map": { "side": "end", "major": false }
+    }
+  ]
+}

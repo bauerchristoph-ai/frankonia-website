@@ -138,7 +138,7 @@
           "name": "Was kostet ein Sicherheitsdienst in Nürnberg?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Für Einsätze in Nürnberg liegen die Stundensätze in der Regel zwischen 26 und 32 Euro, abhängig von Qualifikation der Kräfte, Einsatzzeiten (Nacht-, Wochenend- und Feiertagszuschläge) und Auftragsdauer. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
+            "text": "Für Einsätze in Nürnberg liegen die Stundensätze in der Regel zwischen {{price.min}} und {{price.max}} Euro, abhängig von Qualifikation der Kräfte, Einsatzzeiten (Nacht-, Wochenend- und Feiertagszuschläge) und Auftragsdauer. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
           }
         },
         {
@@ -284,8 +284,8 @@
 
           <div class="hero__actions service-hero__actions">
             <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
-            <a class="btn service-hero__phone" href="{{phone.href}}">
-              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+            <a class="btn btn--secondary service-hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
               {{phone.display}}
             </a>
           </div>
@@ -784,7 +784,7 @@
              what §8.2's "un solo primario por pantalla" actually governs. -->
         <div class="city-callout__actions" data-reveal>
           <a class="btn btn--primary city-callout__call" href="{{phone.href}}">
-            <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+            <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
             Jetzt anrufen: {{phone.display}}
           </a>
 
@@ -809,7 +809,7 @@
       <div class="container service-price__layout">
         <div class="section__intro service-price__intro">
           <h2>Was kostet ein Sicherheitsdienst in Nürnberg?</h2>
-          <p class="service-price__answer" data-reveal data-reveal-delay>Im Großraum Nürnberg bewegen sich seriöse Stundensätze für Sicherheitsdienstleistungen zwischen 26 und 32 Euro, je nach Qualifikation der Kräfte, Einsatzzeit und Auftragsumfang. Nacht-, Wochenend- und Feiertagseinsätze liegen durch tarifliche Zuschläge am oberen Ende der Spanne. Deutlich günstigere Angebote gehen fast immer zulasten von Qualifikation, Schichtbesetzung oder gar rechtlich konformer Bezahlung.</p>
+          <p class="service-price__answer" data-reveal data-reveal-delay>Im Großraum Nürnberg bewegen sich seriöse Stundensätze für Sicherheitsdienstleistungen zwischen {{price.min}} und {{price.max}} Euro, je nach Qualifikation der Kräfte, Einsatzzeit und Auftragsumfang. Nacht-, Wochenend- und Feiertagseinsätze liegen durch tarifliche Zuschläge am oberen Ende der Spanne. Deutlich günstigere Angebote gehen fast immer zulasten von Qualifikation, Schichtbesetzung oder gar rechtlich konformer Bezahlung.</p>
         </div>
 
         <!-- The shared Preis-Box. `range` comes from content/values.json, so the
@@ -1044,7 +1044,7 @@
           </details>
           <details class="faq-item">
             <summary><h3>Was kostet ein Sicherheitsdienst in Nürnberg?</h3></summary>
-            <p class="faq-item__answer">Für Einsätze in Nürnberg liegen die Stundensätze in der Regel zwischen 26 und 32 Euro, abhängig von Qualifikation der Kräfte, Einsatzzeiten (Nacht-, Wochenend- und Feiertagszuschläge) und Auftragsdauer. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
+            <p class="faq-item__answer">Für Einsätze in Nürnberg liegen die Stundensätze in der Regel zwischen {{price.min}} und {{price.max}} Euro, abhängig von Qualifikation der Kräfte, Einsatzzeiten (Nacht-, Wochenend- und Feiertagszuschläge) und Auftragsdauer. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
           </details>
           <details class="faq-item">
             <summary><h3>Wie schnell kann FRANKONIA in Nürnberg starten?</h3></summary>
@@ -1190,16 +1190,6 @@
     </section>
 
   </main>
-
-  <!-- Pixel-dissolve seam before the footer — mandatory on every page
-       (docs/page-conventions.md §4.4). Empty div in the markup;
-       js/pixel-transition.js builds the tile band inside it at runtime and the
-       footer reserves its height (`.pixel-seam + .site-footer`,
-       page-service.css). `--white` tiles now: the section above the seam is
-       Umgebung, which became LIGHT when it moved below the form (see its own
-       note). It carried the default black tiles while the dark form sat above
-       it. -->
-  <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
 
   <!-- include: footer-de -->
   <!-- include: whatsapp-button -->

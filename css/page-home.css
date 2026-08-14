@@ -389,47 +389,26 @@ main h2 {
   margin-top: var(--space-6);
 }
 
-/* Outline twin of the .btn--primary pill next to it in .hero__actions —
-   the HTML carries .btn too, so border-radius/transitions/PADDING/FONT-SIZE
-   all come from the shared foundation (components.css). This rule now ONLY
-   swaps the fill for a stroke and sets its colors: background transparent,
-   .btn's own `border: 2px solid transparent` made visible via border-color.
+/* ⚠️ .hero__phone NO LONGER CARRIES ANY APPEARANCE (client rule G1,
+   2026-08-14: one fixed secondary-CTA design sitewide). The markup now reads
+   `btn btn--secondary hero__phone`, and every colour, the 1.5px stroke, the
+   hover wash and the phone glyph's fill all come from components.css.
 
-   Sizes matched to the primary CTA (client request 2026-07-22: "both
-   buttons the same size, intermediate"). Both now sit at the base .btn
-   size (padding var(--space-3)/var(--space-5), font-base, 2px border) —
-   the primary CTA dropped .btn--lg for this, and the phone dropped its own
-   smaller padding/font-size/1px-border overrides. Result: identical box,
-   just fill vs. outline. Colours stay muted (lower-opacity white) so the
-   phone still reads as the secondary action even at the matched size. */
-.hero__phone {
-  background-color: transparent;
-  border-color: rgb(255 255 255 / 0.35);
-  color: rgb(255 255 255 / 0.85);
-}
+   What lived here and is deliberately GONE, not overridden: the muted
+   `border-color: rgb(255 255 255 / 0.35)` / `color: rgb(255 255 255 / 0.85)`
+   pair (the client's reference is a SOLID white pill), the local
+   `.hero__phone .icon { fill: currentColor }` fix (now the shared .btn__icon)
+   and the `:hover` wash (now the variant's own). Three sibling copies of the
+   same declarations went with it — .service-hero__phone, .city-callout__call
+   .icon and .combo-hero__call .icon.
 
-/* Icon forced to a solid fill (client correction, same day: the shared
-   .icon default — fill: none, stroke: currentColor, see
-   partials/icon-sprite.html — reads as a thin white outline on a photo
-   background, which the client saw as "black" since the unfilled
-   interior just shows the dark photo through it). Scoped to
-   .hero__phone .icon only, not the shared .icon rule — icon-phone has no
-   other usage on the site right now (see pages/index.html's comment on
-   this element), but if it ever gets reused elsewhere the default
-   stroke-only look should stay the default, not be changed globally for
-   this one placement's sake. */
-.hero__phone .icon {
-  fill: currentColor;
-  stroke: none;
-}
+   The class stays in the markup because the phone breakpoint below still
+   needs a handle on this one button, and because `.hero__actions` sizing
+   below targets it. Do not re-add colour here. */
 
 /* Same subtle hover fill already used by .footer-pill (site-chrome.css)
-   for an outline pill on a dark surface — keeps the stroke look instead
-   of switching to a solid fill like .btn--primary's own hover does. */
-.hero__phone:hover,
-.hero__phone:focus-visible {
-  background-color: rgb(255 255 255 / 0.08);
-}
+   for an outline pill on a dark surface — kept for reference; the live
+   declaration is .btn--secondary:hover in components.css. */
 
 /* Three individual reassurance points (client refinement, 2026-07-22) —
    a <ul> of icon+text items, one row when space allows, wrapping cleanly
@@ -601,13 +580,13 @@ main h2 {
        and the next gap (to the CTA) is the big one. That contrast is what gives
        the column a hierarchy instead of five evenly-spaced blocks. */
     margin-top: var(--space-4);
-    /* Client: "reduce its visual width slightly". 34ch was measured at 340px on
-       a 358px column — only 5% narrower, i.e. no visible change; ch resolves to
-       ~10px in this stack, not the ~8.9px an 0.556em advance would suggest, so
-       the value has to be picked against the measurement rather than the theory.
-       31ch measures ~310px, a visible 13% inset that keeps the paragraph's
-       ragged right clear of the CTA's edge below it. */
-    max-width: 31ch;
+    /* ⚠️ THE 31ch CAP IS GONE — client rule G6, 2026-08-14: headline, subline
+       and BOTH CTAs share one content width on mobile. It was a deliberate
+       inset ("reduce its visual width slightly", measured at ~310px on a 358px
+       column) and it is exactly the "subline stays too narrow" the rule names:
+       310px of copy above a 358px full-width button. The whole column is one
+       width now. */
+    max-width: none;
     line-height: 1.55;
     /* Dropped from 0.82 so it reads clearly under the H1 rather than beside it
        in weight. Still ~13:1 against the wash behind it. */
@@ -633,16 +612,20 @@ main h2 {
     justify-content: center;
     min-height: 3rem;
   }
-  /* Compact secondary action (client: "do not make it another large full-width
-     button... reduce the width so it wraps around the content"). Was a
-     full-width 358x48 outline pill directly under a full-width 358x48 blue one,
-     which read as two equal primaries. Now it sizes to its own content (~190px)
-     and steps down in height and type, while keeping the 44px touch floor. */
+  /* ⚠️ THIS PILL USED TO BE DELIBERATELY COMPACT, and it is not any more —
+     client rule G6, 2026-08-14, asked directly because it reverses their own
+     earlier instruction ("no lo hagas otro botón grande a todo el ancho…
+     reducí el ancho para que envuelva al contenido", which this file carried
+     as "do not revert without asking"). Asked; the newer rule wins.
+     Measured before: 175px against a 358px primary at 390px — a 183px spread
+     on the homepage where every other page already matched, and 514px at 767px.
+     It now matches the primary exactly, like the other eight heroes. Height goes
+     back to the shared 3rem so the two buttons are one pair rather than a large
+     one and a small one. */
   .hero__phone {
-    width: auto;
-    min-height: 2.75rem;
-    padding: var(--space-2) var(--space-4);
-    font-size: var(--font-size-sm);
+    width: 100%;
+    justify-content: center;
+    min-height: 3rem;
   }
   .hero__reassurance {
     /* One vertical list of three rows (client 2026-07-31). Was a 2-column grid
@@ -690,9 +673,21 @@ main h2 {
      squeeze into the remaining 85px — the row only just fitted at 390px and
      wrapped below it. Tightening the pill's own padding and star size brings the
      whole row inside 360px without enlarging anything. */
+  /* ⚠️ NOW THE FULL DESKTOP PADDING, 12/16px (client rule G6: more padding on the
+     rating badge — asked for a second time in the mobile review, point 20).
+     An earlier pass the same day stopped one step short of this, at 8/12px, on the
+     grounds that "at the desktop 12/16px the row overflowed". Re-measured isolating
+     the padding alone, that does not hold: at 390px the row is 358px wide and its
+     content is 327px (pill 257 + gap 12 + seals 59), so there is 31px of slack and
+     the +8px this costs leaves 23px. That earlier test moved the padding AND the
+     star/logo sizes together, which is why it overflowed — those two reductions
+     (below) are what bought the room, and they stay.
+     Below ~360px the row wraps, as it already did at 8/12px: the pill alone is then
+     265px inside a 288px row, and .hero__trust is flex-wrap: wrap, so it wraps
+     instead of overflowing. If this row ever gains a fourth element, re-measure. */
   .hero__rating .review-card--sm {
     gap: var(--space-2);
-    padding: var(--space-1) var(--space-2);
+    padding: var(--space-3) var(--space-4);
   }
   .hero__rating .review-card--sm .review-card__logo {
     width: 1.125rem;
@@ -2186,6 +2181,25 @@ main h2 {
   background-color: var(--color-bg-elevated);
 }
 
+/* The <img>'s height: 100% below needs a definite height to resolve against, and
+   the <picture> wrapper is its containing block. reset.css already makes a
+   <picture> display: block, but its height stays AUTO — so the percentage was
+   indefinite, fell back to auto, and the image sized itself by its own intrinsic
+   ratio instead of filling the frame. That is invisible for werkschutz.jpg (820 x
+   1227, exactly the frame's aspect-ratio) and shows as a strip of the frame's grey
+   --color-bg-elevated under EVERY other service photo, because none of them is
+   quite 1227 tall: measured at 1440, brandwache (1217) left 5.5px, revier (1225)
+   1.1px, and so on. Client-reported 2026-08-14 ("a grey bar at the bottom") on the
+   Brandwache row, i.e. the worst of the ten.
+   Same fix and same reason as .jobs-why__media picture and .ref-hero__media
+   picture — any component that wraps its <img> in a <picture> for the WebP needs
+   this. */
+.services__preview-media picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .services__preview-media img {
   width: 100%;
   height: 100%;
@@ -2800,30 +2814,42 @@ main h2 {
   outline-offset: -2px;
 }
 
-/* ---- Outfit viewer on a phone -------------------------------------------
+/* ---- Outfit viewer below the desktop split (phone AND tablet) ------------
+   ⚠️ THIS BLOCK RUNS TO 1023.98px, NOT 767.98 (client 2026-08-14, Change
+   Request 16: "on tablet use pills (like suggested for mobile) instead of the
+   current selector — otherwise you can't click through the outfits and see the
+   model fully at the same time"). It was phone-only until then, so the whole
+   768–1023 band fell through to the BASE list layout: seven full-width ruled
+   rows stacked above the viewer, which is exactly the composition the client
+   screenshotted. The desktop split (min-width: 1024px) is where the list
+   treatment earns its keep — there the picker sits in its own column BESIDE the
+   model, so both are visible at once; in one column it can never be.
+
    Desktop order is: intro copy + name picker, then the viewer beside it. Stacked
-   on a phone that put the seven-item picker ABOVE the image, so tapping "Polo" at
-   the top of the list changed a photo ~350px further down — off-screen, i.e. a
-   control with no visible result. The image comes first here and the picker sits
-   directly under it, so every tap's effect is in view.
+   below 1024px that put the seven-item picker ABOVE the image, so tapping "Polo"
+   at the top of the list changed a photo far enough down to be off-screen — i.e.
+   a control with no visible result. The image comes first here and the picker
+   sits directly under it, so every tap's effect is in view.
 
    `display: contents` on .outfits__intro lifts the heading, lede and picker into
    .outfits__layout's own grid so all four can be ordered independently; the
    picker is nested inside the intro, so grid order on the layout alone could not
    reach it.
 
-   PICKER IS PILLS HERE, NOT A LIST (client 2026-08-03: "solo botones, onda pills
-   para clickear y que cambie el outfit, no hover ni nada"). The full-width ruled
-   rows, the ↗ arrow and the hover state are all gone below 768px — a finger has
-   no hover, and on touch :hover latches after a tap, which made the last-tapped
-   row look selected alongside the real selection. Only [aria-pressed] marks the
-   active pill now.
+   PICKER IS PILLS HERE, NOT A LIST (client 2026-08-03 for phones, extended to
+   tablets 2026-08-14: "solo botones, onda pills para clickear y que cambie el
+   outfit, no hover ni nada"). The full-width ruled rows, the ↗ arrow and the
+   hover state are all gone below 1024px — a finger has no hover, and on touch
+   :hover latches after a tap, which made the last-tapped row look selected
+   alongside the real selection. Only [aria-pressed] marks the active pill now.
+   A tablet is a touch device too, so that reasoning was always true of this
+   band; only the query was wrong.
 
    MUST come after the .outfits__name-btn hover/[aria-pressed]/:focus-visible
    rules above: a media query carries no extra specificity, so declared earlier
    (as this block was until 2026-08-03) those later plain rules would win and the
    hover fill would come back. */
-@media (max-width: 767.98px) {
+@media (max-width: 1023.98px) {
   .outfits__layout {
     gap: var(--space-5);
   }
@@ -3107,8 +3133,106 @@ main h2 {
   font-variant-numeric: tabular-nums;
 }
 
+/* ⚠️ 768–1199.98: THE FIGURE IS SIZED OFF THE VIEWPORT WHILE THE COLUMN IS A
+   THIRD OF IT, and at 768 the tiles go 3-up in one step — so the column drops
+   from ~670px to ~180 while the font keeps climbing with vw. "25.000 €" needed
+   204px in a 182px column and broke the € onto its own line (client 2026-08-14,
+   Change Request 17: "esto no puede pasar"). Nothing was wrong below 768 (one
+   tile per row) or from 1200 (the column has finally caught up).
+
+   The size is the client's own first option ("make the numbers slightly smaller"),
+   NOT "25K €" — a German figure keeps its own notation, and the count-up in
+   js/main.js animates the digits, so 25K would have to stop counting or count to
+   25. The NBSP in the markup is the other half: it forbids the split between a
+   figure and its unit (DIN 5008), which is what the client actually saw break.
+   It survives the count-up because that function re-emits the suffix verbatim.
+
+   ⚠️ The numbers are MEASURED against the tightest of the three blocks — the
+   /referenzen/ and /sicherheitskonzept/ tiles, whose <li> carries 24px of inline
+   padding the homepage's does not, so their column is ~22px narrower at the same
+   width. One value for all three: this is one component published three times
+   (see the copy of this rule in page-referenzen.css and page-sicherheitskonzept.css
+   — keep the three in sync), and 3px of headroom on the homepage is not worth a
+   fourth variant. */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  .references__results .stat__value {
+    font-size: clamp(2.25rem, 6.7vw - 0.9rem, 4.15rem);
+  }
+}
+
 .references__results .stat__label {
   color: rgb(59 73 86 / 0.75);
+}
+
+/* Each tile is a link to its case study since 2026-08-14 (client — see the
+   markup comment for the attribution removal this came with). The whole tile is
+   the anchor, so this is a block-level link that owns the tile's own centred
+   layout; `.references__results .stat` above sets the centring and this just has
+   to not fight it.
+   No card, no fill, no shadow: this section is three figures on white and the
+   affordance is the "Zur Case Study" row plus the hover.
+   EVERY VALUE HERE IS COPIED FROM `.ref-results__link` (page-referenzen.css),
+   not re-derived — /referenzen/ publishes these same three tiles, so they have
+   to be one design in two page-scoped files, not two similar ones. Keep them in
+   step. */
+.references__result-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--radius-sm);
+  padding-block: var(--space-3);
+  transition: transform var(--duration-base) var(--easing-premium);
+}
+
+.references__result-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  /* On white, and this is small text, so it needs the full 4.5:1 — the plain
+     blue-dark token only reaches 3.71:1 here. Same deeper mix
+     docs/page-conventions.md §5 prescribes for blue *content* on a light
+     section (measured 4.88:1). */
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+  /* Hairline under the label, drawn on the text only. */
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 2px;
+}
+
+/* The sprite's own fill/stroke live on its <g id="icon-defs"> wrapper and do
+   NOT survive <use>, so every arrow has to declare them (same trap that made
+   every .service-link__arrow a filled black sliver). */
+.references__result-arrow {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  transition: transform var(--duration-base) var(--easing-premium);
+}
+
+/* The icon points up-right, so it travels the way it points. */
+.references__result-link:hover .references__result-arrow,
+.references__result-link:focus-visible .references__result-arrow {
+  transform: translate(3px, -3px);
+}
+
+.references__result-link:hover {
+  transform: translateY(-2px);
+}
+
+/* --color-focus-ring is white sitewide (it has to work on the dark theme) and
+   would be invisible on this white section — same substitution the other
+   light-section focus states on this page already make. */
+.references__result-link:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-blue-dark) 85%, black);
+  outline-offset: 4px;
 }
 
 @media (min-width: 768px) {
@@ -3697,23 +3821,18 @@ main h2 {
   margin-top: var(--space-8);
 }
 
-/* Secondary CTA for the Instagram reel only (client 2026-08-01: "borde de color
-   blanco y sin fill y con el texto blanco").
-   The shared .btn--secondary (components.css) already gives the transparent fill
-   and white text; its border is --color-border-strong, white at 42% alpha,
-   deliberately calibrated to ~3.7:1 on black (see tokens.css). The client asked
-   for a solid white border here, so the override is scoped to this one section
-   rather than retuning that token — the variant is currently unused anywhere
-   else, but changing a shared component's calibration for one placement is how
-   it stops being reusable. Measured on the composited pixels rather than the
-   declared colours — .social carries a 3%-white tint, so the surface behind the
-   button is rgb(8,8,8), not pure black — solid white lands at 20:1, well past
-   the 3:1 non-text minimum and the 4.5:1 text one.
-   Hover is the variant's own designed behaviour (border + text to the brand
-   blue, ~6.8:1 on black) — left as-is since it was not part of the brief. */
-.social__cta .btn--secondary {
-  border-color: var(--color-white);
-}
+/* ⚠️ The local `border-color: var(--color-white)` override that used to sit
+   here is GONE, and this is the one deletion in the G1 pass that is a
+   PROMOTION rather than a removal: this button — the Instagram pill — is the
+   design the client pointed at when asking for one fixed secondary CTA
+   ("ahí te mandé foto cómo quiero que sea el secondary CTA"). Its solid white
+   border is now the base value of .btn--secondary in components.css, so this
+   section renders identically with no rule of its own, and every other
+   secondary CTA on the site matches it.
+   The contrast measurement that justified it still holds and is worth keeping:
+   .social carries a 3%-white tint, so the surface behind the button composites
+   to rgb(8,8,8), not pure black — solid white lands at 20:1, past both the 3:1
+   non-text minimum and the 4.5:1 text one. */
 
 /* ---- Social reel on a phone ----------------------------------------------
    Three 9:16 cards side by side inside 390px gave each ~85px of width — a
@@ -3846,10 +3965,21 @@ main h2 {
   }
 }
 
+/* 48rem, not 34 (client 2026-08-14: "allow more width so it breaks into 2 lines
+   instead of 3"). Measured, not guessed: at the `main h2` clamp's cap the two
+   halves of this headline render at 742px and 716px, so anything from ~46.4rem
+   up lets the greedy break land on two lines — 48rem keeps a little slack for
+   the fluid sizes in between. The lede restates the old 34rem below, so only
+   the heading got wider; balance keeps the two lines even at intermediate
+   widths, where a greedy break would otherwise run long-then-short. */
 .coverage__intro {
-  max-width: 34rem;
+  max-width: 48rem;
   margin-inline: auto;
   text-align: center;
+}
+
+.coverage__intro h2 {
+  text-wrap: balance;
 }
 
 /* main h2 sets its own colour from --color-text (white), which the section's
@@ -3864,6 +3994,10 @@ main h2 {
 .coverage__lede {
   color: rgb(59 73 86 / 0.78);
   margin-top: var(--space-3);
+  /* The intro's own cap went 34rem -> 48rem for the heading only; this keeps the
+     lede's measure exactly where it was. */
+  max-width: 34rem;
+  margin-inline: auto;
 }
 
 /* ---- Interactive coverage map (client brief, 2026-07-21) ---- */
@@ -3987,10 +4121,16 @@ main h2 {
 }
 
 /* Nennungen ohne Link (Webtext 01 Sektion 11 / Change Request 1.3): service-area
-   places that have no city page. Deliberately NOT pills — a pill reads as
-   tappable and these are plain text. One step quieter than the chips beside them
-   so the hierarchy says "also here, no page yet", and centred to sit under the
-   two centred chip rows.
+   places that have no city page.
+   ⚠️ This rule now styles the LEAD-IN LINE ONLY ("Außerdem im Einsatz in:"). The
+   places themselves became pills 2026-08-14 on client instruction and use
+   .coverage__pill like every other chip — the sentence that used to name them
+   here is what is left. The old comment said "deliberately NOT pills — a pill
+   reads as tappable and these are plain text"; they are tappable now (each is a
+   <button> that drives the map, like the "Alle" toggle), which is what makes the
+   change safe rather than a reversal for its own sake. See the HTML.
+   One step quieter than the chips beside it so the hierarchy still says "also
+   here, no page yet", and centred to sit under the centred chip rows.
    Was 0.75 WHITE (7.4:1 on the old black section); invisible once the section
    went white 2026-08-08.
    ⚠️ The alpha is at its FLOOR, not a look. This is 14px — normal text, so the
@@ -4329,12 +4469,28 @@ main h2 {
   }
 }
 
-/* Below that, two columns from tablet up keeps it from being one long column,
-   with the third item wrapping to its own row. */
+/* ⚠️ 768–1199.98 IS ONE STACKED COLUMN, NOT TWO (client 2026-08-14, Change
+   Request 18). It was `repeat(2, …)`, and with THREE cards that always left the
+   third one alone on its own row under the left column — an L-shape, which is
+   what the client screenshotted. The two ways out of an orphan are to centre it
+   or to stop having rows at all; the client chose the second ("mejor una abajo de
+   la otra y que sean más horizontales, con un width coherente para tablet").
+
+   The cap is what makes stacking work. A card running the full container at
+   1199px would be ~1100px wide, and these paragraphs are ~500 characters — that
+   is ~140 characters per line, far past readable, and the section exists to BE
+   read (it is the page's SEO/GEO block). 44rem is the measure this project
+   already uses for article prose (.cs-article, .rg-article), so the card lands at
+   ~80 characters per line: wide and horizontal, still readable.
+
+   Below 768 the cap is inert (the container is narrower than it) and from 1200
+   the three-column rule above takes over, so this band is the only one that
+   centres. */
 @media (min-width: 768px) and (max-width: 1199.98px) {
   .philosophy__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--space-8);
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 44rem;
+    margin-inline: auto;
   }
 }
 
@@ -4345,19 +4501,65 @@ main h2 {
      48px+ display sizes and reads as collision at this size. */
   /* --font-size-md → --font-size-lg (21→25px) 2026-08-08, client. One step up the
      shared scale, not a bespoke clamp: at md these read as bold body copy inside
-     a card rather than as the card's title. */
-  font-size: var(--font-size-lg);
+     a card rather than as the card's title.
+     ⚠️ BACK DOWN TO md 2026-08-14, client ("un poquito más chiquito así entra en
+     2 líneas la headline de card 1") — so this REVERSES the line above; read it
+     before going up again.
+     20px is not a taste pick, it is the threshold: the long title's tightest
+     two-line split measures 433px at 25px, and the three-column title box at
+     1440 is 355px, so it only fits at 433 x F/25 <= 355, i.e. F <= 20.4px. md
+     caps at exactly 20px. One step back down the shared scale rather than a
+     bespoke clamp, same reasoning the 08-08 note gives for going up. */
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-heading);
   letter-spacing: normal;
-  /* --space-4 → --space-3: with `margin-top: auto` on the paragraph below, the
-     minimum gap only has to be a floor for the card whose text already fills the
-     box; the other two get theirs from the slack. */
+  /* --space-4 → --space-3. Since 2026-08-14 this is the ACTUAL gap on all three
+     cards, not just a floor — the paragraph's `margin-top: auto` is gone (see
+     its own rule). */
   margin-bottom: var(--space-3);
   /* At the larger size the longest title runs to three lines in a ~357px card,
      and it has a break opportunity right after the em dash — which left a short
      orphan middle line ("Werkschutz —"). balance evens the three out. */
   text-wrap: balance;
+}
+
+/* ⚠️ THE CAP IS ON THE SHORT TITLES ONLY, and one shared cap provably cannot do
+   this job — that is the whole reason this rule is positional.
+   All three headlines have to break into two lines (client 2026-08-14). The
+   long one needs a title box of at least 433 x F/25 to reach two lines; the
+   shortest needs a box UNDER 348 x F/25 or it stays on one. 433 > 348, so no
+   single max-width satisfies both — whatever fits the long one leaves the short
+   ones on one line. Hence: card 1 gets the full column, cards 2 and 3 get a cap.
+   18ch = ~200px at the 20px cap, measured against the two strings it governs:
+   the widest first line it has to hold is "Innovativ, langfristig," at 182px,
+   and it must stay under the 278px that would let "Ein Einsatzgebiet, ein
+   Standard" sit on one line. Both hold at every width, since `ch` scales with
+   the font.
+   Positional (:not(:first-child)) rather than a class, because it is a property
+   of these two strings' LENGTH, not of what the cards mean — if the cards are
+   ever reordered or re-worded, re-measure instead of moving the selector. */
+.philosophy__item:not(:first-child) .philosophy__item-title {
+  max-width: 18ch;
+}
+
+/* The long title needs a cap of its own, and a much wider one — found by
+   measuring, after the two above shipped. In the 768-1199.98 band the grid is a
+   SINGLE stacked column capped at 44rem (see the rule below, client Change
+   Request 18 the same day), so this title had a 638px box and ran as ONE
+   579px line while its two neighbours sat in 199px stacks — the exact
+   "different treatment per card" the client was trying to get rid of.
+   32ch, derived not guessed: its tightest two-line split measures 433px at the
+   25px the title used to be, where a `ch` is 13.9px, so 433/13.9 = 31.2ch is the
+   floor and this clears it. Because both the cap and the split scale with the
+   font, that holds at every size the clamp produces.
+   ⚠️ It is deliberately INERT everywhere else: at three columns (>=1200) the
+   track is ~30.7ch, and on a phone ~28ch, both narrower than this — so the cap
+   never binds there and neither band changes. That also means it cannot rescue
+   the one width where this title is unavoidably three lines, ~1200px, where the
+   column is 341px against the 346px the two-line split needs. */
+.philosophy__item:first-child .philosophy__item-title {
+  max-width: 32ch;
 }
 
 /* The mask the title slides up out of. ⚠️ It is applied by js/philosophy-cards.js
@@ -4392,12 +4594,18 @@ main h2 {
      copy on this project, so this is as small as it may go. */
   font-size: var(--font-size-sm);
   line-height: 1.5;
-  /* Bottom-aligns the three paragraphs inside their equal-height cards: the auto
-     margin eats whatever vertical slack the card has left, so the slack sits
-     between title and text instead of below the text. See the note on
-     .philosophy__item for the measurement that made this the right edge to
-     align, and for the subgrid version that was tried and rejected. */
-  margin-top: auto;
+  /* ⚠️ `margin-top: auto` was REMOVED 2026-08-14 (client: "reduce the gap between
+     headline and body text"), and this reverses the 2026-08-08 decision recorded
+     on .philosophy__item — read that note before putting it back.
+     What it did: bottom-aligned the three paragraphs, which moved every card's
+     leftover height OUT of the bottom edge and INTO the space under its own
+     title. That was the right call while the titles ran 3 / 1 / 2 lines, but it
+     is what the client is seeing — measured at 1440 the gap was 12 / 75 / 66px,
+     i.e. a hole under two of the three headlines. The slack sits below the
+     paragraph again, so the gap is now the title's own margin on all three.
+     The other half of this pass makes it cost less than it did in August: with
+     the title capped to 24ch the three run 3 / 2 / 2 lines instead of 3 / 1 / 2,
+     so there is less leftover to be ragged with in the first place. */
   /* German compounds in a ~370px track; the sitewide hyphens: auto (base.css)
      is correct for running prose exactly like this, so it stays on. */
 }
@@ -4660,19 +4868,12 @@ main h2 {
   );
 }
 
-/* FAQ -> footer seam (client 2026-07-24): the band sits in the footer's top,
-   so the footer reserves band-height of extra top padding — but ONLY on the
-   homepage, where a .pixel-seam is placed right before the footer. Scoped via
-   the adjacent-sibling selector so other pages' footer (no seam) is untouched.
-   Keep the values in sync with .pixel-seam__band's height. */
-.pixel-seam + .site-footer {
-  padding-top: calc(var(--space-9) + 200px);
-}
-@media (max-width: 767.98px) {
-  .pixel-seam + .site-footer {
-    padding-top: calc(var(--space-9) + 120px);
-  }
-}
+/* (The form -> footer seam and the footer's reservation for its band were both
+   REMOVED 2026-08-14, client rule G7: "the animated transition between the
+   closing form and the footer adds nothing — remove it site-wide". The seam div
+   is gone from all 21 pages, so this adjacent-sibling rule could never match
+   again; it is deleted rather than left as a rule nobody can trigger. Every
+   IN-PAGE seam is untouched — only the last one, main -> footer, went.) */
 
 /* White trust band -> dark Pain Hook seam (client 2026-07-29): the band sits in
    Pain Hook's top, so reserve band-height of extra top padding for its heading.

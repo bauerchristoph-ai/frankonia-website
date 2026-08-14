@@ -93,25 +93,47 @@ ICON_PAD = 6
 # `major` is only the pin SIZE — the four regional centres read a step stronger.
 # It used to double as "has a label", which is why it looked like a hierarchy
 # decision; it is not one any more.
-CITIES = [
-    # slug,          label,         side,    major
-    ("bamberg",      "Bamberg",     "start", True),
-    ("nuremberg",    "Nürnberg",    "start", True),
-    ("wuerzburg",    "Würzburg",    "end",   True),
-    ("bayreuth",     "Bayreuth",    "start", True),
-    # ⚠️ Erlangen RIGHT and Fürth LEFT, not both left. They are 43 viewBox units
-    # apart vertically, which is only ~15px once the map is a phone's 350px wide,
-    # against an 18px label — so on the same side they overlapped (measured, and
-    # shrinking the type does NOT fix it: the separation is fixed in viewBox
-    # units while the label box shrinks with the font, so they stay in contact).
-    # Opposite sides makes them diverge horizontally instead.
-    ("erlangen",     "Erlangen",    "start", False),
-    ("fuerth",       "Fürth",       "end",   False),
-    ("forchheim",    "Forchheim",   "start", False),
-    ("schweinfurt",  "Schweinfurt", "start", False),
-    ("coburg",       "Coburg",      "start", False),
-    ("ansbach",      "Ansbach",     "start", False),
-]
+# ⚠️ THE LIST ITSELF IS NOT HERE ANY MORE. It is content/coverage.json — the
+# single data source the client asked for on 2026-08-14 ("build it so the
+# map/pill list updates automatically when we add new coverage locations"), and
+# the same file build.js renders the pill lists from and js/coverage-map.js
+# fetches for the Leaflet map. A location added there appears in this map the
+# next time this script is run.
+#
+# ⚠️ AND THAT RUN IS MANUAL, on purpose. This emits inline vector art that is
+# pasted into pages/einsatzgebiete.html; it is generated once in development and
+# never at runtime (CLAUDE.md). So: add the entry, drop its boundary geojson in
+# assets/data/coverage-boundaries/, then re-run this and paste. Everything else
+# — pills, footer, both Leaflet maps — follows from the build alone.
+#
+# The per-city knobs live in that file's `map` object:
+#   side  — which way the label runs from the pin. It exists ONLY to keep
+#           neighbours from colliding.
+#           ⚠️ Erlangen RIGHT and Fürth LEFT, not both left. They are 43 viewBox
+#           units apart vertically, which is ~15px once the map is a phone's
+#           350px wide, against an 18px label — so on the same side they
+#           overlapped (measured; shrinking the type does NOT fix it, because
+#           the separation is fixed in viewBox units while the label box shrinks
+#           with the font, so they stay in contact). Opposite sides makes them
+#           diverge horizontally instead. The same rule is what places the
+#           northern cluster added 2026-08-14 (Coburg / Kronach / Lichtenfels).
+#   major — pin SIZE only, for the four regional centres. It used to double as
+#           "has a label", which is why it looked like a hierarchy decision; it
+#           is not one any more (all of them are labelled).
+COVERAGE_FILE = "content/coverage.json"
+
+
+def load_cities():
+    with open(COVERAGE_FILE) as fh:
+        data = json.load(fh)
+    out = []
+    for loc in data["locations"]:
+        m = loc.get("map") or {}
+        out.append((loc["id"], loc["name"], m.get("side", "start"), bool(m.get("major"))))
+    return out
+
+
+CITIES = load_cities()
 
 
 def load_polygons(path_or_slug):

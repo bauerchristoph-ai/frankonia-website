@@ -179,16 +179,10 @@
   hyphens: manual;
 }
 
-.lh-hero__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-}
+/* (.lh-hero__badge promoted to the shared .hero-badge in components.css, 2026-08-14 —
+   the two were byte-identical. The `.icon` rule below still applies.) */
 
-.lh-hero__badge .icon {
+.hero-badge .icon {
   width: 1.125rem;
   height: 1.125rem;
   color: var(--color-accent);

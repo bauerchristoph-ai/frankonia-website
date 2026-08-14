@@ -153,6 +153,13 @@
     // background, so the comparison is exact.
     // An explicit data-pixel-seam-mode still wins, for a seam that wants pulse
     // anywhere else.
+    // ⚠️ CURRENTLY UNREACHABLE, and deliberately kept. Client rule G7
+    // (2026-08-14) removed the main -> footer seam from every page, and that
+    // boundary is the only one this auto-detection ever fired on — so no seam
+    // has the footer as its next sibling any more. Kept because it is still
+    // correct the day a seam is placed there again, and because an explicit
+    // data-pixel-seam-mode="pulse" still works anywhere. Nothing on the site
+    // sets that attribute today either.
     let mode = seam.getAttribute("data-pixel-seam-mode");
     const below = seam.nextElementSibling;
     if (!mode && below && below.classList.contains("site-footer")) {
@@ -183,6 +190,17 @@
       }
     }
 
+    // ⚠️ Everything from here to the end of buildTiles() USED TO RUN EXACTLY
+    // ONCE, at load. That is the bug client rule G7 describes as "after
+    // shrinking and re-enlarging the viewport, the transition keeps the small
+    // width": the column count is derived from ONE measurement, so a band
+    // measured at 390px kept its ~10 columns after the window went back to
+    // 1440px, leaving the tiles covering only the left ~400px of the seam.
+    // It is now a function, re-run on resize when the band's width actually
+    // changes (see the ScrollTrigger refresh handler at the end).
+    let tiles = [];
+
+    function buildTiles() {
     const rect = band.getBoundingClientRect();
     // ceil, not round (fixed 2026-07-30): the tiles are a FIXED pixel size, so
     // rounding down leaves a bare strip at the right edge of the band. Ceil
@@ -208,7 +226,8 @@
     const rowStep = rows > 1 ? 1 / (rows - 1) : 1;
     const jitter = rowStep * 2.0;
 
-    const tiles = [];
+    band.textContent = "";
+    tiles = [];
 
     for (let row = 0; row < rows; row++) {
       // Bottom-to-top wipe (flipped 2026-07-21, 8th revision — client,
@@ -269,6 +288,24 @@
         }
       }
     }
+
+    }
+
+    buildTiles();
+
+    // Rebuild only when the width really changed. ScrollTrigger already fires
+    // `refresh` on resize (and on its own recalculations), so this needs no
+    // second listener and no debounce of its own — but it DOES need the width
+    // guard, because refresh also fires for reasons that have nothing to do
+    // with the viewport, and rebuilding re-randomises every tile's threshold,
+    // which would visibly reshuffle the dissolve mid-scroll.
+    let lastWidth = band.getBoundingClientRect().width;
+    ScrollTrigger.addEventListener("refresh", () => {
+      const w = band.getBoundingClientRect().width;
+      if (Math.abs(w - lastWidth) < 1) return;
+      lastWidth = w;
+      buildTiles();
+    });
 
     ScrollTrigger.create({
       trigger: seam,

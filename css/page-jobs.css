@@ -479,6 +479,15 @@
   border-bottom: 1px solid var(--color-border);
 }
 
+/* The application CTA under the ladder (client 2026-08-14). Left-aligned with
+   the rungs, not centred: this section's heading and every row it holds range
+   left, and a centred button under a left-aligned list reads as belonging to
+   something else. --space-7 matches the list's own margin-top, so the button
+   sits as far below the last rung as the list sits below the heading. */
+.jobs-levels__actions {
+  margin-top: var(--space-7);
+}
+
 .jobs-levels__head {
   display: flex;
   align-items: baseline;
@@ -899,9 +908,6 @@
   .page-jobs .pixel-seam + .conversion {
     padding-top: 80px;
   }
-  .page-jobs .pixel-seam + .site-footer {
-    padding-top: calc(var(--space-8) + 80px);
-  }
 
   .jobs-steps__list,
   .jobs-levels__list {
@@ -948,6 +954,19 @@
      `auto` hands the job back to align-items: stretch above. */
   .jobs-why .jobs-why__item {
     height: auto;
+  }
+
+  /* ⚠️ NOT decoration, and `width` alone is only half of it: `.btn` is
+     `white-space: nowrap`, so "Jetzt unverbindlich bewerben" plus its arrow and
+     padding has a min-content of ~325px — wider than the ~296px inner width a
+     320px viewport gives — and a nowrap button does not shrink to its box, it
+     overflows it. That is real horizontal page scroll, and it is the same
+     omission this project has now shipped three times (page-service.css and
+     page-city.css both document their own instance). Both declarations, always. */
+  .jobs-levels__actions .btn {
+    width: 100%;
+    justify-content: center;
+    white-space: normal;
   }
 
   /* The card keeps its whole anatomy in the strip (photo → icon → title → copy);
@@ -1057,11 +1076,10 @@
      cover the two links this page has; the FAQ answer's inline link is inside a
      sentence, so it gets padding on an inline-block instead — the hit area
      grows, the sentence does not move. */
-  .faq-item__answer a {
-    display: inline-block;
-    /* 0.65rem, measured: 0.5rem gave a 42px box, just under the minimum. */
-    padding-block: 0.65rem;
-  }
+  /* (rule deleted 2026-08-14 — `.faq-item__answer a` in components.css now
+     carries the inline-block + padding at EVERY width, not just on a phone,
+     which is what client rule G4 needs once phone numbers become links in body
+     copy too.) */
 
   /* The <summary> IS the control that opens each answer, so it owes the 44px.
      Measured: the four two-line questions clear it on their own, but the one

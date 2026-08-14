@@ -409,13 +409,23 @@
     var terms = Array.prototype.slice.call(layer.querySelectorAll(".konzept-seq__terms li"));
     if (!diagram || !terms.length) return null;
 
-    // Label text -> anchor point, read off the SVG tips already in the markup.
+    /* Label text -> anchor point, read off the SVG tips already in the markup.
+       ALL the label's <text> lines joined, not just the first: an SVG label is one
+       line per <text> element, and "Brandmeldeanlage (BMA)" is set on two of them
+       (it overran the viewport as one line — see the note in pages/index.html).
+       With querySelector this key came out "Brandmeldeanlage", never matched the
+       list item's "Brandmeldeanlage (BMA)", and that tip silently lost its chip:
+       12 built where 13 were expected, measured 2026-08-14. Joining the lines
+       keeps any future two-line label pairing correctly. */
     var anchors = {};
     Array.prototype.slice.call(layer.querySelectorAll(".kz-tip")).forEach(function (t) {
-      var label = t.querySelector(".kz-tip__label");
+      var lines = Array.prototype.slice.call(t.querySelectorAll(".kz-tip__label"));
+      var label = lines.length
+        ? lines.map(function (n) { return n.textContent.trim(); }).join(" ")
+        : "";
       var dot = t.querySelector(".kz-tip__dot");
       if (!label || !dot) return;
-      anchors[label.textContent.trim()] = {
+      anchors[label] = {
         x: +dot.getAttribute("cx") / VB_W,
         y: +dot.getAttribute("cy") / VB_H,
       };
@@ -428,28 +438,29 @@
     var items = [];
     terms.forEach(function (li) {
       var nameEl = li.querySelector(".konzept-seq__term-name");
-      var subEl = li.querySelector(".konzept-seq__term-sub");
       if (!nameEl) return;
       var a = anchors[nameEl.textContent.trim()];
       if (!a) return;
 
-      /* Which way the box opens, and how wide it may get: whichever side of the
-         anchor has more room, capped so a centred anchor can't produce a chip
-         that runs off the opposite edge. */
+      /* Which way the leader line points: away from whichever edge is closer, so
+         it runs into the open half of the drawing instead of off it. */
       var left = a.x > 0.5;
-      var avail = (left ? a.x : 1 - a.x) * 100 - 3;
 
+      /* Dot + line ONLY, no text (client 2026-08-14, point 14: "the aspects
+         appear in the graphic AND are listed below — that's redundant … only
+         animate the connector lines to the elements"). The words live once, in
+         the .konzept-seq__terms list below, and the pairing is carried by the
+         sync instead: the lit dot in the drawing and the white row in that list
+         are always the same aspect. The .kz-mtip__body/__name/__sub markup and
+         its three CSS rules were deleted rather than hidden, so nothing here
+         builds a node the design no longer has a place for — which is also why
+         the old maxWidth calculation is gone: it capped a text box. */
       var chip = document.createElement("div");
       chip.className = "kz-mtip" + (left ? " kz-mtip--left" : "");
       chip.style.left = (a.x * 100).toFixed(2) + "%";
       chip.style.top = (a.y * 100).toFixed(2) + "%";
-      chip.style.maxWidth = Math.min(avail, 54).toFixed(1) + "%";
       chip.innerHTML =
-        '<span class="kz-mtip__dot"></span><span class="kz-mtip__line"></span>' +
-        '<span class="kz-mtip__body"><span class="kz-mtip__name"></span>' +
-        '<span class="kz-mtip__sub"></span></span>';
-      chip.querySelector(".kz-mtip__name").textContent = nameEl.textContent;
-      chip.querySelector(".kz-mtip__sub").textContent = subEl ? subEl.textContent : "";
+        '<span class="kz-mtip__dot"></span><span class="kz-mtip__line"></span>';
 
       overlay.appendChild(chip);
       items.push({ chip: chip, li: li });
