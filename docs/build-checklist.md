@@ -130,10 +130,18 @@ reveals de scroll, Lenis).
       768/1024/1440, pero con navegador automatizado, no con la mano
 - [ ] 🔴 Aprobar como plantilla
 - [x] Foto de portería/Werkstor para el hero ✅ (HeroWerkschutz.png, 2026-08-03)
-- [ ] 🔴 **Retrato de Alexander Jäger** — la sección Ansprechpartner tiene el marco
-      4:5 reservado y etiquetado; entra cambiando un `<p>` por un `<picture>`.
-      Decisión del cliente: marco vacío antes que la foto de otra persona al lado
-      de su nombre.
+- [x] **Retrato de Alexander Jäger** ✅ (**`Alex.png`**, cliente, 2026-08-14) — el
+      marco 4:5 reservado se llenó exactamente como estaba previsto: un `<p>` por un
+      `<picture>`, sin cambio de layout y sin CLS. Exportado a 480/960w WebP + JPEG.
+      ⚠️ **Hubo dos archivos ese día**: primero `alex.jpg` (fondo gris de estudio) y
+      después la versión del propio cliente sobre negro, que es la que quedó — es
+      mejor porque **incluye las dos manos**, imposible en un 4:5 desde el 2:3 anterior.
+      Su fondo se **normaliza a #010101 exacto** (no es un recorte con alpha: el pelo
+      oscuro comparte luminancia con el negro y cualquier key se lo come). Medido en
+      la costura: página 1, foto 1, **delta 0,00**. Receta y umbrales en
+      `docs/design-sources/portrait-key-backdrop.py`.
+      ⚠️ **Quedan soldados a una superficie OSCURA**: para una sección clara hay que
+      re-correr el script con otro color de destino, no arreglarlo por CSS.
 - [ ] 🔴 Faltan **2 de las 6 fotos** del Leistungsumfang: "2. Zugangs- &
       Torkontrolle" y "6. Notfall-Erstmaßnahmen" (hoy placeholders; las otras 4
       son las que mandó el cliente). Marcadas inline en el HTML.
@@ -211,17 +219,119 @@ revisar con Chris:
 *Al terminar esto quedaron resueltos los 3 bloques nuevos más usados + el
 formulario compartido.*
 
-### Bloque 2 — Segundo servicio de prueba (1 página)
-- [ ] `/objektschutz/` — armarla **sin diseñar nada nuevo**
+### Bloque 2 + Bloque 3 — LAS 9 PÁGINAS DE SERVICIO QUE FALTABAN — 2026-08-16
+- [x] `/objektschutz/` · `/sicherheitstechnik/` · `/brandwache/` ·
+      `/kaufhausdetektei/` · `/veranstaltungsschutz/` · `/baustellenbewachung/` ·
+      `/revier-schliessdienst/` · `/empfangsdienst/` · `/interventionsdienst/`
+      — Webtexte 02/04/05/06/07/09/10/11/12, verbatim, alemán.
+      **Con esto las 12 páginas de servicio están y no queda un solo link de
+      servicio roto en el nav, el footer ni `/leistungen/`.**
 
-*Si sale sin tocar CSS, la plantilla sirve. Si no, se arregla ahora y no 9 veces.*
+⚠️ **"SIN DISEÑAR NADA NUEVO" NO SE PUDO CUMPLIR DEL TODO, y la razón vale
+saberla: los drafts v2 varían la estructura A PROPÓSITO.** Seis de los nueve lo
+dicen en su propia cabecera ("Struktur bewusst variiert", "Struktur-Variante
+'Notfall-Leistung'", "Variation statt Risiko-Karten"). Van de 8 a 11 secciones y
+la mitad tiene una sección que ninguna otra página tiene (Türsteher, Anzug oder
+Montur, Alarmkette, Modell-Vergleich, "Wann ist eine Brandwache Pflicht?").
+O sea que [page-conventions §8.1](page-conventions.md) —"los 12 drafts usan la
+misma 9-Punkte-Struktur"— era cierto con los drafts de julio y **ya no lo es**.
+Está corregido ahí.
 
-### Bloque 3 — Los 9 servicios restantes
-- [ ] Sicherheitstechnik · Brandwache · Kaufhausdetektei · Veranstaltungsschutz ·
-      Baustellenbewachung · Revier-Schliessdienst · Empfangsdienst ·
-      Interventionsdienst
+**Lo que hubo que agregar a `css/page-service.css`, y sólo esto** (todo genérico,
+todo `.service-*`):
+- `.service-hero--split` — hero de dos columnas con foto VERTICAL. **No es un
+  invento: §8.2 siempre lo prescribió** para una foto vertical, y las reglas se
+  habían borrado el 2026-08-03 cuando el hero de Werkschutz pasó a foto apaisada.
+  Las 9 fotos de servicio son 820x~1220, o sea exactamente ese caso.
+- `.service-points*` — N bloques rayados (regla azul → título → texto). Es la
+  forma más repetida de los nueve drafts (Risiko, Vorteile, Leistungsbereiche,
+  Anwendungsfälle, típicos Einsätze…). **SEXTO consumidor de esta forma**;
+  `.lh-why*` es la misma idea y esta lista ya decía que debería estar en el
+  chasis — no se fusionaron todavía porque ese bloque está vivo en `/leistungen/`
+  y `/sicherheitskonzept/`.
+- `.service-scope*` — el Leistungsumfang como lista de tics a dos columnas.
+  **No se usó `.service-flow`** (el scrollytelling 50/50 de Werkschutz): ese
+  bloque necesita SEIS fotos por servicio y sólo Werkschutz las tiene.
+- `.service-konzept__steps--4 / --5` — el riel de pasos a otros conteos (5 drafts
+  dan 4 pasos, uno da 5). Con conteo par el conector horizontal se rompería al
+  saltar de fila, así que cada uno tiene UN breakpoint donde entra en una línea.
+- `.service-price__box--text` — caja de precio con palabras en vez de cifra.
 
-*Las 10 fotos de servicio ya están. Esto es ensamblado.*
+**Y `partials/price-box.html` se parametrizó** (tics, CTA, unidad, label, con
+defaults en `content/values.json`, misma jugada que `nameRequired`): cada Webtext
+especifica sus propias líneas de caja, y `/brandwache/` además pide ahí el CTA de
+teléfono. **Las 11 páginas que ya incluían la caja no cambiaron** (verificado).
+
+- [x] **Generadas con `docs/design-sources/service-pages.py`**, de una sola
+      pasada, igual que las de ciudad — por las mismas dos fallas invisibles en
+      una captura: la paridad FAQ ↔ JSON-LD (**46 pares**) y el color de cada
+      seam, que se DERIVA de la secuencia de superficies porque cada draft ordena
+      distinto. El copy vive en `service_drafts.py`, **extraído a máquina de los
+      `.docx`, sin tipear una palabra** — son ~19.000 palabras de alemán y un
+      error de transcripción en copy aprobado no lo caza ninguna medición.
+      ⚠️ Después de generarlas son páginas normales editables a mano; **no
+      re-correr el script encima**.
+- [x] **Medido a 320 / 390 / 768 / 1024 / 1440 / 1920 en las 9** (54 corridas):
+      **sin scroll horizontal en ninguna**, un solo `<h1>`, sin saltos de nivel,
+      nada fuera del viewport, **cero fallos de contraste** fuera del caveat
+      sitewide del azul del CTA (3,11:1), y **FAQ visible ↔ `FAQPage` 46/46
+      byte-idénticas**. Sin JS el markup servido trae **6.205–10.647 caracteres**
+      de texto real en `<main>`, 0 tiles y 0 elementos ocultos.
+      **Re-medidas también las 9 páginas que comparten el chasis**
+      (`/werkschutz/`, `/referenzen/`, `/jobs/`, `/sicherheitskonzept/`, ciudad,
+      combo, `/leistungen/`, `/angebot/`, homepage): sin regresiones.
+- [x] Las 9 en `sitemap.xml`, priority 0.8 (igual que Werkschutz).
+
+**Dos defectos reales encontrados midiendo y arreglados:**
+1. **58px de scroll horizontal a 320 en `/revier-schliessdienst/`** —
+   `.service-panel__cta`. Es la **QUINTA** vez que la misma omisión causa el mismo
+   bug acá: `.btn` es `white-space: nowrap` y `width: 100%` **solo** no alcanza,
+   porque un ancho no reduce el min-content. Hace falta `white-space: normal`.
+2. **El H1 se recortaba a 320** en Brandwache, Baustellenbewachung y
+   Empfangsdienst: `hyphens: none` en headings + `overflow-wrap: break-word` (que
+   **no** reduce el min-content) dejaba "Brandsicherheitswache" pidiendo ~340px.
+   `hyphens: auto` sólo abajo de 400px, que con `lang="de"` corta por sílabas.
+   ⚠️ La página **no** scrolleaba de costado — clipeaba, que es peor.
+
+**Y dos de contraste que nunca se habían ejercitado:** `.service-compare` está
+documentado como "either surface" pero **ninguna página lo había puesto sobre
+blanco** hasta `/revier-schliessdienst/`. Ahí los términos daban **3,17:1 a 11px**
+y el label del panel primario **3,71:1 a 12px**. Arreglados con los mismos valores
+que la lista de factores de precio ya usa para ese caso.
+
+- [ ] 🔴 **Las FOTOS de 4 de las 9 no muestran lo que pide su draft.** Los `alt`
+      describen **el archivo**, no el brief — se corrigieron después de mirar las
+      nueve en una hoja de contactos, que es la **tercera** vez en este proyecto
+      que un asset no coincide con lo que su nombre o su brief sugería.
+      | página | el draft pide | el archivo es |
+      |---|---|---|
+      | objektschutz | Kontrollgang am Gebäude | sala de monitoreo |
+      | sicherheitstechnik | Leitstand / montaje de cámara | una cámara en fachada |
+      | brandwache | Brandwache con extintor | un briefing del equipo |
+      | kaufhausdetektei | superficie de venta, discreto | agente de traje en una entrada |
+      **Vale pedirle a Chris al menos las dos últimas**: una brandwache real y una
+      foto de superficie de venta fotografían el servicio mucho mejor.
+- [ ] 🔴 **Contradicción de precio DENTRO del propio draft, en 3 de los 9.** El
+      párrafo de Kosten de Veranstaltungsschutz y Empfangsdienst dice "zwischen 25
+      und 38 Euro" y el de Baustellenbewachung "zwischen 25 und 35", **mientras la
+      Preis-Box y la FAQ del mismo documento dicen 26–32**. Se publicó **26–32 en
+      los tres** (o sea el valor de la caja y de la FAQ, que además es el token
+      sitewide de G10) para no publicar una página que se contradice a sí misma.
+      **Confirmar con Chris cuál es el bueno.**
+- [ ] 🔴 **Los detalles de contacto de Alexander Jäger** aparecen en las 4 páginas
+      cuyo Trust lo nombra (Objektschutz, Sicherheitstechnik, Brandwache,
+      Baustellenbewachung). Sólo el draft de Objektschutz repite su teléfono y su
+      mail; en los otros tres se incluyen igual porque un bloque de contacto sin
+      forma de contactar es peor. Las otras 5 páginas llevan la franja de
+      certificaciones, sin retrato — **es la Q2 del cliente aplicada tal cual**
+      ("stays on every page where the documents specify it"), no un olvido.
+- [ ] 🟡 4 links a páginas combo que todavía no existen (`/objektschutz-nuernberg/`,
+      `/brandwache-wuerzburg/`, `/brandwache-erlangen/`, `/brandwache-fuerth/`).
+      Son las URLs confirmadas de la guía §2.2 — Bloque 6.
+- [ ] 🟡 **`.service-link` mide 29px de alto** y el mínimo táctil es 44. Se arregló
+      **scopeado** a los bloques nuevos; `/werkschutz/`, `/referenzen/`, `/jobs/`
+      y las 3 case studies siguen con 29px. Promoverlo al selector compartido es
+      lo correcto, pero como su propia pasada, medida en esas seis.
 
 - [x] `/sicherheitskonzept/` — **2026-08-10**, Webtext 08 verbatim, alemán, 11
       secciones, 10 seams. **Era el 404 más enlazado del sitio después de las
@@ -256,9 +366,13 @@ formulario compartido.*
         de cliente — Prüfkatalog O4). La ESTRUCTURA de 18 páginas sí se publica,
         porque es copy aprobado; la vista previa es un placeholder etiquetado.
         **No publicar ese PDF hasta que Chris confirme la anonimización.**
-  - [ ] ⚠️ **El bloque de Alexander Jäger (sección 8) es la MISMA pregunta abierta
-        que la de `/werkschutz/`**: se queda el contacto con nombre o no, y si se
-        queda falta su retrato. Lo que decida Chris aplica a las dos páginas.
+  - [ ] ⚠️ **El bloque de Alexander Jäger (sección 8): la pregunta abierta ESTÁ
+        CERRADA — se queda, siempre** (cliente 2026-08-13, Q2), y **su retrato ya
+        existe desde el 2026-08-14** (ver `/werkschutz/`, arriba).
+        ⚠️ **Pero acá NO hay bloque de contacto: sólo una frase de prosa** que lo
+        nombra con su teléfono y su e-mail enlazados. O sea la foto no tiene dónde
+        entrar en esta página sin construirle la sección — decisión de alcance, no
+        un asset que falte. Los assets están: `wk-contact-alexander-jaeger-*`.
         Su teléfono y su e-mail ahora salen de `content/values.json`
         (`phoneJaeger` + **`emailJaeger`, agregado en esta pasada**);
         ⚠️ `pages/werkschutz.html` todavía tiene el e-mail escrito a mano — pasarlo
@@ -362,17 +476,94 @@ formulario compartido.*
         `/leistungen/`). Es la convención del proyecto (§8.3), no placeholders —
         y el CTA primario sí apunta al formulario vivo de la propia página.
 
-### Bloque 5 — Las 9 ciudades restantes
-- [ ] Würzburg · **Bamberg** · Erlangen · Fürth · Bayreuth · Schweinfurt ·
-      Coburg · Forchheim · Ansbach
-- [ ] Cada una: copiar la página de Nürnberg, cambiar copy + meta + JSON-LD
-      (`areaServed`), correr `city-outline.py <slug>` para el contorno, cambiar
-      las vecinas y el `prefix` del formulario. **`page-city.css` no se toca.**
-- [ ] ⚠️ **Bamberg es la única con estructura distinta**: es el único sitio con
-      dirección real, así que va con NAP completo + geo, badge "Unser Zuhause:
-      Sitz in Bamberg" y una Zuhause-Story en vez de las 4 tarjetas de "Warum".
-      Su draft lo marca como "Struktur-Variante Heimmarkt". Es una sección
-      distinta, no una hoja de estilos distinta.
+### Bloque 5 — Las 9 ciudades restantes ✅ **COMPLETO 2026-08-16**
+- [x] Würzburg · **Bamberg** · Erlangen · Fürth · Bayreuth · Schweinfurt ·
+      Coburg · Forchheim · Ansbach — texto real de los Webtexte 14–22
+      (Stand 04.08.2026), alemán, verbatim. **Con esto las 10 páginas de ciudad
+      están, y no queda ni un link de ciudad roto en el sitio**: los 10 hrefs de
+      `content/coverage.json` resuelven, o sea el footer de las 30 páginas y los
+      chips de Coverage del homepage.
+- [x] ⚠️ **CADA DRAFT TIENE OTRA ESTRUCTURA, y es deliberado — no son nueve
+      copias de Nürnberg.** Los propios documentos lo dicen ("Struktur bewusst
+      variiert ggü. Nürnberg"), así que el ORDEN de secciones sale de cada draft:
+      Würzburg entra por los Einsatzfelder y después argumenta el Warum; Erlangen
+      no tiene sección Warum y suma una de Veranstaltungen; Schweinfurt es
+      Werkschutz-first; Coburg cambia la sección de Brandwache por una de
+      Sicherheitskonzept; Ansbach tiene el Warum en prosa, sin tarjetas; Fürth,
+      Forchheim y Ansbach son variantes compactas sin sección de Trust.
+      **Secciones por página: 8 a 11. Seams: 5 a 9.**
+- [x] ⚠️ **POR ESO EL SEAM NO SE PUEDE COPIAR DE NÜRNBERG.** El color de los tiles
+      es el de la sección de ARRIBA y dos secciones del mismo color no llevan
+      seam (§9.2) — con otro orden, la lista cambia entera. Se **deriva** de la
+      secuencia de superficies de cada página, no se escribe a mano.
+- [x] **Bamberg, la excepción**: único sitio con dirección real → NAP completo con
+      geo, badge "Unser Zuhause: Sitz in Bamberg, Neuerbstraße 19", Zuhause-Story
+      en vez de las 4 tarjetas, y **10 servicios en vez de 8** — es la única
+      ciudad que puede listar Revier- & Schließdienst e Interventionsdienst,
+      porque son Raum-Bamberg. Prioridad 0.9 en el sitemap (las otras 0.8).
+      Su primer FAQ da la calle, que en cualquier otra ciudad sería la afirmación
+      que la regla UWG prohíbe.
+- [x] **Cards de servicio sólo donde hay página de ciudad.** Sólo Würzburg,
+      Erlangen y Fürth tienen combos en esta fase, así que sólo ellas llevan el
+      grupo de 4 cards + 4 filas; las otras seis van **todas como filas**, porque
+      todos sus destinos son la página genérica y destacarlos como cards
+      prometería una página local que no existe (§10.1).
+- [x] **Las tarifas son las del draft de cada ciudad, no siempre cuatro**: dos en
+      Schweinfurt y Forchheim, tres en Fürth, Bayreuth, Coburg y Ansbach, cuatro
+      en Würzburg, Bamberg y Erlangen. 🐛 Salieron las cuatro en todas al
+      principio — o sea servicios en una tabla de precios que el cliente no
+      tarifó ahí. Lo encontró el diff automático página↔docx.
+- [x] 🐛 **BUG REAL ENCONTRADO MIDIENDO: `.city-callout__lede` era BLANCO SOBRE
+      BLANCO**, ratio **1:1**, en las tres páginas que ponen un callout de prosa
+      sobre sección clara (Bamberg, Erlangen, Ansbach). El color estaba cableado
+      en blanco porque en Nürnberg ese bloque es siempre la sección de Brandwache,
+      que es siempre oscura. Arreglado con el token.
+      ⚠️ **Y el primer arreglo NO HIZO NADA**: escribí
+      `.section--light .city-callout …`, pero las dos clases están en el MISMO
+      elemento, así que el descendiente no matchea. Un selector que no puede
+      matchear falla igual que uno ausente — por eso se detecta midiendo el color
+      renderizado, no leyendo la hoja.
+- [x] **`.city-why__grid--3`, una regla nueva y necesaria**: cinco de los nueve
+      drafts dan **tres** tarjetas de Warum y la grilla es `repeat(4, …)`, así que
+      dejaban la cuarta columna vacía. Es el mismo hueco que `--wide` cierra para
+      un quinto Einsatzfeld impar. **Nürnberg no se movió** (medido antes y
+      después).
+- [x] **Header de Zertifizierungen CENTRADO** (cliente, sobre Erlangen: "esto
+      centralo"). Sólo toca **Würzburg y Erlangen**: son las dos únicas sin sección
+      de Vertrauen, así que su copy de Trust es el H2 + lede de esa sección, y
+      quedaba rangeado a la izquierda sobre un bloque que ya se centra solo. Sexta
+      aparición de la trampa de §10.4 — `text-align` no alcanza, van dos clases +
+      `margin-inline: auto`. Medido con `Range` sobre el texto real: **0px del eje**
+      a 390/768/1024/1440/1920.
+- [x] **Áreas táctiles**: `.city-fields__link` (29px — **ya fallaba en Nürnberg**,
+      la regla describía dos links y sólo alcanzaba a uno) y el link inline del
+      Abbinder de Erreichbarkeit (23px, nuevo acá). Los dos links de membresía de
+      Bamberg quedan sin padear a propósito: dos links en una frase son la
+      excepción de line-height de WCAG 2.5.8, igual que en `/referenzen/` y
+      `/ueber-uns/`.
+- [x] **Generadas por `docs/design-sources/city-pages.py`** (+ `city_pages_data.py`),
+      un script de desarrollo de una sola pasada, como `city-outline.py` y
+      `franken-map.py`. Existe por las dos cosas que se rompen a mano y no se ven:
+      la paridad FAQ ↔ JSON-LD (50 pares) y el color de los seams. **No es parte
+      de `npm run build` y no se re-corre sobre páginas ya editadas a mano.**
+- [x] **Medido a 320 / 390 / 768 / 1024 / 1440 / 1920 en las 10 páginas**: sin
+      scroll horizontal en ninguna, **cero fallos de contraste** fuera del caveat
+      sitewide del azul del CTA (3,11:1), un solo `<h1>`, sin saltos de nivel,
+      FAQ visible ↔ `FAQPage` **50/50 byte-idénticas**, y nada fuera del viewport.
+      Sin JS el markup servido trae **5.114–11.156 caracteres** de texto real en
+      `<main>`, 0 tiles y 0 elementos ocultos; con `prefers-reduced-motion`, 0
+      tiles y 0 elementos en opacidad <1.
+- [ ] ⚠️ **Para confirmar con Chris** (todo lo demás es verbatim del draft):
+  - [ ] el H2 y el lede de la sección **Umgebung** en las 7 ciudades cuyo draft
+        sólo lista "Nachbarorte: X · Y" — el H2 usa el patrón del propio draft de
+        Bamberg ("Sicherheitsdienst rund um <Stadt>") y el lede es el de Nürnberg
+        con los nombres cambiados;
+  - [ ] en Würzburg se quitó **"(Widget)"** de la frase de Trust: es una
+        instrucción de producción, no copy (el widget está en el hero);
+  - [ ] los **3 módulos de Brandwache de Bamberg** parten UNA frase del draft en
+        sus tres mitades, igual que Nürnberg;
+  - [ ] los **lede de la sección de Leistungen** de las 9 páginas son de este
+        build (el draft da los 8–10 servicios pero no una frase de entrada).
 
 ### Bloque 6 — Primer combo + los 15 restantes
 - [x] `/brandwache-nuernberg/` — **2026-08-09**, texto real del Webtext 34
@@ -593,15 +784,23 @@ formulario compartido.*
         `[ERGÄNZEN ... siehe Prüfkatalog F13]`: los resultados de 25.000 € /
         30 % / 20 % escritos como Ausgangslage → Konzept → Ergebnis. No se
         inventaron: la sección publica las 2 Kundenstories que el draft sí da.
-  - [ ] 🔴 **Freigaben de los logos (F11 del Prüfkatalog)** — **31 de los 34**
+  - [ ] 🔴 **Freigaben de los logos (F11 del Prüfkatalog)** — **32 de los 35**
         clientes ya tienen logo (20 exportados desde `assets/logos/`);
-        los otros 12 van con el nombre en tipografía, en la misma fila. Si una
+        los otros van con el nombre en tipografía, en la misma fila. Si una
         Freigabe vuelve negativa, ese `<img>` vuelve a ser un `<span>`.
   - [ ] 🔴 **Faltan logos de 3 clientes:** Norma · Schöner Leben · nacht arena.
-  - [ ] 🔴 **Brose Bamberg y Bodo Freimuth Tiefbau se sacaron de las listas**
-        (cliente, 2026-08-04) aunque están en el roster del draft 27 — confirmar que
-        fue una decisión de Freigabe y no un olvido, porque el texto del cliente
-        todavía los nombra.
+  - [x] ✅ **Brose Bamberg y Bodo Freimuth Tiefbau VOLVIERON** (cliente, Q7 del
+        feedback consolidado): nombres restaurados el 2026-08-14 en la posición del
+        draft, y sus **logos el mismo día** — Freimuth 3º en Baustellenbewachung,
+        el escudo del club 1º en Veranstaltungsschutz.
+  - [ ] 🔴 **PARA CHRIS — el logo de "Brose Bamberg" dice "BAMBERG BASKETS".**
+        `BroseBamberg.png` es el escudo actual del club de básquet (Brose lo
+        auspició hasta 2023; hoy se llama Bamberg Baskets). Encaja con la fila
+        —Veranstaltungsschutz, al lado de BBC Coburg y HEITEC Volleys— pero como el
+        logo REEMPLAZA al texto, **la cadena "Brose Bamberg" ya no aparece en ninguna
+        parte de la página**. Mismo caso que Heltec/HEITEC más abajo: el `alt` sigue
+        al arte ("Bamberg Baskets Logo"). Si Chris quería la empresa **Brose
+        Fahrzeugteile**, es otro logo y hay que pedirlo.
         ⚠️ **Archivos mal nombrados en el lote del cliente** — se mapean por el
         dibujo, no por el nombre: `Coburg.png` es **Landkreis Coburg**, `Bayerishe.png`
         es **Bayerische Landessiedlung** (no la Bereitschaftspolizei), y el primer

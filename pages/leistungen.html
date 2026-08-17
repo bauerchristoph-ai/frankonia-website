@@ -83,7 +83,7 @@
 
   <!-- LCP element on this page. imagesrcset/imagesizes repeat the <picture>'s own
        srcset/sizes so the preload and the <img> pick the same candidate. -->
-  <link rel="preload" as="image" type="image/webp" imagesrcset="/assets/images/leistungen-hero-768.webp 768w, /assets/images/leistungen-hero-1280.webp 1280w" imagesizes="100vw">
+  <link rel="preload" as="image" href="/assets/images/leistungen-hero-1280.webp" type="image/webp" imagesrcset="/assets/images/leistungen-hero-768.webp 768w, /assets/images/leistungen-hero-1280.webp 1280w, /assets/images/leistungen-hero-1578.webp 1578w" imagesizes="100vw">
   <!-- include: head-common -->
   <link rel="stylesheet" href="/css/lead-form.css">
   <link rel="stylesheet" href="/css/page-service.css">
@@ -108,47 +108,62 @@
 
   <main id="main">
 
-    <nav class="breadcrumbs container" aria-label="Breadcrumb">
-      <ol class="breadcrumbs__list">
-        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
-        <li class="breadcrumbs__sep" aria-hidden="true">
-          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
-        </li>
-        <li><span class="breadcrumbs__current" aria-current="page">Leistungen</span></li>
-      </ol>
-    </nav>
-
     <!-- ============ 1. HERO ============ -->
     <!-- Redesigned 2026-08-10 (client brief), then given a photograph the same day
          after the client saw it: "no me gusta que no haya un hero definido".
-         ~70svh rather than a full screen, so the orientation layer below is already
-         visible at the fold. The three family scenes that briefly lived in a right
-         column here are now in the orientation selectors — they were saying the
-         same three things one screen apart, and the hero needed the room. -->
-    <section class="service-hero lh-hero lh-hero--photo" data-hero-reveal>
-      <!-- The photograph IS the hero now (client 2026-08-10: "no me gusta que no
-           haya un hero definido" — with hero and orientation both on flat black
-           and no seam between them, the hero never visibly ended).
-           ⚠️ A DIRECT CHILD OF THE SECTION, never of .service-hero__grid. The
+         The three family scenes that briefly lived in a right column here are now
+         in the orientation selectors — they were saying the same three things one
+         screen apart, and the hero needed the room.
+
+         FULL-BLEED SINCE 2026-08-17 (client: "que no haya gradientes arriba y
+         abajo como hay ahora, que sea como la de werkschutz, que está ocupando
+         todo el background del inicio"). It used to be a photo layer inside the
+         section with a heavy vertical ramp at each end — 0.97 black at the top so
+         the image "emerged" from the page, 0.94 at the bottom — which is exactly
+         the pair of bands the client is describing. It now uses the CHASSIS'
+         `.service-hero--bleed`, the same treatment /werkschutz/ has: the photo
+         reaches the literal top of the page under the sticky header, and the only
+         washes left are the ones that do a job — a left-to-right ramp for the copy
+         and a short band under the nav.
+         ⚠️ OPTING IN IS TWO THINGS TOGETHER: the class AND moving the breadcrumb
+         inside the section. `.service-hero` is the hero on six other pages, so the
+         bleed declarations live on the modifier; a page that keeps its breadcrumb
+         above the hero would have the photo climbing over it. -->
+    <section class="service-hero lh-hero service-hero--bleed" data-hero-reveal>
+      <!-- ⚠️ A DIRECT CHILD OF THE SECTION, never of .service-hero__grid. The
            chassis sets `position: relative` on that grid, so an absolutely
            positioned layer inside it resolves `inset: 0` against the GRID's box,
-           not the section's — the first build of this put the photo inside and it
+           not the section's — an earlier build of this put the photo inside and it
            came out as a band across the middle of the hero WITH THE COPY BEHIND
            IT, because an absolutely positioned child also paints above its
            non-positioned siblings' content.
-           ⚠️ INTERIM PHOTO. There is no services-hub photograph in the project —
-           every landscape image is already some page's hero — so this is the
-           homepage system-story's handshake shot, which at least is not a hero
-           anywhere. Its left third is genuinely dark (measured luminance 57 against
-           117 on the right), which is what lets the wash stay light enough to keep
-           the two people and the branded entrance readable. Swapping it is a
-           <picture> and three files. -->
-      <div class="lh-hero__bg" aria-hidden="true">
+           ✅ REAL PHOTO SINCE 2026-08-17 (client: `Heroleistungen.png`). This
+           closes the "INTERIM PHOTO" note that stood here since 2026-08-10 — the
+           hub used to borrow the homepage system-story's handshake shot because
+           every landscape image in the project was already some page's hero. This
+           one is FRANKONIA's own: two staff in branded uniform briefing over a
+           clipboard in a building lobby, which is what a services hub should open
+           on. 1578x989, so it is a genuine landscape background and `cover` has
+           almost nothing to crop. -->
+      <div class="service-hero__bg" aria-hidden="true">
         <picture>
-          <source type="image/webp" srcset="/assets/images/leistungen-hero-768.webp 768w, /assets/images/leistungen-hero-1280.webp 1280w" sizes="100vw">
-          <img src="/assets/images/leistungen-hero-1280.jpg" width="1280" height="853" alt="" loading="eager" fetchpriority="high" decoding="async">
+          <source type="image/webp" srcset="/assets/images/leistungen-hero-768.webp 768w, /assets/images/leistungen-hero-1280.webp 1280w, /assets/images/leistungen-hero-1578.webp 1578w" sizes="100vw">
+          <img src="/assets/images/leistungen-hero-1578.jpg" width="1578" height="989" alt="" loading="eager" fetchpriority="high" decoding="async">
         </picture>
       </div>
+
+      <!-- Inside the hero, over the photo — see the note on the section. It needs
+           .service-hero__crumbs for its own z-index layer, or it only paints above
+           the picture by source order. -->
+      <nav class="breadcrumbs service-hero__crumbs container" aria-label="Breadcrumb">
+        <ol class="breadcrumbs__list">
+          <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+          <li class="breadcrumbs__sep" aria-hidden="true">
+            <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+          </li>
+          <li><span class="breadcrumbs__current" aria-current="page">Leistungen</span></li>
+        </ol>
+      </nav>
 
       <div class="container service-hero__grid lh-hero__grid">
         <div class="service-hero__content hero__content">
@@ -174,9 +189,19 @@
           </div>
         </div>
       </div>
-    </section>
 
-    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+      <!-- ⚠️ THE SEAM MOVED INSIDE THE HERO with the bleed (2026-08-17), and it is
+           `--photo`, not the default. A normal seam's tiles are the colour of the
+           section ABOVE it — over a photograph that is a flat black bar, which is
+           precisely the bottom band the client asked to remove. `--photo` inverts
+           the model: the tiles are the NEXT section's colour and fade IN, so the
+           photo breaks up into the section below instead of being covered.
+           Because it is no longer a SIBLING before the orientation section, that
+           section also stops reserving the 200px band — correct, the band is not
+           in it any more. -->
+      <div class="pixel-seam pixel-seam--photo" data-pixel-seam
+           data-seam-start="top 95%" data-seam-end="top 45%" aria-hidden="true"></div>
+    </section>
 
     <!-- ============ 1.5 ORIENTIERUNG ============ -->
     <!-- Added 2026-08-10 (client brief): before eleven services, the three

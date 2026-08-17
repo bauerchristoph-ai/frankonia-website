@@ -58,6 +58,115 @@
   margin-inline: auto;
 }
 
+/* ---- 1b. Hub hero: two columns, copy + drawn guide stack -------------------
+   Client 2026-08-16 (3.10.1, "the current hero is too plain"). Everything here is
+   scoped to `.rg-hero--hub`, and that is load-bearing rather than tidy: the rules
+   above are shared with the three ARTICLE heroes, whose 44rem measure is
+   deliberately tied to `.rg-article`'s so the H1 and the body copy keep one left
+   line down the page (see the note above it). Widening `.rg-hero` itself would
+   have silently broken that alignment on three pages to fix one. */
+@media (min-width: 1024px) {
+  .rg-hero--hub .rg-hero__grid {
+    /* The copy keeps the bigger share: it carries the H1, the lede AND the trust
+       band, while the visual is decoration. */
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    column-gap: clamp(var(--space-7), 5vw, var(--space-9));
+    align-items: center;
+  }
+
+  /* Released from the shared 44rem cap — in its own column there is no article
+     column below it to line up with, and 44rem inside a 1.15fr track would leave
+     the copy hugging the left of a much wider box. Capped at 40rem so the H1 still
+     breaks like a heading rather than running to a single long line. */
+  .rg-hero--hub .service-hero__content {
+    max-width: 40rem;
+    margin-inline: 0;
+  }
+}
+
+.rg-hero__visual {
+  display: flex;
+  justify-content: center;
+}
+
+/* Stacked (<1024px) the drawing sits under the copy, so the only thing enlarging
+   it costs is hero height — but a full-width guide stack on a phone would own the
+   whole first screen, which is the opposite of the point. */
+.rg-guide {
+  width: 100%;
+  max-width: 15rem;
+  height: auto;
+  /* ⚠️ NO `margin-top` here. It had one, and it was redundant: the hero grid
+     already carries `row-gap: 64px`, so a margin stacked ON TOP of it, adding to
+     112px of empty black between the trust band and the drawing on a phone
+     (measured). The grid gap is the single thing that spaces these two rows. */
+  /* Its own type comes from the page rather than the SVG default, same as
+     `.sk-doc` — the chip is the only real word in the drawing. */
+  font-family: var(--font-family-base);
+}
+
+@media (min-width: 640px) {
+  .rg-guide {
+    max-width: 19rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .rg-guide {
+    max-width: 26rem;
+  }
+}
+
+/* ⚠️ EVERY VALUE BELOW IS COPIED FROM `.sk-doc` (page-sicherheitskonzept.css), not
+   re-derived. Those two drawings are the same object in the site's language — a
+   FRANKONIA document — and two hand-tuned sets of near-identical greys would read
+   as an accident. If one changes, change both. */
+.rg-guide__behind rect {
+  fill: rgb(255 255 255 / 0.14);
+}
+
+.rg-guide__sheet {
+  fill: var(--color-white);
+}
+
+/* Brand blue for the two things that are "FRANKONIA" in the drawing: the logo bar
+   and the accordion plus glyphs. Everything else is neutral. */
+.rg-guide__mark,
+.rg-guide__plus {
+  fill: var(--color-blue-light);
+}
+
+/* Skeleton text: the site's body slate at an alpha that reads as "text at a
+   distance" instead of grey boxes. The question bar is a step darker than the
+   answer lines, which is the whole hierarchy the drawing needs. */
+.rg-guide__q {
+  fill: rgb(59 73 86 / 0.38);
+}
+
+.rg-guide__a {
+  fill: rgb(59 73 86 / 0.22);
+}
+
+.rg-guide__rule {
+  stroke: rgb(59 73 86 / 0.16);
+  stroke-width: 1;
+}
+
+.rg-guide__chip {
+  fill: rgb(61 154 211 / 0.14);
+}
+
+/* ⚠️ The deep mix, not `--color-accent`. This is 7px type on a pale blue tint,
+   where #3D9AD3 measures about 2.4:1; #4673AB is ~4.6:1 on that composite. The
+   drawing is decorative and aria-hidden so WCAG does not strictly bind — but a
+   sighted reader still reads it, and an illegible label defeats drawing one. */
+.rg-guide__chip-text {
+  font-size: 7px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  fill: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+}
+
 /* An ARTICLE headline is longer than a page title and has to stay a headline, so
    it steps down from the hero clamp §2 makes mandatory. This is the same
    reasoning the article H2s use below, applied to the H1: the hub keeps the full
@@ -93,7 +202,33 @@
   }
 }
 
-/* ---- 3. Hub: article cards ---------------------------------------------- */
+/* ---- 3. Hub: article list section ---------------------------------------
+   ⚠️ THIS SECTION WAS CALLED `.rg-list` UNTIL 2026-08-16 AND THAT WAS A REAL BUG,
+   not just an untidy name: `.rg-list` is ALSO the prose `<ul>` inside the article
+   pages (see further down this file), and both live in this one stylesheet, so the
+   hub's <section> was silently picking up a list's rules — `padding: 0` and
+   `margin: 24px 0 16px`.
+   The margin is what the client saw: a margin sits OUTSIDE the background, so on a
+   white section over a black page it painted a **16px black band across the full
+   width** under the cards, and another 24px above (hidden by the seam). Measured
+   before the rename: section top 560 / bottom 1300, with the next seam at 1316.
+   Renamed rather than overridden — an override would have left the collision in
+   place for the next rule either side adds. The article list keeps the name it
+   actually describes; nothing here targets `.rg-articles`, because the cards have
+   always been `.rg-cards`.
+   Same failure mode as the /referenzen/ margin-collapse band (CLAUDE.md,
+   2026-08-03): on a light section over a dark page, ANY stray vertical margin is a
+   visible black stripe. */
+
+/* The heading is centred (client 2026-08-16). Only `text-align` is needed here:
+   the intro holds an H2 and no lede, and page-service.css already gives
+   `.section__intro` `max-width: none`, so the box is full width and there is no
+   off-centre caption box to fix with `margin-inline: auto` — the two-declaration
+   trap documented for every other centred intro on this site does not apply. */
+.rg-articles .section__intro {
+  text-align: center;
+}
+
 .rg-cards {
   list-style: none;
   margin: var(--space-8) 0 0;
@@ -192,7 +327,9 @@
 }
 
 /* Points up-right at rest and turns into a straight right arrow on arrival —
-   the same motion .services__item-arrow and .service-related__arrow already use.
+   the same motion .services__item-arrow already uses. (⚠️ .service-related__arrow
+   used to be on this list and is not any more: since 2026-08-17 it nudges
+   diagonally instead of rotating.)
    `rotate` rather than a `transform`, for the reason in the hover note above. */
 .rg-card:hover .rg-card__arrow,
 .rg-card:focus-visible .rg-card__arrow {

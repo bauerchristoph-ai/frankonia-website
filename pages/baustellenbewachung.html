@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- SERVICE PAGE — Baustellenbewachung. Built from
+     NewVersionCopiesFrankonia/"2026-08-04 Webtext 09 Baustellenbewachung.docx"
+     (Stand 04.08.2026), verbatim, in German.
+
+     ⚠️ THIS IS NOT A COPY OF /werkschutz/ SECTION FOR SECTION, and that is the
+     draft's own doing rather than drift: the v2 copy varies the structure per
+     service on purpose ("Struktur bewusst variiert" is written into six of the
+     nine remaining drafts). This one runs 11 sections. The BLOCKS are all the
+     shared `.service-*` chassis, and css/page-service.css is the only page
+     stylesheet loaded besides the shared form.
+
+     Colour rhythm, derived from the section surfaces rather than copied:
+       ▪ ▫ ▪ ▫ ▫ ▪ ▫ ▪ ▫ ▪ ▫
+     9 pixel seams. Tiles are always the colour of the section ABOVE
+     (docs/page-conventions.md §9.2).
+
+     GENERATED ONCE by docs/design-sources/service-pages.py, then hand-editable.
+     ⚠️ If you edit the FAQ below, edit the FAQPage graph above it too — they must
+     stay byte-identical with markup stripped. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title (57 chars) and description (159) are the draft's own —
+       docs/page-conventions.md §12. -->
+  <title>Baustellenbewachung Franken | Diebstahlschutz – FRANKONIA</title>
+  <meta name="description" content="Baustellenbewachung gegen Diebstahl &amp; Vandalismus: flexible Konzepte, die mit dem Baufortschritt mitwachsen. Dokumentiert &amp; zertifiziert, Angebot in 1 Werktag.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/baustellenbewachung/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/baustellenbewachung/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/baustellenbewachung/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Baustellenbewachung Franken | Diebstahlschutz – FRANKONIA">
+  <meta property="og:description" content="Baustellenbewachung gegen Diebstahl &amp; Vandalismus: flexible Konzepte, die mit dem Baufortschritt mitwachsen. Dokumentiert &amp; zertifiziert, Angebot in 1 Werktag.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/baustellenbewachung/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- The hero photo is the LCP element, same pattern as every other service
+       hero. One source, no srcset: the file is 820px wide and there is no larger
+       original, so a candidate list would only ever offer the same image. -->
+  <link rel="preload" as="image" href="/assets/images/baustellenbewachung.webp" type="image/webp">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "{{phone.display}}",
+      "email": "{{email}}",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://frankonia-sicherheit.de/baustellenbewachung/#service",
+      "name": "Baustellenbewachung",
+      "serviceType": "Baustellenbewachung",
+      "description": "Baustellenbewachung in Franken gegen Diebstahl, Vandalismus und unbefugten Zutritt: Nacht- und Wochenendbewachung, Kontrollgänge zu variierenden Zeiten, Zufahrtskontrolle und ergänzende Technik.",
+      "provider": {
+        "@id": "https://frankonia-sicherheit.de/#localbusiness"
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Bamberg" },
+        { "@type": "City", "name": "Nürnberg" },
+        { "@type": "City", "name": "Würzburg" },
+        { "@type": "City", "name": "Erlangen" },
+        { "@type": "City", "name": "Fürth" },
+        { "@type": "City", "name": "Schweinfurt" },
+        { "@type": "City", "name": "Bayreuth" },
+        { "@type": "City", "name": "Coburg" },
+        { "@type": "City", "name": "Ansbach" },
+        { "@type": "City", "name": "Hof" }
+      ],
+      "offers": {
+        "@type": "Offer",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "priceCurrency": "EUR",
+          "minPrice": 26,
+          "maxPrice": 32,
+          "unitCode": "HUR"
+        }
+      },
+      "url": "https://frankonia-sicherheit.de/baustellenbewachung/"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Leistungen",
+          "item": "https://frankonia-sicherheit.de/leistungen/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Baustellenbewachung",
+          "item": "https://frankonia-sicherheit.de/baustellenbewachung/"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/baustellenbewachung/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Was kostet Baustellenbewachung pro Stunde?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde für Bewachungspersonal, mit tariflichen Zuschlägen für Nacht, Wochenende und Feiertage. Revierkontrollen zu variierenden Zeiten werden je Kontrollfahrt kalkuliert und sind oft die wirtschaftlichste Lösung — Ihr Angebot erhalten Sie innerhalb eines Werktages."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Reichen Kontrollen oder brauche ich einen festen Posten?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Das hängt von Materialwert, Lage und Bauphase ab: Bei Großgerät und abgelegener Lage lohnt der feste Nachtposten, bei überschaubaren Werten reichen oft variierende Kontrollen plus Alarmtechnik (im Raum Bamberg als Revierdienst-Kontrollfahrten). Die kostenfreie Begehung liefert eine klare Empfehlung, inklusive Kostenvergleich."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie schnell kann die Bewachung starten?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nach Absprache auch sehr kurzfristig, etwa nach einem Einbruch am Wochenende. Rufen Sie direkt an: +49 951 964352-0, die Einsatzleitung ist rund um die Uhr erreichbar."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Passt sich die Bewachung dem Baufortschritt an?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, das Konzept wird je Bauphase angepasst: mehr Präsenz bei Großgerät und offenem Rohbau, weniger im Innenausbau, Sonderschutz vor der Übergabe. Sie zahlen für den Schutz, den die aktuelle Phase braucht."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Übernimmt FRANKONIA auch die Brandwache bei Heißarbeiten?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, Brandwachen für Schweiß-, Löt- und Dacharbeiten stellen wir aus einer Hand mit der Baustellenbewachung, inklusive der vorgeschriebenen Nachkontrolle und Dokumentation für den Versicherer."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+  <!-- Shared lead-form section, then the service chassis
+       (docs/page-conventions.md §9.1). -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+
+  <!-- The documented generic effect stack (docs/page-conventions.md §4.1).
+       Deliberately NOT loaded: service-flow.js, service-contrast.js, svg-draw.js
+       and case-cards.js — /werkschutz/ needs them for blocks whose markup does
+       not exist on this page. steps-sequence.js IS loaded: the Schritte section
+       uses the shared rail. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+  <script src="/js/steps-sequence.js" defer></script>
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Chevron separators, not slashes — docs/page-conventions.md §3. Matches
+         the BreadcrumbList JSON-LD above. It sits ABOVE the hero because this
+         hero is a two-column split, not a full-bleed photograph: only the bleed
+         variant pulls the breadcrumb inside the section. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/leistungen/">Leistungen</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Baustellenbewachung</span></li>
+      </ol>
+    </nav>
+
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- The draft's own Hero-Aufbau, nothing added or dropped: badge → H1 →
+         subline → 3 ticks → double CTA → Google widget + DEKRA seals.
+         Primary = the free-offer form, secondary = the phone: client rule G2's
+               default order, and the label G3 requires for a CTA pointing at a form.
+
+         TWO COLUMNS, not the full-bleed treatment /werkschutz/ uses, and the
+         reason is the asset: the only photograph this service has is the
+         portrait 820x1222 file that already feeds the homepage's services
+         preview. A background hero would crop a portrait photo to a letterbox
+         band, which is precisely why docs/page-conventions.md §8.2 prescribes the
+         split hero for a vertical photo. The breadcrumb therefore sits ABOVE the
+         hero (a bleed hero is the only case that pulls it inside).
+
+         .hero__lead / .hero__actions / .hero__reassurance / .hero__trust are
+         load-bearing class names, not decoration — js/hero-reveal.js animates
+         exactly those four blocks in that order, so this page needs no JS of its
+         own (docs/page-conventions.md §4.1). -->
+    <section class="service-hero service-hero--split" data-hero-reveal>
+      <div class="container service-hero__grid">
+        <div class="service-hero__content">
+          <!-- Hero badge, verbatim from the Webtext (client rule G9: the badge is
+               whatever the document says it is). -->
+          <p class="hero-badge">
+            <svg class="icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+            Flexible Bewachungskonzepte, angepasst an Ihren Baufortschritt
+          </p>
+
+          <h1>Baustellenbewachung: Schützen Sie Ihre Baustelle vor Diebstahl und Vandalismus</h1>
+
+          <p class="hero__lead service-hero__lead">
+            Maschinen, Kraftstoff, Material: FRANKONIA schützt Ihre Baustelle mit festen Teams und Konzepten, die mit dem Bau mitwachsen.
+          </p>
+
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn btn--secondary service-hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+          </div>
+
+          <!-- The draft's three hero lines, VERBATIM. They are full sentences, so
+               this is the stacked list /jobs/ and the city pages use rather than
+               the homepage's row of short chips — a row of three sentences needs
+               roughly 1000px at this type size against the ~640px this column
+               has. /werkschutz/ truncated its three into chips on an explicit
+               client instruction; no such instruction covers these nine, so the
+               sentences stay whole. -->
+          <ul class="hero__reassurance service-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Schutz vor Diebstahl, Vandalismus und Materialverlust, dokumentiert
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Festes Sicherheitsteam statt wechselnder Gesichter
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Konzept passt sich Bauphasen an: vom Rohbau bis zur Übergabe
+            </li>
+          </ul>
+
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- LCP element: preloaded in <head>, eager, high priority, and the
+             aspect-ratio is this file's REAL height rather than a shared 4:5.
+             Five of the nine service photos are 1217–1225px tall, not 1227, and a
+             shared ratio leaves a strip of the frame's own background showing
+             under the photo — the exact defect §8.2 records for the homepage's
+             services preview ("some service images show a grey bar"). -->
+        <figure class="service-hero__media" style="aspect-ratio: 820 / 1222">
+          <picture>
+            <source type="image/webp" srcset="/assets/images/baustellenbewachung.webp">
+            <img src="/assets/images/baustellenbewachung.jpg" width="820" height="1222" alt="FRANKONIA Sicherheitskraft mit Schutzhelm und Funkgerät auf einer Baustelle" loading="eager" fetchpriority="high">
+          </picture>
+        </figure>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 2. Risiko ============ -->
+    <!-- The draft's 3 blocks, verbatim.
+
+         RULED, NOT CARDED — docs/page-conventions.md §8.2: on a service page the
+         Preis-Box is the only elevated surface. It also avoids re-publishing the
+         3,11:1 caveat `.service-cases`' blue cards carry, which would have landed
+         on this page 3 more times for a section the draft never asked to be
+         cards. -->
+    <section class="section section--light service-points" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Was ein Wochenende ohne Bewachung kosten kann</h2>
+          <p data-reveal data-reveal-delay>Baustellendiebstahl verursacht in Deutschland jährlich Schäden in Millionenhöhe, und trifft fast immer nachts, am Wochenende oder in Ferienzeiten. Der eigentliche Schaden ist oft nicht das gestohlene Gerät, sondern der Bauverzug.</p>
+        </div>
+
+        <ul class="service-points__list service-points__list--3" data-item-reveal="li">
+          <li class="service-points__item">
+            <h3 class="service-points__title">Maschinen- &amp; Kraftstoffdiebstahl</h3>
+            <p class="service-points__text">Bagger, Radlader, Werkzeug, Diesel, organisierte Täter wissen, was sich lohnt, und schlagen gezielt zu. Ein einziger Maschinendiebstahl übersteigt schnell die Bewachungskosten eines ganzen Bauabschnitts.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Bauverzögerung &amp; Vertragsstrafen</h3>
+            <p class="service-points__text">Fehlt am Montag das Gerät, steht die Kolonne. Verzugsschäden und Vertragsstrafen kosten oft mehr als der reine Materialwert.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Vandalismus &amp; ungebetene Gäste</h3>
+            <p class="service-points__text">Beschädigte Verschalungen, besprühte Fassaden, Unbefugte auf dem Gelände, mit Haftungsrisiken, wenn jemandem etwas zustößt.</p>
+          </li>
+        </ul>
+
+        <p class="service-points__outro" data-reveal>Sichtbare Bewachung zu unvorhersehbaren Zeiten ist die wirksamste Prävention — Täter beobachten Baustellen, bevor sie zuschlagen.</p>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 3. Leistungsumfang ============ -->
+    <!-- The draft's Häkchenliste, verbatim, as a two-column tick list.
+         ⚠️ NOT `.service-flow` (the pinned 50/50 scrollytelling /werkschutz/ uses
+         for the same section). That block needs SIX photographs per service and
+         only Werkschutz has them; this page has one. The drafts describe this
+         section as "H2 + Häkchenliste", which is what this is. -->
+    <section class="section service-scope">
+      <div class="container">
+        <div class="section__intro">
+          <h2>So bewacht FRANKONIA Ihre Baustelle</h2>
+        </div>
+
+        <ul class="service-scope__list" data-item-reveal="li">
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Nacht- &amp; Wochenendbewachung</h3>
+              <p class="service-scope__text">Feste Posten oder Kontrollgänge in den kritischen Zeiten, je nach Lage und Materialwert.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Kontrollgänge zu variierenden Zeiten</h3>
+              <p class="service-scope__text">Unvorhersehbare Kontrollen als wirtschaftliche Alternative zur Dauerbewachung, im Raum Bamberg auch als Revierdienst-Kontrollfahrten.</p>
+              <a class="service-link" href="/revier-schliessdienst/">Zum Revier- &amp; Schließdienst<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Zufahrts- &amp; Zutrittskontrolle</h3>
+              <p class="service-scope__text">Wer fährt was auf und vom Gelände? Kontrolle von Lieferverkehr und Subunternehmern, dokumentiert.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Technik-Kombination</h3>
+              <p class="service-scope__text">Moderne Videoüberwachung und Alarmtechnik, wo sie Personalstunden sparen, geplant als Teil des Bewachungskonzepts.</p>
+              <a class="service-link" href="/sicherheitstechnik/">Zur Sicherheitstechnik<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Brandwache bei Heißarbeiten</h3>
+              <p class="service-scope__text">Schweiß- und Dacharbeiten mit vorgeschriebener Brandwache, aus einer Hand mit der Bewachung.</p>
+              <a class="service-link" href="/brandwache/">Zur Brandwache<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Lückenlose Dokumentation</h3>
+              <p class="service-scope__text">Jede Kontrolle, jeder Vorfall im digitalen Wachbuch, als Nachweis für Bauherren, Partnerfirmen und Versicherung.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 4. Baustellenbewachung vs. technische Baustellenüberwachung (Pflicht-Abgrenzung) ============ -->
+    <!-- The draft's own copy, verbatim.
+         GEO: H2 as the question, answer in the first two sentences. -->
+    <section class="section section--light service-prose" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Baustellenbewachung oder Baustellenüberwachung, wovon ist hier die Rede?</h2>
+        </div>
+
+        <div class="section__intro">
+          <p data-reveal data-reveal-delay>Baustellenbewachung schützt Ihre Baustelle vor Diebstahl, Vandalismus und unbefugtem Zutritt, durch Sicherheitspersonal und ergänzende Technik. Die technische Baustellenüberwachung (Bauüberwachung durch Bauleiter, Baukameras zur Dokumentation des Baufortschritts) ist etwas anderes und keine Sicherheitsdienstleistung. FRANKONIA übernimmt die Bewachung, inklusive Videotechnik, wenn sie dem Schutz dient, nicht der Baudokumentation.</p>
+        </div>
+      </div>
+    </section>
+    <!-- No seam: prose and points are both light surfaces, and tiles the colour of the section above would be invisible against the one below (§9.2). -->
+    <!-- ============ 5. Warum FRANKONIA (Pain-Aufhänger) ============ -->
+    <!-- The draft's 3 blocks, verbatim.
+
+         RULED, NOT CARDED — docs/page-conventions.md §8.2: on a service page the
+         Preis-Box is the only elevated surface. It also avoids re-publishing the
+         3,11:1 caveat `.service-cases`' blue cards carry, which would have landed
+         on this page 3 more times for a section the draft never asked to be
+         cards. -->
+    <section class="section section--light service-points" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Baustellenbewachung, auf die Sie sich verlassen können</h2>
+          <p data-reveal data-reveal-delay>Ob die Nachtkontrolle wirklich gelaufen ist, sehen Sie ohne Nachweise erst nach dem Einbruch. Deshalb arbeitet FRANKONIA mit Kontrollpunkten und digitalem Wachbuch:</p>
+        </div>
+
+        <ul class="service-points__list service-points__list--3" data-item-reveal="li">
+          <li class="service-points__item">
+            <h3 class="service-points__title">Nachweisbar gelaufen</h3>
+            <p class="service-points__text">Wächterkontrollsystem mit Checkpoints auf dem Gelände, jede Runde wird technisch belegt, nicht nur behauptet.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Festes Team, eingewiesen auf Ihre Baustelle</h3>
+            <p class="service-points__text">Zufahrten, Gefahrstellen, Ansprechpartner der Gewerke — Ihr Team kennt die Baustelle und erkennt, was nicht dorthin gehört.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Ein Ansprechpartner für die gesamte Bauzeit</h3>
+            <p class="service-points__text">Bauphasen ändern sich, Ihr Einsatzleiter bleibt, erreichbar rund um die Uhr, auch wenn kurzfristig mehr Schutz nötig ist.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 6. Konkrete Schritte ============ -->
+    <!-- The draft's 4 steps, verbatim, on the shared rail: one numeral and one
+         node per step, the hairline between them drawn by js/steps-sequence.js as
+         each step arrives.
+
+         ⚠️ DARK SURFACE, and that is a constraint rather than a rhythm choice:
+         `.service-konzept__text` hardcodes white-at-0.88 and the block's three
+         Figma scenes carry a fixed white stroke, both stated in page-service.css.
+         ⚠️ NO per-step artwork here — this draft supplies none, and inventing 4
+         scenes per page is not assembly. The numeral, the node and the rail carry
+         the sequence, exactly as the mobile layout always has. -->
+    <section class="section service-konzept">
+      <div class="container service-konzept__inner">
+        <div class="section__intro service-konzept__intro">
+          <h2>In 4 Schritten zur bewachten Baustelle</h2>
+        </div>
+
+        <ol class="service-konzept__steps service-konzept__steps--4" data-steps-sequence data-no-text-reveal>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">01</span>
+            <h3 class="service-points__title">Baustellen-Begehung</h3>
+            <p class="service-konzept__text">Lage, Zufahrten, Materialwerte, Bauzeitenplan, kostenfrei, auf Wunsch kurzfristig.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">02</span>
+            <h3 class="service-points__title">Bewachungskonzept</h3>
+            <p class="service-konzept__text">Posten, Revierdienst, Technik oder Kombination, kalkuliert auf Bauphasen statt pauschal.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">03</span>
+            <h3 class="service-points__title">Angebot in 1 Werktag</h3>
+            <p class="service-konzept__text">Transparent nach Bauabschnitten, anpassbar bei Bauverzug oder Planänderung.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">04</span>
+            <h3 class="service-points__title">Start der Bewachung</h3>
+            <p class="service-konzept__text">Auch kurzfristig nach Absprache, etwa nach einem ersten Vorfall auf dem Gelände.</p>
+          </li>
+        </ol>
+
+        <div class="service-konzept__actions" data-reveal>
+          <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 7. KOSTEN ============ -->
+    <!-- The block docs/build-checklist.md counts on 27 pages, reused verbatim.
+         GEO pattern: question H2, the answer in the first sentence, then what
+         moves it.
+         ⚠️ EVERY PRICE IS A TOKEN, never a literal (client rule G10): the draft
+         writes "zwischen 26 und 32 Euro" and it is emitted as {{price.min}} /
+         {{price.max}}, so the annual rate change stays one edit in
+         content/values.json instead of 27 pages x 2 (visible + JSON-LD).
+         DOM order is the design: intro → price → factors → Hinweis, which is the
+         phone order, done in markup rather than with `order` so the tab order
+         matches the screen (§7). -->
+    <section class="section section--light service-price" data-nav-theme="light">
+      <div class="container service-price__layout">
+        <div class="section__intro service-price__intro">
+          <h2>Was kostet Baustellenbewachung?</h2>
+          <p class="service-price__answer" data-reveal data-reveal-delay>Baustellenbewachung kostet in der Regel zwischen 25 und 35 Euro pro Stunde für Bewachungspersonal; im Raum Bamberg sind Revierkontrollen je Kontrollfahrt die wirtschaftliche Einstiegslösung. Die Faktoren:</p>
+        </div>
+
+        <!-- include: price-box range="{{price.range}}" note="netto; Revierkontrollen je Fahrt" priceBoxTick1="Konzept nach Bauphasen" priceBoxTick2="Angebot in 1 Werktag" -->
+
+        <ul class="service-price__factors" data-item-reveal>
+          <li>Bewachungsform: fester Posten, Kontrollfahrten oder Kombination mit Technik</li>
+          <li>Einsatzzeiten: Nächte, Wochenenden, Feiertage (tarifliche Zuschläge)</li>
+          <li>Lage und Größe des Geländes, Anzahl der Zufahrten</li>
+          <li>Bauphase: Rohbau mit Großgerät braucht anderen Schutz als der Innenausbau</li>
+          <li>Dauer: Bewachung über Monate wird günstiger je Stunde als der Kurzeinsatz</li>
+        </ul>
+
+        <p class="service-price__hint">
+          <svg class="icon service-price__hint-icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <span><strong>Hinweis:</strong> Vergleichen Sie die Bewachungskosten mit Ihrem Risiko: Maschinenwert, Wiederbeschaffungszeit, Vertragsstrafen bei Verzug. Meist entscheidet ein einziger verhinderter Diebstahl die Rechnung.</span>
+        </p>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 8. TRUST / ANSPRECHPARTNER ============ -->
+    <!-- ✅ SETTLED BY THE CLIENT (2026-08-13, Q2: "Keep it — always. The Alexander
+         Jäger contact section stays on every page where the documents specify
+         it"). This draft's Trust section names him, so the page carries the full
+         contact block; the drafts that do not name him get the certification
+         strip instead, which is the same decision applied honestly rather than
+         a photo added everywhere.
+
+         ⚠️ DARK SURFACE, twice over: the certs panel is a 6 %-white tint, and the
+         portrait's backdrop is normalised to #010101 exactly so its edge IS the
+         page colour. A light-section version means re-running
+         docs/design-sources/portrait-key-backdrop.py with a different target
+         colour, NOT a CSS override.
+
+         ⚠️ The phone and e-mail actions are FRANKONIA's real published details
+         (they are already on /werkschutz/ and in content/values.json), but THIS
+         draft's Trust paragraph does not repeat them — only Objektschutz's does.
+         They are included because a contact block whose purpose is contact
+         without a way to make contact is worse than either option. Worth one
+         confirmation with Chris. -->
+    <section class="section service-contact">
+      <div class="container service-contact__layout">
+        <div class="section__intro service-contact__intro">
+          <h2>Bewachung, auf die sich Bauherren und Generalunternehmer verlassen</h2>
+        </div>
+
+        <figure class="service-contact__portrait" data-reveal>
+          <picture>
+            <source type="image/webp" srcset="/assets/images/wk-contact-alexander-jaeger-480.webp 480w, /assets/images/wk-contact-alexander-jaeger-960.webp 960w" sizes="(min-width: 900px) 30rem, min(48vw, 14rem)">
+            <img src="/assets/images/wk-contact-alexander-jaeger-960.jpg" srcset="/assets/images/wk-contact-alexander-jaeger-960.jpg 960w" sizes="(min-width: 900px) 30rem, min(48vw, 14rem)" width="960" height="1200" alt="Alexander Jäger, Vertriebsleiter und Sicherheitsbeauftragter bei FRANKONIA" loading="lazy">
+          </picture>
+        </figure>
+
+        <div class="service-contact__person">
+          <p class="service-contact__name">Alexander Jäger</p>
+          <p class="service-contact__role">Vertriebsleiter und Sicherheitsbeauftragter</p>
+          <p class="service-contact__body">FRANKONIA bewacht Baustellen in ganz Franken, vom Wohnbauprojekt bis zur Industrie-Erweiterung, zertifiziert nach DIN 77200-1 und ISO 9001 (DEKRA-geprüft). Ihr Ansprechpartner für Ihre Anfrage: Alexander Jäger, Vertriebsleiter und Sicherheitsbeauftragter; im Einsatz ist die Einsatzleitung rund um die Uhr erreichbar. Dokumentation und Nachweise sind versicherungs- und gerichtstauglich.</p>
+
+          <div class="service-contact__actions">
+            <a class="service-contact__action service-contact__action--phone" href="{{phoneJaeger.href}}">
+              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phoneJaeger.display}}
+            </a>
+            <a class="service-contact__action service-contact__action--mail" href="mailto:{{emailJaeger}}">
+              <svg class="icon" aria-hidden="true"><use href="#icon-mail"></use></svg>
+              {{emailJaeger}}
+            </a>
+          </div>
+        </div>
+
+        <div class="service-contact__certs" data-reveal>
+          <h3 class="service-contact__certs-title">Dahinter steht ein zertifiziertes System</h3>
+
+          <div class="service-contact__seals">
+            <img class="service-contact__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="service-contact__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+          </div>
+
+          <ul class="service-contact__certs-list">
+            <li><strong>DIN 77200-1</strong><span>für stationäre Sicherheitsdienste</span></li>
+            <li><strong>DIN EN ISO 9001</strong><span>seit 2016, geprüft durch die DEKRA</span></li>
+            <li><strong>§ 34a GewO</strong><span>ausschließlich IHK-qualifizierte Kräfte</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 9. FAQ ============ -->
+    <!-- The draft's 5 questions and answers, verbatim, mirroring the FAQPage
+         JSON-LD at the top of this file 1:1.
+         The draft ends an answer with a bare "→ /brandwache/", which is
+         authoring notation rather than copy. The destination is not lost — it is in
+         Verwandte Leistungen at the foot of this page.
+         ⚠️ The visible copy and the schema copy must stay BYTE-IDENTICAL with
+         markup stripped. They are generated from one source by
+         docs/design-sources/service-pages.py, so an edit here has to be made in
+         BOTH places by hand. It is the one thing on this page type that is easy
+         to break with a small edit and impossible to see. -->
+    <section class="section section--light service-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Baustellenbewachung: die häufigsten Fragen</h2>
+        </div>
+
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
+          <details class="faq-item">
+            <summary><h3>Was kostet Baustellenbewachung pro Stunde?</h3></summary>
+            <p class="faq-item__answer">In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde für Bewachungspersonal, mit tariflichen Zuschlägen für Nacht, Wochenende und Feiertage. Revierkontrollen zu variierenden Zeiten werden je Kontrollfahrt kalkuliert und sind oft die wirtschaftlichste Lösung — Ihr Angebot erhalten Sie innerhalb eines Werktages.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Reichen Kontrollen oder brauche ich einen festen Posten?</h3></summary>
+            <p class="faq-item__answer">Das hängt von Materialwert, Lage und Bauphase ab: Bei Großgerät und abgelegener Lage lohnt der feste Nachtposten, bei überschaubaren Werten reichen oft variierende Kontrollen plus Alarmtechnik (im Raum Bamberg als Revierdienst-Kontrollfahrten). Die kostenfreie Begehung liefert eine klare Empfehlung, inklusive Kostenvergleich.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Wie schnell kann die Bewachung starten?</h3></summary>
+            <p class="faq-item__answer">Nach Absprache auch sehr kurzfristig, etwa nach einem Einbruch am Wochenende. Rufen Sie direkt an: +49 951 964352-0, die Einsatzleitung ist rund um die Uhr erreichbar.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Passt sich die Bewachung dem Baufortschritt an?</h3></summary>
+            <p class="faq-item__answer">Ja, das Konzept wird je Bauphase angepasst: mehr Präsenz bei Großgerät und offenem Rohbau, weniger im Innenausbau, Sonderschutz vor der Übergabe. Sie zahlen für den Schutz, den die aktuelle Phase braucht.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Übernimmt FRANKONIA auch die Brandwache bei Heißarbeiten?</h3></summary>
+            <p class="faq-item__answer">Ja, Brandwachen für Schweiß-, Löt- und Dacharbeiten stellen wir aus einer Hand mit der Baustellenbewachung, inklusive der vorgeschriebenen Nachkontrolle und Dokumentation für den Versicherer.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 10. ABSCHLUSS-CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The shared lead-form partial with this page's own field prefix — unique
+         per page, or two forms in one document would break every <label for>.
+         The form still submits nowhere sitewide (action="#", native validation
+         only) — docs/build-checklist.md Paso 4. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Jetzt Baustellenbewachung anfragen — Begehung kostenfrei</h2>
+          <p class="conversion__intro-lede">Beschreiben Sie kurz Baustelle, Bauphase und Zeitraum, unsere Experten melden sich innerhalb eines Werktages, bei akuten Fällen sofort. Formulartitel: Ihre Baustellen-Anfrage</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="bb2" messageLabel="Baustelle, Bauphase und Zeitraum" -->
+
+          <p class="conversion__form-alt">Lieber direkt sprechen? <a href="{{phone.href}}">{{phone.display}}</a></p>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 11. VERWANDTE SEITEN ============ -->
+    <!-- The draft's own internal-link list. Several destinations are not built
+         yet; the URLs are the confirmed ones from guidelines §2.2, so these are
+         real links to pages still to come, not placeholders — the same
+         convention /werkschutz/ and the city pages already follow.
+         ⚠️ `.service-related__cols` / `__col`, NOT `__grid`: that second variant
+         had no CSS rule anywhere and fell back to block layout. /sicherheitskonzept/
+         was the last page carrying it and was corrected 2026-08-17 — do not
+         reintroduce it. -->
+    <section class="section section--light service-related" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Verwandte Leistungen und Einsatzgebiete</h2>
+        </div>
+
+        <div class="service-related__cols">
+
+          <div class="service-related__col">
+            <h3 class="service-related__title">Verwandte Leistungen</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/brandwache/"><span class="service-related__label">Brandwache</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/revier-schliessdienst/"><span class="service-related__label">Revier- &amp; Schließdienst</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitstechnik/"><span class="service-related__label">Sicherheitstechnik</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+          <div class="service-related__col">
+            <h3 class="service-related__title">In Ihrer Stadt</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/sicherheitsdienst-nuernberg/"><span class="service-related__label">Sicherheitsdienst Nürnberg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-wuerzburg/"><span class="service-related__label">Sicherheitsdienst Würzburg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-bamberg/"><span class="service-related__label">Sicherheitsdienst Bamberg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

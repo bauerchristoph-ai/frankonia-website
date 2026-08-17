@@ -5,19 +5,37 @@
                Only the box is shared: the section's H2, the answer paragraph, the
                factor list and the Hinweis are per-service copy from that
                service's own Webtext. page-conventions.md 8.2. -->
-          <aside class="service-price__box" data-reveal>
-            <p class="service-price__box-label">Ihre Preisspanne</p>
-            <p class="service-price__box-value">{{range}} <span class="service-price__box-unit">{{price.unit}}</span></p>
+          <!-- `priceBoxMod` / `priceBoxUnit` / `priceBoxLabel` default to empty,
+               the hourly unit and "Ihre Preisspanne" in content/values.json.
+               They exist because three services are NOT priced by the hour and
+               say so in their own Webtext: Sicherheitstechnik is projektbasiert,
+               Revier- & Schließdienst is calculated je Kontrollfahrt, and the
+               Interventionsdienst is a monthly standby fee plus a per-callout
+               fee. Those pages pass `service-price__box--text` and an empty unit,
+               because "Je Kontrollfahrt €/Std." is not a price, it is a
+               contradiction — and at the numeric size the words overflowed the
+               card by 51px at 1440 (measured). -->
+          <aside class="service-price__box {{priceBoxMod}}" data-reveal>
+            <p class="service-price__box-label">{{priceBoxLabel}}</p>
+            <p class="service-price__box-value">{{range}} <span class="service-price__box-unit">{{priceBoxUnit}}</span></p>
             <p class="service-price__box-note">{{note}}</p>
+            <!-- The two tick lines and the CTA are PARAMETERS with defaults in
+                 content/values.json (priceBoxTick1 / priceBoxTick2 /
+                 priceBoxCta / priceBoxCtaHref), added 2026-08-16. An include's
+                 own parameters win over that file, so the eleven pages that
+                 already include this box render exactly as before while a page
+                 whose Webtext specifies different box lines can state them —
+                 /brandwache/ even points the CTA at the phone, because that
+                 page's whole CTA order is inverted (client rule G2). -->
             <ul class="service-price__box-list">
               <li>
                 <svg class="icon service-price__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
-                Kostenfreie Begehung
+                {{priceBoxTick1}}
               </li>
               <li>
                 <svg class="icon service-price__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
-                Angebot in 1 Werktag
+                {{priceBoxTick2}}
               </li>
             </ul>
-            <a class="btn btn--primary service-price__cta" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn btn--primary service-price__cta" href="{{priceBoxCtaHref}}">{{priceBoxCta}}<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
           </aside>

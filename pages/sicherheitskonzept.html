@@ -304,6 +304,38 @@
              copy beside it and in section 6b, as real text. -->
         <div class="sk-hero__media">
           <!-- include: sk-doc -->
+          <!-- The sample PDF (client 2026-08-14). Q4 asks for the anonymised
+               18-page concept to be downloadable from this page; it already was,
+               but only in section 6b, three screens down.
+               ⚠️ IT LIVES UNDER THE MOCKUP, NOT IN THE CTA ROW (client, second
+               pass). That is where it belongs on its own merits: the drawing IS
+               this document, so the action sits on the thing it acts on instead of
+               interrupting the left column between the buttons and the proof
+               points. It also keeps the CTA row to exactly the two buttons rules
+               G1/G2 fix sitewide.
+               ⚠️ DELIBERATELY NOT A .btn — a third pill would break that pair and
+               split attention away from the primary CTA, which is this project's
+               single primary page action. A quiet text action is not a CTA, so it
+               sits outside the rule.
+               ⚠️ Cost of the move, accepted: it is no longer inside
+               .service-hero__actions, so js/hero-reveal.js does not cascade it in.
+               That script only ever sets start states on what it animates, so this
+               is simply visible from first paint — never hidden. -->
+          <!-- ⚠️ The "PDF, 18 Seiten" chip was removed from the VISIBLE label
+               (client 2026-08-14) but NOT from the accessible name: telling someone
+               that a link changes format and opens a new tab is the one part of it
+               that was doing real work, and a .visually-hidden span costs nothing
+               on screen. Do not delete this span when tidying.
+               ⚠️ `download` was dropped in the same edit. It contradicted both the
+               label and the announcement — "ansehen" and "öffnet in einem neuen
+               Tab" describe VIEWING, while `download` makes the browser save the
+               file and ignore target="_blank". Section 6b links the same PDF the
+               same way; the two are now one behaviour instead of two. -->
+          <a class="sk-hero__doc-link" href="/assets/documents/frankonia-sicherheitskonzept-muster.pdf" target="_blank" rel="noopener">
+            <svg class="sk-hero__doc-icon icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+            Muster-Sicherheitskonzept ansehen
+            <span class="visually-hidden"> (PDF, 18 Seiten, öffnet in einem neuen Tab)</span>
+          </a>
         </div>
       </div>
     </section>
@@ -740,12 +772,17 @@
     <!-- ============ 11. VERWANDTE SEITEN ============ -->
     <section class="section section--light service-related" data-nav-theme="light">
       <div class="container">
-        <div class="service-related__grid">
-          <div>
+        <!-- ⚠️ `__cols` / `__col`, NOT the `__grid` this page used to carry: that
+             variant has no CSS rule anywhere in the project, so the two groups
+             fell back to block layout and stacked at every width while the other
+             12 pages ran them side by side. Corrected in the 2026-08-17 redesign
+             of this block — it is the same section, so it gets the same layout. -->
+        <div class="service-related__cols">
+          <div class="service-related__col">
             <h2 class="service-related__title">Verwandte Leistungen</h2>
             <ul class="service-related__list">
               <li>
-                <a class="service-related__link" href="/werkschutz/">Werkschutz
+                <a class="service-related__link" href="/werkschutz/"><span class="service-related__label">Werkschutz</span>
                   <svg class="service-related__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
                 </a>
               </li>
@@ -754,22 +791,22 @@
                    resolve to the hub that describes all eleven rather than to three
                    404s. One href each when they ship. -->
               <li>
-                <a class="service-related__link" href="/leistungen/">Alle Leistungen im Überblick
+                <a class="service-related__link" href="/leistungen/"><span class="service-related__label">Alle Leistungen im Überblick</span>
                   <svg class="service-related__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
                 </a>
               </li>
             </ul>
           </div>
-          <div>
+          <div class="service-related__col">
             <h2 class="service-related__title">In Ihrer Region</h2>
             <ul class="service-related__list">
               <li>
-                <a class="service-related__link" href="/sicherheitsdienst-nuernberg/">Sicherheitsdienst Nürnberg
+                <a class="service-related__link" href="/sicherheitsdienst-nuernberg/"><span class="service-related__label">Sicherheitsdienst Nürnberg</span>
                   <svg class="service-related__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
                 </a>
               </li>
               <li>
-                <a class="service-related__link" href="/einsatzgebiete/">Alle Einsatzgebiete
+                <a class="service-related__link" href="/einsatzgebiete/"><span class="service-related__label">Alle Einsatzgebiete</span>
                   <svg class="service-related__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
                 </a>
               </li>

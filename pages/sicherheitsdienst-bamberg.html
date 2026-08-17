@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- CITY PAGE — Bamberg. Built from
+     NewVersionCopiesFrankonia/"2026-08-04 Webtext 15 Stadt Bamberg.docx"
+     (Stand 04.08.2026), verbatim, in German.
+
+     ⚠️ UWG / "kein Scheinstandort" is the rule that governs this whole page
+     type (docs/page-conventions.md §10.1). FRANKONIA has ONE address, in
+     Bamberg, and a city page may not imply a branch. It lands in three places
+     here: the hero badge says "Einsatzgebiet", never "Standort"; the
+     LocalBusiness JSON-LD carries the real Bamberg NAP with
+     areaServed: Bamberg and NOT a Bamberg address; and the FAQ answers
+     "do you have an office here?" honestly. Do not "improve" any of the three
+     into a local-address claim.
+
+     ⚠️⚠️ BAMBERG IS THE ONE EXCEPTION TO EVERYTHING ABOVE, and the paragraph
+     above is therefore WRONG for this page — read this instead. This is the only
+     city where FRANKONIA actually sits (Neuerbstraße 19, 96052 Bamberg), so the
+     Einsatzgebiets framing is not needed and the draft says so in as many words:
+     "einziger Standort mit echter Adresse, hier KEIN Einsatzgebiets-Framing
+     nötig". Concretely, three things invert:
+       · the hero badge names the real Sitz ("Unser Zuhause: Sitz in Bamberg,
+         Neuerbstraße 19") instead of saying "Einsatzgebiet";
+       · the first FAQ answers "Wo sitzt FRANKONIA in Bamberg?" with the street
+         address, which on any other city page would be the forbidden claim;
+       · section 2 is a Zuhause-Story, not the four Warum cards.
+     The LocalBusiness JSON-LD is unchanged from the other nine — it always
+     carried the real Bamberg NAP with geo. Here it simply is not a distinction
+     any more, because areaServed and address are the same city. The draft calls
+     for the "stärkste Local-Signale aller Seiten, deckungsgleich mit GBP".
+
+     ⚠️ Ten services, not eight: Revier- & Schließdienst and Interventionsdienst
+     are RAUM-BAMBERG-ONLY services (/einsatzgebiete/'s own FAQ states it), so
+     this is the one city page that may list them. Do not copy this list to
+     another city.
+
+     REUSE MODEL: every class is `.city-*`, never `.bamberg-*`, and
+     css/page-service.css is loaded as the CHASSIS (§9.1) — inset, `main h2`,
+     breadcrumb chevron, `.section--light`, `.service-hero*`, `.service-link`,
+     the whole `.pixel-seam*` block and the entire Kosten section come from
+     there. css/page-city.css was NOT touched to build this page.
+
+     GENERATED ONCE by docs/design-sources/city-pages.py, then hand-editable.
+     ⚠️ If you edit the FAQ below, edit the FAQPage graph above it too — they
+     must stay byte-identical with markup stripped. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title (56 chars) and description (154) are the draft's own —
+       docs/page-conventions.md §12. -->
+  <title>Sicherheitsdienst Bamberg | Ihr Team vor Ort – FRANKONIA</title>
+  <meta name="description" content="FRANKONIA ist Ihr Sicherheitsdienst aus Bamberg: Objektschutz, Wachdienst, Brandwache &amp; Events, seit über 10 Jahren für Stadt, Wirtschaft &amp; Einrichtungen.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/sicherheitsdienst-bamberg/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/sicherheitsdienst-bamberg/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/sicherheitsdienst-bamberg/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sicherheitsdienst Bamberg | Ihr Team vor Ort – FRANKONIA">
+  <meta property="og:description" content="FRANKONIA ist Ihr Sicherheitsdienst aus Bamberg: Objektschutz, Wachdienst, Brandwache &amp; Events, seit über 10 Jahren für Stadt, Wirtschaft &amp; Einrichtungen.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/sicherheitsdienst-bamberg/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- NO hero image preload: this page has no hero photograph. There is not one
+       city photo in the project and the draft does not ask for one — the hero's
+       visual is an inline SVG of Bamberg's real administrative boundary, so
+       it costs no request at all and the page has NO image LCP element. -->
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "{{phone.display}}",
+      "email": "{{email}}",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 49.9019037,
+        "longitude": 10.9067377
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Bamberg",
+        "containedInPlace": { "@type": "AdministrativeArea", "name": "Bayern" }
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "reviewCount": "{{rating.count}}",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/sicherheitsdienst-bamberg/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Wo sitzt FRANKONIA in Bamberg?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Unser Sitz ist die {{address.full}}, von hier koordiniert die Einsatzleitung alle Aufträge in Stadt, Landkreis und der Region. Termine vor Ort sind nach Vereinbarung jederzeit möglich, telefonisch sind wir rund um die Uhr erreichbar: {{phone.display}}."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was kostet ein Sicherheitsdienst in Bamberg?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde netto, je nach Leistung, Qualifikation und Einsatzzeit; Revierkontrollen werden je Fahrt kalkuliert. Als Bamberger Unternehmen kalkulieren wir im Heimmarkt ohne Anfahrtszuschläge — Ihr Angebot erhalten Sie innerhalb eines Werktages."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Stellt FRANKONIA auch Türsteher in Bamberg?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, geprüfte Einlasskräfte nach § 34a GewO für Gastronomie, Clubs und Veranstaltungen, einzeln oder als festes Team. Gerade in der Bamberger Innenstadt zählt ein Einlass, der freundlich bleibt und trotzdem konsequent ist."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Sichert FRANKONIA auch Feste wie die Sandkerwa ab?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "FRANKONIA übernimmt Veranstaltungsschutz für Feste, Kultur- und Firmenveranstaltungen in Bamberg, von der Personalbemessung über behördliche Auflagen bis zum Ordnerdienst. Sprechen Sie uns früh in der Planung an, dann läuft die Behörden-Abstimmung entspannt."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie schnell ist eine Brandwache in Bamberg vor Ort?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Schneller als überall sonst in unserem Einsatzgebiet, die Wege im Stadtgebiet sind kurz, die Einsatzleitung sitzt vor Ort und ist 24/7 erreichbar. Auch Wochenend-Einsätze sind nach Absprache kurzfristig möglich."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Betreut FRANKONIA auch Objekte im Landkreis Bamberg?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja — Stadt und Landkreis Bamberg sind unser Kernrevier, inklusive Hallstadt, Hirschaid, Memmelsdorf und Umgebung. Auch Nachbarräume wie Forchheim gehören zum festen Einsatzgebiet."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Einsatzgebiete",
+          "item": "https://frankonia-sicherheit.de/einsatzgebiete/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Sicherheitsdienst Bamberg",
+          "item": "https://frankonia-sicherheit.de/sicherheitsdienst-bamberg/"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+
+  <!-- Shared, in cascade order (docs/page-conventions.md §9.1):
+       lead-form → testimonials → page-service.css (the CHASSIS) → this page. -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/testimonials.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-city.css">
+
+  <!-- The documented generic effect stack, nothing page-specific
+       (docs/page-conventions.md §4.1). -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+</head>
+<body class="page-city">
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Chevron separators, not slashes — docs/page-conventions.md §3. Matches
+         the BreadcrumbList JSON-LD above. The breadcrumb sits ABOVE the hero
+         (unlike /werkschutz/, whose hero is a full-bleed photograph reaching the
+         top of the page) because this hero has no photo. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/einsatzgebiete/">Einsatzgebiete</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Bamberg</span></li>
+      </ol>
+    </nav>
+
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- The draft's own Hero-Aufbau, nothing added or dropped: badge → H1 →
+         subline → 3 ticks → double CTA → Google widget + DEKRA seals.
+         .hero__lead / .hero__actions / .hero__reassurance / .hero__trust are
+         load-bearing class names, not decoration — js/hero-reveal.js animates
+         exactly those four blocks in that order, so this page needs no JS of its
+         own (docs/page-conventions.md §4.1).
+         ⚠️ The badge names a REAL ADDRESS, which is correct here and would be a
+         UWG violation on any other city page — see the note at the top of this
+         file. It is the draft's own copy. -->
+    <section class="service-hero city-hero" data-hero-reveal>
+      <div class="container service-hero__grid city-hero__grid">
+        <div class="service-hero__content city-hero__content">
+          <p class="city-hero__badge">
+            <svg class="icon city-hero__badge-icon" aria-hidden="true"><use href="#icon-pin"></use></svg>
+            Unser Zuhause: Sitz in Bamberg, Neuerbstraße 19
+          </p>
+
+          <h1>Sicherheitsdienst Bamberg</h1>
+
+          <p class="hero__lead service-hero__lead">
+            FRANKONIA ist Ihr Sicherheitsdienst aus Bamberg, seit über zehn Jahren für Unternehmen, Einrichtungen und Veranstaltungen der Stadt.
+          </p>
+
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn btn--secondary service-hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+          </div>
+
+          <!-- The draft's lines VERBATIM, so a stacked list rather than the
+               homepage hero's row of chips: these are full sentences and need
+               ~1000px in a row at this type size against the ~640px this column
+               has. Same measurement /jobs/ made before the client chose the list.
+               .city-hero__points turns the shared row into a column and supplies
+               the align-items: flex-start the shared centred rule would
+               otherwise apply horizontally (docs/page-conventions.md §10.4). -->
+          <ul class="hero__reassurance service-hero__points city-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Ihr Sicherheitsdienst mit echtem Sitz in Bamberg, keine Filiale, sondern Zuhause
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Über 300 Kunden in der Region, darunter Stadt, Industriefirmen und Universität
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Unverbindliches Angebot innerhalb eines Werktages
+            </li>
+          </ul>
+
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- Bamberg'S REAL ADMINISTRATIVE OUTLINE, as an inline path.
+             Generated once in development by docs/design-sources/city-outline.py
+             from assets/data/coverage-boundaries/bamberg.geojson (fetched from
+             OSM/Nominatim in July). Never hand-edit the coordinates; re-run the
+             script instead.
+             Why an outline and not a photo or a map — docs/page-conventions.md
+             §10.3, in short: no city photography exists and the draft asks for
+             none; an AREA is the honest visual for an Einsatzgebiet where a
+             single pin would read as a branch office (§10.1); and as a path it
+             costs zero requests and no third-party tiles.
+             ⚠️ pathLength="1" IS LOAD-BEARING. The outline draws itself with a
+             pure-CSS dash, and that attribute renormalises the perimeter to 1 so
+             `stroke-dasharray: 1` is one exact lap at any size for any city. A
+             path pasted in without it draws nothing at all.
+             ⚠️ The guides are PERCENTAGES because every city's viewBox height
+             differs (683 for Coburg, 1494 for Kulmbach); this one is 994. -->
+        <div class="city-hero__map" aria-hidden="true">
+          <svg class="city-map" viewBox="0 0 1000 994" fill="none" focusable="false">
+            <line class="city-map__guide" x1="50%" y1="0" x2="50%" y2="100%"></line>
+            <line class="city-map__guide" x1="0" y1="50%" x2="100%" y2="50%"></line>
+            <path class="city-map__area" pathLength="1" d="M0.0 349.6 L2.4 360.8 L9.5 377.2 L14.0 394.6 L22.7 393.0 L33.1 409.2 L40.5 405.7 L39.7 407.9 L67.3 409.7 L66.5 419.0 L71.4 433.9 L64.5 435.8 L61.4 441.8 L61.3 446.1 L64.8 460.0 L70.7 472.9 L73.1 470.2 L71.5 478.1 L72.3 482.8 L52.2 493.9 L49.6 497.8 L53.8 513.2 L53.4 517.1 L49.2 524.0 L45.3 526.7 L49.5 550.0 L69.1 557.8 L76.7 546.4 L68.1 531.9 L79.2 527.1 L86.7 530.8 L96.6 516.6 L104.7 524.7 L111.5 521.1 L117.8 529.9 L122.0 527.9 L128.5 528.0 L130.8 534.4 L124.9 535.9 L121.5 540.5 L106.8 543.6 L102.2 549.3 L98.3 561.5 L92.7 566.8 L85.4 568.8 L93.5 580.3 L91.8 583.9 L96.7 592.3 L89.5 604.0 L87.4 610.3 L89.0 617.0 L115.1 610.8 L142.2 613.9 L134.0 629.6 L136.6 644.4 L150.2 631.9 L154.9 629.3 L178.4 606.0 L188.4 614.1 L195.6 616.9 L198.7 625.8 L211.7 627.8 L208.2 644.9 L209.9 646.7 L208.5 652.3 L210.5 659.9 L217.9 663.2 L219.7 669.3 L225.4 664.0 L234.3 660.2 L237.3 660.2 L243.7 663.7 L239.1 670.8 L238.1 679.6 L234.4 687.1 L239.3 691.0 L255.7 699.4 L272.2 699.5 L272.5 702.1 L288.5 698.6 L289.2 702.2 L299.1 697.5 L301.6 703.4 L323.6 693.2 L321.2 699.9 L295.2 723.5 L297.2 726.6 L287.4 731.5 L296.9 728.5 L288.1 745.6 L298.0 742.8 L313.8 751.1 L317.7 744.1 L325.3 739.6 L326.4 741.8 L324.7 743.4 L328.5 748.6 L341.4 746.8 L341.5 752.4 L355.3 755.8 L356.4 758.6 L361.0 762.5 L361.0 766.8 L383.9 794.5 L384.5 799.1 L393.1 799.3 L392.7 796.2 L404.4 784.0 L406.7 784.7 L403.6 793.1 L408.7 794.9 L430.9 780.6 L443.1 778.0 L445.3 781.0 L432.2 786.6 L419.9 797.3 L404.5 807.1 L403.9 810.0 L408.7 821.3 L407.0 824.9 L403.8 826.7 L406.7 835.4 L409.9 833.9 L413.5 842.7 L418.6 844.9 L426.8 842.9 L442.1 832.1 L444.2 835.4 L451.2 836.0 L451.3 855.0 L503.7 886.0 L513.4 889.7 L553.4 888.7 L558.6 894.0 L550.6 917.2 L552.4 922.1 L568.8 917.1 L589.4 920.2 L595.6 927.1 L628.1 947.8 L636.1 950.7 L648.0 949.9 L739.8 992.7 L746.2 988.3 L751.2 994.4 L767.4 983.4 L768.7 992.1 L773.1 991.1 L777.6 989.7 L765.6 961.1 L763.5 954.4 L763.3 946.2 L766.9 944.7 L765.7 940.7 L772.7 936.9 L765.0 909.0 L759.6 902.6 L785.9 879.8 L784.3 875.8 L787.6 874.5 L790.2 880.0 L797.3 876.6 L826.2 855.4 L842.3 854.1 L859.3 855.1 L861.5 855.7 L864.4 867.3 L874.7 865.8 L885.7 860.8 L880.8 851.1 L893.9 841.9 L904.3 839.0 L913.2 845.6 L927.1 841.8 L945.6 853.8 L954.5 864.7 L963.4 889.0 L966.4 889.4 L965.9 900.6 L978.7 911.2 L997.1 921.9 L999.2 920.4 L1000.0 916.2 L920.4 766.9 L923.6 765.1 L914.3 742.1 L916.0 733.7 L914.0 726.7 L909.2 720.2 L899.8 715.8 L897.6 711.3 L892.5 686.8 L891.0 661.8 L893.9 643.9 L909.5 613.5 L913.4 602.0 L914.0 590.2 L909.2 563.3 L913.2 538.5 L903.6 537.7 L899.2 539.8 L889.8 538.0 L879.0 542.4 L870.8 541.6 L868.0 542.7 L865.6 539.0 L886.3 533.2 L899.3 533.5 L914.3 531.2 L918.2 499.7 L919.2 443.4 L913.0 379.2 L899.8 314.9 L890.5 283.3 L873.3 242.0 L851.7 199.7 L827.3 161.1 L807.3 134.0 L777.7 99.9 L712.6 38.1 L704.9 38.4 L672.0 0.0 L613.0 41.9 L582.7 56.3 L558.1 65.3 L527.3 72.5 L499.2 76.4 L439.2 77.9 L438.6 102.4 L433.9 102.8 L433.9 114.9 L409.4 141.4 L402.3 137.1 L392.0 146.2 L397.0 148.4 L397.2 158.4 L401.8 162.6 L368.7 183.9 L363.9 180.8 L357.2 172.8 L350.8 160.4 L310.8 193.5 L267.2 163.2 L262.8 160.7 L261.0 162.9 L257.8 156.1 L254.0 157.1 L246.9 128.2 L214.5 131.7 L181.4 132.3 L153.8 129.9 L126.1 125.0 L117.8 135.8 L108.1 141.8 L66.3 156.4 L52.2 159.7 L32.0 161.7 L30.7 167.2 L32.8 171.3 L49.2 180.7 L82.7 206.6 L141.4 238.1 L149.7 245.8 L156.7 247.7 L156.4 249.1 L153.4 248.4 L140.9 250.7 L142.5 253.8 L132.3 267.3 L128.9 278.1 L122.6 277.9 L121.8 282.3 L106.2 279.9 L105.3 282.9 L101.5 282.0 L98.1 298.6 L86.1 301.0 L71.1 299.9 L66.1 303.7 L50.2 310.3 L46.0 312.6 L47.0 316.2 L33.5 323.6 L36.2 327.1 L23.7 331.4 L24.8 334.9 L9.4 339.2 L7.9 344.1 L0.0 349.6 Z"></path>
+          </svg>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 2. ZUHAUSE-SEKTION (STRUKTUR-VARIANTE) ============ -->
+    <!-- The section that makes this a CITY page rather than a service page with a
+         place name pasted in: real local references, every word the draft's.
+         Numbered because long blocks need an ordinal to be scannable; the
+         numerals are aria-hidden decoration on top of a real <ol>.
+         ⚠️ Where an item closes with a service link, that pairing is inferred
+         from the copy (the draft only annotates URLs in the Leistungen section)
+         and has been checked against WHERE the service is actually available —
+         the lesson Nürnberg paid for when it linked Revier- & Schließdienst, a
+         Raum-Bamberg-only service, from a Nürnberg page. -->
+    <section class="section section--light city-fields" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <p class="section-eyebrow">Heimmarkt</p>
+          <h2>In Bamberg kennt man uns, und wir kennen Bamberg</h2>
+          <p>Unsere Teams schützen Einrichtungen der Stadt, der Sozialstiftung und der Universität Bamberg, und stehen bei Festen wie der Sandkerwa in der Welterbe-Innenstadt am Einlass. Wenn der Inhaber am selben Ort wohnt wie seine Kunden, ist Verantwortung keine Floskel.</p>
+        </div>
+
+        <ol class="city-fields__list" data-item-reveal="li">
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">01</span>
+            <h3 class="city-fields__title">Öffentliche Hand &amp; Einrichtungen in Bamberg</h3>
+            <p>Kliniken, Verwaltungen, Bildungseinrichtungen — Zutrittskontrolle und Objektschutz mit geschultem, deeskalationssicherem Personal.</p>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">02</span>
+            <h3 class="city-fields__title">Wirtschaft &amp; Industrie in Bamberg</h3>
+            <p>Vom Hafengebiet über den Laubanger bis zu den Produktionsstandorten der Region — Werkschutz, Verschlussrunden und Revierdienst für die Bamberger Wirtschaft.</p>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">03</span>
+            <h3 class="city-fields__title">Welterbe, Handel &amp; Gastronomie in Bamberg</h3>
+            <p>Einzelhandel zwischen Grüner Markt und Fußgängerzone, Gastronomie mit Einlass-Bedarf (auch Türsteher), Schutz bei Festen wie der Sandkerwa — Sicherheit, die zum Stadtbild passt.</p>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">04</span>
+            <h3 class="city-fields__title">Neue Quartiere in Bamberg</h3>
+            <p>Auf Konversions- und Entwicklungsflächen wie dem Lagarde-Campus entstehen Büros, Wohnungen und Baustellen, mit Bewachungsbedarf vom ersten Bauzaun an.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 3. LEISTUNGEN IN BAMBERG ============ -->
+    <!-- The draft's services, its copy, its order and its link targets.
+         Linking confirmed-but-unbuilt URLs is this project's convention
+         (docs/page-conventions.md §8.3); the page's own primary conversion never
+         does it — every CTA points at #anfrage, the live form below. -->
+    <section class="section city-services">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Unsere Sicherheitsdienstleistungen in Bamberg</h2>
+          <p>Vom Werkschutz für Produktionsstandorte bis zum Interventionsdienst mit Anfahrt in Minuten: In Bamberg steht Ihnen das komplette FRANKONIA Leistungsspektrum zur Verfügung.</p>
+        </div>
+
+        <!-- ALL 10 AS ROWS, no card group — and that is the documented rule
+             applied, not a shortcut. Cards exist for services whose destination
+             is a CITY-specific page; Bamberg has no combo pages in this
+             phase (the draft says so itself), so every one of these points at the
+             generic service page. Presenting four of them as featured cards would
+             promise a local page that does not exist — the implied-local claim
+             §10.1 exists to prevent. Rows keep every description crawlable. -->
+          <ul class="city-services__list" data-item-reveal="li">
+            <li>
+              <a class="city-services__row" href="/werkschutz/">
+                <span class="city-services__name">Werkschutz in Bamberg</span>
+                <span class="city-services__text">Pforte, Rundgänge und Anlagen-Bedienung für Produktionsstandorte.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/objektschutz/">
+                <span class="city-services__name">Objektschutz in Bamberg</span>
+                <span class="city-services__text">Bestreifung, Zugangskontrolle und Alarmverfolgung, für Gewerbe, Verwaltung und Einrichtungen.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/baustellenbewachung/">
+                <span class="city-services__name">Baustellenbewachung in Bamberg</span>
+                <span class="city-services__text">Schutz vor Diebstahl und Vandalismus für Wohn- und Gewerbeprojekte in Stadt und Landkreis.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/brandwache/">
+                <span class="city-services__name">Brandwache in Bamberg</span>
+                <span class="city-services__text">Kurzfristige Brandsicherheitswachen bei BMA-Ausfall und Heißarbeiten, aus der Nachbarschaft, in Minuten statt Stunden.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/revier-schliessdienst/">
+                <span class="city-services__name">Revier- &amp; Schließdienst in Bamberg</span>
+                <span class="city-services__text">Nachtkontrollen und Verschlussrunden im dichtesten FRANKONIA Revier, wirtschaftlicher geht Basisschutz nicht.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/empfangsdienst/">
+                <span class="city-services__name">Empfangsdienst in Bamberg</span>
+                <span class="city-services__text">Professioneller Empfang mit Sicherheitskompetenz für Büro- und Verwaltungsstandorte.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/veranstaltungsschutz/">
+                <span class="city-services__name">Veranstaltungsschutz in Bamberg</span>
+                <span class="city-services__text">Einlass, Ordnerdienst und Deeskalation für Feste, Kultur und Firmenevents, inklusive Türsteher für Gastronomie und Clubs.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/kaufhausdetektei/">
+                <span class="city-services__name">Kaufhausdetektei in Bamberg</span>
+                <span class="city-services__text">Zivile Ladendetektive für den Innenstadt-Handel.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/sicherheitstechnik/">
+                <span class="city-services__name">Sicherheitstechnik in Bamberg</span>
+                <span class="city-services__text">Video-, Alarm- und Zutrittstechnik, geplant, installiert und gewartet aus einer Hand.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/interventionsdienst/">
+                <span class="city-services__name">Interventionsdienst in Bamberg</span>
+                <span class="city-services__text">Alarmverfolgung mit Anfahrt in Minuten, das Kernrevier macht es möglich.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+          </ul>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 4. SICHERHEITSBERATUNG BAMBERG ============ -->
+    <!-- Prose-only callout, so no modules and therefore no dark-only tint —
+         which is what lets this section take the LIGHT surface and keep the
+         page alternating. -->
+    <section class="section section--light city-callout" data-nav-theme="light">
+      <div class="container city-callout__layout">
+        <div class="section__intro city-callout__intro">
+          <h2>Sicherheitsberatung in Bamberg: erst das Konzept, dann der Vertrag</h2>
+          <p class="city-callout__lede">Für Bamberger Unternehmen beginnt jede Zusammenarbeit mit einer kostenfreien Begehung vor Ort, meist noch in derselben Woche, der Weg ist kurz. Unsere Sicherheitsexperten bewerten Risiken, prüfen vorhandene Technik und erstellen Ihr Sicherheitskonzept mit klarem Preisrahmen. Kostenfrei, unverbindlich, aus der Praxis von über 300 Kundenobjekten in der Region.</p>
+        </div>
+
+        <div class="city-callout__actions" data-reveal>
+          <a class="service-link city-callout__link" href="/sicherheitskonzept/">
+            So entsteht Ihr Sicherheitskonzept
+            <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 5. BRANDWACHE BAMBERG ============ -->
+    <!-- ⚠️ THE PHONE IS THE STRATEGIC HALF OF THIS SECTION, not decoration.
+         This is the one section on the page about an EMERGENCY — a BMA-Ausfall
+         is a today problem — and the approved copy ends on a 24/7 promise with
+         no way to act on it. The page's primary action is the form, which is a
+         one-working-day process and the wrong action for someone whose fire
+         alarm is down right now. Not invented: the page's own Brandwache FAQ
+         answer already publishes this number for exactly this case, and
+         /brandwache-nuernberg/ makes "Jetzt anrufen" its hero's primary action.
+         Same wording so the two read as one path. -->
+    <section class="section city-callout">
+      <div class="container city-callout__layout">
+        <div class="section__intro city-callout__intro">
+          <!-- ⚠️ NOT from the draft — UI furniture, the same category as the
+               section eyebrows /werkschutz/ and /jobs/ carry, and reversible
+               copy rather than a claim. .section-eyebrow already ships the 6px
+               blue square; it is display:flex, so the parent's text-align does
+               NOT move it and page-city.css gives it its own justify-content. -->
+          <p class="section-eyebrow city-callout__eyebrow">Brandwache Bamberg</p>
+
+          <h2>Brandwache in Bamberg, die schnellste Anfahrt im ganzen Einsatzgebiet</h2>
+          <p class="city-callout__lede">BMA-Störung im Bamberger Betrieb, Heißarbeiten auf der Baustelle, Auflage fürs Stadtfest: Nirgendwo stellen wir eine Brandsicherheitswache schneller als im Heimmarkt.</p>
+        </div>
+
+        <!-- Three stacked modules: circular blue-tinted icon container, the
+             draft's own line beside it. Copy verbatim. They sit 16px apart so
+             the three read as ONE set of promises rather than three blocks.
+             aria-hidden icons — each repeats the sentence beside it. -->
+        <ul class="city-callout__points" data-item-reveal="li">
+          <li>
+            <span class="city-callout__icon" aria-hidden="true">
+              <svg class="icon" aria-hidden="true"><use href="#icon-clock"></use></svg>
+            </span>
+            Einsatzleitung 24/7 erreichbar
+          </li>
+          <li>
+            <span class="city-callout__icon" aria-hidden="true">
+              <svg class="icon" aria-hidden="true"><use href="#icon-badge"></use></svg>
+            </span>
+            qualifizierte Kräfte (§ 34a GewO + Brandschutzhelfer)
+          </li>
+          <li>
+            <span class="city-callout__icon" aria-hidden="true">
+              <svg class="icon" aria-hidden="true"><use href="#icon-document-check"></use></svg>
+            </span>
+            lückenlose Dokumentation für Behörde und Versicherung
+          </li>
+        </ul>
+
+        <div class="city-callout__actions" data-reveal>
+          <a class="btn btn--primary city-callout__call" href="{{phone.href}}">
+            <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+            Jetzt anrufen: {{phone.display}}
+          </a>
+          <a class="service-link city-callout__link" href="/brandwache/">
+            Alles zur Brandwache
+            <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 6. KOSTEN IN BAMBERG ============ -->
+    <!-- Entirely the chassis: .service-price* was built generically on
+         /werkschutz/ because docs/build-checklist.md counts this block on 27
+         pages, and the Preis-Box is a partial. The only city-specific rule is
+         .city-rates for the per-service rows a service page does not have.
+         ⚠️ .city-rates deliberately does NOT reuse .service-price__factors —
+         that block draws a blue `+` per row, and a `+` in front of
+         "Objektschutz · 26-32 €/Std." reads as a list of extras rather than a
+         rate table. It does repeat that block's `grid-column: 1`, or it falls
+         into the second column under the price box.
+         GEO shape: question H2, the number in the first sentence. -->
+    <section class="section section--light service-price" data-nav-theme="light">
+      <div class="container service-price__layout">
+        <div class="section__intro service-price__intro">
+          <h2>Was kostet ein Sicherheitsdienst in Bamberg?</h2>
+          <p class="service-price__answer" data-reveal data-reveal-delay>In Bamberg und dem Umland liegen die Stundensätze in der Regel zwischen {{price.min}} und {{price.max}} Euro netto, je nach Qualifikation, Einsatzzeit und Umfang. Revierkontrollen werden je Kontrollfahrt kalkuliert und sind im dichten Bamberger Revier besonders wirtschaftlich. Anfahrtskosten spielen im Heimmarkt praktisch keine Rolle.</p>
+        </div>
+
+        <!-- The shared Preis-Box. `range` comes from content/values.json, so the
+             annual rate change stays ONE edit for all 27 pages that publish it
+             (client rule G10). -->
+        <!-- include: price-box range="{{price.range}}" note="netto, Richtwerte für Einsätze in Stadt und Landkreis Bamberg" -->
+
+        <!-- The draft's own "Typische Preisspannen" line, split into its services
+             so it can be read rather than parsed. -->
+        <ul class="city-rates" data-item-reveal="li">
+          <li><span class="city-rates__service">Objektschutz</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+          <li><span class="city-rates__service">Werkschutz</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+          <li><span class="city-rates__service">Baustellenbewachung</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+          <li><span class="city-rates__service">Veranstaltungsschutz</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+        </ul>
+
+        <p class="service-price__hint">
+          <svg class="icon service-price__hint-icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <span>Richtwerte netto, Angebot in 1 Werktag.</span>
+        </p>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 7. TRUST (HEIMMARKT-AUSBAU) ============ -->
+    <!-- ⚠️ .testimonial--dark is REQUIRED here and its absence was a real bug on
+         Nürnberg before the modifier existed: css/testimonials.css holds "on
+         white" colours, so on a dark section the customer's NAME rendered black
+         on a black card — invisible, on the one part of a testimonial that has
+         to be verifiable. -->
+    <section class="section city-trust">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Referenzen aus Bamberg, die Sie überprüfen können</h2>
+          <p>Fragen Sie in Bamberg nach FRANKONIA: Die Sozialstiftung Bamberg vertraut uns seit den Zutrittskontrollen der Corona-Zeit, die Sandkerwa setzt beim Veranstaltungsschutz auf uns, dazu Einrichtungen von Stadt und Universität Bamberg sowie Mittelständler wie der CleanTech Innovation Park.</p>
+        </div>
+
+        <div class="city-trust__quotes" data-item-reveal=".testimonial" data-item-reveal-strong>
+          <blockquote class="testimonial testimonial--dark">
+            <header class="testimonial__header">
+              <div class="testimonial__person">
+                <img class="testimonial__avatar" src="/assets/images/testimonial-hermann-schleier.jpg" width="240" height="240" alt="Hermann Schleier" loading="lazy">
+                <div>
+                  <p class="testimonial__name">Hermann Schleier</p>
+                  <p class="testimonial__role">Geschäftsleitung, Sozialstiftung Bamberg</p>
+                </div>
+              </div>
+              <img class="testimonial__google" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+            </header>
+            <p class="testimonial__quote">„Die FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG hat uns in der Corona-Zeit bei den Zutrittskontrollen unserer Einrichtungen sehr zuverlässig unterstützt. Die Zusammenarbeit war jederzeit professionell, flexibel und unkompliziert — auch bei kurzfristigen Änderungen.“</p>
+            <span class="testimonial__stars" role="img" aria-label="5 von 5 Sternen">★★★★★</span>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 8. ZERTIFIZIERUNGEN & MITGLIEDSCHAFTEN ============ -->
+    <!-- .trust-certs* lives in page-service.css (promoted there on 2026-08-09
+         when this composition got its third consumer) and needs no colour rules
+         of its own: .section--light already re-declares every token it uses, and
+         the chassis already gives .service-link its 4,88:1 blue there. -->
+    <section class="section section--light city-certs" data-nav-theme="light">
+      <div class="container">
+        <div class="trust-certs" data-reveal>
+          <div class="trust-certs__seals">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+          </div>
+
+          <ul class="trust-certs__list">
+            <li>
+              <strong>DIN 77200-1</strong>
+              für stationäre Sicherheitsdienste
+            </li>
+            <li>
+              <strong>DIN EN ISO 9001</strong>
+              seit 2016, geprüft durch die DEKRA
+            </li>
+            <li>
+              <strong>§ 34a GewO</strong>
+              ausschließlich IHK-qualifizierte Kräfte
+            </li>
+          </ul>
+
+          <p class="trust-certs__memberships">Zertifiziert nach DIN 77200-1 und ISO 9001 (DEKRA), Mitglied im <a href="https://wirtschaftsclub-bamberg.de/" target="_blank" rel="noopener">Wirtschaftsclub Bamberg<span class="visually-hidden"> (öffnet in einem neuen Tab)</span></a> und im <a href="https://www.mittelstandsbund.de/" target="_blank" rel="noopener">Deutschen Mittelstands-Bund<span class="visually-hidden"> (öffnet in einem neuen Tab)</span></a>.</p>
+        </div>
+      </div>
+    </section>
+    <!-- No seam: certs and faq are both light surfaces, and tiles the colour of the section above would be invisible against the one below (§9.2). -->
+    <!-- ============ 9. FAQ ============ -->
+    <!-- 6 place-specific questions, the draft's own, verbatim. The visible copy
+         and the FAQPage JSON-LD at the top of this file must stay byte-identical
+         with markup stripped — the one thing on this page type that is easy to
+         break with a small edit and impossible to see. They are generated from
+         one source by docs/design-sources/city-pages.py, so an edit here has to
+         be made in BOTH places by hand.
+         ⚠️ The first question answers "do you have an office here?" honestly.
+         That is the UWG requirement of §10.1, not filler — do not soften it into
+         a local-address claim. -->
+    <section class="section section--light city-faq service-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Sicherheitsdienst Bamberg: die häufigsten Fragen</h2>
+        </div>
+
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
+          <details class="faq-item">
+            <summary><h3>Wo sitzt FRANKONIA in Bamberg?</h3></summary>
+            <p class="faq-item__answer">Unser Sitz ist die {{address.full}}, von hier koordiniert die Einsatzleitung alle Aufträge in Stadt, Landkreis und der Region. Termine vor Ort sind nach Vereinbarung jederzeit möglich, telefonisch sind wir rund um die Uhr erreichbar: <a href="{{phone.href}}">{{phone.display}}</a>.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Was kostet ein Sicherheitsdienst in Bamberg?</h3></summary>
+            <p class="faq-item__answer">In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde netto, je nach Leistung, Qualifikation und Einsatzzeit; Revierkontrollen werden je Fahrt kalkuliert. Als Bamberger Unternehmen kalkulieren wir im Heimmarkt ohne Anfahrtszuschläge — Ihr Angebot erhalten Sie innerhalb eines Werktages.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Stellt FRANKONIA auch Türsteher in Bamberg?</h3></summary>
+            <p class="faq-item__answer">Ja, geprüfte Einlasskräfte nach § 34a GewO für Gastronomie, Clubs und Veranstaltungen, einzeln oder als festes Team. Gerade in der Bamberger Innenstadt zählt ein Einlass, der freundlich bleibt und trotzdem konsequent ist.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Sichert FRANKONIA auch Feste wie die Sandkerwa ab?</h3></summary>
+            <p class="faq-item__answer">FRANKONIA übernimmt Veranstaltungsschutz für Feste, Kultur- und Firmenveranstaltungen in Bamberg, von der Personalbemessung über behördliche Auflagen bis zum Ordnerdienst. Sprechen Sie uns früh in der Planung an, dann läuft die Behörden-Abstimmung entspannt.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Wie schnell ist eine Brandwache in Bamberg vor Ort?</h3></summary>
+            <p class="faq-item__answer">Schneller als überall sonst in unserem Einsatzgebiet, die Wege im Stadtgebiet sind kurz, die Einsatzleitung sitzt vor Ort und ist 24/7 erreichbar. Auch Wochenend-Einsätze sind nach Absprache kurzfristig möglich.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Betreut FRANKONIA auch Objekte im Landkreis Bamberg?</h3></summary>
+            <p class="faq-item__answer">Ja — Stadt und Landkreis Bamberg sind unser Kernrevier, inklusive Hallstadt, Hirschaid, Memmelsdorf und Umgebung. Auch Nachbarräume wie <a href="/sicherheitsdienst-forchheim/">Forchheim</a> gehören zum festen Einsatzgebiet.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 10. ABSCHLUSS-CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The shared lead-form partial with this page's own field prefix — unique
+         per page, or two forms in one document would break every <label for>.
+         The draft's separate Formulartitel ("Ihre Anfrage für Bamberg") is not
+         rendered as a second heading: the section H2 already says it, the same
+         call /werkschutz/ and Nürnberg made.
+         The form still submits nowhere sitewide (action="#", native validation
+         only) — docs/build-checklist.md Paso 4. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Jetzt Sicherheitsdienst in Bamberg anfragen</h2>
+          <p class="conversion__intro-lede">Beschreiben Sie kurz Ihr Anliegen; auf Wunsch kommt unser Sicherheitsexperte noch diese Woche zur kostenfreien Begehung. Angebot innerhalb eines Werktages.</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="bb" messageLabel="Ihr Anliegen in Bamberg" -->
+
+          <p class="conversion__form-alt">Lieber direkt sprechen? <a href="{{phone.href}}">{{phone.display}}</a></p>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 11. UMGEBUNG ============ -->
+    <!-- ⚠️ BELOW THE FORM, which departs from the draft's own order and follows
+         Nürnberg's (client-approved, 2026-08-10). The drafts title this section
+         "Umgebung + Abschluss-CTA", i.e. as ONE closing block — but functionally
+         they pull opposite ways: a set of EXITS directly above the page's primary
+         conversion. The service template resolves the same tension the other way
+         ("… FAQ → CTA → verwandte Seiten"), so there is internal precedent.
+         No copy changed. See docs/page-conventions.md §10.2.
+         Small H2 per the draft — the fourth declared exception to §2.
+         A neighbour with no page of its own is a MENTION with no link and no
+         arrow, so "this goes somewhere" is never signalled by colour alone. -->
+    <section class="section section--light city-nearby" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro city-nearby__intro">
+          <h2 class="city-nearby__title">Sicherheitsdienst rund um Bamberg</h2>
+          <p>Von Bamberg aus betreuen wir die gesamte Region:</p>
+        </div>
+
+        <ul class="city-nearby__list" data-item-reveal="li">
+          <li>
+            <a class="city-nearby__tile" href="/sicherheitsdienst-forchheim/">
+              <svg class="icon city-nearby__pin" aria-hidden="true"><use href="#icon-pin"></use></svg>
+              <span class="city-nearby__name">Forchheim</span>
+              <svg class="icon city-nearby__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-nearby__tile" href="/sicherheitsdienst-erlangen/">
+              <svg class="icon city-nearby__pin" aria-hidden="true"><use href="#icon-pin"></use></svg>
+              <span class="city-nearby__name">Erlangen</span>
+              <svg class="icon city-nearby__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-nearby__tile" href="/sicherheitsdienst-nuernberg/">
+              <svg class="icon city-nearby__pin" aria-hidden="true"><use href="#icon-pin"></use></svg>
+              <span class="city-nearby__name">Nürnberg</span>
+              <svg class="icon city-nearby__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-nearby__tile" href="/sicherheitsdienst-wuerzburg/">
+              <svg class="icon city-nearby__pin" aria-hidden="true"><use href="#icon-pin"></use></svg>
+              <span class="city-nearby__name">Würzburg</span>
+              <svg class="icon city-nearby__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-nearby__tile" href="/sicherheitsdienst-coburg/">
+              <svg class="icon city-nearby__pin" aria-hidden="true"><use href="#icon-pin"></use></svg>
+              <span class="city-nearby__name">Coburg</span>
+              <svg class="icon city-nearby__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-nearby__tile" href="/sicherheitsdienst-bayreuth/">
+              <svg class="icon city-nearby__pin" aria-hidden="true"><use href="#icon-pin"></use></svg>
+              <span class="city-nearby__name">Bayreuth</span>
+              <svg class="icon city-nearby__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

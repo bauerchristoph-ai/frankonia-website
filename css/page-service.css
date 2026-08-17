@@ -128,6 +128,7 @@ main h2 {
    "Koor-dination von Fremdfirmen" at 390px. */
 .service-flow__step > p,
 .service-flow__step h3,
+.service-highlight > p,
 .service-compare__answer,
 .service-panel__fact dd,
 .service-decision__text > p,
@@ -138,9 +139,11 @@ main h2 {
 .service-price__factors li,
 .service-price__hint,
 .service-contact__body,
-/* The frame is only 9rem wide on a phone, where `hyphens: auto` broke the
-   bracketed label into "[Portrait Alex-ander Jäger folgt]". */
-.service-contact__portrait-note,
+/* 2026-08-14: `.service-contact__portrait-note` was in this list because
+   `hyphens: auto` broke its bracketed label into "[Portrait Alex-ander Jäger
+   folgt]" in a 9rem-wide frame. The real portrait arrived, the label is gone, and
+   so is its entry here — an unmatched selector in a hyphens list is a rule nobody
+   can verify. */
 .service-contact__certs-list li {
   -webkit-hyphens: none;
   hyphens: none;
@@ -3299,38 +3302,36 @@ main h2 {
 .service-contact__person  { grid-area: person; }
 .service-contact__certs   { grid-area: certs; }
 
-/* ---- The reserved portrait frame ----
-   4:5, so the real space is held and dropping the photo in later shifts nothing
-   (no CLS either). It is a frame, not a broken image: hairline border, the
-   section's own subtle fill, and a bracketed label that cannot be mistaken for
-   content. Replace the whole <p> with a <picture> when the portrait arrives. */
+/* ---- The portrait ----
+   Holds Alexander Jäger's real photo since 2026-08-14. The 4:5 ratio is the one
+   the reserved frame already had, kept deliberately: the export is cropped to
+   exactly 4:5, so `cover` crops nothing and the photo landed in the space that
+   was already being reserved — no layout change, no CLS.
+   ⚠️ EVERY decoration the reserved frame had is GONE, and the reason is the
+   backdrop. The photo shipped first with the client's own light-grey studio
+   backdrop, which needed a radius to read as a deliberate card; it was then
+   re-keyed onto #010101 (see docs/design-sources/portrait-key-backdrop.py), so
+   the backdrop IS this section's colour and there is nothing left to frame — a
+   radius would round black against black and a border would draw a box around
+   thin air. Same treatment, for the same reason, as `.uu-lead__photo` on
+   /ueber-uns/, whose portrait was delivered on black to begin with.
+   So: `padding`, `border`, `border-radius`, `overflow` and `display: grid` +
+   `place-items: center` (which only ever centred the bracketed label) are all
+   deliberately absent. `aspect-ratio` is the one job left — it reserves the space.
+   ⚠️ This is now welded to a DARK section. If Ansprechpartner ever flips to
+   `.section--light`, the photo has to be re-keyed onto the new colour; it cannot
+   be fixed in CSS. */
 .service-contact__portrait {
   margin: 0;
   aspect-ratio: 4 / 5;
-  display: grid;
-  place-items: center;
-  padding: var(--space-5);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background-color: var(--color-bg-subtle);
+  background-color: var(--color-bg);
 }
 
-.service-contact__portrait-note {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
-  text-align: center;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-}
-
-.service-contact__portrait-note .icon {
-  width: 2rem;
-  height: 2rem;
-  color: var(--color-accent);
-  fill: currentColor;
-  stroke: none;
+.service-contact__portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* ---- The person ---- */
@@ -3542,9 +3543,20 @@ main h2 {
     column-gap: clamp(var(--space-7), 5vw, var(--space-9));
   }
 
-  /* Caps the frame so it stays a portrait beside the text rather than a poster. */
+  /* Caps the frame so it stays a portrait beside the text rather than a poster.
+     26rem -> 30rem on 2026-08-14 (client: "un poco más grande"), which is also the
+     cap `.uu-lead__photo` uses for Steffen Walde on /ueber-uns/ — the two portraits
+     are now one treatment, so they should be one size too.
+     ⚠️ MEASURED TRADE-OFF, accepted rather than hidden: the photo column is 493px at
+     1440, so 30rem = 480px fits with 13px to spare, but at 480x600 the photo becomes
+     the TALLEST thing in the section — 600px against 505px of text beside it. That is
+     the exact concern the note above this rule raises, and the reason the cap started
+     at 26rem. 30rem is as far as it goes on that argument; past it the section reads
+     as a poster with a caption. Below 1280 the COLUMN binds, not the cap, so nothing
+     changed there (392px at 1152, 348 at 1024, 305 at 900).
+     960w still covers DPR 2 exactly at this size (480 x 2), so no re-export needed. */
   .service-contact__portrait {
-    max-width: 26rem;
+    max-width: 30rem;
   }
 
   /* ⚠️ The seals-left / lines-right split that used to live here is GONE (2026-08-07):
@@ -3559,15 +3571,30 @@ main h2 {
    all wrap normally at one consistent scale. */
 
 /* ---- 12. Verwandte Seiten — end-of-page navigation --------------------------
-   Refined 2026-08-03 (client): the structure was right but read as a plain
-   sitemap list. Same content, same links, same two groups — the changes are
-   hierarchy, row scale, arrow scale and the interaction.
+   REDESIGNED 2026-08-17 (client brief): the block read "too generic, bulky and
+   SaaS-card-like". It is now a premium editorial INDEX — two quiet surfaces
+   holding a small category label and a ruled list of destinations — rather than
+   two elevated cards.
 
-   What it is: a premium continuation block, so the two group titles carry a blue
-   accent rule and real weight, the rows are tall enough to be a navigation
-   target rather than a text line, and the hover is a light blue wash instead of
-   the full white/black inversion it had (brief: "flat, elegant and lightweight",
-   not a card). */
+   ⚠️ THIS REVERSES FOUR EARLIER DECISIONS ON THE SAME BLOCK, each of them a
+   client call at the time. They are listed so nobody "restores" one as a fix:
+     · the 2px BLUE RULE above each group title (2026-08-03, colour changed to
+       the CTA blue 2026-08-05, bled to the card edges 2026-08-16) — the brief
+       now says "remove the blue horizontal line completely";
+     · the CARD treatment copied from `.service-cases__card` (2026-08-16:
+       border + 1.5rem radius + white fill + two-layer shadow) — "reduce the
+       visual weight of borders and shadows… avoid the feeling of cards inside
+       a white website";
+     · EQUAL-HEIGHT columns — "do NOT create two huge cards with unnecessary
+       empty space at the bottom. Each column should naturally end after its
+       last list item";
+     · the SOLID BLACK hover fill + 45° arrow rotation (2026-08-05, parity with
+       the homepage's outfit list) — "a very subtle light-blue/neutral tint…
+       no exaggerated effects".
+
+   What stays: the two-column desktop / one-column phone structure, the DOM
+   order (Leistungen first), every link and every word of copy, the whole row
+   as one anchor, and the blue category titles — smaller and quieter now. */
 
 /* Narrower than the shared cap so the heading breaks into two controlled lines
    instead of running the full column, and less air under it than
@@ -3578,56 +3605,129 @@ main h2 {
    The SIZE stays on the shared `main h2` clamp on purpose — docs/page-conventions
    §2 is that every section title on the site is one size, and a closing
    navigation block is not the place to start an exception. */
-.service-related .section__intro {
+/* CENTRED since 2026-08-16 (client, on /jobs/: "hacé estos dos títulos centrados").
+   ⚠️ `.jobs-related` is named explicitly because that page uses its OWN wrapper
+   class, not `.service-related` — it was the only one of the 12 pages carrying
+   this block whose heading was full-width AND left-aligned (measured: text-align
+   `start`, h2 midpoint 512 against a container midpoint of 720 at 1440). Centring
+   only that one would have left 11 service pages ranged left, so both selectors
+   share this rule and the block is one decision again.
+   ⚠️ `margin-inline: auto` is not optional next to the cap: `text-align` centres
+   the TEXT inside a 44rem box that otherwise stays pinned to the left edge — the
+   trap docs/page-conventions.md documents for every `.section__intro` on the
+   site. The `> p` rule is the second half of it: the chassis sets
+   `.section__intro > p { max-width: 42rem }` at (0,1,1), so a single-class
+   selector ties and loses on order. Two classes here, so it wins. */
+/* 32px under the heading, down from 48 (brief: "slightly reduce the gap between
+   heading and lists") — the lists now sit close enough to read as this
+   heading's own content rather than as a separate block below it. */
+.service-related .section__intro,
+.jobs-related .section__intro {
   max-width: 44rem;
-  margin-bottom: var(--space-7);
+  margin-bottom: var(--space-6);
+  text-align: center;
+  margin-inline: auto;
 }
 
+.service-related .section__intro > p,
+.jobs-related .section__intro > p {
+  margin-inline: auto;
+}
+
+/* A CONTROLLED MEASURE, not the full container (brief: "use a controlled
+   max-width… the whole composition should feel balanced and intentional").
+   Left at the container's own ~1300px these two lists of three and four short
+   labels stretched a name against an arrow half a metre away, which is most of
+   why the rows read as a dashboard. 60rem caps each column at ~464px — close
+   to the 44rem the heading above already uses, so heading and lists share one
+   optical spine. */
 .service-related__cols {
   display: grid;
-  gap: var(--space-8);
+  gap: var(--space-6);
+  max-width: 60rem;
+  margin-inline: auto;
+  /* Each column ends after its own last row instead of being stretched to its
+     neighbour's height (brief: "do NOT create two huge cards with unnecessary
+     empty space at the bottom"). This is the whole fix for that — the panel is
+     a grid item, so its height came from the track, not from its content. */
+  align-items: start;
 }
 
-/* The group titles: noticeably bigger than the 0.75rem eyebrow-sized label they
-   were, bold, still uppercase (that is this site's label idiom), with a 2px blue
-   rule above each one so the two groups read as two blocks.
+/* ---- Each group is a QUIET SURFACE, not a card ------------------------------
+   A 4%-tint of the section's own ink, no border and no shadow: enough to hold
+   the group together on white, not enough to read as an object sitting on top
+   of the page. `--color-bg-subtle` is the token `.section--light` already
+   declares for exactly this "a shade off the page" job, so this introduces no
+   new colour.
 
-   ⚠️ THE BLUE IS THE CTA'S OWN --color-blue-light (#3D9AD3) since 2026-08-05
-   (client: "que el celeste sea el celeste del CTA"). It replaces a deeper
-   `color-mix(blue-dark 85%, black)` that measured 4.88:1, and #3D9AD3 measures
-   only **3,11:1 on white** — which is why the FONT SIZE is now a flat 1.25rem
-   instead of --font-size-md's 1.125→1.25rem clamp. That is not a taste change:
-   WCAG's large-text threshold is 18.66px BOLD, so at 20px bold the 3:1 minimum
-   applies and 3,11:1 passes, while at the clamp's 18px floor the 4,5:1 for normal
-   text would apply and it would fail. Raising the size to the threshold is the
-   documented cheap way out for this exact situation (docs/page-conventions.md §3,
-   docs/design-system.md §7) — do not lower the size back without also
-   reconsidering the colour.
-   The 2px RULE keeps --color-accent (blue-dark on a light section): a graphic
-   element only needs 3:1 and it clears that on its own. */
+   ⚠️ THE 1.5rem RADIUS IS DELIBERATELY THE SITE'S EXISTING OFF-SCALE ONE (24px,
+   shared with the price card and the Anwendungsfälle cards). The brief asks for
+   20–24px and no token sits in that range — reusing the one exception is the
+   whole reason a second one is not being invented here.
+
+   ⚠️ THE TINT IS SCOPED TO A LIGHT SECTION and this block only ever appears on
+   one today. On a dark section `--color-bg-subtle` is a white tint, which would
+   still work; what would NOT survive is the hover pair below, which resolves to
+   on-white values. Flagged rather than pre-built, same as the note the black
+   fill used to carry. */
+.service-related__col {
+  /* One variable, two consumers — the surface's padding and the row bleed
+     below. They have to be the same number or the hover tint stops short of the
+     surface's inner edge (or spills past its rounded corner). */
+  --related-pad: var(--space-5);
+  padding: var(--related-pad);
+  border-radius: 1.5rem;
+  background-color: var(--color-bg-subtle);
+}
+
+/* ⚠️ The row's hover tint bleeds past the text by a NEGATIVE MARGIN, and outside
+   a surface that margin is --container-padding (the page gutter). Inside one,
+   the correct edge is the SURFACE's padding — otherwise the tint either stops
+   short of the inner edge or, on a narrow viewport where the gutter is larger
+   than the padding, spills over the rounded corner. Same trap the original rule
+   documents for horizontal page scroll, one level in. */
+.service-related__col .service-related__link {
+  margin-inline: calc(-1 * var(--related-pad));
+  padding-inline: var(--related-pad);
+}
+
+/* The group titles: a SMALL uppercase category label (brief: "smaller and less
+   dominant"), 13px tracked out — the same idiom as `.section-eyebrow`, which is
+   what a category heading over an index list should read as. Down from 20px
+   bold with a 2px blue rule above it.
+
+   ⚠️⚠️ SHRINKING IT FORCED THE BLUE TO CHANGE, AND THE TWO CANNOT BE SEPARATED.
+   The old size was not a taste decision: `--color-blue-light` (#3D9AD3) measures
+   **3,11:1 on white**, which only passes as LARGE text — WCAG's threshold is
+   18.66px bold, and the flat 1.25rem/700 existed precisely to stay above it.
+   At 13px the 4,5:1 rule for normal text applies, and both brand blues fail it
+   (#3D9AD3 3,11:1, `--color-accent`/#5287C9 3,71:1). So the colour is the deep
+   mix this site already uses wherever brand blue has to carry small text on
+   white — `color-mix(blue-dark 85%, black)` = #4673AB, **4,88:1** — the same
+   value as `.section--light .service-link`, `.city-fields__num` and the consent
+   link in the lead form. Still unmistakably blue, as the brief asks.
+   ⚠️ DO NOT swap it back to a brand-blue token to "unify" it, and do not shrink
+   it further: at 13px this is already normal text.
+   ⚠️ `color-mix()` computes as `color(srgb …)`, so a contrast probe that parses
+   `rgb()` with a regex reads those decimals as 0–255 and reports a false ~21:1.
+   Calculate this one by hand — the trap is documented sitewide. */
 /* The second selector is not redundant: this section is a LIGHT one, and
    `.section--light h3` is (0,2,0) — it beat the plain `.service-related__title`
    (0,1,0) and painted these titles black instead of blue (measured:
    rgb(1,1,1)). Matching its specificity is the fix; the same collision the
-   Anwendungsfälle card titles hit. */
+   Anwendungsfälle card titles hit. ⚠️ /sicherheitskonzept/ writes these titles
+   as `<h2>`, so `.section--light h2` collides there the same way — the class
+   selector alone would lose. */
 .service-related__title,
 .section--light .service-related__title {
-  padding-top: var(--space-4);
-  margin-bottom: var(--space-5);
-  /* The same CTA blue as the title text below it. It used to be --color-accent
-     (blue-dark on a light section) while the text was a deeper mix — two blues
-     4 pixels apart, which reads as a mistake rather than a hierarchy now that the
-     text is #3D9AD3. A 2px graphic only needs 3:1 and #3D9AD3 gives 3,11:1. */
-  border-top: 2px solid var(--color-blue-light);
-  /* Flat 20px, not the clamp — see the contrast note above. */
-  font-size: 1.25rem;
+  /* 12px, then the first row's own 14px of padding — 26px of settled space
+     under the label (brief: "subtle spacing underneath"). */
+  margin-bottom: var(--space-3);
+  font-size: 0.8125rem;
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
-  /* 0.05em, down from 0.08em (client 2026-08-05: "que el letter spacing de los
-     títulos no sea tan salado, un poco menos"). Still tracked out enough to read
-     as a label rather than a heading — uppercase at 0 tracking sets too tight. */
-  letter-spacing: 0.05em;
-  color: var(--color-blue-light);
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
 }
 
 .service-related__list {
@@ -3642,97 +3742,156 @@ main h2 {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  /* Taller rows and a larger label than the base (brief). */
-  padding: var(--space-5) var(--container-padding);
+  /* 14px block, down from 24 (brief: "slightly tighter height"). Together with
+     the 16px label that is a ~52px row — still past the 44px touch minimum on
+     its own, before the phone block's explicit floor. */
+  padding: 0.875rem var(--container-padding);
   /* Compensating negative inline margin, so the hover tint bleeds past the
      text's own edge without shifting where the text aligns — same pattern as
      the homepage's outfit-name list. It bleeds by exactly --container-padding,
      NOT a fixed step: with a fixed 16px the bleed exceeded the container's own
      padding on small screens (12px at 390px) and produced 4px of real
      horizontal page scroll — measured, not theoretical. Tying both sides to
-     the same token makes that impossible at any width. */
+     the same token makes that impossible at any width.
+     (Inside a `__col` the rule above re-points both to `--related-pad`.) */
   margin-inline: calc(-1 * var(--container-padding));
-  border-top: 1px solid var(--color-border);
-  font-size: var(--font-size-md);
+  /* 16px, down from --font-size-md's 18–20px clamp. An editorial index sets its
+     entries at body size; at 20px against a 13px category label the rows were
+     the loudest thing in a block whose job is to be a quiet way out of the
+     page. Nothing is lost — this is the site's own body size. */
+  font-size: var(--font-size-base);
   color: var(--color-text);
   text-decoration: none;
   transition:
-    background-color var(--duration-base) var(--easing-standard),
-    color var(--duration-base) var(--easing-standard);
+    background-color var(--duration-base) var(--easing-premium),
+    color var(--duration-base) var(--easing-premium);
+}
+
+/* SEPARATORS ONLY BETWEEN ROWS (brief), so the list has no top or bottom edge of
+   its own and the surface's tint is the only thing bounding it.
+   ⚠️ `li + li` also DELETED a special case rather than needing a new one: the
+   old `border-top` on every row meant the first one drew a divider under a
+   title, which on /brandwache-nuernberg/ — a single UNTITLED list — floated as a
+   stray line under empty padding and needed its own `:first-child` override.
+   With the border between siblings, no first row ever has one, titled or not. */
+.service-related__list li + li .service-related__link {
+  border-top: 1px solid var(--color-border);
+}
+
+/* Only the OUTER corners of the stack are rounded, so a hover tint on the first
+   or last row follows the surface's own curve instead of cutting a square
+   across it; the middle rows stay square, which is what keeps each hairline a
+   straight line from edge to edge.
+   ⚠️ Written as first/last rather than as a base radius plus `:has(+ li)`
+   flattening — same result, no `:has()`, and a single-row list (the untitled
+   /brandwache-nuernberg/ case) picks up both halves on its own. */
+.service-related__list li:first-child .service-related__link {
+  border-start-start-radius: var(--radius-md);
+  border-start-end-radius: var(--radius-md);
 }
 
 .service-related__list li:last-child .service-related__link {
-  border-bottom: 1px solid var(--color-border);
+  border-end-start-radius: var(--radius-md);
+  border-end-end-radius: var(--radius-md);
 }
 
-/* Significantly larger than the 0.9em slivers they were, and centred in the row
-   by the flex alignment above. Up again to 1.75rem (28px) on 2026-08-05, client:
-   "las flechas más grandes". The row is 81px tall and the label 20px, so the arrow
-   can carry this size without competing with the text — it is the row's only other
-   mark. */
+/* ⚠️ THE LABEL IS A REAL <span>, AND IT HAS TO BE. The brief wants the text to
+   move a few pixels right on hover while the arrow moves diagonally and the
+   tint stays put — three different motions on what used to be a bare text node
+   plus an <svg> inside one flex row. Transforming the <a> itself would drag its
+   background with it (the row would slide, not the text), and animating the
+   row's padding instead would be a layout property on every frame, which this
+   project's motion rules rule out. Wrapping the words is the only way to move
+   only the words. 74 rows across 13 pages carry it; not one word of copy
+   changed.
+   ⚠️ SAFE AGAINST GSAP: `data-item-reveal="li"` animates the <li>, and GSAP
+   writes `translate/rotate/scale: none` inline on whatever it animates — the
+   documented reason `.city-why__item`'s hover is dead. This transform is on a
+   grandchild, which is exactly the pattern that fix prescribes. */
+.service-related__label {
+  transition: transform var(--duration-base) var(--easing-premium);
+}
+
+/* 18px, down from 28. A "northeast arrow" beside a 16px label is a mark, not a
+   second focal point — at 28px it was carrying more weight than the destination
+   it points at.
+   ⚠️ AND IT IS NEUTRAL AT REST (brief: "let the arrow become blue only on hover
+   rather than having every arrow visually shouting all the time"). Every row
+   was previously drawing a saturated #3D9AD3 chevron, so a four-item list read
+   as four accents. --color-text-muted is the section's own quiet grey. */
 .service-related__arrow {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 1.125rem;
+  height: 1.125rem;
   flex-shrink: 0;
-  /* The CTA blue, like the group titles and their rules — one blue in this block
-     instead of two that differ by a few percent. A line graphic needs 3:1 and this
-     clears it at 3,11:1. On hover the row inverts and the arrow takes the row's own
-     colour, which is handled further down. */
-  color: var(--color-blue-light);
+  color: var(--color-text-muted);
   /* Same measured bug and same fix as .service-link__arrow above — see the note
      there. Without these the row arrows were filled slivers, i.e. absent. */
   fill: none;
   stroke: currentColor;
+  /* 1.6 user units on a 24 viewBox rendered at 18px = 1.2px on screen, which is
+     where the rest of this site's line art sits. It read heavier at 28px; the
+     number stays because the size, not the stroke, is what changed. */
   stroke-width: 1.6;
-  /* 250ms (--duration-base), inside the brief's 200–300ms. */
+  /* 250ms (--duration-base), inside the brief's 250–350ms. */
   transition:
     transform var(--duration-base) var(--easing-premium),
-    color var(--duration-base) var(--easing-standard);
+    color var(--duration-base) var(--easing-premium);
 }
 
-/* SOLID BLACK FILL with white text, exactly like the homepage's outfit-name list
-   (client 2026-08-05: "cuando hoveree, que sea igual que la lista de outfits de la
-   home, que el fondo se ponga negro y que la flecha rote"). Same two tokens that
-   rule uses (--color-logo-black / --color-white), so the two lists are one
-   decision.
-   This REVERSES the light blue wash a 2026-08-03 brief asked for ("flat and
-   lightweight") — the client's later call, and it is also the more accessible of
-   the two: white on black is 21:1, where the wash relied on the label darkening
-   for its only state change.
-   Every instance of this block today sits on a light section. On a dark one a black
-   fill would be invisible, so a future dark instance needs its own inverted pair —
-   flagged rather than pre-built, since none exists. */
+/* A VERY SUBTLE LIGHT-BLUE TINT — `--color-accent-subtle`, which
+   `.section--light` already declares as rgb(82 135 201 / 0.08) for exactly this
+   kind of wash, so no new colour enters the palette. The label darkens from the
+   section's muted grey to full ink at the same time, so the state never depends
+   on the tint alone.
+   ⚠️ This REVERSES the solid black fill + white text of 2026-08-05 (parity with
+   the homepage's outfit list) on the client's later instruction: "no exaggerated
+   effects". Worth knowing what it costs — that fill measured 21:1 and this is a
+   quieter signal by design, which is why the label darkens AND the text shifts
+   AND the arrow both moves and turns blue: four coordinated changes rather than
+   one loud one.
+   ⚠️ On a dark section this pair resolves to on-white values. No instance of
+   this block sits on one today; a future one needs its own. */
 .service-related__link:hover,
 .service-related__link:focus-visible {
-  background-color: var(--color-logo-black);
-  color: var(--color-white);
+  background-color: var(--color-accent-subtle);
+  color: var(--color-text);
 }
 
-/* ROTATES 45deg, turning the up-right arrow into a straight right arrow — the same
-   mechanism as .outfits__name-arrow and .services__item-arrow on the homepage
-   (client 2026-08-05: "que la flecha rote"). It replaces a 3px translate an earlier
-   brief asked for: one icon, two states, and the transition is a real rotation
-   rather than a nudge.
-   White, because it now sits on the black fill. */
+/* 4px right — "text moves a few pixels to the right". */
+.service-related__link:hover .service-related__label,
+.service-related__link:focus-visible .service-related__label {
+  transform: translateX(4px);
+}
+
+/* The arrow travels the way it POINTS (up-right, 3px each axis) instead of the
+   45° rotation it used to do — the brief asks for a diagonal nudge, and this is
+   also the motion `.service-link__arrow` and the Ratgeber cards already use, so
+   the site has one arrow gesture again rather than two.
+   Blue only here: `--color-accent` is blue-dark on a light section, 3,71:1
+   against white, and a line graphic needs 3:1. */
 .service-related__link:hover .service-related__arrow,
 .service-related__link:focus-visible .service-related__arrow {
-  transform: rotate(45deg);
-  color: var(--color-white);
+  transform: translate(3px, -3px);
+  color: var(--color-accent);
 }
 
 @media (min-width: 768px) {
   .service-related__cols {
-    /* Equal columns, and a step more room between them (brief). */
+    /* Two equal columns, precisely aligned because both tracks are `1fr` of the
+       same capped measure. 32px between them, down from the old 64–128px clamp:
+       inside a 60rem cap that clamp was spending a fifth of the block on the
+       gutter between two lists that are already visually separated by their own
+       surfaces. */
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: clamp(var(--space-8), 7vw, var(--space-10));
+    column-gap: var(--space-6);
   }
 }
 
 /* No vertical divider between the columns, and that is a decision rather than an
-   omission: the rows' hover tint deliberately bleeds --container-padding past
-   each column's edge, so the right column's wash would cross a centred divider
-   by ~24px every time it lit up. The two blue rules above the titles already
-   separate the groups, which is what the divider was optional for. */
+   omission: the rows' hover tint deliberately bleeds to each surface's inner
+   edge, so the right column's wash would run up against a centred divider every
+   time it lit up. The two tinted surfaces already separate the groups, which is
+   what the divider was optional for. */
 
 /* ---- Alternating dark / light sections ------------------------------------
    Client 2026-08-03: the page alternates black and white section by section,
@@ -3817,8 +3976,40 @@ main h2 {
   border-bottom-color: var(--color-logo-black);
 }
 
+.section--light .service-highlight,
 .section--light .service-decision {
   border-color: rgb(82 135 201 / 0.3);
+}
+
+/* ---- The Leistungsumfang highlight box -------------------------------------
+   RESTORED 2026-08-16 (client, Feedback 3.15 punto 3). Removed 2026-08-05 on the
+   client's own instruction and brought back on the client's own instruction —
+   both halves of that history are written at the markup in pages/werkschutz.html.
+
+   Values are the ORIGINAL ones recovered from git, not re-derived, so the box the
+   client approved before is the box that comes back rather than a similar one.
+
+   ⚠️ Its 46rem cap is what stops it running the full width of the container. The
+   section it lives in is `.service-flow`, which is full-bleed, so the box also
+   depends on a `.container` wrapper in the markup — see the note there. */
+.service-highlight {
+  margin-top: var(--space-8);
+  padding: var(--space-6);
+  border: 1px solid rgb(61 154 211 / 0.35);
+  border-radius: var(--radius-md);
+  background-color: var(--color-accent-subtle);
+  max-width: 46rem;
+}
+
+.service-highlight__title {
+  font-size: var(--font-size-md);
+  margin-bottom: var(--space-3);
+}
+
+.service-highlight > p {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-5);
 }
 
 
@@ -3848,18 +4039,20 @@ main h2 {
 /* The related-links rows on a white section. The resting colour is this section's
    own grey; the base rule further up is theme-agnostic (--color-text).
    ⚠️ The hover pair here is load-bearing and easy to get wrong: it is (0,2,1)
-   against the base hover's (0,1,1), so whatever it says WINS. It used to set
-   `color: var(--color-logo-black)` for a "darken on hover" brief — with the row now
-   filling BLACK on hover, that would have left a black label on a black fill. It
-   sets white, matching the base rule. Same class of cascade trap as the note this
-   comment replaced, just in the other direction. */
+   against the base hover's (0,1,1), so whatever it says WINS — twice now it has
+   silently contradicted the base rule. It said `--color-logo-black` while the row
+   filled black (black on black), then `--color-white` while the row filled black
+   (correct), and with the fill now a pale blue tint white would be invisible.
+   It darkens to full ink, which is the base rule's intent expressed in this
+   section's own tokens. If the hover fill changes again, THIS is the rule that
+   decides the text colour. */
 .section--light .service-related__link {
   color: var(--color-gray);
 }
 
 .section--light .service-related__link:hover,
 .section--light .service-related__link:focus-visible {
-  color: var(--color-white);
+  color: var(--color-logo-black);
 }
 
 /* The FAQ "+" glyph on the BORDERED default: blue-dark on white clears large
@@ -4195,6 +4388,33 @@ main h2 {
 
 
 @media (max-width: 767.98px) {
+  /* ---- The Vorteile section's trailing whitespace ----
+     Client 2026-08-16 (Feedback 3.15 punto 7, mobile): "a bit too much whitespace
+     before the next section at the bottom".
+
+     Measured at 390px, the empty run after the last panel's text was
+     16 (the panel's own padding) + 32 (the module's padding-bottom)
+        + 80 (the section's tail) = 128px, and then the NEXT section opens with
+     216px of padding-top. Of that 216, 120px is the pixel-seam band and is not
+     negotiable — js/pixel-transition.js paints tiles there, and shrinking the
+     reservation would drop them onto real content. So the only honest levers are
+     the two on this side of the seam, and both are genuinely spare:
+
+       · the LAST module's padding-bottom exists to separate it from the NEXT
+         module, and there isn't one. 32px -> 8px.
+       · this section's own padding-bottom, 96px -> 48px.
+
+     ~72px comes off the run and nothing that separates two real things moves.
+     ⚠️ Deliberately NOT touching `.section`'s shared 96px rhythm — that would
+     silently reflow every section on the three chassis pages. */
+  .service-contrast {
+    padding-bottom: var(--space-7);
+  }
+
+  .service-contrast__module:last-child {
+    padding-bottom: 0.5rem;
+  }
+
   .pixel-seam__band {
     --pixel-band-h: 120px;
   }
@@ -4305,15 +4525,14 @@ main h2 {
     line-height: 1.5;
   }
 
-  /* ---- 2. Ansprechpartner: the reserved portrait can't own half a screen ----
-     It is a 4:5 frame holding a "[Portrait Alexander Jäger folgt]" label until
-     the client supplies the photo. At full width on a phone that measured
-     350x438 — more than half a screen of empty box. It still reserves real,
-     proportional space (so there is no CLS when the photo lands), just at a size
-     that matches its importance here. */
-  .service-contact__portrait {
-    max-width: 9rem;
-  }
+  /* ---- 2. Ansprechpartner: the portrait's cap moved OUT of this block ----
+     ⚠️ It used to be `max-width: 9rem` here, sized for an EMPTY reserved frame
+     ("an empty labelled box can't own half a screen"). That reasoning died with
+     the real photo on 2026-08-14, and keeping the rule in a max-width: 1151.98px
+     block was actively wrong for a second reason: the two-column layout starts at
+     900px, so 900-1151 got a 144px photo in a ~380px column — a thumbnail beside
+     a wide empty gutter. The cap is now phone-only, below the two-column
+     breakpoint — see `@media (max-width: 899.98px)` after this block. */
 
   /* ---- 3. Risiko cards: the illustration keeps its card, tighter ----
      4 cards x ~434px. The isometric scenes are the point of this section
@@ -4345,6 +4564,64 @@ main h2 {
 
   .service-contrast__cue {
     min-height: 2.75rem;
+  }
+
+  /* ---- 3c. GROUPING: a module has to read as ONE thing ----
+     Client 2026-08-16 (Feedback 3.15 punto 6, tablet): "group related elements
+     visually — e.g. everything belonging to '03 Nachweisbarkeit' closer together,
+     and more spacing between '03' and the elements above it".
+
+     Measured before touching it, and the numbers say the complaint is right: a
+     module's own parts sat 16px apart while consecutive modules were separated by
+     32 + 1 + 32 = 65px. Two-to-one is not enough separation to group anything —
+     the eye reads one continuous column of text blocks, so "03" looks like it
+     belongs to whatever is above it.
+
+     Both halves move, because only moving one would not fix the RATIO:
+       within a module   16px -> 12px  (and the topic's 20px lead-in -> 14px)
+       between modules   65px -> 97px
+     i.e. from 4:1 to 8:1. Nothing gets smaller than 12px, so nothing reads as
+     cramped; the separation is what does the work.
+
+     ⚠️ SCOPED FROM 768px ON PURPOSE. The enclosing block runs to 1151.98px, which
+     includes phones — and on a phone this would ADD ~54px per module, the opposite
+     of what punto 7 of the same feedback asks for. The client scoped this to
+     tablet and that scoping is load-bearing, not incidental. */
+  /* ⚠️ BOTH HALVES OPEN AT 768px, NOT AT THE ENCLOSING BLOCK'S START. That block
+     begins at 0, so an unbounded rule here reaches phones — measured, and it did:
+     inter-module separation on a 390px screen went 65 → 97px, i.e. it made the
+     page taller in exactly the place punto 7 of the same feedback asks to make it
+     shorter. The two points pull in opposite directions and the widths are what
+     keep them apart. */
+  @media (min-width: 768px) {
+    .service-contrast__module {
+      padding-block: 3rem;
+    }
+  }
+
+  /* ⚠️⚠️ THE GAP ALSO CLOSES AT 899.98 AND THE PADDING ABOVE DOES NOT — they are
+     different properties doing different jobs, and this was a real bug caught by
+     measuring rather than by reading the rule.
+
+     `.service-contrast__module` is a GRID, and it stops being a stacked one at
+     900px, where the desktop split turns it into three columns (problem | cue |
+     panel). So above 900 `gap` is the HORIZONTAL space between those columns, not
+     the vertical space between a module's stacked parts — tightening it there
+     would squeeze the arrow against the text, which is not what was asked and is
+     not even visible as "grouping".
+     The symptom in the numbers: measuring child[1].top − child[0].bottom returns
+     −94 / −83 / −84 at 900 / 1024 / 1151, i.e. negative, because the children sit
+     side by side. Only 768–899 is the stacked layout the client's screenshot shows.
+     `padding-block` stays unbounded because separation BETWEEN modules is vertical
+     in both layouts, so it is still the right thing at 900–1151. */
+  @media (min-width: 768px) and (max-width: 899.98px) {
+    .service-contrast__module {
+      gap: 0.75rem;
+    }
+
+    .service-contrast__topic {
+      margin-bottom: 0.875rem;
+    }
   }
 
   /* ---- 4. Touch targets under 44px (measured, not assumed) ----
@@ -4427,6 +4704,21 @@ main h2 {
 
   .conversion__form-alt a {
     font-size: 1rem;
+  }
+}
+
+/* ---- Ansprechpartner portrait: the stacked-layout cap ----------------------
+   Scoped to BELOW the 900px two-column breakpoint on purpose: from 900px up the
+   photo has its own grid column and the 26rem cap governs, so a cap here would
+   only ever fight that column. Stacked, the photo has the full container width
+   available and does not want it — 48vw keeps it clearly secondary to the name
+   and the two contact actions, which are what this section is for, and 14rem
+   stops it growing into a poster in the 768-899 band. It replaces the 9rem cap
+   that was sized for an empty placeholder box (see the note in the
+   max-width: 1151.98px block above). */
+@media (max-width: 899.98px) {
+  .service-contact__portrait {
+    max-width: min(48vw, 14rem);
   }
 }
 
@@ -4751,5 +5043,538 @@ main h2 {
   .service-hero .service-hero__content h1,
   .service-hero .service-hero__lead {
     max-width: none;
+  }
+}
+
+/* ==========================================================================
+   THE THREE BLOCKS THE OTHER NINE SERVICE PAGES NEEDED (2026-08-16)
+   ==========================================================================
+   /werkschutz/ is the template, but it is also the ONLY service page whose
+   draft supplies six per-duty photographs and four bespoke isometric scenes.
+   The remaining nine (Objektschutz, Sicherheitstechnik, Brandwache,
+   Kaufhausdetektei, Veranstaltungsschutz, Baustellenbewachung,
+   Revier- & Schließdienst, Empfangsdienst, Interventionsdienst) have exactly
+   ONE asset each — the portrait service photo that already feeds the homepage's
+   services preview — and their v2 drafts deliberately vary their structure
+   ("Struktur bewusst variiert" is written into six of the nine). So §8.4's "copy
+   werkschutz.html and change the copy" needed three shapes that did not exist:
+
+     .service-hero--split   a hero that can hold a PORTRAIT photo
+     .service-points*       N ruled editorial blocks (rule → title → text)
+     .service-scope*        the Leistungsumfang as a tick list, no photo stack
+
+   Everything else on those nine pages is this file, unchanged.
+   ========================================================================== */
+
+/* ---- .service-hero--split: two columns, copy | portrait photo --------------
+   ⚠️ This is a RESTORATION, not an invention. docs/page-conventions.md §8.2 has
+   always prescribed it — "con una foto VERTICAL va a dos columnas (copy | foto),
+   que es lo que tuvo /werkschutz/ hasta el 2026-08-03" — but the rules
+   themselves were deleted with that page's markup when its hero became a
+   full-bleed landscape photograph. Nine pages need them back.
+
+   ⚠️ It is NOT the July original either: that version had its own smaller H1 and
+   its own lede measure. Everything typographic here still comes from the shared
+   `.service-hero` rules above (the homepage-parity H1 clamp, the 0.82 lede, the
+   18px ticks, the 2.75rem seals), so the split hero and the bleed hero are one
+   hero with two photo treatments — which is the whole reason to add a modifier
+   instead of a second hero.
+
+   The nine photos are 820x~1220. `aspect-ratio` is declared per page from the
+   real file, not hardcoded here: five of the nine are 1217–1225 tall, not 1227,
+   and a shared ratio would leave a strip of the frame's own background showing —
+   the exact defect §8.2 documents for `.services__preview-media`. */
+.service-hero--split .service-hero__grid {
+  align-items: center;
+}
+
+/* Without the side column `.service-hero__content` caps itself at 44rem (see
+   above). With one, the COLUMN is the constraint and the cap would only ever
+   subtract from it, so it is released here. */
+.service-hero--split .service-hero__content {
+  max-width: none;
+}
+
+/* No radius, no border, no placeholder tint — the same call as
+   `.uu-lead__photo` and `.service-contact__portrait`: these photos are dark
+   documentary frames on a dark section, and a light placeholder would flash
+   light-then-dark as the lazy image lands. `aspect-ratio` is the frame's only
+   real job — it reserves the space, so there is no CLS. */
+.service-hero--split .service-hero__media {
+  margin: 0;
+  width: 100%;
+  max-width: 24rem;
+  margin-inline: auto;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: var(--color-bg);
+}
+
+/* ⚠️ ALL THREE DECLARATIONS, always. `reset.css` already gives every <picture>
+   `display: block`, which is why a probe reports it healthy — what is missing is
+   the HEIGHT: with `height: auto` the <img>'s `height: 100%` has no definite
+   percentage to resolve against, falls back to `auto`, and the photo sizes
+   itself by its own intrinsic ratio. It looks perfect while the photo matches
+   the frame and leaves a strip of frame showing the moment it does not
+   (docs/page-conventions.md §8.2). */
+.service-hero--split .service-hero__media picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.service-hero--split .service-hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 1024px) {
+  .service-hero--split .service-hero__grid {
+    /* Copy-heavy: this column carries the badge, H1, lede, two CTAs, three ticks
+       and the trust band, so it gets the larger share — the same 1.1/0.9 split
+       /jobs/ measured for the same content against the same 52px H1. */
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  }
+
+  /* Sized by HEIGHT, like the bleed hero's own photo: capped to what is left of
+     the first screen after the 80px header, the ~48px breadcrumb row and the
+     hero's padding, so the trust band never falls below the fold. */
+  .service-hero--split .service-hero__media {
+    max-width: none;
+    max-height: calc(100svh - 16rem);
+  }
+}
+
+@media (max-width: 1023.98px) {
+  /* Stacked, photo AFTER the copy — the H1 has to open the page. DOM order
+     already is copy → photo, so nothing is reordered visually here; this only
+     stops a portrait photo from taking a whole phone screen. */
+  .service-hero--split .service-hero__media {
+    max-width: min(22rem, 68vw);
+  }
+}
+
+/* ---- .service-points*: N ruled editorial blocks ---------------------------
+   The single most-repeated shape in the nine drafts — Risiko cards, Vorteile,
+   Leistungsbereiche, Anwendungsfälle, typische Einsätze, Zahlen-Kacheln, the
+   Prinzip explainer: short accent rule → title → one or two sentences.
+
+   RULED, NOT CARDED, and that is §8.2's own rule rather than a preference: the
+   price box is the only elevated surface on a service page. It also sidesteps a
+   real cost — `.service-cases`' blue glossy cards carry a documented 3.11:1
+   caveat because every one of them holds a paragraph in white on #3D9AD3
+   (design-system §7). Reusing them nine more times would have republished that
+   caveat about forty times over for sections the drafts never asked to be cards.
+
+   ⚠️ SIXTH CONSUMER OF THIS SHAPE. `.lh-why*` (page-leistungen.css) is the same
+   idea and docs/build-checklist.md already says it "ya tendría que estar en el
+   chasis". It is not merged here because that block is live on /leistungen/ and
+   /sicherheitskonzept/ and this pass is not the moment to restyle two approved
+   pages — but the migration is `.lh-why__item` → `.service-points__item`, and
+   the two sets of values were written to match so it stays a rename.
+
+   Token-driven throughout, so it works on either surface with no variant. */
+.service-points__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-7);
+}
+
+/* The accent is a pseudo-element so the item stays a plain block and the rule
+   can never be mistaken for a border something else might override.
+   `--color-accent` resolves to blue-light on a dark section and blue-dark inside
+   `.section--light`; it is a GRAPHIC either way, where 3:1 applies, and both
+   clear it. */
+.service-points__item::before {
+  content: "";
+  display: block;
+  width: 3rem;
+  height: 2px;
+  margin-bottom: var(--space-4);
+  background-color: var(--color-accent);
+}
+
+.service-points__title {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  margin-bottom: var(--space-3);
+}
+
+.service-points__text {
+  color: var(--color-text-muted);
+  max-width: 42ch;
+}
+
+/* The optional numeral. `aria-hidden` in the markup — the <ol> already numbers
+   itself for assistive technology, and a visible numeral is what forces the <ol>
+   in the first place, not the other way round. */
+.service-points__num {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+  font-weight: 300;
+  color: var(--color-accent);
+}
+
+/* ⚠️ COLUMN COUNT IS DECLARED, NOT AUTO-FITTED, and the reason is orphans.
+   The nine drafts give 2, 3, 4, 5 and 6 items to this block. A fixed
+   `repeat(4, …)` — which is what `.lh-why__list` does — leaves the fourth column
+   empty at three items and starts a second row with one item at five, the same
+   visible hole `.city-fields__item--wide` and `.city-why__grid--3` each exist to
+   close. One modifier per real count is duller and always lands. */
+@media (min-width: 640px) {
+  .service-points__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1100px) {
+  .service-points__list--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .service-points__list--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .service-points__list--5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .service-points__list--6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .service-points__list--3,
+  .service-points__list--4,
+  .service-points__list--5,
+  .service-points__list--6 { gap: var(--space-6); }
+}
+
+/* Five in a row only from 1280px: "Mechanische Sicherheitstechnik & Absperrung"
+   is 42 characters and a fifth of the container below that width cannot hold it
+   without leaning on hyphenation in every label — the same measurement
+   /ueber-uns/ made for its own five-across strip. */
+@media (min-width: 1100px) and (max-width: 1279.98px) {
+  .service-points__list--5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* An odd item left alone in the last row of a 2-up or 3-up grid reads as a
+   mistake rather than as a fifth item, so it spans instead. */
+@media (min-width: 640px) and (max-width: 1099.98px) {
+  .service-points__list--3 > :last-child,
+  .service-points__list--5 > :last-child { grid-column: 1 / -1; }
+}
+
+@media (min-width: 1100px) {
+  .service-points__list--4 > :nth-child(5):last-child { grid-column: 1 / -1; }
+}
+
+.service-points__outro {
+  margin-top: var(--space-7);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+  max-width: 62rem;
+  color: var(--color-text-muted);
+}
+
+/* ---- .service-scope*: the Leistungsumfang as a tick list ------------------
+   /werkschutz/ renders this section as `.service-flow` — the pinned 50/50
+   scrollytelling with one photograph per duty. That block needs SIX photos per
+   service and only Werkschutz has them, so the other nine use the shape their
+   drafts actually describe ("H2 + Häkchenliste"): a two-column list of
+   tick → title → sentence, with the section's single link where the draft puts
+   one.
+
+   `.service-scope__tick` was already styled at the top of this file — it has
+   been sharing a rule with `.service-price__tick` since 2026-08-03 and simply
+   had no markup left to style. This is that markup arriving. */
+.service-scope__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-6);
+}
+
+.service-scope__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.service-scope__body {
+  min-width: 0;
+}
+
+.service-scope__title {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  margin-bottom: var(--space-2);
+}
+
+.service-scope__text {
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 900px) {
+  .service-scope__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-8);
+  }
+}
+
+/* German compounds in a half-width column: base.css sets `hyphens: auto` on
+   every <p> and <li>, which is right for prose and wrong for a duty label —
+   "Alarmverfolgung & Technik-Bedienung" broke as "Technik-Bedie-nung". Same
+   suppression the rest of this file applies to its own column-set copy. */
+.service-points__title,
+.service-points__text,
+.service-scope__title,
+.service-scope__text {
+  hyphens: none;
+}
+
+/* ---- .service-konzept__steps--4 / --5: the rail at other step counts --------
+   The shared rail is hardcoded to `repeat(3, …)` from 700px because
+   /werkschutz/'s Sicherheitskonzept has exactly three steps. Five of the nine
+   remaining drafts give their "Konkrete Schritte" section FOUR steps and one
+   ("So läuft eine Intervention") gives FIVE, so the count needs to be declarable.
+
+   ⚠️ WHY THESE DO NOT SIMPLY WRAP TO TWO ROWS. The connector is drawn per step
+   as a HORIZONTAL segment from this node's centre to the next one's, and it
+   computes the next node's position from "this step's right edge + the column
+   gap + half a column". That arithmetic only holds while the next step is in the
+   SAME row — at a row break the last step of row 1 would draw a segment
+   rightwards into empty space. So each count gets ONE breakpoint at which all of
+   its steps fit on one line, and below that it uses the vertical rail the mobile
+   layout already provides, which is correct at any count.
+
+   The breakpoints are the label widths, not round numbers: at four columns the
+   longest step text is "Installation durch Fachpartner" plus two lines of copy,
+   which needs the 1100px this project already measured for a four-across row;
+   five columns need 1280px for the same reason /ueber-uns/'s five-item strip
+   does. */
+@media (min-width: 700px) and (max-width: 1099.98px) {
+  /* Back to one column, which also restores the vertical connector: the
+     re-aimed horizontal rule lives inside the shared 700px block, so the
+     properties it overwrote have to be put back explicitly. */
+  .service-konzept__steps--4,
+  .service-konzept__steps--5 {
+    grid-template-columns: none;
+  }
+
+  .service-konzept__steps--4 > .service-konzept__step:not(:last-child)::after,
+  .service-konzept__steps--5 > .service-konzept__step:not(:last-child)::after {
+    top: auto;
+    bottom: calc(-1 * var(--space-7));
+    left: 50%;
+    right: auto;
+    width: 1px;
+    height: var(--space-7);
+    transform: scaleY(var(--step-line, 1));
+    transform-origin: top center;
+  }
+}
+
+@media (min-width: 1100px) and (max-width: 1279.98px) {
+  .service-konzept__steps--5 {
+    grid-template-columns: none;
+  }
+
+  .service-konzept__steps--5 > .service-konzept__step:not(:last-child)::after {
+    top: auto;
+    bottom: calc(-1 * var(--space-7));
+    left: 50%;
+    right: auto;
+    width: 1px;
+    height: var(--space-7);
+    transform: scaleY(var(--step-line, 1));
+    transform-origin: top center;
+  }
+}
+
+@media (min-width: 1100px) {
+  .service-konzept__steps--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1280px) {
+  .service-konzept__steps--5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+
+/* ⚠️ `.service-konzept__text` hardcodes `color: rgb(255 255 255 / 0.88)` and the
+   three Figma scenes have a fixed white stroke, so this whole block is DARK-ONLY
+   — stated twice further up this file. The nine service pages therefore always
+   place their steps section on a dark surface, and they use the block WITHOUT
+   `.service-konzept__art`: none of those drafts supplies per-step artwork, and
+   inventing three-to-five scenes per page is not "assembly". The numeral, the
+   node and the rail carry the sequence on their own, which is exactly what the
+   mobile layout has always looked like. */
+
+/* ---- .service-price__box--text: a Preis-Box with words instead of a number ---
+   Three of the twelve services are not priced by the hour and their Webtexte say
+   so: Sicherheitstechnik is "projektbasiert kalkuliert … seriöse Zahlen gibt es
+   erst nach einer Begehung", the Revier- & Schließdienst is "je Kontrollfahrt
+   bzw. Runde kalkuliert, nicht je Stunde", and the Interventionsdienst is a
+   monthly standby fee plus a per-callout fee.
+
+   The base value is `clamp(2.5rem … 3.75rem)` with `white-space: nowrap` because
+   it was built to hold "26-32" — at 60px a phrase like "Bereitschaft + Einsatz"
+   ran 51px past the card at 1440 (measured, and the reason this rule exists).
+   Those pages also pass an EMPTY unit: "Je Kontrollfahrt €/Std." is not a price,
+   it is a contradiction.
+
+   ⚠️ These three pages also emit NO `offers` in their Service JSON-LD, for the
+   same reason. If one of them ever gets a real hourly range, both halves change
+   together — the box modifier here and `noOffers` in service_pages_data.py. */
+.service-price__box--text .service-price__box-value {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-tight);
+  white-space: normal;
+  text-wrap: balance;
+}
+
+/* ---- Contrast fixes for a compare block on a LIGHT section -------------------
+   `.service-compare` is documented as either-surface and its light overrides
+   have existed since 2026-08-03, but until /revier-schliessdienst/ no page had
+   actually put it on white — so these two were never exercised. Measured there:
+   the criterion terms came out at 3,17:1 at 11px and the primary panel's context
+   label at 3,71:1 at 12px. Both are small text, where the threshold is 4,5:1.
+
+   Same fix, and the same reasoning, as `.service-price__factors` already applies
+   one section away: a muted alpha that is correct at 16px on a dark surface is
+   not correct at 11px on a light one. */
+.section--light .service-panel__fact dt {
+  /* Was rgb(59 73 86 / 0.6) = 3,17:1. Solid --color-gray measures 9,24:1 on
+     white, which is the value the price factors already use for exactly this
+     "small uppercase label on white" case. */
+  color: var(--color-gray);
+}
+
+.section--light .service-panel--primary .service-panel__label {
+  /* Was --color-accent, which inside .section--light is blue-dark = 3,71:1.
+     The documented deep mix measures 4,90:1 and reads as the same blue — the
+     same substitution §5 prescribes and .service-link already makes here. */
+  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+}
+
+/* ---- Touch targets on the two new blocks ------------------------------------
+   A `.service-link` is `inline-flex; align-items: center` and renders 29px tall,
+   which is under the 44px minimum (WCAG 2.5.8). /werkschutz/ carries three of
+   them and the city pages fixed their own copy the same way — with `min-height`
+   rather than `padding-block`, because padding has to be re-tuned per type size
+   while a min-height is simply correct.
+
+   ⚠️ SCOPED to the blocks added for these nine pages rather than applied to
+   `.service-link` itself. That selector is live on /werkschutz/, /referenzen/,
+   /jobs/ and three case studies, all of which are client-reviewed, and raising
+   the height of an inline link inside a highlight box would move their layout.
+   Promoting it is the right call — but as its own pass, measured on those six. */
+.service-points__item .service-link,
+.service-points__outro .service-link,
+.service-scope__body .service-link {
+  min-height: 44px;
+}
+
+/* ---- 320px: two overflow fixes ---------------------------------------------
+   Measured across nine pages x six widths: clean at 390, 768, 1024, 1440 and
+   1920, and exactly two problems at 320.
+
+   1. THE H1 IN THE SPLIT HERO. base.css sets `hyphens: none` on headings
+      (auto-hyphenating a 52px display heading looks like a typo) and
+      `overflow-wrap: break-word`, which — as this project has measured before —
+      does NOT reduce an element's min-content width. So a single unbreakable
+      compound sets the grid track: "Brandsicherheitswache" is 21 characters and
+      wants ~340px, i.e. 20px past a 320px viewport, and the same happened on
+      /baustellenbewachung/ and /empfangsdienst/. The page did not scroll
+      sideways, which is worse rather than better: the word was being clipped.
+      Below 400px the H1 gets `hyphens: auto`, which with lang="de" breaks German
+      compounds at their real syllable boundaries instead of mid-word. It stays
+      `none` everywhere else, so no heading on any wider screen changes.
+      `min-width: 0` on the grid children is the other half — without it the
+      track cannot shrink below min-content no matter how the text wraps.
+
+   2. `.service-panel__cta` — 58px of real horizontal scroll on
+      /revier-schliessdienst/. `.btn` is `white-space: nowrap`, so the label's
+      min-content is the whole label and the button simply cannot fit a 320px
+      column. This is the FIFTH time this exact omission has caused this exact
+      bug in this repo (page-service.css's own price CTA, page-city.css,
+      page-sicherheitskonzept.css, lead-form.css's submit) — `width: 100%` alone
+      never fixes it, because a width does not reduce min-content. It takes
+      `white-space: normal` too. */
+@media (max-width: 399.98px) {
+  .service-hero--split .service-hero__content h1 {
+    hyphens: auto;
+  }
+}
+
+.service-hero--split .service-hero__content,
+.service-hero--split .service-hero__media {
+  min-width: 0;
+}
+
+@media (max-width: 767.98px) {
+  .service-panel__cta {
+    width: 100%;
+    white-space: normal;
+  }
+}
+
+/* ---- .service-section--centred: centred header on a service section ---------
+   Opt-in per section (client, 2026-08-17, reviewing /objektschutz/). The site
+   already has this composition in several places — the city hub's Vertrauen
+   block, /leistungen/'s Warum and FAQ, /werkschutz/'s Abgrenzung: HEADER
+   centred, CONTENT still left-aligned inside its own column. Centring the items
+   too would take away the common left edge the eye reads a list against.
+
+   ⚠️ TWO THINGS ARE REQUIRED AND ONE OF THEM IS NOT OBVIOUS, and this project
+   has now hit it eight times (five of them on one city page):
+     1. A TWO-CLASS SELECTOR. The chassis styles `.section__intro > p` with
+        `max-width: 42rem` at (0,1,1); a single-class rule here ties on
+        specificity and loses on source order, so the paragraph keeps its cap.
+     2. `margin-inline: auto` AS WELL AS `text-align`. `text-align` centres the
+        TEXT inside the box; the box itself is still pinned left by its own
+        max-width. With only one of the two you get a centred heading over a
+        left-hugging paragraph, which looks worse than centring nothing. */
+.service-section--centred .section__intro {
+  text-align: center;
+}
+
+.service-section--centred .section__intro h2 {
+  max-width: 30ch;
+  margin-inline: auto;
+  text-wrap: balance;
+}
+
+.service-section--centred .section__intro > p {
+  margin-inline: auto;
+}
+
+/* The list keeps its own left edge, but the BLOCK is pulled in off the container
+   so it sits under a centred heading instead of running the full 1600px. 62rem
+   is the same measure the tick list is comfortable at in two columns; without
+   it, four short lines stretch across the whole page and read as four unrelated
+   fragments — which is the second half of what the client reported.
+   ⚠️ 62rem is measured for TWO tick columns and for three `.service-points`
+   cards, which is every centred section today. A centred `--5` or `--6` list
+   would be cramped at this width — check it before adding one, the cap is the
+   thing to raise, not the column count. */
+.service-section--centred .service-scope__list,
+.service-section--centred .service-points__list {
+  max-width: 62rem;
+  margin-inline: auto;
+}
+
+.service-section--centred .service-points__outro {
+  margin-inline: auto;
+}
+
+/* ---- .service-scope__list: rows sized by content, not by the tallest sibling -
+   `align-items: start` on the ITEM already stops the tick from stretching, but
+   the grid's implicit rows still take their height from the tallest cell in the
+   row. With uniform one-line items that is exactly right and costs nothing; it
+   only ever showed as a gap when one item in a list was two lines tall while its
+   siblings were one (see the `titleless` note in service-pages.py). Row and
+   column gap are split so the two columns can breathe horizontally without the
+   rows drifting apart vertically. */
+.service-scope__list {
+  row-gap: var(--space-5);
+}
+
+@media (min-width: 900px) {
+  .service-scope__list {
+    align-items: start;
+    row-gap: var(--space-5);
   }
 }

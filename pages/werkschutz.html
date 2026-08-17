@@ -884,7 +884,7 @@
             <div class="service-contrast__side service-contrast__side--new">
               <p class="service-contrast__label service-contrast__label--new">So läuft es bei FRANKONIA</p>
               <h3>Nachweisbare Ergebnisse</h3>
-              <p><span class="service-contrast__mark">Digitales Wachbuch, Torbuch und regelmäßiger Report</span> machen die Werkschutz-Leistung für Ihre Geschäftsführung sichtbar, inklusive Vorfallstatistik und Maßnahmenverfolgung.</p>
+              <p><span class="service-contrast__mark">Digitales Wachbuch und regelmäßiger Report</span> machen die Werkschutz-Leistung für Ihre Geschäftsführung sichtbar, inklusive Vorfallstatistik und Maßnahmenverfolgung.</p>
             </div>
           </article>
         </div>
@@ -1095,22 +1095,36 @@
         </div>
       </div>
 
-      <!-- REMOVED 2026-08-05 (client: "esto sacalo") — the draft's own Highlight-Box,
-           "Werkschutz + Technik aus einem Konzept", with its paragraph and its
-           `Zur Sicherheitstechnik` link. Its wrapping .container went with it, since
-           it existed only to keep this one block on the page's editorial inset while
-           the flow above it is full-bleed. `.service-highlight*` was used by no other
-           page, so all of its CSS was deleted too rather than left dead.
+      <!-- THE DRAFT'S HIGHLIGHT-BOX, RESTORED 2026-08-16 (client, Feedback 3.15
+           punto 3: "is missing entirely — add it with the text from the document,
+           including the link to /sicherheitstechnik/").
 
-           ⚠️ THIS IS APPROVED DRAFT COPY LEAVING THE PAGE, and it is the one place
-           that developed the "technology can replace personnel hours, which lowers
-           the running cost" argument. What survives elsewhere is thinner: the hero's
-           "Technik-geschulte Kräfte", duty 05, the Sicherheitskonzept's
-           "Technik-Empfehlung", and one five-word factor in Kosten
-           ("Technik-Kombination, die Personalstunden ersetzt"). Flagged in
-           docs/build-checklist.md for Chris.
-           No navigation was lost: /sicherheitstechnik/ is still linked from
-           "Verwandte Leistungen" at the close of the page. -->
+           ⚠️ BOTH HALVES OF THE HISTORY, so nobody deletes it again "cleaning up":
+           it was REMOVED on 2026-08-05 on the client's own instruction ("esto
+           sacalo"), and it is back on the client's own instruction. The later one
+           wins. Its removal was flagged at the time as a real content loss — this
+           is the ONE place on the page that develops the "technology can replace
+           personnel hours, which lowers the running cost" argument; what survives
+           elsewhere is thinner (the hero's "Technik-geschulte Kräfte", duty 05, the
+           Sicherheitskonzept's "Technik-Empfehlung", and a five-word factor in
+           Kosten). So restoring it closes a gap, it does not just add a box.
+
+           Copy is verbatim from `Webtext 03`, and the link is the draft's own.
+
+           ⚠️ IT NEEDS ITS OWN .container AND THAT IS NOT OPTIONAL. This section was
+           rebuilt as the sticky `.service-flow` scrollytelling layout AFTER the box
+           was removed, and that layout is deliberately FULL-BLEED — it left
+           `.container` behind so the photo column can reach the viewport edge. A
+           bare <aside> here would therefore start at the screen edge instead of on
+           the page's editorial inset, i.e. out of line with every other block. The
+           original markup did not need this wrapper; today it does. -->
+      <div class="container">
+        <aside class="service-highlight" data-reveal>
+          <h3 class="service-highlight__title">Werkschutz + Technik aus einem Konzept</h3>
+          <p>Wo Videoüberwachung, Zutrittssysteme oder Alarmanlagen Personalstunden ersetzen können, planen wir sie in Ihr Sicherheitskonzept ein. Das senkt die laufenden Kosten, bei gleicher oder besserer Sicherheit.</p>
+          <a class="service-link" href="/sicherheitstechnik/">Zur Sicherheitstechnik<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        </aside>
+      </div>
     </section>
 
     <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
@@ -1668,8 +1682,8 @@
         <div class="service-cases__proof" data-reveal>
           <p class="service-cases__proof-text">Referenzen auf Anfrage, unter anderem vertrauen MORELO Reisemobile und die Sozialstiftung Bamberg auf FRANKONIA.</p>
           <div class="service-cases__logos">
-            <img class="service-cases__logo" src="/assets/images/client-logos/morelo.png" alt="MORELO Reisemobile Logo" width="128" height="160" loading="lazy">
-            <img class="service-cases__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" alt="Sozialstiftung Bamberg Logo" width="150" height="160" loading="lazy">
+            <picture><source type="image/webp" srcset="/assets/images/client-logos/morelo.webp"><img class="service-cases__logo" src="/assets/images/client-logos/morelo.png" alt="MORELO Reisemobile Logo" width="128" height="160" loading="lazy"></picture>
+            <picture><source type="image/webp" srcset="/assets/images/client-logos/sozialstiftung-bamberg.webp"><img class="service-cases__logo" src="/assets/images/client-logos/sozialstiftung-bamberg.png" alt="Sozialstiftung Bamberg Logo" width="150" height="160" loading="lazy"></picture>
           </div>
         </div>
       </div>
@@ -1909,27 +1923,51 @@
              /sicherheitskonzept/ both carried about whether to keep a named
              contact. Do not remove it, here or on the service pages still to come.
 
-             🔴 STILL RESERVED: THE PORTRAIT. No photo of Alexander Jäger exists in
-             the project, and the client's decision (2026-08-03, asked directly) is
-             to keep the frame reserved rather than put another person's photo next
-             to his name: at that size, beside his name and role, any visitor would
-             read it as him. The frame holds the real 4:5 space so dropping the
-             portrait in later is a two-line edit and shifts no layout. Its label is
-             UI furniture, not client copy, and is deliberately bracketed so it can
-             never be mistaken for content.
-             Q2 keeps the section but does NOT supply the photo — it is still on the
-             list of material Chris owes us. -->
+             ✅ THE PORTRAIT ARRIVED 2026-08-14 — this replaces the reserved
+             "[Portrait Alexander Jäger folgt]" frame that held this space since
+             2026-08-03, and closes the last open item on this section. Reserving the
+             real 4:5 box paid off exactly as intended: the photo drops in with no
+             layout change and no CLS.
+             Source is the CLIENT'S OWN `Alex.png` (1122x1402, already exact 4:5 and
+             already lit for a black backdrop), which superseded an earlier grey-
+             backdrop file the same day. Worth knowing why it is better: it includes
+             BOTH HANDS, which the earlier 2:3 source could not — no 4:5 window tall
+             enough for the hands exists in a 2:3 frame, so that crop had to stop at
+             the belt.
+             The backdrop is normalised to #010101 exactly (see
+             docs/design-sources/portrait-key-backdrop.py) so the photo's edge IS the
+             page colour. Verified by sampling real device pixels across the seam at
+             1440 and 390: page 1, photo 1, delta 0.00 — there is nothing to see, by
+             construction rather than by luck.
+             ⚠️ NOT AN ALPHA CUTOUT, and that was tried and rejected on evidence.
+             Dark hair shares luminance with a black backdrop, so any key eats the
+             hair; composited over black that is invisible, which is exactly the trap
+             — the alpha map is broken and the page cannot show it to you. Over
+             magenta the hair came out full of holes. The reasoning and the measured
+             leak thresholds are in that script.
+             ⚠️ CONSEQUENCE: these files are welded to a dark surface. `Alex.png` on
+             the Desktop is the untouched original, so a light-section version means
+             re-running the script with a different target colour, NOT a CSS
+             override. -->
+
         <figure class="service-contact__portrait" data-reveal>
-          <p class="service-contact__portrait-note">
-            <svg class="icon" aria-hidden="true"><use href="#icon-contact"></use></svg>
-            [Portrait Alexander Jäger folgt]
-          </p>
+          <picture>
+            <source type="image/webp" srcset="/assets/images/wk-contact-alexander-jaeger-480.webp 480w, /assets/images/wk-contact-alexander-jaeger-960.webp 960w" sizes="(min-width: 900px) 30rem, min(48vw, 14rem)">
+            <img src="/assets/images/wk-contact-alexander-jaeger-960.jpg" srcset="/assets/images/wk-contact-alexander-jaeger-960.jpg 960w" sizes="(min-width: 900px) 30rem, min(48vw, 14rem)" width="960" height="1200" alt="Alexander Jäger, Vertriebsleiter und Sicherheitsbeauftragter bei FRANKONIA" loading="lazy">
+          </picture>
         </figure>
 
         <div class="service-contact__person">
           <p class="service-contact__name">Alexander Jäger</p>
           <p class="service-contact__role">Vertriebsleiter und Sicherheitsbeauftragter</p>
-          <p class="service-contact__body">Alexander Jäger begleitet Sie von der ersten Anfrage bis zum Angebot. Im laufenden Betrieb ist Ihr Einsatzleiter rund um die Uhr erreichbar.</p>
+          <!-- ⚠️ "Ihr Werkschutz-Konzept erstellen erfahrene Sicherheitsexperten."
+               IS BACK (client 2026-08-16, Feedback 3.15 punto 4), and it REVERSES
+               this build's own earlier edit — the clause was dropped on 2026-08-05
+               to cut text density, on the reasoning that the Sicherheitskonzept
+               section says it in full anyway. The client asked for it here, so the
+               later instruction wins. Do not remove it again as a duplicate: it is
+               deliberately stated twice now. -->
+          <p class="service-contact__body">Alexander Jäger begleitet Sie von der ersten Anfrage bis zum Angebot. Ihr Werkschutz-Konzept erstellen erfahrene Sicherheitsexperten. Im laufenden Betrieb ist Ihr Einsatzleiter rund um die Uhr erreichbar.</p>
 
           <!-- Two real actions, not two text rows. The phone carries more weight
                than the mail (brief) — it is the outline pill, the mail is the
@@ -2046,19 +2084,19 @@
           <div class="service-related__col">
             <h3 class="service-related__title">Verwandte Leistungen</h3>
             <ul class="service-related__list" data-item-reveal="li">
-              <li><a class="service-related__link" href="/objektschutz/">Objektschutz<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-              <li><a class="service-related__link" href="/empfangsdienst/">Empfangsdienst<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-              <li><a class="service-related__link" href="/sicherheitstechnik/">Sicherheitstechnik<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/objektschutz/"><span class="service-related__label">Objektschutz</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/empfangsdienst/"><span class="service-related__label">Empfangsdienst</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitstechnik/"><span class="service-related__label">Sicherheitstechnik</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
             </ul>
           </div>
 
           <div class="service-related__col">
             <h3 class="service-related__title">Werkschutz in Ihrer Region</h3>
             <ul class="service-related__list" data-item-reveal="li">
-              <li><a class="service-related__link" href="/werkschutz-nuernberg/">Werkschutz Nürnberg<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-              <li><a class="service-related__link" href="/sicherheitsdienst-nuernberg/">Sicherheitsdienst Nürnberg<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-              <li><a class="service-related__link" href="/sicherheitsdienst-schweinfurt/">Sicherheitsdienst Schweinfurt<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-              <li><a class="service-related__link" href="/sicherheitsdienst-bamberg/">Sicherheitsdienst Bamberg<svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/werkschutz-nuernberg/"><span class="service-related__label">Werkschutz Nürnberg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-nuernberg/"><span class="service-related__label">Sicherheitsdienst Nürnberg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-schweinfurt/"><span class="service-related__label">Sicherheitsdienst Schweinfurt</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-bamberg/"><span class="service-related__label">Sicherheitsdienst Bamberg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
             </ul>
           </div>
         </div>

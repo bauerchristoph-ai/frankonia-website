@@ -54,9 +54,11 @@
   // kind of thing that setting is asking us not to build.
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-  // Phone keeps the snap-scroll strip built for it; the ring needs room for a
+  // Phone AND TABLET keep the snap-scroll strip; the ring needs room for a
   // centre card plus two receding ones.
-  var mq = window.matchMedia("(min-width: 768px)");
+  // ⚠️ 1024 must match css/page-home.css's .is-carousel media query AND
+  // css/swipe-carousel.css's tablet block — the strip owns 768–1023 now.
+  var mq = window.matchMedia("(min-width: 1024px)");
 
   var N = items.length;
   var progress = 0; // float slot index currently at the front

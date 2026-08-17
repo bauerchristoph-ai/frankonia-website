@@ -159,12 +159,24 @@
 
           <h2>Fall 3 — Veranstaltungen und Versammlungsstätten</h2>
           <p>Nach der Versammlungsstättenverordnung kann die Behörde für Veranstaltungen eine Brandsicherheitswache auflegen, etwa bei Bühnen, Pyrotechnik oder erhöhter Brandlast. Je nach Bundesland und Auflage stellt sie die Feuerwehr oder ein qualifizierter privater Dienst; die Details stehen im Auflagenbescheid. Früh klären spart Kosten: Eine private Brandsicherheitswache ist meist günstiger als eine Wache durch die Feuerwehr.</p>
+          <!-- 🔴 PENDING, ONE LINK — client 2026-08-16 (3.11): add "Mehr zum
+               Veranstaltungsschutz" -> /veranstaltungsschutz/ at the end of Fall 3.
+               ⚠️ NOT APPLIED YET: /veranstaltungsschutz/ is a 404 today.
+               THE EDIT, ready to paste as a second sentence in this <p>:
+                 · <a href="/veranstaltungsschutz/">Mehr zum Veranstaltungsschutz</a>
+               ✅ Nothing is lost meanwhile: this line already routes the reader to
+               the same service through the /leistungen/ hub, which resolves. -->
           <p class="rg-source">Veranstaltungsschutz und die übrigen Leistungen: <a href="/leistungen/">alle Sicherheitsdienstleistungen im Überblick</a></p>
 
           <h2>Weitere Fälle aus der Praxis</h2>
           <ul class="rg-list">
             <li><strong>Sprinkler/Löschanlage außer Betrieb:</strong> analog zum BMA-Ausfall — Versicherer-Auflage prüfen.</li>
             <li><strong>Nach einem Brandereignis:</strong> Glutnester-Überwachung, bis die Feuerwehr das Objekt freigibt bzw. der Versicherer entwarnt.</li>
+            <!-- 🔴 PENDING, ONE LINK — client 2026-08-16 (3.11): add "Mehr zur
+                 Baustellenbewachung" -> /baustellenbewachung/ to THIS third bullet.
+                 ⚠️ NOT APPLIED YET: /baustellenbewachung/ is a 404 today.
+                 THE EDIT, ready to paste before the closing </li>:
+                   <a href="/baustellenbewachung/">Mehr zur Baustellenbewachung</a> -->
             <li><strong>Erhöhte Brandlast auf Baustellen:</strong> je nach Baustellenordnung des Auftraggebers oder SiGe-Plan.</li>
           </ul>
 
@@ -173,7 +185,25 @@
           <p class="rg-source">Was § 34a GewO genau verlangt: <a href="/ratgeber/paragraph-34a-erklaert/">der 34a-Schein einfach erklärt</a></p>
 
           <h2>Was kostet eine Brandwache?</h2>
-          <p>In der Regel {{price.range}} Euro pro Stunde netto, mit Zuschlägen für Nacht, Wochenende und Feiertag, also genau die Zeiten, in denen Brandwachen am häufigsten gebraucht werden.</p>
+          <!-- ⚠️ `{{price.min}} bis {{price.max}}`, NOT `{{price.range}}` (client
+               2026-08-16: the cost section should read "26 bis 32 Euro", as the
+               document has it). `range` joins the same pair with a hyphen for the
+               price BOX; German prose needs the two halves loose, which is exactly
+               why min/max exist alongside it (G10). Writing "26 bis 32" literally
+               would break G10 — every price on this site is a token so the annual
+               update stays a one-file edit. -->
+          <p>In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde netto, mit Zuschlägen für Nacht, Wochenende und Feiertag, also genau die Zeiten, in denen Brandwachen am häufigsten gebraucht werden.</p>
+          <!-- 🔴 PENDING, ONE ATTRIBUTE — client 2026-08-16 (3.11, "internal linking
+               corrections"): this article is meant to FEED /brandwache/, which it
+               does not link at all today. "Konkretes Angebot" must point to
+               /brandwache/ instead of /angebot/; the /ratgeber/kosten-… link beside
+               it stays as it is.
+               ⚠️ NOT APPLIED YET because /brandwache/ is a 404 right now (verified,
+               not assumed). Chris's own rule is "do not ship a linked 404", and this
+               is the same call already made for the case studies while
+               /sicherheitskonzept/ did not exist — the destination stays live and the
+               swap is one line the day the page ships.
+               THE EDIT: href="/angebot/" -> href="/brandwache/" on the second <a>. -->
           <p class="rg-source">Details und Beispielrechnung: <a href="/ratgeber/kosten-sicherheitsdienst/">Was kostet ein Sicherheitsdienst?</a> · Konkretes Angebot: <a href="/angebot/">kostenfreie Begehung anfordern</a></p>
 
           <h2>Häufige Fragen zur Brandwache</h2>
@@ -219,6 +249,13 @@
           <p>FRANKONIA stellt qualifizierte Brandwachen in ganz Franken, kurzfristig, dokumentiert, abgestimmt mit Behörde und Versicherer.</p>
         </div>
         <div class="rg-close__actions" data-reveal>
+          <!-- 🔴 PENDING, ONE ATTRIBUTE — client 2026-08-16 (3.11): this closing CTA
+               must lead to /brandwache/, not /angebot/.
+               ⚠️ NOT APPLIED YET: /brandwache/ is a 404 today, and this is the page's
+               PRIMARY conversion action — publishing it as a 404 is the worst version
+               of "do not ship a linked 404". /angebot/ resolves and is the right
+               interim destination (it is the request form).
+               THE EDIT: href="/angebot/" -> href="/brandwache/". -->
           <a class="btn btn--primary" href="/angebot/">Brandwache anfragen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
           <!-- Secondary CTA, client rule G1 (2026-08-14): every page carries the
                same outline phone pill next to its primary action. This block had

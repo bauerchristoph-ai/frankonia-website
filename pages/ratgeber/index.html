@@ -110,11 +110,122 @@
     </nav>
 
     <!-- ============ 1. HERO ============ -->
-    <section class="service-hero rg-hero" data-hero-reveal>
-      <div class="container service-hero__grid">
+    <!-- Rebuilt 2026-08-16 (client 3.10.1: "the current hero is too plain, improve
+         the visual treatment"). It was an H1 and a lede in a centred 44rem column
+         on black — measured: no visual, no trust band, 399px tall, the plainest
+         hero on the site.
+         Now two columns: copy left, a drawn guide-stack right, plus the trust band.
+
+         ⚠️ NO BADGE, and that is deliberate rather than an omission. G9 says the
+         hero badge is defined BY THE DOCUMENT, and NONE of the four Ratgeber
+         Webtexte declares one (checked all four, not assumed) — so a chip here
+         would be invented copy, which this project does not do. If Chris supplies
+         badge text it is one <p class="hero-badge"> away.
+         ⚠️ NO HERO CTA PAIR either. G2 governs the pair's ORDER where a hero has
+         one; it does not require every hero to have one, and the four Ratgeber
+         pages have never had one. This page's action is "ask us your question",
+         and it already lives in the closing section ("Ihre Frage ist nicht dabei?"
+         -> /kontakt/ + phone). A quote CTA above three articles competes with the
+         one thing this page exists to do, which is route the reader into them.
+         Say the word and it is four lines.
+         ⚠️ NO PHOTO SLOT: 3.10.2's supplied title images are for the CARDS and for
+         the article heroes (3.11) — the hub hero is not promised one, which is why
+         this is a drawn visual and the hero is finished today rather than pending. -->
+    <section class="service-hero rg-hero rg-hero--hub" data-hero-reveal>
+      <div class="container service-hero__grid rg-hero__grid">
         <div class="service-hero__content hero__content">
           <h1>Der FRANKONIA Sicherheits-Ratgeber</h1>
           <p class="service-hero__lead hero__lead">Kosten, Pflichten, Praxis: Unsere Sicherheitsexperten beantworten die Fragen, die uns täglich erreichen, konkret und ohne Fachchinesisch.</p>
+
+          <!-- The same band /ueber-uns/ gained for the same reason, values copied
+               rather than re-derived: the one client-confirmed rating and the two
+               real DEKRA seals. It belongs on a Ratgeber for a specific reason —
+               the question this page has to answer is "is this advice credible?",
+               and it is the same claim the articles' own "geprüft von Steffen
+               Walde" bylines make further down. -->
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- A drawn stack of answered questions, in the exact visual grammar of
+             `partials/sk-doc.html` (fanned translucent sheets, white front sheet,
+             brand-blue marks, slate skeleton text, a blue chip) — so the site has
+             ONE way of drawing a document, not two similar ones.
+             Inline SVG and not an image, for the reasons that partial documents:
+             crisp at every DPR, no request on the critical path (this page has no
+             LCP image), and its colours come from CSS so it follows its surface.
+             THREE rows because the hub lists three articles — the drawing echoes
+             the page instead of inventing a quantity. The only real word in it is
+             "RATGEBER", which is the page's own H1 and breadcrumb; everything else
+             is skeleton, so nothing here is invented copy.
+             aria-hidden: decoration. Every article it stands for is real text and a
+             real link directly below. -->
+        <div class="rg-hero__visual">
+          <svg class="rg-guide" viewBox="0 0 360 400" role="presentation" focusable="false" aria-hidden="true">
+            <g class="rg-guide__behind">
+              <rect x="40" y="22" width="292" height="360" rx="8" transform="rotate(5 180 200)"/>
+              <rect x="34" y="16" width="292" height="360" rx="8" transform="rotate(2.5 180 200)"/>
+            </g>
+
+            <rect class="rg-guide__sheet" x="26" y="10" width="292" height="360" rx="8"/>
+
+            <rect class="rg-guide__mark" x="50" y="34" width="42" height="7" rx="2"/>
+            <rect class="rg-guide__chip" x="50" y="56" width="74" height="16" rx="8"/>
+            <text class="rg-guide__chip-text" x="59" y="67.5">RATGEBER</text>
+            <line class="rg-guide__rule" x1="50" y1="90" x2="294" y2="90"/>
+
+            <g class="rg-guide__row">
+              <rect class="rg-guide__plus" x="50" y="112.5" width="14" height="3" rx="1.5"/>
+              <rect class="rg-guide__plus" x="55.5" y="107" width="3" height="14" rx="1.5"/>
+              <rect class="rg-guide__q" x="80" y="108" width="176" height="8" rx="3"/>
+              <rect class="rg-guide__a" x="80" y="130" width="214" height="5" rx="2.5"/>
+              <rect class="rg-guide__a" x="80" y="144" width="150" height="5" rx="2.5"/>
+            </g>
+
+            <g class="rg-guide__row">
+              <rect class="rg-guide__plus" x="50" y="204.5" width="14" height="3" rx="1.5"/>
+              <rect class="rg-guide__plus" x="55.5" y="199" width="3" height="14" rx="1.5"/>
+              <rect class="rg-guide__q" x="80" y="200" width="200" height="8" rx="3"/>
+              <rect class="rg-guide__a" x="80" y="222" width="214" height="5" rx="2.5"/>
+              <rect class="rg-guide__a" x="80" y="236" width="128" height="5" rx="2.5"/>
+            </g>
+
+            <g class="rg-guide__row">
+              <rect class="rg-guide__plus" x="50" y="296.5" width="14" height="3" rx="1.5"/>
+              <rect class="rg-guide__plus" x="55.5" y="291" width="3" height="14" rx="1.5"/>
+              <rect class="rg-guide__q" x="80" y="292" width="158" height="8" rx="3"/>
+              <rect class="rg-guide__a" x="80" y="314" width="214" height="5" rx="2.5"/>
+              <rect class="rg-guide__a" x="80" y="328" width="172" height="5" rx="2.5"/>
+            </g>
+          </svg>
         </div>
       </div>
     </section>
@@ -122,7 +233,7 @@
     <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
 
     <!-- ============ 2. ARTIKEL ============ -->
-    <section class="section section--light rg-list" data-nav-theme="light">
+    <section class="section section--light rg-articles" data-nav-theme="light">
       <div class="container">
         <div class="section__intro">
           <h2>Aktuelle Ratgeber-Artikel</h2>

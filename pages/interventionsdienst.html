@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- SERVICE PAGE — Interventionsdienst. Built from
+     NewVersionCopiesFrankonia/"2026-08-04 Webtext 12 Interventionsdienst.docx"
+     (Stand 04.08.2026), verbatim, in German.
+
+     ⚠️ THIS IS NOT A COPY OF /werkschutz/ SECTION FOR SECTION, and that is the
+     draft's own doing rather than drift: the v2 copy varies the structure per
+     service on purpose ("Struktur bewusst variiert" is written into six of the
+     nine remaining drafts). This one runs 9 sections. The BLOCKS are all the
+     shared `.service-*` chassis, and css/page-service.css is the only page
+     stylesheet loaded besides the shared form.
+
+     Colour rhythm, derived from the section surfaces rather than copied:
+       ▪ ▫ ▪ ▫ ▫ ▪ ▫ ▪ ▫
+     7 pixel seams. Tiles are always the colour of the section ABOVE
+     (docs/page-conventions.md §9.2).
+
+     GENERATED ONCE by docs/design-sources/service-pages.py, then hand-editable.
+     ⚠️ If you edit the FAQ below, edit the FAQPage graph above it too — they must
+     stay byte-identical with markup stripped. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title (57 chars) and description (144) are the draft's own —
+       docs/page-conventions.md §12. -->
+  <title>Interventionsdienst Franken | Alarmverfolgung – FRANKONIA</title>
+  <meta name="description" content="Interventionsdienst mit Alarmverfolgung: qualifizierte Interventionskräfte reagieren auf Ihre Alarmanlage, dokumentiert, im Umkreis von Bamberg.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/interventionsdienst/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/interventionsdienst/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/interventionsdienst/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Interventionsdienst Franken | Alarmverfolgung – FRANKONIA">
+  <meta property="og:description" content="Interventionsdienst mit Alarmverfolgung: qualifizierte Interventionskräfte reagieren auf Ihre Alarmanlage, dokumentiert, im Umkreis von Bamberg.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/interventionsdienst/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- The hero photo is the LCP element, same pattern as every other service
+       hero. One source, no srcset: the file is 820px wide and there is no larger
+       original, so a candidate list would only ever offer the same image. -->
+  <link rel="preload" as="image" href="/assets/images/interventionsdienst.webp" type="image/webp">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "{{phone.display}}",
+      "email": "{{email}}",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://frankonia-sicherheit.de/interventionsdienst/#service",
+      "name": "Interventionsdienst",
+      "serviceType": "Interventionsdienst",
+      "description": "Interventionsdienst mit Alarmverfolgung im Umkreis von Bamberg: qualifizierte Interventionskräfte fahren Ihr Objekt bei Alarm an, kontrollieren nach Interventionsplan und dokumentieren jeden Einsatz.",
+      "provider": {
+        "@id": "https://frankonia-sicherheit.de/#localbusiness"
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Bamberg" },
+        { "@type": "City", "name": "Nürnberg" },
+        { "@type": "City", "name": "Würzburg" },
+        { "@type": "City", "name": "Erlangen" },
+        { "@type": "City", "name": "Fürth" },
+        { "@type": "City", "name": "Schweinfurt" },
+        { "@type": "City", "name": "Bayreuth" },
+        { "@type": "City", "name": "Coburg" },
+        { "@type": "City", "name": "Ansbach" },
+        { "@type": "City", "name": "Hof" }
+      ],
+      "url": "https://frankonia-sicherheit.de/interventionsdienst/"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Leistungen",
+          "item": "https://frankonia-sicherheit.de/leistungen/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Interventionsdienst",
+          "item": "https://frankonia-sicherheit.de/interventionsdienst/"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/interventionsdienst/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Was kostet Alarmverfolgung im Monat?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Die Bereitschaftspauschale liegt für die meisten Gewerbeobjekte im überschaubaren zweistelligen bis niedrigen dreistelligen Monatsbereich, dazu kommt eine Einsatzpauschale je tatsächlicher Anfahrt. Ihr konkretes Angebot erhalten Sie innerhalb eines Werktages."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie schnell ist die Interventionskraft vor Ort?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Das Reaktionsfenster wird je Objekt vereinbart und hängt von der Lage im Einsatzgebiet ab, im Kernrevier rund um Bamberg entsprechend kurz. Verbindliche Zeiten stehen im Interventionsplan, den Sie vor Vertragsbeginn erhalten."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Braucht der Interventionsdienst meine Schlüssel?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Für die Innenkontrolle ja, die Schlüssel werden versiegelt und dokumentiert verwahrt, die Ausgabe wird protokolliert. Ohne Schlüsselgewalt bleibt es bei der Außenkontrolle mit Meldung an Sie."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Arbeitet FRANKONIA mit meiner bestehenden Alarmanlage?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja. Die Aufschaltung richten wir gemeinsam mit Ihrem Errichter oder Ihrer Leitstelle ein, unabhängig vom Hersteller. Falls Ihre Anlage häufig Fehlalarme produziert, dokumentieren wir die Ursachen für die Optimierung."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Fährt die Polizei nicht sowieso bei Alarm?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Bei unbestätigten Alarmen privater Anlagen in der Regel nicht, zu viele Fehlalarme. Deshalb fordern viele Versicherer eine qualifizierte Intervention: Erst die bestätigte Feststellung vor Ort löst den Polizeieinsatz aus."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+  <!-- Shared lead-form section, then the service chassis
+       (docs/page-conventions.md §9.1). -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+
+  <!-- The documented generic effect stack (docs/page-conventions.md §4.1).
+       Deliberately NOT loaded: service-flow.js, service-contrast.js, svg-draw.js
+       and case-cards.js — /werkschutz/ needs them for blocks whose markup does
+       not exist on this page. steps-sequence.js IS loaded: the Schritte section
+       uses the shared rail. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+  <script src="/js/steps-sequence.js" defer></script>
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Chevron separators, not slashes — docs/page-conventions.md §3. Matches
+         the BreadcrumbList JSON-LD above. It sits ABOVE the hero because this
+         hero is a two-column split, not a full-bleed photograph: only the bleed
+         variant pulls the breadcrumb inside the section. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/leistungen/">Leistungen</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Interventionsdienst</span></li>
+      </ol>
+    </nav>
+
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- The draft's own Hero-Aufbau, nothing added or dropped: badge → H1 →
+         subline → 3 ticks → double CTA → Google widget + DEKRA seals.
+         Primary = the free-offer form, secondary = the phone: client rule G2's
+               default order, and the label G3 requires for a CTA pointing at a form.
+
+         TWO COLUMNS, not the full-bleed treatment /werkschutz/ uses, and the
+         reason is the asset: the only photograph this service has is the
+         portrait 820x1227 file that already feeds the homepage's services
+         preview. A background hero would crop a portrait photo to a letterbox
+         band, which is precisely why docs/page-conventions.md §8.2 prescribes the
+         split hero for a vertical photo. The breadcrumb therefore sits ABOVE the
+         hero (a bleed hero is the only case that pulls it inside).
+
+         .hero__lead / .hero__actions / .hero__reassurance / .hero__trust are
+         load-bearing class names, not decoration — js/hero-reveal.js animates
+         exactly those four blocks in that order, so this page needs no JS of its
+         own (docs/page-conventions.md §4.1). -->
+    <section class="service-hero service-hero--split" data-hero-reveal>
+      <div class="container service-hero__grid">
+        <div class="service-hero__content">
+          <!-- Hero badge, verbatim from the Webtext (client rule G9: the badge is
+               whatever the document says it is). -->
+          <p class="hero-badge">
+            <svg class="icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+            Alarm ist bei uns keine Nachricht, sondern ein Einsatz
+          </p>
+
+          <h1>Interventionsdienst: Wenn Ihre Alarmanlage auslöst, fährt jemand hin</h1>
+
+          <p class="hero__lead service-hero__lead">
+            Ihre Alarmanlage meldet, unsere Interventionskraft fährt hin: Kontrolle, Erstmaßnahmen, Dokumentation.
+          </p>
+
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn btn--secondary service-hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+          </div>
+
+          <!-- The draft's three hero lines, VERBATIM. They are full sentences, so
+               this is the stacked list /jobs/ and the city pages use rather than
+               the homepage's row of short chips — a row of three sentences needs
+               roughly 1000px at this type size against the ~640px this column
+               has. /werkschutz/ truncated its three into chips on an explicit
+               client instruction; no such instruction covers these nine, so the
+               sentences stay whole. -->
+          <ul class="hero__reassurance service-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Qualifizierte Interventionskräfte nach § 34a GewO
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Definierte Reaktionszeiten im Einsatzgebiet rund um Bamberg
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Jeder Einsatz dokumentiert, für Sie, Polizei und Versicherung
+            </li>
+          </ul>
+
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- LCP element: preloaded in <head>, eager, high priority, and the
+             aspect-ratio is this file's REAL height rather than a shared 4:5.
+             Five of the nine service photos are 1217–1225px tall, not 1227, and a
+             shared ratio leaves a strip of the frame's own background showing
+             under the photo — the exact defect §8.2 records for the homepage's
+             services preview ("some service images show a grey bar"). -->
+        <figure class="service-hero__media" style="aspect-ratio: 820 / 1227">
+          <picture>
+            <source type="image/webp" srcset="/assets/images/interventionsdienst.webp">
+            <img src="/assets/images/interventionsdienst.jpg" width="820" height="1227" alt="Zwei FRANKONIA Interventionskräfte am Einsatzfahrzeug vor einem Objekt" loading="eager" fetchpriority="high">
+          </picture>
+        </figure>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 2. Das Problem (kompakt) ============ -->
+    <!-- The draft's own copy, verbatim. -->
+    <section class="section section--light service-prose" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Bei einem Alarm um 3 Uhr zählt nur, wer wirklich hinfährt</h2>
+        </div>
+
+        <div class="section__intro">
+          <p data-reveal data-reveal-delay>Ein Einbruchalarm nachts läuft ins Leere, wenn niemand definiert ist, der hinfährt: Der Geschäftsführer schläft, der Hausmeister ist im Urlaub, die Polizei fährt bei unbestätigten Alarmen oft nicht mehr an. Genau diese Lücke schließt der Interventionsdienst, mit einer Kraft, die vertraglich reagieren muss und es dokumentiert tut.</p>
+        </div>
+
+        <ul class="service-points__list service-points__list--2" data-item-reveal="li">
+          <li class="service-points__item">
+            <h3 class="service-points__title">Ohne Intervention</h3>
+            <p class="service-points__text">Alarm → SMS an den Chef → Fehlalarm-Unsicherheit → keiner fährt → im Ernstfall stundenlang unbemerkter Schaden.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Mit FRANKONIA Intervention</h3>
+            <p class="service-points__text">Alarm → Interventionskraft fährt an → prüft, sichert, meldet → dokumentierter Abschluss. Jedes Mal.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 3. So läuft eine Intervention (Kernsektion) ============ -->
+    <!-- The draft's 5 steps, verbatim, on the shared rail: one numeral and one
+         node per step, the hairline between them drawn by js/steps-sequence.js as
+         each step arrives.
+
+         ⚠️ DARK SURFACE, and that is a constraint rather than a rhythm choice:
+         `.service-konzept__text` hardcodes white-at-0.88 and the block's three
+         Figma scenes carry a fixed white stroke, both stated in page-service.css.
+         ⚠️ NO per-step artwork here — this draft supplies none, and inventing 5
+         scenes per page is not assembly. The numeral, the node and the rail carry
+         the sequence, exactly as the mobile layout always has. -->
+    <section class="section service-konzept">
+      <div class="container service-konzept__inner">
+        <div class="section__intro service-konzept__intro">
+          <h2>Von der Alarmauslösung bis zum dokumentierten Abschluss</h2>
+        </div>
+
+        <ol class="service-konzept__steps service-konzept__steps--5" data-steps-sequence data-no-text-reveal>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">01</span>
+            <h3 class="service-points__title">Alarmeingang</h3>
+            <p class="service-konzept__text">Ihre Alarmanlage meldet an die Notruf- und Serviceleitstelle (NSL) oder direkt in die FRANKONIA Meldekette, die Aufschaltung richten wir mit Ihrem Errichter ein.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">02</span>
+            <h3 class="service-points__title">Anfahrt</h3>
+            <p class="service-konzept__text">Die Interventionskraft fährt Ihr Objekt an, im vereinbarten Reaktionsfenster, mit Objektunterlagen und Schlüsselgewalt nach Ihrer Freigabe.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">03</span>
+            <h3 class="service-points__title">Außen- und Innenkontrolle</h3>
+            <p class="service-konzept__text">Kontrolle nach Interventionsplan: Außenhaut, Zugänge, bei Befund Innenkontrolle, besonnen und nach klaren Regeln.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">04</span>
+            <h3 class="service-points__title">Erstmaßnahmen</h3>
+            <p class="service-konzept__text">Bei Einbruch: Polizei, Spurenschutz, provisorische Sicherung, Benachrichtigung nach Meldekette. Bei Fehlalarm: Ursache dokumentieren, Anlage rückstellen.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">05</span>
+            <h3 class="service-points__title">Dokumentation</h3>
+            <p class="service-konzept__text">Sie erhalten den Einsatzbericht mit Zeiten, Feststellungen und Fotos, verwertbar für Polizei und Versicherung.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 4. Leistungsumfang ============ -->
+    <!-- The draft's Häkchenliste, verbatim, as a two-column tick list.
+         ⚠️ NOT `.service-flow` (the pinned 50/50 scrollytelling /werkschutz/ uses
+         for the same section). That block needs SIX photographs per service and
+         only Werkschutz has them; this page has one. The drafts describe this
+         section as "H2 + Häkchenliste", which is what this is. -->
+    <section class="section section--light service-scope" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Das ist im FRANKONIA Interventionsdienst enthalten</h2>
+        </div>
+
+        <ul class="service-scope__list" data-item-reveal="li">
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Alarmverfolgung rund um die Uhr</h3>
+              <p class="service-scope__text">24/7-Interventionsbereitschaft für Einbruch-, Überfall- und technische Alarme.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Schlüsselverwahrung</h3>
+              <p class="service-scope__text">Gesicherte Verwahrung Ihrer Objektschlüssel mit dokumentierter Ausgabe — Voraussetzung für die Innenkontrolle.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Interventionsplan je Objekt</h3>
+              <p class="service-scope__text">Anfahrt, Kontrollpunkte, Meldekette und Verhaltensregeln werden vor Aufschaltung schriftlich festgelegt.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Fehlalarm-Management</h3>
+              <p class="service-scope__text">Ursachen-Dokumentation und Rückmeldung an Ihren Errichter, damit Fehlalarme seltener statt teurer werden.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Kombination mit Revierdienst (Raum Bamberg)</h3>
+              <p class="service-scope__text">Wer ohnehin im Revier fährt, ist im Alarmfall schneller da, die wirtschaftlichste Variante im Bamberger Kernrevier.</p>
+              <a class="service-link" href="/revier-schliessdienst/">Zum Revier- &amp; Schließdienst<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Norm-Konformität</h3>
+              <p class="service-scope__text">Intervention nach den einschlägigen Vorgaben (u. a. VdS-Richtlinien für Interventionsdienste), wo Ihr Versicherer sie fordert.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <!-- No seam: scope and price are both light surfaces, and tiles the colour of the section above would be invisible against the one below (§9.2). -->
+    <!-- ============ 5. KOSTEN ============ -->
+    <!-- The block docs/build-checklist.md counts on 27 pages, reused verbatim.
+         GEO pattern: question H2, the answer in the first sentence, then what
+         moves it.
+         ⚠️ NO HOURLY RANGE IN THE BOX AND NO `offers` IN THE SCHEMA — the draft
+         prices this service differently on purpose and says so, so a number here
+         would be a claim the client did not make. -->
+    <!--
+         ⚠️ EVERY PRICE IS A TOKEN, never a literal (client rule G10): the draft
+         writes "zwischen 26 und 32 Euro" and it is emitted as {{price.min}} /
+         {{price.max}}, so the annual rate change stays one edit in
+         content/values.json instead of 27 pages x 2 (visible + JSON-LD).
+         DOM order is the design: intro → price → factors → Hinweis, which is the
+         phone order, done in markup rather than with `order` so the tab order
+         matches the screen (§7). -->
+    <section class="section section--light service-price" data-nav-theme="light">
+      <div class="container service-price__layout">
+        <div class="section__intro service-price__intro">
+          <h2>Was kostet ein Interventionsdienst?</h2>
+          <p class="service-price__answer" data-reveal data-reveal-delay>Der Interventionsdienst besteht aus zwei Komponenten: einer monatlichen Bereitschaftspauschale (abhängig von Objektlage und Reaktionszeit) und einer Einsatzpauschale je tatsächlicher Intervention. Für die meisten Gewerbeobjekte liegt die Bereitschaft bei einem überschaubaren zweistelligen bis niedrigen dreistelligen Monatsbetrag, deutlich unter jeder personellen Alternative.</p>
+        </div>
+
+        <!-- include: price-box range="Bereitschaft + Einsatz" note="monatliche Bereitschaftspauschale zzgl. Einsatzpauschale, netto" priceBoxTick1="Interventionsplan inklusive" priceBoxTick2="Angebot in 1 Werktag" priceBoxMod="service-price__box--text" priceBoxUnit="" priceBoxLabel="Ihre Kostenlogik" -->
+
+        <ul class="service-price__factors" data-item-reveal>
+          <li>Objektlage und vereinbartes Reaktionsfenster</li>
+          <li>Umfang: nur Außenkontrolle oder Innenkontrolle mit Schlüsselgewalt</li>
+          <li>Alarmaufkommen (Fehlalarm-Quote Ihrer Anlage)</li>
+          <li>Kombination mit Revierdienst oder NSL-Aufschaltung</li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 6. TRUST ============ -->
+    <!-- The draft's Trust paragraph, verbatim, over the SHARED certification
+         strip (`.trust-certs*`, the chassis block /referenzen/, /ueber-uns/ and
+         /sicherheitskonzept/ all use). It is fully token-driven, so it works on
+         either surface.
+         ⚠️ NOT the `.service-contact` block with Alexander Jäger's portrait: this
+         draft's Trust section does not name him, and adding a named contact the
+         document did not ask for would be inventing a person into the page. The
+         four drafts that DO name him get that block instead — client Q2,
+         2026-08-13, applied as written. -->
+    <section class="section service-trust">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Verlässlichkeit, die Ihr Versicherer anerkennt</h2>
+        </div>
+
+        <div class="section__intro">
+          <p data-reveal data-reveal-delay>FRANKONIA arbeitet nach dokumentierten Interventionsplänen im zertifizierten System (DIN 77200-1, ISO 9001, DEKRA-geprüft), mit qualifizierten Kräften nach § 34a GewO und einer Einsatzleitung, die rund um die Uhr erreichbar ist. Einsatzberichte sind polizei- und versicherungstauglich.</p>
+        </div>
+
+        <div class="trust-certs" data-reveal>
+          <div class="trust-certs__seals">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+          </div>
+          <ul class="trust-certs__list">
+            <li>
+              <strong>DIN 77200-1</strong>
+              für stationäre Sicherheitsdienstleistungen
+            </li>
+            <li>
+              <strong>DIN EN ISO 9001</strong>
+              zertifiziert, DEKRA-geprüft
+            </li>
+            <li>
+              <strong>§ 34a GewO</strong>
+              ausschließlich IHK-qualifizierte Kräfte
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 7. FAQ ============ -->
+    <!-- The draft's 5 questions and answers, verbatim, mirroring the FAQPage
+         JSON-LD at the top of this file 1:1.
+         The draft ends an answer with a bare "→ /sicherheitstechnik/", which is
+         authoring notation rather than copy. The destination is not lost — it is in
+         Verwandte Leistungen at the foot of this page.
+         ⚠️ The visible copy and the schema copy must stay BYTE-IDENTICAL with
+         markup stripped. They are generated from one source by
+         docs/design-sources/service-pages.py, so an edit here has to be made in
+         BOTH places by hand. It is the one thing on this page type that is easy
+         to break with a small edit and impossible to see. -->
+    <section class="section section--light service-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Interventionsdienst: die häufigsten Fragen</h2>
+        </div>
+
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
+          <details class="faq-item">
+            <summary><h3>Was kostet Alarmverfolgung im Monat?</h3></summary>
+            <p class="faq-item__answer">Die Bereitschaftspauschale liegt für die meisten Gewerbeobjekte im überschaubaren zweistelligen bis niedrigen dreistelligen Monatsbereich, dazu kommt eine Einsatzpauschale je tatsächlicher Anfahrt. Ihr konkretes Angebot erhalten Sie innerhalb eines Werktages.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Wie schnell ist die Interventionskraft vor Ort?</h3></summary>
+            <p class="faq-item__answer">Das Reaktionsfenster wird je Objekt vereinbart und hängt von der Lage im Einsatzgebiet ab, im Kernrevier rund um Bamberg entsprechend kurz. Verbindliche Zeiten stehen im Interventionsplan, den Sie vor Vertragsbeginn erhalten.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Braucht der Interventionsdienst meine Schlüssel?</h3></summary>
+            <p class="faq-item__answer">Für die Innenkontrolle ja, die Schlüssel werden versiegelt und dokumentiert verwahrt, die Ausgabe wird protokolliert. Ohne Schlüsselgewalt bleibt es bei der Außenkontrolle mit Meldung an Sie.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Arbeitet FRANKONIA mit meiner bestehenden Alarmanlage?</h3></summary>
+            <p class="faq-item__answer">Ja. Die Aufschaltung richten wir gemeinsam mit Ihrem Errichter oder Ihrer Leitstelle ein, unabhängig vom Hersteller. Falls Ihre Anlage häufig Fehlalarme produziert, dokumentieren wir die Ursachen für die Optimierung.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Fährt die Polizei nicht sowieso bei Alarm?</h3></summary>
+            <p class="faq-item__answer">Bei unbestätigten Alarmen privater Anlagen in der Regel nicht, zu viele Fehlalarme. Deshalb fordern viele Versicherer eine qualifizierte Intervention: Erst die bestätigte Feststellung vor Ort löst den Polizeieinsatz aus.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 8. ABSCHLUSS-CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The shared lead-form partial with this page's own field prefix — unique
+         per page, or two forms in one document would break every <label for>.
+         The form still submits nowhere sitewide (action="#", native validation
+         only) — docs/build-checklist.md Paso 4. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Jetzt Interventionsdienst anfragen — Alarmkette schließen</h2>
+          <p class="conversion__intro-lede">Nennen Sie uns Objekt und Alarmanlagen-Typ, wir erstellen Interventionsplan und Angebot innerhalb eines Werktages. Formulartitel: Ihre Interventions-Anfrage</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="id" messageLabel="Objekt und Alarmanlagen-Typ" -->
+
+          <p class="conversion__form-alt">Lieber direkt sprechen? <a href="{{phone.href}}">{{phone.display}}</a></p>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 9. VERWANDTE SEITEN ============ -->
+    <!-- The draft's own internal-link list. Several destinations are not built
+         yet; the URLs are the confirmed ones from guidelines §2.2, so these are
+         real links to pages still to come, not placeholders — the same
+         convention /werkschutz/ and the city pages already follow.
+         ⚠️ `.service-related__cols` / `__col`, NOT `__grid`: that second variant
+         had no CSS rule anywhere and fell back to block layout. /sicherheitskonzept/
+         was the last page carrying it and was corrected 2026-08-17 — do not
+         reintroduce it. -->
+    <section class="section section--light service-related" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Verwandte Leistungen und Einsatzgebiete</h2>
+        </div>
+
+        <div class="service-related__cols">
+
+          <div class="service-related__col">
+            <h3 class="service-related__title">Verwandte Leistungen</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/sicherheitstechnik/"><span class="service-related__label">Sicherheitstechnik</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/revier-schliessdienst/"><span class="service-related__label">Revier- &amp; Schließdienst</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/objektschutz/"><span class="service-related__label">Objektschutz</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+          <div class="service-related__col">
+            <h3 class="service-related__title">In Ihrer Region</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/sicherheitsdienst-bamberg/"><span class="service-related__label">Sicherheitsdienst Bamberg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-nuernberg/"><span class="service-related__label">Sicherheitsdienst Nürnberg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-erlangen/"><span class="service-related__label">Sicherheitsdienst Erlangen</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

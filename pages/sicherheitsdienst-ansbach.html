@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- CITY PAGE — Ansbach. Built from
+     NewVersionCopiesFrankonia/"2026-08-04 Webtext 22 Stadt Ansbach.docx"
+     (Stand 04.08.2026), verbatim, in German.
+
+     ⚠️ UWG / "kein Scheinstandort" is the rule that governs this whole page
+     type (docs/page-conventions.md §10.1). FRANKONIA has ONE address, in
+     Bamberg, and a city page may not imply a branch. It lands in three places
+     here: the hero badge says "Einsatzgebiet", never "Standort"; the
+     LocalBusiness JSON-LD carries the real Bamberg NAP with
+     areaServed: Ansbach and NOT a Ansbach address; and the FAQ answers
+     "do you have an office here?" honestly. Do not "improve" any of the three
+     into a local-address claim.
+
+     ⚠️ THE WARUM SECTION IS PROSE, NOT CARDS. Webtext 22's section 2 is two
+     paragraphs with no card list at all, so it renders as a prose callout rather
+     than as the four-card grid — inventing three card titles to fill the usual
+     shape would be writing copy. It also takes the LIGHT surface, which is
+     available precisely because a prose callout has no dark-only tint.
+     ⚠️ The draft is candid in two of its FAQ answers ("eine ehrliche
+     Einschätzung, ob wir die richtige Wahl sind", "prüfen wir die Machbarkeit
+     ehrlich am Telefon") because Ansbach is the outer edge of the Einsatzgebiet.
+     That honesty is the point — do not smooth it into a coverage promise.
+
+     REUSE MODEL: every class is `.city-*`, never `.ansbach-*`, and
+     css/page-service.css is loaded as the CHASSIS (§9.1) — inset, `main h2`,
+     breadcrumb chevron, `.section--light`, `.service-hero*`, `.service-link`,
+     the whole `.pixel-seam*` block and the entire Kosten section come from
+     there. css/page-city.css was NOT touched to build this page.
+
+     GENERATED ONCE by docs/design-sources/city-pages.py, then hand-editable.
+     ⚠️ If you edit the FAQ below, edit the FAQPage graph above it too — they
+     must stay byte-identical with markup stripped. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title (50 chars) and description (153) are the draft's own —
+       docs/page-conventions.md §12. -->
+  <title>Sicherheitsdienst Ansbach | Wachdienst – FRANKONIA</title>
+  <meta name="description" content="Sicherheitsdienst für Ansbach: Objektschutz, Wachdienst, Brandwache &amp; Baustellenbewachung in Westmittelfranken. DEKRA-zertifiziert, Angebot in 1 Werktag.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/sicherheitsdienst-ansbach/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/sicherheitsdienst-ansbach/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/sicherheitsdienst-ansbach/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sicherheitsdienst Ansbach | Wachdienst – FRANKONIA">
+  <meta property="og:description" content="Sicherheitsdienst für Ansbach: Objektschutz, Wachdienst, Brandwache &amp; Baustellenbewachung in Westmittelfranken. DEKRA-zertifiziert, Angebot in 1 Werktag.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/sicherheitsdienst-ansbach/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- NO hero image preload: this page has no hero photograph. There is not one
+       city photo in the project and the draft does not ask for one — the hero's
+       visual is an inline SVG of Ansbach's real administrative boundary, so
+       it costs no request at all and the page has NO image LCP element. -->
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "{{phone.display}}",
+      "email": "{{email}}",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 49.9019037,
+        "longitude": 10.9067377
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Ansbach",
+        "containedInPlace": { "@type": "AdministrativeArea", "name": "Bayern" }
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "reviewCount": "{{rating.count}}",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/sicherheitsdienst-ansbach/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Übernimmt FRANKONIA laufende Aufträge in Ansbach?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, uneingeschränkt — Ihre Sicherheitskräfte arbeiten fest vor Ort im Objekt, koordiniert über die 24/7 erreichbare Einsatzleitung. Für einmalige Kurzeinsätze erhalten Sie vorab eine ehrliche Einschätzung, ob wir die richtige Wahl sind."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was kostet ein Sicherheitsdienst in Ansbach?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde netto, je nach Leistung und Einsatzzeit. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Arbeitet FRANKONIA für Behörden in Ansbach?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "FRANKONIA schützt Einrichtungen der öffentlichen Hand in ganz Franken, mit zertifiziertem System (DIN 77200-1, ISO 9001, DEKRA) und vergabetauglichen Nachweisen. Referenzen aus dem Behördenumfeld nennen wir im persönlichen Gespräch."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Übernimmt FRANKONIA Baustellenbewachung entlang der A6?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja — Logistik- und Infrastrukturprojekte am A6-Korridor gehören zu den typischen Anfragen aus dem Raum Ansbach. Konzepte werden je Bauphase kalkuliert, das Angebot kommt innerhalb eines Werktages."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie läuft eine Brandwache in Ansbach?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Geplante Brandsicherheitswachen (Heißarbeiten, BMA-Wartung, Veranstaltungen) stellen wir zuverlässig mit Vorlauf; die Dokumentation für Behörde und Versicherer ist inklusive. Bei akuten Fällen prüfen wir die Machbarkeit ehrlich am Telefon: {{phone.display}}."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Einsatzgebiete",
+          "item": "https://frankonia-sicherheit.de/einsatzgebiete/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Sicherheitsdienst Ansbach",
+          "item": "https://frankonia-sicherheit.de/sicherheitsdienst-ansbach/"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+
+  <!-- Shared, in cascade order (docs/page-conventions.md §9.1):
+       lead-form → testimonials → page-service.css (the CHASSIS) → this page. -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/testimonials.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-city.css">
+
+  <!-- The documented generic effect stack, nothing page-specific
+       (docs/page-conventions.md §4.1). -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+</head>
+<body class="page-city">
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Chevron separators, not slashes — docs/page-conventions.md §3. Matches
+         the BreadcrumbList JSON-LD above. The breadcrumb sits ABOVE the hero
+         (unlike /werkschutz/, whose hero is a full-bleed photograph reaching the
+         top of the page) because this hero has no photo. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/einsatzgebiete/">Einsatzgebiete</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Ansbach</span></li>
+      </ol>
+    </nav>
+
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- The draft's own Hero-Aufbau, nothing added or dropped: badge → H1 →
+         subline → 3 ticks → double CTA → Google widget + DEKRA seals.
+         .hero__lead / .hero__actions / .hero__reassurance / .hero__trust are
+         load-bearing class names, not decoration — js/hero-reveal.js animates
+         exactly those four blocks in that order, so this page needs no JS of its
+         own (docs/page-conventions.md §4.1).
+         The badge says "Einsatzgebiet", which is the UWG disclosure of §10.1 and
+         the draft's own copy. -->
+    <section class="service-hero city-hero" data-hero-reveal>
+      <div class="container service-hero__grid city-hero__grid">
+        <div class="service-hero__content city-hero__content">
+          <p class="city-hero__badge">
+            <svg class="icon city-hero__badge-icon" aria-hidden="true"><use href="#icon-pin"></use></svg>
+            Einsatzgebiet Ansbach, für laufende Aufträge und geplante Einsätze
+          </p>
+
+          <h1>Sicherheitsdienst Ansbach</h1>
+
+          <p class="hero__lead service-hero__lead">
+            Ihr Sicherheitsdienst für Ansbach und Westmittelfranken: Objektschutz, Wachdienst, Brandwache und Baustellenbewachung durch IHK-qualifizierte Kräfte — DEKRA-zertifiziert nach DIN 77200-1 und ISO 9001.
+          </p>
+
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn btn--secondary service-hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+          </div>
+
+          <!-- The draft's lines VERBATIM, so a stacked list rather than the
+               homepage hero's row of chips: these are full sentences and need
+               ~1000px in a row at this type size against the ~640px this column
+               has. Same measurement /jobs/ made before the client chose the list.
+               .city-hero__points turns the shared row into a column and supplies
+               the align-items: flex-start the shared centred rule would
+               otherwise apply horizontally (docs/page-conventions.md §10.4). -->
+          <ul class="hero__reassurance service-hero__points city-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Feste Teams vor Ort bei laufenden Aufträgen in Ansbach
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Erfahrung mit Behörden, Verwaltung und Industrie
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Unverbindliches Angebot innerhalb eines Werktages
+            </li>
+          </ul>
+
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- Ansbach'S REAL ADMINISTRATIVE OUTLINE, as an inline path.
+             Generated once in development by docs/design-sources/city-outline.py
+             from assets/data/coverage-boundaries/ansbach.geojson (fetched from
+             OSM/Nominatim in July). Never hand-edit the coordinates; re-run the
+             script instead.
+             Why an outline and not a photo or a map — docs/page-conventions.md
+             §10.3, in short: no city photography exists and the draft asks for
+             none; an AREA is the honest visual for an Einsatzgebiet where a
+             single pin would read as a branch office (§10.1); and as a path it
+             costs zero requests and no third-party tiles.
+             ⚠️ pathLength="1" IS LOAD-BEARING. The outline draws itself with a
+             pure-CSS dash, and that attribute renormalises the perimeter to 1 so
+             `stroke-dasharray: 1` is one exact lap at any size for any city. A
+             path pasted in without it draws nothing at all.
+             ⚠️ The guides are PERCENTAGES because every city's viewBox height
+             differs (683 for Coburg, 1494 for Kulmbach); this one is 833. -->
+        <div class="city-hero__map" aria-hidden="true">
+          <svg class="city-map" viewBox="0 0 1000 833" fill="none" focusable="false">
+            <line class="city-map__guide" x1="50%" y1="0" x2="50%" y2="100%"></line>
+            <line class="city-map__guide" x1="0" y1="50%" x2="100%" y2="50%"></line>
+            <path class="city-map__area" pathLength="1" d="M0.0 442.2 L39.6 498.3 L47.2 492.9 L50.4 499.4 L41.0 509.9 L46.9 514.0 L54.2 517.1 L61.6 511.4 L65.3 510.7 L71.4 503.0 L73.3 504.0 L73.8 515.1 L77.8 514.7 L78.0 512.5 L80.7 511.8 L82.2 520.0 L86.6 519.0 L88.2 525.9 L101.9 521.5 L96.9 519.6 L102.5 513.1 L93.5 504.1 L93.7 502.0 L97.1 501.8 L97.8 500.0 L95.7 495.7 L99.4 486.2 L105.2 482.8 L107.1 484.6 L110.3 496.7 L119.2 495.3 L122.9 503.6 L128.9 503.2 L131.3 500.9 L142.7 526.3 L138.8 529.2 L136.8 529.0 L137.0 526.5 L129.5 527.3 L129.8 530.0 L132.0 529.8 L133.9 532.3 L112.5 534.3 L107.3 540.8 L105.6 546.8 L100.0 549.1 L94.3 555.2 L89.0 563.3 L93.3 562.3 L93.6 567.7 L95.5 568.9 L95.4 572.1 L94.0 572.9 L96.8 580.6 L85.9 582.7 L90.4 594.0 L93.8 593.3 L102.2 586.8 L121.9 579.3 L132.1 581.8 L131.3 583.7 L135.2 583.5 L138.4 580.6 L138.4 583.0 L146.1 583.8 L146.6 581.4 L150.0 584.4 L152.8 581.2 L155.1 580.9 L159.4 574.7 L163.2 574.4 L160.9 578.3 L176.7 582.0 L185.9 580.9 L189.1 592.3 L192.9 589.3 L198.4 588.9 L202.2 583.6 L218.1 595.8 L223.9 595.0 L228.6 589.2 L238.8 598.2 L248.8 601.6 L247.9 604.3 L250.1 605.6 L249.7 615.3 L258.3 613.9 L260.7 624.5 L255.8 636.4 L258.3 643.7 L262.1 642.0 L272.5 643.9 L284.1 649.4 L299.1 650.8 L309.5 654.4 L310.8 653.6 L316.7 658.0 L316.5 651.7 L320.4 654.6 L324.8 653.7 L327.6 650.3 L326.0 641.5 L321.1 640.0 L330.3 637.6 L331.0 634.5 L334.6 634.6 L334.3 630.2 L329.8 622.5 L330.8 616.7 L337.5 616.5 L340.3 622.3 L340.5 629.4 L350.3 629.1 L352.0 627.6 L355.8 628.1 L361.4 620.7 L365.6 620.9 L380.0 613.6 L379.8 611.5 L396.3 615.8 L434.1 631.7 L434.5 640.1 L455.3 646.1 L459.4 645.6 L467.8 648.6 L476.4 642.3 L482.7 640.8 L493.1 641.6 L501.7 649.4 L503.3 660.0 L514.7 667.3 L524.8 668.6 L520.5 682.8 L523.8 683.9 L528.4 681.2 L526.8 689.4 L527.7 697.2 L556.3 695.3 L558.4 690.6 L592.8 698.9 L607.9 704.9 L614.2 704.8 L622.5 709.8 L630.9 720.1 L632.7 731.8 L636.4 732.9 L620.9 750.9 L623.0 751.9 L622.9 753.5 L640.2 758.8 L641.6 756.5 L656.5 762.0 L674.3 764.7 L670.5 757.8 L668.5 749.8 L683.5 748.8 L684.0 753.9 L686.9 753.5 L688.3 764.2 L691.9 764.7 L692.1 766.6 L700.3 767.3 L718.8 772.4 L738.9 763.4 L749.4 756.5 L752.6 756.4 L752.1 758.6 L758.6 760.1 L762.3 756.4 L760.9 771.9 L771.5 772.1 L769.7 782.1 L772.5 795.5 L764.8 799.9 L772.3 800.6 L804.8 811.0 L809.6 809.3 L837.7 809.1 L839.2 807.4 L867.5 811.1 L870.5 813.4 L874.1 812.7 L872.2 815.6 L879.8 826.6 L881.3 833.0 L883.0 833.4 L896.1 824.2 L899.0 827.2 L904.5 829.0 L920.4 830.2 L916.3 819.2 L917.6 813.9 L920.2 808.0 L928.7 799.7 L921.7 799.8 L917.1 797.8 L917.8 783.5 L919.6 779.5 L917.0 771.2 L901.3 768.6 L904.0 755.4 L900.1 739.9 L908.1 738.7 L907.1 709.4 L928.9 703.5 L927.5 698.9 L945.3 691.9 L944.9 687.6 L947.7 685.6 L947.8 655.5 L943.8 654.8 L944.1 653.4 L920.1 648.0 L902.5 641.2 L891.9 632.2 L870.7 622.1 L867.7 611.5 L867.8 604.6 L848.2 602.8 L847.9 574.9 L843.8 561.0 L842.0 540.2 L839.3 540.1 L840.0 537.3 L830.1 537.5 L818.8 540.1 L804.8 539.4 L805.4 526.8 L809.2 526.4 L803.8 516.7 L798.3 519.7 L793.6 516.0 L791.3 510.3 L796.1 508.5 L794.3 506.1 L797.2 503.8 L792.0 501.7 L793.3 497.5 L801.3 499.1 L812.9 498.8 L836.1 492.6 L838.0 483.6 L846.8 482.8 L849.0 477.0 L848.2 475.1 L838.7 473.7 L815.4 466.1 L779.3 462.7 L782.1 460.7 L786.4 461.4 L787.0 456.2 L798.6 458.5 L799.2 454.1 L797.3 453.9 L797.5 452.1 L795.0 451.8 L792.9 448.4 L793.8 444.8 L799.2 446.1 L800.0 442.6 L807.7 444.0 L807.5 441.5 L809.0 441.8 L812.6 433.3 L824.0 436.7 L824.8 429.7 L854.5 422.3 L855.5 420.4 L869.3 420.4 L865.0 408.8 L861.7 405.9 L869.7 400.6 L869.6 397.7 L875.9 398.4 L880.3 401.2 L879.4 396.3 L875.3 393.6 L874.9 386.5 L885.9 387.6 L886.7 377.7 L888.9 378.0 L895.0 314.8 L912.8 303.6 L948.1 295.9 L949.0 286.3 L950.4 286.0 L950.7 267.0 L965.0 248.1 L977.7 247.9 L979.2 237.4 L987.0 238.3 L987.6 229.2 L982.6 229.0 L982.9 220.7 L999.9 220.4 L998.8 198.4 L994.3 183.0 L980.9 185.7 L969.8 194.3 L966.2 192.8 L964.6 195.5 L962.5 180.7 L969.2 180.9 L968.9 163.0 L960.2 164.7 L959.4 161.1 L945.3 165.0 L927.0 162.6 L922.6 154.3 L924.3 153.2 L923.7 147.7 L914.4 145.2 L914.9 142.8 L901.6 145.0 L901.2 143.5 L895.4 141.8 L873.2 146.9 L872.9 143.7 L863.5 144.4 L849.7 138.6 L854.8 135.6 L856.6 129.7 L864.0 131.2 L863.2 126.2 L857.2 123.1 L851.6 121.7 L834.1 128.2 L812.2 120.3 L807.8 123.1 L799.8 124.6 L790.7 124.4 L780.6 118.4 L775.2 116.8 L773.8 119.5 L766.1 114.4 L758.3 113.6 L759.9 106.4 L755.5 105.5 L753.5 107.9 L738.9 106.3 L733.6 107.6 L733.3 103.0 L728.6 93.2 L704.2 80.2 L680.3 83.3 L679.7 74.3 L676.3 67.8 L673.9 65.8 L671.1 69.0 L670.3 67.5 L669.2 53.6 L659.1 8.9 L652.9 11.3 L636.1 9.4 L621.6 0.4 L615.5 0.0 L607.4 0.5 L607.6 5.5 L595.0 7.3 L595.0 8.9 L576.3 9.3 L573.5 37.6 L574.3 41.2 L564.6 37.7 L553.1 31.0 L552.6 35.0 L548.6 36.6 L546.1 33.1 L542.8 36.2 L522.2 31.2 L515.6 28.1 L505.2 31.5 L504.5 34.5 L490.1 33.3 L478.2 34.3 L467.8 30.5 L466.4 26.3 L459.5 28.9 L450.2 42.1 L442.8 46.1 L437.9 51.0 L429.2 55.1 L425.0 60.5 L416.9 64.4 L399.4 80.0 L384.8 99.9 L385.9 106.5 L385.4 108.8 L382.9 109.8 L381.0 119.5 L382.9 122.1 L379.1 125.7 L377.5 124.1 L371.1 129.5 L371.1 131.4 L365.0 137.8 L367.7 141.4 L359.1 148.7 L367.3 160.1 L361.9 162.3 L360.1 160.1 L342.1 174.4 L340.8 170.7 L335.3 166.6 L324.9 162.2 L320.3 158.7 L322.7 142.1 L310.0 140.4 L292.0 144.4 L285.8 143.1 L282.0 146.7 L270.8 146.6 L271.1 144.8 L266.6 143.7 L267.3 139.1 L257.4 139.3 L251.0 136.4 L244.3 139.2 L234.6 136.4 L220.0 128.0 L208.4 118.3 L201.3 142.9 L205.9 145.4 L202.7 145.3 L202.6 146.6 L198.6 145.0 L196.3 149.3 L192.4 152.3 L186.8 143.9 L176.6 135.9 L174.7 137.2 L170.0 135.8 L158.9 130.1 L159.2 128.0 L155.6 126.6 L150.0 126.8 L144.3 129.4 L143.4 127.0 L141.2 126.2 L137.6 127.5 L136.9 131.5 L113.5 135.5 L108.2 139.3 L108.1 135.8 L105.2 134.4 L95.4 134.5 L102.9 171.4 L99.1 174.5 L99.0 177.9 L103.6 194.9 L103.6 203.6 L120.4 231.5 L108.7 247.5 L121.9 261.1 L140.9 262.5 L138.7 269.6 L146.9 275.0 L154.7 284.3 L165.2 287.1 L182.2 284.2 L189.7 285.1 L188.7 288.4 L190.6 289.0 L202.8 320.4 L206.7 319.9 L208.1 332.8 L207.1 335.8 L218.2 331.5 L225.0 339.4 L220.2 342.1 L223.0 345.2 L219.4 348.4 L214.3 342.2 L210.6 351.5 L203.8 357.3 L210.1 362.1 L217.7 364.8 L218.1 369.5 L220.1 371.1 L213.4 376.7 L214.7 385.7 L222.3 396.8 L210.8 397.1 L209.9 401.8 L201.4 400.5 L195.5 401.5 L195.4 403.1 L189.3 405.2 L183.0 403.5 L178.4 404.2 L179.7 415.9 L167.2 418.5 L170.4 423.3 L133.2 438.1 L129.7 434.3 L138.6 420.2 L143.7 415.7 L139.1 403.4 L138.1 391.9 L135.9 392.2 L133.5 386.5 L127.6 386.0 L117.2 391.4 L111.4 392.1 L90.5 390.8 L90.6 386.9 L83.7 388.2 L82.2 390.5 L63.7 389.9 L63.6 387.6 L55.5 383.8 L57.2 395.2 L55.6 398.0 L57.5 407.8 L54.5 420.8 L32.5 425.0 L19.3 431.7 L20.5 442.2 L0.0 442.2 Z"></path>
+          </svg>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 2. WARUM FRANKONIA IN ANSBACH ============ -->
+    <!-- Prose, not cards: the draft gives two paragraphs and no card list, and
+         inventing three card titles to fill the usual grid would be writing copy.
+         Prose-only means no dark-only tint, so this can take the light surface
+         and keep the page alternating. -->
+    <section class="section section--light city-callout" data-nav-theme="light">
+      <div class="container city-callout__layout">
+        <div class="section__intro city-callout__intro">
+          <h2>Warum FRANKONIA in Ansbach</h2>
+          <p class="city-callout__lede">Ansbach gehört zu unseren festen Einsatzgebieten: Ihre Sicherheitskräfte arbeiten fest vor Ort im Objekt, koordiniert über die 24/7 erreichbare Einsatzleitung und dokumentiert in digitalen Systemen, die Sie jederzeit einsehen können.</p>
+          <p class="city-callout__lede">Dauerhafte Bewachung, Werkschutz, Empfang und geplante Einsätze übernehmen wir in Ansbach uneingeschränkt, mit festen Teams und zertifizierten Prozessen: DIN 77200-1, ISO 9001, DEKRA-geprüft.</p>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 3. LEISTUNGEN IN ANSBACH ============ -->
+    <!-- The draft's services, its copy, its order and its link targets.
+         Linking confirmed-but-unbuilt URLs is this project's convention
+         (docs/page-conventions.md §8.3); the page's own primary conversion never
+         does it — every CTA points at #anfrage, the live form below. -->
+    <section class="section city-services">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Unsere Sicherheitsdienstleistungen in Ansbach</h2>
+          <p>Vom Objektschutz für Verwaltung und Gewerbe bis zur geplanten Brandwache: Alle FRANKONIA Leistungen stehen Ihnen auch in Ansbach und Westmittelfranken zur Verfügung.</p>
+        </div>
+
+        <!-- ALL 8 AS ROWS, no card group — and that is the documented rule
+             applied, not a shortcut. Cards exist for services whose destination
+             is a CITY-specific page; Ansbach has no combo pages in this
+             phase (the draft says so itself), so every one of these points at the
+             generic service page. Presenting four of them as featured cards would
+             promise a local page that does not exist — the implied-local claim
+             §10.1 exists to prevent. Rows keep every description crawlable. -->
+          <ul class="city-services__list" data-item-reveal="li">
+            <li>
+              <a class="city-services__row" href="/werkschutz/">
+                <span class="city-services__name">Werkschutz in Ansbach</span>
+                <span class="city-services__text">Pforte und Rundgänge für Industrie- und Zuliefererstandorte.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/objektschutz/">
+                <span class="city-services__name">Objektschutz in Ansbach</span>
+                <span class="city-services__text">Bestreifung, Zugangskontrolle und Alarmverfolgung für Verwaltung, Gewerbe und Einrichtungen.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/baustellenbewachung/">
+                <span class="city-services__name">Baustellenbewachung in Ansbach</span>
+                <span class="city-services__text">Schutz für Bauprojekte in Stadt und Landkreis, konzipiert je Bauphase.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/brandwache/">
+                <span class="city-services__name">Brandwache in Ansbach</span>
+                <span class="city-services__text">Geplante Brandsicherheitswachen bei Heißarbeiten, BMA-Wartung und Veranstaltungen.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/empfangsdienst/">
+                <span class="city-services__name">Empfangsdienst in Ansbach</span>
+                <span class="city-services__text">Professioneller Empfang mit Sicherheitskompetenz für Behörden und Verwaltungen.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/veranstaltungsschutz/">
+                <span class="city-services__name">Veranstaltungsschutz in Ansbach</span>
+                <span class="city-services__text">Einlass, Ordnerdienst und Auflagen-Unterstützung für Feste und Events.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/kaufhausdetektei/">
+                <span class="city-services__name">Kaufhausdetektei in Ansbach</span>
+                <span class="city-services__text">Zivile Ladendetektive für Handel und Filialen.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/sicherheitstechnik/">
+                <span class="city-services__name">Sicherheitstechnik in Ansbach</span>
+                <span class="city-services__text">Videoüberwachung, Alarm- und Zutrittstechnik, geplant als Teil des Gesamtkonzepts.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+          </ul>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 4. LOKALE EINSATZFELDER IN ANSBACH ============ -->
+    <!-- The section that makes this a CITY page rather than a service page with a
+         place name pasted in: real local references, every word the draft's.
+         Numbered because long blocks need an ordinal to be scannable; the
+         numerals are aria-hidden decoration on top of a real <ol>.
+         ⚠️ Where an item closes with a service link, that pairing is inferred
+         from the copy (the draft only annotates URLs in the Leistungen section)
+         and has been checked against WHERE the service is actually available —
+         the lesson Nürnberg paid for when it linked Revier- & Schließdienst, a
+         Raum-Bamberg-only service, from a Nürnberg page. -->
+    <section class="section section--light city-fields" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <p class="section-eyebrow">Vor Ort im Einsatz</p>
+          <h2>Wo Sicherheitsdienste in Ansbach gebraucht werden</h2>
+        </div>
+
+        <ol class="city-fields__list" data-item-reveal="li">
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">01</span>
+            <h3 class="city-fields__title">Behörden und Verwaltung in Ansbach</h3>
+            <p>Als Regierungssitz Mittelfrankens konzentriert Ansbach Ämter, Gerichte und Institutionen — Zutrittssteuerung, Empfangsdienste und Objektschutz mit dokumentierten, vergabetauglichen Prozessen.</p>
+            <a class="service-link city-fields__link" href="/empfangsdienst/">
+              Zum Empfangsdienst
+              <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">02</span>
+            <h3 class="city-fields__title">Industrie und Zulieferer in Ansbach</h3>
+            <p>Kunststoff-, Automobil- und Elektronikfertigung prägen den Standort — Werkschutz mit technik-geschulten Kräften und Fremdfirmen-Koordination.</p>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">03</span>
+            <h3 class="city-fields__title">Logistik am A6-Korridor bei Ansbach</h3>
+            <p>Die A6 als Ost-West-Achse zieht Speditionen und Lager an — Zufahrtskontrolle, Verschlussrunden und Baustellenbewachung entlang des Korridors.</p>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">04</span>
+            <h3 class="city-fields__title">Veranstaltungen in Ansbach</h3>
+            <p>Von den Rokoko-Festspielen bis zu Stadt- und Firmenevents — Einlass und Ordnerdienst mit Behörden-Abstimmung.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+    <!-- No seam: fields and price are both light surfaces, and tiles the colour of the section above would be invisible against the one below (§9.2). -->
+    <!-- ============ 5. KOSTEN IN ANSBACH ============ -->
+    <!-- Entirely the chassis: .service-price* was built generically on
+         /werkschutz/ because docs/build-checklist.md counts this block on 27
+         pages, and the Preis-Box is a partial. The only city-specific rule is
+         .city-rates for the per-service rows a service page does not have.
+         ⚠️ .city-rates deliberately does NOT reuse .service-price__factors —
+         that block draws a blue `+` per row, and a `+` in front of
+         "Objektschutz · 26-32 €/Std." reads as a list of extras rather than a
+         rate table. It does repeat that block's `grid-column: 1`, or it falls
+         into the second column under the price box.
+         GEO shape: question H2, the number in the first sentence. -->
+    <section class="section section--light service-price" data-nav-theme="light">
+      <div class="container service-price__layout">
+        <div class="section__intro service-price__intro">
+          <h2>Was kostet ein Sicherheitsdienst in Ansbach?</h2>
+          <p class="service-price__answer" data-reveal data-reveal-delay>Auch in Ansbach gilt die FRANKONIA Preislogik: {{price.min}} bis {{price.max}} Euro pro Stunde netto je nach Leistung, Qualifikation und Einsatzzeit.</p>
+        </div>
+
+        <!-- The shared Preis-Box. `range` comes from content/values.json, so the
+             annual rate change stays ONE edit for all 27 pages that publish it
+             (client rule G10). -->
+        <!-- include: price-box range="{{price.range}}" note="netto, Richtwerte für Einsätze in Ansbach und Westmittelfranken" -->
+
+        <!-- The draft's own "Typische Preisspannen" line, split into its services
+             so it can be read rather than parsed. -->
+        <ul class="city-rates" data-item-reveal="li">
+          <li><span class="city-rates__service">Werkschutz</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+          <li><span class="city-rates__service">Baustellenbewachung</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+          <li><span class="city-rates__service">Veranstaltungsschutz</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+        </ul>
+
+        <p class="service-price__hint">
+          <svg class="icon service-price__hint-icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <span>Richtwerte netto. Ihr konkretes Angebot erhalten Sie unverbindlich innerhalb eines Werktages.</span>
+        </p>
+      </div>
+    </section>
+    <!-- No seam: price and faq are both light surfaces, and tiles the colour of the section above would be invisible against the one below (§9.2). -->
+    <!-- ============ 6. FAQ ============ -->
+    <!-- 5 place-specific questions, the draft's own, verbatim. The visible copy
+         and the FAQPage JSON-LD at the top of this file must stay byte-identical
+         with markup stripped — the one thing on this page type that is easy to
+         break with a small edit and impossible to see. They are generated from
+         one source by docs/design-sources/city-pages.py, so an edit here has to
+         be made in BOTH places by hand.
+         ⚠️ The first question answers "do you have an office here?" honestly.
+         That is the UWG requirement of §10.1, not filler — do not soften it into
+         a local-address claim. -->
+    <section class="section section--light city-faq service-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Sicherheitsdienst Ansbach: die häufigsten Fragen</h2>
+        </div>
+
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
+          <details class="faq-item">
+            <summary><h3>Übernimmt FRANKONIA laufende Aufträge in Ansbach?</h3></summary>
+            <p class="faq-item__answer">Ja, uneingeschränkt — Ihre Sicherheitskräfte arbeiten fest vor Ort im Objekt, koordiniert über die 24/7 erreichbare Einsatzleitung. Für einmalige Kurzeinsätze erhalten Sie vorab eine ehrliche Einschätzung, ob wir die richtige Wahl sind.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Was kostet ein Sicherheitsdienst in Ansbach?</h3></summary>
+            <p class="faq-item__answer">In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde netto, je nach Leistung und Einsatzzeit. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Arbeitet FRANKONIA für Behörden in Ansbach?</h3></summary>
+            <p class="faq-item__answer">FRANKONIA schützt Einrichtungen der öffentlichen Hand in ganz Franken, mit zertifiziertem System (DIN 77200-1, ISO 9001, DEKRA) und vergabetauglichen Nachweisen. Referenzen aus dem Behördenumfeld nennen wir im persönlichen Gespräch.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Übernimmt FRANKONIA Baustellenbewachung entlang der A6?</h3></summary>
+            <p class="faq-item__answer">Ja — Logistik- und Infrastrukturprojekte am A6-Korridor gehören zu den typischen Anfragen aus dem Raum Ansbach. Konzepte werden je Bauphase kalkuliert, das Angebot kommt innerhalb eines Werktages.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Wie läuft eine Brandwache in Ansbach?</h3></summary>
+            <p class="faq-item__answer">Geplante Brandsicherheitswachen (Heißarbeiten, BMA-Wartung, Veranstaltungen) stellen wir zuverlässig mit Vorlauf; die Dokumentation für Behörde und Versicherer ist inklusive. Bei akuten Fällen prüfen wir die Machbarkeit ehrlich am Telefon: <a href="{{phone.href}}">{{phone.display}}</a>.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 7. ABSCHLUSS-CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The shared lead-form partial with this page's own field prefix — unique
+         per page, or two forms in one document would break every <label for>.
+         The draft's separate Formulartitel ("Ihre Anfrage für Ansbach") is not
+         rendered as a second heading: the section H2 already says it, the same
+         call /werkschutz/ and Nürnberg made.
+         The form still submits nowhere sitewide (action="#", native validation
+         only) — docs/build-checklist.md Paso 4. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Jetzt Sicherheitsdienst für Ansbach anfragen</h2>
+          <p class="conversion__intro-lede">Beschreiben Sie kurz Ihr Objekt oder Vorhaben in Ansbach — Sie erhalten eine ehrliche Einschätzung und Ihr unverbindliches Angebot innerhalb eines Werktages.</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="an" messageLabel="Ihr Objekt oder Vorhaben in Ansbach" -->
+
+          <p class="conversion__form-alt">Lieber direkt sprechen? <a href="{{phone.href}}">{{phone.display}}</a></p>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 8. UMGEBUNG ============ -->
+    <!-- ⚠️ BELOW THE FORM, which departs from the draft's own order and follows
+         Nürnberg's (client-approved, 2026-08-10). The drafts title this section
+         "Umgebung + Abschluss-CTA", i.e. as ONE closing block — but functionally
+         they pull opposite ways: a set of EXITS directly above the page's primary
+         conversion. The service template resolves the same tension the other way
+         ("… FAQ → CTA → verwandte Seiten"), so there is internal precedent.
+         No copy changed. See docs/page-conventions.md §10.2.
+         Small H2 per the draft — the fourth declared exception to §2.
+         A neighbour with no page of its own is a MENTION with no link and no
+         arrow, so "this goes somewhere" is never signalled by colour alone. -->
+    <section class="section section--light city-nearby" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro city-nearby__intro">
+          <h2 class="city-nearby__title">Sicherheitsdienst rund um Ansbach</h2>
+          <p>Unser Einsatzgebiet endet nicht an der Ansbacher Stadtgrenze: Auch in Nürnberg und Fürth übernehmen wir Objektschutz, Baustellenbewachung und mehr.</p>
+        </div>
+
+        <ul class="city-nearby__list" data-item-reveal="li">
+          <li>
+            <a class="city-nearby__tile" href="/sicherheitsdienst-nuernberg/">
+              <svg class="icon city-nearby__pin" aria-hidden="true"><use href="#icon-pin"></use></svg>
+              <span class="city-nearby__name">Nürnberg</span>
+              <svg class="icon city-nearby__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-nearby__tile" href="/sicherheitsdienst-fuerth/">
+              <svg class="icon city-nearby__pin" aria-hidden="true"><use href="#icon-pin"></use></svg>
+              <span class="city-nearby__name">Fürth</span>
+              <svg class="icon city-nearby__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

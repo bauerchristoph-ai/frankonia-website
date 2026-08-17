@@ -92,8 +92,8 @@
    1. HERO
    ==========================================================================
    Two columns from 1024px: the draft's copy on the left, the city's own
-   administrative outline on the right. Below that, one column and the outline is
-   hidden — see .city-hero__map.
+   administrative outline on the right. Below that, one column with the outline
+   moved ABOVE the copy at a smaller size — see .city-hero__map.
 
    NO PHOTOGRAPH, and that is following the copy rather than working around a
    gap: the draft's Hero-Aufbau lists badge, H1, subline, ticks, double CTA and
@@ -215,26 +215,98 @@
   max-height: min(30rem, calc(100svh - 22rem));
 }
 
-/* Below 1024px the hero is one column and the outline would sit under the trust
-   band, adding ~380px of scroll to the first screen for something purely
-   decorative. It is `display: none` rather than a smaller version, and that is
-   safe precisely because it is decorative — the <div> is aria-hidden and the
-   path carries no information the H1 does not. */
+/* ⚠️ BELOW 1024px THE OUTLINE IS VISIBLE AGAIN, ABOVE THE COPY (client 2026-08-16,
+   feedback 3.16 point 4: "the Nürnberg map animation is approved and works very
+   well on desktop — add it on tablet and mobile, potentially a smaller version
+   positioned above the text").
+   This REVERSES the `display: none` this block used to carry. That decision was
+   not wrong on its own terms — the outline is decorative, and at its desktop size
+   it would have added ~380px to the first screen — so the reversal is not "make
+   it visible", it is "make it small enough to be worth its space".
+
+   The animation needed NO work: @keyframes city-map-draw/fill/guides are plain
+   CSS with no JS behind them, so the draw plays at every width the moment the
+   element is laid out, and motion.css's global reduced-motion override already
+   covers it. Nothing here is per-width behaviour, only per-width SIZE.
+
+   ⚠️ `order: -1` is what puts it above the copy, and it is safe HERE for one
+   specific reason that will not hold for the next block someone tries this on:
+   the <div> is aria-hidden, holds no text and contains nothing focusable, so
+   moving it visually cannot desynchronise the tab order from the reading order —
+   which is exactly the trap docs/page-conventions.md §7 warns about. Any element
+   with a link or a field inside must be reordered in the DOM, not with `order`. */
 @media (max-width: 1023.98px) {
-  .city-hero__map {
-    display: none;
+  /* ⚠️ THE GAP IS THE GRID'S, NOT A MARGIN ON THE MAP. The shared
+     .service-hero__grid already sets `gap: --space-8`, so the first version of
+     this block — which added its own margin-bottom — produced 87px of measured
+     air between the outline and the badge where 24 was intended. Two spacing
+     mechanisms stacked. One owner: the grid. */
+  .city-hero__grid {
+    gap: var(--space-5);
   }
+
+  .city-hero__map {
+    order: -1;
+  }
+
+  /* MEASURED, not a round number. The budget is what the outline may cost before
+     the H1 on a phone: at 390 the H1 already starts at 271px and the trust band
+     already falls past an 844px fold, so the outline has to stay well under the
+     ~150px that would push the H1 out of comfortable reach. The shape is portrait
+     (viewBox 1000×1432, ratio 0.698), so its HEIGHT is the whole cost — the width
+     follows and is never the constraint in a one-column hero.
+     The desktop rule caps against the viewport height; here it must not, or a
+     short landscape phone would collapse it to nothing. */
+  .city-map {
+    max-height: clamp(6.5rem, 16vw, 12rem);
+  }
+
+  /* ⚠️ The stroke weight for this small size is NOT set here — it lives in its own
+     media query further down, AFTER .city-map__area/.city-map__guide. Setting it
+     in this block does nothing: those base rules are the same specificity (0,1,0)
+     and come LATER in the file, so they win. Measured that mistake — the outline
+     stayed at 0.18px. */
 }
 
-/* The boundary itself: a hairline, not a filled shape. A fill would read as a
-   coloured blob and would have to answer "what does this colour mean"; a line
-   reads as a drawing, which is the site's own language (the isometric risk
-   scenes, the Konzept icons, the Vorteile frame). */
+/* The boundary itself: a BLUE hairline, not a filled shape (client 2026-08-14:
+   "que sean como el hero de /einsatzgebiete/, o sea mapa con forma azul").
+   Every value here is /einsatzgebiete/'s `.eg-map-svg__region` translated to
+   this map's own rendered size, so the two pages read as ONE map family rather
+   than two similar drawings. It used to be a white 0.55 hairline.
+
+   ⚠️ THE STROKE WIDTH IS NOT COPIED FROM THAT FILE, IT IS RE-DERIVED, and
+   copying it literally would have been wrong. `stroke-width` is in viewBox
+   units, so what a viewer sees is `units x (rendered width / 1000)`:
+     /einsatzgebiete/  1.6 units x 0.55 px/unit = 0.88 px on screen
+     here              2.5 units x 0.335 px/unit = 0.84 px on screen
+   This map is capped by HEIGHT at 30rem, so it renders ~335px wide against that
+   one's ~540–708px — narrower, therefore it needs a BIGGER number for the same
+   optical weight. eg's own label tiers document the same inversion. At 1.6 units
+   this outline would have measured 0.54px, i.e. a pale ghost. */
 .city-map__area {
-  fill: rgb(61 154 211 / 0.05);
-  stroke: rgb(255 255 255 / 0.55);
-  stroke-width: 3;
+  /* fill-opacity, not an alpha baked into the colour, so the wash can fade in
+     behind the finished line (see @keyframes city-map-fill). Kept low on
+     purpose: the client's standing instruction on the /einsatzgebiete/ map is
+     "que en ningún momento se fill todo de celeste, que sean solo los
+     contornos", and this shape is that map's REGION outline scaled up to fill a
+     hero — not one of its small city polygons, which are the things that carry
+     the 0.55 fill over there. A 335x480 blob at 0.55 is exactly what that
+     instruction rejected.
+     0.16 was CHOSEN BY COMPARING RENDERS at 0.06 / 0.10 / 0.16 / 0.24, not
+     picked: 0.06 is invisible (no better than no fill), 0.24 starts reading as a
+     solid mass that competes with the hero copy beside it, and 0.16 is where the
+     outline reads as a SHAPE — the "forma azul" that was asked for — while still
+     being a drawing. It was 0.05. */
+  fill: var(--color-blue-light);
+  fill-opacity: 0.16;
+  stroke: var(--color-blue-light);
+  stroke-opacity: 0.7;
+  stroke-width: 2.5;
   stroke-linejoin: round;
+  /* A real administrative border turns sharply hundreds of times; without round
+     caps AND joins those turns spike into whiskers. Same pair, same reason, as
+     .eg-map-svg__region. */
+  stroke-linecap: round;
 }
 
 /* Dashed construction guides through the centre of the shape's box. They are
@@ -247,13 +319,79 @@
   stroke-dasharray: 16 16;
 }
 
+/* ---- The outline at tablet/phone size ----------------------------------- */
+/* ⚠️ THIS BLOCK MUST STAY BELOW the two rules above. It is the same specificity
+   (0,1,0), so placing it with the rest of the <1024 layout — where it naturally
+   belongs, ~80 lines up — silently loses to them. Measured: the outline stayed
+   at 0.18px with the override sitting in that block.
+
+   ⚠️ AND THE REASON IT NEEDS AN OVERRIDE AT ALL is the trap the icon family and
+   the /einsatzgebiete/ labels each paid for once already: `stroke-width` is in
+   USER UNITS of the viewBox, so shrinking the drawing thins the line by exactly
+   the same factor. On this viewBox (1432 tall) the desktop 2.5 renders:
+      1024px viewport → 449px tall → 0.78px  ← what the design was tuned to
+      1023px          → 164px      → 0.29px
+       390px          → 104px      → 0.18px  ← a quarter of it, i.e. a smudge
+   9 units puts the band back in range — 1.03 / 0.91 / 0.77 / 0.65px at
+   1023 / 900 / 768 / 390. It cannot be constant across the band (the size range
+   is 1.58x) but that beats a 4.3x gap against desktop.
+   ⚠️ Re-derive if the max-height clamp changes. */
+@media (max-width: 1023.98px) {
+  .city-map__area {
+    stroke-width: 9;
+    /* At this size the FILL carries the shape, not the outline — there is not
+       enough line left to do it. Raised from the desktop 0.16, and still well
+       inside the "solo los contornos" instruction that governs this map family:
+       what that rejected was a 335x480 blob at 0.55, not a 73x104 one at 0.24. */
+    fill-opacity: 0.24;
+    stroke-opacity: 0.85;
+  }
+
+  .city-map__guide {
+    /* Same unit problem, same fix — including the dash, which is also in user
+       units and would otherwise render as a near-solid line at this scale. */
+    stroke-width: 7;
+    stroke-dasharray: 56 56;
+  }
+}
+
 /* The outline DRAWS ITSELF on load, not on scroll — it is above the fold, and a
    scroll-scrubbed reveal there is the bug /referenzen/'s hero already paid for
    (the title sat half-revealed until the visitor scrolled). Same reason
    js/hero-reveal.js plays on load.
-   7381 is the path's MEASURED length in viewBox units, not a guess: a value
-   below it would leave a visible gap in the outline, and a value far above it
-   would waste the first part of the animation on nothing.
+
+   ⚠️⚠️ THE DASH IS `1`, AND THAT IS THE WHOLE POINT — THERE IS NO MEASURED
+   LENGTH IN HERE ANY MORE. It used to be `stroke-dasharray: 7381`, Nürnberg's
+   own perimeter in viewBox units, which made this rule secretly single-city:
+   every other one of the ten has a different perimeter (too low leaves a gap in
+   the outline that never closes, too high wastes the first part of the
+   animation on nothing), and it went stale for Nürnberg itself the moment the
+   2026-08-14 detail pass took the path from 200 to 833 points.
+   `pathLength="1"` on the path renormalises its perimeter to 1, so `1` is
+   exactly one lap for ANY city at ANY size, with nothing to keep in sync.
+   docs/design-sources/city-outline.py emits that attribute for this reason —
+   a path pasted in without it draws nothing.
+   Verified by measurement rather than assumed: rendering the real Nürnberg path
+   at dashoffset 1 / 0.75 / 0.5 / 0.25 / 0 inks 0 / 25.2 / 49.9 / 74.5 / 100 %
+   of the finished outline, i.e. linear.
+
+   ⚠️ DO NOT ADD `vector-effect: non-scaling-stroke` TO THIS PATH. It looks like
+   the tidy fix for the per-size stroke-width derivation above (it would pin the
+   line to screen pixels, so one number would serve every city at every width)
+   and it BREAKS THE DRAW: non-scaling-stroke reinterprets the dash pattern in
+   screen space too, so `stroke-dasharray: 1` stops meaning "one lap" and becomes
+   a 1px dash. Tested rather than reasoned about — with it applied, dashoffset 0
+   inks LESS than dashoffset 0.5 and dashoffset 1 already shows part of the
+   outline, i.e. the progression is not even monotonic.
+
+   ⚠️ `--easing-standard`, NOT `--easing-premium`, and this is a measured lesson
+   the Vorteile frame already paid for: premium is an expo-out, which draws ~65 %
+   of a perimeter in its first 80ms and then crawls — it reads as a snap with a
+   long tail, not as a line travelling. Here the RIDE is the effect. 1.6s matches
+   /einsatzgebiete/'s own 1.5s region draw, and the 350ms delay is that hero's
+   delay too, so the map arrives as a second movement after the copy cascade
+   rather than competing with it.
+
    Gated on `no-preference` per docs/page-conventions.md §4.3 — the global
    motion.css override collapses `animation-duration` but not `animation-delay`,
    so an ungated cascade with a delay would leave a reduced-motion visitor
@@ -261,8 +399,16 @@
    outline. */
 @media (prefers-reduced-motion: no-preference) {
   .city-map__area {
-    stroke-dasharray: 7381;
-    animation: city-map-draw 2.4s var(--easing-premium) 240ms backwards;
+    stroke-dasharray: 1;
+    /* Two animations on one element, comma-separated: the line travels, and the
+       wash then fades in behind it — the same two-beat order /einsatzgebiete/
+       uses (regions draw, then the city shapes appear), and the reason the fill
+       is on `fill-opacity` above instead of baked into the colour. The fill
+       starts at 1.15s, i.e. inside the tail of the draw, so it is one movement
+       and not two queued ones. */
+    animation:
+      city-map-draw 1.6s var(--easing-standard) 350ms backwards,
+      city-map-fill var(--duration-slower) var(--easing-standard) 1150ms backwards;
   }
 
   .city-map__guide {
@@ -271,8 +417,12 @@
 }
 
 @keyframes city-map-draw {
-  from { stroke-dashoffset: 7381; }
+  from { stroke-dashoffset: 1; }
   to   { stroke-dashoffset: 0; }
+}
+
+@keyframes city-map-fill {
+  from { fill-opacity: 0; }
 }
 
 @keyframes city-map-guides {
@@ -439,6 +589,34 @@
   .city-why__item p {
     font-size: var(--font-size-sm);
     line-height: 1.55;
+  }
+}
+
+/* THREE CARDS INSTEAD OF FOUR — added 2026-08-16 with the nine remaining city
+   pages, and it is a real requirement rather than a convenience: Nürnberg's
+   draft gives four Warum-Karten, but FIVE of the other nine give THREE
+   (Würzburg, Fürth, Bayreuth, Coburg, Forchheim, plus Schweinfurt's
+   Werkschutz-first variant). The grid above is `repeat(4, …)`, so three cards
+   left the fourth column empty — the same visible hole `.city-fields__item--wide`
+   exists to close for an odd fifth field.
+
+   Two bands need it, and only the second is obvious:
+     ≥1100px  three columns instead of four.
+     640–1099 the grid is 2-up, so the third card sits alone in row 2 — it spans
+              both columns there, exactly as the fifth field item does.
+   Below 640 everything is single-column already and this is inert.
+
+   ⚠️ This does NOT touch the four-card default, so /sicherheitsdienst-nuernberg/
+   is unaffected — verified by measuring it before and after. */
+@media (min-width: 640px) and (max-width: 1099.98px) {
+  .city-why__grid--3 > .city-why__item:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1100px) {
+  .city-why__grid--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -667,13 +845,17 @@
 }
 
 /* Hover/focus: a faint white wash and the arrow rotating 45° from ↗ to →, the
-   same gesture .service-related__link and the homepage's outfit list use.
-   ⚠️ It is a WASH here, not the black fill those rows use, and the difference is
-   forced: this section is DARK, so filling `--color-logo-black` would be black
-   on black — a row that does nothing on hover. If a city page ever puts this
-   block on a `.section--light`, that variant needs the black fill instead, and
-   its label needs to go white with it (the cascade trap page-service.css
-   documents at `.section--light .service-related__link:hover`). */
+   same gesture the homepage's outfit list uses.
+   ⚠️ It is a WASH here because this section is DARK — filling
+   `--color-logo-black` would be black on black, a row that does nothing on
+   hover. If a city page ever puts this block on a `.section--light`, that
+   variant needs its own pair, and the cascade trap to read first is the one
+   page-service.css documents at `.section--light .service-related__link:hover`.
+   ⚠️ `.service-related__link` NO LONGER matches this gesture: the 2026-08-17
+   redesign of that block dropped both the black fill and the 45° rotation for a
+   pale blue tint and a diagonal nudge. These rows were deliberately left alone —
+   the brief was scoped to that one section. Worth one question to the client
+   before the two drift further apart. */
 .city-services__row:hover,
 .city-services__row:focus-visible {
   background-color: rgb(255 255 255 / 0.05);
@@ -925,6 +1107,38 @@
   color: rgb(255 255 255 / 0.72);
 }
 
+/* ⚠️⚠️ WHITE ON WHITE, AND IT WAS MEASURED AT 1:1 — added 2026-08-16.
+   The colour above is a hardcoded white because this block only ever sat on a
+   dark section: Nürnberg's callout is the Brandwache section and Brandwache is
+   always dark. Three of the nine new city pages put a PROSE-ONLY callout on a
+   LIGHT section (Bamberg's Sicherheitsberatung, Erlangen's Veranstaltungen,
+   Ansbach's Warum — all prose, so none of them carries the white-tinted modules
+   that force the dark surface), and there the lede rendered white on white:
+   invisible, at every width from 320 to 1920.
+
+   It is the same failure mode this project has now paid for three times — a
+   block that hardcodes a colour instead of consuming a token stops working the
+   moment its surface flips (`.ag-hero__alt` on /angebot/, the dark price box's
+   tick labels, `.testimonial` on a dark section). The rule is the one
+   page-service.css already states: a panel that paints its own surface must
+   paint its own text colour, and anything that does NOT paint its own surface
+   must use the token so `.section--light` can re-declare it.
+
+   `--color-text-muted` is exactly that token — on a light section the chassis
+   re-declares it to the dark-grey-at-0.75 that measures 4,60:1 on white
+   (docs/page-conventions.md §10.4 has the alpha scale).
+
+   ⚠️ `.city-callout.section--light`, NOT `.section--light .city-callout` — the
+   two classes are on the SAME element (`<section class="section section--light
+   city-callout">`), so a descendant combinator matches nothing at all. Written
+   the wrong way first and it silently did nothing: the rule shipped, appeared in
+   the built CSS, and the paragraph still measured 1:1. A selector that cannot
+   match fails exactly like a selector that is absent, which is why this was
+   caught by measuring the rendered colour and not by reading the stylesheet. */
+.city-callout.section--light .city-callout__lede {
+  color: var(--color-text-muted);
+}
+
 /* ---- The three benefit modules ----
    Stacked horizontal panels, not a 3-up row (brief 2026-08-10). Tight together on
    purpose — 16px, the brief's 14–18px — so the three read as ONE set of promises
@@ -1009,8 +1223,42 @@
    the type size, and .service-link is already `inline-flex; align-items: center`,
    so the label simply centres in it. */
 .city-callout__link,
-.trust-certs__memberships .service-link {
+.trust-certs__memberships .service-link,
+/* ⚠️ `.city-fields__link` ADDED 2026-08-16, and it was already failing on
+   Nürnberg — measured at 29px there, i.e. this rule's own comment described two
+   standalone links but the selector only ever reached one of them. The
+   Einsatzfeld links are the same kind of thing by the same test: a standalone
+   action that closes a block, not a link inside a sentence, so §7's inline
+   exception does not apply to them either. Fixing it here fixes all ten city
+   pages at once, which is why it belongs in this rule rather than in a new one. */
+.city-fields__link {
   min-height: 44px;
+}
+
+/* An inline link inside the Erreichbarkeit closing line — the neighbouring city
+   the Abbinder names. NEW with the nine city pages: Nürnberg's own outro has no
+   link, so this location never existed before, and Würzburg, Erlangen and
+   Schweinfurt all measured it at 23px.
+   ⚠️ `padding-block` on an `inline-block`, NOT a `min-height`: this one IS a link
+   inside a sentence, so the hit area has to grow without moving the sentence
+   around it (§7) — the opposite of the standalone links above. 0.75rem is the
+   value components.css already measured for exactly this case (0.5rem came out
+   at 42px, just under the minimum).
+   The colour needs no rule: this section is dark on all three pages, where
+   base.css's blue-light link measures 6,8:1. If this block is ever put on a light
+   section, it needs the deep mix — that is what components.css's own inline-link
+   rule exists for. */
+.city-proof__outro a:not(.btn),
+/* Same case, same fix: Coburg's Sicherheitskonzept section closes its second
+   paragraph with a single /brandwache/ link, which measured 21px at 320px (it
+   only clears 44 at wider widths, where it happens to wrap). A lone link in a
+   sentence is the case §10.4 says to pad; two or more in one sentence are the
+   WCAG 2.5.8 line-height exception and are deliberately left alone — which is
+   why Bamberg's pair of membership links in .trust-certs__memberships is NOT in
+   this rule, matching what /referenzen/ and /ueber-uns/ already ship. */
+.city-callout__lede a:not(.btn) {
+  display: inline-block;
+  padding-block: 0.75rem;
 }
 
 /* ---- The action row ----
@@ -1615,6 +1863,40 @@ a.city-nearby__tile:focus-visible .city-nearby__arrow {
   margin-top: 0;
   padding-top: 0;
   border-top: none;
+}
+
+/* CENTRED HEADER — added 2026-08-16 (client, on Erlangen: "esto centralo").
+   Only two pages have a header here at all: Nürnberg and Bamberg let the H2 two
+   sections up do the work, but Würzburg and Erlangen have no Vertrauen section,
+   so their Trust copy is this section's own H2 + lede. Ranged left they sat
+   under a block (`.trust-certs`) that centres itself — a left-aligned heading
+   over a centred set of seals, which is what the client saw.
+   It is also this page type's default: Vertrauen, Brandwache, Erreichbarkeit,
+   Umgebung, Warum, Leistungen and the FAQ are all centred already (§10.4).
+
+   ⚠️ THE THREE-PART FIX §10.4 DOCUMENTS, and one part is not optional. The
+   chassis sets `.section__intro > p { max-width: 42rem }` at (0,1,1), so:
+   · `text-align: center` alone centres the TEXT inside a 672px box that is still
+     pinned to the left edge — centred heading, left-aligned paragraph, which is
+     worse than not centring at all;
+   · the paragraph therefore needs `margin-inline: auto` to centre the BOX, and a
+     TWO-class selector, because a single class only ties on specificity and
+     loses on order;
+   · the H2 gets a `ch` cap so a 60px line breaks somewhere sensible instead of
+     crossing the whole container — in `ch` and not px, because it is the same
+     sentence with a different city name in it.
+   This is the sixth time this exact trap has appeared on this page type. */
+.city-certs .section__intro {
+  text-align: center;
+}
+
+.city-certs .section__intro h2 {
+  max-width: 30ch;
+  margin-inline: auto;
+}
+
+.city-certs .section__intro > p {
+  margin-inline: auto;
 }
 
 /* ==========================================================================

@@ -46,122 +46,98 @@
   background-color: var(--color-bg);
 }
 
-/* ---- .lh-hero--photo: the hero's own surface -----------------------------
-   Added 2026-08-10, client: "no me gusta que no haya un hero definido". The
-   hero and the orientation layer were both flat black with no seam between
-   them, so the hero had no edge and no material of its own — it just ran into
-   the next section. A photograph gives it both.
+/* ---- The hero's photo layer: REMOVED 2026-08-17 ---------------------------
+   `.lh-hero--photo`, `.lh-hero__bg` and its two washes are gone. This page now
+   uses the CHASSIS' `.service-hero--bleed` — the same hero /werkschutz/ has —
+   because the client asked for exactly that ("que sea como la de werkschutz, que
+   está ocupando todo el background del inicio"), and a second, near-identical
+   photo hero in a page stylesheet was the reason the two could drift.
 
-   ⚠️ A MODIFIER, and that is not tidiness. `/einsatzgebiete/` loads this
-   stylesheet and its hero carries `.lh-hero` too (`service-hero lh-hero
-   eg-hero`), so anything put on the bare class restyles that page as well.
-   Everything below is scoped to --photo, which only this page has. */
-.lh-hero--photo {
-  position: relative;
-  /* If the photo fails or has not decoded yet, the hero is still black with
-     white copy — the copy never depends on the image. */
-  background-color: var(--color-bg);
+   What went with it, and why it is not a loss: the two VERTICAL ramps. This hero
+   used to open at `rgb(1 1 1 / 0.97)` so the photo would "emerge" from the page's
+   black under the breadcrumb, and close at 0.94 at the bottom. Both existed only
+   because the photo started at the SECTION edge rather than at the top of the
+   page — with the bleed there is no horizontal cut to hide, so the bands that
+   hid it are the bands the client asked to remove.
+
+   Everything the hero still needs now lives in page-service.css:
+   `.service-hero--bleed` (the negative margin under the sticky header and the
+   matching padding), `.service-hero__bg` (the photo layer), its readability wash
+   and its nav band, and `.service-hero__crumbs` for the breadcrumb that moved
+   inside the section. Only the three things below are specific to THIS page's
+   photograph. */
+
+/* ⚠️ THE BRIGHTNESS LIFT HAS TO BE CANCELLED, and it is the one thing that does
+   not survive the move. `.service-hero__bg img` carries
+   `filter: brightness(1.34) contrast(0.96) saturate(1.06)` — measured for
+   /werkschutz/'s hero, a NIGHT shot whose own median relative luminance is 0.010.
+   This photograph is a daylit lobby; the same lift blows out the window wall
+   behind the two people and washes the whole frame flat. */
+.lh-hero .service-hero__bg img {
+  filter: none;
+  /* The two people stand centre-right and the copy column is on the left, so the
+     crop holds slightly right of centre — it keeps both of them and the branded
+     polo clear of the H1. Vertically centred: the frame has headroom at the top
+     and floor at the bottom, and neither is worth protecting. */
+  object-position: 58% 50%;
 }
 
-.lh-hero__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-}
-
-.lh-hero__bg picture {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.lh-hero__bg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* Pushes the two people and the branded entrance into the RIGHT half, clear of
-     the copy column. The default centre put the left-hand man directly behind
-     the H1, where the wash then had to bury him. */
-  object-position: 68% 50%;
-}
-
-/* TWO washes, both on this layer and never on the <img> — the same split
-   /werkschutz/ and the homepage hero use, for the same reason:
-   · a left-to-right ramp so the copy sits on darkness while the right half of
-     the photograph stays readable as a photograph;
-   · a short bottom fade so the hero dissolves into the section below instead of
-     ending on a hard cut.
-   ⚠️ Two stacked washes do NOT read as the sum of their numbers — the
-   /werkschutz/ hero shipped flat for exactly that reason. The vertical one is
-   held at 0 through the middle of the frame and only closes at the very bottom. */
-.lh-hero__bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(
-      to right,
-      rgb(1 1 1 / 0.94) 0%,
-      rgb(1 1 1 / 0.88) 34%,
-      rgb(1 1 1 / 0.55) 58%,
-      rgb(1 1 1 / 0.18) 78%,
-      rgb(1 1 1 / 0.06) 100%
-    ),
-    linear-gradient(
-      to bottom,
-      /* The photo starts at the section edge, directly under the breadcrumb, and
-         a hard horizontal cut across the page there reads as a mistake. This ramp
-         is what makes the image EMERGE from the page's own black instead. */
-      rgb(1 1 1 / 0.97) 0%,
-      rgb(1 1 1 / 0.6) 9%,
-      rgb(1 1 1 / 0) 26%,
-      rgb(1 1 1 / 0) 66%,
-      rgb(1 1 1 / 0.94) 100%
-    );
-}
-
-/* The copy has to sit above the photo layer. */
-.lh-hero--photo .service-hero__grid {
-  position: relative;
-  z-index: 1;
-}
-
-/* One column again: the families moved down into the orientation selectors, so
-   the copy is the only thing in the grid and the photo is behind it. */
+/* ⚠️ RESTATES min-height, and it has to. `.service-hero--bleed` computes its own
+   from /werkschutz/'s photo ratio (`100vw * 1118 / 1621`) and averages it with a
+   full screen, which would make this hero a screen and a half tall. The ~70svh
+   here is a MEASURED decision from 2026-08-10 that this page should keep: it is
+   what puts the orientation heading and the first chapter numerals inside the
+   first screen, so a visitor sees that the hub sorts eleven services before they
+   scroll. The band is added on top because the dissolve now lives inside the
+   hero.
+   Both rules below are (0,2,0) against the modifier's (0,1,0), so unlike the old
+   `.lh-hero` rule they win on specificity rather than on load order. */
 @media (min-width: 1024px) {
-  .lh-hero--photo .lh-hero__grid {
-    grid-template-columns: minmax(0, 1fr);
+  .lh-hero.service-hero--bleed {
+    min-height: calc(70svh + var(--service-hero-band-h));
   }
 }
 
-/* On a phone the copy spans the full width and would land on the two people, so
-   the ramp goes vertical instead of horizontal — the same call the homepage and
-   /werkschutz/ heroes both make at this breakpoint. */
-@media (max-width: 767.98px) {
-  .lh-hero__bg img { object-position: 62% 50%; }
+/* (`.lh-hero--photo .service-hero__grid { position: relative; z-index: 1 }` and the
+   single-column override for `.lh-hero__grid` were both DELETED 2026-08-17 with the
+   photo layer: the chassis' own `.service-hero__grid` already carries the z-index
+   layer, and its ≥1024px rule already makes every hero grid one column. Two rules
+   that restate what the sheet above them already says are two rules that can drift
+   apart from it.) */
 
-  .lh-hero__bg::after {
+/* On a phone the copy spans the FULL width, so a left-to-right ramp buys it
+   nothing — the lede and the CTA end up over the window wall and the two people,
+   which are the brightest things in this frame. The wash goes vertical instead,
+   the same call the homepage and /werkschutz/ heroes both make at this
+   breakpoint.
+   ⚠️ It has to restate the whole stack: `background-image` is one property, so a
+   layer cannot be appended to the bleed variant's three. Measured after the swap
+   — see the contrast figures in CLAUDE.md's entry for this change. */
+@media (max-width: 767.98px) {
+  .lh-hero .service-hero__bg img {
+    /* Holds the two people in frame when `cover` crops a 1.6 landscape into a
+       tall phone hero; the default centre keeps the empty floor instead. */
+    object-position: 62% 45%;
+  }
+
+  .lh-hero .service-hero__bg::after {
     background-image: linear-gradient(
       to bottom,
-      rgb(1 1 1 / 0.90) 0%,
-      rgb(1 1 1 / 0.82) 46%,
-      rgb(1 1 1 / 0.86) 72%,
-      rgb(1 1 1 / 0.96) 100%
+      rgb(1 1 1 / 0.72) 0%,
+      rgb(1 1 1 / 0.62) 42%,
+      rgb(1 1 1 / 0.70) 72%,
+      rgb(1 1 1 / 0.88) 100%
     );
   }
 }
 
 @media (min-width: 1024px) {
-  /* ⚠️ RESTATES min-height and padding rather than inheriting them. The shared
-     `.service-hero` desktop rule sets `min-height: calc(100svh - 8rem)` and is
-     (0,1,0) — exactly this rule's specificity — so this only wins because
-     page-leistungen.css loads AFTER page-service.css. Keep that load order (see
-     the <head> of pages/leistungen.html); if this sheet ever moves above the
-     chassis, the hero silently goes back to a full screen.
-     70svh measured at 1440x900: hero 630px, so the orientation heading and the
-     first chapter numerals sit inside the first screen. */
-  .lh-hero {
+  /* ⚠️ `:not(.service-hero--bleed)` IS LOAD-BEARING. `/einsatzgebiete/` loads this
+     stylesheet and its hero carries `.lh-hero` too (`service-hero lh-hero
+     eg-hero`), so this 70svh has to keep applying THERE — but on this page the
+     bleed hero owns its own height (above) and a plain `.lh-hero` rule would tie
+     on specificity and win on load order, collapsing the photo box. */
+  .lh-hero:not(.service-hero--bleed) {
     min-height: 70svh;
     padding-block: var(--space-7) var(--space-8);
   }

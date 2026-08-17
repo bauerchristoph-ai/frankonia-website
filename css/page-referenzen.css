@@ -469,10 +469,18 @@
    = 227s, mobile 1751px / 11.5 = 152s. Re-measured after: 11.51 and 11.52 px/s.
    Veranstaltungsschutz gained Brose Bamberg in the same pass and needed NO
    change — 10 items against 9 is +11 %, which moved it 10.4 → 11.5 px/s, onto
-   the target rather than off it. */
+   the target rather than off it.
+
+   ⚠️ AND SWAPPING A TEXT NAME FOR ITS LOGO IS THE SAME EVENT, in the opposite
+   direction — the item COUNT does not move but the item WIDTH does. When the art
+   for those two arrived (2026-08-14) both rows SHRANK, because a logo is narrower
+   than the name spelled out: half-track 2613 → 2447 and 2822 → 2631, which at the
+   old durations meant 10.78 and 10.74 px/s, i.e. both rows now dragging behind
+   Objektschutz instead of outrunning it. Re-derived proportionally from the
+   measured half-track and re-verified: 11.5 px/s on both, desktop and phone. */
 .ref-marquee--objektschutz  { --ref-marquee-duration: 270s; }
-.ref-marquee--baustelle     { --ref-marquee-duration: 227s; }
-.ref-marquee--veranstaltung { --ref-marquee-duration: 245s; }
+.ref-marquee--baustelle     { --ref-marquee-duration: 213s; }
+.ref-marquee--veranstaltung { --ref-marquee-duration: 228s; }
 
 .ref-marquee--baustelle .ref-marquee__track {
   animation-direction: reverse;
@@ -511,18 +519,22 @@
   height: clamp(2.75rem, 1.4rem + 1.9vw, 3.5rem);
 }
 
-/* A third tier, for two marks that are not just compact but FINE: the
+/* A third tier, for marks that are not just compact but FINE: the
    Otto-Friedrich-Universität crest (a detailed round seal) and the
    Wirtschaftsclub Bamberg wordmark (small type under a line-drawn skyline). Both
    rendered as an unreadable smudge at the tier above — checked in a screenshot.
-   This sets the row's height, so it is deliberately only these two. */
+   This sets the row's height, so it is deliberately kept to a handful.
+   Bamberg Baskets joined 2026-08-14: same shape of problem as the
+   Bereitschaftspolizei star it sits beside here — a portrait CREST carrying two
+   lines of small type, where the compact tier's 56px leaves it 45px wide. */
 .ref-marquee__logo[src*="universitaet-bamberg"],
 .ref-marquee__logo[src*="bayerische-bereitschaftspolizei"],
+.ref-marquee__logo[src*="bamberg-baskets"],
 .ref-marquee__logo[src*="wirtschaftsclub-bamberg"] {
   height: clamp(3.25rem, 1.8rem + 2vw, 4.25rem);
 }
 
-/* 3 of the 34 companies have no logo file yet, so they ride the same row as
+/* 3 of the 35 companies have no logo file yet, so they ride the same row as
    their NAME set in type. Deliberately not a pill and not a heading — a wordmark
    among wordmarks, one step quieter than a real mark so the logos still lead the
    row. When a logo arrives it is one <span> → one <img>, nothing else. */
@@ -705,6 +717,7 @@
 
   .ref-marquee__logo[src*="universitaet-bamberg"],
   .ref-marquee__logo[src*="bayerische-bereitschaftspolizei"],
+  .ref-marquee__logo[src*="bamberg-baskets"],
   .ref-marquee__logo[src*="wirtschaftsclub-bamberg"] {
     height: 2.75rem;
   }
@@ -718,10 +731,12 @@
      hold the ~11px/s pace — the same correction the homepage's marquee needed
      below 1024px. */
   .ref-marquee--objektschutz  { --ref-marquee-duration: 190s; }
-  /* 115s → 152s, re-derived from the measured 1751px half-track after Bodo
-     Freimuth Tiefbau was restored — see the desktop block's note. */
-  .ref-marquee--baustelle     { --ref-marquee-duration: 152s; }
-  .ref-marquee--veranstaltung { --ref-marquee-duration: 175s; }
+  /* 115s → 152s → 136s: re-derived from the measured half-track twice, first when
+     Bodo Freimuth Tiefbau was restored as a name (1751px) and again when its logo
+     replaced that name and the track shrank to 1579px. Veranstaltungsschutz took
+     the second correction only (2033 → 1901px). See the desktop block's note. */
+  .ref-marquee--baustelle     { --ref-marquee-duration: 136s; }
+  .ref-marquee--veranstaltung { --ref-marquee-duration: 164s; }
 
   .ref-results,
   .ref-quotes__grid,

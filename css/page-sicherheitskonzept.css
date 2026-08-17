@@ -15,6 +15,13 @@
 .sk-checks span,
 .sk-step__title,
 .sk-step__when,
+/* ⚠️ .sk-step__text JOINED THIS LIST 2026-08-14, when the rail moved to the
+   centre: that halved the step's measure (832px → 456px at 1440), and at that
+   width `hyphens: auto` started firing on nearly every line of the longest step
+   — rendered "identi-fiziert" and "Sicherheits-konzept-Software", which reads as
+   a render fault rather than as typography. Nothing can overflow without it:
+   `overflow-wrap: break-word` is set sitewide in base.css. */
+.sk-step__text,
 .sk-results__label,
 .sk-sample__label,
 .sk-note p {
@@ -42,11 +49,21 @@
     padding-block: var(--space-9) var(--space-8);
   }
 
-  /* 0.66fr, not an even split: the left column carries a badge, the H1, a lede,
-     two buttons, three full-sentence ticks and the trust band, and the document
-     is a supporting visual rather than the subject. */
+  /* 0.74fr (was 0.66) — the mockup grew 2026-08-14 and the column had to grow
+     with it or the cap would never be reached. Still not an even split: the left
+     column carries a badge, the H1, a lede, two buttons, a download action, three
+     full-sentence ticks and the trust band, and the document is a supporting
+     visual rather than the subject.
+     ⚠️ MEASURED BOTH WAYS, not picked: width taken off the copy column is width
+     the H1 has to break in, so this was checked against the 0.66 build before
+     keeping it. H1 line counts at 1024 / 1152 / 1280 / 1440 / 1600 / 1920 are
+     3 / 3 / 3 / 2 / 2 / 2 at BOTH ratios — identical, i.e. this costs the heading
+     nothing. Copy column 705 → 672px at 1440, 736 → 736 at 1600 (its own 46rem cap
+     binds from there). The mockup gains 352 → 416px at 1280 and up.
+     ⚠️ The three-line break at 1024–1280 is PRE-EXISTING, not a side effect of
+     this change — do not "fix" it by shrinking the mockup back. */
   .sk-hero .service-hero__grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 0.66fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.74fr);
     gap: var(--space-8);
   }
 }
@@ -63,10 +80,62 @@
    On a phone it sits under the copy at roughly half size: the hero there already
    runs badge → H1 → lede → 2 CTAs → 3 ticks → trust band, and a full-size
    document would push all of that up by ~400px for something decorative. */
+/* A COLUMN since 2026-08-14: the mockup, then the download action under it. */
 .sk-hero__media {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
 }
+
+/* The quiet action under the mockup: the sample PDF. Not a .btn — see the markup
+   comment for why a third pill is not available here (rules G1/G2 fix the hero CTA
+   pair sitewide).
+   ⚠️ It sat inside .service-hero__actions until 2026-08-14 and carried
+   `flex-basis: 100%` and a negative inline margin to survive that row. Both are
+   GONE with the move — a negative margin would now pull it off the mockup's centre
+   line, which is the one thing this position exists to line up with. It is a
+   centred flex item in .sk-hero__media instead, wrapping to its own content. */
+.sk-hero__doc-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  /* WCAG 2.5.8: the row is a real target, so it clears 44px rather than sitting
+     at its 15px line box. */
+  min-height: 44px;
+  padding-inline: var(--space-2);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  /* Underlined, never identified by colour alone (WCAG 1.4.1). White at 0.82 is
+     13.4:1 on this hero's black — the blue is carried by the icon, which is a
+     graphic and only needs 3:1. */
+  color: rgb(255 255 255 / 0.82);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+  transition: color var(--duration-base) var(--easing-standard);
+}
+
+.sk-hero__doc-link:hover,
+.sk-hero__doc-link:focus-visible {
+  color: var(--color-white);
+}
+
+/* ⚠️ The sprite's fill/stroke live on its <g id="icon-defs"> wrapper and do NOT
+   survive <use> — restate them or this renders as a solid black blob on a black
+   hero. Same trap this file's own hero ticks shipped with until 2026-08-14. */
+.sk-hero__doc-icon {
+  flex: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  color: var(--color-blue-light);
+}
+
 
 .sk-doc {
   width: 100%;
@@ -77,9 +146,25 @@
   font-family: var(--font-family-base);
 }
 
-@media (min-width: 1024px) {
+/* TABLET (640–1023px): the mockup was stuck at its 14rem phone size all the way
+   to 1024, which on a 768px tablet is a 224px thumbnail floating under a
+   full-width hero — too small to read as the document the page is about. It is
+   still stacked below the copy here, so the only cost of enlarging it is hero
+   height, and 18rem is the size at which the mockup's own chip and title become
+   legible. */
+@media (min-width: 640px) {
   .sk-doc {
-    max-width: 22rem;
+    max-width: 18rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* 22rem → 26rem (client 2026-08-14: "un poco más grande"). The cap alone is not
+     enough — at 0.66fr the COLUMN was the binding constraint past ~1500px, so the
+     mockup would have stopped growing before reaching the new cap. Both numbers
+     move together; see the grid rule above. */
+  .sk-doc {
+    max-width: 26rem;
   }
 }
 
@@ -164,6 +249,69 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-2);
+}
+
+/* ---- 1c. Centred section headers ---------------------------------------- */
+/* Five sections centre their header (client 2026-08-14): Bausteine, Wann
+   notwendig, die fünf Schritte, Beratung, Kosten. With the results section
+   (already centred since 2026-08-10) and the FAQ (centred by the chassis) that
+   makes centred headers the rule on this page rather than the exception, which is
+   what stops it reading as six unrelated decisions.
+
+   ⚠️ TWO CLASSES AND TWO PROPERTIES, and every part is load-bearing — this is the
+   trap CLAUDE.md documents five separate times on /sicherheitsdienst-nuernberg/:
+     · page-service.css styles `.section__intro > p` at (0,1,1), so a single-class
+       selector TIES and wins only on source order — i.e. by accident;
+     · `text-align` centres the TEXT, the auto margins centre the BOX. With only
+       the first, the lede's own 42rem cap leaves it centred inside a box still
+       hugging the left edge — a centred title over a left-hanging paragraph,
+       which looks worse than centring nothing at all. */
+.sk-parts .section__intro,
+.sk-when .section__intro,
+.sk-process .section__intro,
+.sk-advice .section__intro,
+.sk-price .section__intro {
+  text-align: center;
+}
+
+.sk-parts .section__intro > *,
+.sk-when .section__intro > *,
+.sk-process .section__intro > *,
+.sk-advice .section__intro > *,
+.sk-price .section__intro > * {
+  margin-inline: auto;
+}
+
+/* The BODY of each section keeps its text ranged left — only the header is
+   centred. A tick list is scanned down its left edge, and centring six clauses of
+   different lengths destroys that edge. What the cap does is stop a centred
+   header from sitting over a list that runs the full 1440px container, which is
+   what made the two read as belonging to different sections. */
+.sk-advice .sk-checks,
+.sk-price .sk-checks {
+  max-width: 46rem;
+  margin-inline: auto;
+}
+
+/* The six Bausteine are already two-up and symmetric, so they only need the cap
+   raised enough to keep two readable columns. */
+.sk-parts .sk-checks--grid {
+  max-width: 60rem;
+  margin-inline: auto;
+}
+
+/* The Abgrenzung aside carries a left border, so it is deliberately NOT centred
+   text — but its box lines up with the block above it. */
+.sk-when .sk-note {
+  margin-inline: auto;
+}
+
+/* The button closing the steps section follows its header onto the axis.
+   ⚠️ `justify-content`, not `text-align`: .sk-actions is a flex row, so the thing
+   that needs centring is its CONTENT, not its text — the same distinction that
+   caught the closing link row on /ueber-uns/. */
+.sk-process .sk-actions {
+  justify-content: center;
 }
 
 /* ---- 2. Tick lists ------------------------------------------------------- */
@@ -270,6 +418,90 @@
   display: grid;
   gap: var(--space-7);
   max-width: 52rem;
+  /* Centres the BOX under the now-centred heading. It only bites in the 833–1023
+     band, where the container is wider than this cap and the list would otherwise
+     hug the left edge with all the slack piled on the right; everywhere else the
+     list fills its container and this is a no-op. Above 1024 the centred-rail
+     block below restates it with its own wider cap. */
+  margin-inline: auto;
+}
+
+/* ---- 4b. The centred rail (client 2026-08-14) ---------------------------- */
+/* "hacé la línea vertical centrada" — the rail moves from the left edge to the
+   middle of the section and the steps alternate around it.
+
+   WHY ALTERNATING AND NOT CENTRED TEXT UNDER EACH NODE: a rail is only a rail
+   while it is continuous. Centre the text on the axis and the line has to run
+   THROUGH the paragraphs, so it has to be broken into stubs between them — at
+   which point it stops reading as one line being drawn and becomes five
+   disconnected ticks. Putting the copy either side keeps the axis clear, which is
+   the whole point of moving it there.
+
+   ⚠️ DESKTOP ONLY (≥1024px) — PHONES AND TABLETS KEEP THE LEFT RAIL. This started
+   at 900px and was moved after measuring: at 900 each half is only 342px, and the
+   longest step (03, five lines at full width) ran to nine — which made the section
+   1738px there, TALLER than at any other width including 390. A centred rail needs
+   real column width to pay for itself. 1024 is also where this page's hero goes
+   two-column, so the whole page now has one desktop threshold instead of two.
+
+   ⚠️ NOTHING HERE TOUCHES THE ANIMATION. js/steps-sequence.js writes --step-node
+   and --step-line on the <li> and staggers that step's own children in; it knows
+   nothing about where the rail sits. Both custom properties still default to 1 in
+   the base rules above, so the finished rail remains the no-JS / reduced-motion
+   state. */
+@media (min-width: 1024px) {
+  .sk-steps {
+    /* The gap from a step's inner edge to the rail. It is a real column of air:
+       at less than this the copy reads as if it is touching the line. */
+    --sk-gutter: 2.5rem;
+    max-width: 62rem;
+    margin-inline: auto;
+  }
+
+  .sk-step {
+    /* Half the list, less the gutter — the two halves plus two gutters are the
+       whole width, so the rail lands exactly on the centre. */
+    width: calc(50% - var(--sk-gutter));
+    padding-left: 0;
+  }
+
+  /* Odd steps sit LEFT of the rail and range right, so their line ends run down
+     the axis; even steps mirror it. The pairing of `margin-*: auto` with
+     `text-align` is what makes each half hug the rail rather than the container. */
+  .sk-step:nth-child(odd) {
+    margin-inline-end: auto;
+    text-align: right;
+  }
+
+  .sk-step:nth-child(even) {
+    margin-inline-start: auto;
+    text-align: left;
+  }
+
+  /* The node and the connector both sit ON the axis, which from inside a step is
+     one gutter beyond its inner edge, minus half the node so the square is
+     centred on the line rather than hanging off it. */
+  .sk-step:nth-child(odd)::before,
+  .sk-step:nth-child(odd):not(:last-child)::after {
+    left: auto;
+    right: calc(-1 * var(--sk-gutter) - var(--sk-dot) / 2);
+  }
+
+  .sk-step:nth-child(even)::before,
+  .sk-step:nth-child(even):not(:last-child)::after {
+    left: calc(-1 * var(--sk-gutter) - var(--sk-dot) / 2);
+  }
+
+  /* The connector is 1px wide while the node is 12px, so it needs half of each to
+     stay on the same axis — without this correction the line hangs 5.5px off the
+     side of every square it joins. */
+  .sk-step:nth-child(odd):not(:last-child)::after {
+    right: calc(-1 * var(--sk-gutter) - 0.5px);
+  }
+
+  .sk-step:nth-child(even):not(:last-child)::after {
+    left: calc(-1 * var(--sk-gutter) - 0.5px);
+  }
 }
 
 .sk-step {
@@ -604,13 +836,29 @@
 /* The Kosten section's own box: one line of reassurance and the button. Filled,
    because it is the page's closing argument before the trust section and it has
    to read as a block rather than as one more paragraph. */
+/* ⚠️ REWORKED 2026-08-14 once the section's header became centred — the old box
+   was left-hugging and looked oversized, and both were the same two declarations:
+     · `max-width: 46rem` with NO auto margin, so a 736px box sat against the left
+       edge of a 1312px container under a centred heading;
+     · `justify-content: space-between` on a box WIDER than its content, which at
+       736px could not fit the line (~450px) and the button (~300px) on one row —
+       so they wrapped, and space-between then pushed each to an opposite edge of a
+       box neither of them filled. That is what read as "disproportionate": the box
+       was sized independently of what was in it.
+   `width: fit-content` makes the box the size of its contents instead of a fixed
+   736px, so it can never be too wide for what it holds; the auto margins centre
+   it under the heading; `max-width: 100%` keeps it inside the container when the
+   contents alone would exceed it. */
 .sk-cta-box {
   margin-top: var(--space-8);
-  max-width: 46rem;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  text-align: center;
   gap: var(--space-4) var(--space-6);
   padding: var(--space-6);
   border: 1px solid var(--color-border);
@@ -630,6 +878,15 @@
   .sk-cta-box {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  /* ⚠️ `width: auto` UNDOES THE DESKTOP `fit-content`, and without it the box
+     shrink-wraps its longest line on a phone instead of filling the column — i.e.
+     a centred card narrower than everything above it, with the full-width button
+     inside then dictating the width. Full width is the right shape here: it is the
+     section's closing action. */
+  .sk-cta-box {
+    width: auto;
   }
 
   .sk-actions .btn,
@@ -696,36 +953,38 @@
    whole bug (client 2026-08-14, Sicherheitskonzept 3: "headline/text length
    mismatch: balance the column widths (headline can take 2 lines)").
    `.section__intro > p` is capped at 42rem by page-service.css while the h2 has
-   no cap at all, so the heading stretches to the full container while the
-   paragraph under it stops at 672px. Measured at 1440 before the fix — heading
-   text vs paragraph box:
+   no cap at all, so the heading ran the full container while the paragraph under
+   it stopped at 672px. Measured at 1440 before the fix — heading text vs
+   paragraph box:
        sk-when   1138 vs 672  (+466px, the worst)
        sk-parts   984 vs 672  (+312px, the one the client screenshotted)
        sk-price   917 vs 672  (+245px)
        sk-advice  863 vs 672  (+191px, already two lines)
    Everything else on the page already balances (sk-sample -23px, sk-trust -1px),
-   which is why this is four selectors and not a blanket `main h2` rule: those
-   sections are right as they are and a global cap would re-break them.
+   which is why this is four selectors and not a blanket `main h2` rule.
 
-   ⚠️ 54rem, AND THE VALUE WAS MEASURED, NOT PICKED. The obvious choice is 42rem —
-   the lede's own cap, so the two columns are literally equal — and it is wrong
-   here: base.css sets `text-wrap: balance` on headings, so at 42rem the browser
-   balances "Wann ist ein Sicherheitskonzept notwendig?" and the Beratung heading
-   into THREE short lines (~492px), which is both more lines than the client asked
-   for ("headline can take 2 lines") and a heading block visibly NARROWER than the
-   text under it — the same imbalance mirrored. Measured at 1440, longest rendered
-   line and line count per cap:
-       42/46/50rem   sk-when 492/3L · sk-advice 528/3L   ✗ three lines
-       54rem         sk-parts 524/2L · sk-when 810/2L ·
-                     sk-advice 863/2L · sk-price 524/2L  ✓ all two lines
-       58rem         sk-price back to 917/1L             ✗ the original bug
-   At 54rem the rendered lines run 524–863 against the lede's 672, i.e. two sit a
-   little narrower and two a little wider — balanced in the way the eye reads it,
-   against the +466px it was. Below ~1024px nothing changes: the container is
-   already narrower than the cap. */
+   ⚠️⚠️ THE CAP IS IN `ch`, NOT `rem`, AND THAT IS THE WHOLE TRICK. The heading is
+   fluid (the shared `main h2` clamp) while a rem cap is fixed, so a fixed value
+   is only ever right at one viewport — measured, 54rem gave four two-line
+   headings at 1440 and left three of them back on ONE line at 1024/1280, which is
+   the original bug at those widths. `ch` scales with the font, so the characters
+   per line stay constant and the line count holds across the range. Measured, of
+   the four headings, how many land on two lines:
+                     1024   1280   1440   1920
+       54rem          1/4    3/4    4/4    3/4
+       26ch           4/4    4/4    3/4    3/4
+       26ch + 30ch    4/4    4/4    4/4    4/4   <- this
+   ⚠️ The Beratung heading needs its own 30ch because its copy is 60 characters
+   against the others' 34-42; at 26ch `text-wrap: balance` (base.css) splits it
+   into three. Widening everyone to 30ch instead is not the fix — it puts the two
+   short headings back on one line at 1024+.
+   Below ~1024px nothing changes: the container is already narrower than the cap. */
 .sk-parts .section__intro h2,
 .sk-when .section__intro h2,
-.sk-price .section__intro h2,
+.sk-price .section__intro h2 {
+  max-width: 26ch;
+}
+
 .sk-advice .section__intro h2 {
-  max-width: 54rem;
+  max-width: 30ch;
 }

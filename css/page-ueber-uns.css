@@ -287,6 +287,14 @@
    has none. Same call as /jobs/'s KarriereHero portrait.
    max-width 22rem → 30rem the same day (client: "la foto tiene que ser más
    grande") — re-exported at 480/960w to match, see the <picture> markup. */
+/* The portrait needs no radius, border or placeholder tint because its backdrop IS
+   the section's colour — normalised to #010101 literally on 2026-08-14
+   (docs/design-sources/portrait-key-backdrop.py), not merely "close to black".
+   ⚠️ It shipped at 0,0,0 for four days, one level below the page, which also meant
+   the bottom fade below ramped toward a colour the photo never reached. Measured
+   across the seam after the fix: page 1, photo 1, delta 0.00.
+   30rem is the same cap `.service-contact__portrait` uses for Alexander Jäger on
+   /werkschutz/ — the two portraits are one treatment, so they are one size. */
 .uu-lead__photo {
   position: relative;
   aspect-ratio: 4 / 5;

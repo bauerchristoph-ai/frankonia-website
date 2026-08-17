@@ -3676,7 +3676,38 @@ main h2 {
    plain flex row above stays the truth for no-JS, reduced-motion, crawlers and
    phones, so the three reels are never positioned in 3D by CSS alone.
    ========================================================================== */
-@media (min-width: 768px) {
+/* ---- Social reel on TABLET (768–1023.98px) -------------------------------
+   The reel opts into the strip through the tablet band (`data-swipe-tablet`),
+   because the 3D ring below needs desktop room and projected as a pile of
+   overlapping cards at 768 — that is what the client saw as "está rota".
+
+   ⚠️ IT CANNOT USE THE DEFAULT 86vw CARD, and this is the whole reason this rule
+   exists. These are 9:16 VERTICAL videos, so card height is width × ~1.78: at
+   86vw that is a card 1210px tall at 768 and 1600px at 1023 — taller than the
+   screen it is on, i.e. you could never see one whole card. The System cards get
+   away with 86vw because they are 3:2.
+   So the card is sized from viewport HEIGHT here, not width: 35vh of width puts
+   the card at ~62vh tall whatever the tablet's shape, which leaves the caption
+   and the progress line on screen with it. The 62vw term is a guard for a short
+   landscape tablet, where 35vh could otherwise grow wider than the viewport.
+   Knobs go on the SECTION, never the strip — the injected counter and progress
+   line are the strip's SIBLINGS, and custom properties only inherit downwards. */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .social {
+    --swipe-card: min(35vh, 62vw);
+    --swipe-gap: 2vw;
+  }
+}
+
+/* ⚠️ 1024, NOT 768 (fixed 2026-08-14 — the reel was reported broken on tablet).
+   The ring is a DESKTOP composition: three 15rem cards on a 300px-radius ring
+   need room for a centre card plus two receding ones, and at 768 they project
+   almost on top of each other — which is what "está rota" looked like. The strip
+   now runs to 1023.98 via data-swipe-tablet, so this MUST start at 1024 or both
+   mechanisms own the 768–1023 band at once.
+   ⚠️ THIS NUMBER IS DUPLICATED in js/social-carousel.js's own matchMedia and in
+   css/swipe-carousel.css's tablet block. All three have to agree. */
+@media (min-width: 1024px) {
   .social__grid.is-carousel {
     /* The row becomes a stage: items are absolutely positioned on the ring, so
        flex has nothing left to lay out. */

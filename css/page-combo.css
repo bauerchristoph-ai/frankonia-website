@@ -166,6 +166,20 @@
   .combo-hero .city-hero__grid {
     grid-template-columns: minmax(0, 1fr) minmax(0, 0.42fr);
   }
+
+  /* ⚠️ THE NARROWER COLUMN COSTS THE OUTLINE ITS LINE WEIGHT, and that is not
+     obvious from the rule above — "loses nothing" was true while the outline was
+     a white hairline, and stopped being true when it became a drawn blue line
+     (2026-08-14). `stroke-width` is in viewBox units, so what a viewer sees is
+     `units x (rendered width / 1000)`: this band renders the map 242px wide
+     against the city page's 322px, so page-city.css's 2.5 units measure 0.61px
+     here against 0.80px there — the same line, a third fainter, on one page in
+     one band. 3.3 units restores 0.80px.
+     Measured, not estimated, and it is the only band that needs this: from
+     1152px up this page renders the map at the same 322px the city page does. */
+  .combo-hero .city-map__area {
+    stroke-width: 3.3;
+  }
 }
 
 /* ==========================================================================

@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- SERVICE PAGE — Veranstaltungsschutz. Built from
+     NewVersionCopiesFrankonia/"2026-08-04 Webtext 07 Veranstaltungsschutz.docx"
+     (Stand 04.08.2026), verbatim, in German.
+
+     ⚠️ THIS IS NOT A COPY OF /werkschutz/ SECTION FOR SECTION, and that is the
+     draft's own doing rather than drift: the v2 copy varies the structure per
+     service on purpose ("Struktur bewusst variiert" is written into six of the
+     nine remaining drafts). This one runs 11 sections. The BLOCKS are all the
+     shared `.service-*` chassis, and css/page-service.css is the only page
+     stylesheet loaded besides the shared form.
+
+     Colour rhythm, derived from the section surfaces rather than copied:
+       ▪ ▫ ▪ ▫ ▪ ▫ ▫ ▪ ▫ ▪ ▫
+     9 pixel seams. Tiles are always the colour of the section ABOVE
+     (docs/page-conventions.md §9.2).
+
+     GENERATED ONCE by docs/design-sources/service-pages.py, then hand-editable.
+     ⚠️ If you edit the FAQ below, edit the FAQPage graph above it too — they must
+     stay byte-identical with markup stripped. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title (60 chars) and description (148) are the draft's own —
+       docs/page-conventions.md §12. -->
+  <title>Veranstaltungsschutz Franken | Event &amp; Türsteher – FRANKONIA</title>
+  <meta name="description" content="Veranstaltungsschutz für Events, Messen &amp; Feste: Einlass, Ordnerdienst, Deeskalation &amp; Türsteher. Unterstützung schon bei den behördlichen Auflagen.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/veranstaltungsschutz/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/veranstaltungsschutz/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/veranstaltungsschutz/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Veranstaltungsschutz Franken | Event &amp; Türsteher – FRANKONIA">
+  <meta property="og:description" content="Veranstaltungsschutz für Events, Messen &amp; Feste: Einlass, Ordnerdienst, Deeskalation &amp; Türsteher. Unterstützung schon bei den behördlichen Auflagen.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/veranstaltungsschutz/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- The hero photo is the LCP element, same pattern as every other service
+       hero. One source, no srcset: the file is 820px wide and there is no larger
+       original, so a candidate list would only ever offer the same image. -->
+  <link rel="preload" as="image" href="/assets/images/veranstaltungsschutz.webp" type="image/webp">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "{{phone.display}}",
+      "email": "{{email}}",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://frankonia-sicherheit.de/veranstaltungsschutz/#service",
+      "name": "Veranstaltungsschutz",
+      "serviceType": "Veranstaltungsschutz",
+      "description": "Veranstaltungsschutz in Franken: Einlasskontrolle, Ordnerdienst nach Versammlungsstättenverordnung, Deeskalation, Türsteher für Gastronomie und Clubs sowie Unterstützung beim Sicherheitskonzept.",
+      "provider": {
+        "@id": "https://frankonia-sicherheit.de/#localbusiness"
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Bamberg" },
+        { "@type": "City", "name": "Nürnberg" },
+        { "@type": "City", "name": "Würzburg" },
+        { "@type": "City", "name": "Erlangen" },
+        { "@type": "City", "name": "Fürth" },
+        { "@type": "City", "name": "Schweinfurt" },
+        { "@type": "City", "name": "Bayreuth" },
+        { "@type": "City", "name": "Coburg" },
+        { "@type": "City", "name": "Ansbach" },
+        { "@type": "City", "name": "Hof" }
+      ],
+      "offers": {
+        "@type": "Offer",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "priceCurrency": "EUR",
+          "minPrice": 26,
+          "maxPrice": 32,
+          "unitCode": "HUR"
+        }
+      },
+      "url": "https://frankonia-sicherheit.de/veranstaltungsschutz/"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Leistungen",
+          "item": "https://frankonia-sicherheit.de/leistungen/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Veranstaltungsschutz",
+          "item": "https://frankonia-sicherheit.de/veranstaltungsschutz/"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/veranstaltungsschutz/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Wie viele Sicherheitskräfte brauche ich für meine Veranstaltung?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Als Orientierung wird häufig 1 Sicherheitskraft je 100 Besucher angesetzt, verbindlich sind aber die behördlichen Auflagen und die Risikobewertung Ihrer konkreten Veranstaltung. FRANKONIA erstellt Ihnen nach einem kurzen Planungsgespräch eine belastbare Personalempfehlung, das Angebot folgt innerhalb eines Werktages."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was kostet Veranstaltungsschutz pro Stunde?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde und Kraft, je nach Qualifikation und Uhrzeit. Einsatzleiter und besonders qualifizierte Kräfte liegen am oberen Ende; Nacht- und Wochenendzuschläge kommen nach Tarif dazu."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Stellt FRANKONIA auch Türsteher für Clubs und Gastronomie?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, geprüfte Kräfte nach § 34a GewO, deeskalations-geschult, einzeln oder als festes Team für wiederkehrende Abende. Feste Teams haben den Vorteil, dass Ihr Personal Gäste, Hausregeln und kritische Situationen Ihres Betriebs kennt."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Hilft FRANKONIA bei den behördlichen Auflagen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja. Wir unterstützen bei Sicherheitskonzept, Personalbemessung und der Abstimmung mit Ordnungsamt, Polizei und Feuerwehr, inklusive Brandsicherheitswache, wenn die Behörde sie fordert."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie kurzfristig kann ich Veranstaltungsschutz buchen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nach Absprache auch kurzfristig, etwa als Verstärkung wenige Tage vor dem Event. Für die Unterstützung bei Auflagen und Sicherheitskonzept gilt: je früher, desto besser, ideal sind mehrere Wochen Vorlauf."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+  <!-- Shared lead-form section, then the service chassis
+       (docs/page-conventions.md §9.1). -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+
+  <!-- The documented generic effect stack (docs/page-conventions.md §4.1).
+       Deliberately NOT loaded: service-flow.js, service-contrast.js, svg-draw.js
+       and case-cards.js — /werkschutz/ needs them for blocks whose markup does
+       not exist on this page. steps-sequence.js IS loaded: the Schritte section
+       uses the shared rail. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+  <script src="/js/steps-sequence.js" defer></script>
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Chevron separators, not slashes — docs/page-conventions.md §3. Matches
+         the BreadcrumbList JSON-LD above. It sits ABOVE the hero because this
+         hero is a two-column split, not a full-bleed photograph: only the bleed
+         variant pulls the breadcrumb inside the section. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/leistungen/">Leistungen</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Veranstaltungsschutz</span></li>
+      </ol>
+    </nav>
+
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- The draft's own Hero-Aufbau, nothing added or dropped: badge → H1 →
+         subline → 3 ticks → double CTA → Google widget + DEKRA seals.
+         Primary = the free-offer form, secondary = the phone: client rule G2's
+               default order, and the label G3 requires for a CTA pointing at a form.
+
+         TWO COLUMNS, not the full-bleed treatment /werkschutz/ uses, and the
+         reason is the asset: the only photograph this service has is the
+         portrait 820x1223 file that already feeds the homepage's services
+         preview. A background hero would crop a portrait photo to a letterbox
+         band, which is precisely why docs/page-conventions.md §8.2 prescribes the
+         split hero for a vertical photo. The breadcrumb therefore sits ABOVE the
+         hero (a bleed hero is the only case that pulls it inside).
+
+         .hero__lead / .hero__actions / .hero__reassurance / .hero__trust are
+         load-bearing class names, not decoration — js/hero-reveal.js animates
+         exactly those four blocks in that order, so this page needs no JS of its
+         own (docs/page-conventions.md §4.1). -->
+    <section class="service-hero service-hero--split" data-hero-reveal>
+      <div class="container service-hero__grid">
+        <div class="service-hero__content">
+          <!-- Hero badge, verbatim from the Webtext (client rule G9: the badge is
+               whatever the document says it is). -->
+          <p class="hero-badge">
+            <svg class="icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+            Ordner, Einlass &amp; Deeskalation — IHK-qualifiziert nach § 34a GewO
+          </p>
+
+          <h1>Veranstaltungsschutz: Sicherheit für Ihr Event in Franken</h1>
+
+          <p class="hero__lead service-hero__lead">
+            Sicherheit, Ordnung und reibungsloser Ablauf für Ihr Event, von den behördlichen Auflagen bis zum Einlass.
+          </p>
+
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn btn--secondary service-hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+          </div>
+
+          <!-- The draft's three hero lines, VERBATIM. They are full sentences, so
+               this is the stacked list /jobs/ and the city pages use rather than
+               the homepage's row of short chips — a row of three sentences needs
+               roughly 1000px at this type size against the ~640px this column
+               has. /werkschutz/ truncated its three into chips on an explicit
+               client instruction; no such instruction covers these nine, so the
+               sentences stay whole. -->
+          <ul class="hero__reassurance service-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Unterstützung bei Sicherheitskonzept und behördlichen Auflagen
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Geschulte Kräfte für Einlass, Ordnerdienst und Deeskalation
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Ein Ansprechpartner vom Planungsgespräch bis zum Abbau
+            </li>
+          </ul>
+
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- LCP element: preloaded in <head>, eager, high priority, and the
+             aspect-ratio is this file's REAL height rather than a shared 4:5.
+             Five of the nine service photos are 1217–1225px tall, not 1227, and a
+             shared ratio leaves a strip of the frame's own background showing
+             under the photo — the exact defect §8.2 records for the homepage's
+             services preview ("some service images show a grey bar"). -->
+        <figure class="service-hero__media" style="aspect-ratio: 820 / 1223">
+          <picture>
+            <source type="image/webp" srcset="/assets/images/veranstaltungsschutz.webp">
+            <img src="/assets/images/veranstaltungsschutz.jpg" width="820" height="1223" alt="FRANKONIA Sicherheitskraft vor dem Publikum einer Abendveranstaltung" loading="eager" fetchpriority="high">
+          </picture>
+        </figure>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 2. Risiko ============ -->
+    <!-- The draft's 3 blocks, verbatim.
+
+         RULED, NOT CARDED — docs/page-conventions.md §8.2: on a service page the
+         Preis-Box is the only elevated surface. It also avoids re-publishing the
+         3,11:1 caveat `.service-cases`' blue cards carry, which would have landed
+         on this page 3 more times for a section the draft never asked to be
+         cards. -->
+    <section class="section section--light service-points" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Als Veranstalter haften Sie, auch für das, was Ihr Sicherheitsdienst versäumt</h2>
+          <p data-reveal data-reveal-delay>Bei einer Veranstaltung entscheiden Minuten und Menschenkenntnis. Was ohne professionellen Veranstaltungsschutz auf dem Spiel steht:</p>
+        </div>
+
+        <ul class="service-points__list service-points__list--3" data-item-reveal="li">
+          <li class="service-points__item">
+            <h3 class="service-points__title">Eskalationen im Publikum</h3>
+            <p class="service-points__text">Ein übersehener Konflikt, eine unprofessionelle Ansprache, und aus einer Rangelei wird ein Vorfall mit Verletzten, Anzeigen und Presse.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Behördliche Auflagen</h3>
+            <p class="service-points__text">Fehlt das geforderte Sicherheitspersonal oder das Sicherheitskonzept, drohen Auflagen-Verstöße bis zur Absage der Veranstaltung.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Ihr Ruf</h3>
+            <p class="service-points__text">Gäste erinnern sich an aggressive Türsteher und chaotischen Einlass, nicht an das Programm. Der Sicherheitsdienst ist Teil Ihres Gastgeber-Auftritts.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 3. Leistungsumfang ============ -->
+    <!-- The draft's Häkchenliste, verbatim, as a two-column tick list.
+         ⚠️ NOT `.service-flow` (the pinned 50/50 scrollytelling /werkschutz/ uses
+         for the same section). That block needs SIX photographs per service and
+         only Werkschutz has them; this page has one. The drafts describe this
+         section as "H2 + Häkchenliste", which is what this is. -->
+    <section class="section service-scope">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Das übernimmt FRANKONIA bei Ihrer Veranstaltung</h2>
+        </div>
+
+        <ul class="service-scope__list" data-item-reveal="li">
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Einlasskontrolle</h3>
+              <p class="service-scope__text">Ticket- und Ausweiskontrolle, Taschenkontrollen nach Auflage, Gästeliste, freundlich im Ton, konsequent in der Sache.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Ordnerdienst</h3>
+              <p class="service-scope__text">Wegeführung, Absperrungen, Bühnengraben, Parkplatz — Ordner nach Versammlungsstättenverordnung, eingewiesen auf Ihre Örtlichkeit.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Deeskalation &amp; Intervention</h3>
+              <p class="service-scope__text">Geschulte Kräfte erkennen Konflikte früh und lösen sie, bevor sie eskalieren, koordiniert über Funk, dokumentiert im Einsatzprotokoll.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Evakuierung &amp; Notfallorganisation</h3>
+              <p class="service-scope__text">Eingespielte Abläufe nach Ihrem Räumungskonzept, Zusammenarbeit mit Polizei, Feuerwehr und Sanitätsdienst.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Brandsicherheitswache</h3>
+              <p class="service-scope__text">Wo die Behörde sie fordert, aus einer Hand mit dem übrigen Veranstaltungsschutz.</p>
+              <a class="service-link" href="/brandwache/">Zur Brandwache<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Garderobe &amp; Backstage</h3>
+              <p class="service-scope__text">Zutrittsschutz für sensible Bereiche, Künstler- und VIP-Betreuung nach Absprache.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 4. Türsteher &amp; Einlass für Gastronomie und Clubs (Sekundär-Keyword-Sektion) ============ -->
+    <!-- The draft's own copy, verbatim. -->
+    <section class="section section--light service-prose" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Türsteher gesucht? Professioneller Einlass für Gastronomie, Clubs und Bars</h2>
+        </div>
+
+        <div class="section__intro">
+          <p data-reveal data-reveal-delay>Ein guter Türsteher ist Gastgeber und Sicherheitskraft zugleich: Er entscheidet freundlich, aber verbindlich, wer hineinkommt, und bleibt ruhig, wenn andere es nicht mehr sind. Dafür stellt FRANKONIA geprüfte Kräfte nach § 34a GewO, einzeln oder als festes Team für Ihre wiederkehrenden Abende.</p>
+        </div>
+
+        <ul class="service-points__list service-points__list--3" data-item-reveal="li">
+          <li class="service-points__item">
+            <p class="service-points__text">Feste Türsteher-Teams statt wechselnder Aushilfen — Ihr Personal kennt Ihre Gäste und Ihre Hausregeln</p>
+          </li>
+          <li class="service-points__item">
+            <p class="service-points__text">Deeskalations-geschult und dokumentationssicher (wichtig bei Anzeigen und Hausverboten)</p>
+          </li>
+          <li class="service-points__item">
+            <p class="service-points__text">Auch kurzfristig für einzelne Veranstaltungen oder als Verstärkung</p>
+          </li>
+        </ul>
+
+        <aside class="service-highlight" data-reveal>
+          <h3 class="service-highlight__title">Unser Anspruch</h3>
+          <p>Gäste sollen bei unprofessionellem Auftreten Feedback direkt dem Sicherheitsdienst geben, nicht Ihnen. Dafür gibt es bei FRANKONIA einen direkten Feedback-Kanal — Beschwerden landen bei uns und werden nachverfolgt.</p>
+        </aside>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 5. Sicherheitskonzept für Veranstaltungen (Keyword-Sektion, 590er-Cluster) ============ -->
+    <!-- The draft's 4 steps, verbatim, on the shared rail: one numeral and one
+         node per step, the hairline between them drawn by js/steps-sequence.js as
+         each step arrives.
+
+         ⚠️ DARK SURFACE, and that is a constraint rather than a rhythm choice:
+         `.service-konzept__text` hardcodes white-at-0.88 and the block's three
+         Figma scenes carry a fixed white stroke, both stated in page-service.css.
+         ⚠️ NO per-step artwork here — this draft supplies none, and inventing 4
+         scenes per page is not assembly. The numeral, the node and the rail carry
+         the sequence, exactly as the mobile layout always has. -->
+    <section class="section service-konzept">
+      <div class="container service-konzept__inner">
+        <div class="section__intro service-konzept__intro">
+          <h2>Sicherheitskonzept für Veranstaltungen: ab wann Pflicht, und wer es erstellt</h2>
+          <p data-reveal data-reveal-delay>Ein Sicherheitskonzept ist für Veranstaltungen in Versammlungsstätten ab 5.000 Besucherplätzen vorgeschrieben (§ 43 MVStättVO) — Behörden können es aber auch darunter fordern, etwa bei erhöhtem Risiko oder Open-Air-Lagen. Erstellt wird es vom Veranstalter, in der Praxis gemeinsam mit einem erfahrenen Sicherheitsdienstleister: FRANKONIA liefert Risikobewertung, Personalbemessung, Räumungs- und Ordnerkonzept, abgestimmt mit Ordnungsamt, Polizei und Feuerwehr.</p>
+          <p>Die meisten Sicherheitsprobleme einer Veranstaltung entstehen in der Planung, nicht am Abend selbst. Deshalb steigt FRANKONIA früh ein:</p>
+        </div>
+
+        <ol class="service-konzept__steps service-konzept__steps--4" data-steps-sequence data-no-text-reveal>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">01</span>
+            <h3 class="service-points__title">Planungsgespräch</h3>
+            <p class="service-konzept__text">Veranstaltungsart, Besucherzahl, Örtlichkeit, Risikobewertung, daraus entsteht die Personalempfehlung.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">02</span>
+            <h3 class="service-points__title">Sicherheitskonzept &amp; Behörden</h3>
+            <p class="service-konzept__text">Wir unterstützen bei Sicherheitskonzept, Auflagen und der Abstimmung mit Ordnungsamt, Polizei und Feuerwehr.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">03</span>
+            <h3 class="service-points__title">Briefing &amp; Aufbau</h3>
+            <p class="service-konzept__text">Einweisung aller Kräfte auf Lageplan, Funkkonzept und Eskalationsstufen, vor dem ersten Gast.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">04</span>
+            <h3 class="service-points__title">Durchführung &amp; Nachbereitung</h3>
+            <p class="service-konzept__text">Einsatzleitung vor Ort, dokumentierte Vorfälle, gemeinsames Debriefing mit Empfehlungen für das nächste Mal.</p>
+          </li>
+        </ol>
+
+        <div class="service-konzept__actions" data-reveal>
+          <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 6. Anwendungsfälle ============ -->
+    <!-- The draft's 5 blocks, verbatim.
+
+         RULED, NOT CARDED — docs/page-conventions.md §8.2: on a service page the
+         Preis-Box is the only elevated surface. It also avoids re-publishing the
+         3,11:1 caveat `.service-cases`' blue cards carry, which would have landed
+         on this page 5 more times for a section the draft never asked to be
+         cards. -->
+    <section class="section section--light service-points" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Diese Veranstaltungen schützt FRANKONIA</h2>
+        </div>
+
+        <ul class="service-points__list service-points__list--5" data-item-reveal="li">
+          <li class="service-points__item">
+            <h3 class="service-points__title">Stadtfeste &amp; Open-Airs</h3>
+            <p class="service-points__text">Große Besucherströme, Jugendschutz, Glasverbot — Ordnerdienst und Einlass im Zusammenspiel mit den Behörden.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Firmenevents &amp; Galas</h3>
+            <p class="service-points__text">Repräsentativer Einlass (auf Wunsch im Anzug), Gästeliste, diskreter Schutz für Gäste und Ausstattung.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Messen &amp; Kongresse</h3>
+            <p class="service-points__text">Standbewachung über Nacht, Zutrittskontrolle, Personalverstärkung zu Stoßzeiten.</p>
+            <a class="service-link" href="/sicherheitsdienst-nuernberg/">Sicherheitsdienst Nürnberg<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Konzerte &amp; Kulturveranstaltungen</h3>
+            <p class="service-points__text">Bühnengraben, Backstage, Evakuierungskonzept, koordiniert mit Veranstalter und Location.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Sportveranstaltungen</h3>
+            <p class="service-points__text">Ordnerdienst, Fantrennung, Einlasskontrollen nach Verbandsvorgaben.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <!-- No seam: points and price are both light surfaces, and tiles the colour of the section above would be invisible against the one below (§9.2). -->
+    <!-- ============ 7. KOSTEN ============ -->
+    <!-- The block docs/build-checklist.md counts on 27 pages, reused verbatim.
+         GEO pattern: question H2, the answer in the first sentence, then what
+         moves it.
+         ⚠️ EVERY PRICE IS A TOKEN, never a literal (client rule G10): the draft
+         writes "zwischen 26 und 32 Euro" and it is emitted as {{price.min}} /
+         {{price.max}}, so the annual rate change stays one edit in
+         content/values.json instead of 27 pages x 2 (visible + JSON-LD).
+         DOM order is the design: intro → price → factors → Hinweis, which is the
+         phone order, done in markup rather than with `order` so the tab order
+         matches the screen (§7). -->
+    <section class="section section--light service-price" data-nav-theme="light">
+      <div class="container service-price__layout">
+        <div class="section__intro service-price__intro">
+          <h2>Was kostet Veranstaltungsschutz?</h2>
+          <p class="service-price__answer" data-reveal data-reveal-delay>Veranstaltungsschutz kostet in der Regel zwischen 25 und 38 Euro pro Stunde und Kraft, abhängig von Qualifikation, Uhrzeit und Einsatzdauer. Die Personalstärke ergibt sich aus Besucherzahl, Veranstaltungsart und behördlichen Auflagen; als Faustwert wird oft 1 Sicherheitskraft je 100 Besucher angesetzt, verbindlich ist aber immer die Auflage im Einzelfall.</p>
+        </div>
+
+        <!-- include: price-box range="{{price.range}}" note="netto, je Kraft" priceBoxTick1="Personalempfehlung nach Planungsgespräch" priceBoxTick2="Angebot in 1 Werktag" -->
+
+        <ul class="service-price__factors" data-item-reveal>
+          <li>Qualifikation (Ordner, § 34a-Kraft, Einsatzleiter)</li>
+          <li>Uhrzeit: Nacht- und Wochenendzuschläge nach Tarif</li>
+          <li>Dauer und Personalstärke laut Sicherheitskonzept</li>
+          <li>Zusatzleistungen: Brandsicherheitswache, Planungsunterstützung, Technik</li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 8. TRUST ============ -->
+    <!-- The draft's Trust paragraph, verbatim, over the SHARED certification
+         strip (`.trust-certs*`, the chassis block /referenzen/, /ueber-uns/ and
+         /sicherheitskonzept/ all use). It is fully token-driven, so it works on
+         either surface.
+         ⚠️ NOT the `.service-contact` block with Alexander Jäger's portrait: this
+         draft's Trust section does not name him, and adding a named contact the
+         document did not ask for would be inventing a person into the page. The
+         four drafts that DO name him get that block instead — client Q2,
+         2026-08-13, applied as written. -->
+    <section class="section service-trust">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Erfahrung, auf die sich Veranstalter in ganz Franken verlassen</h2>
+        </div>
+
+        <div class="section__intro">
+          <p data-reveal data-reveal-delay>FRANKONIA sichert seit über zehn Jahren Veranstaltungen in der Region, vom Firmenevent bis zum Stadtfest, unter anderem für Kommunen und öffentliche Einrichtungen. Zertifiziert nach DIN 77200-1 und ISO 9001 (DEKRA-geprüft), mit ausschließlich IHK-qualifizierten Kräften nach § 34a GewO.</p>
+        </div>
+
+        <div class="trust-certs" data-reveal>
+          <div class="trust-certs__seals">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+          </div>
+          <ul class="trust-certs__list">
+            <li>
+              <strong>DIN 77200-1</strong>
+              für stationäre Sicherheitsdienstleistungen
+            </li>
+            <li>
+              <strong>DIN EN ISO 9001</strong>
+              zertifiziert, DEKRA-geprüft
+            </li>
+            <li>
+              <strong>§ 34a GewO</strong>
+              ausschließlich IHK-qualifizierte Kräfte
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 9. FAQ ============ -->
+    <!-- The draft's 5 questions and answers, verbatim, mirroring the FAQPage
+         JSON-LD at the top of this file 1:1.
+         ⚠️ The visible copy and the schema copy must stay BYTE-IDENTICAL with
+         markup stripped. They are generated from one source by
+         docs/design-sources/service-pages.py, so an edit here has to be made in
+         BOTH places by hand. It is the one thing on this page type that is easy
+         to break with a small edit and impossible to see. -->
+    <section class="section section--light service-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Veranstaltungsschutz: die häufigsten Fragen</h2>
+        </div>
+
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
+          <details class="faq-item">
+            <summary><h3>Wie viele Sicherheitskräfte brauche ich für meine Veranstaltung?</h3></summary>
+            <p class="faq-item__answer">Als Orientierung wird häufig 1 Sicherheitskraft je 100 Besucher angesetzt, verbindlich sind aber die behördlichen Auflagen und die Risikobewertung Ihrer konkreten Veranstaltung. FRANKONIA erstellt Ihnen nach einem kurzen Planungsgespräch eine belastbare Personalempfehlung, das Angebot folgt innerhalb eines Werktages.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Was kostet Veranstaltungsschutz pro Stunde?</h3></summary>
+            <p class="faq-item__answer">In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde und Kraft, je nach Qualifikation und Uhrzeit. Einsatzleiter und besonders qualifizierte Kräfte liegen am oberen Ende; Nacht- und Wochenendzuschläge kommen nach Tarif dazu.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Stellt FRANKONIA auch Türsteher für Clubs und Gastronomie?</h3></summary>
+            <p class="faq-item__answer">Ja, geprüfte Kräfte nach § 34a GewO, deeskalations-geschult, einzeln oder als festes Team für wiederkehrende Abende. Feste Teams haben den Vorteil, dass Ihr Personal Gäste, Hausregeln und kritische Situationen Ihres Betriebs kennt.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Hilft FRANKONIA bei den behördlichen Auflagen?</h3></summary>
+            <p class="faq-item__answer">Ja. Wir unterstützen bei Sicherheitskonzept, Personalbemessung und der Abstimmung mit Ordnungsamt, Polizei und Feuerwehr, inklusive Brandsicherheitswache, wenn die Behörde sie fordert.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Wie kurzfristig kann ich Veranstaltungsschutz buchen?</h3></summary>
+            <p class="faq-item__answer">Nach Absprache auch kurzfristig, etwa als Verstärkung wenige Tage vor dem Event. Für die Unterstützung bei Auflagen und Sicherheitskonzept gilt: je früher, desto besser, ideal sind mehrere Wochen Vorlauf.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 10. ABSCHLUSS-CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The shared lead-form partial with this page's own field prefix — unique
+         per page, or two forms in one document would break every <label for>.
+         The form still submits nowhere sitewide (action="#", native validation
+         only) — docs/build-checklist.md Paso 4. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Jetzt Veranstaltungsschutz anfragen, mit Planungsgespräch</h2>
+          <p class="conversion__intro-lede">Beschreiben Sie kurz Veranstaltung, Datum und erwartete Besucherzahl, unsere Experten melden sich innerhalb eines Werktages mit Personalempfehlung und Angebot. Formulartitel: Ihre Event-Anfrage</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="vs" messageLabel="Veranstaltung, Datum und erwartete Besucherzahl" -->
+
+          <p class="conversion__form-alt">Lieber direkt sprechen? <a href="{{phone.href}}">{{phone.display}}</a></p>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 11. VERWANDTE SEITEN ============ -->
+    <!-- The draft's own internal-link list. Several destinations are not built
+         yet; the URLs are the confirmed ones from guidelines §2.2, so these are
+         real links to pages still to come, not placeholders — the same
+         convention /werkschutz/ and the city pages already follow.
+         ⚠️ `.service-related__cols` / `__col`, NOT `__grid`: that second variant
+         had no CSS rule anywhere and fell back to block layout. /sicherheitskonzept/
+         was the last page carrying it and was corrected 2026-08-17 — do not
+         reintroduce it. -->
+    <section class="section section--light service-related" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Verwandte Leistungen und Einsatzgebiete</h2>
+        </div>
+
+        <div class="service-related__cols">
+
+          <div class="service-related__col">
+            <h3 class="service-related__title">Verwandte Leistungen</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/brandwache/"><span class="service-related__label">Brandwache</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/empfangsdienst/"><span class="service-related__label">Empfangsdienst</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/objektschutz/"><span class="service-related__label">Objektschutz</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+          <div class="service-related__col">
+            <h3 class="service-related__title">In Ihrer Stadt</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/sicherheitsdienst-nuernberg/"><span class="service-related__label">Sicherheitsdienst Nürnberg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-bamberg/"><span class="service-related__label">Sicherheitsdienst Bamberg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-wuerzburg/"><span class="service-related__label">Sicherheitsdienst Würzburg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

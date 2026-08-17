@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- CITY PAGE — Forchheim. Built from
+     NewVersionCopiesFrankonia/"2026-08-04 Webtext 21 Stadt Forchheim.docx"
+     (Stand 04.08.2026), verbatim, in German.
+
+     ⚠️ UWG / "kein Scheinstandort" is the rule that governs this whole page
+     type (docs/page-conventions.md §10.1). FRANKONIA has ONE address, in
+     Bamberg, and a city page may not imply a branch. It lands in three places
+     here: the hero badge says "Einsatzgebiet", never "Standort"; the
+     LocalBusiness JSON-LD carries the real Bamberg NAP with
+     areaServed: Forchheim and NOT a Forchheim address; and the FAQ answers
+     "do you have an office here?" honestly. Do not "improve" any of the three
+     into a local-address claim.
+
+     ⚠️ THE SHORTEST OF THE TEN — the draft is an explicitly compact 7-section
+     variant, so there is no Brandwache section, no Erreichbarkeit strip and no
+     Trust section. That leaves Einsatzfelder, Kosten and FAQ adjacent, all three
+     of them light-only blocks, so the page carries a three-section light run with
+     no seams inside it (§9.2). That is a consequence of the copy, not an
+     oversight: the alternatives were to invent a section or to reorder the
+     client's structure for rhythm alone, and neither is worth it.
+
+     REUSE MODEL: every class is `.city-*`, never `.forchheim-*`, and
+     css/page-service.css is loaded as the CHASSIS (§9.1) — inset, `main h2`,
+     breadcrumb chevron, `.section--light`, `.service-hero*`, `.service-link`,
+     the whole `.pixel-seam*` block and the entire Kosten section come from
+     there. css/page-city.css was NOT touched to build this page.
+
+     GENERATED ONCE by docs/design-sources/city-pages.py, then hand-editable.
+     ⚠️ If you edit the FAQ below, edit the FAQPage graph above it too — they
+     must stay byte-identical with markup stripped. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title (52 chars) and description (146) are the draft's own —
+       docs/page-conventions.md §12. -->
+  <title>Sicherheitsdienst Forchheim | Wachdienst – FRANKONIA</title>
+  <meta name="description" content="Sicherheitsdienst für Forchheim: Objektschutz, Werkschutz, Brandwache &amp; Events. DEKRA-zertifiziert, digital nachweisbar, Angebot in einem Werktag.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/sicherheitsdienst-forchheim/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/sicherheitsdienst-forchheim/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/sicherheitsdienst-forchheim/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sicherheitsdienst Forchheim | Wachdienst – FRANKONIA">
+  <meta property="og:description" content="Sicherheitsdienst für Forchheim: Objektschutz, Werkschutz, Brandwache &amp; Events. DEKRA-zertifiziert, digital nachweisbar, Angebot in einem Werktag.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/sicherheitsdienst-forchheim/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- NO hero image preload: this page has no hero photograph. There is not one
+       city photo in the project and the draft does not ask for one — the hero's
+       visual is an inline SVG of Forchheim's real administrative boundary, so
+       it costs no request at all and the page has NO image LCP element. -->
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "{{phone.display}}",
+      "email": "{{email}}",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 49.9019037,
+        "longitude": 10.9067377
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Forchheim",
+        "containedInPlace": { "@type": "AdministrativeArea", "name": "Bayern" }
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "reviewCount": "{{rating.count}}",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/sicherheitsdienst-forchheim/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Wie schnell kann FRANKONIA in Forchheim starten?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sehr kurzfristig: Die Einsatzleitung ist rund um die Uhr erreichbar und organisiert Einsätze nach Absprache auch von heute auf morgen. Laufende Aufträge im Raum Forchheim betreuen feste Teams."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was kostet ein Sicherheitsdienst in Forchheim?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde netto, je nach Leistung und Einsatzzeit. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Übernimmt FRANKONIA Feste und Veranstaltungen in Forchheim?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja — Einlass, Ordnerdienst, Objektschutz für Anlieger und Betriebe sowie Brandsicherheitswachen nach Auflage. Je früher Sie anfragen, desto sicherer ist die Wunschbesetzung."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Betreut FRANKONIA auch den Landkreis Forchheim?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja — Stadt und Landkreis Forchheim inklusive der Gewerbestandorte im Umland und im Wiesenttal gehören zum festen Einsatzgebiet. Kurzes Telefonat genügt: {{phone.display}}."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Lohnt sich ein Sicherheitsdienst auch für kleinere Betriebe in Forchheim?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja. Kontrollrunden statt Dauerposten oder die Kombination mit Technik machen auch kleinere Schutzkonzepte wirtschaftlich. Der beste Start ist das kostenfreie Sicherheitskonzept: hochprofessionell, kostet nichts, und Kunden haben damit schon bis zu 30 % gespart."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Einsatzgebiete",
+          "item": "https://frankonia-sicherheit.de/einsatzgebiete/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Sicherheitsdienst Forchheim",
+          "item": "https://frankonia-sicherheit.de/sicherheitsdienst-forchheim/"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+
+  <!-- Shared, in cascade order (docs/page-conventions.md §9.1):
+       lead-form → testimonials → page-service.css (the CHASSIS) → this page. -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/testimonials.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-city.css">
+
+  <!-- The documented generic effect stack, nothing page-specific
+       (docs/page-conventions.md §4.1). -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+</head>
+<body class="page-city">
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Chevron separators, not slashes — docs/page-conventions.md §3. Matches
+         the BreadcrumbList JSON-LD above. The breadcrumb sits ABOVE the hero
+         (unlike /werkschutz/, whose hero is a full-bleed photograph reaching the
+         top of the page) because this hero has no photo. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/einsatzgebiete/">Einsatzgebiete</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Forchheim</span></li>
+      </ol>
+    </nav>
+
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- The draft's own Hero-Aufbau, nothing added or dropped: badge → H1 →
+         subline → 3 ticks → double CTA → Google widget + DEKRA seals.
+         .hero__lead / .hero__actions / .hero__reassurance / .hero__trust are
+         load-bearing class names, not decoration — js/hero-reveal.js animates
+         exactly those four blocks in that order, so this page needs no JS of its
+         own (docs/page-conventions.md §4.1).
+         The badge says "Einsatzgebiet", which is the UWG disclosure of §10.1 and
+         the draft's own copy. -->
+    <section class="service-hero city-hero" data-hero-reveal>
+      <div class="container service-hero__grid city-hero__grid">
+        <div class="service-hero__content city-hero__content">
+          <p class="city-hero__badge">
+            <svg class="icon city-hero__badge-icon" aria-hidden="true"><use href="#icon-pin"></use></svg>
+            Einsatzgebiet Forchheim, fester Ansprechpartner rund um die Uhr
+          </p>
+
+          <h1>Sicherheitsdienst Forchheim</h1>
+
+          <p class="hero__lead service-hero__lead">
+            Objektschutz, Werkschutz, Brandwache und Events für Forchheim, durch IHK-qualifizierte Kräfte, DEKRA-zertifiziert.
+          </p>
+
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn btn--secondary service-hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+          </div>
+
+          <!-- The draft's lines VERBATIM, so a stacked list rather than the
+               homepage hero's row of chips: these are full sentences and need
+               ~1000px in a row at this type size against the ~640px this column
+               has. Same measurement /jobs/ made before the client chose the list.
+               .city-hero__points turns the shared row into a column and supplies
+               the align-items: flex-start the shared centred rule would
+               otherwise apply horizontally (docs/page-conventions.md §10.4). -->
+          <ul class="hero__reassurance service-hero__points city-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Digital nachweisbar: Wachbuch, Checkpoints und Reports
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Feste Teams für laufende Aufträge in Forchheim
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Unverbindliches Angebot innerhalb eines Werktages
+            </li>
+          </ul>
+
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- Forchheim'S REAL ADMINISTRATIVE OUTLINE, as an inline path.
+             Generated once in development by docs/design-sources/city-outline.py
+             from assets/data/coverage-boundaries/forchheim.geojson (fetched from
+             OSM/Nominatim in July). Never hand-edit the coordinates; re-run the
+             script instead.
+             Why an outline and not a photo or a map — docs/page-conventions.md
+             §10.3, in short: no city photography exists and the draft asks for
+             none; an AREA is the honest visual for an Einsatzgebiet where a
+             single pin would read as a branch office (§10.1); and as a path it
+             costs zero requests and no third-party tiles.
+             ⚠️ pathLength="1" IS LOAD-BEARING. The outline draws itself with a
+             pure-CSS dash, and that attribute renormalises the perimeter to 1 so
+             `stroke-dasharray: 1` is one exact lap at any size for any city. A
+             path pasted in without it draws nothing at all.
+             ⚠️ The guides are PERCENTAGES because every city's viewBox height
+             differs (683 for Coburg, 1494 for Kulmbach); this one is 938. -->
+        <div class="city-hero__map" aria-hidden="true">
+          <svg class="city-map" viewBox="0 0 1000 938" fill="none" focusable="false">
+            <line class="city-map__guide" x1="50%" y1="0" x2="50%" y2="100%"></line>
+            <line class="city-map__guide" x1="0" y1="50%" x2="100%" y2="50%"></line>
+            <path class="city-map__area" pathLength="1" d="M0.0 174.8 L1.3 183.7 L8.8 199.1 L8.7 205.0 L16.6 219.5 L22.5 224.6 L34.1 229.1 L41.6 233.8 L50.2 243.7 L63.0 252.7 L54.5 271.0 L50.7 284.7 L48.9 365.0 L50.2 375.1 L84.1 409.5 L109.1 420.4 L119.2 426.8 L169.1 467.1 L187.2 595.4 L191.4 595.2 L197.6 619.0 L190.6 619.4 L184.2 605.3 L178.0 601.5 L155.4 607.6 L170.2 621.0 L175.7 628.4 L182.2 626.8 L185.8 632.7 L186.4 637.1 L189.2 637.0 L190.1 649.9 L196.5 649.0 L217.5 650.8 L217.7 639.9 L215.9 635.4 L252.0 618.5 L259.2 604.5 L265.4 597.7 L268.3 598.5 L265.1 626.6 L290.2 626.3 L291.2 619.0 L310.7 619.5 L313.8 598.7 L338.0 598.0 L338.0 589.6 L346.8 589.5 L347.5 592.7 L371.0 587.8 L373.3 584.8 L383.0 580.5 L388.2 580.8 L398.2 575.1 L419.3 580.2 L418.4 598.5 L413.6 631.9 L416.4 632.6 L408.4 658.3 L417.9 660.8 L402.9 691.7 L387.9 711.4 L375.1 736.3 L398.0 748.6 L393.7 756.2 L411.1 758.7 L403.0 773.6 L395.1 807.1 L406.3 811.3 L420.6 824.6 L426.6 828.2 L418.9 840.0 L428.2 844.6 L424.3 853.4 L431.7 857.6 L433.2 861.6 L448.2 870.1 L481.4 897.5 L500.4 902.0 L507.7 909.5 L526.9 918.5 L526.5 915.5 L532.1 913.4 L534.6 916.4 L550.9 907.8 L565.5 910.1 L576.6 908.8 L586.6 911.7 L587.5 905.6 L597.9 913.3 L596.1 918.1 L602.4 921.9 L599.7 928.1 L611.3 931.8 L614.1 917.0 L619.1 928.3 L626.9 927.4 L627.1 925.6 L634.0 925.6 L635.1 915.9 L643.5 917.3 L648.8 915.8 L652.6 910.1 L652.2 893.9 L657.6 893.2 L663.5 908.7 L671.1 919.6 L677.5 935.4 L680.3 937.9 L692.1 936.7 L688.2 911.3 L691.5 911.5 L694.3 908.8 L687.9 904.4 L687.8 899.7 L685.2 899.0 L687.0 880.7 L691.4 881.4 L693.7 894.2 L700.0 896.3 L697.9 876.5 L693.0 874.8 L689.3 856.9 L690.9 849.1 L682.2 845.8 L674.0 846.0 L649.0 835.0 L650.7 831.9 L661.7 833.7 L663.4 829.9 L672.1 829.4 L679.0 825.5 L677.1 823.5 L678.2 821.5 L674.1 816.0 L682.8 813.2 L683.9 803.6 L681.6 804.0 L677.9 795.8 L674.3 798.4 L661.6 773.9 L636.6 753.6 L639.2 746.2 L644.2 741.8 L644.8 729.6 L648.0 727.8 L640.3 718.3 L633.3 719.0 L634.1 710.5 L627.9 678.3 L650.3 677.9 L651.3 674.4 L680.2 665.3 L676.3 653.8 L679.3 642.1 L680.7 600.8 L694.5 594.3 L694.9 583.5 L707.9 582.7 L706.9 569.3 L712.6 564.7 L719.9 564.6 L721.3 559.9 L731.6 550.8 L733.9 546.2 L737.6 547.1 L743.4 533.4 L746.7 535.2 L750.5 541.4 L754.8 539.5 L763.0 548.0 L772.1 544.9 L773.7 549.7 L800.6 547.2 L811.4 543.2 L816.0 538.1 L826.5 540.8 L838.0 527.3 L854.5 512.6 L868.8 481.5 L890.0 463.7 L917.1 449.3 L937.6 425.8 L939.2 426.1 L940.8 424.0 L937.2 422.5 L944.3 410.6 L946.3 393.9 L950.0 388.0 L960.0 380.3 L961.3 375.1 L969.9 364.5 L971.9 360.3 L972.4 352.8 L980.9 333.1 L990.6 321.2 L987.1 318.2 L985.8 313.1 L986.9 308.2 L994.0 296.3 L988.3 294.1 L997.1 265.9 L994.2 262.2 L996.7 256.7 L993.7 255.3 L1000.0 243.0 L993.9 238.6 L979.8 232.7 L981.1 227.6 L971.4 221.5 L984.2 204.1 L986.1 197.6 L986.1 194.8 L981.0 190.4 L983.3 184.2 L977.0 174.8 L977.2 170.4 L984.8 167.3 L982.0 162.1 L935.5 118.7 L828.0 25.6 L825.1 25.8 L824.5 42.9 L815.4 42.1 L808.9 54.5 L802.7 51.8 L799.3 53.4 L798.8 66.0 L792.9 71.7 L776.5 77.3 L775.8 71.8 L767.6 68.6 L766.9 61.4 L749.4 65.5 L727.6 66.8 L714.6 70.6 L716.6 81.5 L706.8 83.8 L706.4 95.5 L708.2 102.0 L705.2 104.0 L696.6 105.0 L694.6 108.6 L677.5 107.9 L677.9 106.1 L674.9 104.9 L662.1 104.6 L646.1 109.7 L621.3 109.6 L610.3 111.6 L593.1 107.9 L582.1 100.5 L577.3 94.6 L572.2 96.2 L553.9 87.6 L551.8 85.1 L499.0 61.7 L494.5 53.9 L474.2 58.5 L472.9 57.2 L467.1 58.5 L465.3 51.4 L457.2 52.8 L456.7 50.7 L441.5 53.4 L440.3 50.1 L426.7 52.9 L422.5 49.6 L412.6 47.6 L408.4 49.3 L402.3 55.8 L399.4 56.2 L381.8 50.4 L371.2 43.5 L363.3 43.5 L361.3 38.0 L357.7 34.7 L354.8 23.8 L351.4 35.9 L348.1 37.9 L324.4 19.6 L322.4 19.3 L316.2 23.5 L315.7 26.3 L303.6 29.4 L300.9 23.5 L293.5 20.2 L271.1 18.2 L267.1 16.9 L265.8 12.0 L258.5 12.0 L241.5 17.3 L241.9 38.4 L234.9 39.3 L229.3 22.5 L199.6 38.1 L184.5 49.4 L181.1 47.9 L181.3 45.4 L186.7 37.2 L184.3 35.5 L185.4 34.0 L198.0 32.6 L212.0 26.2 L210.0 24.4 L196.3 22.7 L174.3 22.8 L172.2 34.9 L175.6 37.3 L174.0 47.5 L167.2 58.6 L147.8 50.5 L159.1 31.8 L161.0 24.4 L149.9 19.7 L150.9 17.4 L161.9 18.5 L160.2 15.6 L147.0 10.9 L133.6 8.5 L117.3 0.0 L108.8 2.8 L108.6 25.8 L52.4 126.4 L49.6 132.9 L49.2 145.1 L31.2 150.5 L12.7 150.6 L5.6 158.4 L0.0 174.8 Z"></path>
+          </svg>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 2. WARUM FRANKONIA IN FORCHHEIM ============ -->
+    <!-- The draft's 3 cards. WHITE ELEVATED PANELS, every value copied from
+         .service-cases__card on /werkschutz/ rather than re-derived, so the two
+         are one design in two files (docs/page-conventions.md §10.4). That
+         REVERSES §8.2's "ruled, not carded" for this block — a client decision
+         with precedent, not drift. Do not restore the hairlines.
+         ⚠️ The hover uses `translate`, never `transform`: these carry
+         data-item-reveal and GSAP writes `transform` INLINE, which beats any
+         stylesheet rule. `translate` is a separate property and composes. -->
+    <section class="section section--light city-why" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Warum FRANKONIA in Forchheim</h2>
+          <p>Forchheim gehört zu den Räumen, in denen FRANKONIA täglich im Einsatz ist, mit laufenden Objekten und einem Team, das die Königstadt und ihre Gewerbestandorte kennt: vom Medizintechnik-Werk im Süden bis zu den Gewerbeflächen im Umland.</p>
+        </div>
+
+        <ul class="city-why__grid city-why__grid--3" data-item-reveal=".city-why__item">
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-pin"></use></svg>
+            <h3 class="city-why__title">Im Einsatz vor Ort</h3>
+            <p>Laufende Aufträge im Raum Forchheim, kurzfristige Einsätze nach Absprache inklusive.</p>
+          </li>
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-transparency"></use></svg>
+            <h3 class="city-why__title">Professionell und digital</h3>
+            <p>Zertifizierte Prozesse, digitales Wachbuch, Reports und feste Teams.</p>
+          </li>
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+            <h3 class="city-why__title">Zertifiziert</h3>
+            <p>DIN 77200-1, ISO 9001, DEKRA-geprüft, Kräfte nach § 34a GewO.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 3. LEISTUNGEN IN FORCHHEIM ============ -->
+    <!-- The draft's services, its copy, its order and its link targets.
+         Linking confirmed-but-unbuilt URLs is this project's convention
+         (docs/page-conventions.md §8.3); the page's own primary conversion never
+         does it — every CTA points at #anfrage, the live form below. -->
+    <section class="section city-services">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Unsere Sicherheitsdienstleistungen in Forchheim</h2>
+          <p>Vom Werkschutz für Produktionsstandorte bis zur kurzfristigen Brandwache: Alle FRANKONIA Leistungen stehen Ihnen auch in Forchheim zur Verfügung.</p>
+        </div>
+
+        <!-- ALL 8 AS ROWS, no card group — and that is the documented rule
+             applied, not a shortcut. Cards exist for services whose destination
+             is a CITY-specific page; Forchheim has no combo pages in this
+             phase (the draft says so itself), so every one of these points at the
+             generic service page. Presenting four of them as featured cards would
+             promise a local page that does not exist — the implied-local claim
+             §10.1 exists to prevent. Rows keep every description crawlable. -->
+          <ul class="city-services__list" data-item-reveal="li">
+            <li>
+              <a class="city-services__row" href="/werkschutz/">
+                <span class="city-services__name">Werkschutz in Forchheim</span>
+                <span class="city-services__text">Pforte und Rundgänge für Produktionsstandorte, von Medizintechnik bis Lebensmittel.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/objektschutz/">
+                <span class="city-services__name">Objektschutz in Forchheim</span>
+                <span class="city-services__text">Bestreifung und Zugangskontrolle für Gewerbe, Praxen und Einrichtungen.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/baustellenbewachung/">
+                <span class="city-services__name">Baustellenbewachung in Forchheim</span>
+                <span class="city-services__text">Schutz für Wohnbau- und Gewerbeprojekte in Stadt und Landkreis.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/brandwache/">
+                <span class="city-services__name">Brandwache in Forchheim</span>
+                <span class="city-services__text">Kurzfristige Brandsicherheitswachen bei BMA-Ausfall und Heißarbeiten.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/empfangsdienst/">
+                <span class="city-services__name">Empfangsdienst in Forchheim</span>
+                <span class="city-services__text">Professioneller Empfang mit Sicherheitskompetenz für Betriebe.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/veranstaltungsschutz/">
+                <span class="city-services__name">Veranstaltungsschutz in Forchheim</span>
+                <span class="city-services__text">Einlass und Ordnerdienst, vom Firmenevent bis zum Volksfest.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/kaufhausdetektei/">
+                <span class="city-services__name">Kaufhausdetektei in Forchheim</span>
+                <span class="city-services__text">Zivile Ladendetektive für den Handel in Altstadt und Umland.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/sicherheitstechnik/">
+                <span class="city-services__name">Sicherheitstechnik in Forchheim</span>
+                <span class="city-services__text">Videoüberwachung, Alarm- und Zutrittstechnik, geplant als Teil des Gesamtkonzepts.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+          </ul>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 4. LOKALE EINSATZFELDER IN FORCHHEIM ============ -->
+    <!-- The section that makes this a CITY page rather than a service page with a
+         place name pasted in: real local references, every word the draft's.
+         Numbered because long blocks need an ordinal to be scannable; the
+         numerals are aria-hidden decoration on top of a real <ol>.
+         ⚠️ Where an item closes with a service link, that pairing is inferred
+         from the copy (the draft only annotates URLs in the Leistungen section)
+         and has been checked against WHERE the service is actually available —
+         the lesson Nürnberg paid for when it linked Revier- & Schließdienst, a
+         Raum-Bamberg-only service, from a Nürnberg page. -->
+    <section class="section section--light city-fields" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <p class="section-eyebrow">Vor Ort im Einsatz</p>
+          <h2>Wo Sicherheitsdienste in Forchheim gebraucht werden</h2>
+        </div>
+
+        <ol class="city-fields__list" data-item-reveal="li">
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">01</span>
+            <h3 class="city-fields__title">Industrie und Gewerbe im Forchheimer Süden</h3>
+            <p>Rund um die großen Werksstandorte und Gewerbegebiete gilt: hohe Werte, Pendlerverkehr, nachts ruhige Areale — Werkschutz und dokumentierte Kontrollen greifen hier ineinander.</p>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">02</span>
+            <h3 class="city-fields__title">Feste und Veranstaltungen in Forchheim</h3>
+            <p>Wenn gefeiert wird, braucht es erfahrene Einlass- und Ordnerkräfte, dazu Objektschutz für Betriebe und Anlieger.</p>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">03</span>
+            <h3 class="city-fields__title">Altstadt und Handel in Forchheim</h3>
+            <p>Fachwerk-Altstadt mit Einzelhandel und Gastronomie — Ladendetektei und Einlass-Dienste nach Bedarf.</p>
+            <a class="service-link city-fields__link" href="/kaufhausdetektei/">
+              Zur Kaufhausdetektei
+              <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">04</span>
+            <h3 class="city-fields__title">Wohn- und Gewerbebau in Stadt und Landkreis</h3>
+            <p>Forchheim baut und verdichtet. Baustellenbewachung mit flexiblen Konzepten schützt Gerät und Termine.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+    <!-- No seam: fields and price are both light surfaces, and tiles the colour of the section above would be invisible against the one below (§9.2). -->
+    <!-- ============ 5. KOSTEN IN FORCHHEIM ============ -->
+    <!-- Entirely the chassis: .service-price* was built generically on
+         /werkschutz/ because docs/build-checklist.md counts this block on 27
+         pages, and the Preis-Box is a partial. The only city-specific rule is
+         .city-rates for the per-service rows a service page does not have.
+         ⚠️ .city-rates deliberately does NOT reuse .service-price__factors —
+         that block draws a blue `+` per row, and a `+` in front of
+         "Objektschutz · 26-32 €/Std." reads as a list of extras rather than a
+         rate table. It does repeat that block's `grid-column: 1`, or it falls
+         into the second column under the price box.
+         GEO shape: question H2, the number in the first sentence. -->
+    <section class="section section--light service-price" data-nav-theme="light">
+      <div class="container service-price__layout">
+        <div class="section__intro service-price__intro">
+          <h2>Was kostet ein Sicherheitsdienst in Forchheim?</h2>
+          <p class="service-price__answer" data-reveal data-reveal-delay>In Forchheim gelten die FRANKONIA Standardspannen: {{price.min}} bis {{price.max}} Euro pro Stunde netto je nach Leistung und Einsatzzeit.</p>
+        </div>
+
+        <!-- The shared Preis-Box. `range` comes from content/values.json, so the
+             annual rate change stays ONE edit for all 27 pages that publish it
+             (client rule G10). -->
+        <!-- include: price-box range="{{price.range}}" note="netto, Richtwerte für Einsätze in Stadt und Landkreis Forchheim" -->
+
+        <!-- The draft's own "Typische Preisspannen" line, split into its services
+             so it can be read rather than parsed. -->
+        <ul class="city-rates" data-item-reveal="li">
+          <li><span class="city-rates__service">Baustellenbewachung</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+          <li><span class="city-rates__service">Werkschutz</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+        </ul>
+
+        <p class="service-price__hint">
+          <svg class="icon service-price__hint-icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <span>Richtwerte netto. Ihr konkretes Angebot erhalten Sie unverbindlich innerhalb eines Werktages.</span>
+        </p>
+      </div>
+    </section>
+    <!-- No seam: price and faq are both light surfaces, and tiles the colour of the section above would be invisible against the one below (§9.2). -->
+    <!-- ============ 6. FAQ ============ -->
+    <!-- 5 place-specific questions, the draft's own, verbatim. The visible copy
+         and the FAQPage JSON-LD at the top of this file must stay byte-identical
+         with markup stripped — the one thing on this page type that is easy to
+         break with a small edit and impossible to see. They are generated from
+         one source by docs/design-sources/city-pages.py, so an edit here has to
+         be made in BOTH places by hand.
+         ⚠️ The first question answers "do you have an office here?" honestly.
+         That is the UWG requirement of §10.1, not filler — do not soften it into
+         a local-address claim. -->
+    <section class="section section--light city-faq service-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Sicherheitsdienst Forchheim: die häufigsten Fragen</h2>
+        </div>
+
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
+          <details class="faq-item">
+            <summary><h3>Wie schnell kann FRANKONIA in Forchheim starten?</h3></summary>
+            <p class="faq-item__answer">Sehr kurzfristig: Die Einsatzleitung ist rund um die Uhr erreichbar und organisiert Einsätze nach Absprache auch von heute auf morgen. Laufende Aufträge im Raum Forchheim betreuen feste Teams.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Was kostet ein Sicherheitsdienst in Forchheim?</h3></summary>
+            <p class="faq-item__answer">In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde netto, je nach Leistung und Einsatzzeit. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Übernimmt FRANKONIA Feste und Veranstaltungen in Forchheim?</h3></summary>
+            <p class="faq-item__answer">Ja — Einlass, Ordnerdienst, Objektschutz für Anlieger und Betriebe sowie Brandsicherheitswachen nach Auflage. Je früher Sie anfragen, desto sicherer ist die Wunschbesetzung.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Betreut FRANKONIA auch den Landkreis Forchheim?</h3></summary>
+            <p class="faq-item__answer">Ja — Stadt und Landkreis Forchheim inklusive der Gewerbestandorte im Umland und im Wiesenttal gehören zum festen Einsatzgebiet. Kurzes Telefonat genügt: <a href="{{phone.href}}">{{phone.display}}</a>.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Lohnt sich ein Sicherheitsdienst auch für kleinere Betriebe in Forchheim?</h3></summary>
+            <p class="faq-item__answer">Ja. Kontrollrunden statt Dauerposten oder die Kombination mit Technik machen auch kleinere Schutzkonzepte wirtschaftlich. Der beste Start ist das <a href="/sicherheitskonzept/">kostenfreie Sicherheitskonzept</a>: hochprofessionell, kostet nichts, und Kunden haben damit schon bis zu 30 % gespart.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 7. ABSCHLUSS-CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The shared lead-form partial with this page's own field prefix — unique
+         per page, or two forms in one document would break every <label for>.
+         The draft's separate Formulartitel ("Ihre Anfrage für Forchheim") is not
+         rendered as a second heading: the section H2 already says it, the same
+         call /werkschutz/ and Nürnberg made.
+         The form still submits nowhere sitewide (action="#", native validation
+         only) — docs/build-checklist.md Paso 4. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Jetzt Sicherheitsdienst für Forchheim anfragen</h2>
+          <p class="conversion__intro-lede">Beschreiben Sie kurz Ihr Objekt oder Vorhaben in Forchheim — Angebot innerhalb eines Werktages, Begehung meist noch in derselben Woche.</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="fo" messageLabel="Ihr Objekt oder Vorhaben in Forchheim" -->
+
+          <p class="conversion__form-alt">Lieber direkt sprechen? <a href="{{phone.href}}">{{phone.display}}</a></p>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 8. UMGEBUNG ============ -->
+    <!-- ⚠️ BELOW THE FORM, which departs from the draft's own order and follows
+         Nürnberg's (client-approved, 2026-08-10). The drafts title this section
+         "Umgebung + Abschluss-CTA", i.e. as ONE closing block — but functionally
+         they pull opposite ways: a set of EXITS directly above the page's primary
+         conversion. The service template resolves the same tension the other way
+         ("… FAQ → CTA → verwandte Seiten"), so there is internal precedent.
+         No copy changed. See docs/page-conventions.md §10.2.
+         Small H2 per the draft — the fourth declared exception to §2.
+         A neighbour with no page of its own is a MENTION with no link and no
+         arrow, so "this goes somewhere" is never signalled by colour alone. -->
+    <section class="section section--light city-nearby" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro city-nearby__intro">
+          <h2 class="city-nearby__title">Sicherheitsdienst rund um Forchheim</h2>
+          <p>Unser Einsatzgebiet endet nicht an der Forchheimer Stadtgrenze: Auch in Bamberg und Erlangen übernehmen wir Objektschutz, Baustellenbewachung und mehr.</p>
+        </div>
+
+        <ul class="city-nearby__list" data-item-reveal="li">
+          <li>
+            <a class="city-nearby__tile" href="/sicherheitsdienst-bamberg/">
+              <svg class="icon city-nearby__pin" aria-hidden="true"><use href="#icon-pin"></use></svg>
+              <span class="city-nearby__name">Bamberg</span>
+              <svg class="icon city-nearby__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-nearby__tile" href="/sicherheitsdienst-erlangen/">
+              <svg class="icon city-nearby__pin" aria-hidden="true"><use href="#icon-pin"></use></svg>
+              <span class="city-nearby__name">Erlangen</span>
+              <svg class="icon city-nearby__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

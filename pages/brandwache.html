@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- SERVICE PAGE — Brandwache. Built from
+     NewVersionCopiesFrankonia/"2026-08-04 Webtext 05 Brandwache.docx"
+     (Stand 04.08.2026), verbatim, in German.
+
+     ⚠️ THIS IS NOT A COPY OF /werkschutz/ SECTION FOR SECTION, and that is the
+     draft's own doing rather than drift: the v2 copy varies the structure per
+     service on purpose ("Struktur bewusst variiert" is written into six of the
+     nine remaining drafts). This one runs 11 sections. The BLOCKS are all the
+     shared `.service-*` chassis, and css/page-service.css is the only page
+     stylesheet loaded besides the shared form.
+
+     Colour rhythm, derived from the section surfaces rather than copied:
+       ▪ ▫ ▪ ▫ ▪ ▫ ▪ ▪ ▫ ▪ ▫
+     9 pixel seams. Tiles are always the colour of the section ABOVE
+     (docs/page-conventions.md §9.2).
+
+     GENERATED ONCE by docs/design-sources/service-pages.py, then hand-editable.
+     ⚠️ If you edit the FAQ below, edit the FAQPage graph above it too — they must
+     stay byte-identical with markup stripped. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title (59 chars) and description (150) are the draft's own —
+       docs/page-conventions.md §12. -->
+  <title>Brandwache Franken | Brandsicherheitswache 24/7 – FRANKONIA</title>
+  <meta name="description" content="Brandwache &amp; Brandsicherheitswache in Franken: kurzfristig gestellt bei BMA-Ausfall, Heißarbeiten &amp; Events. IHK-qualifizierte Kräfte, 24/7 erreichbar.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/brandwache/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/brandwache/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/brandwache/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Brandwache Franken | Brandsicherheitswache 24/7 – FRANKONIA">
+  <meta property="og:description" content="Brandwache &amp; Brandsicherheitswache in Franken: kurzfristig gestellt bei BMA-Ausfall, Heißarbeiten &amp; Events. IHK-qualifizierte Kräfte, 24/7 erreichbar.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/brandwache/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- The hero photo is the LCP element, same pattern as every other service
+       hero. One source, no srcset: the file is 820px wide and there is no larger
+       original, so a candidate list would only ever offer the same image. -->
+  <link rel="preload" as="image" href="/assets/images/brandwache.webp" type="image/webp">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "{{phone.display}}",
+      "email": "{{email}}",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://frankonia-sicherheit.de/brandwache/#service",
+      "name": "Brandwache",
+      "serviceType": "Brandwache",
+      "description": "Brandwache und Brandsicherheitswache in Franken: Ersatzmaßnahme bei BMA-Ausfall, Absicherung von Heißarbeiten und behördlich aufgelegte Brandsicherheitswachen, kurzfristig gestellt und lückenlos dokumentiert.",
+      "provider": {
+        "@id": "https://frankonia-sicherheit.de/#localbusiness"
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Bamberg" },
+        { "@type": "City", "name": "Nürnberg" },
+        { "@type": "City", "name": "Würzburg" },
+        { "@type": "City", "name": "Erlangen" },
+        { "@type": "City", "name": "Fürth" },
+        { "@type": "City", "name": "Schweinfurt" },
+        { "@type": "City", "name": "Bayreuth" },
+        { "@type": "City", "name": "Coburg" },
+        { "@type": "City", "name": "Ansbach" },
+        { "@type": "City", "name": "Hof" }
+      ],
+      "offers": {
+        "@type": "Offer",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "priceCurrency": "EUR",
+          "minPrice": 26,
+          "maxPrice": 32,
+          "unitCode": "HUR"
+        }
+      },
+      "url": "https://frankonia-sicherheit.de/brandwache/"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Leistungen",
+          "item": "https://frankonia-sicherheit.de/leistungen/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Brandwache",
+          "item": "https://frankonia-sicherheit.de/brandwache/"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/brandwache/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Was kostet eine Brandwache pro Stunde?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde, je nach Qualifikation, Einsatzzeit (Zuschläge für Nacht, Wochenende, Feiertag) und Vorlaufzeit. Für geplante Wachen erhalten Sie ein Angebot innerhalb eines Werktages, bei Notfällen nennen wir Ihnen die Konditionen direkt am Telefon."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie schnell kann FRANKONIA eine Brandwache stellen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nach Absprache auch sehr kurzfristig, etwa bei BMA-Ausfall am Wochenende. Rufen Sie direkt an (+49 951 964352-0): Die Einsatzleitung ist rund um die Uhr erreichbar und plant die Besetzung aus dem festen Mitarbeiterstamm."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Welche Qualifikation hat eine Brandwache von FRANKONIA?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Mindestens IHK-Qualifikation nach § 34a GewO plus Brandschutzhelfer-Ausbildung nach DGUV-Grundsätzen. Fordert Ihre Behörde oder Ihr Versicherer zusätzliche Qualifikationen, stimmen wir die Besetzung vor Einsatzbeginn ab."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Ersetzt die Brandwache meine Brandmeldeanlage?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nein, sie ist die anerkannte Ersatzmaßnahme, solange die Anlage gestört, gewartet oder umgebaut wird. Die Details (Rundenintervalle, besetzte Bereiche) legen Behörde oder Versicherer fest; wir setzen die Auflage um und dokumentieren jede Runde."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Stellt FRANKONIA Brandwachen auch außerhalb Bambergs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, im Umkreis von rund 100 Kilometern: in Nürnberg, Würzburg, Erlangen, Fürth sowie Bayreuth, Schweinfurt und Coburg."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wer schreibt vor, dass ich eine Brandwache brauche?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Je nach Fall: das Bauordnungsamt oder die Feuerwehr (BMA-Ausfall, Veranstaltungen nach Versammlungsstättenverordnung), Ihr Versicherer (Heißarbeiten, Sonderlagen) oder die Baustellenordnung des Auftraggebers. Wir helfen bei der Einordnung, und stimmen den Einsatzplan direkt mit der fordernden Stelle ab."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+  <!-- Shared lead-form section, then the service chassis
+       (docs/page-conventions.md §9.1). -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+
+  <!-- The documented generic effect stack (docs/page-conventions.md §4.1).
+       Deliberately NOT loaded: service-flow.js, service-contrast.js, svg-draw.js
+       and case-cards.js — /werkschutz/ needs them for blocks whose markup does
+       not exist on this page. steps-sequence.js IS loaded: the Schritte section
+       uses the shared rail. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+  <script src="/js/steps-sequence.js" defer></script>
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Chevron separators, not slashes — docs/page-conventions.md §3. Matches
+         the BreadcrumbList JSON-LD above. It sits ABOVE the hero because this
+         hero is a two-column split, not a full-bleed photograph: only the bleed
+         variant pulls the breadcrumb inside the section. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/leistungen/">Leistungen</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Brandwache</span></li>
+      </ol>
+    </nav>
+
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- The draft's own Hero-Aufbau, nothing added or dropped: badge → H1 →
+         subline → 3 ticks → double CTA → Google widget + DEKRA seals.
+         The PHONE leads here, which inverts every other page on the site.
+               That is the draft's own "CTA primär: Jetzt anrufen" and the one
+               approved exception to client rule G2 — right for the single service
+               someone reaches in the middle of an incident.
+
+         TWO COLUMNS, not the full-bleed treatment /werkschutz/ uses, and the
+         reason is the asset: the only photograph this service has is the
+         portrait 820x1217 file that already feeds the homepage's services
+         preview. A background hero would crop a portrait photo to a letterbox
+         band, which is precisely why docs/page-conventions.md §8.2 prescribes the
+         split hero for a vertical photo. The breadcrumb therefore sits ABOVE the
+         hero (a bleed hero is the only case that pulls it inside).
+
+         .hero__lead / .hero__actions / .hero__reassurance / .hero__trust are
+         load-bearing class names, not decoration — js/hero-reveal.js animates
+         exactly those four blocks in that order, so this page needs no JS of its
+         own (docs/page-conventions.md §4.1). -->
+    <section class="service-hero service-hero--split" data-hero-reveal>
+      <div class="container service-hero__grid">
+        <div class="service-hero__content">
+          <!-- Hero badge, verbatim from the Webtext (client rule G9: the badge is
+               whatever the document says it is). -->
+          <p class="hero-badge">
+            <svg class="icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+            Kurzfristig verfügbar — 24/7 erreichbar, auch am Wochenende
+          </p>
+
+          <h1>Brandwache &amp; Brandsicherheitswache in Franken</h1>
+
+          <p class="hero__lead service-hero__lead">
+            BMA-Ausfall, Heißarbeiten, Behörden-Auflage? FRANKONIA stellt qualifizierte Brandwachen, schnell, dokumentiert, zuverlässig besetzt.
+          </p>
+
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="{{phone.href}}"><svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>Jetzt anrufen: {{phone.display}}</a>
+            <a class="btn btn--secondary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </div>
+
+          <!-- The draft's three hero lines, VERBATIM. They are full sentences, so
+               this is the stacked list /jobs/ and the city pages use rather than
+               the homepage's row of short chips — a row of three sentences needs
+               roughly 1000px at this type size against the ~640px this column
+               has. /werkschutz/ truncated its three into chips on an explicit
+               client instruction; no such instruction covers these nine, so the
+               sentences stay whole. -->
+          <ul class="hero__reassurance service-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Kurzfristig verfügbar nach Absprache, auch nachts und am Wochenende
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Geschulte Kräfte: Brandschutzhelfer-Qualifikation, § 34a GewO
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Lückenlose Dokumentation für Behörde und Versicherung
+            </li>
+          </ul>
+
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- LCP element: preloaded in <head>, eager, high priority, and the
+             aspect-ratio is this file's REAL height rather than a shared 4:5.
+             Five of the nine service photos are 1217–1225px tall, not 1227, and a
+             shared ratio leaves a strip of the frame's own background showing
+             under the photo — the exact defect §8.2 records for the homepage's
+             services preview ("some service images show a grey bar"). -->
+        <figure class="service-hero__media" style="aspect-ratio: 820 / 1217">
+          <picture>
+            <source type="image/webp" srcset="/assets/images/brandwache.webp">
+            <img src="/assets/images/brandwache.jpg" width="820" height="1217" alt="FRANKONIA Einsatzleitung im Briefing mit Sicherheitskräften vor einem Industriegebäude" loading="eager" fetchpriority="high">
+          </picture>
+        </figure>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 2. Wann ist eine Brandwache Pflicht? (GEO-Kernsektion) ============ -->
+    <!-- The draft's 4 blocks, verbatim.
+         GEO: the H2 is the visitor's own question and the answer is the FIRST
+         sentence under it, which is the pattern CLAUDE.md requires and the draft
+         already writes. Do not "fix" it into a short keyword title.
+
+         RULED, NOT CARDED — docs/page-conventions.md §8.2: on a service page the
+         Preis-Box is the only elevated surface. It also avoids re-publishing the
+         3,11:1 caveat `.service-cases`' blue cards carry, which would have landed
+         on this page 4 more times for a section the draft never asked to be
+         cards. -->
+    <section class="section section--light service-points" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Wann ist eine Brandwache vorgeschrieben?</h2>
+          <p data-reveal data-reveal-delay>Eine Brandwache ist typischerweise Pflicht, wenn eine Brandmeldeanlage ausfällt, wenn feuergefährliche Arbeiten durchgeführt werden oder wenn Behörden sie für Veranstaltungen auflegen. Die Anforderung ergibt sich je nach Fall aus Baurecht, Versammlungsstättenverordnung, den Auflagen der Feuerwehr oder den Bedingungen Ihres Versicherers.</p>
+        </div>
+
+        <ul class="service-points__list service-points__list--4" data-item-reveal="li">
+          <li class="service-points__item">
+            <h3 class="service-points__title">Ausfall der Brandmeldeanlage (BMA)</h3>
+            <p class="service-points__text">Bei Störung, Wartung oder Umbau der BMA verlangen Bauordnungsamt, Feuerwehr oder Versicherer eine Ersatzmaßnahme, meist eine Brandwache, bis die Anlage wieder betriebsbereit ist.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Heißarbeiten</h3>
+            <p class="service-points__text">Schweißen, Trennen, Löten, Dacharbeiten mit offener Flamme: Nach den Regeln der Versicherer und DGUV ist während und nach den Arbeiten eine Brandwache zu stellen (Nachkontrolle wegen Schwelbränden).</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Veranstaltungen</h3>
+            <p class="service-points__text">Für Versammlungsstätten, Bühnen und pyrotechnische Effekte kann die Behörde eine Brandsicherheitswache auflegen, teils durch die Feuerwehr, teils durch qualifizierte private Kräfte.</p>
+            <a class="service-link" href="/veranstaltungsschutz/">Zum Veranstaltungsschutz<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Erhöhte Brandlast im Betrieb</h3>
+            <p class="service-points__text">Nach Bränden, bei Umbauten oder in Sonderlagen (z. B. abgeschaltete Sprinkler), als Auflage oder freiwillige Absicherung gegenüber dem Versicherer.</p>
+          </li>
+        </ul>
+
+        <p class="service-points__outro" data-reveal><a class="service-link" href="/ratgeber/brandwache-wann-vorgeschrieben/">Wann eine Brandwache vorgeschrieben ist<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></p>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 3. Leistungsumfang ============ -->
+    <!-- The draft's Häkchenliste, verbatim, as a two-column tick list.
+         ⚠️ NOT `.service-flow` (the pinned 50/50 scrollytelling /werkschutz/ uses
+         for the same section). That block needs SIX photographs per service and
+         only Werkschutz has them; this page has one. The drafts describe this
+         section as "H2 + Häkchenliste", which is what this is. -->
+    <section class="section service-scope">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Das leistet die FRANKONIA Brandwache</h2>
+        </div>
+
+        <ul class="service-scope__list" data-item-reveal="li">
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Kontrollgänge nach Einsatzplan</h3>
+              <p class="service-scope__text">Festgelegte Intervalle und Routen, angepasst an Brandlast und Objektlage, dokumentiert je Runde.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Überwachung von Heißarbeiten</h3>
+              <p class="service-scope__text">Absicherung während der Arbeiten plus vorgeschriebene Nachkontrolle, wenn Schwelbrände am wahrscheinlichsten sind.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Erstmaßnahmen im Brandfall</h3>
+              <p class="service-scope__text">Alarmierung nach Meldekette, Entstehungsbrand-Bekämpfung mit geeigneten Löschmitteln, Einweisung der Feuerwehr, Räumungsunterstützung.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Ersatzmaßnahme bei BMA-Ausfall</h3>
+              <p class="service-scope__text">Besetzung nach behördlicher Auflage, inklusive Abstimmung mit Feuerwehr und Bauordnungsamt.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Lückenlose Dokumentation</h3>
+              <p class="service-scope__text">Wachbuch mit Rundenprotokoll, Vorkommnissen und Übergaben, als Nachweis für Behörde und Versicherung.</p>
+            </div>
+          </li>
+        </ul>
+
+        <aside class="service-highlight" data-reveal>
+          <p>Ausrüstung nach Lage: Feuerlöscher, Warnkleidung, Kommunikationsmittel und, wo gefordert, zusätzliche Qualifikationen (Brandschutzhelfer nach DGUV, Ersthelfer), abgestimmt auf Ihre Auflage.</p>
+        </aside>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 4. Warum FRANKONIA (Pain-Aufhänger, kompakt) ============ -->
+    <!-- The draft's 3 blocks, verbatim.
+
+         RULED, NOT CARDED — docs/page-conventions.md §8.2: on a service page the
+         Preis-Box is the only elevated surface. It also avoids re-publishing the
+         3,11:1 caveat `.service-cases`' blue cards carry, which would have landed
+         on this page 3 more times for a section the draft never asked to be
+         cards. -->
+    <section class="section section--light service-points" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Bei einer Pflicht-Brandwache zählt nur eines: jede Schicht zuverlässig besetzt</h2>
+          <p data-reveal data-reveal-delay>Eine unbesetzte Brandwach-Schicht ist nicht nur ein Sicherheitsrisiko, sondern ein Verstoß gegen Ihre Auflage, mit Konsequenzen bis zum Nutzungsverbot. Deshalb:</p>
+        </div>
+
+        <ul class="service-points__list service-points__list--3" data-item-reveal="li">
+          <li class="service-points__item">
+            <h3 class="service-points__title">Zuverlässig besetzt</h3>
+            <p class="service-points__text">Fester Mitarbeiterstamm, eigene Einsatzleitung, dokumentierte Übergaben, jede Schicht nachweisbar besetzt.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Qualifiziert nach Auflage</h3>
+            <p class="service-points__text">Kräfte mit § 34a GewO und Brandschutzhelfer-Qualifikation; auf Wunsch stimmen wir die Qualifikation direkt mit Ihrer Behörde ab.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Erreichbar, wenn es brennt, auch organisatorisch</h3>
+            <p class="service-points__text">Ihr Ansprechpartner ist 24/7 direkt erreichbar, Verstärkung und Verlängerung sind ein Anruf.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 5. Typische Einsätze ============ -->
+    <!-- The draft's 4 blocks, verbatim.
+
+         RULED, NOT CARDED — docs/page-conventions.md §8.2: on a service page the
+         Preis-Box is the only elevated surface. It also avoids re-publishing the
+         3,11:1 caveat `.service-cases`' blue cards carry, which would have landed
+         on this page 4 more times for a section the draft never asked to be
+         cards. -->
+    <section class="section service-points">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Typische Brandwache-Einsätze in Franken</h2>
+        </div>
+
+        <ul class="service-points__list service-points__list--4" data-item-reveal="li">
+          <li class="service-points__item">
+            <h3 class="service-points__title">Industriebetrieb, BMA-Störung</h3>
+            <p class="service-points__text">Freitagnachmittag fällt die Brandmeldeanlage aus, die Versicherung fordert eine Wache übers Wochenende. FRANKONIA besetzt ab dem Abend, bis der Errichter die Anlage instand gesetzt hat.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Baustelle, Dacharbeiten</h3>
+            <p class="service-points__text">Schweißarbeiten an der Dachabdichtung — Brandwache während der Arbeiten plus zweistündige Nachkontrolle laut Auflage des Versicherers.</p>
+            <a class="service-link" href="/baustellenbewachung/">Zur Baustellenbewachung<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Veranstaltung mit Auflage</h3>
+            <p class="service-points__text">Stadtfest, Bühne, Pyrotechnik — Brandsicherheitswache nach behördlicher Vorgabe, koordiniert mit Feuerwehr und Veranstalter.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Kliniken &amp; Einrichtungen</h3>
+            <p class="service-points__text">Umbau im laufenden Betrieb, Sprinkler bereichsweise außer Betrieb — Brandwache als Ersatzmaßnahme, abgestimmt auf den Räumungsplan.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 6. KOSTEN ============ -->
+    <!-- The block docs/build-checklist.md counts on 27 pages, reused verbatim.
+         GEO pattern: question H2, the answer in the first sentence, then what
+         moves it.
+         ⚠️ EVERY PRICE IS A TOKEN, never a literal (client rule G10): the draft
+         writes "zwischen 26 und 32 Euro" and it is emitted as {{price.min}} /
+         {{price.max}}, so the annual rate change stays one edit in
+         content/values.json instead of 27 pages x 2 (visible + JSON-LD).
+         DOM order is the design: intro → price → factors → Hinweis, which is the
+         phone order, done in markup rather than with `order` so the tab order
+         matches the screen (§7). -->
+    <section class="section section--light service-price" data-nav-theme="light">
+      <div class="container service-price__layout">
+        <div class="section__intro service-price__intro">
+          <h2>Was kostet eine Brandwache?</h2>
+          <p class="service-price__answer" data-reveal data-reveal-delay>Eine Brandwache kostet in der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde, abhängig von Qualifikation, Einsatzzeit und Vorlaufzeit. Nacht-, Wochenend- und Feiertagseinsätze liegen durch tarifliche Zuschläge am oberen Ende.</p>
+        </div>
+
+        <!-- include: price-box range="{{price.range}}" note="netto, je nach Qualifikation, Einsatzzeit und Vorlauf" priceBoxTick1="Kurzfristig verfügbar nach Absprache" priceBoxTick2="Dokumentation für Behörde &amp; Versicherung inklusive" priceBoxCta="Jetzt anrufen: {{phone.display}}" priceBoxCtaHref="{{phone.href}}" -->
+
+        <ul class="service-price__factors" data-item-reveal>
+          <li>Geforderte Qualifikation (Brandschutzhelfer, ggf. zusätzliche Auflagen der Behörde)</li>
+          <li>Einsatzzeit: Nacht-, Wochenend- und Feiertagszuschläge nach Tarif</li>
+          <li>Vorlaufzeit: geplante Wache oder Notfall-Einsatz</li>
+          <li>Dauer und Schichtmodell (eine Nacht, ein Wochenende, mehrere Wochen)</li>
+          <li>Objektlage und Objektgröße</li>
+        </ul>
+
+        <p class="service-price__hint">
+          <svg class="icon service-price__hint-icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <span><strong>Hinweis:</strong> Rechnen Sie die Brandwache gegen das Risiko: Ein Nutzungsverbot, ein Deckungsproblem mit dem Versicherer oder ein Schwelbrand nach Heißarbeiten kostet ein Vielfaches der Wache.</span>
+        </p>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 7. Konkrete Schritte (Notfall-Variante) ============ -->
+    <!-- The draft's 3 steps, verbatim, on the shared rail: one numeral and one
+         node per step, the hairline between them drawn by js/steps-sequence.js as
+         each step arrives.
+
+         ⚠️ DARK SURFACE, and that is a constraint rather than a rhythm choice:
+         `.service-konzept__text` hardcodes white-at-0.88 and the block's three
+         Figma scenes carry a fixed white stroke, both stated in page-service.css.
+         ⚠️ NO per-step artwork here — this draft supplies none, and inventing 3
+         scenes per page is not assembly. The numeral, the node and the rail carry
+         the sequence, exactly as the mobile layout always has. -->
+    <section class="section service-konzept">
+      <div class="container service-konzept__inner">
+        <div class="section__intro service-konzept__intro">
+          <h2>So schnell steht Ihre Brandwache</h2>
+        </div>
+
+        <ol class="service-konzept__steps" data-steps-sequence data-no-text-reveal>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">01</span>
+            <h3 class="service-points__title">Anrufen oder anfragen</h3>
+            <p class="service-konzept__text">Schildern Sie Lage, Auflage und Zeitraum, telefonisch geht es am schnellsten: +49 951 964352-0.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">02</span>
+            <h3 class="service-points__title">Abstimmung &amp; Angebot</h3>
+            <p class="service-konzept__text">Wir klären Qualifikation und Einsatzplan (bei Bedarf direkt mit Ihrer Behörde oder Ihrem Versicherer), Ihr Angebot erhalten Sie kurzfristig, bei geplanten Wachen innerhalb eines Werktages.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">03</span>
+            <h3 class="service-points__title">Wache steht</h3>
+            <p class="service-konzept__text">Ihre Brandwache beginnt zum vereinbarten Zeitpunkt, mit Wachbuch, Meldekette und direkt erreichbarem Einsatzleiter.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+    <!-- No seam: steps and contact are both dark surfaces, and tiles the colour of the section above would be invisible against the one below (§9.2). -->
+    <!-- ============ 8. TRUST / ANSPRECHPARTNER ============ -->
+    <!-- ✅ SETTLED BY THE CLIENT (2026-08-13, Q2: "Keep it — always. The Alexander
+         Jäger contact section stays on every page where the documents specify
+         it"). This draft's Trust section names him, so the page carries the full
+         contact block; the drafts that do not name him get the certification
+         strip instead, which is the same decision applied honestly rather than
+         a photo added everywhere.
+
+         ⚠️ DARK SURFACE, twice over: the certs panel is a 6 %-white tint, and the
+         portrait's backdrop is normalised to #010101 exactly so its edge IS the
+         page colour. A light-section version means re-running
+         docs/design-sources/portrait-key-backdrop.py with a different target
+         colour, NOT a CSS override.
+
+         ⚠️ The phone and e-mail actions are FRANKONIA's real published details
+         (they are already on /werkschutz/ and in content/values.json), but THIS
+         draft's Trust paragraph does not repeat them — only Objektschutz's does.
+         They are included because a contact block whose purpose is contact
+         without a way to make contact is worse than either option. Worth one
+         confirmation with Chris. -->
+    <section class="section service-contact">
+      <div class="container service-contact__layout">
+        <div class="section__intro service-contact__intro">
+          <h2>Zertifizierte Sicherheit auch im Ausnahmezustand</h2>
+        </div>
+
+        <figure class="service-contact__portrait" data-reveal>
+          <picture>
+            <source type="image/webp" srcset="/assets/images/wk-contact-alexander-jaeger-480.webp 480w, /assets/images/wk-contact-alexander-jaeger-960.webp 960w" sizes="(min-width: 900px) 30rem, min(48vw, 14rem)">
+            <img src="/assets/images/wk-contact-alexander-jaeger-960.jpg" srcset="/assets/images/wk-contact-alexander-jaeger-960.jpg 960w" sizes="(min-width: 900px) 30rem, min(48vw, 14rem)" width="960" height="1200" alt="Alexander Jäger, Vertriebsleiter und Sicherheitsbeauftragter bei FRANKONIA" loading="lazy">
+          </picture>
+        </figure>
+
+        <div class="service-contact__person">
+          <p class="service-contact__name">Alexander Jäger</p>
+          <p class="service-contact__role">Vertriebsleiter und Sicherheitsbeauftragter</p>
+          <p class="service-contact__body">FRANKONIA ist nach DIN 77200-1 und ISO 9001 zertifiziert (DEKRA-geprüft) und stellt seit über zehn Jahren Wachen für Betriebe, Baustellen, Veranstaltungen und öffentliche Einrichtungen in ganz Franken, unter anderem für die Sozialstiftung Bamberg und bei der Bamberger Sandkerwa. Ihr Ansprechpartner für Ihre Anfrage: Alexander Jäger, Vertriebsleiter und Sicherheitsbeauftragter; im Einsatz ist die Einsatzleitung rund um die Uhr erreichbar.</p>
+
+          <div class="service-contact__actions">
+            <a class="service-contact__action service-contact__action--phone" href="{{phoneJaeger.href}}">
+              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phoneJaeger.display}}
+            </a>
+            <a class="service-contact__action service-contact__action--mail" href="mailto:{{emailJaeger}}">
+              <svg class="icon" aria-hidden="true"><use href="#icon-mail"></use></svg>
+              {{emailJaeger}}
+            </a>
+          </div>
+        </div>
+
+        <div class="service-contact__certs" data-reveal>
+          <h3 class="service-contact__certs-title">Dahinter steht ein zertifiziertes System</h3>
+
+          <div class="service-contact__seals">
+            <img class="service-contact__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="service-contact__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+          </div>
+
+          <ul class="service-contact__certs-list">
+            <li><strong>DIN 77200-1</strong><span>für stationäre Sicherheitsdienste</span></li>
+            <li><strong>DIN EN ISO 9001</strong><span>seit 2016, geprüft durch die DEKRA</span></li>
+            <li><strong>§ 34a GewO</strong><span>ausschließlich IHK-qualifizierte Kräfte</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 9. FAQ ============ -->
+    <!-- The draft's 6 questions and answers, verbatim, mirroring the FAQPage
+         JSON-LD at the top of this file 1:1.
+         ⚠️ The visible copy and the schema copy must stay BYTE-IDENTICAL with
+         markup stripped. They are generated from one source by
+         docs/design-sources/service-pages.py, so an edit here has to be made in
+         BOTH places by hand. It is the one thing on this page type that is easy
+         to break with a small edit and impossible to see. -->
+    <section class="section section--light service-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Brandwache: die häufigsten Fragen</h2>
+        </div>
+
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
+          <details class="faq-item">
+            <summary><h3>Was kostet eine Brandwache pro Stunde?</h3></summary>
+            <p class="faq-item__answer">In der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde, je nach Qualifikation, Einsatzzeit (Zuschläge für Nacht, Wochenende, Feiertag) und Vorlaufzeit. Für geplante Wachen erhalten Sie ein Angebot innerhalb eines Werktages, bei Notfällen nennen wir Ihnen die Konditionen direkt am Telefon.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Wie schnell kann FRANKONIA eine Brandwache stellen?</h3></summary>
+            <p class="faq-item__answer">Nach Absprache auch sehr kurzfristig, etwa bei BMA-Ausfall am Wochenende. Rufen Sie direkt an (+49 951 964352-0): Die Einsatzleitung ist rund um die Uhr erreichbar und plant die Besetzung aus dem festen Mitarbeiterstamm.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Welche Qualifikation hat eine Brandwache von FRANKONIA?</h3></summary>
+            <p class="faq-item__answer">Mindestens IHK-Qualifikation nach § 34a GewO plus Brandschutzhelfer-Ausbildung nach DGUV-Grundsätzen. Fordert Ihre Behörde oder Ihr Versicherer zusätzliche Qualifikationen, stimmen wir die Besetzung vor Einsatzbeginn ab.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Ersetzt die Brandwache meine Brandmeldeanlage?</h3></summary>
+            <p class="faq-item__answer">Nein, sie ist die anerkannte Ersatzmaßnahme, solange die Anlage gestört, gewartet oder umgebaut wird. Die Details (Rundenintervalle, besetzte Bereiche) legen Behörde oder Versicherer fest; wir setzen die Auflage um und dokumentieren jede Runde.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Stellt FRANKONIA Brandwachen auch außerhalb Bambergs?</h3></summary>
+            <p class="faq-item__answer">Ja, im Umkreis von rund 100 Kilometern: in <a href="/brandwache-nuernberg/">Nürnberg</a>, <a href="/brandwache-wuerzburg/">Würzburg</a>, <a href="/brandwache-erlangen/">Erlangen</a>, <a href="/brandwache-fuerth/">Fürth</a> sowie Bayreuth, Schweinfurt und Coburg.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Wer schreibt vor, dass ich eine Brandwache brauche?</h3></summary>
+            <p class="faq-item__answer">Je nach Fall: das Bauordnungsamt oder die Feuerwehr (BMA-Ausfall, Veranstaltungen nach Versammlungsstättenverordnung), Ihr Versicherer (Heißarbeiten, Sonderlagen) oder die Baustellenordnung des Auftraggebers. Wir helfen bei der Einordnung, und stimmen den Einsatzplan direkt mit der fordernden Stelle ab.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 10. ABSCHLUSS-CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The shared lead-form partial with this page's own field prefix — unique
+         per page, or two forms in one document would break every <label for>.
+         The form still submits nowhere sitewide (action="#", native validation
+         only) — docs/build-checklist.md Paso 4. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Brandwache benötigt? Rufen Sie an, wir planen sofort</h2>
+          <p class="conversion__intro-lede">Bei akutem Bedarf: +49 951 964352-0, rund um die Uhr. Für geplante Wachen: Formular ausfüllen, Angebot innerhalb eines Werktages. Formulartitel: Ihre Brandwache-Anfrage (Zeitraum, Objekt, Auflage)</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="bw" messageLabel="Zeitraum, Objekt und Auflage" -->
+
+          <p class="conversion__form-alt">Lieber direkt sprechen? <a href="{{phone.href}}">{{phone.display}}</a></p>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 11. VERWANDTE SEITEN ============ -->
+    <!-- The draft's own internal-link list. Several destinations are not built
+         yet; the URLs are the confirmed ones from guidelines §2.2, so these are
+         real links to pages still to come, not placeholders — the same
+         convention /werkschutz/ and the city pages already follow.
+         ⚠️ `.service-related__cols` / `__col`, NOT `__grid`: that second variant
+         had no CSS rule anywhere and fell back to block layout. /sicherheitskonzept/
+         was the last page carrying it and was corrected 2026-08-17 — do not
+         reintroduce it. -->
+    <section class="section section--light service-related" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Verwandte Leistungen und Einsatzgebiete</h2>
+        </div>
+
+        <div class="service-related__cols">
+
+          <div class="service-related__col">
+            <h3 class="service-related__title">Verwandte Leistungen</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/objektschutz/"><span class="service-related__label">Objektschutz</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/veranstaltungsschutz/"><span class="service-related__label">Veranstaltungsschutz</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/baustellenbewachung/"><span class="service-related__label">Baustellenbewachung</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+          <div class="service-related__col">
+            <h3 class="service-related__title">Brandwache in Ihrer Stadt</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/brandwache-nuernberg/"><span class="service-related__label">Brandwache Nürnberg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/brandwache-wuerzburg/"><span class="service-related__label">Brandwache Würzburg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/brandwache-erlangen/"><span class="service-related__label">Brandwache Erlangen</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/brandwache-fuerth/"><span class="service-related__label">Brandwache Fürth</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

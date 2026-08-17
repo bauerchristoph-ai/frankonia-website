@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- SERVICE PAGE — Objektschutz. Built from
+     NewVersionCopiesFrankonia/"2026-08-04 Webtext 02 Objektschutz.docx"
+     (Stand 04.08.2026), verbatim, in German.
+
+     ⚠️ THIS IS NOT A COPY OF /werkschutz/ SECTION FOR SECTION, and that is the
+     draft's own doing rather than drift: the v2 copy varies the structure per
+     service on purpose ("Struktur bewusst variiert" is written into six of the
+     nine remaining drafts). This one runs 12 sections. The BLOCKS are all the
+     shared `.service-*` chassis, and css/page-service.css is the only page
+     stylesheet loaded besides the shared form.
+
+     Colour rhythm, derived from the section surfaces rather than copied:
+       ▪ ▫ ▪ ▫ ▪ ▫ ▪ ▫ ▪ ▫ ▪ ▫
+     11 pixel seams. Tiles are always the colour of the section ABOVE
+     (docs/page-conventions.md §9.2).
+
+     GENERATED ONCE by docs/design-sources/service-pages.py, then hand-editable.
+     ⚠️ If you edit the FAQ below, edit the FAQPage graph above it too — they must
+     stay byte-identical with markup stripped. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title (55 chars) and description (155) are the draft's own —
+       docs/page-conventions.md §12. -->
+  <title>Objektschutz Franken | Objektbewachung 24/7 – FRANKONIA</title>
+  <meta name="description" content="Objektschutz vom DEKRA-zertifizierten Sicherheitsdienst aus Bamberg: Bestreifung, Zugangskontrolle, Alarmverfolgung. Kostenfreies Sicherheitskonzept vorab.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/objektschutz/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/objektschutz/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/objektschutz/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Objektschutz Franken | Objektbewachung 24/7 – FRANKONIA">
+  <meta property="og:description" content="Objektschutz vom DEKRA-zertifizierten Sicherheitsdienst aus Bamberg: Bestreifung, Zugangskontrolle, Alarmverfolgung. Kostenfreies Sicherheitskonzept vorab.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/objektschutz/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- The hero photo is the LCP element, same pattern as every other service
+       hero. One source, no srcset: the file is 820px wide and there is no larger
+       original, so a candidate list would only ever offer the same image. -->
+  <link rel="preload" as="image" href="/assets/images/objektschutz.webp" type="image/webp">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "{{phone.display}}",
+      "email": "{{email}}",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://frankonia-sicherheit.de/objektschutz/#service",
+      "name": "Objektschutz",
+      "serviceType": "Objektschutz",
+      "description": "Objektschutz für Gebäude, Gelände und Einrichtungen in Franken: dokumentierte Bestreifung, Zugangskontrolle, Alarmverfolgung und Technik-Bedienung durch IHK-qualifizierte Kräfte nach § 34a GewO.",
+      "provider": {
+        "@id": "https://frankonia-sicherheit.de/#localbusiness"
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Bamberg" },
+        { "@type": "City", "name": "Nürnberg" },
+        { "@type": "City", "name": "Würzburg" },
+        { "@type": "City", "name": "Erlangen" },
+        { "@type": "City", "name": "Fürth" },
+        { "@type": "City", "name": "Schweinfurt" },
+        { "@type": "City", "name": "Bayreuth" },
+        { "@type": "City", "name": "Coburg" },
+        { "@type": "City", "name": "Ansbach" },
+        { "@type": "City", "name": "Hof" }
+      ],
+      "offers": {
+        "@type": "Offer",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "priceCurrency": "EUR",
+          "minPrice": 26,
+          "maxPrice": 32,
+          "unitCode": "HUR"
+        }
+      },
+      "url": "https://frankonia-sicherheit.de/objektschutz/"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Leistungen",
+          "item": "https://frankonia-sicherheit.de/leistungen/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Objektschutz",
+          "item": "https://frankonia-sicherheit.de/objektschutz/"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/objektschutz/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Was kostet Objektschutz pro Stunde?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Objektschutz kostet in der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde, je nach Qualifikation der Sicherheitskräfte, Einsatzzeit (Nacht-, Wochenend- und Feiertagszuschläge) und Umfang des Auftrags. Sie erhalten von FRANKONIA ein transparentes, unverbindliches Angebot innerhalb eines Werktages, inklusive kostenfreier Begehung."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was ist der Unterschied zwischen Objektschutz und Werkschutz?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Objektschutz sichert Gebäude, Gelände und Einrichtungen aller Art, etwa Bürogebäude, Logistikhallen oder öffentliche Einrichtungen. Werkschutz ist die spezialisierte Form für Industrieanlagen und Betriebsstätten mit laufender Produktion, mit zusätzlichem Fokus auf Pfortendienste und Anlagen-Bedienung. FRANKONIA bietet beides, welche Form zu Ihnen passt, klärt die kostenfreie Begehung."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie schnell kann FRANKONIA mit dem Objektschutz starten?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nach der kostenfreien Begehung erhalten Sie Ihr Angebot innerhalb eines Werktages. Kurzfristige Einsätze sind nach Absprache möglich, da wir mit eigener Einsatzleitung und festem Mitarbeiterstamm planen. Rufen Sie bei dringendem Bedarf direkt an: +49 951 964352-0."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Sind die Sicherheitskräfte im Objektschutz qualifiziert?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja. Alle FRANKONIA Sicherheitskräfte sind mindestens IHK-qualifiziert nach § 34a GewO und technik-geschult, damit sie Ihre Alarm- und Sicherheitsanlagen sachgemäß bedienen können. Das Unternehmen ist nach DIN 77200-1 für stationäre Sicherheitsdienstleistungen und nach ISO 9001 zertifiziert, geprüft durch die DEKRA."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "In welchen Regionen bietet FRANKONIA Objektschutz an?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "FRANKONIA ist von Bamberg aus im Umkreis von rund 100 Kilometern im Einsatz: in ganz Oberfranken sowie im Großraum Nürnberg, in Würzburg, Erlangen, Fürth, Bayreuth, Schweinfurt und Coburg. Kurzfristige Einsätze organisiert die rund um die Uhr erreichbare Einsatzleitung."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+  <!-- Shared lead-form section, then the service chassis
+       (docs/page-conventions.md §9.1). -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+
+  <!-- The documented generic effect stack (docs/page-conventions.md §4.1).
+       Deliberately NOT loaded: service-flow.js, service-contrast.js, svg-draw.js
+       and case-cards.js — /werkschutz/ needs them for blocks whose markup does
+       not exist on this page. steps-sequence.js IS loaded: the Schritte section
+       uses the shared rail. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+  <script src="/js/steps-sequence.js" defer></script>
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Chevron separators, not slashes — docs/page-conventions.md §3. Matches
+         the BreadcrumbList JSON-LD above. It sits ABOVE the hero because this
+         hero is a two-column split, not a full-bleed photograph: only the bleed
+         variant pulls the breadcrumb inside the section. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/leistungen/">Leistungen</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Objektschutz</span></li>
+      </ol>
+    </nav>
+
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- The draft's own Hero-Aufbau, nothing added or dropped: badge → H1 →
+         subline → 3 ticks → double CTA → Google widget + DEKRA seals.
+         Primary = the free-offer form, secondary = the phone: client rule G2's
+               default order, and the label G3 requires for a CTA pointing at a form.
+
+         TWO COLUMNS, not the full-bleed treatment /werkschutz/ uses, and the
+         reason is the asset: the only photograph this service has is the
+         portrait 820x1227 file that already feeds the homepage's services
+         preview. A background hero would crop a portrait photo to a letterbox
+         band, which is precisely why docs/page-conventions.md §8.2 prescribes the
+         split hero for a vertical photo. The breadcrumb therefore sits ABOVE the
+         hero (a bleed hero is the only case that pulls it inside).
+
+         .hero__lead / .hero__actions / .hero__reassurance / .hero__trust are
+         load-bearing class names, not decoration — js/hero-reveal.js animates
+         exactly those four blocks in that order, so this page needs no JS of its
+         own (docs/page-conventions.md §4.1). -->
+    <section class="service-hero service-hero--split" data-hero-reveal>
+      <div class="container service-hero__grid">
+        <div class="service-hero__content">
+          <!-- Hero badge, verbatim from the Webtext (client rule G9: the badge is
+               whatever the document says it is). -->
+          <p class="hero-badge">
+            <svg class="icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+            DIN 77200-1 zertifiziert für stationäre Sicherheitsdienste
+          </p>
+
+          <h1>Objektschutz für Bamberg, Franken und Bayern</h1>
+
+          <p class="hero__lead service-hero__lead">
+            Ihr Objekt, sicher bewacht: dokumentierte Bestreifung, Zugangskontrolle und Alarmverfolgung, mit festem Ansprechpartner rund um die Uhr.
+          </p>
+
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn btn--secondary service-hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+          </div>
+
+          <!-- The draft's three hero lines, VERBATIM. They are full sentences, so
+               this is the stacked list /jobs/ and the city pages use rather than
+               the homepage's row of short chips — a row of three sentences needs
+               roughly 1000px at this type size against the ~640px this column
+               has. /werkschutz/ truncated its three into chips on an explicit
+               client instruction; no such instruction covers these nine, so the
+               sentences stay whole. -->
+          <ul class="hero__reassurance service-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Bestreifung, Zugangskontrolle und Alarmverfolgung aus dokumentierter Hand
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Feste Stammkräfte, die Ihr Objekt kennen, kein ständiger Wechsel
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Unverbindliches Angebot innerhalb eines Werktages
+            </li>
+          </ul>
+
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- LCP element: preloaded in <head>, eager, high priority, and the
+             aspect-ratio is this file's REAL height rather than a shared 4:5.
+             Five of the nine service photos are 1217–1225px tall, not 1227, and a
+             shared ratio leaves a strip of the frame's own background showing
+             under the photo — the exact defect §8.2 records for the homepage's
+             services preview ("some service images show a grey bar"). -->
+        <figure class="service-hero__media" style="aspect-ratio: 820 / 1227">
+          <picture>
+            <source type="image/webp" srcset="/assets/images/objektschutz.webp">
+            <img src="/assets/images/objektschutz.jpg" width="820" height="1227" alt="FRANKONIA Sicherheitskräfte in der Einsatzleitstelle an Monitoren mit den Kamerabildern eines bewachten Objekts" loading="eager" fetchpriority="high">
+          </picture>
+        </figure>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 2. Risiko ============ -->
+    <!-- The draft's 4 blocks, verbatim.
+
+         RULED, NOT CARDED — docs/page-conventions.md §8.2: on a service page the
+         Preis-Box is the only elevated surface. It also avoids re-publishing the
+         3,11:1 caveat `.service-cases`' blue cards carry, which would have landed
+         on this page 4 more times for a section the draft never asked to be
+         cards. -->
+    <section class="section section--light service-points" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Was ein unbewachtes Objekt wirklich kostet</h2>
+          <p data-reveal data-reveal-delay>„Bei uns wurde noch nie etwas gestohlen": Diesen Satz hören wir oft, bis zum ersten Vorfall. Ohne professionellen Schutz zeigen sich die Probleme erst mit der Zeit, und im Ernstfall fehlen die Nachweise für die Versicherung.</p>
+        </div>
+
+        <ul class="service-points__list service-points__list--4" data-item-reveal="li">
+          <li class="service-points__item">
+            <h3 class="service-points__title">Einbruch</h3>
+            <p class="service-points__text">Unbewachte Objekte sind ein leichtes Ziel. Ein einziger Einbruch kostet oft mehr als ein ganzes Jahr professioneller Bewachung.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Diebstahl</h3>
+            <p class="service-points__text">Diebstahl passiert selten spektakulär, aber regelmäßig. Sichtbare Präsenz und Zugangskontrolle stoppen Gelegenheitstäter wie organisierte Banden.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Vandalismus</h3>
+            <p class="service-points__text">Graffiti, zerstörte Anlagen, beschädigte Fassaden: Das kostet Reparaturen und beschädigt das Bild Ihres Unternehmens.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Brandgefahr</h3>
+            <p class="service-points__text">Ein unbemerkter Schwelbrand kann ein ganzes Objekt vernichten. Regelmäßige Kontrollgänge erkennen Gefahrenquellen früh.</p>
+          </li>
+        </ul>
+
+        <p class="service-points__outro" data-reveal>Die gute Nachricht: Professioneller Objektschutz ist Prävention. Sichtbare, qualifizierte Sicherheitskräfte verhindern die meisten Vorfälle, bevor sie entstehen, und Sie haben im Ernstfall dokumentierte Nachweise statt offener Fragen.</p>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 3. Vorteile (Pain-Aufhänger) ============ -->
+    <!-- The draft's 3 blocks, verbatim.
+
+         RULED, NOT CARDED — docs/page-conventions.md §8.2: on a service page the
+         Preis-Box is the only elevated surface. It also avoids re-publishing the
+         3,11:1 caveat `.service-cases`' blue cards carry, which would have landed
+         on this page 3 more times for a section the draft never asked to be
+         cards. -->
+    <section class="section service-points service-section--centred">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Volle Kontrolle über Ihre Sicherheit, ohne selbst kontrollieren zu müssen</h2>
+          <p data-reveal data-reveal-delay>Vertrauen entsteht nicht durch Versprechen, sondern durch Nachweise. Deshalb ist der FRANKONIA Objektschutz so aufgebaut, dass Sie jederzeit sehen können, was auf Ihrem Objekt passiert:</p>
+        </div>
+
+        <ul class="service-points__list service-points__list--3" data-item-reveal="li">
+          <li class="service-points__item">
+            <h3 class="service-points__title">Aufgaben zuverlässig erledigt</h3>
+            <p class="service-points__text">Jede Kraft wird nach Checkliste in Ihr Objekt eingearbeitet, alle Objektdaten liegen cloud-basiert vor. Das Wächterkontrollsystem belegt jede gelaufene Runde.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Volle Transparenz</h3>
+            <p class="service-points__text">Digitales Wachbuch in Echtzeit, Vorfallberichte mit Foto, regelmäßiger Report für Ihre Geschäftsführung. Sie sehen jederzeit, was auf Ihrem Objekt passiert.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Feste Stammkräfte</h3>
+            <p class="service-points__text">Überdurchschnittliche Bezahlung bedeutet weniger Fluktuation. Sie bekommen ein eingespieltes Team, das Zugänge, Abläufe und Besonderheiten Ihres Objekts kennt.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 4. Leistungsumfang ============ -->
+    <!-- The draft's Häkchenliste, verbatim, as a two-column tick list.
+         ⚠️ NOT `.service-flow` (the pinned 50/50 scrollytelling /werkschutz/ uses
+         for the same section). That block needs SIX photographs per service and
+         only Werkschutz has them; this page has one. The drafts describe this
+         section as "H2 + Häkchenliste", which is what this is. -->
+    <section class="section section--light service-scope" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Das ist im FRANKONIA Objektschutz enthalten</h2>
+          <p data-reveal data-reveal-delay>Ihr Objektschutz wird individuell auf Ihre Anforderungen zugeschnitten.</p>
+        </div>
+
+        <ul class="service-scope__list" data-item-reveal="li">
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Bestreifung &amp; Kontrollgänge</h3>
+              <p class="service-scope__text">Regelmäßige und unregelmäßige Rundgänge über Ihr Gelände und durch Ihre Gebäude, damit Sicherheitsrisiken früh erkannt werden.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Zugangskontrolle</h3>
+              <p class="service-scope__text">Nur befugte Personen betreten Ihr Objekt — Kontrolle von Mitarbeiterausweisen, Besucher- und Lieferverkehr am Eingang.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Alarmverfolgung &amp; Technik-Bedienung</h3>
+              <p class="service-scope__text">Technik-geschulte Kräfte bedienen Ihre Sicherheitsanlagen sachgemäß und reagieren auf jeden Alarm sofort und nach klarem Meldeplan.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Lückenlose Dokumentation</h3>
+              <p class="service-scope__text">Jeder Kontrollgang und jeder Vorfall wird präzise dokumentiert, als Nachweis für Sie, Ihre Geschäftsleitung und Ihre Versicherung.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Professionelle Repräsentation</h3>
+              <p class="service-scope__text">Ihre Sicherheitskräfte treten freundlich und kompetent auf, ganz nach Ihrem Wunsch im Hemd oder in Sicherheitsmontur.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Fester Ansprechpartner, 24/7</h3>
+              <p class="service-scope__text">Einsatz- und Bereichsleiter sind rund um die Uhr direkt für Sie erreichbar, keine Warteschleifen, keine Weiterleitungen.</p>
+            </div>
+          </li>
+        </ul>
+
+        <aside class="service-highlight" data-reveal>
+          <h3 class="service-highlight__title">Bestmöglicher Schutz: Personal plus Technik</h3>
+          <p>Die preiswerteste Sicherheit entsteht aus der Kombination von geschultem Personal und moderner Technik. Wo Videoüberwachung oder Alarmanlagen sinnvoll sind, planen wir sie direkt in Ihr Sicherheitskonzept ein: ein Ansprechpartner, ein aktuelles Konzept, klare Zuständigkeiten.</p>
+          <a class="service-link" href="/sicherheitstechnik/">Zur Sicherheitstechnik<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        </aside>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 5. Anwendungsfälle ============ -->
+    <!-- The draft's 4 blocks, verbatim.
+
+         RULED, NOT CARDED — docs/page-conventions.md §8.2: on a service page the
+         Preis-Box is the only elevated surface. It also avoids re-publishing the
+         3,11:1 caveat `.service-cases`' blue cards carry, which would have landed
+         on this page 4 more times for a section the draft never asked to be
+         cards. -->
+    <section class="section service-points">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Für diese Objekte wird FRANKONIA gebucht</h2>
+        </div>
+
+        <ol class="service-points__list service-points__list--4" data-item-reveal="li">
+          <li class="service-points__item">
+            <span class="service-points__num" aria-hidden="true">01</span>
+            <h3 class="service-points__title">Industrieanlagen &amp; Firmengelände</h3>
+            <p class="service-points__text">Weitläufige Areale mit Maschinen, Material und Know-how brauchen konsequente Bestreifung und Zugangskontrolle, für Produktionsstandorte mit laufendem Betrieb übernimmt der spezialisierte Werkschutz.</p>
+            <a class="service-link" href="/werkschutz/">Zum Werkschutz<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </li>
+          <li class="service-points__item">
+            <span class="service-points__num" aria-hidden="true">02</span>
+            <h3 class="service-points__title">Bürogebäude &amp; Verwaltungen</h3>
+            <p class="service-points__text">Schutz für Mitarbeitende, IT und sensible Unterlagen, dazu ein professioneller Auftritt gegenüber Gästen und Geschäftspartnern am Eingang.</p>
+          </li>
+          <li class="service-points__item">
+            <span class="service-points__num" aria-hidden="true">03</span>
+            <h3 class="service-points__title">Logistik &amp; Lagerhallen</h3>
+            <p class="service-points__text">Hohe Warenwerte, viel Verkehr, wechselnde Fahrer, hier zählen lückenlose Kontrolle des Lieferverkehrs und dokumentierte Rundgänge.</p>
+          </li>
+          <li class="service-points__item">
+            <span class="service-points__num" aria-hidden="true">04</span>
+            <h3 class="service-points__title">Öffentliche Einrichtungen</h3>
+            <p class="service-points__text">Kliniken, Behörden, Schulen und Stiftungen: FRANKONIA schützt unter anderem Einrichtungen der Stadt Bamberg, der Sozialstiftung Bamberg und der Universität Bamberg.</p>
+          </li>
+        </ol>
+
+        <p class="service-points__outro" data-reveal>Über 300 Unternehmen und Einrichtungen vertrauen FRANKONIA, darunter die Sozialstiftung Bamberg, MORELO Reisemobile und der CleanTech Innovation Park.</p>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 6. Individuelles Sicherheitskonzept (neue Pflicht-Sektion) ============ -->
+    <!-- The draft's Häkchenliste, verbatim, as a two-column tick list.
+         ⚠️ NOT `.service-flow` (the pinned 50/50 scrollytelling /werkschutz/ uses
+         for the same section). That block needs SIX photographs per service and
+         only Werkschutz has them; this page has one. The drafts describe this
+         section as "H2 + Häkchenliste", which is what this is. -->
+    <section class="section section--light service-scope service-section--centred" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Vor dem ersten Einsatz: Ihr kostenfreies Sicherheitskonzept</h2>
+          <p data-reveal data-reveal-delay>Bevor bei FRANKONIA eine Sicherheitskraft eingeplant wird, sehen sich unsere Sicherheitsexperten Ihr Objekt an: Zugänge, Schwachstellen, vorhandene Technik, Abläufe. Daraus entsteht ein schriftliches Sicherheitskonzept mit Personalbedarf, Einsatzzeiten und, wo sinnvoll, ergänzender Technik. Das Konzept ist kostenfrei und unverbindlich, und Kunden haben damit bis zu 30 % Kosten gespart.</p>
+        </div>
+
+        <ul class="service-scope__list" data-item-reveal="li">
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <p class="service-scope__text">Begehung und Risiko-Bewertung vor Ort, kostenfrei</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <p class="service-scope__text">Schriftliches Konzept: Personal, Zeiten, Technik-Empfehlung</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <p class="service-scope__text">Kostenfrei und unverbindlich, mit klarer Empfehlung, was sich wirtschaftlich lohnt</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <p class="service-scope__text">Laufende Aktualisierung, wenn sich Ihr Objekt verändert, ebenfalls kostenfrei</p>
+            </div>
+          </li>
+        </ul>
+
+        <p class="service-points__outro" data-reveal><a class="service-link" href="/sicherheitskonzept/">So entsteht Ihr Sicherheitskonzept<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></p>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 7. Konkrete Schritte ============ -->
+    <!-- The draft's 4 steps, verbatim, on the shared rail: one numeral and one
+         node per step, the hairline between them drawn by js/steps-sequence.js as
+         each step arrives.
+
+         ⚠️ DARK SURFACE, and that is a constraint rather than a rhythm choice:
+         `.service-konzept__text` hardcodes white-at-0.88 and the block's three
+         Figma scenes carry a fixed white stroke, both stated in page-service.css.
+         ⚠️ NO per-step artwork here — this draft supplies none, and inventing 4
+         scenes per page is not assembly. The numeral, the node and the rail carry
+         the sequence, exactly as the mobile layout always has. -->
+    <section class="section service-konzept">
+      <div class="container service-konzept__inner">
+        <div class="section__intro service-konzept__intro">
+          <h2>In 4 Schritten zum zuverlässigen Objektschutz</h2>
+        </div>
+
+        <ol class="service-konzept__steps service-konzept__steps--4" data-steps-sequence data-no-text-reveal>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">01</span>
+            <h3 class="service-points__title">Kostenfreie Begehung</h3>
+            <p class="service-konzept__text">Unsere Experten sehen sich Ihr Objekt an, decken potenzielle Sicherheitsrisiken auf und geben Ihnen professionelle Empfehlungen. Sie zahlen dafür keinen Cent.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">02</span>
+            <h3 class="service-points__title">Individuelles Sicherheitskonzept</h3>
+            <p class="service-konzept__text">Auf Basis der Begehung entwickeln wir ein Konzept, das genau zu Ihrem Objekt passt: Personal, Einsatzzeiten und, wo sinnvoll, ergänzende Sicherheitstechnik.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">03</span>
+            <h3 class="service-points__title">Angebot in 1 Werktag</h3>
+            <p class="service-konzept__text">Sie erhalten Ihr unverbindliches Angebot innerhalb eines Werktages, mit transparenten Kosten und klar definiertem Leistungsumfang.</p>
+          </li>
+          <li class="service-konzept__step">
+            <span class="service-konzept__num" aria-hidden="true">04</span>
+            <h3 class="service-points__title">Schneller, reibungsloser Start</h3>
+            <p class="service-konzept__text">Ihr festes, eingearbeitetes Team übernimmt zum vereinbarten Termin, auf Wunsch sehr kurzfristig. Sie gehen kein Risiko ein und konzentrieren sich wieder voll auf Ihr Kerngeschäft.</p>
+          </li>
+        </ol>
+
+        <div class="service-konzept__actions" data-reveal>
+          <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 8. KOSTEN ============ -->
+    <!-- The block docs/build-checklist.md counts on 27 pages, reused verbatim.
+         GEO pattern: question H2, the answer in the first sentence, then what
+         moves it.
+         ⚠️ EVERY PRICE IS A TOKEN, never a literal (client rule G10): the draft
+         writes "zwischen 26 und 32 Euro" and it is emitted as {{price.min}} /
+         {{price.max}}, so the annual rate change stays one edit in
+         content/values.json instead of 27 pages x 2 (visible + JSON-LD).
+         DOM order is the design: intro → price → factors → Hinweis, which is the
+         phone order, done in markup rather than with `order` so the tab order
+         matches the screen (§7). -->
+    <section class="section section--light service-price" data-nav-theme="light">
+      <div class="container service-price__layout">
+        <div class="section__intro service-price__intro">
+          <h2>Was kostet Objektschutz?</h2>
+          <p class="service-price__answer" data-reveal data-reveal-delay>Objektschutz kostet in der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde. Wo Ihr Objekt in dieser Spanne liegt, hängt von wenigen, klar benennbaren Faktoren ab:</p>
+        </div>
+
+        <!-- include: price-box range="{{price.range}}" note="netto, je nach Qualifikation, Einsatzzeit und Umfang" priceBoxTick1="Kostenfreie Begehung vorab" priceBoxTick2="Transparente Kalkulation ohne versteckte Posten" -->
+
+        <ul class="service-price__factors" data-item-reveal>
+          <li>Qualifikation der Sicherheitskräfte (Basisschutz oder speziell geschultes Personal)</li>
+          <li>Einsatzzeiten: Nacht-, Wochenend- und Feiertagszuschläge nach Tarif</li>
+          <li>Umfang und Dauer: dauerhafte Bewachung, Randzeiten-Schutz oder Kombination mit Revierdienst (Raum Bamberg)</li>
+          <li>Größe und Beschaffenheit des Objekts (Gelände, Gebäude, Zugänge)</li>
+          <li>Kombination mit Sicherheitstechnik, die Personalstunden einsparen kann</li>
+        </ul>
+
+        <p class="service-price__hint">
+          <svg class="icon service-price__hint-icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <span><strong>Hinweis:</strong> Der scheinbar günstigste Anbieter wird teuer, wenn Schichten unbesetzt bleiben oder im Schadensfall die Dokumentation fehlt. Vergleichen Sie deshalb Leistung, nicht nur den Stundensatz.</span>
+        </p>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 9. TRUST / ANSPRECHPARTNER ============ -->
+    <!-- ✅ SETTLED BY THE CLIENT (2026-08-13, Q2: "Keep it — always. The Alexander
+         Jäger contact section stays on every page where the documents specify
+         it"). This draft's Trust section names him, so the page carries the full
+         contact block; the drafts that do not name him get the certification
+         strip instead, which is the same decision applied honestly rather than
+         a photo added everywhere.
+
+         ⚠️ DARK SURFACE, twice over: the certs panel is a 6 %-white tint, and the
+         portrait's backdrop is normalised to #010101 exactly so its edge IS the
+         page colour. A light-section version means re-running
+         docs/design-sources/portrait-key-backdrop.py with a different target
+         colour, NOT a CSS override.
+
+         ⚠️ The phone and e-mail actions are FRANKONIA's real published details
+         (they are already on /werkschutz/ and in content/values.json), but THIS
+         draft's Trust paragraph does not repeat them — only Objektschutz's does.
+         They are included because a contact block whose purpose is contact
+         without a way to make contact is worse than either option. Worth one
+         confirmation with Chris. -->
+    <section class="section service-contact">
+      <div class="container service-contact__layout">
+        <div class="section__intro service-contact__intro">
+          <h2>Verantwortung auf Geschäftsführungsebene</h2>
+        </div>
+
+        <figure class="service-contact__portrait" data-reveal>
+          <picture>
+            <source type="image/webp" srcset="/assets/images/wk-contact-alexander-jaeger-480.webp 480w, /assets/images/wk-contact-alexander-jaeger-960.webp 960w" sizes="(min-width: 900px) 30rem, min(48vw, 14rem)">
+            <img src="/assets/images/wk-contact-alexander-jaeger-960.jpg" srcset="/assets/images/wk-contact-alexander-jaeger-960.jpg 960w" sizes="(min-width: 900px) 30rem, min(48vw, 14rem)" width="960" height="1200" alt="Alexander Jäger, Vertriebsleiter und Sicherheitsbeauftragter bei FRANKONIA" loading="lazy">
+          </picture>
+        </figure>
+
+        <div class="service-contact__person">
+          <p class="service-contact__name">Alexander Jäger</p>
+          <p class="service-contact__role">Vertriebsleiter und Sicherheitsbeauftragter</p>
+          <p class="service-contact__body">Alexander Jäger, Vertriebsleiter und Sicherheitsbeauftragter, begleitet Sie von der ersten Anfrage bis zum Angebot (+49 951 964352-70 · a.jaeger@frankonia-sicherheit.de). Ihre Begehung und Ihr Konzept erstellen erfahrene Sicherheitsexperten aus der echten Einsatzpraxis; im laufenden Einsatz ist Ihr Einsatzleiter rund um die Uhr erreichbar. Dahinter: zertifizierte Qualität (DIN 77200-1, ISO 9001, DEKRA-geprüft) und übertariflich bezahlte Teams.</p>
+
+          <div class="service-contact__actions">
+            <a class="service-contact__action service-contact__action--phone" href="{{phoneJaeger.href}}">
+              <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phoneJaeger.display}}
+            </a>
+            <a class="service-contact__action service-contact__action--mail" href="mailto:{{emailJaeger}}">
+              <svg class="icon" aria-hidden="true"><use href="#icon-mail"></use></svg>
+              {{emailJaeger}}
+            </a>
+          </div>
+        </div>
+
+        <div class="service-contact__certs" data-reveal>
+          <h3 class="service-contact__certs-title">Dahinter steht ein zertifiziertes System</h3>
+
+          <div class="service-contact__seals">
+            <img class="service-contact__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="service-contact__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+          </div>
+
+          <ul class="service-contact__certs-list">
+            <li><strong>DIN 77200-1</strong><span>für stationäre Sicherheitsdienste</span></li>
+            <li><strong>DIN EN ISO 9001</strong><span>seit 2016, geprüft durch die DEKRA</span></li>
+            <li><strong>§ 34a GewO</strong><span>ausschließlich IHK-qualifizierte Kräfte</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 10. FAQ ============ -->
+    <!-- The draft's 5 questions and answers, verbatim, mirroring the FAQPage
+         JSON-LD at the top of this file 1:1.
+         ⚠️ The visible copy and the schema copy must stay BYTE-IDENTICAL with
+         markup stripped. They are generated from one source by
+         docs/design-sources/service-pages.py, so an edit here has to be made in
+         BOTH places by hand. It is the one thing on this page type that is easy
+         to break with a small edit and impossible to see. -->
+    <section class="section section--light service-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Objektschutz: die wichtigsten Antworten</h2>
+        </div>
+
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
+          <details class="faq-item">
+            <summary><h3>Was kostet Objektschutz pro Stunde?</h3></summary>
+            <p class="faq-item__answer">Objektschutz kostet in der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde, je nach Qualifikation der Sicherheitskräfte, Einsatzzeit (Nacht-, Wochenend- und Feiertagszuschläge) und Umfang des Auftrags. Sie erhalten von FRANKONIA ein transparentes, unverbindliches Angebot innerhalb eines Werktages, inklusive kostenfreier Begehung.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Was ist der Unterschied zwischen Objektschutz und Werkschutz?</h3></summary>
+            <p class="faq-item__answer">Objektschutz sichert Gebäude, Gelände und Einrichtungen aller Art, etwa Bürogebäude, Logistikhallen oder öffentliche Einrichtungen. Werkschutz ist die spezialisierte Form für Industrieanlagen und Betriebsstätten mit laufender Produktion, mit zusätzlichem Fokus auf Pfortendienste und Anlagen-Bedienung. FRANKONIA bietet beides, welche Form zu Ihnen passt, klärt die kostenfreie Begehung.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Wie schnell kann FRANKONIA mit dem Objektschutz starten?</h3></summary>
+            <p class="faq-item__answer">Nach der kostenfreien Begehung erhalten Sie Ihr Angebot innerhalb eines Werktages. Kurzfristige Einsätze sind nach Absprache möglich, da wir mit eigener Einsatzleitung und festem Mitarbeiterstamm planen. Rufen Sie bei dringendem Bedarf direkt an: +49 951 964352-0.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Sind die Sicherheitskräfte im Objektschutz qualifiziert?</h3></summary>
+            <p class="faq-item__answer">Ja. Alle FRANKONIA Sicherheitskräfte sind mindestens IHK-qualifiziert nach § 34a GewO und technik-geschult, damit sie Ihre Alarm- und Sicherheitsanlagen sachgemäß bedienen können. Das Unternehmen ist nach DIN 77200-1 für stationäre Sicherheitsdienstleistungen und nach ISO 9001 zertifiziert, geprüft durch die DEKRA.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>In welchen Regionen bietet FRANKONIA Objektschutz an?</h3></summary>
+            <p class="faq-item__answer">FRANKONIA ist von Bamberg aus im Umkreis von rund 100 Kilometern im Einsatz: in ganz Oberfranken sowie im Großraum Nürnberg, in Würzburg, Erlangen, Fürth, Bayreuth, Schweinfurt und Coburg. Kurzfristige Einsätze organisiert die rund um die Uhr erreichbare Einsatzleitung.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 11. ABSCHLUSS-CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The shared lead-form partial with this page's own field prefix — unique
+         per page, or two forms in one document would break every <label for>.
+         The form still submits nowhere sitewide (action="#", native validation
+         only) — docs/build-checklist.md Paso 4. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Jetzt Objektschutz anfragen — Angebot innerhalb eines Werktages</h2>
+          <p class="conversion__intro-lede">Beschreiben Sie kurz Ihr Objekt, den Rest übernehmen wir: kostenfreie Begehung, individuelles Sicherheitskonzept und Ihr unverbindliches Angebot innerhalb eines Werktages.</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="ob" messageLabel="Objekt und gewünschte Bewachungszeiten" -->
+
+          <p class="conversion__form-alt">Lieber direkt sprechen? <a href="{{phone.href}}">{{phone.display}}</a></p>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 12. VERWANDTE SEITEN ============ -->
+    <!-- The draft's own internal-link list. Several destinations are not built
+         yet; the URLs are the confirmed ones from guidelines §2.2, so these are
+         real links to pages still to come, not placeholders — the same
+         convention /werkschutz/ and the city pages already follow.
+         ⚠️ `.service-related__cols` / `__col`, NOT `__grid`: that second variant
+         had no CSS rule anywhere and fell back to block layout. /sicherheitskonzept/
+         was the last page carrying it and was corrected 2026-08-17 — do not
+         reintroduce it. -->
+    <section class="section section--light service-related" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Verwandte Leistungen und Einsatzgebiete</h2>
+        </div>
+
+        <div class="service-related__cols">
+
+          <div class="service-related__col">
+            <h3 class="service-related__title">Verwandte Leistungen</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/werkschutz/"><span class="service-related__label">Werkschutz</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/revier-schliessdienst/"><span class="service-related__label">Revier- &amp; Schließdienst</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitstechnik/"><span class="service-related__label">Sicherheitstechnik</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+          <div class="service-related__col">
+            <h3 class="service-related__title">Objektschutz in Ihrer Stadt</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/objektschutz-nuernberg/"><span class="service-related__label">Objektschutz Nürnberg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-nuernberg/"><span class="service-related__label">Sicherheitsdienst Nürnberg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-wuerzburg/"><span class="service-related__label">Sicherheitsdienst Würzburg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-bamberg/"><span class="service-related__label">Sicherheitsdienst Bamberg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

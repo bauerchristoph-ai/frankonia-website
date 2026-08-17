@@ -19,14 +19,45 @@ Usage:  python3 docs/design-sources/city-outline.py nuremberg
         (the slug is the geojson filename, e.g. nuremberg, wuerzburg, fuerth)
 
 Prints the viewBox and the `d` attribute to paste into the page markup.
+
+⚠️ HOW MUCH DETAIL, AND WHY IT IS NOT A POINT BUDGET ANY MORE (2026-08-14).
+This used to simplify down to MAX_POINTS = 220 "so the path stays ~2.5KB", and
+the client saw the result for what it was: "es muy rectas las líneas de border…
+no tan rectas sino un poco más detalladas". A point budget is the wrong control
+because it says nothing about what the drawing actually looks like — it happened
+to leave Nürnberg's outline with straight runs several hundred metres long, which
+at hero size read as a polygon rather than as a city.
+
+The control is now TOLERANCE_UNITS: the largest error, in viewBox units, that a
+simplified vertex may have. That converts straight into screen pixels, which is
+the only thing a viewer can see:
+
+    px on screen = TOLERANCE_UNITS x (rendered width / TARGET_W)
+
+.city-map is capped at 30rem TALL (css/page-city.css), so Nürnberg's 1000x1432
+box renders ~335px wide, i.e. 0.335 px per unit. At 1.0 unit the worst vertex is
+therefore off by 0.34 CSS px — under half a device pixel even on a retina
+screen, so the outline is visually indistinguishable from the raw 3.566-point
+boundary while still being 833 points / ~11KB instead of 45KB.
+
+DO NOT lower this to "save bytes" without re-deriving that number: the straight
+lines come back long before the file gets meaningfully smaller (220 points was
+2.6KB against 833 points' 10.7KB — 8KB of markup, which gzips to a fraction,
+bought back the entire look).
 """
 import json
 import math
 import sys
 
 TARGET_W = 1000          # viewBox width; the height follows the real aspect
-TOLERANCE_START = 0.0002 # degrees; auto-tightened until the point budget is met
-MAX_POINTS = 220         # ~2.5KB of path data — the whole point of simplifying
+# The simplification error ceiling, in viewBox units. See the module docstring:
+# this is a SUB-PIXEL budget at the size the hero actually renders, not a point
+# count. Raising it straightens the outline; lowering it only adds bytes.
+TOLERANCE_UNITS = 1.0
+# A hard stop, not a target — it only ever trips if a future boundary is far
+# more detailed than the ten fetched in July, and it prints a warning when it
+# does rather than silently straightening the shape.
+MAX_POINTS = 1600
 
 
 def load_rings(slug):
@@ -87,17 +118,32 @@ def main(slug):
     lat0 = sum(lat for _, lat in ring) / len(ring)
     pts = project(ring, lat0)
 
-    tol = TOLERANCE_START
-    while True:
-        simple = simplify(pts, tol)
-        if len(simple) <= MAX_POINTS:
-            break
-        tol *= 1.35
+    # ⚠️ THE SCALE IS DERIVED FROM THE RAW RING, BEFORE SIMPLIFYING, AND IT HAS
+    # TO BE. The tolerance is expressed in viewBox units, so it can only be
+    # converted to degrees once the degrees-per-unit factor is known — and that
+    # factor comes from the shape's own width. Deriving it from the SIMPLIFIED
+    # ring instead would be circular (the simplification would be setting its
+    # own budget) and it drifts: dropping vertices can pull the bounding box in,
+    # which changes the scale, which changes what the tolerance meant.
+    raw_xs = [x for x, _ in pts]
+    scale = TARGET_W / (max(raw_xs) - min(raw_xs))
+
+    tol = TOLERANCE_UNITS / scale
+    simple = simplify(pts, tol)
+    if len(simple) > MAX_POINTS:
+        # Not silently straightened — a boundary this detailed is a fact worth
+        # seeing, and the fix is a decision (accept the bytes, or raise the
+        # tolerance knowing the outline gets straighter), not a default.
+        print(
+            f"# ⚠️ {len(simple)} points, over MAX_POINTS ({MAX_POINTS}). "
+            f"Kept anyway — raise TOLERANCE_UNITS only after re-deriving the "
+            f"sub-pixel budget in this file's docstring.",
+            file=sys.stderr,
+        )
 
     xs = [x for x, _ in simple]
     ys = [y for _, y in simple]
     w, h = max(xs) - min(xs), max(ys) - min(ys)
-    scale = TARGET_W / w
     vb_h = round(h * scale)
 
     coords = [
@@ -107,12 +153,20 @@ def main(slug):
     d = "M" + " L".join(f"{x} {y}" for x, y in coords) + " Z"
 
     print(f"# {slug}: {props.get('osm_display_name', '')}")
-    print(f"# {len(ring)} points -> {len(simple)} (tolerance {tol:.5f} deg)")
+    print(f"# {len(ring)} points -> {len(simple)} "
+          f"(tolerance {TOLERANCE_UNITS} viewBox units = {tol:.6f} deg)")
     print(f'viewBox="0 0 {TARGET_W} {vb_h}"')
     print(f'centroid (viewBox units): '
           f'{round(sum(x for x, _ in coords) / len(coords), 1)} '
           f'{round(sum(y for _, y in coords) / len(coords), 1)}')
-    print(f'd="{d}"')
+    # ⚠️ pathLength="1" IS PART OF THE OUTPUT, not decoration. The outline draws
+    # itself with a pure-CSS dash (css/page-city.css), and pathLength renormalises
+    # the perimeter to 1 so `stroke-dasharray: 1` is exactly one lap FOR ANY CITY
+    # AT ANY SIZE. Without it the stylesheet needs this shape's measured length as
+    # a magic number — which is what it had (7381, Nürnberg's), and that number is
+    # wrong for every other city and wrong for this one the moment the tolerance
+    # above changes. Same trick .service-contrast__frame already uses.
+    print(f'<path class="city-map__area" pathLength="1" d="{d}"></path>')
     print(f"# path data: {len(d)} bytes")
 
 

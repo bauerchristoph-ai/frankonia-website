@@ -194,6 +194,42 @@
   aspect-ratio: 13 / 10;
   background-color: var(--color-bg);
   margin-inline-end: calc(-1 * var(--jobs-hero-shift, 0px));
+  /* Anchors the bottom fade below. It is `relative`, NOT `absolute`, so the bleed
+     margin above and the grid placement are untouched. */
+  position: relative;
+}
+
+/* The bottom edge fades into the section instead of ending on a hard cut (client
+   2026-08-14: "el hero image flota y se corta abruptamente abajo… hacele un
+   gradient negro como las otras"). Measured, the cut is real and not a perception
+   problem: the frame is 13/10 and `cover` crops the four people at mid-thigh, so
+   the bottom row of the export carries subject, not backdrop — luminance up to 21
+   on the 1300w file, up to 95 on the 640w one. A straight edge there reads as a
+   photo that ran out rather than as four people standing on the page.
+
+   ⚠️ VALUES COPIED FROM `.uu-lead__photo::after` (page-ueber-uns.css), not
+   re-derived — this is the site's one bottom-fade treatment and the two should be
+   one decision rather than two similar ones. Same reasoning applies verbatim:
+     · on a PSEUDO-ELEMENT, never on the <img> — a filter or mask on the image
+       would fade whatever sits behind it and would fight `object-fit`;
+     · fully transparent through the top 58 % so it never touches the faces;
+     · it lands on `--color-bg`, not a literal black, so the fade always matches
+       the surface it dissolves into.
+   ✅ It also closes the "floats" half of the same report: the export's bottom
+   corners measure 0,0,0 against the page's 1, and the ramp ends ON --color-bg, so
+   the seam that gave the rectangle away is gone. */
+.jobs-hero__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    to bottom,
+    rgb(1 1 1 / 0) 58%,
+    rgb(1 1 1 / 0.35) 78%,
+    rgb(1 1 1 / 0.8) 92%,
+    var(--color-bg) 100%
+  );
 }
 
 /* Bleeds through the container's own right inset to the viewport edge, which is

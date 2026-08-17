@@ -1,0 +1,319 @@
+
+
+========== PAGE 1 ==========
+FRANKONIA Website — Consolidated Feedback (Review of 
+2026-08-13) 
+Date: 2026-08-13 · Refers to: preview build at frankonia-website.vercel.app · From: Christoph Bauer This document replaces all previous change-request documents. It consolidates the full review of all 20 built pages (checked on desktop, tablet and mobile) plus the answers to your open questions. Structure: (1) answers to your questions, (2) global rules that apply site-wide, (3) page-by-page feedback, (4) assets we deliver. Copy source of truth remains the page documents in the “Seitenentw
+ü
+rfe” folder (“2026-08-04 Webtext 01–52”). Note: changes to the template pages (/werkschutz/, /sicherheitsdienst-nuernberg/, /
+brandwache-nuernberg/) inherit down to all pages built from those templates.	 1. Answers to your open ques
+J
+ons 
+Q1 — Legal text. Impressum: please take it 1:1 from the current live site: https://
+frankonia-sicherheit.de/impressum/. Datenschutz: we will integrate an automatic privacy-
+policy scanner that keeps the text up to date — details follow later. Plan the /datenschutz/ page as a shell for now. Q2 — Alexander Jäger section. Keep it — always. The Alexander J
+ä
+ger contact section stays on every page where the documents specify it (/werkschutz/, /sicherheitskonzept/ and the other service pages to come). Q3 — Heroes for the 4 unde
+H
+ined pages. We love the minimalist map animation (the N
+ü
+rnberg outline on /sicherheitsdienst-nuernberg/ is great). Decision: •
+/einsatzgebiete/
+, city pages and city+service pages
+: use the map animation as the hero visual, adapted per city. •
+/sicherheitskonzept/
+: standard hero (badge, H1, subline, dual CTA, checkmarks, Google widget — like the homepage), with a stylized mockup/preview of the security-concept document as the hero visual instead of a photo. This ties in with the sample PDF (Q4). •
+Across these pages, feel free to add a few real photos in the body sections; we will supply photo material. Q4 — Sample concept PDF. We will deliver a fully anonymized 18-page PDF of a real FRANKONIA security concept (all client names, addresses, contacts and customer numbers 
+========== PAGE 2 ==========
+replaced with d
+ictional placeholder data). It will be offered as a download on /
+sicherheitskonzept/ and can also feed the section preview/mockup. Delivery from our side shortly. Q7 — Brose Bamberg and Bodo Freimuth. Put both back into the references (logos and mentions as before). Q8 — English version. No English version. Please take the outdated English homepage down before anything gets indexed.	 2. Global rules (apply site-wide) 
+G1 — Secondary CTA: one H
+ixed design everywhere. De
+d
+ine ONE d
+ixed design for the secondary CTA and use it on every page, exactly as it looks on the homepage hero. Currently the secondary CTA differs in style and placement across pages (seen on /leistungen/, /
+sicherheitskonzept/, /ueber-uns/, /ratgeber/ and articles, case studies, /sicherheitsdienst-
+nuernberg/ and more). Where a page has no secondary CTA yet, add one with the clickable phone number (this also applies to /einsatzgebiete/ on all breakpoints and to all three case studies). G2 — Hero CTA order. Primary CTA = “Unverbindliches Angebot einholen”, secondary CTA = phone number. Exception: Brandwache pages only (/brandwache/ and city+service Brandwache pages like /brandwache-nuernberg/): there the phone number is the primary CTA and the offer button is secondary — that is intentional and must stay limited to Brandwache. G3 — CTA link targets. CTAs labeled “Kostenfreies Sicherheitskonzept anfordern” always link to /sicherheitskonzept/ — never to the homepage form anchor (/
+#sicherheitsanalyse). Only CTAs labeled “Unverbindliches Angebot einholen” lead to the request form. Currently wrong on the case-study pages (see 3.12/3.13). G4 — Phone numbers are always clickable (tel: link) — everywhere they appear in body text, FAQ answers and CTAs. Currently missing e.g. in the /angebot/ mini-FAQ answer and in the Brandwache guide article. G5 — Google rating format. Always “4,7” (German decimal comma) in every rating badge, and pull the value dynamically if possible. Optional nice-to-have: show star icons with the rating (as in the testimonial cards). G6 — Mobile width consistency (all pages). On wider mobile viewports the H1/subline stay too narrow while the primary CTA goes full-width and the secondary CTA does not — 
+========== PAGE 3 ==========
+headline, subline and both CTAs should use the same content width. Also give the Google rating badge (“97 Bewertungen”) a bit more padding/whitespace. G7 — Remove the form→footer transition animation. The animated transition between the closing form and the footer adds nothing — please remove it site-wide (seen on /
+leistungen/ and /einsatzgebiete/). Related minor bug (
+d
+ix only if cheap): after shrinking and re-enlarging the viewport, the transition keeps the small width.	 	 G8 — Breadcrumbs design. The current breadcrumb bar (image cut off hard, no gradient) doesn’t look good, especially on mobile. Please improve — e.g. with a gradient fade like on /
+referenzen/. G9 — Hero badges on subpages. The documents de
+d
+ine a hero badge for most subpages; currently badges render inconsistently (present on /angebot/, missing on /referenzen/ and /brandwache-nuernberg/). Please render the badge on all subpages as speci
+d
+ied in the page documents. G10 — Prices stay centrally editable. All price values (26–32 €/h range, surcharge percentages 23 % night / 26 % Sunday / 100 % public holiday, example calculations, the year in the cost-guide title) are adjusted once per year on our side — keep them editable in one place. The update must be a 5-minute content edit. G11 — Consent checkbox rendering. Verify the DSGVO checkbox sentence renders correctly in all browsers: “Ich habe die Datenschutzerklärung gelesen und stimme zu.” (previously the linked word was missing from the sentence). 
+========== PAGE 4 ==========
+G12 — WhatsApp button (verify). The d
+loating WhatsApp button must point to wa.me/
+491727866338 (+49 172 7866338), with the number easily con
+d
+igurable. This should already be implemented — please just con
+d
+irm.	 3. Page-by-page feedback 
+3.1 Homepage — / 
+Desktop: 1. Google rating: pull dynamically if possible, and show “4,7” (German format) consistently in all rating badges (see G5).	 	 2. Services grid: we will deliver a new image for Objektschutz
+. 
+========== PAGE 5 ========== 	 3. Some service images show a grey bar at the bottom or dark corners — please check the assets/rendering (shouldn’t they be clean PNGs?).	 	 4. Out
+d
+it con
+d
+igurator, Polo description: change to “Für den täglichen Empfang und Einsätze bei warmem Wetter”
+.	 	 5. Social section: videos are still missing — we will upload/deliver them
+. 
+========== PAGE 6 ========== 	 6. Results tiles (“25.000 € / 30 % / 20 %”): the client attributions “– MORELO Reisemobile”, “– Sozialstiftung Bamberg”, “– CleanTech Innovation Park” must be removed
+. Results carry no client attribution; instead link each tile to its case study (/referenzen/case-study-…/, see 3.12–3.14).	 	 7. Coverage section headline “Von Bamberg aus in Franken und ganz Bayern im Einsatz”: allow more width so it breaks into 2 lines instead of 3. 
+========== PAGE 7 ========== 	 8. Coverage section: the additional locations (Hof, Kronach, Kulmbach, Lichtenfels, Schwandorf) must not just be listed as plain text below — render them as pills AND mark them on the map
+. They get no own city pages (render without links), but they must be visible. Forchheim must appear in the city chips/footer as a linked city (it has a page).	 	 9. SEO/philosophy section (the three dark cards “Wachdienst, Wachschutz…”, “Ein Einsatzgebiet, ein Standard”, “Innovativ, langfristig…”): let the card headlines break into 2 lines and reduce the gap between headline and body text. 
+========== PAGE 8 ========== 	 10. NEW SECTION: after the FAQ, add “Unsere Partner” — a logo row with: Wirtschaftsclub Bamberg, Deutscher Mittelstandsbund, bauerchristoph.de. (Logos will be provided.)	 	 11. 3-step graphic (content d
+ix — only the label was updated so far): Step 1 “Ortsbegehung” (“Wir erfassen Objekt, Umfeld und Abl
+ä
+ufe vor Ort.”), Step 2 description “Wir bewerten 
+========== PAGE 9 ==========
+Gef
+ä
+hrdungen, Schwachstellen und Abdeckungsl
+ü
+cken.”, Step 3 “Maßnahmenkonzept aus Personal, Technik und Organisation.” with the new chips: Wachpersonal: Feste Positionen · Streifendienst: Optimierte Routen · Zutrittskontrolle: Pforte & Schrankenanlage · Video
+ü
+berwachung: L
+ü
+ckenlose Abdeckung · Alarmanlage: Einbruch- & Ux
+berfallmeldung · Brandmeldeanlage (BMA): Fr
+ü
+hwarnung · Sensoren: Perimeterschutz.	 
+========== PAGE 10 ========== 12. Security-concept checklist (section “Ihr individuelles Sicherheitskonzept”): “…oder eine Kombination aus beidem
+” and “Ergebnisse, die sich rechnen: Kunden sparten mit unseren Konzepten bis zu 30 % Kosten.”	 	 13. Hero image: will be replaced with a real FRANKONIA photo (we deliver, see section 4). Tablet: 14. 3-step graphic: on scroll, the aspects (Kontrollpunkt, Hauptzugang, Kritischer Bereich) appear in the graphic AND are listed below — that’s redundant. Suggestion: list the aspects below and only animate the connector lines to the elements in the graphic on scroll. The grey→white color change of the aspects is good, keep that. 
+========== PAGE 11 ========== 	 15. “Unser System” cards: on tablet they are neither animated like desktop nor like mobile, just stacked. Please use the mobile animation on tablet. 
+========== PAGE 12 ========== 	 16. Out
+d
+it con
+d
+igurator: on tablet use pills (like suggested for mobile) instead of the current selector — otherwise you can’t click through the out
+d
+its and see the model fully at the same time. 
+========== PAGE 13 ========== 	 17. Results tiles: “25.000 €” wraps the €-sign to a new line — make the numbers slightly smaller or use “25K €”. 
+========== PAGE 14 ========== 	 18. SEO/philosophy section: is the current layout the best? Consider centering the bottom card. 
+========== PAGE 15 ========== 
+========== PAGE 16 ========== 19. Menu bug: there is no way to close the expanded tablet menu. Please add a close control.	 	 Mobile: 20. See G6 (headline/CTA widths, rating padding)
+. 
+========== PAGE 17 ========== 	 21. The video display in the social section doesn’t work properly — please d
+ix the layout. 
+========== PAGE 18 ========== 
+========== PAGE 19 ========== 3.2 Leistungen — /leistungen/ 
+1. Secondary CTA: exactly like homepage (G1).	 	 2
+. Remove the form→footer transition (G7). 
+========== PAGE 20 ========== 3. Breadcrumbs: see G8 (tablet/mobile especially).	 	 4. Mobile: secondary CTA placement is off, headline can be wider so it doesn’t wrap awkwardly (G6). 
+========== PAGE 21 ========== 
+========== PAGE 22 ========== 3.3 Einsatzgebiete — /einsatzgebiete/ 
+1. Map/graphic: add the missing locations (Hof, Kronach, Kulmbach, Lichtenfels, Schwandorf — no links) and build it so the map/pill list updates automatically when we add new coverage locations on the homepage (single data source).	 	 2. Copy d
+ix: add “Schwandorf” to the “Ihr Standort ist nicht dabei?” paragraph — new list: “auch Hof, Kulmbach, Lichtenfels, Kronach, Kitzingen, Haßfurt, Schwabach oder Schwandorf”. 	 3. FAQ “Gibt es Leistungen, die nicht ü
+berall verf
+ü
+gbar sind?”: the answer must also state that Interventionsdienst is not offered outside the Bamberg area (alongside Revier-/
+Schließdienst). Applies to all breakpoints. New answer wording (already updated in document 2026-08-04 Webtext 24): “Ja, ehrlicherweise: Der Revier- und Schließdienst mit Kontrollfahrten und der Interventionsdienst laufen ausschließlich im Raum Bamberg. Alle anderen Leistungen — Objektschutz, Werkschutz, Brandwache, Baustellenbewachung, Veranstaltungsschutz, Sicherheitstechnik, Detektei und Empfang, bieten wir im gesamten Einsatzgebiet an.” 
+========== PAGE 23 ========== 	 4
+. Remove the form→footer transition (G7). 
+========== PAGE 24 ========== 	 5. Mobile: CTA and headline/subline same width (G6).	 	 6. Add a secondary CTA with the phone number — desktop, tablet and mobile (G1). 
+========== PAGE 25 ========== 	 7. Hero: use the map animation (see Q3). 3.4 Sicherheitskonzept — /sicherheitskonzept/ 
+1. Hero is missing. Build the standard hero (badge, H1, subline, dual CTA, checkmarks, Google widget) with a stylized preview/mockup of the concept document as the visual (see Q3/Q4). The checkmark bullets below the CTA are currently missing entirely.	 
+========== PAGE 26 ========== 2. Secondary CTA like homepage (G1). 3. Section with headline/text length mismatch: balance the column widths (headline can take 2 lines).	 	 4. Results/case-study reference: link the case study here — and note the general rule: whenever results are shown (including the homepage tiles, which still wrongly show “MORELO & Co.”), link to the respective case-study page instead of attributing clients.	 	 5. Certi
+d
+icates/experience badge: write “Über 10 Jahre Erfahrung” instead of “
+Ux
+ber zehn Jahre”.	 
+========== PAGE 27 ========== 6. One section headline appears to use a different font — please check/unify.	 	 7. The page still lacks images in several sections — we will supply photos. 8. Tablet and mobile are not optimized at all yet — please do a full responsive pass on this page. 
+========== PAGE 28 ========== 
+========== PAGE 29 ========== 
+========== PAGE 30 ========== 	 3.5 Über uns — /ueber-uns/ 
+1. Hero is missing (as on Sicherheitskonzept), secondary CTA like homepage (G1). 
+========== PAGE 31 ========== 	 2. History section: content will be revised by us — updated copy follows (placeholder d
+ine for now).	 	 3. Leadership section (Steffen Walde photo): the black photo background is visible against the section background — please blend/mask it. 
+========== PAGE 32 ========== 	 4. Memberships: link the two organizations: Wirtschaftsclub Bamberg → https://
+wirtschaftsclub-bamberg.de/ · Deutscher Mittelstands-Bund → https://
+www.mittelstandsbund.de/	 	 5. Innovation section, one-word change: “Monatliche GF-Reports” → “Regelmäßige GF-
+Reports” (already updated in document 2026-08-04 Webtext 28). 6. Team section H2, exact wording: “Menschen, die bleiben – der eigentliche FRANKONIA Unterschied”
+.	 	 
+========== PAGE 33 ==========
+3.6 Referenzen — /referenzen/ 
+1. Hero: the document speci
+d
+ies a badge, CTA pair and Google widget — please con
+d
+irm the omission was intentional or add them (G9). 2. Bottom link tiles: link only “Alle Leistungen im Überblick” and “Alle Einsatzgebiete im Überblick” — do not link Bamberg and Coburg individually.	 	 3. Membership line (“Mitglied im Wirtschaftsclub Bamberg und im Deutschen Mittelstands-
+Bund.”): link both organizations (same URLs as 3.5.4).	 	 4. References content: Brose Bamberg and Bodo Freimuth go back in (see Q7). 3.7 Jobs — /jobs/ 
+1. Hero image d
+loats and is cut off at the bottom without a gradient (unlike /referenzen/) — please d
+ix with a proper fade/gradient.	 	 
+========== PAGE 34 ==========
+2. A CTA is missing — there must be a way to apply directly from the job listings. Add an application CTA in/near the positions section.	 	 3. The “Noch nicht sicher? Lies dich ein” article-link section works, but could be visually nicer if possible.	 	 4. Mobile: CTA and headline same width (G6). 
+========== PAGE 35 ========== 	 3.8 Kontakt — /kontakt/ 
+1. Page works overall. Optional: add of
+d
+ice photos (we have some — will deliver).	 
+========== PAGE 36 ========== 2. Phone tile: add “Rund um die Uhr erreichbar, an 365 Tagen im Jahr.” 3. Add the DEKRA certi
+d
+ication symbols/seals. 4. Carried over from the previous review: in the contact form, the phone H
+ield must be required (as speci
+d
+ied in Webtext 25) — currently it is optional. 3.9 Angebot — /angebot/ 
+Overall: great, no structural changes. 1. Mini-FAQ answer “Wie schnell kann FRANKONIA starten?”: make the phone number a tel: link (G4).	 	 2. Tablet: make sure the hero CTA stays visible/inside the layout. 
+========== PAGE 37 ========== 	 3.10 Ratgeber hub — /ratgeber/ 
+1. Hero is rather unspectacular — please give it some love. 
+========== PAGE 38 ========== 	 2. The horizontal bar/divider element serves no purpose — remove. And: add an article image to each article card (title images: see 3.11 / section 4).	 	 3. Secondary CTA per the d
+ixed global design (G1). 
+========== PAGE 39 ========== 	 3.11 Ratgeber ar
+J
+cles 
+/ratgeber/paragraph-34a-erklaert/: add a title image (hero); d
+ix the secondary CTA (G1). 
+========== PAGE 40 ========== 	 /ratgeber/kosten-sicherheitsdienst/: add hero with title image; secondary CTA at the bottom (G1). Content: the document “2026-08-04 Webtext 32 Ratgeber Kosten” was completely rewritten (rev. 13.08.) — replace the current page text entirely with the new version. Key changes: the price table got a third column “Wo in der Spanne — und warum” with the service names linked (no separate details column), and all three example calculations now include the collectively-agreed surcharges with a transparent calculation path (night post ~5,500–6,800 €/month · weekend construction site ~1,900–2,350 € · 72-
+h d
+ire watch ~2,050–2,500 €). One FAQ answer changed too. Take everything verbatim from the updated document. /ratgeber/brandwache-wann-vorgeschrieben/: add hero/title image; make the phone number in the FAQ a tel: link (G4). Internal linking is wrong — this article is a feeder to /
+brandwache/, which is currently not linked at all: 
+========== PAGE 41 ========== 	 1. Cost section (“Was kostet eine Brandwache?”): link “Konkretes Angebot” → /
+brandwache/ (currently /angebot/). The link to /ratgeber/kosten-sicherheitsdienst/ stays. 2. Closing CTA (“Au
+d
+lage auf dem Tisch und wenig Zeit?”): CTA → /brandwache/ (currently /angebot/). 3. Section “Fall 3 — Veranstaltungen und Versammlungsst
+ä
+tten”: add a link to /veranstaltungsschutz/ at the end (e.g. “Mehr zum Veranstaltungsschutz”). 4. Section “Weitere F
+ä
+lle aus der Praxis”, third bullet: add a link to /
+baustellenbewachung/ (e.g. “Mehr zur Baustellenbewachung”). Minor: cost section should read “26 bis 32 Euro” (as in the document). 3.12 Case Study Sicherheitstechnik — /referenzen/case-study-sicherheitstechnik/ 
+1. Add the secondary CTA with phone number (G1). 2. Headline: can it break more nicely (3 lines)? 
+========== PAGE 42 ========== 	 3. CTA “Kostenfreies Sicherheitskonzept anfordern” → /sicherheitskonzept/ (currently /
+#sicherheitsanalyse), see G3. Also add the missing “Weiterf
+ü
+hrend” link to /
+sicherheitskonzept/ per the document. 4. Images will be delivered (see section 4). 3.13 Case Study Schichtsystem — /referenzen/case-study-schichtsystem/ 
+1. Add the secondary CTA with phone number (G1). 
+========== PAGE 43 ========== 	 2. CTA “Kostenfreies Sicherheitskonzept anfordern” → /sicherheitskonzept/ (currently /
+#sicherheitsanalyse), see G3. 3. Images will be delivered. 3.14 Case Study Sicherheitskonzept — /referenzen/case-study-sicherheitskonzept/ 
+1. Headline preferably 3 lines; add secondary CTA with phone number (G1). 
+========== PAGE 44 ========== 	 2. Check the same CTA target rule (G3) on this page as well. 3. Images will be delivered. 3.15 Werkschutz — /werkschutz/ (services template) 
+1. Alexander J
+ä
+ger section: stays in (see Q2). 2. “Nachweisbare Ergebnisse” card: change “Digitales Wachbuch, Torbuch und regelm
+ä
+ßiger Report” → “Digitales Wachbuch und regelmäßiger Report” (the word “Torbuch” goes; already updated in document 2026-08-04 Webtext 03).	 	 
+========== PAGE 45 ==========
+3. The highlight box “Werkschutz + Technik aus einem Konzept” (section “Das ü
+bernimmt der FRANKONIA Werkschutz”, after the six checklist items) is missing entirely — add it with the text from the document, including the link to /sicherheitstechnik/. 4. Trust section: add the sentence “Ihr Werkschutz-Konzept erstellen erfahrene Sicherheitsexperten.” to the Alexander J
+ä
+ger card (before “Im laufenden Betrieb…”). 5. “Verwandte Leistungen und Einsatzgebiete” link section: works, but could be presented more attractively if possible.	 	 6. Tablet: group related elements visually — e.g. everything belonging to “03 Nachweisbarkeit” closer together, and more spacing between “03” and the elements above it. 
+========== PAGE 46 ========== 	 7. Mobile: a bit too much whitespace before the next section at the bottom. 
+========== PAGE 47 ========== 
+========== PAGE 48 ========== 3.16 Stadtseite Nürnberg — /sicherheitsdienst-nuernberg/ (city template) 
+1. Secondary CTA per global design (G1). 2. Tablet: button widths vs. headline width (G6).	 	 3. Link H
+ix: in the local-use-case card “02 Gewerbegebiete Richtung Feucht…”, “Revier- & Schließdienst” links to /revier-schliessdienst/. This service exists only in the Bamberg area 
+========== PAGE 49 ==========
+— the link falsely implies availability in N
+ü
+rnberg. Remove it; if a link is wanted there, use /
+objektschutz-nuernberg/
+. Please check the other nine city pages for the same pattern when you build them. 4. Hero: love it. The N
+ü
+rnberg map animation is fantastic on desktop — please add it on mobile and tablet too (maybe smaller, above the text). Consider a light-
+blue accent or a subtle “N
+ü
+rnberg” lettering. 5. Feel free to work a few real photos into the page (we deliver). 3.17 Brandwache Nürnberg — /brandwache-nuernberg/ (city+service template) 
+1. Hero CTA order (phone d
+irst, offer second) is correct here and intentional — but only for Brandwache pages (G2). All other city+service pages get the standard order. 2. Hero badge is missing (“Einsatzgebiet N
+ü
+rnberg — Einsatzleitung 24/7 erreichbar”) — please add (G9). 3. Use the map animation here as well, plus 1–2 real photos if it d
+its.	 
+========== PAGE 50 ==========
+4. Assets we will deliver 
+
+========== PAGE 51 ==========
+#
+Asset
+For
+Status
+1
+Real hero photo (homepage)
+/
+in progress
+2
+New Objektschutz image
+homepage services grid
+in progress
+3
+Videos (social section)
+homepage
+we upload
+4
+Anonymized 18-
+page security-
+concept PDF (download + preview basis)
+/
+sicherheitskonze
+pt/
+we create, coming shortly
+5
+Case-study images (3 sets: Technik, Konzept, Schichtsystem)
+case studies
+in progress
+6
+Article title images (3 articles + hub cards)
+/ratgeber/
+in progress
+7
+Of
+d
+ice photos
+/kontakt/
+available, we send
+8
+Alexander J
+ä
+ger portrait
+/werkschutz/, /
+sicherheitskonze
+pt/ etc.
+in progress
+9
+Partner logos (Wirtschaftsclub Bamberg, Deutscher Mittelstandsbund
+, bauerchristoph.d
+e)
+homepage partner section
+we send
+
+========== PAGE 52 ========== 5. Copy source reminder 
+All page copy comes verbatim from the documents in the “Seitenentw
+ü
+rfe” folder (“2026-08-04 Webtext 01–52”). Recently updated there: Webtext 32 (cost guide, fully rewritten 13.08.), Webtext 28 (
+Ux
+ber uns, “Regelm
+ä
+ßige GF-Reports”), Webtext 24 (Einsatzgebiete, Schwandorf + FAQ). For the 33 template-based pages still to build, always pull the copy from the corresponding document — titles and meta descriptions exactly as speci
+d
+ied, never with prices in metas.
+10
+Impressum text
+/impressum/
+take from https://
+frankonia-
+sicherheit.de/
+impressum/
+11
+Datenschutz (auto-scanner integration)
+/datenschutz/
+follows later
+12
+Revised “
+Ux
+ber uns” history copy
+/ueber-uns/
+follows
+13
+Updated cost-
+guide copy (Webtext 32 rev. 13.08.)
+/ratgeber/
+kosten-
+sicherheitsdienst
+/
+already in Seitenentwürfe folder

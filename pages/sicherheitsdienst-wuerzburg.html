@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- CITY PAGE — Würzburg. Built from
+     NewVersionCopiesFrankonia/"2026-08-04 Webtext 14 Stadt Wuerzburg.docx"
+     (Stand 04.08.2026), verbatim, in German.
+
+     ⚠️ UWG / "kein Scheinstandort" is the rule that governs this whole page
+     type (docs/page-conventions.md §10.1). FRANKONIA has ONE address, in
+     Bamberg, and a city page may not imply a branch. It lands in three places
+     here: the hero badge says "Einsatzgebiet", never "Standort"; the
+     LocalBusiness JSON-LD carries the real Bamberg NAP with
+     areaServed: Würzburg and NOT a Würzburg address; and the FAQ answers
+     "do you have an office here?" honestly. Do not "improve" any of the three
+     into a local-address claim.
+
+     ⚠️ SECTION ORDER IS THE DRAFT'S, NOT NÜRNBERG'S. Webtext 14 says
+     "Struktur bewusst variiert ggü. Nürnberg: Einstieg über den Wirtschaftsraum,
+     dann Warum-Argumentation" — so the five Einsatzfelder come FIRST and the
+     Warum cards second. Both are light sections, so they share a surface and
+     take no seam between them (§9.2). That is deliberate, not a missing seam.
+
+     REUSE MODEL: every class is `.city-*`, never `.wuerzburg-*`, and
+     css/page-service.css is loaded as the CHASSIS (§9.1) — inset, `main h2`,
+     breadcrumb chevron, `.section--light`, `.service-hero*`, `.service-link`,
+     the whole `.pixel-seam*` block and the entire Kosten section come from
+     there. css/page-city.css was NOT touched to build this page.
+
+     GENERATED ONCE by docs/design-sources/city-pages.py, then hand-editable.
+     ⚠️ If you edit the FAQ below, edit the FAQPage graph above it too — they
+     must stay byte-identical with markup stripped. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title (56 chars) and description (156) are the draft's own —
+       docs/page-conventions.md §12. -->
+  <title>Sicherheitsdienst Würzburg | 24/7 Wachdienst – FRANKONIA</title>
+  <meta name="description" content="Sicherheitsdienst für Würzburg: Objektschutz, Baustellenbewachung, Brandwache &amp; Veranstaltungsschutz. DEKRA-zertifiziert, Angebot innerhalb eines Werktages.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/sicherheitsdienst-wuerzburg/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/sicherheitsdienst-wuerzburg/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/sicherheitsdienst-wuerzburg/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sicherheitsdienst Würzburg | 24/7 Wachdienst – FRANKONIA">
+  <meta property="og:description" content="Sicherheitsdienst für Würzburg: Objektschutz, Baustellenbewachung, Brandwache &amp; Veranstaltungsschutz. DEKRA-zertifiziert, Angebot innerhalb eines Werktages.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/sicherheitsdienst-wuerzburg/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- NO hero image preload: this page has no hero photograph. There is not one
+       city photo in the project and the draft does not ask for one — the hero's
+       visual is an inline SVG of Würzburg's real administrative boundary, so
+       it costs no request at all and the page has NO image LCP element. -->
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "{{phone.display}}",
+      "email": "{{email}}",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 49.9019037,
+        "longitude": 10.9067377
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Würzburg",
+        "containedInPlace": { "@type": "AdministrativeArea", "name": "Bayern" }
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "reviewCount": "{{rating.count}}",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/sicherheitsdienst-wuerzburg/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Hat FRANKONIA ein Büro in Würzburg?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Würzburg ist eines unserer festen Einsatzgebiete mit laufenden Aufträgen: Ihre Kräfte arbeiten fest vor Ort in Ihrem Objekt, die Einsatzleitung erreichen Sie rund um die Uhr direkt."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was kostet ein Sicherheitsdienst in Würzburg pro Stunde?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In der Regel {{price.min}} bis {{price.max}} Euro netto, je nach Qualifikation, Einsatzzeit und Auftragsumfang; Baustellenbewachung liegt bei {{price.range}} Euro. Ihr Angebot erhalten Sie innerhalb eines Werktages."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Übernimmt FRANKONIA Veranstaltungsschutz in Würzburg?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, von Firmenevents über Kongresse bis zu Festen: Einlasskontrolle, Ordnerdienst, Deeskalation und Unterstützung bei behördlichen Auflagen. Je früher wir in die Planung einsteigen, desto reibungsloser läuft die Abstimmung mit den Würzburger Behörden."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie schnell bekomme ich in Würzburg eine Brandwache?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nach Absprache auch kurzfristig, die Einsatzleitung ist rund um die Uhr erreichbar: {{phone.display}}. Für geplante Brandwachen (Heißarbeiten, Wartungsfenster der BMA) erhalten Sie das Angebot innerhalb eines Werktages."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Betreut FRANKONIA auch Objekte im Landkreis Würzburg?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, das Einsatzgebiet umfasst Stadt und Landkreis Würzburg sowie das Maindreieck komplett."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Welche Qualifikation haben die Sicherheitskräfte in Würzburg?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Alle Kräfte sind mindestens IHK-qualifiziert nach § 34a GewO, viele zusätzlich als Brandschutzhelfer oder für Sicherheitstechnik geschult. Das Unternehmen ist DIN-77200-1- und ISO-9001-zertifiziert, DEKRA-geprüft."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Einsatzgebiete",
+          "item": "https://frankonia-sicherheit.de/einsatzgebiete/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Sicherheitsdienst Würzburg",
+          "item": "https://frankonia-sicherheit.de/sicherheitsdienst-wuerzburg/"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+
+  <!-- Shared, in cascade order (docs/page-conventions.md §9.1):
+       lead-form → testimonials → page-service.css (the CHASSIS) → this page. -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/testimonials.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-city.css">
+
+  <!-- The documented generic effect stack, nothing page-specific
+       (docs/page-conventions.md §4.1). -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+</head>
+<body class="page-city">
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Chevron separators, not slashes — docs/page-conventions.md §3. Matches
+         the BreadcrumbList JSON-LD above. The breadcrumb sits ABOVE the hero
+         (unlike /werkschutz/, whose hero is a full-bleed photograph reaching the
+         top of the page) because this hero has no photo. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/einsatzgebiete/">Einsatzgebiete</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Würzburg</span></li>
+      </ol>
+    </nav>
+
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- The draft's own Hero-Aufbau, nothing added or dropped: badge → H1 →
+         subline → 3 ticks → double CTA → Google widget + DEKRA seals.
+         .hero__lead / .hero__actions / .hero__reassurance / .hero__trust are
+         load-bearing class names, not decoration — js/hero-reveal.js animates
+         exactly those four blocks in that order, so this page needs no JS of its
+         own (docs/page-conventions.md §4.1).
+         The badge says "Einsatzgebiet", which is the UWG disclosure of §10.1 and
+         the draft's own copy — it carries information nothing else on the first
+         screen carries. -->
+    <section class="service-hero city-hero" data-hero-reveal>
+      <div class="container service-hero__grid city-hero__grid">
+        <div class="service-hero__content city-hero__content">
+          <p class="city-hero__badge">
+            <svg class="icon city-hero__badge-icon" aria-hidden="true"><use href="#icon-pin"></use></svg>
+            Einsatzgebiet Würzburg &amp; Mainfranken, fester Ansprechpartner 24/7
+          </p>
+
+          <h1>Sicherheitsdienst Würzburg</h1>
+
+          <p class="hero__lead service-hero__lead">
+            Objektschutz, Baustellenbewachung, Brandwache und Veranstaltungsschutz für Würzburg und Mainfranken — DEKRA-zertifiziert.
+          </p>
+
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn btn--secondary service-hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+          </div>
+
+          <!-- The draft's lines VERBATIM, so a stacked list rather than the
+               homepage hero's row of chips: these are full sentences and need
+               ~1000px in a row at this type size against the ~640px this column
+               has. Same measurement /jobs/ made before the client chose the list.
+               .city-hero__points turns the shared row into a column and supplies
+               the align-items: flex-start the shared centred rule would
+               otherwise apply horizontally (docs/page-conventions.md §10.4). -->
+          <ul class="hero__reassurance service-hero__points city-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Feste Teams für laufende Aufträge, direkt in Ihrem Objekt
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Digital dokumentiert: Wachbuch, Checkpoints, Reports
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Unverbindliches Angebot innerhalb eines Werktages
+            </li>
+          </ul>
+
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- Würzburg'S REAL ADMINISTRATIVE OUTLINE, as an inline path.
+             Generated once in development by docs/design-sources/city-outline.py
+             from assets/data/coverage-boundaries/wuerzburg.geojson (fetched from
+             OSM/Nominatim in July). Never hand-edit the coordinates; re-run the
+             script instead.
+             Why an outline and not a photo or a map — docs/page-conventions.md
+             §10.3, in short: no city photography exists and the draft asks for
+             none; an AREA is the honest visual for an Einsatzgebiet where a
+             single pin would read as a branch office (§10.1); and as a path it
+             costs zero requests and no third-party tiles.
+             ⚠️ pathLength="1" IS LOAD-BEARING. The outline draws itself with a
+             pure-CSS dash, and that attribute renormalises the perimeter to 1 so
+             `stroke-dasharray: 1` is one exact lap at any size for any city. A
+             path pasted in without it draws nothing at all.
+             ⚠️ The guides are PERCENTAGES because every city's viewBox height
+             differs (683 for Coburg, 1494 for Kulmbach); this one is 1462. -->
+        <div class="city-hero__map" aria-hidden="true">
+          <svg class="city-map" viewBox="0 0 1000 1462" fill="none" focusable="false">
+            <line class="city-map__guide" x1="50%" y1="0" x2="50%" y2="100%"></line>
+            <line class="city-map__guide" x1="0" y1="50%" x2="100%" y2="50%"></line>
+            <path class="city-map__area" pathLength="1" d="M0.0 523.9 L5.6 551.2 L23.6 546.3 L29.9 536.0 L43.6 522.3 L48.8 527.6 L48.2 531.9 L65.7 537.0 L76.4 549.6 L75.5 552.5 L87.3 561.5 L85.7 564.2 L113.9 585.3 L125.7 592.5 L172.1 610.2 L186.4 628.8 L184.6 632.0 L193.8 647.8 L202.9 654.8 L205.8 654.1 L217.6 662.1 L218.2 664.6 L240.2 687.6 L262.9 715.9 L274.2 734.1 L283.7 753.6 L268.1 756.7 L258.6 747.4 L240.9 742.9 L242.3 738.6 L220.1 739.1 L220.5 736.8 L208.0 729.7 L200.2 719.3 L196.6 696.7 L189.1 701.2 L184.7 706.0 L183.5 705.1 L175.3 707.2 L175.1 709.3 L156.4 708.5 L153.5 717.6 L150.1 716.2 L147.9 721.5 L151.4 722.3 L147.5 732.0 L153.5 734.3 L151.7 738.1 L133.3 753.9 L96.8 767.5 L96.4 770.9 L85.7 775.1 L60.9 781.5 L47.2 788.5 L38.6 794.8 L27.9 797.5 L19.6 802.0 L33.0 815.5 L37.2 824.4 L34.9 833.9 L28.7 842.4 L26.0 842.8 L21.4 847.0 L21.7 860.6 L38.5 850.4 L81.3 832.9 L102.6 829.2 L111.6 829.4 L121.4 834.0 L135.9 836.7 L148.1 836.3 L164.9 838.7 L172.6 837.4 L173.4 843.6 L170.8 854.9 L153.5 871.7 L152.9 875.9 L143.9 889.0 L141.3 900.3 L143.2 901.3 L134.0 913.1 L123.7 933.1 L105.8 940.1 L92.5 954.5 L85.1 959.3 L83.2 958.8 L78.2 963.5 L64.8 968.7 L54.6 978.0 L47.9 992.7 L35.8 1001.3 L75.5 1069.3 L78.0 1071.7 L88.9 1074.3 L94.1 1077.9 L96.6 1077.3 L107.1 1092.2 L112.4 1095.2 L126.1 1088.6 L130.8 1091.3 L132.4 1095.6 L140.4 1094.5 L162.7 1097.9 L180.6 1093.5 L187.3 1089.6 L189.3 1090.6 L216.1 1061.8 L231.9 1076.4 L255.8 1087.3 L280.7 1101.5 L314.9 1134.4 L338.3 1146.0 L357.1 1158.7 L370.3 1163.9 L391.9 1168.8 L401.1 1173.6 L421.3 1194.1 L435.8 1196.2 L434.8 1209.8 L436.8 1228.5 L433.7 1248.0 L450.9 1248.6 L456.0 1252.0 L453.8 1265.1 L468.2 1264.5 L466.2 1267.0 L464.0 1267.2 L474.3 1278.7 L457.0 1286.5 L475.2 1315.2 L452.7 1330.6 L453.9 1334.1 L468.9 1361.8 L504.3 1347.2 L528.7 1382.0 L531.6 1402.1 L535.0 1404.6 L537.9 1451.9 L536.9 1459.5 L567.1 1452.0 L570.2 1423.4 L593.9 1423.7 L607.2 1427.6 L613.9 1447.7 L638.0 1439.5 L639.7 1461.7 L650.2 1459.3 L651.3 1461.5 L663.6 1457.1 L699.7 1452.6 L700.1 1454.8 L703.1 1454.1 L703.8 1458.5 L764.1 1439.0 L775.3 1432.0 L773.8 1410.8 L781.7 1404.5 L784.3 1398.6 L784.0 1393.1 L787.5 1390.2 L797.4 1363.9 L799.0 1353.9 L798.7 1332.2 L750.9 1331.0 L740.2 1307.9 L712.0 1263.6 L710.2 1258.9 L710.2 1242.8 L715.3 1228.9 L759.7 1224.7 L764.9 1220.5 L761.2 1189.9 L770.6 1182.4 L789.8 1178.4 L789.6 1165.4 L791.7 1156.3 L788.7 1147.6 L788.7 1134.2 L791.3 1124.2 L791.7 1112.2 L796.7 1095.5 L790.8 1071.7 L792.1 1062.6 L791.1 1058.9 L781.8 1036.1 L774.0 1022.0 L767.0 1010.9 L754.1 996.3 L749.7 987.9 L738.8 951.9 L725.8 931.9 L715.0 918.7 L713.0 919.6 L707.8 915.1 L693.7 908.9 L690.8 906.1 L682.4 903.4 L669.3 902.0 L652.1 896.8 L627.7 892.5 L592.3 881.5 L578.5 872.7 L579.4 863.0 L576.6 856.9 L571.0 852.2 L573.7 844.3 L577.3 840.9 L616.3 857.5 L619.1 851.2 L620.3 837.1 L622.6 832.2 L626.1 829.2 L631.4 816.7 L643.2 805.5 L645.0 801.9 L645.4 793.3 L659.4 795.0 L680.5 787.3 L691.5 796.4 L705.4 788.0 L714.6 779.5 L722.9 786.1 L725.0 792.7 L754.7 802.2 L760.5 801.6 L755.7 776.6 L755.2 764.1 L744.6 765.2 L734.2 736.2 L731.6 712.3 L731.6 708.7 L733.6 707.8 L734.6 692.9 L725.0 682.6 L736.0 682.4 L735.6 678.5 L742.5 678.5 L754.3 674.8 L767.7 665.1 L774.3 655.5 L785.7 629.5 L792.0 622.6 L799.2 619.5 L798.1 599.6 L819.7 599.4 L819.9 602.9 L848.2 605.0 L858.6 609.4 L851.5 615.2 L865.7 618.4 L874.3 628.1 L878.9 629.3 L899.0 628.6 L918.9 580.3 L925.5 582.2 L931.5 572.1 L943.3 559.2 L962.1 542.3 L964.2 538.2 L949.4 489.9 L1000.0 471.7 L990.9 447.7 L968.0 455.6 L951.3 447.4 L965.3 412.7 L936.4 399.5 L932.6 367.8 L928.7 367.8 L926.0 347.1 L927.4 307.3 L919.7 293.6 L927.5 287.3 L925.3 283.6 L906.0 295.7 L901.5 290.6 L903.6 287.9 L895.5 278.3 L897.1 276.9 L856.2 238.7 L848.3 228.5 L841.0 232.7 L834.2 239.4 L827.8 234.8 L819.4 222.0 L817.0 215.3 L823.0 199.5 L816.1 181.7 L814.6 166.0 L822.8 132.8 L824.5 115.5 L821.2 98.6 L810.5 74.0 L775.0 92.7 L765.3 81.4 L759.2 66.5 L740.9 77.0 L732.5 74.0 L729.5 70.2 L724.7 68.1 L701.3 62.3 L683.2 65.1 L683.6 61.8 L617.5 76.6 L587.9 90.0 L548.9 96.3 L545.4 99.2 L544.8 102.8 L553.9 107.9 L561.0 115.6 L526.1 132.0 L524.3 127.0 L490.5 131.0 L491.1 123.7 L467.0 126.9 L462.0 105.6 L434.9 110.5 L436.1 109.8 L433.7 102.2 L426.0 82.6 L401.6 37.3 L390.5 40.9 L378.2 50.0 L350.7 8.8 L343.9 2.1 L337.3 0.0 L337.9 9.7 L344.8 21.1 L344.1 27.2 L340.6 30.0 L331.4 30.4 L325.9 20.0 L323.0 17.4 L306.4 11.5 L292.4 3.7 L268.4 14.3 L267.3 42.3 L263.4 57.5 L263.5 106.6 L261.9 134.9 L264.2 135.4 L262.3 178.3 L261.3 179.8 L256.2 179.4 L249.5 218.4 L235.7 216.9 L232.4 221.0 L225.9 220.2 L224.4 227.9 L220.6 229.3 L200.8 224.7 L202.7 213.6 L197.2 214.3 L176.3 210.7 L160.0 199.4 L116.2 221.2 L100.7 226.3 L114.7 250.7 L109.6 255.2 L109.3 262.2 L75.7 274.1 L70.9 262.1 L64.4 264.3 L58.2 252.1 L47.1 251.5 L45.4 250.2 L41.6 236.7 L4.9 254.0 L7.7 260.5 L11.5 279.5 L7.3 314.1 L7.7 323.4 L25.0 403.3 L35.3 429.0 L42.1 440.6 L53.8 455.8 L83.0 510.5 L75.8 517.6 L53.5 493.8 L44.4 490.9 L39.5 500.8 L44.9 503.6 L40.2 512.2 L35.5 509.5 L26.7 521.6 L19.4 526.0 L7.6 528.5 L0.0 523.9 Z"></path>
+          </svg>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 2. DER WIRTSCHAFTSRAUM (LOKALE EINSATZFELDER) ============ -->
+    <!-- The section that makes this a CITY page rather than a service page with a
+         place name pasted in: real local references, every word the draft's.
+         Numbered because long blocks need an ordinal to be scannable; the
+         numerals are aria-hidden decoration on top of a real <ol>.
+         ⚠️ Where an item closes with a service link, that pairing is inferred
+         from the copy (the draft only annotates URLs in the Leistungen section)
+         and has been checked against WHERE the service is actually available —
+         the lesson Nürnberg paid for when it linked Revier- & Schließdienst, a
+         Raum-Bamberg-only service, from a Nürnberg page. -->
+    <section class="section section--light city-fields" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <p class="section-eyebrow">Vor Ort im Einsatz</p>
+          <h2>Wo Sicherheitsdienste in Würzburg gebraucht werden</h2>
+          <p>Universitätsstadt, Klinikstandort, Industrie- und Logistikdrehscheibe, Besucher-Magnet: Würzburg hat viele Gesichter, und jedes eigene Sicherheitsanforderungen.</p>
+        </div>
+
+        <ol class="city-fields__list" data-item-reveal="li">
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">01</span>
+            <h3 class="city-fields__title">Kliniken, Universität und Einrichtungen in Würzburg</h3>
+            <p>Das Universitätsklinikum und die Hochschul-Standorte gehören zu den größten Arbeitgebern Mainfrankens: Publikumsverkehr rund um die Uhr, sensible Bereiche, Nachtbetrieb. Hier zählen geschulte, deeskalationssichere Kräfte mit sauberer Dokumentation — Erfahrung, die FRANKONIA aus dem Klinikumfeld der Sozialstiftung Bamberg mitbringt.</p>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">02</span>
+            <h3 class="city-fields__title">Industrie und Gewerbe im Würzburger Osten</h3>
+            <p>In den Gewerbegebieten im Osten der Stadt und entlang des Mains produzieren und lagern Traditionsunternehmen wie der Druckmaschinenbau, mit Werten, die nach Feierabend geschützt werden wollen: Werkschutz, Verschlussrunden und dokumentierte Kontrollgänge.</p>
+            <a class="service-link city-fields__link" href="/werkschutz-wuerzburg/">
+              Werkschutz in Würzburg
+              <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">03</span>
+            <h3 class="city-fields__title">Logistik am Autobahnkreuz A3/A7</h3>
+            <p>Die Lage am Kreuz der Nord-Süd- und Ost-West-Achsen macht den Raum Würzburg zum Logistikpunkt — Speditionen und Lager mit durchgehendem Verkehr brauchen Zufahrtskontrolle und Kontrollgänge zu variierenden Zeiten.</p>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">04</span>
+            <h3 class="city-fields__title">Innenstadt-Handel zwischen Dom und Marktplatz</h3>
+            <p>In den Einkaufslagen um Domstraße und Schönbornstraße ist Ladendiebstahl Alltag, zivile Kaufhausdetektive senken die Inventurdifferenz messbar, gerade zur Weihnachtszeit und in der Festsaison.</p>
+            <a class="service-link city-fields__link" href="/kaufhausdetektei/">
+              Kaufhausdetektei in Würzburg
+              <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li class="city-fields__item city-fields__item--wide">
+            <span class="city-fields__num" aria-hidden="true">05</span>
+            <h3 class="city-fields__title">Veranstaltungen und Feste in Würzburg</h3>
+            <p>Vom Kiliani-Volksfest über Weinfeste bis zu Kongressen: Veranstaltungsschutz in Würzburg heißt Einlass, Ordnerdienst und behördliche Auflagen, geplant mit Vorlauf, besetzt mit geschulten Kräften.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+    <!-- No seam: fields and why are both light surfaces, and tiles the colour of the section above would be invisible against the one below (§9.2). -->
+    <!-- ============ 3. WARUM FRANKONIA IN WÜRZBURG ============ -->
+    <!-- The draft's 3 cards. WHITE ELEVATED PANELS, every value copied from
+         .service-cases__card on /werkschutz/ rather than re-derived, so the two
+         are one design in two files (docs/page-conventions.md §10.4). That
+         REVERSES §8.2's "ruled, not carded" for this block — a client decision
+         with precedent, not drift. Do not restore the hairlines.
+         ⚠️ The hover uses `translate`, never `transform`: these carry
+         data-item-reveal and GSAP writes `transform` INLINE, which beats any
+         stylesheet rule. `translate` is a separate property and composes. -->
+    <section class="section section--light city-why" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Warum Würzburger Auftraggeber mit FRANKONIA arbeiten</h2>
+          <p>Würzburg ist festes Einsatzgebiet von FRANKONIA, mit laufenden Aufträgen in Stadt und Region. Was Sie davon haben:</p>
+        </div>
+
+        <ul class="city-why__grid city-why__grid--3" data-item-reveal=".city-why__item">
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-building"></use></svg>
+            <h3 class="city-why__title">Mittelstand mit Verbindlichkeit</h3>
+            <p>Sie sprechen direkt mit dem Inhaber-geführten Unternehmen, nicht mit der Vertriebsabteilung eines Konzerns. Entscheidungen fallen schnell, und gelten.</p>
+          </li>
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-contact"></use></svg>
+            <h3 class="city-why__title">Feste Kräfte im Objekt, Leitung erreichbar</h3>
+            <p>Bei laufenden Aufträgen arbeiten Ihre Sicherheitskräfte fest vor Ort in Würzburg; Einsatz- und Bereichsleitung erreichen Sie 24/7 direkt.</p>
+          </li>
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+            <h3 class="city-why__title">Zertifiziert und geprüft</h3>
+            <p>DIN 77200-1, ISO 9001, DEKRA, dieselben Standards, mit denen wir über 300 Kunden in Franken betreuen, gelten auch für jeden Würzburger Auftrag.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 4. LEISTUNGEN IN WÜRZBURG ============ -->
+    <!-- The draft's services, its copy, its order and its link targets.
+         Linking confirmed-but-unbuilt URLs is this project's convention
+         (docs/page-conventions.md §8.3); the page's own primary conversion never
+         does it — every CTA points at #anfrage, the live form below. -->
+    <section class="section city-services">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Unsere Sicherheitsdienstleistungen in Würzburg</h2>
+          <p>Vom Werkschutz für Industrie und Produktion bis zur kurzfristigen Brandwache: Alle FRANKONIA Leistungen stehen Ihnen auch in Würzburg und Mainfranken zur Verfügung.</p>
+        </div>
+
+        <!-- GROUP 1 — the four whose destination is a Würzburg page of its
+             own. They carry the local keyword volume and a click keeps the
+             visitor on a city-specific path. Whole card is the link. -->
+        <ul class="city-services__featured" data-item-reveal=".city-services__card">
+          <li>
+            <a class="city-services__card" href="/werkschutz-wuerzburg/">
+              <span class="city-services__card-name">Werkschutz in Würzburg</span>
+              <span class="city-services__card-text">Pfortendienst und Rundgänge für Industrie und Produktion.</span>
+              <svg class="icon city-services__card-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-services__card" href="/objektschutz-wuerzburg/">
+              <span class="city-services__card-name">Objektschutz in Würzburg</span>
+              <span class="city-services__card-text">Bestreifung, Zugangskontrolle, Alarmverfolgung für Gewerbe, Verwaltung und Einrichtungen.</span>
+              <svg class="icon city-services__card-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-services__card" href="/baustellenbewachung-wuerzburg/">
+              <span class="city-services__card-name">Baustellenbewachung in Würzburg</span>
+              <span class="city-services__card-text">Schutz für Baustellen in Stadt und Landkreis, flexibel je Bauphase.</span>
+              <svg class="icon city-services__card-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-services__card" href="/brandwache-wuerzburg/">
+              <span class="city-services__card-name">Brandwache in Würzburg</span>
+              <span class="city-services__card-text">Kurzfristige Brandsicherheitswachen bei BMA-Ausfall und Heißarbeiten.</span>
+              <svg class="icon city-services__card-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+        </ul>
+
+        <!-- GROUP 2 — the four whose page is the GENERIC service page, which
+             will not contain the city's name. As equal peers their "… in Würzburg"
+             label was promising a local page that does not exist, which is the
+             same implied-local claim §10.1 exists to prevent. Rows, not chips,
+             so every description survives — the client's own condition.
+             ⚠️ This grouping is about which destinations are CITY-specific, not
+             about which pages exist yet. Do not promote a row to a card when its
+             generic target goes live. -->
+        <div class="city-services__more">
+          <p class="city-services__more-label">Ebenfalls verfügbar</p>
+
+          <ul class="city-services__list" data-item-reveal="li">
+            <li>
+              <a class="city-services__row" href="/empfangsdienst/">
+                <span class="city-services__name">Empfangsdienst in Würzburg</span>
+                <span class="city-services__text">Professioneller Empfang mit Sicherheitskompetenz.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/veranstaltungsschutz/">
+                <span class="city-services__name">Veranstaltungsschutz in Würzburg</span>
+                <span class="city-services__text">Einlass, Ordnerdienst, Deeskalation, inklusive Unterstützung bei behördlichen Auflagen.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/kaufhausdetektei/">
+                <span class="city-services__name">Kaufhausdetektei in Würzburg</span>
+                <span class="city-services__text">Zivile Ladendetektive für Handel und Filialen.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/sicherheitstechnik/">
+                <span class="city-services__name">Sicherheitstechnik in Würzburg</span>
+                <span class="city-services__text">Videoüberwachung, Alarm- und Zutrittstechnik, geplant als Teil des Gesamtkonzepts.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <!-- No seam: services and callout are both dark surfaces, and tiles the colour of the section above would be invisible against the one below (§9.2). -->
+    <!-- ============ 5. BRANDWACHE WÜRZBURG (PFLICHTABSCHNITT) ============ -->
+    <!-- A whole section for one keyword, because the draft makes it a
+         Pflichtabschnitt: it is the one urgent, same-day service in the range.
+         GEO shape straight from the draft — H2 with city + keyword, the answer in
+         the first sentences, then the link to the combo page. -->
+    <!-- ⚠️ THE PHONE IS THE STRATEGIC HALF OF THIS SECTION, not decoration.
+         This is the one section on the page about an EMERGENCY — a BMA-Ausfall
+         is a today problem — and the approved copy ends on a 24/7 promise with
+         no way to act on it. The page's primary action is the form, which is a
+         one-working-day process and the wrong action for someone whose fire
+         alarm is down right now. Not invented: the page's own Brandwache FAQ
+         answer already publishes this number for exactly this case, and
+         /brandwache-nuernberg/ makes "Jetzt anrufen" its hero's primary action.
+         Same wording so the two read as one path. -->
+    <section class="section city-callout">
+      <div class="container city-callout__layout">
+        <div class="section__intro city-callout__intro">
+          <!-- ⚠️ NOT from the draft — UI furniture, the same category as the
+               section eyebrows /werkschutz/ and /jobs/ carry, and reversible
+               copy rather than a claim. .section-eyebrow already ships the 6px
+               blue square; it is display:flex, so the parent's text-align does
+               NOT move it and page-city.css gives it its own justify-content. -->
+          <p class="section-eyebrow city-callout__eyebrow">Brandwache Würzburg</p>
+
+          <h2>Brandwache in Würzburg, auch kurzfristig am Wochenende</h2>
+          <p class="city-callout__lede">Wenn in einem Würzburger Betrieb die Brandmeldeanlage ausfällt oder der Versicherer für Heißarbeiten eine Brandsicherheitswache fordert, zählt Geschwindigkeit: Die FRANKONIA Einsatzleitung ist rund um die Uhr erreichbar und besetzt Brandwachen nach Absprache auch kurzfristig, mit Kräften, die nach § 34a GewO qualifiziert und als Brandschutzhelfer geschult sind. Jede Runde wird dokumentiert, als Nachweis für Behörde und Versicherung.</p>
+        </div>
+
+        <div class="city-callout__actions" data-reveal>
+          <a class="btn btn--primary city-callout__call" href="{{phone.href}}">
+            <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+            Jetzt anrufen: {{phone.display}}
+          </a>
+          <a class="service-link city-callout__link" href="/brandwache-wuerzburg/">
+            Alles zur Brandwache in Würzburg
+            <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 6. KOSTEN IN WÜRZBURG ============ -->
+    <!-- Entirely the chassis: .service-price* was built generically on
+         /werkschutz/ because docs/build-checklist.md counts this block on 27
+         pages, and the Preis-Box is a partial. The only city-specific rule is
+         .city-rates for the per-service rows a service page does not have.
+         ⚠️ .city-rates deliberately does NOT reuse .service-price__factors —
+         that block draws a blue `+` per row, and a `+` in front of
+         "Objektschutz · 26-32 €/Std." reads as a list of extras rather than a
+         rate table. It does repeat that block's `grid-column: 1`, or it falls
+         into the second column under the price box.
+         GEO shape: question H2, the number in the first sentence. -->
+    <section class="section section--light service-price" data-nav-theme="light">
+      <div class="container service-price__layout">
+        <div class="section__intro service-price__intro">
+          <h2>Was kostet ein Sicherheitsdienst in Würzburg?</h2>
+          <p class="service-price__answer" data-reveal data-reveal-delay>Für Einsätze in Würzburg liegen seriöse Stundensätze zwischen {{price.min}} und {{price.max}} Euro, abhängig von Qualifikation, Einsatzzeit und Umfang. Nacht-, Wochenend- und Feiertagseinsätze liegen durch tarifliche Zuschläge am oberen Ende.</p>
+        </div>
+
+        <!-- The shared Preis-Box. `range` comes from content/values.json, so the
+             annual rate change stays ONE edit for all 27 pages that publish it
+             (client rule G10). -->
+        <!-- include: price-box range="{{price.range}}" note="netto, Richtwerte für Einsätze in Würzburg und Mainfranken" -->
+
+        <!-- The draft's own "Typische Preisspannen" line, split into its services
+             so it can be read rather than parsed. -->
+        <ul class="city-rates" data-item-reveal="li">
+          <li><span class="city-rates__service">Objektschutz</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+          <li><span class="city-rates__service">Werkschutz</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+          <li><span class="city-rates__service">Baustellenbewachung</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+          <li><span class="city-rates__service">Veranstaltungsschutz</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+        </ul>
+
+        <p class="service-price__hint">
+          <svg class="icon service-price__hint-icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <span>Richtwerte netto. Ihr konkretes Angebot: unverbindlich innerhalb eines Werktages.</span>
+        </p>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 7. ERREICHBARKEIT & DIGITALE NACHWEISE ============ -->
+    <!-- The /leistungen/ chapter-strip treatment, values taken from
+         page-leistungen.css rather than re-derived. No arrow and no hover: those
+         three are LINKS to chapters, these are statements with nowhere to go, and
+         an arrow would promise navigation that does not exist. No 01–03 numerals
+         either — these are PARALLEL facts, not steps.
+         ⚠️ The closing line is the draft's Abbinder verbatim, and it is written
+         to be UWG-safe: it promises fixed personnel in the object and a reachable
+         Einsatzleitung and makes NO claim about response times or travel
+         distances (Prüfkatalog F10, §10.1). Do not add one. -->
+    <section class="section city-proof">
+      <div class="container">
+        <div class="section__intro">
+          <h2>So bleibt Ihr Sicherheitsdienst in Würzburg jederzeit greifbar</h2>
+        </div>
+
+        <ul class="city-proof__grid" data-item-reveal="li">
+          <li class="city-proof__item">
+            <svg class="icon city-proof__icon" aria-hidden="true"><use href="#icon-clock"></use></svg>
+            <p class="city-proof__label">24/7 direkt erreichbare Einsatzleitung</p>
+          </li>
+          <li class="city-proof__item">
+            <svg class="icon city-proof__icon" aria-hidden="true"><use href="#icon-route"></use></svg>
+            <p class="city-proof__label">Digitales Wachbuch mit Checkpoint-Nachweis</p>
+          </li>
+          <li class="city-proof__item">
+            <svg class="icon city-proof__icon" aria-hidden="true"><use href="#icon-transparency"></use></svg>
+            <p class="city-proof__label">Regelmäßiger Report für Ihre Geschäftsführung</p>
+          </li>
+        </ul>
+
+        <p class="city-proof__outro">Bei laufenden Aufträgen arbeitet Ihr festes Team vor Ort in Würzburg, koordiniert und dokumentiert über Systeme, die Sie jederzeit einsehen können. Auch in Mainfranken sind wir breiter im Einsatz, etwa in <a href="/sicherheitsdienst-schweinfurt/">Schweinfurt</a>.</p>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 8. TRUST ============ -->
+    <!-- .trust-certs* lives in page-service.css (promoted there on 2026-08-09
+         when this composition got its third consumer) and needs no colour rules
+         of its own: .section--light already re-declares every token it uses, and
+         the chassis already gives .service-link its 4,88:1 blue there. -->
+    <section class="section section--light city-certs" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Sicherheitsfirma für Würzburg mit geprüften Standards</h2>
+          <p>FRANKONIA ist nach DIN 77200-1 für stationäre Sicherheitsdienstleistungen und nach ISO 9001 zertifiziert, geprüft durch die DEKRA. Referenzen aus ganz Franken (u. a. MORELO Reisemobile, Sozialstiftung Bamberg, CleanTech Innovation Park) und unsere Google-Bewertungen zeigen, wie das im Alltag ankommt.</p>
+        </div>
+
+        <div class="trust-certs" data-reveal>
+          <div class="trust-certs__seals">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+          </div>
+
+          <ul class="trust-certs__list">
+            <li>
+              <strong>DIN 77200-1</strong>
+              für stationäre Sicherheitsdienste
+            </li>
+            <li>
+              <strong>DIN EN ISO 9001</strong>
+              seit 2016, geprüft durch die DEKRA
+            </li>
+            <li>
+              <strong>§ 34a GewO</strong>
+              ausschließlich IHK-qualifizierte Kräfte
+            </li>
+          </ul>
+
+          <p class="trust-certs__memberships">Referenzen aus ganz Franken, nachprüfbar: <a class="service-link" href="/referenzen/">Kundenliste und Ergebnisse ansehen<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></p>
+        </div>
+      </div>
+    </section>
+    <!-- No seam: certs and faq are both light surfaces, and tiles the colour of the section above would be invisible against the one below (§9.2). -->
+    <!-- ============ 9. FAQ ============ -->
+    <!-- 6 place-specific questions, the draft's own, verbatim. The visible copy
+         and the FAQPage JSON-LD at the top of this file must stay byte-identical
+         with markup stripped — the one thing on this page type that is easy to
+         break with a small edit and impossible to see. They are generated from
+         one source by docs/design-sources/city-pages.py, so an edit here has to
+         be made in BOTH places by hand.
+         ⚠️ The first question answers "do you have an office here?" honestly.
+         That is the UWG requirement of §10.1, not filler — do not soften it into
+         a local-address claim. -->
+    <section class="section section--light city-faq service-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Sicherheitsdienst Würzburg: die häufigsten Fragen</h2>
+        </div>
+
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
+          <details class="faq-item">
+            <summary><h3>Hat FRANKONIA ein Büro in Würzburg?</h3></summary>
+            <p class="faq-item__answer">Würzburg ist eines unserer festen Einsatzgebiete mit laufenden Aufträgen: Ihre Kräfte arbeiten fest vor Ort in Ihrem Objekt, die Einsatzleitung erreichen Sie rund um die Uhr direkt.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Was kostet ein Sicherheitsdienst in Würzburg pro Stunde?</h3></summary>
+            <p class="faq-item__answer">In der Regel {{price.min}} bis {{price.max}} Euro netto, je nach Qualifikation, Einsatzzeit und Auftragsumfang; Baustellenbewachung liegt bei {{price.range}} Euro. Ihr Angebot erhalten Sie innerhalb eines Werktages.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Übernimmt FRANKONIA Veranstaltungsschutz in Würzburg?</h3></summary>
+            <p class="faq-item__answer">Ja, von Firmenevents über Kongresse bis zu Festen: Einlasskontrolle, Ordnerdienst, Deeskalation und Unterstützung bei behördlichen Auflagen. Je früher wir in die Planung einsteigen, desto reibungsloser läuft die Abstimmung mit den Würzburger Behörden.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Wie schnell bekomme ich in Würzburg eine Brandwache?</h3></summary>
+            <p class="faq-item__answer">Nach Absprache auch kurzfristig, die Einsatzleitung ist rund um die Uhr erreichbar: <a href="{{phone.href}}">{{phone.display}}</a>. Für geplante Brandwachen (Heißarbeiten, Wartungsfenster der BMA) erhalten Sie das Angebot innerhalb eines Werktages.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Betreut FRANKONIA auch Objekte im Landkreis Würzburg?</h3></summary>
+            <p class="faq-item__answer">Ja, das Einsatzgebiet umfasst Stadt und Landkreis Würzburg sowie das Maindreieck komplett.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Welche Qualifikation haben die Sicherheitskräfte in Würzburg?</h3></summary>
+            <p class="faq-item__answer">Alle Kräfte sind mindestens IHK-qualifiziert nach § 34a GewO, viele zusätzlich als Brandschutzhelfer oder für Sicherheitstechnik geschult. Das Unternehmen ist DIN-77200-1- und ISO-9001-zertifiziert, DEKRA-geprüft.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 10. ABSCHLUSS-CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The shared lead-form partial with this page's own field prefix — unique
+         per page, or two forms in one document would break every <label for>.
+         The draft's separate Formulartitel ("Ihre Anfrage für Würzburg") is not
+         rendered as a second heading: the section H2 already says it, the same
+         call /werkschutz/ and Nürnberg made.
+         The form still submits nowhere sitewide (action="#", native validation
+         only) — docs/build-checklist.md Paso 4. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Jetzt Sicherheitsdienst für Würzburg anfragen</h2>
+          <p class="conversion__intro-lede">Beschreiben Sie kurz Ihr Objekt, Ihre Baustelle oder Ihr Event in Würzburg — Sie erhalten Ihr unverbindliches Angebot innerhalb eines Werktages, inklusive kostenfreier Beratung.</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="wz" messageLabel="Ihr Objekt, Ihre Baustelle oder Ihr Event in Würzburg" -->
+
+          <p class="conversion__form-alt">Lieber direkt sprechen? <a href="{{phone.href}}">{{phone.display}}</a></p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

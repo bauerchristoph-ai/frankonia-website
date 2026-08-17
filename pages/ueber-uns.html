@@ -264,10 +264,18 @@
           <p>Steffen Walde, Betriebswirt (B.Sc.) und Geschäftsführender Gesellschafter, führt FRANKONIA seit der Gründung. Sein Anspruch: zertifizierte Qualität, übertariflich bezahlte Teams und Sicherheitskonzepte, die genau zum Objekt passen. Begehungen und Konzepte erstellen bei FRANKONIA erfahrene Sicherheitsexperten, nicht der Vertrieb.</p>
         </div>
         <!-- Real portrait, delivered 2026-08-10 — replaces the reserved 4:5
-             frame that used to hold this space (same call as Alexander Jäger's
-             on /werkschutz/, still reserved there). Pure black backdrop
-             (0,0,0 measured at every corner), matching --color-bg exactly, so
-             the frame carries no radius/border/tint — see .uu-lead__photo.
+             frame that used to hold this space (Alexander Jäger's on /werkschutz/
+             got its own photo on 2026-08-14, so the two are now one treatment).
+             Black backdrop, so the frame carries no radius/border/tint — see
+             .uu-lead__photo.
+             ⚠️ CORRECTION 2026-08-14: this comment used to claim the backdrop was
+             "0,0,0 … matching --color-bg exactly". The first half was right and the
+             conclusion was NOT — --color-bg is #010101, i.e. 1, so the photo sat one
+             level BELOW the page it was supposed to match, and the bottom fade
+             below ramped to a colour the photo never reached. Re-exported with the
+             backdrop normalised to #010101 literally
+             (docs/design-sources/portrait-key-backdrop.py, same pass as Jäger's).
+             Measured across the seam afterwards: page 1, photo 1, delta 0.00.
              Enlarged same day (22rem → 30rem cap); re-exported at 480/960w so
              a 2x screen at the new cap still gets a sharp source. -->
         <div class="uu-lead__photo" data-reveal>

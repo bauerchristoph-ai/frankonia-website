@@ -58,10 +58,34 @@
   }
 }
 
+/* The hero's H1 and lede are CENTRED (client, 2026-08-14). Note this centres the
+   hero only — `.legal-doc` below keeps its ranged-left prose, because centred
+   running text is a readability failure and a legal notice is the last place to
+   try it (see that rule's own comment).
+
+   Three declarations, and all three are load-bearing — the same trap documented
+   half a dozen times in CLAUDE.md for `.section__intro`:
+     · `text-align` centres the TEXT inside each box;
+     · `.service-hero__content` is capped at 44rem by the chassis, so without an
+       auto margin the centred text sits in a 704px box still hugging the left
+       edge of a wider container;
+     · the lede carries its own 34rem cap, i.e. a second box needing the same
+       treatment — with only the wrapper's margin it reads as a centred title
+       with the subline pulled left, which is worse than centring nothing.
+   Two-class selectors throughout: the chassis rules are (0,1,0) and page-legal
+   .css loads after page-service.css, so a single class would win here by order
+   alone — but only by accident, and it would break the day the load order or a
+   shared rule changes. */
+.legal-hero .service-hero__content {
+  margin-inline: auto;
+  text-align: center;
+}
+
 /* The lede is capped shorter than the shared 32rem hero measure: one sentence
    of housekeeping copy should not run the width of a display heading. */
 .legal-hero .service-hero__lead {
   max-width: 34rem;
+  margin-inline: auto;
 }
 
 /* ---- 2. The document column --------------------------------------------- */

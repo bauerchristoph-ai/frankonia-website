@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- CITY PAGE — Fürth. Built from
+     NewVersionCopiesFrankonia/"2026-08-04 Webtext 17 Stadt Fuerth.docx"
+     (Stand 04.08.2026), verbatim, in German.
+
+     ⚠️ UWG / "kein Scheinstandort" is the rule that governs this whole page
+     type (docs/page-conventions.md §10.1). FRANKONIA has ONE address, in
+     Bamberg, and a city page may not imply a branch. It lands in three places
+     here: the hero badge says "Einsatzgebiet", never "Standort"; the
+     LocalBusiness JSON-LD carries the real Bamberg NAP with
+     areaServed: Fürth and NOT a Fürth address; and the FAQ answers
+     "do you have an office here?" honestly. Do not "improve" any of the three
+     into a local-address claim.
+
+     ⚠️ NO BRANDWACHE SECTION and no Trust/Zertifizierungen section: Webtext 17 is
+     the deliberately compact variant ("kompakteres Layout, 8 Sektionen") and asks
+     for neither. The DEKRA seals still appear, in the hero trust band. Do not add
+     the missing sections to "match" Nürnberg — the draft is the spec.
+
+     REUSE MODEL: every class is `.city-*`, never `.fuerth-*`, and
+     css/page-service.css is loaded as the CHASSIS (§9.1) — inset, `main h2`,
+     breadcrumb chevron, `.section--light`, `.service-hero*`, `.service-link`,
+     the whole `.pixel-seam*` block and the entire Kosten section come from
+     there. css/page-city.css was NOT touched to build this page.
+
+     GENERATED ONCE by docs/design-sources/city-pages.py, then hand-editable.
+     ⚠️ If you edit the FAQ below, edit the FAQPage graph above it too — they
+     must stay byte-identical with markup stripped. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title (53 chars) and description (157) are the draft's own —
+       docs/page-conventions.md §12. -->
+  <title>Sicherheitsdienst Fürth | Wachdienst 24/7 – FRANKONIA</title>
+  <meta name="description" content="Sicherheitsdienst für Fürth: Objektschutz, Wachdienst, Brandwache &amp; Baustellenbewachung — IHK-qualifizierte Kräfte, DEKRA-zertifiziert, Angebot in 1 Werktag.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/sicherheitsdienst-fuerth/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/sicherheitsdienst-fuerth/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/sicherheitsdienst-fuerth/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sicherheitsdienst Fürth | Wachdienst 24/7 – FRANKONIA">
+  <meta property="og:description" content="Sicherheitsdienst für Fürth: Objektschutz, Wachdienst, Brandwache &amp; Baustellenbewachung — IHK-qualifizierte Kräfte, DEKRA-zertifiziert, Angebot in 1 Werktag.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/sicherheitsdienst-fuerth/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- NO hero image preload: this page has no hero photograph. There is not one
+       city photo in the project and the draft does not ask for one — the hero's
+       visual is an inline SVG of Fürth's real administrative boundary, so
+       it costs no request at all and the page has NO image LCP element. -->
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "{{phone.display}}",
+      "email": "{{email}}",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 49.9019037,
+        "longitude": 10.9067377
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Fürth",
+        "containedInPlace": { "@type": "AdministrativeArea", "name": "Bayern" }
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "reviewCount": "{{rating.count}}",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/sicherheitsdienst-fuerth/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Hat FRANKONIA ein Büro in Fürth?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Fürth ist eines unserer festen Einsatzgebiete mit laufenden Aufträgen: Ihre Kräfte arbeiten fest vor Ort in Ihrem Objekt, die Einsatzleitung erreichen Sie rund um die Uhr direkt."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was kostet ein Sicherheitsdienst in Fürth?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde netto, je nach Leistung und Einsatzzeit. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Übernimmt FRANKONIA Objektschutz während der Michaelis-Kirchweih?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, gerade während der Kirchweih steigt der Bedarf: Objektschutz für Anlieger und Betriebe, Einlass für Gastronomie, Verstärkung für Veranstaltungsflächen. Früh anfragen lohnt sich, die Kirchweih-Wochen sind erfahrungsgemäß schnell verplant."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie schnell ist eine Brandwache in Fürth verfügbar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nach Absprache auch kurzfristig, die Einsatzleitung ist rund um die Uhr erreichbar: {{phone.display}}. Details zur Brandwache in Fürth."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Betreut FRANKONIA auch den Landkreis Fürth?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, Stadt und Landkreis Fürth gehören komplett zum Einsatzgebiet, inklusive Zirndorf, Oberasbach und Stein."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Einsatzgebiete",
+          "item": "https://frankonia-sicherheit.de/einsatzgebiete/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Sicherheitsdienst Fürth",
+          "item": "https://frankonia-sicherheit.de/sicherheitsdienst-fuerth/"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+
+  <!-- Shared, in cascade order (docs/page-conventions.md §9.1):
+       lead-form → testimonials → page-service.css (the CHASSIS) → this page. -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/testimonials.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-city.css">
+
+  <!-- The documented generic effect stack, nothing page-specific
+       (docs/page-conventions.md §4.1). -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+</head>
+<body class="page-city">
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Chevron separators, not slashes — docs/page-conventions.md §3. Matches
+         the BreadcrumbList JSON-LD above. The breadcrumb sits ABOVE the hero
+         (unlike /werkschutz/, whose hero is a full-bleed photograph reaching the
+         top of the page) because this hero has no photo. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/einsatzgebiete/">Einsatzgebiete</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Fürth</span></li>
+      </ol>
+    </nav>
+
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- The draft's own Hero-Aufbau, nothing added or dropped: badge → H1 →
+         subline → 3 ticks → double CTA → Google widget + DEKRA seals.
+         .hero__lead / .hero__actions / .hero__reassurance / .hero__trust are
+         load-bearing class names, not decoration — js/hero-reveal.js animates
+         exactly those four blocks in that order, so this page needs no JS of its
+         own (docs/page-conventions.md §4.1).
+         The badge says "Einsatzgebiet", which is the UWG disclosure of §10.1 and
+         the draft's own copy. -->
+    <section class="service-hero city-hero" data-hero-reveal>
+      <div class="container service-hero__grid city-hero__grid">
+        <div class="service-hero__content city-hero__content">
+          <p class="city-hero__badge">
+            <svg class="icon city-hero__badge-icon" aria-hidden="true"><use href="#icon-pin"></use></svg>
+            Einsatzgebiet Fürth, fester Ansprechpartner rund um die Uhr
+          </p>
+
+          <h1>Sicherheitsdienst Fürth</h1>
+
+          <p class="hero__lead service-hero__lead">
+            Objektschutz, Werkschutz, Brandwache und Baustellenbewachung für Fürth, mit festem Ansprechpartner rund um die Uhr.
+          </p>
+
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn btn--secondary service-hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+          </div>
+
+          <!-- The draft's lines VERBATIM, so a stacked list rather than the
+               homepage hero's row of chips: these are full sentences and need
+               ~1000px in a row at this type size against the ~640px this column
+               has. Same measurement /jobs/ made before the client chose the list.
+               .city-hero__points turns the shared row into a column and supplies
+               the align-items: flex-start the shared centred rule would
+               otherwise apply horizontally (docs/page-conventions.md §10.4). -->
+          <ul class="hero__reassurance service-hero__points city-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Feste Teams für laufende Aufträge in Fürth
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Digital dokumentiert: Wachbuch, Checkpoints, Reports
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Unverbindliches Angebot innerhalb eines Werktages
+            </li>
+          </ul>
+
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- Fürth'S REAL ADMINISTRATIVE OUTLINE, as an inline path.
+             Generated once in development by docs/design-sources/city-outline.py
+             from assets/data/coverage-boundaries/fuerth.geojson (fetched from
+             OSM/Nominatim in July). Never hand-edit the coordinates; re-run the
+             script instead.
+             Why an outline and not a photo or a map — docs/page-conventions.md
+             §10.3, in short: no city photography exists and the draft asks for
+             none; an AREA is the honest visual for an Einsatzgebiet where a
+             single pin would read as a branch office (§10.1); and as a path it
+             costs zero requests and no third-party tiles.
+             ⚠️ pathLength="1" IS LOAD-BEARING. The outline draws itself with a
+             pure-CSS dash, and that attribute renormalises the perimeter to 1 so
+             `stroke-dasharray: 1` is one exact lap at any size for any city. A
+             path pasted in without it draws nothing at all.
+             ⚠️ The guides are PERCENTAGES because every city's viewBox height
+             differs (683 for Coburg, 1494 for Kulmbach); this one is 1196. -->
+        <div class="city-hero__map" aria-hidden="true">
+          <svg class="city-map" viewBox="0 0 1000 1196" fill="none" focusable="false">
+            <line class="city-map__guide" x1="50%" y1="0" x2="50%" y2="100%"></line>
+            <line class="city-map__guide" x1="0" y1="50%" x2="100%" y2="50%"></line>
+            <path class="city-map__area" pathLength="1" d="M0.0 521.3 L1.2 522.1 L3.0 535.7 L6.5 535.4 L5.9 546.4 L14.4 540.8 L21.0 538.7 L22.3 550.6 L20.8 559.3 L25.4 566.2 L29.5 568.6 L28.9 572.3 L36.4 573.5 L45.3 580.7 L44.7 594.2 L56.6 601.7 L65.1 601.5 L65.8 635.7 L62.4 636.2 L58.5 639.4 L69.1 639.9 L69.4 642.4 L57.3 643.3 L56.4 646.4 L53.8 647.4 L56.7 658.3 L61.6 668.4 L63.9 688.1 L67.9 694.6 L75.6 722.2 L74.1 725.0 L77.8 734.8 L102.6 731.5 L101.0 734.9 L105.6 746.1 L107.1 744.7 L140.4 769.9 L136.0 771.4 L136.5 778.2 L142.8 796.7 L137.4 803.1 L136.4 806.5 L134.0 806.6 L132.1 816.3 L128.8 822.0 L120.4 830.3 L113.6 832.3 L103.9 843.4 L109.8 848.2 L110.2 861.6 L123.2 872.4 L125.7 877.6 L130.4 881.5 L133.3 892.4 L153.0 893.3 L172.7 887.4 L184.4 880.7 L189.0 885.0 L212.1 890.7 L224.9 895.8 L245.8 912.0 L265.9 921.7 L267.8 926.0 L294.1 939.5 L359.5 934.2 L395.1 927.1 L396.4 943.9 L434.6 946.7 L446.0 945.3 L450.4 950.5 L473.4 946.4 L472.9 940.7 L482.9 939.2 L487.1 948.8 L504.4 943.0 L516.7 942.9 L519.8 947.8 L532.3 952.1 L538.0 957.9 L576.9 962.2 L583.4 985.1 L583.2 990.9 L573.1 1003.2 L574.2 1004.3 L572.0 1007.0 L574.1 1008.6 L570.9 1013.6 L579.3 1017.9 L604.6 1022.0 L610.9 1020.4 L612.5 1000.8 L625.2 1001.9 L624.3 999.9 L643.7 1000.1 L644.7 1000.4 L644.0 1007.1 L647.1 1005.9 L650.3 1001.8 L651.8 1002.3 L645.3 1020.5 L656.1 1028.8 L656.4 1031.9 L653.2 1040.1 L659.3 1058.0 L662.9 1058.7 L677.2 1047.1 L679.5 1046.6 L681.4 1048.0 L681.0 1057.3 L684.8 1066.3 L684.7 1069.2 L675.2 1084.3 L674.9 1091.4 L678.6 1091.2 L684.8 1095.3 L692.5 1105.2 L693.1 1115.1 L690.2 1133.7 L697.5 1147.9 L709.5 1160.7 L713.1 1180.2 L715.7 1184.9 L721.8 1190.8 L724.0 1195.9 L729.2 1192.9 L743.5 1178.6 L742.4 1175.6 L745.0 1174.5 L745.9 1176.5 L772.7 1169.3 L763.1 1146.9 L763.2 1129.1 L766.6 1129.9 L783.4 1126.2 L774.9 1091.6 L769.4 1076.5 L761.0 1064.5 L748.6 1051.3 L758.6 1038.5 L776.9 1054.7 L787.8 1051.1 L798.5 1042.8 L850.0 991.6 L854.8 985.1 L858.5 960.4 L856.5 956.7 L860.9 955.2 L863.6 949.0 L867.5 927.0 L868.3 893.6 L872.1 874.5 L870.1 873.2 L880.9 857.5 L883.4 859.0 L882.8 861.1 L898.8 870.3 L902.9 843.0 L900.8 839.3 L904.4 833.9 L904.8 822.8 L906.4 822.2 L906.5 819.3 L910.5 819.9 L912.7 815.5 L914.0 799.9 L905.0 779.1 L911.5 774.3 L917.1 780.2 L923.5 776.0 L935.2 786.8 L936.0 785.7 L943.9 791.5 L946.2 788.3 L949.2 787.5 L951.3 783.5 L957.6 789.3 L970.1 793.3 L972.4 792.2 L978.9 777.2 L977.6 776.0 L985.4 743.9 L982.2 741.7 L983.6 740.9 L983.6 728.5 L980.2 681.8 L977.7 682.6 L977.1 679.9 L959.2 683.9 L959.4 643.1 L940.2 645.4 L939.2 611.4 L933.9 612.6 L933.5 611.3 L923.1 614.6 L906.7 576.8 L914.3 558.7 L893.1 553.1 L906.7 530.3 L905.7 529.5 L935.9 499.8 L943.0 489.6 L948.1 486.0 L962.2 483.5 L962.3 451.1 L964.4 451.1 L964.2 434.9 L960.7 434.9 L960.4 412.6 L973.7 411.4 L972.9 384.7 L996.7 387.6 L1000.0 369.4 L980.9 361.2 L981.7 354.6 L974.9 354.4 L971.7 370.7 L947.7 369.8 L946.8 363.9 L915.1 363.3 L912.8 384.1 L891.9 382.9 L892.3 374.8 L859.4 373.7 L857.2 363.2 L850.1 364.5 L849.3 361.5 L843.2 362.9 L843.6 354.4 L832.1 352.9 L834.6 342.5 L832.8 328.7 L819.9 324.2 L803.9 321.6 L785.0 314.5 L784.1 303.1 L779.3 300.8 L775.1 283.6 L783.7 280.8 L779.6 234.1 L794.3 228.6 L806.3 226.9 L810.2 215.0 L818.1 211.6 L808.7 206.7 L805.3 201.9 L805.1 197.3 L792.5 192.4 L784.9 191.9 L785.0 193.2 L759.9 184.8 L759.1 179.3 L752.3 174.4 L754.7 171.3 L745.2 167.7 L747.9 162.2 L738.3 159.3 L734.9 163.3 L735.7 133.9 L737.6 133.8 L737.8 109.9 L745.0 95.1 L745.3 90.6 L742.7 90.3 L743.6 79.7 L739.1 63.7 L736.5 59.6 L720.5 61.2 L710.9 57.2 L692.3 45.5 L684.3 42.8 L682.5 40.1 L669.7 39.5 L670.7 33.1 L656.6 28.8 L647.7 24.3 L639.4 14.1 L630.4 11.3 L620.8 13.6 L614.2 12.5 L606.7 0.0 L597.3 14.8 L596.3 23.0 L587.5 41.6 L581.4 66.9 L577.7 66.4 L575.1 72.6 L570.8 71.4 L565.2 88.4 L560.2 86.7 L547.2 86.5 L544.7 91.1 L530.3 90.9 L531.8 88.2 L491.7 87.3 L490.2 85.9 L490.1 97.1 L478.1 92.1 L465.9 92.9 L436.0 90.2 L434.4 95.6 L380.3 73.4 L379.1 75.7 L353.5 60.4 L335.7 63.2 L336.1 69.6 L301.3 75.8 L302.7 89.9 L294.6 91.3 L297.8 123.4 L292.0 123.8 L289.3 129.3 L283.2 132.9 L283.2 136.9 L279.0 144.6 L278.7 154.4 L265.9 154.0 L265.3 165.9 L308.2 164.5 L306.2 202.7 L263.6 203.8 L262.4 232.2 L294.0 232.7 L288.0 273.9 L283.7 283.1 L285.5 288.0 L283.3 291.6 L292.8 298.9 L290.5 313.5 L290.9 323.6 L298.9 359.6 L296.9 360.3 L298.8 378.3 L301.6 385.9 L300.5 390.8 L298.2 392.1 L294.7 389.5 L290.6 390.8 L290.3 397.1 L293.7 396.2 L294.6 397.4 L291.1 399.2 L279.9 396.6 L279.3 393.6 L276.9 393.0 L275.8 390.0 L269.0 389.8 L266.7 395.0 L262.1 399.0 L245.6 401.6 L242.2 395.5 L238.8 397.2 L235.2 394.0 L231.9 394.4 L232.4 389.3 L231.0 387.8 L226.7 392.9 L222.6 393.0 L220.6 387.5 L212.8 382.5 L209.7 382.2 L209.5 377.1 L206.3 378.9 L204.3 376.1 L201.4 375.6 L201.7 368.7 L196.0 370.0 L189.2 368.6 L187.3 371.9 L181.8 373.4 L183.0 375.8 L180.4 380.0 L169.7 380.3 L165.0 382.9 L167.4 387.0 L166.3 388.3 L162.2 386.4 L159.7 389.1 L153.5 391.7 L133.6 398.3 L119.4 398.9 L114.2 396.6 L110.8 396.9 L109.1 397.9 L108.1 403.2 L99.6 402.3 L99.1 421.1 L96.3 437.8 L89.9 458.7 L82.5 474.2 L79.7 477.8 L74.4 480.4 L64.5 467.3 L59.1 470.2 L67.7 482.6 L63.3 486.5 L52.1 502.3 L52.4 518.6 L22.8 517.0 L0.9 510.2 L0.0 521.3 Z"></path>
+          </svg>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 2. WARUM FRANKONIA IN FÜRTH ============ -->
+    <!-- The draft's 3 cards. WHITE ELEVATED PANELS, every value copied from
+         .service-cases__card on /werkschutz/ rather than re-derived, so the two
+         are one design in two files (docs/page-conventions.md §10.4). That
+         REVERSES §8.2's "ruled, not carded" for this block — a client decision
+         with precedent, not drift. Do not restore the hairlines.
+         ⚠️ The hover uses `translate`, never `transform`: these carry
+         data-item-reveal and GSAP writes `transform` INLINE, which beats any
+         stylesheet rule. `translate` is a separate property and composes. -->
+    <section class="section section--light city-why" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Fürth ist nicht Nürnberg — Ihr Sicherheitsdienst sollte das wissen</h2>
+          <p>Traditionsunternehmen, dichte Innenstadt-Handelslagen, Gewerbeflächen wie die Hardhöhe, und mit der Michaelis-Kirchweih eines der größten Straßenfeste Bayerns: Fürth hat ein eigenes Sicherheitsprofil. FRANKONIA bedient es als fränkischer Mittelständler mit Fürth als festem Einsatzgebiet, professionell und verbindlich.</p>
+        </div>
+
+        <ul class="city-why__grid city-why__grid--3" data-item-reveal=".city-why__item">
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-transparency"></use></svg>
+            <h3 class="city-why__title">Modern und digital nachweisbar</h3>
+            <p>Wachbuch, Checkpoint-Kontrollen und Reports zeigen Ihnen jederzeit, was auf Ihrem Fürther Objekt passiert.</p>
+          </li>
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-contact"></use></svg>
+            <h3 class="city-why__title">Inhabergeführt statt anonym</h3>
+            <p>Entscheidungen fallen in Bamberg beim Inhaber, nicht in einer Konzernzentrale. Ihr Einsatzleiter ist 24/7 direkt erreichbar.</p>
+          </li>
+          <li class="city-why__item">
+            <svg class="icon city-why__icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+            <h3 class="city-why__title">Zertifiziert</h3>
+            <p>DIN 77200-1, ISO 9001, DEKRA-geprüft, dieselben Standards wie bei über 300 Kunden in Franken.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 3. LEISTUNGEN IN FÜRTH ============ -->
+    <!-- The draft's services, its copy, its order and its link targets.
+         Linking confirmed-but-unbuilt URLs is this project's convention
+         (docs/page-conventions.md §8.3); the page's own primary conversion never
+         does it — every CTA points at #anfrage, the live form below. -->
+    <section class="section city-services">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Unsere Sicherheitsdienstleistungen in Fürth</h2>
+          <p>Vom dauerhaften Objektschutz über den Werkschutz bis zur kurzfristigen Brandwache: Alle FRANKONIA Leistungen stehen Ihnen auch in Fürth zur Verfügung.</p>
+        </div>
+
+        <!-- GROUP 1 — the four whose destination is a Fürth page of its
+             own. They carry the local keyword volume and a click keeps the
+             visitor on a city-specific path. Whole card is the link. -->
+        <ul class="city-services__featured" data-item-reveal=".city-services__card">
+          <li>
+            <a class="city-services__card" href="/werkschutz-fuerth/">
+              <span class="city-services__card-name">Werkschutz in Fürth</span>
+              <span class="city-services__card-text">Pforte und Rundgänge für Produktions- und Traditionsstandorte.</span>
+              <svg class="icon city-services__card-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-services__card" href="/objektschutz-fuerth/">
+              <span class="city-services__card-name">Objektschutz in Fürth</span>
+              <span class="city-services__card-text">Bestreifung und Zugangskontrolle für Gewerbe, Verwaltung und Wohnanlagen.</span>
+              <svg class="icon city-services__card-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-services__card" href="/baustellenbewachung-fuerth/">
+              <span class="city-services__card-name">Baustellenbewachung in Fürth</span>
+              <span class="city-services__card-text">Schutz für Innenstadt-Nachverdichtung und Gewerbeprojekte.</span>
+              <svg class="icon city-services__card-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-services__card" href="/brandwache-fuerth/">
+              <span class="city-services__card-name">Brandwache in Fürth</span>
+              <span class="city-services__card-text">Kurzfristige Brandsicherheitswachen bei BMA-Ausfall und Heißarbeiten.</span>
+              <svg class="icon city-services__card-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+        </ul>
+
+        <!-- GROUP 2 — the four whose page is the GENERIC service page, which
+             will not contain the city's name. As equal peers their "… in Fürth"
+             label was promising a local page that does not exist, which is the
+             same implied-local claim §10.1 exists to prevent. Rows, not chips,
+             so every description survives — the client's own condition.
+             ⚠️ This grouping is about which destinations are CITY-specific, not
+             about which pages exist yet. Do not promote a row to a card when its
+             generic target goes live. -->
+        <div class="city-services__more">
+          <p class="city-services__more-label">Ebenfalls verfügbar</p>
+
+          <ul class="city-services__list" data-item-reveal="li">
+            <li>
+              <a class="city-services__row" href="/empfangsdienst/">
+                <span class="city-services__name">Empfangsdienst in Fürth</span>
+                <span class="city-services__text">Professioneller Empfang mit Sicherheitskompetenz.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/veranstaltungsschutz/">
+                <span class="city-services__name">Veranstaltungsschutz in Fürth</span>
+                <span class="city-services__text">Einlass, Ordnerdienst und Deeskalation, vom Firmenevent bis zum Straßenfest.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/kaufhausdetektei/">
+                <span class="city-services__name">Kaufhausdetektei in Fürth</span>
+                <span class="city-services__text">Zivile Ladendetektive für Innenstadt-Handel und Filialen.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="city-services__row" href="/sicherheitstechnik/">
+                <span class="city-services__name">Sicherheitstechnik in Fürth</span>
+                <span class="city-services__text">Videoüberwachung, Alarm- und Zutrittstechnik, geplant als Teil des Gesamtkonzepts.</span>
+                <svg class="icon city-services__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 4. LOKALE EINSATZFELDER IN FÜRTH ============ -->
+    <!-- The section that makes this a CITY page rather than a service page with a
+         place name pasted in: real local references, every word the draft's.
+         Numbered because long blocks need an ordinal to be scannable; the
+         numerals are aria-hidden decoration on top of a real <ol>.
+         ⚠️ Where an item closes with a service link, that pairing is inferred
+         from the copy (the draft only annotates URLs in the Leistungen section)
+         and has been checked against WHERE the service is actually available —
+         the lesson Nürnberg paid for when it linked Revier- & Schließdienst, a
+         Raum-Bamberg-only service, from a Nürnberg page. -->
+    <section class="section section--light city-fields" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <p class="section-eyebrow">Vor Ort im Einsatz</p>
+          <h2>Wo Sicherheitsdienste in Fürth gebraucht werden</h2>
+        </div>
+
+        <ol class="city-fields__list" data-item-reveal="li">
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">01</span>
+            <h3 class="city-fields__title">Gewerbegebiet Hardhöhe und Stadtgrenze zu Nürnberg</h3>
+            <p>Produktion, Logistik und Großhandel dicht an dicht, nach Feierabend verwaiste Areale, klassisches Ziel für Diebstahl. Kontrollgänge und sichtbare Präsenz schrecken ab.</p>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">02</span>
+            <h3 class="city-fields__title">Innenstadt-Handel an der Fürther Freiheit</h3>
+            <p>Einkaufslagen zwischen Fürther Freiheit und Neuer Mitte kämpfen wie überall mit Ladendiebstahl, zivile Detektive und Doorman-Präsenz senken die Verluste messbar.</p>
+            <a class="service-link city-fields__link" href="/kaufhausdetektei/">
+              Kaufhausdetektei in Fürth
+              <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">03</span>
+            <h3 class="city-fields__title">Michaelis-Kirchweih und Veranstaltungen in Fürth</h3>
+            <p>Elf Tage Ausnahmezustand in der Innenstadt, für Anlieger, Gastronomie und Veranstalter heißt das: Einlass, Objektschutz und geschulte Kräfte, die deeskalieren können.</p>
+          </li>
+          <li class="city-fields__item">
+            <span class="city-fields__num" aria-hidden="true">04</span>
+            <h3 class="city-fields__title">Kliniken und Einrichtungen in Fürth</h3>
+            <p>Klinikum und öffentliche Einrichtungen brauchen Zutrittssteuerung mit Fingerspitzengefühl — Erfahrung aus dem Klinikumfeld bringt FRANKONIA mit.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+    <!-- No seam: fields and price are both light surfaces, and tiles the colour of the section above would be invisible against the one below (§9.2). -->
+    <!-- ============ 5. KOSTEN IN FÜRTH ============ -->
+    <!-- Entirely the chassis: .service-price* was built generically on
+         /werkschutz/ because docs/build-checklist.md counts this block on 27
+         pages, and the Preis-Box is a partial. The only city-specific rule is
+         .city-rates for the per-service rows a service page does not have.
+         ⚠️ .city-rates deliberately does NOT reuse .service-price__factors —
+         that block draws a blue `+` per row, and a `+` in front of
+         "Objektschutz · 26-32 €/Std." reads as a list of extras rather than a
+         rate table. It does repeat that block's `grid-column: 1`, or it falls
+         into the second column under the price box.
+         GEO shape: question H2, the number in the first sentence. -->
+    <section class="section section--light service-price" data-nav-theme="light">
+      <div class="container service-price__layout">
+        <div class="section__intro service-price__intro">
+          <h2>Was kostet ein Sicherheitsdienst in Fürth?</h2>
+          <p class="service-price__answer" data-reveal data-reveal-delay>In Fürth gelten dieselben seriösen Spannen wie im gesamten Großraum: {{price.min}} bis {{price.max}} Euro pro Stunde netto, je nach Qualifikation, Einsatzzeit und Umfang.</p>
+        </div>
+
+        <!-- The shared Preis-Box. `range` comes from content/values.json, so the
+             annual rate change stays ONE edit for all 27 pages that publish it
+             (client rule G10). -->
+        <!-- include: price-box range="{{price.range}}" note="netto, Richtwerte für Einsätze in Stadt und Landkreis Fürth" -->
+
+        <!-- The draft's own "Typische Preisspannen" line, split into its services
+             so it can be read rather than parsed. -->
+        <ul class="city-rates" data-item-reveal="li">
+          <li><span class="city-rates__service">Baustellenbewachung</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+          <li><span class="city-rates__service">Werkschutz</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+          <li><span class="city-rates__service">Veranstaltungsschutz</span><span class="city-rates__range">{{price.range}} {{price.unit}}</span></li>
+        </ul>
+
+        <p class="service-price__hint">
+          <svg class="icon service-price__hint-icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <span>Richtwerte netto. Ihr konkretes Angebot erhalten Sie unverbindlich innerhalb eines Werktages.</span>
+        </p>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 6. ERREICHBARKEIT & DIGITALE NACHWEISE ============ -->
+    <!-- The /leistungen/ chapter-strip treatment, values taken from
+         page-leistungen.css rather than re-derived. No arrow and no hover: those
+         three are LINKS to chapters, these are statements with nowhere to go, and
+         an arrow would promise navigation that does not exist. No 01–03 numerals
+         either — these are PARALLEL facts, not steps.
+         ⚠️ The closing line is the draft's Abbinder verbatim, and it is written
+         to be UWG-safe: it promises fixed personnel in the object and a reachable
+         Einsatzleitung and makes NO claim about response times or travel
+         distances (Prüfkatalog F10, §10.1). Do not add one. -->
+    <section class="section city-proof">
+      <div class="container">
+        <div class="section__intro">
+          <h2>So bleibt Ihr Sicherheitsdienst in Fürth jederzeit greifbar</h2>
+        </div>
+
+        <ul class="city-proof__grid" data-item-reveal="li">
+          <li class="city-proof__item">
+            <svg class="icon city-proof__icon" aria-hidden="true"><use href="#icon-clock"></use></svg>
+            <p class="city-proof__label">24/7 direkt erreichbare Einsatzleitung</p>
+          </li>
+          <li class="city-proof__item">
+            <svg class="icon city-proof__icon" aria-hidden="true"><use href="#icon-route"></use></svg>
+            <p class="city-proof__label">Digitales Wachbuch mit Checkpoint-Nachweis</p>
+          </li>
+          <li class="city-proof__item">
+            <svg class="icon city-proof__icon" aria-hidden="true"><use href="#icon-transparency"></use></svg>
+            <p class="city-proof__label">Regelmäßiger Report für Ihre Geschäftsführung</p>
+          </li>
+        </ul>
+
+        <p class="city-proof__outro">Bei laufenden Aufträgen sind Ihre Kräfte fest im Fürther Objekt eingeteilt, koordiniert über die Einsatzleitung, dokumentiert in Systemen, die Sie jederzeit einsehen können.</p>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 7. FAQ ============ -->
+    <!-- 5 place-specific questions, the draft's own, verbatim. The visible copy
+         and the FAQPage JSON-LD at the top of this file must stay byte-identical
+         with markup stripped — the one thing on this page type that is easy to
+         break with a small edit and impossible to see. They are generated from
+         one source by docs/design-sources/city-pages.py, so an edit here has to
+         be made in BOTH places by hand.
+         ⚠️ The first question answers "do you have an office here?" honestly.
+         That is the UWG requirement of §10.1, not filler — do not soften it into
+         a local-address claim. -->
+    <section class="section section--light city-faq service-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Sicherheitsdienst Fürth: die häufigsten Fragen</h2>
+        </div>
+
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
+          <details class="faq-item">
+            <summary><h3>Hat FRANKONIA ein Büro in Fürth?</h3></summary>
+            <p class="faq-item__answer">Fürth ist eines unserer festen Einsatzgebiete mit laufenden Aufträgen: Ihre Kräfte arbeiten fest vor Ort in Ihrem Objekt, die Einsatzleitung erreichen Sie rund um die Uhr direkt.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Was kostet ein Sicherheitsdienst in Fürth?</h3></summary>
+            <p class="faq-item__answer">In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde netto, je nach Leistung und Einsatzzeit. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Übernimmt FRANKONIA Objektschutz während der Michaelis-Kirchweih?</h3></summary>
+            <p class="faq-item__answer">Ja, gerade während der Kirchweih steigt der Bedarf: Objektschutz für Anlieger und Betriebe, Einlass für Gastronomie, Verstärkung für Veranstaltungsflächen. Früh anfragen lohnt sich, die Kirchweih-Wochen sind erfahrungsgemäß schnell verplant.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Wie schnell ist eine Brandwache in Fürth verfügbar?</h3></summary>
+            <p class="faq-item__answer">Nach Absprache auch kurzfristig, die Einsatzleitung ist rund um die Uhr erreichbar: <a href="{{phone.href}}">{{phone.display}}</a>. Details zur <a href="/brandwache-fuerth/">Brandwache in Fürth</a>.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Betreut FRANKONIA auch den Landkreis Fürth?</h3></summary>
+            <p class="faq-item__answer">Ja, Stadt und Landkreis Fürth gehören komplett zum Einsatzgebiet, inklusive Zirndorf, Oberasbach und Stein.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 8. ABSCHLUSS-CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The shared lead-form partial with this page's own field prefix — unique
+         per page, or two forms in one document would break every <label for>.
+         The draft's separate Formulartitel ("Ihre Anfrage für Fürth") is not
+         rendered as a second heading: the section H2 already says it, the same
+         call /werkschutz/ and Nürnberg made.
+         The form still submits nowhere sitewide (action="#", native validation
+         only) — docs/build-checklist.md Paso 4. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Jetzt Sicherheitsdienst für Fürth anfragen</h2>
+          <p class="conversion__intro-lede">Beschreiben Sie kurz Ihr Objekt oder Event in Fürth — Angebot innerhalb eines Werktages.</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="ft" messageLabel="Ihr Objekt oder Event in Fürth" -->
+
+          <p class="conversion__form-alt">Lieber direkt sprechen? <a href="{{phone.href}}">{{phone.display}}</a></p>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 9. UMGEBUNG ============ -->
+    <!-- ⚠️ BELOW THE FORM, which departs from the draft's own order and follows
+         Nürnberg's (client-approved, 2026-08-10). The drafts title this section
+         "Umgebung + Abschluss-CTA", i.e. as ONE closing block — but functionally
+         they pull opposite ways: a set of EXITS directly above the page's primary
+         conversion. The service template resolves the same tension the other way
+         ("… FAQ → CTA → verwandte Seiten"), so there is internal precedent.
+         No copy changed. See docs/page-conventions.md §10.2.
+         Small H2 per the draft — the fourth declared exception to §2.
+         A neighbour with no page of its own is a MENTION with no link and no
+         arrow, so "this goes somewhere" is never signalled by colour alone. -->
+    <section class="section section--light city-nearby" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro city-nearby__intro">
+          <h2 class="city-nearby__title">Sicherheitsdienst rund um Fürth</h2>
+          <p>Unser Einsatzgebiet endet nicht an der Fürther Stadtgrenze: Auch in Nürnberg und Erlangen übernehmen wir Objektschutz, Baustellenbewachung und mehr.</p>
+        </div>
+
+        <ul class="city-nearby__list" data-item-reveal="li">
+          <li>
+            <a class="city-nearby__tile" href="/sicherheitsdienst-nuernberg/">
+              <svg class="icon city-nearby__pin" aria-hidden="true"><use href="#icon-pin"></use></svg>
+              <span class="city-nearby__name">Nürnberg</span>
+              <svg class="icon city-nearby__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+          <li>
+            <a class="city-nearby__tile" href="/sicherheitsdienst-erlangen/">
+              <svg class="icon city-nearby__pin" aria-hidden="true"><use href="#icon-pin"></use></svg>
+              <span class="city-nearby__name">Erlangen</span>
+              <svg class="icon city-nearby__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

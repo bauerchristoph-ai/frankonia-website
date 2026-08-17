@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- SERVICE PAGE — Revier- & Schließdienst. Built from
+     NewVersionCopiesFrankonia/"2026-08-04 Webtext 10 Revier-Schliessdienst.docx"
+     (Stand 04.08.2026), verbatim, in German.
+
+     ⚠️ THIS IS NOT A COPY OF /werkschutz/ SECTION FOR SECTION, and that is the
+     draft's own doing rather than drift: the v2 copy varies the structure per
+     service on purpose ("Struktur bewusst variiert" is written into six of the
+     nine remaining drafts). This one runs 10 sections. The BLOCKS are all the
+     shared `.service-*` chassis, and css/page-service.css is the only page
+     stylesheet loaded besides the shared form.
+
+     Colour rhythm, derived from the section surfaces rather than copied:
+       ▪ ▫ ▪ ▫ ▪ ▫ ▪ ▫ ▪ ▫
+     9 pixel seams. Tiles are always the colour of the section ABOVE
+     (docs/page-conventions.md §9.2).
+
+     GENERATED ONCE by docs/design-sources/service-pages.py, then hand-editable.
+     ⚠️ If you edit the FAQ below, edit the FAQPage graph above it too — they must
+     stay byte-identical with markup stripped. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title (57 chars) and description (145) are the draft's own —
+       docs/page-conventions.md §12. -->
+  <title>Revier- &amp; Schließdienst Bamberg | Basisschutz – FRANKONIA</title>
+  <meta name="description" content="Revier- &amp; Schließdienst im Raum Bamberg: Kontrollfahrten und Verschlussrunden zu variierenden Zeiten, wirtschaftlicher Basisschutz, dokumentiert.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/revier-schliessdienst/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/revier-schliessdienst/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/revier-schliessdienst/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Revier- &amp; Schließdienst Bamberg | Basisschutz – FRANKONIA">
+  <meta property="og:description" content="Revier- &amp; Schließdienst im Raum Bamberg: Kontrollfahrten und Verschlussrunden zu variierenden Zeiten, wirtschaftlicher Basisschutz, dokumentiert.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/revier-schliessdienst/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- The hero photo is the LCP element, same pattern as every other service
+       hero. One source, no srcset: the file is 820px wide and there is no larger
+       original, so a candidate list would only ever offer the same image. -->
+  <link rel="preload" as="image" href="/assets/images/revier-schliessdienst.webp" type="image/webp">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "{{phone.display}}",
+      "email": "{{email}}",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "parentOrganization": {
+        "@id": "https://frankonia-sicherheit.de/#organization"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://frankonia-sicherheit.de/revier-schliessdienst/#service",
+      "name": "Revier- & Schließdienst",
+      "serviceType": "Revier- und Schließdienst",
+      "description": "Revier- und Schließdienst in Stadt und Landkreis Bamberg: Kontrollfahrten und Verschlussrunden zu variierenden Zeiten, mit Checkpoint-Nachweis im Wächterkontrollsystem.",
+      "provider": {
+        "@id": "https://frankonia-sicherheit.de/#localbusiness"
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Bamberg" }
+      ],
+      "url": "https://frankonia-sicherheit.de/revier-schliessdienst/"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Leistungen",
+          "item": "https://frankonia-sicherheit.de/leistungen/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Revier- & Schließdienst",
+          "item": "https://frankonia-sicherheit.de/revier-schliessdienst/"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/revier-schliessdienst/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Was kostet eine Nachtkontrolle für mein Objekt?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Revierkontrollen werden je Kontrollfahrt kalkuliert, der Preis hängt von Umfang, Frequenz und Lage im Revier ab. Für die meisten Gewerbeobjekte liegt ein solider Kontroll-Rhythmus bei einem niedrigen bis mittleren dreistelligen Monatsbetrag; Ihr konkretes Angebot erhalten Sie innerhalb eines Werktages."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Woher weiß ich, dass die Runden wirklich gefahren werden?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Durch das Wächterkontrollsystem: Checkpoints an Ihrem Objekt werden bei jeder Runde gescannt, mit Zeitstempel dokumentiert und im Report ausgewiesen. Feststellungen (offene Tür, Schaden, Verdacht) werden mit Foto und Meldekette dokumentiert."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was passiert, wenn der Revierfahrer etwas feststellt?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Er sichert die Situation, informiert nach der vereinbarten Meldekette (Sie, Polizei, Notdienste) und dokumentiert den Vorfall mit Fotos. Auf Wunsch bleibt die Kraft bis zur Klärung vor Ort oder eine Verstärkung übernimmt."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Übernimmt FRANKONIA auch nur den Schließdienst?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, abendliche Verschlussrunden und morgendliches Öffnen sind auch einzeln buchbar, inklusive Alarmscharfschaltung. Viele Kunden starten mit dem Schließdienst und erweitern später um Nachtkontrollen."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Ist mein Objekt im FRANKONIA Revier?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Der Revier- und Schließdienst läuft ausschließlich in Stadt und Landkreis Bamberg, inklusive Hallstadt, Hirschaid, Memmelsdorf und Umgebung. Ob Ihr Objekt im Revier liegt, klärt ein kurzes Telefonat: +49 951 964352-0. Außerhalb Bambergs übernehmen Objektschutz und Interventionsdienst vergleichbare Aufgaben."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+  <!-- Shared lead-form section, then the service chassis
+       (docs/page-conventions.md §9.1). -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+
+  <!-- The documented generic effect stack (docs/page-conventions.md §4.1).
+       Deliberately NOT loaded: service-flow.js, service-contrast.js, svg-draw.js
+       and case-cards.js — /werkschutz/ needs them for blocks whose markup does
+       not exist on this page. steps-sequence.js IS loaded: the Schritte section
+       uses the shared rail. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+  <script src="/js/steps-sequence.js" defer></script>
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Chevron separators, not slashes — docs/page-conventions.md §3. Matches
+         the BreadcrumbList JSON-LD above. It sits ABOVE the hero because this
+         hero is a two-column split, not a full-bleed photograph: only the bleed
+         variant pulls the breadcrumb inside the section. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/leistungen/">Leistungen</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Revier- &amp; Schließdienst</span></li>
+      </ol>
+    </nav>
+
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- The draft's own Hero-Aufbau, nothing added or dropped: badge → H1 →
+         subline → 3 ticks → double CTA → Google widget + DEKRA seals.
+         Primary = the free-offer form, secondary = the phone: client rule G2's
+               default order, and the label G3 requires for a CTA pointing at a form.
+
+         TWO COLUMNS, not the full-bleed treatment /werkschutz/ uses, and the
+         reason is the asset: the only photograph this service has is the
+         portrait 820x1225 file that already feeds the homepage's services
+         preview. A background hero would crop a portrait photo to a letterbox
+         band, which is precisely why docs/page-conventions.md §8.2 prescribes the
+         split hero for a vertical photo. The breadcrumb therefore sits ABOVE the
+         hero (a bleed hero is the only case that pulls it inside).
+
+         .hero__lead / .hero__actions / .hero__reassurance / .hero__trust are
+         load-bearing class names, not decoration — js/hero-reveal.js animates
+         exactly those four blocks in that order, so this page needs no JS of its
+         own (docs/page-conventions.md §4.1). -->
+    <section class="service-hero service-hero--split" data-hero-reveal>
+      <div class="container service-hero__grid">
+        <div class="service-hero__content">
+          <!-- Hero badge, verbatim from the Webtext (client rule G9: the badge is
+               whatever the document says it is). -->
+          <p class="hero-badge">
+            <svg class="icon" aria-hidden="true"><use href="#icon-shield-check"></use></svg>
+            Exklusiv im Raum Bamberg, dokumentiert je Kontrolle
+          </p>
+
+          <h1>Revier- &amp; Schließdienst: Kontrollierte Sicherheit zum Bruchteil eines festen Postens</h1>
+
+          <p class="hero__lead service-hero__lead">
+            Nicht jedes Objekt braucht Dauerbewachung, aber jedes braucht Kontrolle: Kontrollfahrten und Verschlussrunden in Stadt und Landkreis Bamberg.
+          </p>
+
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn btn--secondary service-hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+          </div>
+
+          <!-- The draft's three hero lines, VERBATIM. They are full sentences, so
+               this is the stacked list /jobs/ and the city pages use rather than
+               the homepage's row of short chips — a row of three sentences needs
+               roughly 1000px at this type size against the ~640px this column
+               has. /werkschutz/ truncated its three into chips on an explicit
+               client instruction; no such instruction covers these nine, so the
+               sentences stay whole. -->
+          <ul class="hero__reassurance service-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Kontrollfahrten und Verschlussrunden zu unvorhersehbaren Zeiten
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Jede Kontrolle dokumentiert, mit Checkpoint-Nachweis
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Wirtschaftlich: bezahlt wird die Kontrolle, nicht die Anwesenheit
+            </li>
+          </ul>
+
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- LCP element: preloaded in <head>, eager, high priority, and the
+             aspect-ratio is this file's REAL height rather than a shared 4:5.
+             Five of the nine service photos are 1217–1225px tall, not 1227, and a
+             shared ratio leaves a strip of the frame's own background showing
+             under the photo — the exact defect §8.2 records for the homepage's
+             services preview ("some service images show a grey bar"). -->
+        <figure class="service-hero__media" style="aspect-ratio: 820 / 1225">
+          <picture>
+            <source type="image/webp" srcset="/assets/images/revier-schliessdienst.webp">
+            <img src="/assets/images/revier-schliessdienst.jpg" width="820" height="1225" alt="FRANKONIA Streifenfahrzeug bei einer Kontrollfahrt vor einem Gewerbeobjekt" loading="eager" fetchpriority="high">
+          </picture>
+        </figure>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 2. Das Prinzip (Variation: Erklär-Sektion statt Risiko-Block) ============ -->
+    <!-- The draft's 3 blocks, verbatim.
+
+         RULED, NOT CARDED — docs/page-conventions.md §8.2: on a service page the
+         Preis-Box is the only elevated surface. It also avoids re-publishing the
+         3,11:1 caveat `.service-cases`' blue cards carry, which would have landed
+         on this page 3 more times for a section the draft never asked to be
+         cards. -->
+    <section class="section section--light service-points" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Warum unvorhersehbare Kontrollen Täter wirksamer abschrecken als Routine</h2>
+          <p data-reveal data-reveal-delay>Einbrecher beobachten, bevor sie handeln, und Routinen sind ihr bester Freund. Der FRANKONIA Revierdienst arbeitet deshalb mit variierenden Zeiten und Routen: Ihr Objekt wird mehrfach pro Nacht oder Woche kontrolliert, aber nie nach erkennbarem Muster.</p>
+        </div>
+
+        <ul class="service-points__list service-points__list--3" data-item-reveal="li">
+          <li class="service-points__item">
+            <h3 class="service-points__title">Revierdienst</h3>
+            <p class="service-points__text">Kontrollfahrten zu Ihrem Objekt — Außenhaut, Zugänge, Auffälligkeiten, auf Wunsch Innenkontrolle mit definierten Punkten.</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Schließdienst</h3>
+            <p class="service-points__text">Abendliche Verschlussrunden (Türen, Tore, Fenster, Alarmscharfschaltung) und morgendliches Aufschließen, nie wieder die Frage „Ist abgeschlossen?".</p>
+          </li>
+          <li class="service-points__item">
+            <h3 class="service-points__title">Streifendienst</h3>
+            <p class="service-points__text">Fußstreifen auf größeren Arealen, Parkplätzen oder in Gewerbegebieten, sichtbare Präsenz, wo Fahrzeugkontrollen nicht genügen.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 3. Leistungsumfang ============ -->
+    <!-- The draft's Häkchenliste, verbatim, as a two-column tick list.
+         ⚠️ NOT `.service-flow` (the pinned 50/50 scrollytelling /werkschutz/ uses
+         for the same section). That block needs SIX photographs per service and
+         only Werkschutz has them; this page has one. The drafts describe this
+         section as "H2 + Häkchenliste", which is what this is. -->
+    <section class="section service-scope">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Das ist im FRANKONIA Revier- &amp; Schließdienst enthalten</h2>
+        </div>
+
+        <ul class="service-scope__list" data-item-reveal="li">
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Kontrollfahrten nach Vereinbarung</h3>
+              <p class="service-scope__text">Häufigkeit, Zeiten und Prüfpunkte werden je Objekt festgelegt, von der täglichen Nachtkontrolle bis zur Wochenendrunde.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Verschluss- &amp; Öffnungsrunden</h3>
+              <p class="service-scope__text">Dokumentiertes Verschließen am Abend, kontrolliertes Öffnen am Morgen, inklusive Alarmanlagen-Bedienung.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Checkpoint-Nachweis</h3>
+              <p class="service-scope__text">Kontrollpunkte am Objekt belegen jede gelaufene Runde im Wächterkontrollsystem — Sie sehen, was wann geprüft wurde.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Erstmaßnahmen bei Feststellungen</h3>
+              <p class="service-scope__text">Offene Tür, Wasserschaden, Einbruchspuren, definierte Meldekette, Sicherung vor Ort, Dokumentation mit Foto.</p>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Alarmverfolgung kombinierbar</h3>
+              <p class="service-scope__text">Revierdienst plus Interventionsdienst: Wer ohnehin in Ihrem Revier unterwegs ist, ist bei Alarm schneller da.</p>
+              <a class="service-link" href="/interventionsdienst/">Zum Interventionsdienst<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            </div>
+          </li>
+          <li class="service-scope__item">
+            <svg class="icon service-scope__tick" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <div class="service-scope__body">
+              <h3 class="service-scope__title">Urlaubs- &amp; Sonderkontrollen</h3>
+              <p class="service-scope__text">Verstärkte Kontrollen in Betriebsferien, an Feiertagen oder nach Vorfällen, kurzfristig zubuchbar.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 4. Für wen sich welches Modell rechnet (Kernsektion Wirtschaftlichkeit) ============ -->
+    <!-- The draft's Vergleichstabelle, rendered as the two decision panels
+         docs/page-conventions.md §8.2 prescribes rather than as a <table>: a
+         table's row/column semantics are exactly what made this read as a
+         spreadsheet, and a symmetric table cannot express that THIS page's
+         service should carry more weight. Same four criteria, same values, same
+         words — grouped by option instead of by criterion, which is how somebody
+         choosing actually reads them.
+         The distinction is never carried by colour alone (WCAG 1.4.1): the
+         context label, the title and the icon each state it. -->
+    <section class="section section--light service-compare" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Revierdienst oder fester Posten, was rechnet sich für Ihr Objekt?</h2>
+        </div>
+
+        <div class="service-compare__panels" data-item-reveal=".service-panel">
+          <article class="service-panel service-panel--primary">
+            <p class="service-panel__label">
+              <svg class="icon service-panel__icon" aria-hidden="true"><use href="#icon-route"></use></svg>
+              Kontrolle statt Anwesenheit
+            </p>
+            <h3 class="service-panel__title">Revier- &amp; Schließdienst</h3>
+
+            <dl class="service-panel__facts">
+              <div class="service-panel__fact">
+                <dt>Prinzip</dt>
+                <dd>Kontrollen zu variierenden Zeiten</dd>
+              </div>
+              <div class="service-panel__fact">
+                <dt>Kostenlogik</dt>
+                <dd>je Kontrollfahrt / Runde</dd>
+              </div>
+              <div class="service-panel__fact">
+                <dt>Passt zu</dt>
+                <dd>Büros, Praxen, Gewerbe, Baustellen mit Technik</dd>
+              </div>
+              <div class="service-panel__fact">
+                <dt>Reaktionszeit</dt>
+                <dd>bei Alarm über Interventionsdienst</dd>
+              </div>
+            </dl>
+
+            <a class="btn btn--primary service-panel__cta" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </article>
+
+          <article class="service-panel service-panel--secondary">
+            <p class="service-panel__label">
+              <svg class="icon service-panel__icon" aria-hidden="true"><use href="#icon-building"></use></svg>
+              Durchgehende Präsenz
+            </p>
+            <h3 class="service-panel__title">Fester Posten (Objektschutz)</h3>
+
+            <dl class="service-panel__facts">
+              <div class="service-panel__fact">
+                <dt>Prinzip</dt>
+                <dd>Durchgehende Anwesenheit</dd>
+              </div>
+              <div class="service-panel__fact">
+                <dt>Kostenlogik</dt>
+                <dd>je Stunde ({{price.range}} €)</dd>
+              </div>
+              <div class="service-panel__fact">
+                <dt>Passt zu</dt>
+                <dd>Hohe Werte, laufender Betrieb, Auflagen</dd>
+              </div>
+              <div class="service-panel__fact">
+                <dt>Reaktionszeit</dt>
+                <dd>sofort vor Ort</dd>
+              </div>
+            </dl>
+
+            <a class="service-panel__cta service-panel__cta--quiet" href="/objektschutz/">Zum Objektschutz<svg class="icon service-panel__cta-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </article>
+        </div>
+
+        <aside class="service-decision" data-reveal>
+          <div class="service-decision__text">
+            <p>Am wirtschaftlichsten ist oft die Kombination: Alarmtechnik erkennt, der Revierdienst kontrolliert planmäßig, die Interventionskraft reagiert im Alarmfall. Welche Lösung zu Ihrem Objekt passt, klärt die kostenfreie Begehung.</p>
+          </div>
+          <div class="service-decision__actions">
+            <a class="btn btn--primary" href="#anfrage">Kostenfreie Einschätzung erhalten<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </div>
+        </aside>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 5. Warum FRANKONIA (Pain-Aufhänger, kompakt) ============ -->
+    <!-- The draft's own copy, verbatim. -->
+    <section class="section service-prose">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Revierdienst, den Sie jederzeit nachvollziehen können</h2>
+        </div>
+
+        <div class="section__intro">
+          <p data-reveal data-reveal-delay>Der häufigste Betrugsfall der Branche: bezahlte Runden, die nie gefahren wurden. Bei FRANKONIA ist jede Kontrolle technisch belegt — Checkpoints am Objekt, Zeitstempel, Foto-Dokumentation bei Feststellungen. Aufgaben werden zuverlässig erledigt, und Sie können es jederzeit nachprüfen: im Report, den Sie regelmäßig erhalten.</p>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 6. KOSTEN ============ -->
+    <!-- The block docs/build-checklist.md counts on 27 pages, reused verbatim.
+         GEO pattern: question H2, the answer in the first sentence, then what
+         moves it.
+         ⚠️ NO HOURLY RANGE IN THE BOX AND NO `offers` IN THE SCHEMA — the draft
+         prices this service differently on purpose and says so, so a number here
+         would be a claim the client did not make. -->
+    <!--
+         ⚠️ EVERY PRICE IS A TOKEN, never a literal (client rule G10): the draft
+         writes "zwischen 26 und 32 Euro" and it is emitted as {{price.min}} /
+         {{price.max}}, so the annual rate change stays one edit in
+         content/values.json instead of 27 pages x 2 (visible + JSON-LD).
+         DOM order is the design: intro → price → factors → Hinweis, which is the
+         phone order, done in markup rather than with `order` so the tab order
+         matches the screen (§7). -->
+    <section class="section section--light service-price" data-nav-theme="light">
+      <div class="container service-price__layout">
+        <div class="section__intro service-price__intro">
+          <h2>Was kostet ein Revier- und Schließdienst?</h2>
+          <p class="service-price__answer" data-reveal data-reveal-delay>Revier- und Schließdienst wird je Kontrollfahrt bzw. Runde kalkuliert, nicht je Stunde. Dadurch liegt der Monatspreis für einen soliden Basisschutz meist deutlich unter dem eines festen Postens; als Einordnung: Schon wenige Euro-Beträge je Kontrolle summieren sich je nach Frequenz auf einen niedrigen bis mittleren dreistelligen Monatsbetrag.</p>
+        </div>
+
+        <!-- include: price-box range="Je Kontrollfahrt" note="netto, nach Frequenz, Umfang und Lage im Revier" priceBoxTick1="Objektschutz-Vergleichsrechnung inklusive" priceBoxTick2="Angebot in 1 Werktag" priceBoxMod="service-price__box--text" priceBoxUnit="" priceBoxLabel="Ihre Kostenlogik" -->
+
+        <ul class="service-price__factors" data-item-reveal>
+          <li>Anzahl und Frequenz der Kontrollen (täglich, werktags, Wochenende)</li>
+          <li>Umfang je Kontrolle: Außenrunde, Innenrunde, Verschlussrunde mit Alarmbedienung</li>
+          <li>Lage im Revier (Anfahrtslogik, je dichter das Revier, desto günstiger)</li>
+          <li>Zusatzleistungen: Interventionsbereitschaft, Sonderkontrollen, Berichte</li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 7. TRUST ============ -->
+    <!-- The draft's Trust paragraph, verbatim, over the SHARED certification
+         strip (`.trust-certs*`, the chassis block /referenzen/, /ueber-uns/ and
+         /sicherheitskonzept/ all use). It is fully token-driven, so it works on
+         either surface.
+         ⚠️ NOT the `.service-contact` block with Alexander Jäger's portrait: this
+         draft's Trust section does not name him, and adding a named contact the
+         document did not ask for would be inventing a person into the page. The
+         four drafts that DO name him get that block instead — client Q2,
+         2026-08-13, applied as written. -->
+    <section class="section service-trust">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Basisschutz mit denselben Standards wie unser Werkschutz</h2>
+        </div>
+
+        <div class="section__intro">
+          <p data-reveal data-reveal-delay>Auch die günstigste FRANKONIA Leistung läuft im zertifizierten System: DIN 77200-1, ISO 9001 (DEKRA-geprüft), IHK-qualifizierte Kräfte nach § 34a GewO, dokumentierte Prozesse. Über 300 Unternehmen und Einrichtungen in Franken vertrauen darauf, vom Einzelbüro bis zum Industriestandort.</p>
+        </div>
+
+        <div class="trust-certs" data-reveal>
+          <div class="trust-certs__seals">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="trust-certs__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+          </div>
+          <ul class="trust-certs__list">
+            <li>
+              <strong>DIN 77200-1</strong>
+              für stationäre Sicherheitsdienstleistungen
+            </li>
+            <li>
+              <strong>DIN EN ISO 9001</strong>
+              zertifiziert, DEKRA-geprüft
+            </li>
+            <li>
+              <strong>§ 34a GewO</strong>
+              ausschließlich IHK-qualifizierte Kräfte
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 8. FAQ ============ -->
+    <!-- The draft's 5 questions and answers, verbatim, mirroring the FAQPage
+         JSON-LD at the top of this file 1:1.
+         ⚠️ The visible copy and the schema copy must stay BYTE-IDENTICAL with
+         markup stripped. They are generated from one source by
+         docs/design-sources/service-pages.py, so an edit here has to be made in
+         BOTH places by hand. It is the one thing on this page type that is easy
+         to break with a small edit and impossible to see. -->
+    <section class="section section--light service-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Revier- &amp; Schließdienst: die häufigsten Fragen</h2>
+        </div>
+
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
+          <details class="faq-item">
+            <summary><h3>Was kostet eine Nachtkontrolle für mein Objekt?</h3></summary>
+            <p class="faq-item__answer">Revierkontrollen werden je Kontrollfahrt kalkuliert, der Preis hängt von Umfang, Frequenz und Lage im Revier ab. Für die meisten Gewerbeobjekte liegt ein solider Kontroll-Rhythmus bei einem niedrigen bis mittleren dreistelligen Monatsbetrag; Ihr konkretes Angebot erhalten Sie innerhalb eines Werktages.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Woher weiß ich, dass die Runden wirklich gefahren werden?</h3></summary>
+            <p class="faq-item__answer">Durch das Wächterkontrollsystem: Checkpoints an Ihrem Objekt werden bei jeder Runde gescannt, mit Zeitstempel dokumentiert und im Report ausgewiesen. Feststellungen (offene Tür, Schaden, Verdacht) werden mit Foto und Meldekette dokumentiert.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Was passiert, wenn der Revierfahrer etwas feststellt?</h3></summary>
+            <p class="faq-item__answer">Er sichert die Situation, informiert nach der vereinbarten Meldekette (Sie, Polizei, Notdienste) und dokumentiert den Vorfall mit Fotos. Auf Wunsch bleibt die Kraft bis zur Klärung vor Ort oder eine Verstärkung übernimmt.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Übernimmt FRANKONIA auch nur den Schließdienst?</h3></summary>
+            <p class="faq-item__answer">Ja, abendliche Verschlussrunden und morgendliches Öffnen sind auch einzeln buchbar, inklusive Alarmscharfschaltung. Viele Kunden starten mit dem Schließdienst und erweitern später um Nachtkontrollen.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Ist mein Objekt im FRANKONIA Revier?</h3></summary>
+            <p class="faq-item__answer">Der Revier- und Schließdienst läuft ausschließlich in Stadt und Landkreis Bamberg, inklusive Hallstadt, Hirschaid, Memmelsdorf und Umgebung. Ob Ihr Objekt im Revier liegt, klärt ein kurzes Telefonat: +49 951 964352-0. Außerhalb Bambergs übernehmen Objektschutz und Interventionsdienst vergleichbare Aufgaben.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 9. ABSCHLUSS-CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The shared lead-form partial with this page's own field prefix — unique
+         per page, or two forms in one document would break every <label for>.
+         The form still submits nowhere sitewide (action="#", native validation
+         only) — docs/build-checklist.md Paso 4. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Jetzt Revier- &amp; Schließdienst anfragen — Basisschutz ab sofort</h2>
+          <p class="conversion__intro-lede">Nennen Sie uns kurz Objekt und Adresse — Sie erhalten Ihr Angebot mit Kontroll-Empfehlung innerhalb eines Werktages. Formulartitel: Ihre Revierdienst-Anfrage</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="rs" messageLabel="Objekt und Adresse" -->
+
+          <p class="conversion__form-alt">Lieber direkt sprechen? <a href="{{phone.href}}">{{phone.display}}</a></p>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 10. VERWANDTE SEITEN ============ -->
+    <!-- The draft's own internal-link list. Several destinations are not built
+         yet; the URLs are the confirmed ones from guidelines §2.2, so these are
+         real links to pages still to come, not placeholders — the same
+         convention /werkschutz/ and the city pages already follow.
+         ⚠️ `.service-related__cols` / `__col`, NOT `__grid`: that second variant
+         had no CSS rule anywhere and fell back to block layout. /sicherheitskonzept/
+         was the last page carrying it and was corrected 2026-08-17 — do not
+         reintroduce it. -->
+    <section class="section section--light service-related" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Verwandte Leistungen und Einsatzgebiete</h2>
+        </div>
+
+        <div class="service-related__cols">
+
+          <div class="service-related__col">
+            <h3 class="service-related__title">Verwandte Leistungen</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/objektschutz/"><span class="service-related__label">Objektschutz</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/interventionsdienst/"><span class="service-related__label">Interventionsdienst</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitstechnik/"><span class="service-related__label">Sicherheitstechnik</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+          <div class="service-related__col">
+            <h3 class="service-related__title">In Ihrer Stadt</h3>
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/sicherheitsdienst-bamberg/"><span class="service-related__label">Sicherheitsdienst Bamberg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-nuernberg/"><span class="service-related__label">Sicherheitsdienst Nürnberg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-erlangen/"><span class="service-related__label">Sicherheitsdienst Erlangen</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

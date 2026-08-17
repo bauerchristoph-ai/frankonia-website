@@ -1143,10 +1143,37 @@ Referencia: `pages/werkschutz.html` + `css/page-service.css` (2026-08-03). Las 1
 páginas de servicio salen de acá, y las de ciudad y las combo reusan varios de
 estos bloques. **Nada de esto hay que volver a decidirlo.**
 
-### 8.1 La estructura ya está dada por el copy
+### 8.1 La estructura ya está dada por el copy — ⚠️ CORREGIDO 2026-08-16
 
-Los 12 drafts de `content-de/` usan la misma **9-Punkte-Struktur**, así que las
-secciones se mapean 1:1 y lo único que cambia es el texto:
+> ⚠️ **ESTO ERA CIERTO CON LOS DRAFTS DE JULIO Y YA NO LO ES.** El párrafo que
+> seguía decía que "los 12 drafts usan la misma 9-Punkte-Struktur, así que las
+> secciones se mapean 1:1". Con el copy v2 (`NewVersionCopiesFrankonia/`, la
+> fuente desde el 2026-08-05) **cada servicio varía su estructura a propósito**:
+> seis de los nueve lo escriben en su propia cabecera — *"Struktur bewusst
+> variiert"*, *"Struktur-Variante 'Notfall-Leistung'"*, *"Variation statt
+> Risiko-Karten"*, *"Struktur-Variante 'Wirtschaftlichkeit'"*. Van de **8 a 11
+> secciones**, y la mitad tiene una sección que ninguna otra página tiene
+> (Türsteher, Anzug oder Montur, la Alarmkette, el Modell-Vergleich, "Wann ist
+> eine Brandwache Pflicht?").
+>
+> **Dos consecuencias prácticas antes de construir la siguiente:**
+> 1. **La lista de seams NO se copia.** Los tiles son del color de la sección de
+>    ARRIBA y dos secciones del mismo color no llevan seam (§9.2), así que con
+>    otro orden cambia entera. Se **deriva** de la secuencia de superficies.
+> 2. **La superficie de cada sección es una RESTRICCIÓN, no un gusto.**
+>    `konzept` sólo oscuro (`.service-konzept__text` cablea blanco al 0,88),
+>    `contact` sólo oscuro (el panel de certs al 6 % y el retrato soldado a
+>    #010101), `price` sólo claro (la caja es un panel negro adentro), `faq` sólo
+>    claro, `related` sólo claro (su hover llena de negro), `form` siempre oscuro.
+>    `points`, `scope`, `prose`, `compare` y `certs` son token-driven y van a los
+>    dos lados — **son ellos los que hacen posible alternar**.
+>
+> La tabla de abajo sigue siendo el catálogo de bloques disponibles; lo que ya no
+> vale es dar por hecho que las secciones de un draft caen en ella 1:1 y en ese
+> orden. La correspondencia real de las 9 páginas está declarada, sección por
+> sección, en `docs/design-sources/service_pages_data.py`.
+
+Bloques disponibles y a qué sección de draft suelen corresponder:
 
 | # | Sección | Bloque |
 |---|---|---|
@@ -1162,6 +1189,20 @@ secciones se mapean 1:1 y lo único que cambia es el texto:
 | 10 | FAQ | `.faq__list` compartido |
 | 11 | CTA final | `css/lead-form.css` |
 | 12 | Páginas relacionadas | `.service-related*` |
+
+**Sección 12 — es un ÍNDICE EDITORIAL, no dos cards** (rediseño 2026-08-17, brief
+del cliente). Dos superficies tintadas al 4 % sin borde ni sombra, radio 1.5rem,
+`max-width: 60rem` centrado, cada columna terminando en su última fila
+(`align-items: start` — el panel es grid item, su alto venía de la pista). Título
+de grupo = etiqueta de 13px en la mezcla profunda **#4673AB**, no en un azul de
+marca: a ese tamaño aplica el 4,5:1 y los dos azules de marca fallan. Hover =
+tinte `--color-accent-subtle`, texto a tinta plena, label `translateX(4px)`,
+flecha `translate(3px,-3px)` y azul. **El label de cada fila va en un
+`<span class="service-related__label">`** — es la única forma de mover el texto
+sin arrastrar el fondo, y es un nieto del `<li>` que anima GSAP, que es
+justamente lo que lo salva del `translate: none` inline. El razonamiento
+completo, con las cuatro decisiones anteriores que revierte, está en el propio
+bloque de `page-service.css`.
 
 Las secciones 5, 7 y 8 son genéricas a propósito porque
 [build-checklist.md](build-checklist.md) las cuenta fuera de servicios: precios
@@ -1558,15 +1599,70 @@ pantalla con todo el contenido de su propia sección; a 60px solo el título se 
 a tres líneas y el bloque pedía 1260px contra los 820px de un 1440x900. En móvil
 mantiene el clamp compartido.
 
-### 8.4 Para armar la siguiente
+### 8.4 Para armar la siguiente — ⚠️ LAS 12 YA ESTÁN (2026-08-16)
+
+**No queda ninguna página de servicio por construir.** Esta sección se conserva
+para el día que el cliente agregue un servicio 13.
 
 Copiar `pages/werkschutz.html`, abrir el draft del servicio, y cambiar: meta y
 JSON-LD, H1 y todo el copy, la foto del hero
 (`assets/images/<slug>.webp/.jpg`, ya están las 10), el rango de precio, los
 factores de la sección de costos, la tabla comparativa si ese servicio se
-delimita contra otro, los `id` del formulario y las listas de links. **No tocar
-`page-service.css`, `lead-form.css` ni `components.css`**: si el contenido no
-entra (8 items de alcance en vez de 6), son más `<li>`, no CSS nuevo.
+delimita contra otro, los `id` del formulario y las listas de links.
+
+⚠️ **"No tocar `page-service.css`" fue cierto once veces y falló la doce.** Las
+nueve páginas del 2026-08-16 necesitaron cinco bloques que no existían, y ninguno
+por capricho de diseño — cada uno sale de un asset o de una estructura de copy que
+Werkschutz no tiene:
+
+| Bloque | Por qué hizo falta |
+|---|---|
+| `.service-hero--split` | Las 9 fotos de servicio son **verticales** (820x~1220). §8.2 siempre prescribió el hero de dos columnas para eso; las reglas se habían borrado el 2026-08-03 al pasar Werkschutz a foto apaisada. |
+| `.service-points*` | N bloques rayados (regla azul → título → texto). **La forma más repetida de los nueve drafts.** Es el SEXTO consumidor de esta forma — `.lh-why*` es la misma idea y ya debería estar en el chasis. |
+| `.service-scope*` | El Leistungsumfang como lista de tics. **`.service-flow` necesita SEIS fotos por servicio** y sólo Werkschutz las tiene; los drafts piden literalmente "H2 + Häkchenliste". |
+| `.service-konzept__steps--4/--5` | El riel está cableado a `repeat(3)`. Cinco drafts dan 4 pasos y uno da 5. |
+| `.service-price__box--text` | Tres servicios **no se cobran por hora** y su draft lo dice. La caja está construida para "26-32": a 60px con `nowrap`, "Bereitschaft + Einsatz" se salía 51px. |
+
+**La regla vigente, corregida:** si el contenido no entra, son más `<li>`. Si el
+draft cambia la FORMA (otra cantidad de pasos, otro tipo de precio, otro tipo de
+foto), eso sí es CSS nuevo — y va al chasis con nombre genérico `.service-*`,
+nunca al nombre del servicio.
+
+### 8.5 Los bloques que agregó la tanda de las nueve
+
+- **`.service-points*`** — `<ul>`/`<ol>` con `--3/--4/--5/--6`. Token-driven, va
+  en superficie clara u oscura. El numeral es opcional y `aria-hidden` (el `<ol>`
+  ya numera). ⚠️ **El conteo de columnas se DECLARA, no se auto-ajusta**: los
+  drafts dan 2, 3, 4, 5 y 6 items, y un `repeat(4)` fijo deja huérfanos — el mismo
+  hueco que `.city-why__grid--3` existe para cerrar.
+- **`.service-scope*`** — tick + título + frase, dos columnas desde 900px, con un
+  `.service-link` opcional por item. `.service-scope__tick` ya estaba estilado
+  desde el 2026-08-03 y simplemente no tenía markup.
+- **`.service-hero--split`** — mantiene TODA la tipografía del hero compartido
+  (el clamp de 52px, el lede al 0,82, los tics de 18px, los sellos de 2,75rem):
+  lo único que cambia es que hay una segunda columna. ⚠️ **El `aspect-ratio` se
+  declara por página con la altura REAL del archivo** — cinco de las nueve fotos
+  miden 1217–1225 y no 1227, y un ratio compartido deja una franja del fondo del
+  marco asomando (el mismo defecto que §8.2 ya documenta para el preview del
+  homepage). ⚠️ El breadcrumb va **arriba** del hero: sólo la variante `--bleed`
+  lo mete adentro.
+
+### 8.6 La caja de precio es parametrizable (2026-08-16)
+
+`partials/price-box.html` acepta `range`, `note`, `priceBoxTick1/2`,
+`priceBoxCta`, `priceBoxCtaHref`, `priceBoxLabel`, `priceBoxUnit` y
+`priceBoxMod`. **Todos tienen default en `content/values.json`**, así que las 11
+páginas que ya la incluían no cambiaron ni una línea — es la misma mecánica que
+`nameRequired`/`companyRequired` del formulario, y por la misma razón: un
+parámetro de include es una clave plana y no puede pisar una anidada.
+
+Existe porque cada Webtext especifica sus propias líneas de caja, y sobre todo
+porque **tres servicios no se cobran por hora** (Sicherheitstechnik projektbasiert,
+Revier- & Schließdienst je Kontrollfahrt, Interventionsdienst
+Bereitschaft + Einsatz). Esos tres pasan `service-price__box--text` y unidad
+vacía — *"Je Kontrollfahrt €/Std."* no es un precio, es una contradicción — **y
+además no emiten `offers` en su JSON-LD**. Las dos mitades van juntas: si alguno
+consigue un rango por hora, se cambian el modificador y `noOffers` a la vez.
 
 ---
 
@@ -1791,18 +1887,73 @@ ciudad**, como un `<path>` inline:
 - se genera **una vez, en desarrollo**, con
   `docs/design-sources/city-outline.py <slug>`, desde los geojson que ya están
   en el repo (`assets/data/coverage-boundaries/`, bajados de OSM/Nominatim en
-  julio). 3.566 puntos → 200, ~2,6KB de path;
+  julio). Para Nürnberg: 3.566 puntos → **833, ~11KB de path**;
+- ⚠️ **EL NIVEL DE DETALLE NO ES UN PRESUPUESTO DE PUNTOS, y esto ya se corrigió
+  una vez (2026-08-14).** Era 200 puntos "para que el path pese 2,6KB", y el
+  cliente lo leyó exactamente por lo que era: *"es muy rectas las líneas de
+  border… un poco más detalladas"*. Un presupuesto de puntos no dice nada de cómo
+  se ve el dibujo. El control es `TOLERANCE_UNITS` en el generador: el error
+  máximo, en unidades del viewBox, que puede tener un vértice simplificado — y eso
+  se traduce directo a píxeles de pantalla, que es lo único que un visitante ve
+  (`px = unidades × ancho renderizado / 1000`). A 1.0 unidad el peor vértice cae a
+  **0,34px** con el mapa a ~335px de ancho, o sea sub-píxel incluso en retina.
+  **Chequeado en las 14 ciudades: 289–833 puntos, 3,6–10,7KB, ninguna pasa el
+  tope.** No cambiarlo "para ahorrar bytes": las líneas rectas vuelven mucho antes
+  de que el archivo se haga meaningfully más chico;
 - es **honesto para un Einsatzgebiet**: un área, no una dirección. Un pin único
-  se leería como sucursal, que es justo lo que §10.1 prohíbe;
+  se leería como sucursal, que es justo lo que §10.1 prohíbe — **por eso este
+  hero NO lleva pin ni label**, al contrario que el mapa de `/einsatzgebiete/`,
+  donde cada ciudad sí los tiene;
 - **cero requests y cero terceros**, al contrario que los mapas Leaflet de `/` y
   `/kontakt/` (los tiles de CARTO son una llamada a un tercero y todavía no hay
   banner de consentimiento);
+- **es AZUL, y es el mismo dibujo que `/einsatzgebiete/`** (cliente 2026-08-14:
+  "que sean como el hero de /einsatzgebiete/, o sea mapa con forma azul"). Era un
+  hairline blanco al 0,55. Los valores son los de `.eg-map-svg__region`
+  traducidos, con dos cuidados que no se deducen:
+  · ⚠️ **el `stroke-width` se RE-DERIVA, no se copia**: está en unidades del
+    viewBox, así que lo que se ve es `unidades × (ancho renderizado / 1000)`. Este
+    mapa está capado por ALTO (30rem) y renderiza ~335px contra los ~540–708 de
+    aquél, o sea necesita un número MÁS GRANDE para el mismo peso óptico — 2.5
+    unidades = 0,84px acá contra 1.6 = 0,88px allá. Con 1.6 sería un fantasma de
+    0,54px. `/brandwache-nuernberg/` necesita además **3.3 en la banda
+    1024–1151**, donde su grilla angosta el contorno a 242px;
+  · el relleno queda **bajo (0,16)** y no en el 0,55 de las city shapes de aquél:
+    esas son polígonos chicos sobre un mapa grande, y acá la forma llena un hero —
+    un blob de 335×480 al 0,55 es exactamente lo que el cliente rechazó en esa
+    misma página ("que en ningún momento se fill todo de celeste"). 0,16 se eligió
+    **comparando renders** a 0,06 / 0,10 / 0,16 / 0,24;
 - se **dibuja al cargar**, no con el scroll: está arriba del fold, y un reveal
   scrubbeado ahí es el bug que ya pagó el hero de `/referenzen/` (el título
-  quedaba a medio revelar hasta que scrolleabas). El `stroke-dasharray` es el
-  **largo medido** del path (7381 unidades para Nürnberg), no un número al
-  voleo — y el bloque entero va dentro de
-  `@media (prefers-reduced-motion: no-preference)` por §4.3;
+  quedaba a medio revelar hasta que scrolleabas).
+  ⚠️⚠️ **El dash es `1` y NO hay ningún largo medido en el CSS.** Era
+  `stroke-dasharray: 7381`, el perímetro de Nürnberg, lo que volvía esa regla
+  secretamente de-una-sola-ciudad (cada una tiene otro perímetro) y la dejó
+  obsoleta el día que cambió el detalle. **`pathLength="1"` en el `<path>`**
+  renormaliza el perímetro a 1, así que `1` es exactamente una vuelta para
+  cualquier ciudad a cualquier tamaño. El generador emite ese atributo; **un path
+  pegado sin él no dibuja nada**. Medido: dashoffset 1 / 0,75 / 0,5 / 0,25 / 0
+  tinta 0 / 25,2 / 49,9 / 74,5 / 100 % del contorno;
+  ⚠️ **NO agregarle `vector-effect: non-scaling-stroke`.** Parece el arreglo
+  prolijo para la derivación de arriba (fijaría el trazo en píxeles de pantalla) y
+  **rompe el dibujado**: reinterpreta el patrón de dash en espacio de pantalla, así
+  que `dasharray: 1` deja de ser "una vuelta". Testeado: con eso, dashoffset 0
+  tinta MENOS que 0,5;
+  ⚠️ La curva es **`--easing-standard`, no `--easing-premium`** — expo-out traza
+  ~65 % del perímetro en los primeros 80ms y después se arrastra; acá el RECORRIDO
+  es el efecto. Es la misma lección que ya pagó el marco de Vorteile. 1,6s + 350ms
+  de delay son los valores del hero de `/einsatzgebiete/`, para que las dos páginas
+  se sientan como una familia. Medido: 0 % → 18,9 % → 49,7 % a mitad de duración →
+  100 %, y el relleno entra en la cola del trazado (a 1150ms);
+  el bloque entero va dentro de
+  `@media (prefers-reduced-motion: no-preference)` por §4.3 — verificado que sin
+  eso el estado de reposo es el mapa completo (`dasharray: none`, fill 0,16);
+- ⚠️ **Las guías punteadas van en PORCENTAJES (`50%` / `100%`), no en números.**
+  Eran `x1="500" … y2="1432"`, o sea la mitad y el total del viewBox **de
+  Nürnberg**, y el alto del viewBox cambia por ciudad (medido: 683 en Coburg,
+  1494 en Kulmbach) — un contorno pegado habría dibujado sus guías fuera de la
+  forma sin que nada falle en voz alta. Un porcentaje de SVG resuelve contra el
+  viewport, x contra el ancho y y contra el alto;
 - **`display: none` abajo de 1024px**: apilado agregaría ~380px de scroll a la
   primera pantalla por algo puramente decorativo. Es seguro justamente porque es
   decorativo (`aria-hidden`, sin texto propio).
@@ -1902,12 +2053,17 @@ ciudad**, como un `<path>` inline:
   - El hover usa **`translate`**, por la misma razón medida que las cards de
     "Warum" (GSAP escribe `transform` inline vía `item-reveal.js`). La rotación de
     la flecha sí puede ser `transform`: GSAP nunca toca la flecha, sólo la card.
-- ⚠️ **El hover de las filas es un lavado, no el relleno negro** de
-  `.service-related__link`. Esta sección es oscura, y rellenar
+- ⚠️ **El hover de las filas es un lavado.** Esta sección es oscura, y rellenar
   `--color-logo-black` sobre negro es una fila que no hace nada al hover. Si
-  alguna vez este bloque cae en una `.section--light`, hay que darle el relleno
-  negro **y** pasar la etiqueta a blanco (la trampa que documenta
-  `page-service.css` en `.section--light .service-related__link:hover`).
+  alguna vez este bloque cae en una `.section--light` necesita su propio par, y
+  la trampa que hay que leer primero es la que documenta `page-service.css` en
+  `.section--light .service-related__link:hover` (esa regla es (0,2,1) y le gana
+  a la base, así que decide el color del texto).
+  ⚠️ **`.service-related__link` ya NO es el espejo de esto**: el rediseño del
+  2026-08-17 le sacó el relleno negro y la rotación de 45° y los cambió por un
+  tinte celeste al 8 % más un empujón diagonal. Estas filas se dejaron como
+  estaban a propósito (el pedido era sólo aquella sección) — vale preguntarle al
+  cliente antes de que las dos se separen más.
 - ⚠️ **La lista de tarifas NO reusa `.service-price__factors`.** Ese bloque
   dibuja un `+` azul por fila, y un `+` delante de "Objektschutz · 26-32 €/Std."
   se lee como lista de extras. Pero **sí tiene que repetir el
@@ -2154,13 +2310,88 @@ ciudad**, como un `<path>` inline:
   algún lado" nunca lo dice solo el color. Es lo mismo que hizo el homepage con
   Hof y Kronach.
 
-### 10.5 Para armar la siguiente ciudad
+### 10.5 Las 10 ciudades están (2026-08-16) — y lo que enseñaron las otras nueve
 
-Copiar `pages/sicherheitsdienst-nuernberg.html` y cambiar: meta y JSON-LD
-(incluido `areaServed`), todo el copy del draft de esa ciudad, el `<path>` del
-contorno (`python3 docs/design-sources/city-outline.py <slug>`), las vecinas de
-la sección 10, el `note` de la Preis-Box, y el `prefix` del formulario (único por
-página). **`css/page-city.css` no se toca** — si el copy no entra, son más `<li>`.
+**Las diez páginas existen.** Nürnberg (2026-08-09) es la plantilla; las otras
+nueve se construyeron el 2026-08-16 desde los Webtexte 14–22, y están generadas
+por `docs/design-sources/city-pages.py` + `city_pages_data.py` — un script de
+**una sola pasada, en desarrollo**, igual que `city-outline.py` y
+`franken-map.py`. No corre en `npm run build` y **no se re-corre sobre páginas ya
+editadas a mano**: existe porque las dos cosas que se rompen a mano en este tipo
+de página no se ven en una captura (la paridad FAQ ↔ JSON-LD, 50 pares; y el
+color de cada seam).
+
+Para armar una ciudad **nueva**: es una entrada de datos en `city_pages_data.py`
+más su geojson. A mano, es copiar Nürnberg y cambiar meta y JSON-LD (incluido
+`areaServed`), el copy del draft, el `<path>` del contorno
+(`python3 docs/design-sources/city-outline.py <slug>`), las vecinas, el `note` de
+la Preis-Box y el `prefix` del formulario (único por página).
+
+⚠️⚠️ **LO QUE ESTA SECCIÓN DECÍA ANTES ERA LA MITAD DE LA VERDAD.** Decía "copiar
+Nürnberg y cambiar el copy", y eso subestima el trabajo, porque **cada draft trae
+su propia estructura a propósito** — los documentos lo dicen ellos mismos
+("Struktur bewusst variiert ggü. Nürnberg"). En la práctica:
+
+| Página | Variante del draft |
+|---|---|
+| Würzburg | entra por los Einsatzfelder, el Warum va después (3 tarjetas) |
+| Bamberg | Heimmarkt: dirección real, Zuhause-Story, **10 servicios** |
+| Erlangen | Technologie-Standort: **sin sección Warum**, más una de Veranstaltungen |
+| Fürth | compacta, sin Brandwache y sin Trust |
+| Bayreuth | Oberfranken: sin combos, 8 servicios como filas |
+| Schweinfurt | **Werkschutz-first**: la sección 2 argumenta Werkschutz |
+| Coburg | **Sicherheitskonzept en vez de Brandwache** (variante del draft) |
+| Forchheim | la más corta: 8 secciones |
+| Ansbach | Warum **en prosa**, sin tarjetas |
+
+De ahí salen las cinco reglas que la próxima ciudad no debería re-descubrir:
+
+1. **El orden de secciones lo manda el draft, no Nürnberg.** Los bloques CSS son
+   genéricos, así que reordenar es gratis; lo que no es gratis es asumir.
+2. **⚠️ EL SEAM SE DERIVA, NUNCA SE COPIA.** Los tiles son del color de la sección
+   de ARRIBA y dos secciones del mismo color **no llevan seam** (§9.2). Con otro
+   orden, la lista entera cambia: las diez páginas van de **5 a 11 seams**. Con
+   `city-pages.py` lo calcula la secuencia de superficies.
+3. **Qué bloque puede ir sobre qué superficie NO es libre**, y cada restricción es
+   real, no estética: `why` sólo CLARO (paneles blancos) · `services` sólo OSCURO
+   (tinte de blanco al 4,5 %) · `fields` sólo CLARO (el numeral usa la mezcla
+   profunda, que sobre negro mide 4,32:1 y falla) · `price` sólo CLARO (la caja
+   es un panel oscuro DENTRO) · `certs` sólo CLARO (la línea de membresías cablea
+   la mezcla) · `faq` sólo CLARO (la respuesta cablea un gris oscuro) · `form`
+   siempre OSCURO. `proof`, `trust` y `nearby` van en las dos. **Un `callout` con
+   sus módulos es sólo OSCURO; en prosa, va en las dos** — que es lo que permite
+   alternar en Bamberg, Erlangen y Ansbach.
+4. **⚠️ Un bloque que cablea un color deja de funcionar cuando su superficie
+   cambia, y es invisible.** `.city-callout__lede` era blanco fijo (en Nürnberg
+   ese bloque es siempre la sección de Brandwache, siempre oscura) y salió
+   **blanco sobre blanco, 1:1**, en las tres páginas que lo ponen sobre claro.
+   **Y el primer arreglo no hizo nada**: `.section--light .city-callout` no
+   matchea, porque las dos clases están en el MISMO elemento — va
+   `.city-callout.section--light`. Un selector que no puede matchear falla
+   exactamente igual que uno ausente, así que **esto se detecta midiendo el color
+   renderizado, no leyendo la hoja**.
+5. **Las cards de servicio son para destinos de CIUDAD.** Sólo Würzburg, Erlangen
+   y Fürth tienen combos en esta fase; las otras seis van **todas como filas**,
+   porque destacar cuatro genéricas como cards promete una página local que no
+   existe (§10.1). Y **las tarifas son las que nombra cada draft** — dos, tres o
+   cuatro servicios, nunca "las cuatro de siempre".
+
+**`css/page-city.css` sí se tocó**, cuatro veces y con razón medida: el arreglo de
+contraste de arriba, **`.city-why__grid--3`** (cinco drafts dan tres tarjetas y la
+grilla es `repeat(4, …)`, o sea dejaban una columna vacía), dos áreas táctiles
+—`.city-fields__link`, que **ya fallaba en Nürnberg** con 29px, y el link inline
+del Abbinder de Erreichbarkeit con 23px— y el **header centrado de la sección de
+Zertifizierungen**.
+
+⚠️ Ese último sólo afecta a **Würzburg y Erlangen**, y por una razón estructural
+que conviene saber antes de tocarlo: son las dos únicas ciudades **sin sección de
+Vertrauen**, así que su copy de Trust es el H2 + lede de la sección de
+certificaciones. En Nürnberg y Bamberg ese bloque **no lleva header propio** (lo
+encabeza el H2 de Vertrauen dos secciones arriba), así que ahí no hay nada que
+centrar. Ranged left, el header quedaba sobre un `.trust-certs` que ya se centra
+solo. Y es la **sexta** aparición de la trampa de especificidad de §6/§10.4 en
+este tipo de página: `text-align` NO alcanza, hacen falta el selector de dos
+clases y el `margin-inline: auto`.
 
 ---
 

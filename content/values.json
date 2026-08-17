@@ -81,6 +81,27 @@
     },
     "guideYear": "2026"
   },
+  "priceBoxTick1": "Kostenfreie Begehung",
+  "priceBoxTick2": "Angebot in 1 Werktag",
+  "priceBoxCta": "Unverbindliches Angebot einholen",
+  "priceBoxCtaHref": "#anfrage",
+  "priceBoxLabel": "Ihre Preisspanne",
+  "priceBoxUnit": "{{price.unit}}",
+  "priceBoxMod": "",
+  "_priceBoxComment": [
+    "Defaults for partials/price-box.html, added 2026-08-16 for the nine service",
+    "pages. Same mechanism and same reason as nameRequired/companyRequired below:",
+    "an include's own parameters WIN over this file, so a page overrides one line",
+    "by passing e.g. priceBoxTick1=\"Kurzfristig verfügbar nach Absprache\" and every",
+    "other page keeps the default without being edited. They live at the TOP LEVEL",
+    "because an include parameter is a flat key and cannot override a nested one.",
+    "",
+    "Why they exist: each Webtext specifies its own Preis-Box lines, and /brandwache/",
+    "specifies a PHONE CTA there rather than the form (its whole page inverts the CTA",
+    "order — client rule G2, the one approved exception). Before this the box was",
+    "fixed, so those lines were the one part of a draft the price section could not",
+    "state. Nothing about the 11 pages that already include the box changed."
+  ],
   "nameRequired": "required",
   "companyRequired": "required",
   "_formComment": "nameRequired/companyRequired: banderas del partial lead-form. Por defecto ambos obligatorios; una página las sobrescribe en su include, p.ej. nameRequired=\"\" para bajar la fricción en una landing de Ads. Van al nivel superior porque un parámetro de include es una clave plana y no puede sobrescribir una anidada."
