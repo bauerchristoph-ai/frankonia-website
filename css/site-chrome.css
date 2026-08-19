@@ -331,6 +331,35 @@
     overscroll-behavior: contain;
   }
 
+  /* ---- THE CTA SITS AT THE BOTTOM, CENTRED (client 2026-08-19: "y el cta ponelo
+     abajo al centro"). A flex column is what lets `margin-top: auto` on the
+     actions push it there; the panel is `inset: 0`, so "the bottom" is the bottom
+     of the SCREEN, not of the list.
+
+     ⚠️⚠️ `:not([hidden])` IS NOT TIDINESS — WITHOUT IT THE MENU CANNOT BE CLOSED.
+     This shipped for a few minutes as a plain `.site-nav { display: flex }` and
+     the client hit it immediately ("estoy clickeando la cruz y pasa esto"):
+     initNavToggle() closes the panel by setting the `hidden` ATTRIBUTE, which
+     hides it through the UA sheet's `[hidden] { display: none }` — and ANY author
+     `display` beats a UA rule, so the panel stayed on screen with the X doing
+     nothing visible. The `:not()` makes the rule (0,2,0) and, more to the point,
+     makes it stop matching the moment JS hides the panel.
+     ⚠️ The desktop block already documents the mirror image of this trap for
+     `.site-nav[hidden]`. Same attribute, same lesson, opposite direction: on
+     desktop the nav has to show DESPITE `hidden`; here it has to disappear
+     BECAUSE of it.
+
+     ⚠️ When a submenu is open the content is taller than the panel and there is no
+     free space to distribute — `margin-top: auto` then collapses to 0 and the
+     button simply follows the list, which is the right behaviour for a scrolling
+     drawer. Measured in both states. */
+  .site-nav:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+  }
+
+
+
   /* Both are earlier siblings of .site-nav inside .site-header__inner, so with
      everything at z-index auto the positioned panel would paint OVER them and
      the visitor would lose both the logo and the button that closes the menu. */
@@ -711,20 +740,68 @@ a.site-nav__link {
   border-left: 1px solid var(--color-border);
 }
 
+/* ⚠️ `gap: 0` IS PART OF THE DIVIDER, not a separate tidy-up (client 2026-08-19:
+   "hacé dividers también en estas sublistas"). With a gap, a hairline between two
+   rows floats in the middle of 12px of nothing and reads as a stray line; with the
+   rows touching, the row's own padding IS the space around it and the divider
+   reads as the edge between two list rows.
+   ✅ It also makes the open drawer SHORTER, not longer: ten rows go from 56px
+   (44 + gap) to 44, i.e. 560 → 440px — which matters, because this list is the one
+   thing on the site that can push the drawer past a phone screen. */
 .site-nav__submenu-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 0;
 }
 
+/* `li + li`, so there is no line above the first row or below the last — the
+   dividers sit BETWEEN items, and the submenu's own left border already marks
+   where the group starts. */
+.site-nav__submenu-list > li + li {
+  border-top: 1px solid var(--color-border);
+}
+
+/* ⚠️ MOBILE/TABLET DRAWER SIZING, and the values are a CONTRAST fix, not a taste
+   one (client 2026-08-19: "cuando abrimos el piquito de los servicios o las
+   ciudades en el nav de mobile hacé los nombres más grandes y más blancos porque
+   no se leen"). Measured in the open drawer before the change: these links were
+   14.06px at `rgba(255,255,255,0.65)` sitting directly under their own top-level
+   items at 21px in solid white — a third smaller and a third dimmer, in the one
+   place on the site where a list of ten destinations has to be read at arm's
+   length.
+   Now 18px, and GREY rather than white (client, right after: "prefiero que el
+   color de la lista de los servicios en el menú sea gris, no blanco"). The two
+   asks pull in opposite directions, so the split is: the SIZE carries the
+   readability and the COLOUR carries the hierarchy. 0.8 white — not the 0.65 that
+   was there, which is what made them unreadable at 14px, and not solid white,
+   which flattened them against their own parent item.
+   ⚠️ Measured on the drawer's own near-black: **13,0:1**, against 8,6:1 at the old
+   0.65 and 20,9:1 at solid white. If it is ever dimmed again, that number is the
+   thing to keep an eye on — at 18px the floor is 4,5:1, so there is room, but the
+   client already rejected 0.65 once by eye, not by ratio.
+   ⚠️ These declarations are the MOBILE ones: the ≥1400px block further down
+   restates size and colour for the floating panel, which is a LIGHT surface where
+   white text would be invisible. Changing one does not change the other, and both
+   have to stay that way. */
 .site-nav__submenu-list a {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
+  font-size: var(--font-size-md);
+  color: rgb(255 255 255 / 0.8);
+  /* The row's own padding is the ONLY spacing mechanism here — the list's gap is
+     0 so the dividers can sit on the edge between rows (see above). Raised from
+     0.35rem on 2026-08-19 ("make the list a bit more spaced, it's too tight"):
+     the row goes 44 → 56px and the ten-item list 440 → 560. Measured, not
+     guessed — 0.6rem gave 50px, which read as barely changed. */
+  padding-block: 0.8rem;
 }
 
+/* The closing "Alle Leistungen →" row takes the same divider: without it, ten
+   ruled rows are followed by a link floating in space. `display: block` rather
+   than inline-block so the line spans the list instead of the text. */
 .site-nav__submenu-all {
-  display: inline-block;
-  margin-top: var(--space-3);
+  display: block;
+  margin-top: 0;
+  padding-block: 0.8rem;
+  border-top: 1px solid var(--color-border);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
 }
@@ -877,6 +954,16 @@ a.site-nav__link {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-1) var(--space-3);
+  }
+
+  /* ⚠️ The mobile drawer's row dividers do NOT come along. They are a base rule,
+     which on this file means "the mobile default", and this panel overrides it —
+     it is a TWO-COLUMN grid on a light surface, where `li + li` would rule nine of
+     the ten cells including the first of the second column. Invisible today
+     (--color-border is white at 0.12 and this panel is white) but wrong the moment
+     anyone gives it a colour that shows. The gap above is what separates these. */
+  .site-nav__submenu-list > li + li {
+    border-top: none;
   }
 
   /* Dark body text on the white panel. The shared .site-nav__list a
@@ -1318,6 +1405,22 @@ a.site-nav__link {
 
   .site-nav__actions {
     align-items: center;
+    /* ⚠️ THESE FOUR LIVE HERE, NOT IN THE FIRST max-width:1399.98 BLOCK, AND THAT
+       IS THE WHOLE FIX (client 2026-08-19: "y el cta ponelo abajo al centro").
+       Written up there first, they measured back as `margin-top: 24px` and the
+       button sat 138px short of the bottom: the plain, unmediated
+       `.site-nav__actions` rule further down the file (the desktop-first base,
+       with its own `margin-top: var(--space-5)`) is the SAME specificity (0,1,0)
+       and comes LATER, so it won on source order. A media query adds no weight.
+       ⚠️ So: any mobile override of a property that base rule also sets has to be
+       written after it — in this block, not the earlier one. */
+    margin-top: auto;
+    /* Centres the BUTTON, not its label: `.btn` is inline-flex, so it is the
+       wrapper's own alignment that moves it. */
+    justify-content: center;
+    /* Clears the last nav row when a short screen puts the two next to each
+       other. */
+    padding-top: var(--space-6);
   }
 
   /* ---- Centre the LABEL, not the label+caret pair ---------------------------

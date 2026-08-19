@@ -766,6 +766,260 @@ una clase en el markup.
   izquierda (`margin 0px`), y `/empfangsdienst/` y `/veranstaltungsschutz/` siguen
   centradas por la regla del 08-17. Sólo `/werkschutz/` cambió.
 
+**2026-08-19, MISMO DÍA — DOS CORRECCIONES: EL SUBMENÚ DEL NAV MÓVIL SE PODÍA LEER
+MAL, Y EL MAPA DE CIUDAD/COMBO CRECE OTRA VEZ** (cliente: "cuando abrimos el piquito de
+los servicios o las ciudades en el nav de mobile hacé los nombres más grandes y más
+blancos porque no se leen" + "el mapa en las secciones de ciudades y las de
+ciudad+servicio hacelos más grandes").
+
+- **EL SUBMENÚ ERA UN PROBLEMA DE CONTRASTE MEDIBLE, no una impresión.** Medido con el
+  drawer abierto: los links de ciudad/servicio salían a **14,06px en
+  `rgba(255,255,255,0.65)`**, justo debajo de sus propios ítems de primer nivel a
+  **21px en blanco pleno** — un tercio más chicos y un tercio más apagados, en el único
+  lugar del sitio donde hay que leer una lista de diez destinos con el teléfono en la
+  mano. Ahora **18px**, y **gris** (pedido inmediatamente después: "prefiero que el color
+  de la lista de los servicios en el menú sea gris, no blanco"). Los dos pedidos tiran
+  para lados opuestos, así que el reparto es: **el TAMAÑO carga la legibilidad y el COLOR
+  la jerarquía** — blanco al **0,8**, ni el 0,65 de antes (que es lo que las volvía
+  ilegibles a 14px) ni blanco pleno (que las aplanaba contra su propio ítem padre).
+  **Medido sobre el negro del drawer: 13,02:1**, contra 8,6:1 del 0,65 y 20,9:1 del
+  blanco sólido. Verificado en los dos submenús.
+- **Y las sublistas llevan DIVIDERS** (pedido a continuación: "hacé dividers también en
+  estas sublistas"): hairline entre filas con `li + li`, así **no hay línea arriba de la
+  primera ni abajo de la última** — el borde izquierdo del submenú ya marca dónde empieza
+  el grupo. La fila "Alle Leistungen →" toma el mismo divisor, si no diez filas rayadas
+  terminaban en un link flotando.
+  ⚠️ **`gap: 0` ES PARTE DEL DIVIDER, no una limpieza aparte**: con gap, la hairline
+  flota en el medio de 12px de nada y se lee como una línea suelta; con las filas
+  pegadas, **el padding de la fila es el ÚNICO mecanismo de espaciado**, que es lo que
+  después permitió airearla sin tocar el divisor (cliente: "make the list a bit more
+  spaced, it's too tight"): `padding-block` 0,35 → **0,8rem**, o sea la fila de **44 a
+  56px** y la lista de diez de 440 a 573. **Medido, no estimado — 0,6rem daba 50px y se
+  leía casi igual.**
+  ⚠️ **El panel de ESCRITORIO no se los lleva**, y hay un reset explícito para eso: es
+  una grilla de DOS columnas sobre superficie clara, donde `li + li` rayaría nueve de
+  diez celdas **incluida la primera de la segunda columna**. Hoy sería invisible
+  (`--color-border` es blanco al 0,12 sobre panel blanco), que es justo por qué se
+  escaparía sin que nadie lo note.
+- **EL CTA DEL DRAWER VA ABAJO Y CENTRADO** (pedido a continuación: "y el cta ponelo
+  abajo al centro"). El panel pasa a `display: flex; flex-direction: column` y las
+  acciones a `margin-top: auto`.
+  ⚠️⚠️ **PRIMERO LO ESCRIBÍ EN EL BLOQUE MÓVIL EQUIVOCADO Y NO HIZO NADA — medido,
+  `margin-top: 24px` y el botón a 138px del fondo.** Este archivo tiene DOS bloques
+  `max-width: 1399.98px`, y entre ellos está la regla base de `.site-nav__actions`, que
+  es **desktop-first, sin media query, con su propio `margin-top: var(--space-5)`**.
+  Misma especificidad (0,1,0) y **más abajo en el archivo**, así que gana por orden —
+  una media query no suma peso. **Cualquier override móvil de una propiedad que esa
+  regla base también fija tiene que escribirse en el SEGUNDO bloque.**
+  ⚠️⚠️ **Y COMO REGLA PLANA ROMPIÓ EL MENÚ: LA CRUZ DEJÓ DE CERRARLO.** El cliente lo
+  encontró en minutos ("estoy clickeando la cruz y pasa esto"). `initNavToggle()` cierra
+  el panel poniendo el ATRIBUTO `hidden`, que lo oculta por la hoja del navegador
+  (`[hidden] { display: none }`) — y **cualquier `display` de autor le gana a una regla
+  de UA**, así que el panel se quedaba en pantalla con la X sin efecto visible. Va
+  `.site-nav:not([hidden])`, que además de subir la especificidad **deja de matchear en
+  el instante en que el JS oculta el panel**.
+  ⚠️ **El bloque de escritorio ya documentaba la trampa ESPEJO** para `.site-nav[hidden]`
+  (ahí el nav tiene que verse A PESAR del atributo). Mismo atributo, misma lección, en
+  las dos direcciones.
+  **Verificado el ciclo completo**: al cargar `display: none`; abierto `flex` y tapando
+  la pantalla; **tras la cruz `display: none`**; y otra vez con un submenú abierto.
+  **Medido después**: a 390x844 el CTA queda **centrado (0px de desvío) y a 48px del
+  fondo**, que es el propio `padding-bottom` del panel. ⚠️ En pantallas donde el
+  contenido ya no entra (390x667, 320x568, o con un submenú abierto) **`auto` colapsa a 0
+  y el botón sigue a la lista** — que es lo correcto en un drawer que scrollea.
+  **Escritorio verificado intacto**: `margin-top: 0`, fila horizontal, sin dividers.
+- ✅ **De paso quedaron en 44px de alto exactos** (18px de línea + 0,35rem de padding
+  arriba y abajo), o sea pasan el mínimo táctil que antes no alcanzaban (~20px).
+- ⚠️ **Las declaraciones del bloque MÓVIL no son las del panel de escritorio.** El
+  bloque de ≥1400px re-declara tamaño y color para el panel flotante, que es una
+  superficie **CLARA** donde el texto blanco sería invisible. Tocar uno no toca el otro,
+  y tienen que seguir así.
+- **Verificado el invariante del drawer**: con los submenús colapsados sigue entrando en
+  una pantalla a 390x844 (844 de 844), que es la razón por la que existe el acordeón. Con
+  uno abierto el drawer scrollea — **ya scrolleaba antes** (`overflow-y: auto`), sólo que
+  ahora la lista mide 440px en vez de 200.
+- **EL MAPA: segunda subida del día, y las dos mitades del rango se movieron por razones
+  distintas.**
+  · **Escritorio `min(30rem, 100svh − 22rem)` → `min(36rem, 100svh − 20rem)`.** El
+    segundo término es el que ata de verdad en un portátil de 900px de alto, así que
+    subir sólo el cap no habría hecho nada. Medido a 1440x900: **480 → 576px**.
+  · **Móvil/tablet `clamp(9.5rem, 28vw, 18rem)` → `clamp(10rem, 34vw, 22rem)`**:
+    390 **152 → 160**, 600 168 → 204, 768 215 → **261**, 834 234 → **284**.
+- ⚠️⚠️ **EL TELÉFONO ESTÁ EN SU TECHO Y POR ESO CASI NO SE MOVIÓ (152 → 160), y la
+  restricción es la PÁGINA COMBO, no la de ciudad.** El mapa va ARRIBA del copy en una
+  columna, así que cada píxel empuja el CTA. Slack medido a 390 antes de esta pasada:
+  43px en una ciudad y **26px en una combo** (su par de CTA con teléfono primero es más
+  alto). El candidato que llevaba la tablet a 284 subiendo el piso a 11rem dejaba el CTA
+  de la combo a **2px** del fold. Con 10rem queda en 826 de 844.
+  **No volver a subir el piso sin medir el CTA a 390 en una COMBO — las de ciudad no son
+  el caso ajustado.**
+- ⚠️ **UNA CIUDAD ANCHA NO CRECE CON ESTO, y es inherente**: la forma se dimensiona por
+  ALTO con `max-width: 100%`, así que en un contorno más ancho que alto **manda la
+  COLUMNA**. Coburg mide 214px a 1024 y 304 a 1440 **antes y después**. La palanca para
+  ésas es el split de columnas del hero, que le sacaría ancho al copy — otra decisión.
+
+**2026-08-19, MISMO DÍA, TERCERA PASADA — EL SEAM DE PÍXELES SALE DE LA FOTO, NO DE
+UNA BARRA NEGRA** (cliente: "the pixel transition is now in black and it has to be like
+it is in /leistungen/, that there is no black part, only the image").
+
+- **Es el mismo defecto para el que se inventó `.pixel-seam--photo` el 2026-08-07**,
+  llegando acá por la misma razón: un seam normal pinta tiles del color de la sección
+  de ARRIBA y los despinta, y sobre una fotografía eso es **una barra negra plana**
+  entre la foto y la sección siguiente. Medido antes: banda en y=1127 (el borde de
+  abajo del hero) con tiles `rgb(1,1,1)`.
+- ⚠️⚠️ **NO SE PUEDEN USAR LAS CLASES `--photo`, y por eso está reconstruido en CSS.**
+  Ese modificador es `position: absolute; inset: auto 0 0`, que sólo funciona porque
+  `/leistungen/` tiene el seam ADENTRO del hero; el nuestro es hermano en flujo
+  después de él, y **en escritorio tiene que seguir siéndolo**. Una clase en el markup
+  aplica a todos los anchos: a ≥1024 el seam se volvería absoluto contra `main` y
+  **aterrizaría al final de la página**. Así que el comportamiento se rehace con
+  selectores de hermano, scopeado al breakpoint, y **el markup no se toca**.
+- **Son tres mitades y hacen falta las tres:** la banda sube **su propio alto** para
+  quedar sobre la última franja de foto en vez de colgar en negro debajo del hero; los
+  tiles pasan al color de DESTINO y se **invierten** (nacen invisibles y aparecen,
+  `.is-revealed { opacity: 1 }`, el mismo flip que hace `--photo`); y la sección
+  siguiente **deja de reservar** los 120/200px para una banda que ya no está delante
+  de ella, mientras el hero crece ese mismo alto para que el copy nunca quede debajo
+  de un tile.
+- **`--color-white` y no un destino por token**: las nueve abren sobre una
+  `.section--light` — **verificado en las nueve, `rgb(255,255,255)`** — y #FAFAFA se
+  leería como una banda grisácea entrando a una sección blanca, que es la misma razón
+  por la que `.pixel-seam--photo-light` usa ese valor exacto. Si alguna vez una página
+  de servicio abre sobre sección oscura, eso es un modificador, no una edición.
+- ⚠️ **El alto de la banda queda expresado DOS veces** (200px y 120px abajo de 768),
+  porque vive en `.pixel-seam__band`, que es un HERMANO — su variable no se puede
+  heredar desde el hero. Es el mismo "escrito dos veces, mantener en sincro" que el
+  bleed hero ya carga para `--service-hero-band-h`.
+- **Medido en las 9 páginas a 390 y 834**: banda **sobre la foto** en las 18
+  combinaciones, **todos los tiles blancos**, el copy **libre** de la banda, 0 tiles
+  visibles en reposo y sin scroll horizontal. Y por scroll real con Lenis: **0 → 16 →
+  26 → 30 tiles** apareciendo al bajar, o sea el dissolve corre de verdad.
+- **Escritorio intacto**: a 1440 el seam sigue debajo del hero, con tiles negros y la
+  sección reservando sus 296px.
+
+**2026-08-19, MISMO DÍA, SEGUNDA PASADA — LA FOTO LLEGA HASTA ARRIBA DE LA PÁGINA Y EL
+CONTENIDO BAJA** (cliente, viendo la primera versión: "la imagen tiene que ir hasta
+arriba, no puede haber una franja negra que la corte … y poné un poco más abajo el
+contenido, no tan arriba, como en /leistungen/").
+
+- ⚠️ **LA FRANJA ERA MEDIBLE, no una impresión: 131px** — 76 del header (que es
+  TRANSPARENTE) más 55 de la fila del breadcrumb, o sea fondo de página arriba de la
+  foto. La primera versión hacía la foto fondo **de la sección**, y la sección empieza
+  después del breadcrumb.
+- **Ahora la geometría es la de `/leistungen/`, medida contra ella**: hero en
+  **y = −36/−38** contra su −20, y el texto del breadcrumb en **y = 108**, exactamente
+  el 108 de esa página. El H1 pasó de ~230 a **352** a 390 (el cliente pidió "más
+  abajo"), contra los 377 de `/leistungen/`.
+- ⚠️⚠️ **NO se usó `.service-hero--bleed`, y no por capricho: optar por ese modificador
+  obliga a mover el breadcrumb ADENTRO de la sección**, que es markup en 9 páginas **y
+  lo movería también en ESCRITORIO**, donde estas páginas conservan el split de dos
+  columnas. En vez de eso la sección se sube por encima del breadcrumb
+  (`margin-top` negativo, devuelto como padding) y **el breadcrumb se levanta por
+  encima de la foto**, que es donde `/leistungen/` lo muestra igual.
+- ⚠️ **EL PULL ES `breadcrumb + 6rem` Y LAS DOS MITADES ESTÁN MEDIDAS.** La fila del
+  breadcrumb mide 54–56px y **se queda en UNA línea a 320 / 360 / 390 / 600 / 834 /
+  1023** (verificado), más los 32px que este bloque le agrega para despegarla del nav:
+  5.5rem. El 6rem es la misma constante generosa que ya usa el bleed hero para el
+  header — más que los 76px que mide, a propósito, para que siga funcionando si el
+  header crece.
+  ⚠️ **Es UN número en DOS lugares**: si cambia el padding del breadcrumb hay que
+  cambiar `--svc-crumbs-h`. Con 3.5rem quedaba **una franja negra de 16px arriba**,
+  medida — así se detecta.
+- ⚠️ **DOS REGLAS SOBRE EL BREADCRUMB, PARTIDAS POR QUÉ PASA SI EL SELECTOR FALLA.**
+  El `z-index` va **sin scopear**: sin él la foto (que es un absoluto) le pinta encima
+  y el breadcrumb **desaparece**, así que eso no puede depender de un selector que un
+  navegador podría no conocer — y es no-op en el resto del sitio (nada se superpone a
+  un breadcrumb en ninguna otra página; verificado en /kontakt/, /referenzen/, /jobs/,
+  /ueber-uns/ y una ciudad: siguen en y=92 con su padding de 16px). El **padding** sí
+  lleva `:has()`, porque es lo realmente específico de estas páginas y su modo de falla
+  es inofensivo: sin él la foto arranca 32px más arriba, no se rompe nada.
+- ✅ **CONTRASTE RE-MEDIDO CON PÍXELES, y ahora incluye el nav y el breadcrumb, que
+  quedaron sobre la fotografía**: logo **7,3–19,6**, breadcrumb **6,4–18,3**, badge
+  **5,2–7,2**, H1 **5,3–6,6**, lede **6,2–8,4**, tics **8,9–16,4**. Las 9 páginas × 390
+  y 834, todo arriba de 4,5:1.
+  ⚠️ **Seis lecturas de "1,00" en los tics eran EL BOTÓN DE WHATSAPP**, que es `fixed`
+  abajo a la derecha y cae dentro del rect del tic a 390 — su glifo blanco es el "peor
+  píxel". Re-medido ocultándolo: 8,9–16,4. **Una sonda de contraste tiene que ocultar
+  también lo que flota.**
+- **Barrido a 320 / 360 / 390 / 600 / 768 / 834 / 1023**: la foto arranca en y ≤ 0 en
+  los siete, **cero franja negra**, sin scroll horizontal. **A 1024 y 1440 nada cambió**
+  (la `<figure>` vuelve a `position: static` en su columna) y **`/ueber-uns/` sigue
+  intacta** en los tres anchos.
+- ⚠️⚠️ **LO QUE COSTÓ LA RONDA ANTERIOR NO FUE EL CÓDIGO: EL CLIENTE MIRABA OTRO
+  ÁRBOL.** El preview de `:8123` lo sirve otra sesión desde su propio scratch
+  (`…/de84d294-…/scratchpad/build/dist`), o sea un snapshot congelado — tenía todos los
+  cambios del día MENOS el último. **Se detecta en un comando**, y no leyendo el CSS:
+  `curl http://127.0.0.1:<puerto>/css/page-service.css | grep <la regla>` → 0 en 8123 y
+  3 en 3000. Un `diff -rq` de los dos `dist/` mostró que **difería exactamente un
+  archivo**. El puerto que siempre refleja este repo es **:3000**
+  (`serve-dev.js /Users/maquesymonds/Desktop/FRANKONIA/dist`).
+
+**2026-08-19 — EN LAS 9 PÁGINAS DE SERVICIO, ABAJO DE 1024px LA FOTO DEL HERO PASA A
+SER EL FONDO EN VEZ DE UNA CAJA DEBAJO DEL TEXTO** (cliente: "in tablet and mobile, in
+the services individual pages, put the image in the background, like you're doing in
+/leistungen/"). Todo en `css/page-service.css`, **cero cambios de markup**.
+
+- ⚠️ **ESTO NO ES `.service-hero--bleed`, aunque sea el tratamiento que el cliente
+  señala.** Optar por ese modificador son DOS cosas juntas — la clase **y** mover el
+  breadcrumb adentro de la sección (su propia nota lo dice, y la primera versión de
+  aquel cambio metió cinco heroes encima de su breadcrumb). Estas páginas conservan
+  `main > .breadcrumbs` arriba del hero en todos los anchos, así que **la foto arranca
+  debajo del breadcrumb y no en el borde de la página**. Todo lo demás es la misma
+  idea. El bleed de verdad es un cambio de markup en 10 páginas y movería el
+  breadcrumb **también en escritorio**, que no es lo que se pidió.
+- ⚠️⚠️ **DOS REGLAS QUE SON UN SOLO MECANISMO, y esto costó una ronda: un absoluto
+  resuelve contra su ancestro POSICIONADO, y la `<figure>` vive dentro de
+  `.service-hero__grid`, al que el chasis le pone `position: relative`.** Así que
+  `inset: 0` cubría **el grid, no la sección** — medido **390x584 en y=163 dentro de un
+  hero de 390x868**, o sea una foto que no llegaba al padding de la sección por ningún
+  lado. Pasar el grid a `static` le devuelve el trabajo a `.service-hero` (que ya es
+  relative y ya es `overflow: hidden`), y recién ahí el copy necesita posicionarse él
+  mismo, o un absoluto le pinta encima.
+- ⚠️ **`width/height: 100%` explícitos, y NO por redundancia: la `<figure>` lleva un
+  `aspect-ratio` INLINE por página** (el ratio real de cada archivo, que en escritorio
+  reserva el espacio), y un estilo inline le gana a cualquier hoja. Con `height: auto`
+  el ratio gana y dimensiona la caja desde el ancho — ésos eran los 584px. **Dos ejes
+  definidos vuelven el ratio inaplicable por spec**, así que el override no necesita
+  `!important`, que este proyecto no usa.
+- **El wash es VERTICAL, no la rampa lateral del bleed hero**: aquélla funciona porque
+  su copy vive en la mitad izquierda, y acá el copy ocupa todo el ancho a estos
+  tamaños — un gradiente horizontal dejaría el final de cada línea sobre foto pelada.
+  Es la misma decisión que ya toman el homepage y `/werkschutz/` en este breakpoint.
+- ✅ **CONTRASTE MEDIDO CON PÍXELES REALES, ocultando el copy y muestreando el PEOR
+  píxel (el más claro) detrás de cada elemento** — no razonando sobre el CSS. Las 9
+  páginas × 390 y 834: **badge 6,8–18,8 · H1 5,6–7,7 · lede 5,3–6,4 · tics 7,3–12,1**,
+  todos por encima del 4,5:1. ⚠️ Las 4 lecturas de "1,00" en la trust band **no son un
+  fallo**: ahí el único texto vive dentro de la píldora de Google, que es una card
+  BLANCA con su propio texto oscuro — la sonda mide su blanco y asume texto blanco.
+- ✅ **GANANCIA GRANDE Y MEDIDA: el hero se acorta ~35–46 %**, porque la foto dejó de
+  ser una fila propia:
+
+  | | 390 | 834 |
+  |---|---|---|
+  | objektschutz | 1329 → **868** | 1279 → **688** |
+  | brandwache | 1326 → **868** | 1274 → **688** |
+  | revier-schliessdienst | 1396 → **936** | 1331 → **741** |
+
+- **Verificado que NO se tocó nada más**: en escritorio (1024 y 1440) la `<figure>`
+  sigue `position: static` con su radio de 16px y su columna (363x543 / 526x644), o sea
+  el split de dos columnas está intacto; y **`/ueber-uns/`, que comparte el modificador
+  y NO es una página de servicio, queda igual** en 390 y 834 — por eso las reglas llevan
+  `:not(.uu-hero)`.
+- **Medido en las 9 a 390 / 768 / 834 / 1023**: la foto cubre el hero **exactamente**
+  (mismo x/y/ancho/alto que la sección) en las 36 combinaciones, sin scroll horizontal
+  y con **cero elementos fuera del viewport**.
+- ⚠️ **`object-position: 50% 32%` es una decisión de encuadre que conviene mirar en
+  pantalla**: las nueve fotos son verticales (820x~1227) dentro de una caja apaisada, así
+  que `cover` recorta arriba y abajo, y el 32 % existe porque el sujeto de las nueve está
+  en la mitad superior — a 50 % se cortan cabezas en proporciones de tablet. Si alguna
+  foto queda mal encuadrada, es un `object-position` por página, no un cambio de sistema.
+- ⚠️ **Trampa de medición, mía: las capturas para medir contraste salían con el copy
+  todavía visible.** Ocultarlo con `visibility` y capturar en la misma tanda no alcanza —
+  el compositor no repintó todavía. **Hay que esperar un frame (400ms) entre ocultar y
+  capturar**, si no se mide el texto en vez del fondo. Y ojo con la heurística inversa:
+  una captura de 834x1112 contiene 424px de la sección CLARA de abajo, así que "hay
+  mucho blanco" no significa que el copy no se haya ocultado.
+
 **2026-08-19 — EL CONTORNO DEL HERO DE CIUDAD CRECE ~50 % EN TELÉFONO Y ~75 % EN
 TABLET** (cliente: "in both tablet and mobile, make the map image bigger"). Un solo
 valor en `css/page-city.css`, y con eso las 10 páginas.

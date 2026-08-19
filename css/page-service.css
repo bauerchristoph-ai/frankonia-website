@@ -4608,6 +4608,11 @@ main h2 {
     --pixel-band-h: 120px;
   }
 
+  /* Companion to the line above — see --svc-seam-band-h at the split hero. */
+  .service-hero--split:not(.uu-hero) {
+    --svc-seam-band-h: 120px;
+  }
+
   /* The hero's own copy of the same number — see --service-hero-band-h. */
   .service-hero--bleed {
     --service-hero-band-h: 120px;
@@ -5434,12 +5439,17 @@ main h2 {
    ⚠️ WHY THIS IS NOT `.service-hero--bleed`, even though that is the treatment
    being pointed at: opting into that modifier is TWO things together — the class
    AND moving the page's breadcrumb inside the section (its own note says so, and
-   the first build of it slid five heroes over their breadcrumbs). These ten pages
-   keep `main > .breadcrumbs` above the hero at every width, so the photo starts
-   under the breadcrumb rather than at the very top of the page. Everything else —
-   full-width photo, copy over it, vertical wash — is the same idea. Making it a
-   true bleed is a markup change on ten pages and would move the breadcrumb on
-   DESKTOP too, which is not what was asked.
+   the first build of it slid five heroes over their breadcrumbs). That is a markup
+   change on nine pages AND it would move the breadcrumb on DESKTOP, where these
+   pages keep the two-column split. So the same GEOMETRY is reached a different
+   way: the section is pulled up over the breadcrumb and the breadcrumb is lifted
+   above the photo, which is exactly where /leistungen/ shows it.
+   ⚠️ THE FIRST BUILD OF THIS STOPPED THE PHOTO UNDER THE BREADCRUMB and the client
+   rejected it in those words ("la imagen tiene que ir hasta arriba, no puede haber
+   una franja negra que la corte"). The band was measurable: 76px of transparent
+   header plus a 55px breadcrumb row = 131px of page background above the photo.
+   The pull below is what removes it — measured hero top −36/−38 against
+   /leistungen/'s own −20.
 
    ⚠️ `:not(.uu-hero)` because /ueber-uns/ shares this modifier and is not a
    service page. It also has its own `.uu-hero .service-hero__media` tuning; this
@@ -5463,6 +5473,40 @@ main h2 {
      already `overflow: hidden` so the photo is clipped to it). The copy then has to
      be positioned itself, or the absolutely positioned photo would paint over it —
      a non-positioned block always loses to a positioned sibling. */
+  /* ---- THE PHOTO REACHES THE TOP OF THE PAGE (client 2026-08-19: "la imagen
+     tiene que ir hasta arriba, no puede haber una franja negra que la corte …
+     y poné un poco más abajo el contenido, como en /leistungen/").
+     The band being cut off was the 76px transparent header plus the 55px
+     breadcrumb row — 131px of page background above the photo, measured.
+     ⚠️ THIS IS THE SAME GEOMETRY AS /leistungen/ BUT NOT ITS MECHANISM. That page
+     opts into `.service-hero--bleed`, which needs the breadcrumb moved INSIDE the
+     section — a markup change that would also move it on DESKTOP, where these
+     pages keep the two-column split. So the section is pulled up over the
+     breadcrumb instead, and the breadcrumb is lifted above the photo so it reads
+     ON it, which is exactly where /leistungen/ puts it (measured there: hero at
+     y −20, crumbs at y 108).
+     ⚠️ THE PULL IS crumb row + overlap, and the 3.5rem is MEASURED, not guessed:
+     the row is 54–56px and stays ONE line at 320 / 360 / 390 / 600 / 834 / 1023.
+     The 6rem is the same generous constant the bleed hero uses for the header —
+     deliberately more than the 76px it measures, so it keeps working if the
+     header grows. Together they land the hero at y −21, i.e. /leistungen/'s own
+     −20. If the breadcrumb ever wrapped to two lines the photo would start a few
+     px late; the overlap's slack is what absorbs that. */
+  .service-hero--split:not(.uu-hero) {
+    /* The breadcrumb ROW as it renders on these pages: 54–56px of its own
+       (measured, one line at 320 / 360 / 390 / 600 / 834 / 1023) plus the
+       32px this block adds to push it off the header. ⚠️ If that padding
+       changes, this changes with it — they are one number in two places, and
+       getting it wrong shows up as the hero starting late: 3.5rem left a 16px
+       black sliver at the very top, measured. */
+    --svc-crumbs-h: 5.5rem;
+    --svc-bleed-pull: calc(var(--svc-crumbs-h) + 6rem);
+    margin-top: calc(-1 * var(--svc-bleed-pull));
+    /* The pull is given straight back, plus the air the client asked for, so the
+       copy sits LOWER than it did rather than where it was. */
+    padding-top: calc(var(--svc-bleed-pull) + 9rem);
+  }
+
   .service-hero--split:not(.uu-hero) .service-hero__grid {
     position: static;
   }
@@ -5470,6 +5514,30 @@ main h2 {
   .service-hero--split:not(.uu-hero) .service-hero__content {
     position: relative;
     z-index: 1;
+  }
+
+  /* ⚠️ TWO RULES ON PURPOSE, SPLIT BY WHAT HAPPENS IF THE SELECTOR FAILS.
+     The breadcrumb is a SIBLING of the hero, and the hero now sits UNDER it — so
+     without a stacking lift the absolutely positioned photo paints over it and the
+     breadcrumb disappears entirely. That must never depend on a selector a browser
+     might not know, so it is unscoped: `position: relative; z-index: 1` is a no-op
+     everywhere else on the site (nothing overlaps a breadcrumb on any other page)
+     and it cannot fail closed.
+     The PADDING is the part that is really page-specific, so it takes the `:has()`
+     — and its failure mode is harmless: without it the crumbs hug the nav and the
+     photo starts 32px higher than intended, not broken. */
+  main > .breadcrumbs {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Off the header, the way /leistungen/'s own crumbs sit 32px below it (measured
+     there: header ends at 76, crumbs at 108). Without this they hug the nav,
+     because the row that used to separate them is now photograph.
+     `:has()` keeps it off every other page, including /ueber-uns/, which shares
+     the modifier and is not a service page. */
+  main:has(> .service-hero--split:not(.uu-hero)) > .breadcrumbs {
+    padding-top: var(--space-6);
   }
 
   .service-hero--split:not(.uu-hero) .service-hero__media {
@@ -5504,6 +5572,63 @@ main h2 {
      both make at this breakpoint.
      Heaviest at the BOTTOM, where the 15px ticks and the trust band sit, and
      lighter through the middle where the 34px H1 carries itself. */
+  /* ---- THE DISSOLVE COMES OUT OF THE PHOTO, NOT OUT OF A BLACK BAND ----------
+     Client 2026-08-19: "the pixel transition is now in black and it has to be like
+     it is in /leistungen/, that there is no black part, only the image".
+     They are describing the exact defect `.pixel-seam--photo` was invented for on
+     2026-08-07, arriving here for the same reason: a normal seam paints tiles the
+     colour of the section ABOVE and clears them, which over a photograph is a flat
+     black bar sitting between the picture and the next section. Measured before
+     this: band at y 1127 (the hero's own bottom edge) with tiles rgb(1,1,1).
+
+     ⚠️ IT CANNOT JUST TAKE THE `--photo` CLASSES. That modifier is
+     `position: absolute; inset: auto 0 0`, which only works because /leistungen/
+     keeps its seam INSIDE the hero; ours is a flow sibling after it, and on
+     DESKTOP it has to stay one. A class in the markup applies at every width, so
+     at ≥1024 the seam would go absolute against `main` and land at the bottom of
+     the page. So the behaviour is rebuilt here, scoped by the sibling selector and
+     to this breakpoint, and the markup is untouched.
+
+     THE THREE HALVES OF IT:
+       · the band moves UP by its own height, so it overlays the last strip of
+         photograph instead of hanging below the hero in empty black;
+       · the tiles become the DESTINATION surface and are inverted — they start
+         invisible and appear (`.is-revealed { opacity: 1 }`), the same flip
+         `.pixel-seam--photo` makes;
+       · the next section stops reserving room for a band that is no longer in
+         front of it, and the hero grows by that height instead, so the copy is
+         never underneath a tile.
+     ⚠️ `--color-white` and not a token-driven destination: all nine of these pages
+     open on a `.section--light` (verified on each — rgb(255,255,255)), and #FAFAFA
+     would read as a greyish band stepping into a white section, which is the same
+     reason `.pixel-seam--photo-light` uses this exact value. If a service page ever
+     opens on a dark section, this needs a modifier rather than an edit. */
+  .service-hero--split:not(.uu-hero) {
+    /* ⚠️ Mirrors .pixel-seam__band's own 200px, and the 767.98 block below mirrors
+       its 120px — the same "expressed twice, keep in step" the bleed hero already
+       carries for --service-hero-band-h. The band lives on a SIBLING, so its
+       variable cannot be inherited from here. */
+    --svc-seam-band-h: 200px;
+    padding-bottom: calc(var(--space-9) + var(--svc-seam-band-h));
+  }
+
+  .service-hero--split:not(.uu-hero) + .pixel-seam .pixel-seam__band {
+    top: calc(-1 * var(--pixel-band-h));
+  }
+
+  .service-hero--split:not(.uu-hero) + .pixel-seam .pixel-seam__tile {
+    background-color: var(--color-white);
+    opacity: 0;
+  }
+
+  .service-hero--split:not(.uu-hero) + .pixel-seam .pixel-seam__tile.is-revealed {
+    opacity: 1;
+  }
+
+  .service-hero--split:not(.uu-hero) + .pixel-seam + .section {
+    padding-top: var(--space-9);
+  }
+
   .service-hero--split:not(.uu-hero) .service-hero__media::after {
     content: "";
     position: absolute;

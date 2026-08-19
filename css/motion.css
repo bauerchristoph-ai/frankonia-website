@@ -53,6 +53,33 @@
   transition-delay: var(--reveal-delay, 0.45s);
 }
 
+/* Off-screen animation pause — the CSS half of js/pause-offscreen.js (see the
+   long note there for the measurement and for why nothing visible changes).
+   The class lands on a <section>; this pauses every looping animation inside it.
+
+   THREE things about this selector are load-bearing, do not "simplify" them:
+
+   1. `animation-play-state` DOES NOT INHERIT, so pausing the section alone does
+      nothing to its children — each animated element has to be matched.
+   2. `*` DOES NOT MATCH PSEUDO-ELEMENTS, and btn-shine (the CTA gloss, the most
+      common looping animation on the site) lives on `.btn::after`. Hence the
+      explicit ::before/::after rows.
+   3. THE CLASS IS DOUBLED ON PURPOSE, to raise specificity from (0,1,x) to
+      (0,2,x). The `animation` shorthand on the targets sets play-state to
+      `running`, and those rules live in page stylesheets (konzept-seq.css,
+      page-home.css, page-referenzen.css, page-service.css) which load AFTER
+      app.css — at equal specificity they would win on source order and the
+      pause would silently do nothing. Doubling the class is what makes this
+      work without !important, which this project does not use. */
+.is-anim-paused.is-anim-paused,
+.is-anim-paused.is-anim-paused::before,
+.is-anim-paused.is-anim-paused::after,
+.is-anim-paused.is-anim-paused *,
+.is-anim-paused.is-anim-paused *::before,
+.is-anim-paused.is-anim-paused *::after {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

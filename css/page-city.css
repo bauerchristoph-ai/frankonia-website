@@ -222,7 +222,20 @@
   width: auto;
   height: auto;
   max-width: 100%;
-  max-height: min(30rem, calc(100svh - 22rem));
+  /* ⚠️ RAISED 2026-08-19 (client: "el mapa en las secciones de ciudades y las de
+     ciudad+servicio hacelos más grandes") from `min(30rem, 100svh - 22rem)`.
+     Both terms moved, and the second one is the real constraint: it is what keeps
+     the hero inside the first screen, so growing the cap alone would have done
+     nothing on a 900px-tall laptop. 22 → 20rem buys 32px there, 30 → 36rem buys
+     the rest on a tall screen. Measured, height at 1440x900: 480 → 576px, and the
+     CTA and the trust band both still land above the fold on the city AND the
+     combo pages.
+     ⚠️ A WIDE CITY DOES NOT GROW WITH THIS, and that is inherent, not a bug: the
+     shape is sized by HEIGHT with `max-width: 100%`, so for an outline wider than
+     it is tall the COLUMN is the binding constraint. Coburg measures 214px at 1024
+     and 304 at 1440 both before and after. The lever for those is the hero's
+     column split, which would take width away from the copy — a separate call. */
+  max-height: min(36rem, calc(100svh - 20rem));
 }
 
 /* ⚠️ BELOW 1024px THE OUTLINE IS VISIBLE AGAIN, ABOVE THE COPY (client 2026-08-16,
@@ -259,9 +272,10 @@
     order: -1;
   }
 
-  /* MEASURED, not a round number, and RAISED on 2026-08-19 (client: "in both
-     tablet and mobile, make the map image bigger") from
-     `clamp(6.5rem, 16vw, 12rem)`. The shape is portrait, so its HEIGHT is the
+  /* MEASURED, not a round number, and RAISED TWICE on 2026-08-19 — first from
+     `clamp(6.5rem, 16vw, 12rem)` (client: "in both tablet and mobile, make the map
+     image bigger"), then to the value below when the client asked again for the
+     city and combo pages. The shape is portrait, so its HEIGHT is the
      whole cost — the width follows and is never the constraint in a one-column
      hero — and every pixel of it pushes the H1 and the CTA down by the same
      pixel. So the ceiling is the CTA, not taste. A/B measured on
@@ -269,10 +283,16 @@
          390 phone   71x104 → 104x152  (+46%)   CTA ends 753 → 801 of an 844 fold
          768 tablet  84x123 → 147x215  (+75%)   CTA ends 642 → 734 of 1024
          834 tablet  91x133 → 160x234  (+76%)   CTA ends 656 → 756 of 1112
-     43px of fold left on the phone is the whole remaining budget — the previous
-     value's own note called ~150px the point where the H1 leaves comfortable
-     reach, and 152 sits on it. **Do not raise this again without re-measuring the
-     CTA at 390.**
+     ⚠️⚠️ THE PHONE IS AT ITS CEILING AND THE SECOND RAISE BARELY MOVED IT — 152 →
+     160px, while the tablet went 234 → 284. That asymmetry is the whole point of
+     the `vw` term, and it is forced: the map sits ABOVE the copy in one column, so
+     every pixel of it pushes the CTA down. Measured at 390 before this pass, the
+     slack to the fold was 43px on a city page and **26px on a combo page** (their
+     phone-first CTA pair is taller), so the candidate that took the tablet to
+     284 by raising the floor to 11rem left the combo CTA **2px** above the fold.
+     10rem is what keeps a real margin: combo CTA at 826 of 844.
+     **Do not raise the floor again without re-measuring the CTA at 390 on a COMBO
+     page — the city pages are not the tight case.**
      ⚠️ TWO COSTS, MEASURED AND ACCEPTED, both on the trust band and both at
      viewports that were already marginal: at 600x900 it ends at 998 (was 890 of a
      900 fold) and at 1023x900 at 1078 (was 895). Neither had more than 10px of
@@ -282,7 +302,7 @@
      The desktop rule caps against the viewport height; here it must not, or a
      short landscape phone would collapse it to nothing. */
   .city-map {
-    max-height: clamp(9.5rem, 28vw, 18rem);
+    max-height: clamp(10rem, 34vw, 22rem);
   }
 
   /* ⚠️ The stroke weight for this small size is NOT set here — it lives in its own

@@ -12,3 +12,9 @@
      build.js (buildCss). Keep SHARED_CSS_ORDER there in sync with this. -->
 <link rel="stylesheet" href="/css/app.css">
 <script src="/js/main.js" defer></script>
+<!-- Pauses looping CSS animations in sections that are off screen (perf,
+     2026-08-19). Site-wide because the CTA gloss (btn-shine) loops on every
+     page; the big win is the homepage's Konzept diagram. Nothing visible
+     changes — see js/pause-offscreen.js and the .is-anim-paused rule in
+     motion.css for why, and for the rootMargin that keeps it that way. -->
+<script src="/js/pause-offscreen.js" defer></script>
