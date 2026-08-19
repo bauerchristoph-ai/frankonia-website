@@ -151,6 +151,46 @@
   }
 }
 
+/* ---- STACKED BELOW 1280px: THE PHOTO COMES FIRST ------------------------ */
+/* Client 2026-08-19, on a phone screenshot: "en ambos tablet y mobile, quiero que
+   la imagen vaya antes que los textos". It covers the WHOLE stacked band — 1024
+   to 1279 (tablet) and everything below it (phone) — i.e. every width where this
+   hero is one column. From 1280px up the grid is two columns and the photo is
+   already beside the copy, so nothing there moves.
+
+   ⚠️ VISUAL ORDER ONLY: the DOM still has the copy first, deliberately. The H1
+   has to open the page for a crawler and for a screen reader, and
+   js/hero-reveal.js still cascades the copy blocks in their own DOM order.
+   docs/page-conventions.md §7 warns against `order` exactly because it desyncs
+   tab order from the screen — that warning does not bite HERE, and the reason is
+   specific: there is nothing focusable inside .jobs-hero__media (one <picture>,
+   no link, no button), so not a single tab stop changes position. Putting a link
+   or a button in that column later would reintroduce the problem this rule is
+   currently exempt from.
+
+   ⚠️ NO top fade to mirror the ::after at the bottom, and that is measured rather
+   than skipped: the export's top three rows peak at luminance 2 (WebP) / 4 (JPEG)
+   against the page's own 1, so the photo's top edge already IS the page's black.
+   The bottom needed a ramp because `cover` crops the four people at mid-thigh
+   there (up to 21); the top has nothing to dissolve into anything.
+
+   ✅ ZERO LAYOUT COST, A/B-measured rather than assumed: reordering rows in a
+   one-column grid with a uniform gap cannot change the total, and the numbers
+   agree — hero 1164px and page 9381px at 390, hero 1378 and page 8855 at 1024,
+   identical with the rule on and off.
+   ⚠️ WHAT IT DOES COST, and it is real: the photo is full-column width in this
+   band (641px at 768 → 1090px at 1279), so above ~900px it fills the first screen
+   and the H1 lands at or below the fold — copy top 753 of 1024 at 768 (fine), 848
+   of 1000 at 900, 914 at 1024, 1083 at 1279. On a phone the H1 is still well above
+   it (496 of 844 at 390). That is inherent to putting a 13/10 photo first at a
+   width where the column is 1000px wide; the lever, if it ever matters, is a
+   `max-height` on .jobs-hero__media in this band, NOT reverting the order. */
+@media (max-width: 1279.98px) {
+  .jobs-hero__media {
+    order: -1;
+  }
+}
+
 /* A safety cap only: inside the two-column grid the track is what constrains the
    copy (~640px at 1440), well under this. It matters on the single-column layout
    below 1024px, where it keeps the hero from reading as a full-width banner. */
@@ -515,13 +555,47 @@
   border-bottom: 1px solid var(--color-border);
 }
 
-/* The application CTA under the ladder (client 2026-08-14). Left-aligned with
-   the rungs, not centred: this section's heading and every row it holds range
-   left, and a centred button under a left-aligned list reads as belonging to
-   something else. --space-7 matches the list's own margin-top, so the button
-   sits as far below the last rung as the list sits below the heading. */
+/* ---- Heading and CTA centred, the ladder itself still ranged left -----------
+   Client 2026-08-19: "center the title and the cta".
+
+   ⚠️⚠️ THIS REVERSES THE NOTE THAT USED TO SIT ON .jobs-levels__actions, kept here
+   so nobody "restores" it as a bug: it argued the button had to be LEFT-aligned
+   because the heading and every rung range left, and a centred button under a
+   left-aligned list reads as belonging to something else. The client's later call
+   wins — and it also removes that objection, because the heading is centred now
+   too, so the button lines up with the one thing above it that is centred.
+
+   The rungs keep their own left edge on purpose: this is the site's standard
+   header-centred / content-left composition (.service-section--centred in
+   page-service.css, /leistungen/'s Warum and FAQ, the city hub's Vertrauen), and
+   centring five two-column rows would take away the edge the eye reads a list
+   against.
+
+   ⚠️ 30ch + `margin-inline: auto` on the H2, not just `text-align`: the chassis
+   leaves `.section__intro` at `max-width: none` so this 65-character heading would
+   otherwise run one ~1200px line at 1440 and read as a banner, not a title.
+   `text-align` centres the TEXT inside a box; the auto margins centre the BOX —
+   both are needed, this project has hit that nine times now. `ch` and not px
+   because the H2 is a clamp, so the cap has to track its own type size. */
+.jobs-levels .section__intro {
+  text-align: center;
+}
+
+.jobs-levels .section__intro h2 {
+  max-width: 30ch;
+  margin-inline: auto;
+  text-wrap: balance;
+}
+
+/* --space-7 matches the list's own margin-top, so the button sits as far below the
+   last rung as the list sits below the heading. `.btn` is inline-flex, so the
+   parent's text-align is what centres it — no flexbox needed here.
+   ⚠️ Inert below 640px, where the button is `width: 100%` (see the phone block).
+   Was 768 until 2026-08-19; the full-width band narrowed with the site-wide CTA
+   rule, so this centring now does real work in the 640–767 band too. */
 .jobs-levels__actions {
   margin-top: var(--space-7);
+  text-align: center;
 }
 
 .jobs-levels__head {
@@ -999,10 +1073,14 @@
      overflows it. That is real horizontal page scroll, and it is the same
      omission this project has now shipped three times (page-service.css and
      page-city.css both document their own instance). Both declarations, always. */
-  .jobs-levels__actions .btn {
-    width: 100%;
-    justify-content: center;
-    white-space: normal;
+  /* ⚠️ 639.98, NOT this block's 767.98 — client 2026-08-19, one CTA rule
+     site-wide; see .service-hero__actions in page-service.css. */
+  @media (max-width: 639.98px) {
+    .jobs-levels__actions .btn {
+      width: 100%;
+      justify-content: center;
+      white-space: normal;
+    }
   }
 
   /* The card keeps its whole anatomy in the strip (photo → icon → title → copy);

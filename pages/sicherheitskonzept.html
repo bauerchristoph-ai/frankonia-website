@@ -772,6 +772,22 @@
     <!-- ============ 11. VERWANDTE SEITEN ============ -->
     <section class="section section--light service-related" data-nav-theme="light">
       <div class="container">
+        <!-- SECTION HEADING RESTORED 2026-08-17 (client: "porque perdió el título?
+             tenía título esta sección, agregalo"). It went missing in the same-day
+             redesign of this block.
+             ⚠️ Audited across all 28 pages that carry this block before choosing the
+             wording: 27 of 28 have a `.section__intro` with exactly one <h2>, and
+             this page was the ONLY one without — so this is a restore to the site's
+             own pattern, not a new decision. The six other two-column service pages
+             (/werkschutz/, /objektschutz/, /brandwache/, /sicherheitstechnik/,
+             /empfangsdienst/, /veranstaltungsschutz/) all use this exact string, and
+             Webtext 08 names its own section "verwandte Seiten" with the two groups
+             "Verwandte Leistungen" and "In Ihrer Region" — which are the two group
+             titles below. So no copy is invented here. -->
+        <div class="section__intro">
+          <h2>Verwandte Leistungen und Einsatzgebiete</h2>
+        </div>
+
         <!-- ⚠️ `__cols` / `__col`, NOT the `__grid` this page used to carry: that
              variant has no CSS rule anywhere in the project, so the two groups
              fell back to block layout and stacked at every width while the other
@@ -779,7 +795,7 @@
              of this block — it is the same section, so it gets the same layout. -->
         <div class="service-related__cols">
           <div class="service-related__col">
-            <h2 class="service-related__title">Verwandte Leistungen</h2>
+            <h3 class="service-related__title">Verwandte Leistungen</h3>
             <ul class="service-related__list">
               <li>
                 <a class="service-related__link" href="/werkschutz/"><span class="service-related__label">Werkschutz</span>
@@ -798,7 +814,7 @@
             </ul>
           </div>
           <div class="service-related__col">
-            <h2 class="service-related__title">In Ihrer Region</h2>
+            <h3 class="service-related__title">In Ihrer Region</h3>
             <ul class="service-related__list">
               <li>
                 <a class="service-related__link" href="/sicherheitsdienst-nuernberg/"><span class="service-related__label">Sicherheitsdienst Nürnberg</span>

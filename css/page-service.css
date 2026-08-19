@@ -545,7 +545,8 @@ main h2 {
    ⚠️ The class now has NO rule anywhere — it is kept in the markup purely as a
    name for what the element is. Mobile sizing was never its job: the phone
    breakpoint at the foot of this file stacks and stretches
-   `.service-hero__actions .btn`, which covers both buttons in the row. Do not
+   `.service-hero__actions .btn` below 640px, which covers both buttons in the
+   row. Do not
    re-add colour here, and do not assume this selector is doing something. */
 
 /* Trust band: rating pill then the two DEKRA seals, exactly as the homepage
@@ -692,6 +693,50 @@ main h2 {
      column. */
   .service-hero__grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- .service-hero--bleed BELOW 1024px: the copy sits at the BOTTOM ----------
+   Client 2026-08-19, on a tablet: "me gustaría que el contenido esté abajo, no
+   alineado arriba".
+
+   The cause was a gap, not a wrong value: every alignment rule for this hero lived
+   in the `min-width: 1024px` block above, so under it the section fell back to
+   plain block flow while the hero KEPT its full min-height (that formula is on the
+   base rule, at every width). The copy therefore sat under the breadcrumb with the
+   rest of the hero as empty photograph. Measured before, empty space below the last
+   element: 304px at 390, 553px at 767, 593px at 768, 676px at 834, 351px at 1023 —
+   against 194px at 1024, where the grid already handled it.
+
+   `auto 1fr` + `align-self: end` is the same mechanism the desktop block uses, only
+   parked at the other end of the track. Safe because the two things that would
+   otherwise become stray grid items — .service-hero__bg and .pixel-seam--photo —
+   are both `position: absolute`, so the auto row is the breadcrumb and the 1fr row
+   is the copy, exactly as it is above 1024.
+
+   ⚠️ THE MARGIN IS NOT SPACING, IT RESERVES THE DISSOLVE BAND. The pixel band is
+   anchored to the hero's bottom and its tiles paint over whatever is there, so
+   bottom-aligned copy without this would land underneath them. It reads
+   `--service-hero-band-h` rather than a literal because that variable is already
+   200px here and 120px on a phone — so one declaration follows both, and if the
+   band height ever changes this moves with it instead of drifting.
+
+   Applies to /leistungen/ and /werkschutz/, the two pages that use this modifier.
+   Both had the same defect. */
+@media (max-width: 1023.98px) {
+  .service-hero--bleed {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    /* The shared rule's `align-content: center` is inside the ≥1024 block, so
+       there is nothing to cancel here — but state it anyway, because with
+       `auto 1fr` the tracks already fill the box and a future centred value
+       would silently undo the `end` below. */
+    align-content: stretch;
+  }
+
+  .service-hero--bleed .service-hero__grid {
+    align-self: end;
+    margin-bottom: var(--service-hero-band-h);
   }
 }
 
@@ -3142,6 +3187,37 @@ main h2 {
   white-space: normal;
 }
 
+/* ⚠️ THE ONE CTA THE 2026-08-19 SITE-WIDE RULE COULD NOT FIX BY MOVING A
+   BREAKPOINT, because its stretch is not viewport-driven — it fills its card, and
+   the card is what goes full-column below 900px. Measured before capping: 648px
+   wide at 767 on all 36 pages that publish the price box, i.e. exactly the
+   over-wide pill the client flagged in the hero, one section further down.
+
+   22.5rem = 360px is NOT a chosen number: it is the width this same button
+   already has on desktop, where the card caps at 432px and its inner width is
+   360. So the cap is INERT at every width the card is 432px or narrower —
+   verified 243px at 900, 290 at 1024, 360 at 1280 and 1440, all unchanged — and
+   the client's "nearly full width inside the card" (2026-08-05) still holds
+   everywhere it was written for. All this does is stop the button growing past
+   its own desktop size when the card briefly becomes a full-width panel.
+
+   ⚠️ SCOPED TO 640px UP ON PURPOSE. Below that every CTA on the site is
+   deliberately full-width (the phone pattern this file documents at
+   .service-hero__actions), and the phone renderings are already client-reviewed
+   — capping there would change a screen nobody complained about. */
+@media (min-width: 640px) {
+  .service-price__cta {
+    max-width: 22.5rem;
+  }
+}
+
+/* ⚠️ NO `margin-inline: auto` HERE, and that is a measurement, not an omission:
+   `.btn` is `inline-flex`, i.e. an inline-level box, where auto inline margins
+   do nothing. Written and then deleted rather than left in as a declaration that
+   cannot fire. It is also not needed — measured at 767, the capped button's left
+   edge is 59px, exactly the tick list's, so it sits on the card's own content
+   edge, which is where the rest of the card is aligned anyway. */
+
 /* The draft's "Hinweis" — a caution, so it is set apart from the factors and
    led by the alert icon, but kept as plain body copy rather than a coloured
    warning panel (the only non-brand hue on this site is scoped to the
@@ -4001,6 +4077,97 @@ main h2 {
   max-width: 46rem;
 }
 
+/* ---- .service-prose and .service-trust are CENTRED (2026-08-17) -------------
+   Client, on /empfangsdienst/: "centra estas dos secciones … y en todas las
+   páginas que estén estas secciones centralas". Both classes had NO rules of their
+   own anywhere in the project before this — they were pure markup hooks — so this
+   is the whole of their styling. Scope, measured: `.service-prose` on 20 pages,
+   `.service-trust` on 5 (the 12 service pages plus the combo pages).
+
+   ⚠️ EACH OF THESE SECTIONS CARRIES TWO SEPARATE `.section__intro` DIVS — one
+   holding the H2, a second holding the body paragraphs. That is why the selectors
+   are not `:first-of-type`: both have to be centred or the heading centres and the
+   copy underneath stays hard left, which is worse than not centring at all.
+   ⚠️ The `> p` rule is the documented other half: the chassis sets
+   `.section__intro > p { max-width: 42rem }` at (0,1,1), so a capped box stays
+   pinned to the left edge until it gets auto margins — `text-align` moves the text
+   inside the box, never the box. Two classes here, so it beats the chassis on
+   specificity rather than on file order.
+
+   NOT touched, deliberately:
+   · `.trust-certs` already sets its own `text-align: center`, which is why the
+     DEKRA seals and the three standard columns were centred before this change and
+     need nothing here;
+   · the `.service-highlight` callout keeps its text LEFT-aligned and only its BOX
+     is centred (below). Its content is a 3–4 line paragraph, and this project's own
+     convention is that centred prose needs a narrower measure and `hyphens: none`
+     (see /referenzen/) — a callout is not the place for it. */
+.service-prose .section__intro,
+.service-trust .section__intro {
+  text-align: center;
+  margin-inline: auto;
+}
+
+.service-prose .section__intro > p,
+.service-trust .section__intro > p {
+  margin-inline: auto;
+}
+
+/* ---- ...and their H2 is CAPPED, not full-container (2026-08-19) -------------
+   Client, on /baustellenbewachung/: "the width of the title is too long in this
+   section". Measured before touching anything: the chassis leaves
+   `.section__intro` at `max-width: none`, so the heading ran the WHOLE container
+   while the paragraph under it sits in the chassis' own 42rem box — a 72-character
+   title spanning ~1233px at 1440 above a 672px column of copy. That mismatch is
+   the defect, not the type size.
+
+   ⚠️ THIS IS A PROMOTION, NOT A NEW RULE. `.combo-prose .section__intro h2` has
+   carried these exact three declarations since 2026-08-17, for the same client
+   report on /objektschutz-nuernberg/ ("no puede quedar esto así tan largo") — and
+   every combo section carries BOTH classes, so that copy was deleted rather than
+   left to say the same thing twice. Its full reasoning stays in page-combo.css at
+   the spot where the rule used to be; read it there before changing these numbers.
+
+   30ch is the project's dominant H2 cap (page-city.css twice, page-service.css,
+   page-sicherheitskonzept.css). In `ch`, never px: the H2 is a type clamp, so the
+   measure has to follow its own font size — and these titles run 33 to 74
+   characters, so the cap cannot be fitted to one of them.
+   ⚠️ `margin-inline: auto` is NOT optional (the trap this file documents nine
+   times): the section is centred, so `max-width` alone centres the TEXT inside a
+   full-width box that stays pinned left. Both halves, always.
+   ⚠️ NO CAP GIVES "EXACTLY TWO LINES" FOR ALL 11 — at 33 to 74 characters, any
+   measure that breaks the shortest in two leaves the longest in three. What 30ch
+   guarantees is that none of them runs one giant single line, which is what was
+   reported.
+
+   `.service-trust` is included deliberately: it is the same centred composition,
+   already centred by the same rule above, and its five titles (42–62 characters)
+   have the identical full-container problem. Splitting them would make one
+   decision into two. */
+.service-prose .section__intro h2,
+.service-trust .section__intro h2 {
+  max-width: 30ch;
+  margin-inline: auto;
+  text-wrap: balance;
+}
+
+/* THE BOX IS CENTRED EVERYWHERE, unconditionally (client 2026-08-19: "si hay un box
+   abajo … también centrado", after asking for it on /werkschutz/ alone two hours
+   earlier). It is capped at 46rem with no auto margins of its own, so without this it
+   sits hard left under a centred heading.
+   ⚠️ Centres the BOX ONLY — the text inside stays left-aligned, which is this
+   component's documented rule: its content is a 3–4 line paragraph, and centred prose
+   here would need a narrower measure and `hyphens: none` (see /referenzen/). A callout
+   is not the place for that.
+   ⚠️ This REPLACES two scoped rules — `.service-prose/.service-trust
+   .service-highlight` (08-17) and `.service-highlight--centred` (08-19, opt-in per
+   page) — because the client has now asked for it in every section that holds one.
+   Seven pages carry this box and all seven want it centred, so a scope or a class
+   would only be a second way to say the same thing. */
+.service-highlight {
+  margin-inline: auto;
+}
+
 .service-highlight__title {
   font-size: var(--font-size-md);
   margin-bottom: var(--space-3);
@@ -4291,18 +4458,40 @@ main h2 {
    the two are continuous) to 0 at its top, mirroring the section's own decay — so the
    dissolve and the section read as one lit band rather than two.
    ⚠️ Keep the 0.38 in step with .service-risk's first gradient stop, and the navy
-   literal in step with its background-color. */
+   literal in step with its background-color.
+
+   ⚠️⚠️ THE PAINT IS PER-DESTINATION, WHICH IS WHY IT IS TWO CUSTOM PROPERTIES AND NOT
+   TWO LITERALS (client 2026-08-17: "en la sección de Leistungen el degradado está mal,
+   tiene que ser blanco, ¿ves que está azul?"). The values below are /werkschutz/'s and
+   are only DEFAULTS: they describe that page's incoming section (the navy Risiko band),
+   not anything intrinsic to dissolving out of a photo. When /leistungen/ adopted this
+   variant for its own bleed hero on 2026-08-17, it inherited werkschutz's navy while its
+   own next section is WHITE — so the photo dissolved into a navy that appears nowhere
+   else on that page. Use `.pixel-seam--photo-light` below for a light destination, and
+   add a modifier rather than editing these defaults if a third surface ever shows up.
+   It is the same lesson this project keeps paying for (`.ag-hero__alt`,
+   `.city-callout__lede`, `.review-card` on a white section): a block that hardcodes a
+   surface breaks the moment its neighbour changes colour. */
 .pixel-seam--photo .pixel-seam__tile {
-  background-color: #00091F;
-  background-image: linear-gradient(
-    to top,
-    rgb(61 154 211 / 0.38) 0,
-    rgb(61 154 211 / 0) 100%
+  background-color: var(--pixel-photo-fill, #00091F);
+  background-image: var(
+    --pixel-photo-glow,
+    linear-gradient(to top, rgb(61 154 211 / 0.38) 0, rgb(61 154 211 / 0) 100%)
   );
   background-size: 100% var(--pixel-band-h, 200px);
   background-position: 0 calc(-1 * var(--pixel-row, 0) * var(--pixel-tile-size, 24px));
   background-repeat: no-repeat;
   opacity: 0;
+}
+
+/* Light destination: the hero dissolves into a WHITE section (/leistungen/).
+   `--color-white` exactly, for the same reason `.pixel-seam--white` uses it — #FAFAFA
+   would read as a greyish band stepping into a white section. And the glow goes to
+   `none`, not to a paler gradient: that ramp exists to match the lit top edge of the
+   navy Risiko band, and a white section has no such edge to be continuous with. */
+.pixel-seam--photo-light {
+  --pixel-photo-fill: var(--color-white);
+  --pixel-photo-glow: none;
 }
 
 .pixel-seam--photo .pixel-seam__tile.is-revealed {
@@ -4722,6 +4911,57 @@ main h2 {
   }
 }
 
+/* ---- Ansprechpartner: the STACKED layout is CENTRED -------------------------
+   Client 2026-08-19 ("this section has to be centered"), from a phone screenshot of
+   /werkschutz/. Scoped to BELOW the 900px two-column breakpoint, which is the layout
+   that screenshot shows: from 900px up the photo has its own left column and the copy
+   its own right one, and centring a column of text beside a left-hand portrait reads
+   as a caption rather than as a centred composition. Extending it upwards is
+   `text-align` plus the same auto-margins inside the min-width: 900px block.
+
+   It also makes the section internally consistent: `.service-contact__certs` has been
+   centred since 2026-08-07 (it matches /referenzen/), so stacked, this block was a
+   centred certification strip under a left-ranged heading, photo and contact rows.
+
+   ⚠️ FIVE PAGES, not one — /werkschutz/, /objektschutz/, /brandwache/,
+   /sicherheitstechnik/ and /baustellenbewachung/ all publish this block, identically.
+   Deliberate: one composition for one block beats five near-identical variants. A page
+   that should stay ranged left needs an opt-out class, not an edit to these rules.
+
+   ⚠️ FOUR declarations, and each does a different part of the job — the trap this
+   file documents nine times over: `text-align` centres the TEXT; `justify-self` and
+   `margin-inline: auto` centre a CAPPED BOX (the portrait is capped right above, the
+   paragraph at 34rem — and in the 768-899 band that cap is narrower than the column,
+   so without it the paragraph stays hugging the left edge under a centred heading);
+   and `.service-contact__actions` is a FLEX row, which a parent's `text-align` cannot
+   move. */
+@media (max-width: 899.98px) {
+  .service-contact__intro,
+  .service-contact__person {
+    text-align: center;
+  }
+
+  /* ⚠️ `width: 100%` IS LOAD-BEARING, and leaving it out COLLAPSED THE PHOTO TO 0x0 —
+     measured, not theorised. `justify-self: center` (like an auto inline margin) makes a
+     grid item content-sized, so the figure's width became indefinite; `<picture>` is
+     inline and its `<img>` is `width: 100%`, so that percentage had nothing to resolve
+     against and the whole frame went to zero. With an explicit 100% the figure resolves
+     against its grid area, `max-width` above caps it, and the centring is what is left.
+     Same trap page-service.css already documents for the hero's own <picture>. */
+  .service-contact__portrait {
+    width: 100%;
+    justify-self: center;
+  }
+
+  .service-contact__body {
+    margin-inline: auto;
+  }
+
+  .service-contact__actions {
+    justify-content: center;
+  }
+}
+
 /* ---- Phone pass (built responsive from the start, 2026-08-03) -------------
    The homepage's mobile pass had to be retrofitted section by section; this
    template is measured at 390px as it is built instead (see CLAUDE.md
@@ -4784,18 +5024,50 @@ main h2 {
     );
   }
 
-  /* Both hero CTAs full width and stacked: at 390px the blue pill plus the
-     phone pill do not fit one row, and a wrapped row leaves a ragged gap. */
-  .service-hero__actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-3);
-  }
-  .service-hero__actions .btn {
-    width: 100%;
-    /* .btn sets white-space: nowrap; the German CTA label needs to wrap at
-       this width rather than overflow. */
-    white-space: normal;
+  /* ---- FULL-WIDTH STACKED CTAs: A PHONE PATTERN, AND IT STOPS AT 640px ------
+     ⚠️⚠️ THE 639.98 IS THE SITE-WIDE RULE FOR EVERY CTA ROW, NOT A LOCAL TWEAK.
+     This is the canonical copy of the reasoning; the seven sibling rules that
+     changed with it (page-city.css x2, page-home.css, page-case-study.css,
+     page-jobs.css, and this file's .service-konzept__actions and
+     .service-panel__cta) carry a one-line pointer back here.
+
+     Client 2026-08-19, with a screenshot of /referenzen/ on a tablet: "que
+     queden con un width normal, no que se alarguen así, y esto en toda la web".
+     They were right and it was measurable — this treatment used to run to
+     767.98px, so at the top of that band the phone pill "+49 951 964352-0",
+     which needs 209px, rendered **720px wide**. A pill five words wide holding
+     one phone number does not read as a button, it reads as a broken layout.
+
+     Stacking + stretching exists because at 390px the pair genuinely cannot
+     share a row (325 + 209 + 24 = 558px of content against ~350px). That
+     argument expires the moment the row fits, and the row fits from 640px:
+     measured 559px needed against 598px available at 640, on every page that
+     publishes the pair. So 640 is not a round number, it is where the reason
+     for the rule runs out.
+
+     ⚠️ THREE COMPONENTS ALREADY CUT AT 639.98 (.faq__cta, .rg-cta__actions /
+     .rg-close__actions, .sk-actions / .sk-cta-box), so the site had two
+     thresholds for one decision. This aligns everything on the narrower one
+     rather than inventing a third.
+
+     640–767 needs NO rules of its own: every action row on this site is a
+     `flex-wrap: wrap` row by default, so a pair that does not fit (only the
+     case studies' 610px pitch pair, at the very bottom of the band) wraps to
+     two content-width buttons instead of overflowing. */
+  @media (max-width: 639.98px) {
+    /* Both hero CTAs full width and stacked: at 390px the blue pill plus the
+       phone pill do not fit one row, and a wrapped row leaves a ragged gap. */
+    .service-hero__actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-3);
+    }
+    .service-hero__actions .btn {
+      width: 100%;
+      /* .btn sets white-space: nowrap; the German CTA label needs to wrap at
+         this width rather than overflow. */
+      white-space: normal;
+    }
   }
 
   /* On a phone the homepage sets the trust row apart as its own compact band
@@ -4880,10 +5152,14 @@ main h2 {
      viewport gives, i.e. 2px of real page scroll on each side (measured — the
      rest of the page is clean at 320). Same fix, same reason it reads as
      intentional rather than as a button that nearly fits. */
-  .service-konzept__actions .btn {
-    width: 100%;
-    justify-content: center;
-    white-space: normal;
+  /* ⚠️ 639.98, not the enclosing block's 767.98 — see the full reasoning at
+     .service-hero__actions above. Above 640 this CTA is content-width. */
+  @media (max-width: 639.98px) {
+    .service-konzept__actions .btn {
+      width: 100%;
+      justify-content: center;
+      white-space: normal;
+    }
   }
 
 }
@@ -5146,12 +5422,98 @@ main h2 {
   }
 }
 
+/* ---- BELOW 1024px THE PHOTO IS THE BACKGROUND, NOT A BOX UNDER THE COPY -----
+   Client 2026-08-19: "in tablet and mobile, in the services individual pages, put
+   the image in the background, like you're doing in /leistungen/ — the image
+   instead of being a box under the text put it as the background".
+   ⚠️ THIS REPLACES A STACKED PHOTO, and the note that stood here ("stacked, photo
+   AFTER the copy … this only stops a portrait photo from taking a whole phone
+   screen") is superseded: the photo now takes the whole hero on purpose, and it
+   costs the page NOTHING in height because it stopped being a row of its own.
+
+   ⚠️ WHY THIS IS NOT `.service-hero--bleed`, even though that is the treatment
+   being pointed at: opting into that modifier is TWO things together — the class
+   AND moving the page's breadcrumb inside the section (its own note says so, and
+   the first build of it slid five heroes over their breadcrumbs). These ten pages
+   keep `main > .breadcrumbs` above the hero at every width, so the photo starts
+   under the breadcrumb rather than at the very top of the page. Everything else —
+   full-width photo, copy over it, vertical wash — is the same idea. Making it a
+   true bleed is a markup change on ten pages and would move the breadcrumb on
+   DESKTOP too, which is not what was asked.
+
+   ⚠️ `:not(.uu-hero)` because /ueber-uns/ shares this modifier and is not a
+   service page. It also has its own `.uu-hero .service-hero__media` tuning; this
+   deliberately does not touch it.
+
+   The four declarations are all it takes because the chassis already provides the
+   rest: `.service-hero` is `position: relative; overflow: hidden` (so the photo is
+   clipped to the section) and `.service-hero__grid` is already
+   `position: relative; z-index: 1` (so the copy is already above it).
+   ⚠️ The inline `style="aspect-ratio: 820 / 1227"` on the <figure> needs no
+   override and gets none: with `inset: 0` both axes are definite, and
+   `aspect-ratio` only applies when one of them is auto. Measured, not assumed. */
 @media (max-width: 1023.98px) {
-  /* Stacked, photo AFTER the copy — the H1 has to open the page. DOM order
-     already is copy → photo, so nothing is reordered visually here; this only
-     stops a portrait photo from taking a whole phone screen. */
-  .service-hero--split .service-hero__media {
-    max-width: min(22rem, 68vw);
+  /* ⚠️⚠️ THESE TWO RULES ARE ONE MECHANISM AND NEITHER WORKS ALONE — this cost a
+     round: an absolutely positioned element resolves against its nearest
+     POSITIONED ancestor, and the figure lives inside `.service-hero__grid`, which
+     the chassis makes `position: relative`. So `inset: 0` covered the GRID, not
+     the section — measured 390x584 at y=163 inside a 390x868 hero, i.e. a photo
+     that stopped short of the section's own padding at both ends.
+     Making the grid static hands the job to `.service-hero` (already relative, and
+     already `overflow: hidden` so the photo is clipped to it). The copy then has to
+     be positioned itself, or the absolutely positioned photo would paint over it —
+     a non-positioned block always loses to a positioned sibling. */
+  .service-hero--split:not(.uu-hero) .service-hero__grid {
+    position: static;
+  }
+
+  .service-hero--split:not(.uu-hero) .service-hero__content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .service-hero--split:not(.uu-hero) .service-hero__media {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    max-width: none;
+    /* ⚠️ EXPLICIT 100%/100%, and NOT because `inset: 0` is insufficient — because
+       the <figure> carries an inline `aspect-ratio` per page, and an inline style
+       beats any stylesheet rule. With `height: auto` the ratio wins and sizes the
+       box from the width (that is the 584px above). Two definite axes make the
+       ratio inapplicable by spec, so the override needs no `!important`, which
+       this project does not use. */
+    width: 100%;
+    height: 100%;
+    /* A background has no edge to round. */
+    border-radius: 0;
+  }
+
+  /* Portrait source in a landscape-ish box: `cover` crops the top and bottom, so
+     the frame holds ABOVE centre — every one of the nine photos is a person or a
+     scene whose subject sits in the upper half, and 50% cuts heads at tablet
+     ratios. Same reasoning as the bleed hero's own `object-position`. */
+  .service-hero--split:not(.uu-hero) .service-hero__media img {
+    object-position: 50% 32%;
+  }
+
+  /* Readability wash. VERTICAL, not the bleed hero's left-side ramp: that one
+     works because its copy sits in the left half, and here the copy spans the
+     full width at these sizes — a horizontal gradient would leave the right end
+     of every line on bare photograph. Same call the homepage and /werkschutz/
+     both make at this breakpoint.
+     Heaviest at the BOTTOM, where the 15px ticks and the trust band sit, and
+     lighter through the middle where the 34px H1 carries itself. */
+  .service-hero--split:not(.uu-hero) .service-hero__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+      to bottom,
+      rgb(1 1 1 / 0.68) 0%,
+      rgb(1 1 1 / 0.58) 38%,
+      rgb(1 1 1 / 0.82) 100%
+    );
   }
 }
 
@@ -5230,6 +5592,42 @@ main h2 {
   .service-points__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+/* ⚠️ TWO ITEMS IS ITS OWN CASE, and the client caught it: "this is weird, center the
+   items", on /interventionsdienst/ — the only page with a `--2` list today. At full
+   container width the 2-up grid gives each item a 593px column for three lines of
+   copy, so the pair reads as two stranded blocks with 100+px of hole between them,
+   under a heading and lede that are centred. Every other count is dense enough that
+   the container width is fine.
+
+   So this is the ONE place the items themselves are centred, and it is not a reversal
+   of "no toques la lista": it is the client asking for it on the one list where the
+   grid leaves a hole. 46rem was picked by rendering it against 52rem and against a
+   centred block with left text — at 46rem both items come out three lines and read as
+   a deliberate before/after pair.
+   ⚠️ The accent rule needs its own `margin-inline: auto`: it is a pseudo-element with
+   a fixed 3rem width, so `text-align` on the item cannot move it, and a left-pinned
+   rule over centred text looks like a mistake.
+   ⚠️ ≥640px only, i.e. exactly where the 2-up grid starts. On a phone this is one
+   column ~350px wide, and three or four lines of centred German in a column that
+   narrow is harder to read than the same copy ranged left — the same call /jobs/ makes
+   for its own centred steps. */
+@media (min-width: 640px) {
+  .service-points__list--2 {
+    max-width: 46rem;
+    margin-inline: auto;
+  }
+
+  .service-points__list--2 > .service-points__item {
+    text-align: center;
+    -webkit-hyphens: none;
+    hyphens: none;
+  }
+
+  .service-points__list--2 > .service-points__item::before {
+    margin-inline: auto;
+  }
+}
+
 @media (min-width: 1100px) {
   .service-points__list--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .service-points__list--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -5249,6 +5647,111 @@ main h2 {
   .service-points__list--5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
+/* ---- .service-points__list--cards: the CITY PAGES' Warum card -------------
+   Client 2026-08-19, reviewing three service pages side by side: "quiero que esta
+   primera sección de los distintos servicios sean cards, como son en las ciudades
+   … y que tengan iconito si se puede".
+
+   ⚠️⚠️ THIS IS AN OPT-IN MODIFIER, NOT A CHANGE TO .service-points, and the reason
+   is scope: that block renders TWENTY sections across ten pages (Risiko, Vorteile,
+   Leistungsbereiche, Anwendungsfälle, typische Einsätze…). The client asked for the
+   FIRST section — the risk/why pitch right after the hero — which on all seven pages
+   that have one is also the `.service-section--centred` one. Everything below the
+   fold on those pages stays ruled, which is a hierarchy statement rather than an
+   inconsistency: the opening pitch is carded, the supporting sections are not.
+   Extending it to another section is adding this class plus its icons.
+
+   ⚠️ It REVERSES "RULED, NOT CARDED" from the block above for these seven sections
+   only. That note is still right about why it was ruled (§8.2, and dodging
+   .service-cases' 3,11:1 caveat) — and this card dodges that caveat too, because it
+   is the CITY card, not the blue glossy one: dark text on white.
+
+   ⚠️ THIRD COPY OF THIS CARD IN THE PROJECT — `.service-cases__card` (above) and
+   `.city-why__item` (page-city.css) are the other two, and by this project's own
+   "third consumer promotes it" rule the shared class is now overdue. NOT done here:
+   it would restyle /werkschutz/ and the ten city pages, all client-approved, in the
+   middle of a page-by-page review. Every value below is COPIED from
+   `.city-why__item`, not re-derived, so when the promotion happens it is a rename.
+   Keep the two in sync until then. */
+.service-points__list--cards {
+  gap: var(--space-6);
+}
+
+.service-points__list--cards > .service-points__item {
+  /* grid + align-content: start = the four cards in a row are equal height (the
+     grid stretches them) while their icons and titles still line up at the top. */
+  display: grid;
+  align-content: start;
+  min-width: 0;
+  padding: var(--space-6);
+  /* 1.5rem = 24px, the ONE off-scale radius this project allows itself, already
+     shared by the cases card, the price card and the city card. Not a fourth value. */
+  border-radius: 1.5rem;
+  border: 1px solid rgb(1 1 1 / 0.07);
+  background-color: var(--color-white);
+  /* Two layers, NOT --shadow-lg: on a white section the border and this shadow are
+     the only things defining the card's edge, so a wide low-opacity spread plus a
+     tight contact shadow is what makes white read as lifted off white. */
+  box-shadow: 0 18px 48px rgb(1 1 1 / 0.07), 0 2px 6px rgb(1 1 1 / 0.04);
+}
+
+/* The 3rem accent rule is what the ICON replaces — keeping both would give the card
+   two things competing to open it. `content: none` rather than deleting the base
+   rule, which the other thirteen ruled sections still need. */
+.service-points__list--cards > .service-points__item::before {
+  content: none;
+}
+
+/* Sizes and gaps are `.city-why__icon`'s, so the two cards read as one component.
+   `--color-accent` is blue-dark inside `.section--light` = 3,71:1 on white, which is
+   what a GRAPHIC needs (3:1).
+   ⚠️ fill/stroke must be restated: the sprite's own paint lives on its
+   `<g id="icon-defs">` wrapper and does NOT survive `<use>` — without these the
+   glyph renders as a black blob, a bug this project has shipped four times. */
+.service-points__icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-bottom: var(--space-5);
+  color: var(--color-accent);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Inside a card the padding IS the measure, so the 42ch cap only adds a ragged
+   right edge. And `hyphens: none` for the same reason the city card sets it: this
+   copy now sits in 3- and 4-up columns, where German compounds break on almost
+   every line and read as broken text rather than as typesetting.
+   ⚠️ Scoped to --cards on purpose: the other thirteen ruled sections keep base.css's
+   `hyphens: auto`, which is untouched here. */
+.service-points__list--cards .service-points__text {
+  max-width: none;
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* Padding per band, mirroring the city card exactly: wide cards get more air, and
+   from 1100px the row is 3- or 4-up and comes back down.
+   ⚠️ NO HOVER STATE, deliberately, and for two independent reasons: these cards hold
+   no link and nothing to click, so a lift would claim an interactivity that does not
+   exist; and the list carries `data-item-reveal="li"`, i.e. GSAP animates THIS
+   element and writes `translate: none; rotate: none; scale: none` inline — which
+   beats any stylesheet rule, so a CSS lift here would simply never run. That is the
+   documented reason the city card's own hover is dead in production. */
+@media (min-width: 640px) {
+  .service-points__list--cards > .service-points__item {
+    padding: var(--space-7);
+  }
+}
+
+@media (min-width: 1100px) {
+  .service-points__list--cards > .service-points__item {
+    padding: var(--space-5);
+  }
+}
+
 /* An odd item left alone in the last row of a 2-up or 3-up grid reads as a
    mistake rather than as a fifth item, so it spans instead. */
 @media (min-width: 640px) and (max-width: 1099.98px) {
@@ -5260,12 +5763,73 @@ main h2 {
   .service-points__list--4 > :nth-child(5):last-child { grid-column: 1 / -1; }
 }
 
+/* ---- THE FRAME OF EVERY .service-points / .service-scope SECTION IS CENTRED --
+   Client 2026-08-19, with seven screenshots from four service pages: "todas estas
+   screenshots son secciones de las páginas de servicios que tienen que estar
+   centradas, no toda la sección pero el título (y si tiene un texto abajo también
+   centralo) y si hay un box abajo o un comentario abajo de los items también
+   centrados … no toques la lista de contenidos".
+
+   So it is the section's FRAME — heading, lede, the closing comment, the closing
+   box — and explicitly NOT the items. The list keeps its own left edge, which is
+   also the reason this project gives for it everywhere else: centring the items
+   takes away the common edge the eye reads a list against.
+
+   ⚠️ UNCONDITIONAL, not a per-section modifier, and that is the point of this pass:
+   it was opt-in via `.service-section--centred` since 08-17 and the client has now
+   asked for it on every section of this type, so the class would only be a second
+   way to say the same thing. `--centred` still exists and now means just "narrow
+   the list block as well".
+
+   ⚠️ `.service-flow__intro` IS EXCLUDED, and it must stay excluded: that is
+   /werkschutz/'s pinned scrollytelling heading, which sits above a 50/50 split and
+   is sticky — centring it would move the one heading on the site whose position is
+   load-bearing. It is the only `.section__intro` inside a `.service-scope` section
+   that is not a plain section header.
+
+   ⚠️ Two declarations are needed and one is not obvious (this project has hit it
+   eleven times): `text-align` centres the TEXT inside the box, `margin-inline: auto`
+   centres the BOX — and the chassis caps `.section__intro > p` at 42rem, so without
+   the auto margins the lede stays pinned left under a centred heading, which looks
+   worse than centring nothing. Two-class selectors for the same reason: the chassis
+   rule is (0,1,1). */
+.service-points .section__intro,
+.service-scope .section__intro:not(.service-flow__intro) {
+  text-align: center;
+}
+
+.service-points .section__intro > h2,
+.service-scope .section__intro:not(.service-flow__intro) > h2 {
+  /* `ch`, not px: the H2 is a clamp, so the cap has to track its own type size. The
+     same 30ch the centred sections were approved with on 08-17. */
+  max-width: 30ch;
+  margin-inline: auto;
+  text-wrap: balance;
+}
+
+.service-points .section__intro > p,
+.service-scope .section__intro:not(.service-flow__intro) > p {
+  margin-inline: auto;
+}
+
 .service-points__outro {
   margin-top: var(--space-7);
   padding-top: var(--space-5);
   border-top: 1px solid var(--color-border);
   max-width: 62rem;
   color: var(--color-text-muted);
+  /* The closing comment under the items, centred with the rest of the frame (client
+     2026-08-19). It needs BOTH: the 62rem cap above means auto margins are what
+     actually move the box, and `text-align` is what centres the sentence inside it.
+     Before this it had auto margins only inside `--centred`, so a two-line outro
+     read as left-aligned under a centred heading.
+     `hyphens: none` because base.css sets `auto` on every <p>: a centred line already
+     has two ragged edges, so a German compound broken mid-word doubles the
+     raggedness — the same call /referenzen/ and /leistungen/ make for centred copy. */
+  margin-inline: auto;
+  text-align: center;
+  -webkit-hyphens: none;
+  hyphens: none;
 }
 
 /* ---- .service-scope*: the Leistungsumfang as a tick list ------------------
@@ -5504,7 +6068,10 @@ main h2 {
   min-width: 0;
 }
 
-@media (max-width: 767.98px) {
+/* ⚠️ 639.98, not 767.98 — the site-wide CTA rule, see .service-hero__actions
+   in the phone block above. The overflow this fixes is a 320px-column problem;
+   from 640 up the panel is wide enough for a 231px content-width button. */
+@media (max-width: 639.98px) {
   .service-panel__cta {
     width: 100%;
     white-space: normal;
@@ -5527,19 +6094,14 @@ main h2 {
         TEXT inside the box; the box itself is still pinned left by its own
         max-width. With only one of the two you get a centred heading over a
         left-hugging paragraph, which looks worse than centring nothing. */
-.service-section--centred .section__intro {
-  text-align: center;
-}
-
-.service-section--centred .section__intro h2 {
-  max-width: 30ch;
-  margin-inline: auto;
-  text-wrap: balance;
-}
-
-.service-section--centred .section__intro > p {
-  margin-inline: auto;
-}
+/* ⚠️ 2026-08-19: THE FRAME CENTRING MOVED OUT OF THIS MODIFIER and is now
+   unconditional for every `.service-points` / `.service-scope` section — see
+   "the FRAME of these sections is centred" further down. The client asked for it on
+   all of them, not per section, so keeping a copy here would have been two
+   mechanisms for one decision. What is left in this modifier is ONLY the list cap,
+   i.e. what it now means is "narrow the list block too". Its name is kept because
+   five sections carry it in markup and the caps are exactly what those five were
+   approved with. */
 
 /* The list keeps its own left edge, but the BLOCK is pulled in off the container
    so it sits under a centred heading instead of running the full 1600px. 62rem
@@ -5556,9 +6118,21 @@ main h2 {
   margin-inline: auto;
 }
 
-.service-section--centred .service-points__outro {
-  margin-inline: auto;
+/* ⚠️ A FOUR-UP CENTRED LIST NEEDS A WIDER CAP, and this is the check the comment
+   above asks for rather than an exception to it. 2026-08-19 the client asked for
+   the FIRST section of every service page to be centred, and two of those —
+   /objektschutz/ and /brandwache/ — are `--4`. Measured at 1440 with the 62rem
+   cap: 224px per column, against the 309px the already-approved `--3` centred
+   sections get. Same block, a third narrower, purely because of how many items
+   the draft happens to give it.
+   72rem puts them at 264px. Still narrower than a 3-up column — four things in a
+   centred block always will be — but it stops the count from being the thing that
+   decides how wide a card is. Below ~1280 the container is the binding constraint
+   and this cap never applies, so nothing changes on tablet or phone. */
+.service-section--centred .service-points__list--4 {
+  max-width: 72rem;
 }
+
 
 /* ---- .service-scope__list: rows sized by content, not by the tallest sibling -
    `align-items: start` on the ITEM already stops the tick from stretching, but

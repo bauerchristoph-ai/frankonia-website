@@ -227,16 +227,38 @@
         <path d="M5 7.5h14l-1.2 12.5H6.2L5 7.5z"/>
         <path d="M9 10V6.5a3 3 0 016 0V10"/>
       </symbol>
-      <!-- Sicherheitstechnik: a surveillance camera on a wall mount, aimed down-left.
-           Body, lens ring, arm, wall plate — nothing else. An earlier draft added a
-           floor stand under it, which read as a tripod, i.e. a photo camera. -->
+      <!-- Sicherheitstechnik: a bullet surveillance camera on a wall bracket, aimed
+           down-left. Body, lens nub, arm, wall plate — nothing else.
+
+           ⚠️ REDRAWN 2026-08-19 (client, on /sicherheitstechnik/: "wtf is this
+           icon"). The previous version claimed a "lens ring" in this very comment
+           and did not have one: it was a tilted parallelogram, two loose stubs, an
+           L-shaped stand and a stray diagonal below the body with nothing to
+           connect it to. At the 28px it actually renders at, that read as a broken
+           glyph rather than as a camera.
+
+           ⚠️ IT IS TWO CONSUMERS, BOTH AT 28px — `.service-points__icon` on
+           /sicherheitstechnik/ and `.lh-card__icon` on /leistungen/ — so 28px is the
+           size that decides it, not the large one. Six candidates were RENDERED at
+           28 / 56 / 112 and compared as pixels, per this project's own rule for
+           icons. What that killed: a dome-under-a-ceiling-rail (reads as a kitchen
+           scale), a body on a floor stand (a projector), and — the useful one — an
+           otherwise identical version carrying a proper round LENS, which at 28px
+           collides with the body's own edge and turns into a smudge. The lens is a
+           nub here for that measured reason; do not "improve" it into a circle
+           without re-rendering at 28.
+
+           The tilt is a group `rotate`, so the body stays a plain rect and the
+           numbers stay readable. Rotating about (13.1, 12) rather than the grid
+           centre is what balances the artwork inside the box — measured margins
+           2,55 left / 2,65 right / 4,75 top and bottom, stroke included. -->
       <symbol id="icon-camera" viewBox="0 0 24 24">
-        <path d="M4.2 10.1l11.4-3.4 1.5 5-11.4 3.4-1.5-5z"/>
-        <path d="M4.6 11.6l-1.9.6"/>
-        <path d="M17.1 11.7l1.9-.6"/>
-        <path d="M19 11.1V19"/>
-        <path d="M16.5 19h5"/>
-        <path d="M8.2 15.6L9.4 19.5"/>
+        <g transform="rotate(-18 13.1 12)">
+          <rect x="4.1" y="8" width="11.5" height="7.5" rx="2"/>
+          <path d="M15.6 11.75h3"/>
+        </g>
+        <path d="M20.6 5.5v13"/>
+        <path d="M16.9 13.4l3.7 2.2"/>
       </symbol>
       <!-- Added 2026-08-10 for /brandwache-nuernberg/'s Ablauf, step 02
            ("Abstimmen: Qualifikation und Einsatzplan klären wir direkt mit Behörde

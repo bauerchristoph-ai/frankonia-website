@@ -340,12 +340,74 @@
     z-index: 1;
   }
 
+  /* ---- ⚠️ REAL BUG: TWO close controls in the same corner ------------------
+     Client 2026-08-19: "there are two crosses in the right corner, it has to be
+     only one". Both were real and both were deliberate, which is why neither
+     looked wrong on its own:
+       · the hamburger morphs its three bars into an X while expanded, and it is
+         painted OVER the panel on purpose (the z-index pair above);
+       · `.nav-close`, the panel's own X, was added 2026-08-14 because the
+         hamburger sits OUTSIDE the panel, so its colour depends on the header's
+         theme — over a light section it was rendering #3B4956 on black, 1.36:1.
+     Open the menu and the two land on top of each other, reading as a star.
+
+     The HAMBURGER is the one that goes, not `.nav-close`: the panel's control is
+     inside the panel, so it inherits the panel's colour and cannot be lost that
+     way — which was the whole reason it exists. It is also already the first tab
+     stop, and js/main.js's initNavToggle() already moves focus onto it when the
+     panel opens (and back to the hamburger on close, by which point this rule no
+     longer matches), so `display: none` here costs nothing in keyboard flow.
+
+     ⚠️ This makes two annotated blocks unreachable rather than wrong — the bar
+     morph at `.nav-toggle[aria-expanded="true"] .nav-toggle__bar` and the
+     `.nav-open .site-header--dark .nav-toggle__bar` colour fix. Both are left in
+     place, because reviving the hamburger-as-X is one line here and they would
+     have to be rewritten from scratch otherwise. Do not "clean them up" without
+     also deleting this rule. */
+  .nav-toggle[aria-expanded="true"] {
+    display: none;
+  }
+
+  /* ---- Centred, roomier, ruled, bigger (client 2026-08-19) -----------------
+     "make the menu centered, with a bit more spacing between the items and a
+     subtle divider line, the texts a bit bigger".
+
+     The spacing is deliberately SPLIT between the gap and the padding, both at
+     --space-5: the divider lives on the top edge of each item after the first,
+     so the gap is the air ABOVE the line and the padding is the air BELOW it.
+     Equal values are what centre the line between the two labels — a gap alone
+     would leave it hugging the item below. Total space between labels goes 24px
+     → 48px, which is the "bit more" without the list starting to scroll on a
+     short phone (measured below). */
   .site-nav__list {
     gap: var(--space-5);
+    text-align: center;
+  }
+
+  .site-nav__list > li + li {
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-5);
+  }
+
+  /* These two items (Leistungen, Einsatzgebiete) are `display: flex` in the
+     drawer so the injected submenu toggle sits beside the label — a flex
+     container ignores `text-align`, so they need their own centring. */
+  .site-nav__item--has-submenu.has-js-submenu {
+    justify-content: center;
+  }
+
+  /* The CTA's wrapper is a flex COLUMN pinned to flex-start, so centring the
+     text does nothing to it; the cross-axis alignment is the lever. */
+  .site-nav__actions {
+    align-items: center;
   }
 
   .site-nav__list a {
-    font-size: var(--font-size-md);
+    /* --font-size-md (18–20px) → --font-size-lg (21–25px), the next step on the
+       scale rather than an invented value. The 44px floor below still holds:
+       at 21px the line box is ~33.6px, so the min-height is still what sets the
+       target, not the type. */
+    font-size: var(--font-size-lg);
     /* 44px is the touch-target minimum this project measures against. At 18px
        over a 28.8px line-height the links came out 38.8px, and enlarging the
        type alone would have left them there — the injected submenu toggle beside
@@ -1243,6 +1305,57 @@ a.site-nav__link {
    at 1400px, see the min-width: 1400px block above), so this can never reach the
    desktop navigation. */
 @media (max-width: 1399.98px) {
+  /* ---- ⚠️ THESE TWO HAVE TO LIVE DOWN HERE, after the base rules ------------
+     Both were written in the drawer block near the top first and both silently
+     lost: a media query adds NO specificity, and `.site-nav__list` and
+     `.site-nav__actions` are each re-declared as a plain base rule further down
+     this file, so the later copy won on source order. Measured after that first
+     attempt — the gap stayed at the base 16px instead of 24, and the CTA stayed
+     pinned left. Nothing about the values is special; only their position is. */
+  .site-nav__list {
+    gap: var(--space-5);
+  }
+
+  .site-nav__actions {
+    align-items: center;
+  }
+
+  /* ---- Centre the LABEL, not the label+caret pair ---------------------------
+     Leistungen and Einsatzgebiete carry an injected submenu button beside them,
+     so `justify-content: center` centres the GROUP — which left those two labels
+     24px to the left of every other item's, measured, reading as two items out of
+     line rather than as a centred menu.
+
+     The fix is to make the caret contribute NOTHING to the flex line: a trailing
+     negative margin equal to its own footprint (its 2.75rem box plus the
+     --space-1 leading margin it already carries) zeroes its outer width, so the
+     line's width is the label's, the label centres on the axis, and the caret
+     overhangs to its right. Derived from the toggle's own two properties above,
+     so it stays correct if either changes.
+
+     ⚠️ FIRST ATTEMPT WAS A LEFT PADDING ON THE <li>, AND A SCREENSHOT IS WHAT
+     CAUGHT IT. Padding the item by the caret's footprint does centre the label
+     (the group shifts right by half of it) — but the submenu panel is a CHILD of
+     that same item with `flex-basis: 100%`, so it inherited the indent and the ten
+     service links ended up ~24px right of centre. The measurement said the labels
+     were at 0 and looked correct; only the render showed the submenu drifting.
+     Measure the children too when you shift a container. */
+  .site-nav__item--has-submenu.has-js-submenu .site-nav__submenu-toggle {
+    margin-inline-end: calc(-1 * (2.75rem + var(--space-1)));
+  }
+
+  /* The submenu's left rail and indent (base rule further up) exist to show
+     hierarchy for a LEFT-ALIGNED list. With the items centred, a vertical line
+     down the left edge is a rule attached to nothing — visible in the screenshot
+     as a line 150px away from the text it was supposed to bracket. Hierarchy here
+     is carried by the smaller, dimmer type and by sitting under an expanded
+     parent, which is what the desktop panel already relies on (it sets
+     `border: none` for its own reasons). */
+  .site-nav__submenu {
+    padding-left: 0;
+    border-left: 0;
+  }
+
   .nav-toggle {
     /* 44px target kept exactly as it was — only the drawn icon shrinks. */
     --nav-toggle-target: 2.75rem;

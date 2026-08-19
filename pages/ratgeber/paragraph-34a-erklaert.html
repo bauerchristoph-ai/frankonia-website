@@ -149,6 +149,25 @@
               <span aria-hidden="true">·</span> Lesezeit: ~7 Min.
             </span>
           </p>
+
+          <!-- RESERVED TITLE IMAGE — client 2026-08-16, feedback 3.11 ("add a
+               title image (hero)"). The photo does not exist yet, so this frame
+               holds its exact space (16/9, 704x396 at 1440) and dropping the real
+               <picture> in later shifts nothing.
+               ⚠️ The label is INFERRED from this article's topic — none of the
+               three Ratgeber documents names a shot, unlike the case studies.
+               Confirm the motif with Chris.
+               Swap recipe, export spec and the full reasoning: css/page-ratgeber.css §1c.
+               ⚠️ `.hero__trust` is the js/hero-reveal.js animation hook, not a
+               style — it carries no rules on this page (checked). It is what lets
+               the image arrive as the third beat of the hero cascade instead of
+               just being there. Keep both classes; same two-class pattern as
+               /ueber-uns/'s trust band. -->
+          <figure class="rg-hero__figure hero__trust">
+            <div class="rg-hero__frame rg-hero__frame--empty">
+              <span class="rg-hero__caption">[Titelbild folgt: Unterrichtung oder Sachkundeprüfung, z.&nbsp;B. Schulungssituation]</span>
+            </div>
+          </figure>
         </div>
       </div>
     </section>

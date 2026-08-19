@@ -99,6 +99,898 @@ strategically and optimize it carefully," not "remove all animation."
 > única copia de la fuente de verdad actual y no tiene historial — conviene
 > commitearla antes de empezar a migrar.
 
+**2026-08-19 — EL H2 DE `.service-prose` / `.service-trust` SE CAPA A 30ch: CORRE EL
+ANCHO ENTERO DEL CONTAINER DESDE 1512px** (cliente, sobre `/baustellenbewachung/`: "the
+width of the title is too long in this section"). Una regla en `css/page-service.css`,
+otra BORRADA de `css/page-combo.css`; **cero markup, cero copy**.
+
+- ⚠️⚠️ **EL DEFECTO ARRANCA EXACTAMENTE A 1512px Y A 1440 NO SE VE, así que medir sólo
+  a 1440 lo habría declarado inexistente.** Medido en la sección reportada: el chasis
+  deja `.section__intro` en `max-width: none`, así que el título de 72 caracteres iba
+  **1293px sobre 2 líneas a 1512 / 1800 / 2000 / 2400**, encima de un párrafo de 656px
+  (el `max-width: 42rem` del chasis). Por debajo, `text-wrap: balance` alcanzaba a
+  partirlo en 3 líneas de 631–703px y tapaba el problema — **1280 y 1440 se veían
+  bien**. La captura del cliente es de ~2000px de viewport.
+- **Después: 707px sobre 3 líneas**, o sea el título queda apenas más ancho que su
+  propio párrafo en vez de tres veces más. Costo medido y esperable: la sección pasa de
+  **824 a 899px** a ≥1512 (una línea más).
+- ⚠️ **ES UNA PROMOCIÓN, NO UNA REGLA NUEVA.** `.combo-prose .section__intro h2` llevaba
+  estos tres valores desde el 2026-08-17, por el MISMO reporte del cliente en
+  `/objektschutz-nuernberg/` — pero las 12 páginas de servicio no llevan `.combo-prose`,
+  así que el defecto seguía vivo en 11 secciones. **Las 21 secciones combo llevan LAS DOS
+  clases**, así que la copia se BORRÓ en vez de dejar la misma decisión escrita dos
+  veces. **Verificado midiendo las 21 antes y después: 63 filas byte-idénticas.** El
+  razonamiento largo (por qué 30ch, por qué en `ch`) queda en `page-combo.css`, en el
+  lugar donde estaba la regla.
+- **30ch en `ch` y no en px**, porque el H2 es un clamp tipográfico y la medida tiene que
+  seguir a su propio tamaño de letra — y estos 11 títulos van de **33 a 74 caracteres**,
+  o sea el cap no se puede ajustar a uno de ellos.
+  ⚠️ **NINGÚN CAP DA "DOS LÍNEAS" PARA LOS 11**: cualquier medida que parta el más corto
+  en dos deja el más largo en tres. Lo que 30ch garantiza es que ninguno corre una línea
+  gigante.
+  ⚠️ **Un título más corto que el cap conserva su ancho natural**: a 60px, 30ch = 1001px,
+  así que el más ancho que queda es el de `/empfangsdienst/` con **941px**. Si hay que
+  acercar TODOS a la medida del copy, la palanca es el cap (24–26ch), no la tipografía.
+- ⚠️ **`.service-trust` entra a propósito**: es la MISMA composición centrada (la centra
+  la misma regla desde el 08-17) y sus 5 títulos tenían el mismo problema — el de
+  `/kaufhausdetektei/` iba **1166px en UNA línea**. Separarlas convertiría una decisión
+  en dos.
+- ⚠️ **`margin-inline: auto` no es opcional** (novena vez): la sección está centrada, así
+  que `max-width` solo centra el TEXTO dentro de una caja de ancho completo que sigue
+  pegada a la izquierda.
+- **Medido en las 6 páginas con estas secciones (11 secciones) a 320 / 390 / 768 / 1024 /
+  1512 / 1920 = 66 casos: 20 se angostaron, CERO se ensancharon**, offset 0,0px del eje
+  en todos, sin scroll horizontal. **Por debajo de 1024 no se movió nada** — ahí la
+  columna ya es más angosta que el cap, o sea el arreglo es sólo de escritorio. Captura
+  a 1512 revisada.
+
+**2026-08-19 — LA SECCIÓN ANSPRECHPARTNER VA CENTRADA EN EL LAYOUT APILADO, EN LAS 5
+PÁGINAS QUE LA PUBLICAN** (cliente, con captura de teléfono de `/werkschutz/`: "this
+section has to be centered"). Un bloque en `css/page-service.css`; **cero markup, cero
+copy**.
+
+- **Scopeado debajo de 900px, que es el layout de la captura.** De 900 arriba la foto
+  tiene su propia columna izquierda y el copy la derecha: centrar una columna de texto al
+  lado de un retrato pegado a la izquierda se lee como epígrafe, no como composición
+  centrada. **Verificado que escritorio no se movió NI UN PÍXEL** (medido a 900 / 1024 /
+  1440 / 1920 contra un build A/B: mismos offsets, misma foto de 480x600, mismo alto de
+  sección).
+- ✅ **Y arregla una inconsistencia que el bloque ya tenía:** `.service-contact__certs`
+  se centra desde el 2026-08-07 (para igualar `/referenzen/`), así que apilado la sección
+  era **una franja de certificados centrada debajo de un título, una foto y dos acciones
+  rangeados a la izquierda**.
+- ⚠️⚠️ **BUG PROPIO, ENCONTRADO MIDIENDO Y NO MIRANDO: `justify-self: center` SOLO
+  COLAPSÓ EL RETRATO A 0x0.** Ese valor (igual que un margen automático) vuelve
+  **content-sized** al grid item, así que el ancho del `<figure>` pasó a indefinido — y
+  su `<picture>` es inline con un `<img>` a `width: 100%`, que entonces no tiene contra
+  qué resolver. **La sonda lo cantó como `w:0 h:0`; una captura a ese ancho habría
+  mostrado la foto ausente y parecido un problema de la imagen.** El arreglo es
+  `width: 100%` + `justify-self` juntos, que es exactamente lo que este archivo ya
+  documenta para el `<picture>` del hero y para la price card. **Medido después: 153,6 /
+  187,2 / 206,4 / 224px — los MISMOS anchos que antes del cambio.**
+- ⚠️ **SON CUATRO DECLARACIONES Y CADA UNA HACE UNA PARTE DISTINTA** — la trampa que este
+  archivo documenta nueve veces: `text-align` centra el TEXTO; `justify-self` + `width`
+  centran la FOTO; `margin-inline: auto` centra el PÁRRAFO, que está capado a 34rem y en
+  la banda 768–899 ese cap es más angosto que la columna (o sea sin él quedaba pegado a
+  la izquierda debajo de un título ya centrado); y `.service-contact__actions` es una
+  fila **flex**, a la que el `text-align` del padre no mueve.
+- ⚠️ **VA EN LAS 5 PÁGINAS, no en una** — werkschutz · objektschutz · brandwache ·
+  sicherheitstechnik · baustellenbewachung publican el bloque idénticamente. Deliberado:
+  una composición para un bloque es mejor que cinco variantes casi iguales. Una página
+  que deba quedar rangeada a la izquierda necesita una clase de opt-out, no una edición
+  de estas reglas.
+- **Medido en las 5 a 320 / 390 / 430 / 600 / 768 / 899 / 900 / 1024 / 1440 / 1920** (50
+  corridas): **título, nombre, rol, párrafo, foto, acciones y sellos a 0,0px del eje del
+  container en los seis anchos apilados**, sin scroll horizontal, nada fuera del
+  viewport, y **el alto de la sección idéntico al build anterior** (1726 / 1663 / 1663 /
+  1568 / 1503 / 1523px), o sea el centrado no costó ni un píxel de alto. Con motion
+  prendido el retrato y la franja de certificados asientan en opacidad 1 y
+  `transform: none`; capturas revisadas a 390.
+
+**2026-08-19 — HOMEPAGE MOBILE, 5 REPORTES DEL CLIENTE: 3 ARREGLADOS Y 2 QUE NO
+REPRODUCEN EN EL CÓDIGO ACTUAL (ni local ni desplegado).** Sus capturas son de
+`frankonia-website.vercel.app`, o sea el deploy, y eso importa: todo se midió también
+ahí, a **393px reales vía CDP**, no sólo en local.
+
+- ✅ **1. LOS DIAGRAMAS DEL KONZEPT ESTABAN CORTADOS, Y EL CULPABLE ERA EL `viewBox`,
+  NO EL CONTAINER** ("están cortados a la derecha, tienen que estar centrados y un poco
+  más pequeños"). Medido: la caja del SVG cae en x 20..373 con 20px de aire a cada lado
+  —o sea holgada— pero `getBBox()` dice que **el DIBUJO va de x=-37 a x=1121 contra un
+  `viewBox="0 0 1079 1110"`**. Un root SVG recorta en su viewport por defecto, así que
+  se comía **42 unidades a la derecha (~14px) y 37 a la izquierda (~12px)** en todos los
+  anchos de teléfono. **Por eso en escritorio nunca se vio**: ahí
+  `.konzept-seq--enhanced .konzept-seq__svg` ya trae `overflow: visible` para las
+  anotaciones.
+  - **El arreglo es `overflow: visible` debajo de 1024px**, y es seguro SÓLO ahí porque
+    `.kz-tip` es `display: none` en ese rango — lo único fuera del viewBox en un
+    teléfono es la geometría del cubo.
+    ⚠️ **NO ensanchar el atributo `viewBox`**: es compartido con escritorio, donde las
+    anotaciones están posicionadas contra esas mismas coordenadas.
+  - ⚠️ **EL FRAME TIENE QUE ENCOGERSE PARA PAGARLO, y el número es derivado:** con
+    overflow visible el dibujo renderiza **1158/1079 = 7,3 % MÁS ANCHO** que su caja, así
+    que los 90vw viejos habrían pedido 96,6vw y se iban de pantalla. **78vw** deja el
+    dibujo en 83,7vw = 329px dentro de 393. Si alguien cambia ese valor, el ancho visible
+    se mueve **1,0732×**, no 1×.
+  - **Medido a 320 / 393 / 430 / 640 / 768 / 1023:** `hScroll` 0 en los seis, dibujo
+    entero, centrado a **1px** del eje, y aire a la derecha de **25 / 31 / 34 / 51 / 160 /
+    287px**. Captura del tercer diagrama revisada.
+  - ⚠️ **TRAMPA DE MEDICIÓN: `getBBox()` CUENTA HIJOS CON `display: none` en Chrome.** El
+    layer 3 reportaba el dibujo arrancando en **x=-957**, o sea 229px saliendo por la
+    izquierda, y parecía una regresión que yo acababa de introducir. Son los `.kz-tip`
+    ocultos (y un `<use>` que los instancia) contaminando el bbox. **Se descartó con una
+    captura, no con más números** — no pinta nada ahí.
+
+- ✅ **2. FUERA LOS TOOLTIPS DEL MOBILE** ("no es necesario que escroleemos y vaya
+  apareciendo el punto en distintos lugares del diagrama… deja nomás los diagramas y
+  abajo que diga los nombres"). Se **BORRÓ** `buildMobileTips()` + su `mm.add` de
+  `js/konzept-seq.js` (146 líneas) y todo el bloque `.kz-mtips` / `.kz-mtip*` de
+  `css/konzept-seq.css`, no se ocultó.
+  - ⚠️ **EL DIMMING SE FUE SOLO, y eso es lo elegante de borrar la construcción en vez de
+    esconderla:** `.konzept-seq__terms.is-synced` bajaba los nombres al 45 % para marcar
+    cuál chip estaba encendido, y **`is-synced` lo agregaba ese mismo script**. Sin script
+    no hay clase, así que los 13 términos quedan a contraste pleno sin tocar una regla más.
+    Verificado: `mtips: 0` y `color: rgba(255,255,255,0.9)` en los tres layers.
+  - ⚠️ **No "restaurar" esto des-ocultando los `.kz-tip` del SVG**: están fuera del
+    viewBox para el split de escritorio, así que abajo de 1024 se recortaban a dos o tres
+    letras — que es la razón por la que están `display: none` ahí.
+
+- ✅ **4. LOS THUMBNAILS DE LA LISTA DE SERVICIOS ESTABAN CROPEADOS DESDE ARRIBA, Y ERA
+  MEDIBLE** ("están alineadas arriba y no se ve lo principal de la imagen… objektschutz,
+  kaufhausdetektei y baustellenbewachung están bien, el resto un poco más abajo").
+  - ⚠️ **`object-position` NO PODÍA ARREGLARLO, y por eso hubo que re-exportar:** los
+    archivos de `assets/images/services-thumb/` **ya son 128x96 recortados** y se muestran
+    en una caja de 62x47 — **el mismo ratio 4:3**, así que `cover` no recorta nada. El
+    recorte está horneado en el archivo.
+  - **El recorte viejo se recuperó por fuerza bruta, no se adivinó:** deslizando una
+    ventana 820x615 por cada fuente vertical, bajando a 128x96 y tomando el MSE mínimo
+    contra el archivo publicado → **top = 57–60px de ~1220 en los DIEZ, o sea 9,8 %**. Una
+    decisión sistemática, no arte por foto.
+  - ⚠️ **UN 0.50 LITERAL CORTA CABEZAS, y se comprobó renderizando:** en werkschutz e
+    interventionsdienst se pierden las caras y en revier-schliessdienst se clipea al
+    hombre. Así que se centra **EL SUJETO, no la ventana** — 0.25 donde hay caras cerca del
+    borde, 0.35 donde manda el grupo o la marca. Los siete valores salieron de una hoja de
+    contactos al doble del tamaño real, nunca del número.
+  - **`docs/design-sources/services-thumbs.py`** (nuevo) deja la tabla de recortes
+    reproducible, y **excluye a propósito los tres que el cliente aprobó** — re-correrlo no
+    los toca. Verificado con `git status`: cambiaron exactamente 7 archivos. 44KB el
+    directorio entero, y **cero markup** (son `<img>` sueltos, sin `<picture>`).
+
+- ⚠️⚠️ **3 y 5 NO REPRODUCEN, Y LA EVIDENCIA APUNTA A CSS CACHEADO EN SU TELÉFONO.** No se
+  tocó nada por eso: cambiar código que mide bien es cómo se rompe lo que funciona.
+  - **5, "los videos en mobile se siguen viendo mal":** el strip social mide **3 cards de
+    338px, 1 video cada una, snapped**, en los dos extremos del scroll y a dos alturas de
+    viewport, **en el deploy**. Su captura muestra tres imágenes de **~85px** — que es
+    exactamente el ancho del bug que la pasada mobile del **2026-07-30** arregló ("three
+    9:16 cards side by side gave each ~85px").
+  - **3, "las cards de los servicios están cortadas":** probado forzando la altura de la
+    card a **422 / 380 / 340 / 300 / 260 / 220 / 180px** — la lista de bullets **nunca**
+    desborda, siempre queda a **−24px** del borde. Es estructural: `.system-story__body` es
+    `position: absolute` + `space-between`, así que entra a cualquier altura. El
+    `max-height: 68svh` sí achica la card (medido 422→343 al bajar el viewport) pero el
+    contenido pide ~160px, así que el clamp no puede recortarlo. **En el código actual ese
+    recorte no es alcanzable** — y sí lo era en el layout pre-30/07, donde el contenido iba
+    en flujo dentro de una card de alto fijo.
+  - **Los dos reportes apuntan al mismo build viejo**, así que lo primero es un
+    **hard-reload** en su iPhone. Si persiste con caché limpia, hay que pedirle **qué card
+    exactamente** y una captura nueva: sería otro defecto, no éste.
+
+- ⚠️⚠️ **TRAMPA DE ENTORNO QUE INVALIDÓ LOS 54 LINKS QUE LE PASÉ HOY: EL PUERTO 8123 NO
+  ERA MÍO.** Mi server murió a mitad de sesión y **otra sesión tomó el puerto**, sirviendo
+  `/private/tmp/.../de84d294-…/scratchpad/build/dist`, o sea un **snapshot congelado de
+  otro árbol**. Se detecta pidiendo un archivo que sólo existe en el `dist/` propio: daba
+  **404 con el archivo presente en disco**. Se confirma con
+  `lsof -nP -iTCP:8123 -sTCP:LISTEN` + `ps -ww -o command= -p <pid>`, que imprime la raíz
+  servida. **Verificar la identidad del server con un md5 contra el `dist/` propio antes de
+  medir o de pasar links**, y levantarlo con `nohup … & disown` en un puerto propio (8792).
+- ⚠️ **Nota de medición: `--window-size=393` NO da un viewport de 393px** — Chrome impone
+  el mínimo de ~500 (medido `innerWidth=500`). Para un ancho de teléfono real hace falta
+  `Emulation.setDeviceMetricsOverride` por CDP; hay un driver mínimo de ~30 líneas usando
+  el `WebSocket` nativo de Node 22 (cero dependencias) en el scratchpad de esta sesión.
+
+**2026-08-19 — EL "MARCO" DE TODA SECCIÓN `.service-points` / `.service-scope` VA
+CENTRADO, EN LAS 14 PÁGINAS QUE LAS LLEVAN — Y LA LISTA NO SE TOCA** (cliente, con
+siete capturas de cuatro páginas de servicio: "todas estas screenshots son secciones
+de las páginas de servicios que tienen que estar centradas, no toda la sección pero el
+título (y si tiene un texto abajo también centralo) y si hay un box abajo o un
+comentario abajo de los items también centrados … **no toques la lista de
+contenidos**"). Todo en `css/page-service.css`; **una sola edición de markup** (sacar
+una clase que quedó muerta) y cero copy.
+
+- **Qué se centra: título, lede, el comentario de cierre (`__outro`) y la caja
+  (`.service-highlight`). Qué NO: los items.** La lista conserva su borde izquierdo, que
+  es la razón que este proyecto da en todos lados: centrar los items le saca el borde
+  común contra el que el ojo compara una lista. **Medido: el ancho y la posición de
+  todas las listas quedaron IDÉNTICOS antes y después.**
+- ⚠️⚠️ **PASÓ DE OPT-IN A INCONDICIONAL, y ESA es la decisión de esta pasada.** Desde
+  el 08-17 esto era `.service-section--centred`, sección por sección; el cliente ahora
+  lo pidió para todas, así que la clase habría sido un segundo mecanismo para decir lo
+  mismo. **La regla vieja NO se duplicó: se le sacaron las partes de marco y quedó
+  sólo con el cap de la lista**, o sea hoy significa "además angostá el bloque de la
+  lista". Las 5 secciones que la llevan en markup rinden **exactamente igual que
+  antes** (medido: 992px y 1152px de lista, sin cambio).
+- ⚠️⚠️ **`.service-flow__intro` ESTÁ EXCLUIDO Y TIENE QUE SEGUIR EXCLUIDO.** Es el
+  heading **pinneado** del scrollytelling de `/werkschutz/`, que vive dentro de un
+  `.service-scope` y se sienta arriba de un split 50/50 — centrarlo movería el único
+  heading del sitio cuya posición es funcional. Es el único `.section__intro` dentro de
+  un `.service-scope` que no es un header de sección normal. Verificado después: sigue
+  a **−38px** del eje, o sea intacto.
+- **El `__outro` pasó de "caja centrada" a "texto centrado", y hacían falta las dos
+  cosas**: ya tenía cap de 62rem, así que el `margin-inline: auto` es lo que mueve la
+  caja y el `text-align` lo que centra la frase adentro. Antes tenía sólo el margen y
+  **sólo dentro de `--centred`**, así que un outro de dos líneas se leía alineado a la
+  izquierda debajo de un título centrado. Lleva `hyphens: none` por la razón de siempre:
+  una línea centrada ya tiene dos bordes irregulares.
+- **La caja se centra ahora INCONDICIONALMENTE** (`.service-highlight`), lo que
+  **reemplaza dos reglas scopeadas**: la de `.service-prose`/`.service-trust` del 08-17
+  y **el `.service-highlight--centred` que yo mismo había hecho dos horas antes** para
+  `/werkschutz/` solo. Las 7 páginas que llevan esa caja la quieren centrada, así que
+  un scope o una clase eran una segunda forma de decir lo mismo. **La clase se borró
+  del markup**, no quedó como selector muerto. Su texto sigue a la izquierda (regla
+  documentada del componente).
+- ⚠️ **NO se tocaron `.service-price` ni `.service-contact`, y no es un olvido:** su
+  intro vive en **una columna de un grid de dos**, así que centrarlo rompe esa maqueta —
+  este archivo ya lo documenta para Kosten desde el 08-09. Miden −296 a −431px del eje
+  y así se quedan. **Ninguna de las siete capturas del cliente es una de esas dos.**
+- ⚠️ **Tampoco `.service-risk` ni `.service-contrast` de `/werkschutz/`** (−91 y −264):
+  son bloques propios de esa página, no de este tipo de sección, y ninguna captura los
+  incluye. **Queda como la única inconsistencia visible del sitio en este eje** — si el
+  cliente la marca, son dos selectores más.
+- **Medido en las 12 páginas de servicio + 2 combo, a 320 / 390 / 768 / 1024 / 1440 /
+  1920** (84 corridas): **cero fallos de centrado** (título, lede, outro y caja dentro
+  de 2px del eje en TODAS las secciones `.service-points`/`.service-scope`), **cero
+  scroll horizontal**, y los únicos elementos fuera del viewport son los 3 compartidos
+  de siempre (honeypot + su label + input). Capturas revisadas de dos de los casos del
+  cliente.
+- ⚠️ **UNA EXCEPCIÓN, pedida por el cliente diez minutos después: en
+  `/interventionsdienst/` LOS ITEMS SÍ VAN CENTRADOS** ("this is weird, center the
+  items"). Es la **única página con una lista `--2`**, y ahí la grilla de 2 columnas a
+  ancho de container le da **593px a cada item para tres líneas de copy**, o sea el par
+  se lee como dos bloques abandonados con 100+px de hueco debajo de un título y un lede
+  centrados. **No es una reversión de "no toques la lista"**: es el cliente pidiéndolo
+  en la única lista donde la grilla deja un agujero.
+  - **46rem, elegido comparando renders** contra 52rem y contra "bloque centrado con
+    texto a la izquierda": a 46rem los dos items salen de **tres líneas** y se leen como
+    un antes/después deliberado. Medido: lista **736px centrada, items de 344px, título
+    y texto a 0px del eje de su item**, sin scroll horizontal a 320 → 1920.
+  - ⚠️ **La regla azul necesita su propio `margin-inline: auto`**: es un pseudo-elemento
+    de 3rem fijos, así que el `text-align` del item no la mueve, y una regla pegada a la
+    izquierda sobre texto centrado se lee como un error.
+  - ⚠️ **Sólo ≥640px**, donde arranca la grilla de 2 columnas: en teléfono es una
+    columna de ~350px y tres líneas de alemán centrado ahí se leen peor que rangeadas —
+    la misma decisión que ya toma `/jobs/` con sus pasos centrados. Verificado:
+    `align: start` a 320 y 390, `center` de 640 arriba.
+- ⚠️⚠️ **TRAMPA DE MEDICIÓN NUEVA Y LA PEOR DE HOY: HABÍA DOS CHROME HEADLESS EN EL
+  PUERTO 9333 — el mío y el de OTRA SESIÓN — y mi sonda se conectó al de ella.**
+  Reportó secciones `city-hero` / `city-fields` / `city-nearby` en `/werkschutz/` y
+  `/revier-schliessdienst/`, o sea el layout de una página de CIUDAD, porque estaba
+  midiendo `http://127.0.0.1:8177/sicherheitsdienst-bamberg/` (su server, su página).
+  **Se detecta con `curl http://127.0.0.1:<puerto>/json/list | grep url`.** Dos reglas
+  que quedan: **elegir un puerto de debugging poco común** (usé 9612) y **que la sonda
+  verifique `location.href` contra la URL que pidió** antes de creerse un número. Y
+  **`kill <pid>` del propio Chrome, nunca `pkill -f remote-debugging-port`** — eso mata
+  el navegador de la otra sesión.
+- ⚠️ **Y la de siempre, ahora con la solución buena: mi server de medición se murió
+  TRES veces** entre llamadas (`nohup ... & disown` no alcanza en este harness). La
+  forma que sí sobrevive es lanzarlo como **background task del harness**
+  (`run_in_background`). El síntoma vuelve a ser una sonda que devuelve "no existe el
+  elemento" o `WRONGPAGE`; se confirma con `curl -w "%{http_code}"` → **000**.
+- ⚠️ **Otra sesión está editando `css/page-service.css` y `CLAUDE.md` al mismo tiempo**
+  (mtime 11:21 y 11:25 mientras yo trabajaba; la regla `--centred .service-points__list--4
+  { max-width: 72rem }` la agregó ella sobre mi pasada de cards). Sus cambios se
+  respetaron; los míos son inserciones con `assert` de una sola aparición.
+
+**2026-08-19 — LA PRIMERA SECCIÓN DE 7 PÁGINAS DE SERVICIO PASA A CARDS CON ICONO:
+la card de las páginas de ciudad, traída al chasis** (cliente, con tres páginas de
+ejemplo al lado: "quiero que esta primera sección de los distintos servicios sean
+cards, como son en las ciudades … y que tengan iconito si se puede"). Un bloque nuevo
+en `css/page-service.css` + una clase y un `<svg>` por item en 7 páginas. **Ni una
+palabra de copy cambió.**
+
+- **Qué páginas, y por qué exactamente esas 7.** Auditadas las **20 secciones**
+  `.service-points` de 10 páginas: en 7 la PRIMERA sección después del hero es el
+  pitch de riesgo/why, y en las 7 es además la `.service-section--centred` —
+  objektschutz · brandwache · kaufhausdetektei · revier-schliessdienst ·
+  sicherheitstechnik · veranstaltungsschutz · baustellenbewachung. Las tres capturas
+  del cliente son tres de ésas. ⚠️ **`/empfangsdienst/` e `/interventionsdienst/`
+  abren con `.service-prose`** (no tienen este bloque arriba) y **`/werkschutz/` abre
+  con `.service-risk`** (ya son cards, con las escenas isométricas), así que no hubo
+  nada que convertir ahí.
+- ⚠️⚠️ **ES UN MODIFICADOR OPT-IN, NO UN CAMBIO A `.service-points`, y eso es
+  deliberado:** ese bloque renderiza 20 secciones. Las **13 restantes siguen
+  rayadas**, que es jerarquía y no inconsistencia — el pitch de apertura va carded y
+  las secciones de apoyo no. Extenderlo a otra sección es agregar la clase más sus
+  iconos.
+- ⚠️ **REVIERTE el "RULED, NOT CARDED" de §8.2 para estas 7 secciones.** Esa nota
+  sigue siendo correcta sobre POR QUÉ eran rayadas —y sobre esquivar el caveat de
+  **3,11:1** de `.service-cases`— y **esta card también lo esquiva**, porque es la
+  card de CIUDAD (texto oscuro sobre blanco), no la azul glossy. Medido: título
+  **20,87:1**, texto **4,60:1**, icono **3,71:1** (es gráfico, piso 3:1).
+- ⚠️⚠️ **TERCERA COPIA DE ESTA CARD EN EL PROYECTO** (`.service-cases__card`,
+  `.city-why__item`, ésta), o sea que por la regla propia del proyecto la promoción a
+  clase compartida **ya está vencida**. NO se hizo acá: implicaría restilar
+  `/werkschutz/` y las 10 páginas de ciudad, todas revisadas por el cliente, en plena
+  ronda de review. **Todos los valores están COPIADOS de `.city-why__item`, no
+  re-derivados**, así que cuando se haga es un rename.
+- ✅ **La grilla NO necesitó nada nuevo:** `.service-points__list` ya tenía el sistema
+  `--3/--4/--5/--6`, así que `--cards` sólo compone. Medido: **4-up en las dos páginas
+  de 4 items y 3-up en las cinco de 3**, con filas de alto idéntico en todos los
+  anchos.
+- ⚠️ **SIN estado hover, por dos razones independientes** (las dos anotadas en el
+  CSS): estas cards no tienen link ni nada que clickear, así que un lift afirmaría
+  una interactividad que no existe; y la lista lleva `data-item-reveal="li"`, o sea
+  **GSAP anima ESE elemento y escribe `translate/rotate/scale: none` inline**, que le
+  gana a cualquier regla de hoja. Es exactamente la razón por la que el hover de la
+  card de ciudad está muerto en producción — acá el problema se evita en vez de
+  re-pagarse.
+- ⚠️ **La regla azul de 3rem pasa a `content: none`, no se borra**: el icono la
+  reemplaza (dos cosas compitiendo por abrir la card), y las otras 13 secciones
+  rayadas la siguen necesitando.
+- **Los 23 iconos salen del sprite que ya existía — CERO símbolos nuevos** — y se
+  eligieron **renderizándolos a 28 y 40px en una hoja de contactos**, no juzgando el
+  path: `icon-transparency` es un ojo (para "wird überhaupt bemerkt"), `icon-route` es
+  una ruta con nodos, `icon-guard` una persona dentro del escudo, `icon-bag` una bolsa
+  de compras. **Ninguno se repite DENTRO de una sección.**
+  - ⚠️ **`icon-clock` en vez de `icon-calendar` para "Bauverzögerung"**: el calendario
+    del sprite lleva un check, o sea dice "en fecha" — lo contrario de un retraso.
+  - ⚠️ **`icon-route` se repite en `/revier-schliessdienst/`** (ya está en su
+    `.service-compare`), y se dejó a propósito: significa **lo mismo** en los dos
+    lugares (rondas con puntos definidos), o sea no es un glifo haciendo dos trabajos.
+  - ⚠️ **`icon-alert` está también en el "Hinweis" de la sección de Kosten** en 5 de
+    las 7 páginas. Aceptado: son 5 secciones de distancia y ahí es un glifo inline de
+    advertencia, no el ancla de una card.
+- ⚠️ **`hyphens: none` scopeado a `--cards`:** el copy pasa a vivir en columnas de 3 y
+  4, donde los compuestos alemanes rompen en casi todas las líneas. **Chequeado que no
+  desborda**: la palabra más larga es "Kraftstoffdiebstahl" (19 caracteres) contra
+  ~232px de ancho interno a 320px. Las otras 13 secciones conservan el
+  `hyphens: auto` de base.css.
+- **Medido en las 7 páginas a 320 / 390 / 640 / 768 / 1024 / 1100 / 1440 / 1920:**
+  card blanca con radio 24px, borde 1px `rgba(1,1,1,0.07)`, sombra de dos capas,
+  `::before` en `none`, **los 23 iconos a 28px con `fill: none` + `stroke:
+  currentColor`** (o sea el bug de la mancha negra del `<use>` no aparece), **filas de
+  alto idéntico y CERO scroll horizontal en todos los anchos, 320 incluido**. El
+  markup servido —lo que ve un crawler— trae los 23 iconos.
+- ⚠️ **Trampa de medición nueva y cara: DOS `node cards.js` corriendo contra el MISMO
+  Chrome se pisan.** Uno quedó en background y el otro navegaba la misma pestaña: la
+  sonda reportó "PROBE FAILED" y `cols=3` a 390px (o sea el viewport de otro). Se
+  detecta comparando `r.w` contra el ancho pedido — **una sonda tiene que verificar
+  que el viewport que midió es el que pidió**. Y `setViewport` va antes de CADA
+  `goto`, no una vez por banda.
+
+**2026-08-19 — `/einsatzgebiete/`: EL MAPA DEL HERO ESTABA PEGADO AL BORDE, NO
+CENTRADO, EN TODA LA BANDA APILADA** (cliente, en una tablet de 741px: "in tablet,
+make the image of this map centred, is aligned to the right"). Tres declaraciones en
+`css/page-einsatzgebiete.css`; **cero markup**.
+
+- ⚠️⚠️ **DÉCIMA VEZ DE LA MISMA TRAMPA: `max-width` CAPA UNA CAJA, NO LA CENTRA.** La
+  regla de tablet era `@media (max-width: 1023.98px) { .eg-hero__map { max-width:
+  34rem } }` **sin auto-márgenes**, y un grid item cuyo `max-width` le impide
+  estirarse cae en la posición de arranque de su `justify-self`, o sea contra el borde
+  de contenido, con **toda** la holgura junta de un lado.
+  **Medido antes: 8px fuera del eje a 600, 49 a 768, 111 a 900 y 163 a 1023** — cuanto
+  más ancha la tablet, peor, porque el cap es fijo y la columna sigue creciendo.
+- ⚠️⚠️ **Y EL ARREGLO OBVIO ROMPIÓ EL MAPA, que es la SEGUNDA trampa en las mismas
+  tres líneas y la cazó la medición, no la vista:** con sólo `margin-inline: auto` el
+  item se vuelve **content-sized** (un auto margin cancela el `justify-self: stretch`)
+  y un `<svg>` no tiene ancho intrínseco en px, así que colapsó al default de elemento
+  reemplazado — **544px → 300px en todos los anchos abajo de 1024**, perfectamente
+  centrado y 45 % más chico. Es la misma falla que `page-service.css` documenta para
+  la price card. Van **`width: 100%` + `max-width` + `margin-inline: auto`**, las tres.
+- ✅ **CENTRAR LA CAJA CENTRA EL DIBUJO, y está medido y no asumido:** `getBBox()`
+  reporta la tinta de x 0 a 1000 dentro de un viewBox 0..1000, o sea son el mismo
+  rectángulo. **Si una corrida futura de `franken-map.py` cambia el padding del
+  viewBox, esa identidad se rompe** — re-medir en vez de confiar en esta línea.
+- **El cap de 34rem NO se tocó**: existe para que el mapa no sea lo más grande de una
+  pantalla de tablet, y el pedido era centrarlo, no agrandarlo.
+- **Medido a 390 / 600 / 741 / 768 / 900 / 1023 / 1024 / 1440:** desvío del eje **0px
+  en los seis anchos apilados**, ancho del mapa **544px conservado** (350 a 390, donde
+  manda la columna y no el cap), **1024 y 1440 sin un solo cambio** (435,5 y 631,6px,
+  idénticos al baseline), y sin scroll horizontal en ninguno. Captura revisada a 741.
+  ⚠️ **Inerte en teléfono** (0px de corrección a 390, 8 a 600): ahí la columna es más
+  angosta que el cap y no hay holgura que repartir. **Sólo se centra el MAPA** — el
+  copy sigue rangeado a la izquierda.
+- ⚠️ **VISTO EN LA CAPTURA DEL CLIENTE Y NO TOCADO, es sitewide y pre-existente: el
+  breadcrumb se lee ENCIMA del logo apenas se scrollea.** `.site-header` es `sticky`
+  con `background-color: rgba(0,0,0,0)` y **sin `backdrop-filter`**, así que el
+  contenido pasa por debajo y se ve a través. Verificado a 40px de scroll en
+  `/einsatzgebiete/`, `/jobs/` y `/werkschutz/`: **40 / 40 / 8px de solapamiento**. El
+  header transparente es una decisión explícita del cliente (2026-07-17), así que
+  darle fondo al scrollear es una decisión suya, no un arreglo unilateral.
+
+**2026-08-19 — `/jobs/`: EN EL HERO APILADO LA FOTO VA ARRIBA DEL TEXTO** (cliente:
+"en ambos tablet y mobile, quiero que la imagen vaya antes que los textos"). Una
+declaración en `css/page-jobs.css`; **cero markup, cero copy**.
+
+- **Cubre TODA la banda apilada, 1024–1279 (tablet) y todo lo de abajo (teléfono)** —
+  o sea cada ancho donde este hero es una sola columna. **De 1280 para arriba no
+  cambia nada**: ahí la grilla es de dos columnas y la foto ya está al lado del copy
+  (verificado: `order: 0`, columnas y ancho de foto idénticos — 661px a 1440).
+- ⚠️⚠️ **ES ORDEN VISUAL, NO DE DOM, y eso es deliberado.** El copy sigue primero en
+  el markup: el H1 tiene que abrir la página para un crawler y para un lector de
+  pantalla, y `js/hero-reveal.js` sigue cascadeando los bloques de copy en su propio
+  orden de DOM. **page-conventions §7 prohíbe `order` justamente porque desincroniza
+  el tab order de la pantalla — acá esa objeción no aplica, y la razón es concreta:
+  dentro de `.jobs-hero__media` no hay NADA focuseable** (un `<picture>`, sin link y
+  sin botón), así que ningún tab stop se mueve. **Meter un link o un botón en esa
+  columna reintroduce el problema del que esta regla hoy está exenta.**
+- ⚠️ **NO se agregó un fade arriba que espeje el `::after` de abajo, y está medido, no
+  salteado:** las tres primeras filas del export pican en luminancia **2 (WebP) / 4
+  (JPEG)** contra el 1 de la página, o sea **el borde superior de la foto YA ES el
+  negro de la página**. El de abajo necesita rampa porque ahí `cover` corta a las
+  cuatro personas a media pierna (hasta 21).
+- ✅ **COSTO DE LAYOUT CERO, medido en A/B y no supuesto:** reordenar filas en una
+  grilla de una columna con gap uniforme no puede cambiar el total, y los números
+  coinciden — hero **1164px** y página 9381 a 390, hero **1378** y página 8855 a 1024,
+  **idénticos con la regla puesta y sacada**.
+- ⚠️ **LO QUE SÍ CUESTA, y es real: arriba de ~900px el H1 cae en el fold o debajo.**
+  La foto ocupa el ancho completo de la columna en esta banda (641px a 768 → **1090px a
+  1279**), así que llena la primera pantalla. Medido, top del copy: **753 de 1024 a 768
+  (bien), 848 de 1000 a 900, 914 a 1024, 1083 a 1279**. En teléfono el H1 sigue bien
+  arriba del fold (496 de 844 a 390). Es inherente a poner una foto 13/10 primero en
+  una columna de 1000px; **la palanca, si algún día molesta, es un `max-height` en
+  `.jobs-hero__media` en esa banda, NO revertir el orden.**
+- **Medido a 320 / 390 / 430 / 768 / 900 / 1024 / 1152 / 1279 / 1280 / 1440:** foto
+  antes del copy en **los ocho anchos apilados** y después en los dos de dos columnas,
+  gap de 64px constante, ratio **1,30 exacto** en los diez (o sea `cover` no recorta),
+  H1 en 2 líneas de 768 arriba, y **sin scroll horizontal en ninguno**. Capturas
+  revisadas a 390 y 1024.
+  ⚠️ Los 30 elementos "fuera del viewport" que reporta la sonda debajo de 768 son el
+  falso positivo ya documentado en este archivo: las cards del scroller horizontal
+  `jobs-why__grid`, no este cambio.
+
+**2026-08-19 — REGLA GLOBAL: UNA FILA DE CTA SE APILA A TODO EL ANCHO SÓLO POR
+DEBAJO DE 640px, Y ESO CAMBIA LAS 54 PÁGINAS** (cliente, con una captura de
+`/referenzen/` en tablet: "encargate de que en tablet no pase esto con los CTAs, que
+quedan todos largos en la screen, la idea es que queden con un width normal, no que
+se alarguen así, y esto en toda la web"). Ocho reglas en cinco hojas, **cero markup,
+cero copy**. La plantilla está en
+[docs/page-conventions.md §3](docs/page-conventions.md) y el razonamiento canónico
+en `.service-hero__actions` de `css/page-service.css`.
+
+- ⚠️⚠️ **EL DEFECTO ERA REAL Y MEDIBLE, Y LA CAUSA ES UN BREAKPOINT DEMASIADO
+  ANCHO.** El apilado full-width llegaba a **767.98px**, así que en el tope de esa
+  banda la píldora del teléfono —**209px de contenido**— renderizaba **720px de
+  ancho**. Una píldora de cinco palabras conteniendo un número de teléfono no se lee
+  como botón, se lee como layout roto. **La captura del cliente se reprodujo exacta a
+  767px** (H1 en una línea, lede en dos, los dos CTA a todo el ancho) — o sea el
+  "tablet" que estaba mirando cae dentro del bloque de teléfono. ⚠️ Ojo con esto: un
+  iPad en portrait son 768 CSS px, pero **una ventana de escritorio de 768 con
+  scrollbar deja ~752**, o sea del lado equivocado del corte.
+- **640 NO es un número redondo: es donde se termina el motivo de la regla.** El
+  apilado existe porque a 390px el par no puede compartir fila (558px de contenido
+  contra ~350 disponibles). Medido, el par pide **325 + 209 + 24 = 558px** y a 640
+  hay **598px** — entra en todas las páginas que lo publican. De ahí el corte.
+- ⚠️ **TRES COMPONENTES YA CORTABAN EN 639.98** (`.faq__cta`, `.rg-cta__actions` /
+  `.rg-close__actions`, `.sk-actions` / `.sk-cta-box`), o sea el sitio tenía **dos
+  umbrales para una sola decisión**. Esto alinea todo en el más angosto en vez de
+  inventar un tercero. Por eso `/ratgeber/`, los artículos y `/sicherheitskonzept/`
+  midieron **0 diferencias**: ya estaban del lado correcto.
+- **La banda 640–767 no necesitó UNA regla propia**, y eso es lo que hace el cambio
+  chico: **todas las filas de acción del sitio son `flex-wrap: wrap` de base**, así
+  que un par que no entre cae a dos líneas de botones al ancho de su contenido en vez
+  de desbordar. Pasa en **un solo lugar del sitio** — el par de las case studies
+  (383 + 209 + 16 = 608 contra 598 a 640), verificado en captura y sin scroll
+  horizontal.
+- **Se implementó con `@media` ANIDADAS dentro de cada bloque de teléfono**, no
+  moviendo reglas a otro lugar del archivo: cada declaración se queda al lado del
+  comentario que la explica y el orden de fuente no se toca. Es el patrón que
+  `page-service.css` ya usaba para el `min-width: 768px` de `.service-contrast__module`.
+- ⚠️ **LA EXCEPCIÓN QUE NO SE ARREGLA MOVIENDO UN BREAKPOINT: `.service-price__cta`
+  no depende del viewport, llena su CARD** — y la card pasa a columna completa por
+  debajo de 900px. Medido: **648px de ancho a 767 en las 36 páginas** que publican la
+  caja, o sea exactamente la píldora que el cliente marcó en el hero, una sección más
+  abajo. Lleva `max-width: 22.5rem` desde 640px, que **es el ancho que ese mismo
+  botón ya tiene en escritorio** (la card topa en 432 y su interior mide 360): el cap
+  es **inerte** a 900 / 1024 / 1280 / 1440 (243 / 290 / 360 / 360, sin cambio) y el
+  "nearly full width inside the card" del cliente (2026-08-05) sigue valiendo donde
+  fue escrito.
+  ⚠️ **NO lleva `margin-inline: auto`, y eso es una medición, no un olvido:** `.btn`
+  es `inline-flex`, o sea inline-level, donde las auto-márgenes inline **no hacen
+  nada** — se escribió y se borró en vez de dejar una declaración que no puede
+  disparar. Tampoco hace falta: medido a 767, el botón capado arranca en **59px,
+  exactamente el borde del texto de la lista de tics**, o sea ya está alineado con el
+  contenido de la card.
+- ⚠️ **EL SUBMIT DEL FORMULARIO COMPARTIDO QUEDA FUERA, a propósito.** Es un control
+  dentro de una card blanca, no una fila de CTA, y su ancho completo es una decisión
+  propia de `lead-form.css` documentada en la pasada móvil. Sigue full-width en
+  teléfono y tablet; si el cliente lo quiere capado también, es una regla más.
+- ✅ **VERIFICADO POR A/B CON DOS BUILDS EN PARALELO (8311 nuevo / 8312 con el árbol
+  exacto de antes del cambio), NO por razonamiento — 486 comparaciones fuera de la
+  banda con CERO diferencias:**
+  **216 a 320 / 390 / 600 / 639 → 0 difieren** (el render de teléfono que el cliente
+  ya revisó no se movió un píxel) y **270 a 900 / 1024 / 1280 / 1440 / 1920 → 0
+  difieren**. Dentro de la banda el diff es exactamente el pedido: hero
+  **720+720 → 325+209**, price CTA **648 → 360**, y la página se acorta ~60px porque
+  el par deja de ocupar dos renglones.
+- **Barrido de las 54 páginas a 640 / 700 / 767 / 834 (216 corridas):** sin scroll
+  horizontal en ninguna, **cero botones por encima del 72 % del viewport**, y nada
+  pintado fuera de pantalla salvo los dos scrollers horizontales CONTENIDOS que este
+  archivo ya documenta como falso positivo (el strip `system-story` del homepage y
+  `jobs-why__grid` de `/jobs/`). Capturas revisadas a 767 (`/referenzen/`,
+  `/werkschutz/`, la caja de precios) y a 640 (el par que envuelve).
+- ⚠️⚠️ **TRAMPA DE VERIFICACIÓN QUE CASI PUBLICA UN FALSO POSITIVO Y VA A VOLVER: un
+  baseline sacado de `git show HEAD:` NO es "antes de mi cambio".** El working tree
+  tiene 40 archivos modificados sin commitear, así que ese A/B reportó **18 páginas
+  con diferencias** —botones de 288 → 280 y páginas 300px más altas— que eran trabajo
+  de días anteriores, no de esta pasada. El baseline correcto se reconstruye
+  aplicando la transformación INVERSA sobre el working tree actual.
+  ⚠️ Y al reconstruirlo, **una regla que se AGREGÓ no se revierte "desanidándola"**:
+  desenvolver el `@media (min-width: 640px)` del price CTA dejó su `max-width`
+  aplicando a TODOS los anchos, así que el baseline mostró 360px donde el original
+  tenía 512 y el diff salió invertido. Una regla nueva se BORRA del baseline, no se
+  desanida.
+- ⚠️ **Nota de medición: `getBoundingClientRect().width` no sirve para leer el ancho
+  NATURAL de un botón apilado.** Poner `width: auto` inline no le gana a
+  `align-items: stretch` del contenedor en columna (el stretch fija el tamaño
+  cruzado), así que la sonda devolvió 599px de "ancho natural" para botones de 325.
+  Hace falta `align-self: flex-start` también, o medir en el estado de fila.
+
+**2026-08-19 — `/jobs/`: EL TÍTULO Y EL CTA DE LA SECCIÓN "Wen wir suchen" VAN
+CENTRADOS** (cliente: "center the title and the cta"). Tres reglas en
+`css/page-jobs.css`, cero markup, cero copy.
+
+- **Los cinco peldaños de la escalera se quedan rangeados a la izquierda**: es la
+  composición estándar de este sitio —**header centrado, contenido a la
+  izquierda**— que ya usan `.service-section--centred`, el Warum y el FAQ de
+  `/leistungen/` y el Vertrauen del hub de ciudades. Centrar cinco filas de dos
+  columnas les saca el borde izquierdo contra el que el ojo compara una lista.
+  Medido: las 5 filas conservan su propio borde (39–48px según el ancho).
+- ⚠️⚠️ **REVIERTE LA NOTA QUE VIVÍA EN `.jobs-levels__actions`, y quedó escrita
+  entera en el CSS para que nadie la "restaure" como bug:** ese comentario
+  argumentaba que el botón TENÍA que ir a la izquierda porque el título y las filas
+  van a la izquierda, y un botón centrado debajo de una lista izquierda se lee como
+  perteneciente a otra cosa. La decisión posterior del cliente gana — y además
+  **desarma esa objeción**, porque ahora el título también está centrado, así que el
+  botón se alinea con lo único que tiene arriba.
+- ⚠️ **El H2 necesitó cap Y auto-márgenes, no sólo `text-align`** (van diez veces en
+  este proyecto): el chasis deja `.section__intro` en `max-width: none`, así que este
+  título de **65 caracteres** corría **una sola línea de ~1200px a 1440** y se leía
+  como un banner. `max-width: 30ch` + `margin-inline: auto` + `text-wrap: balance` lo
+  parte en **dos líneas parejas de 600 para arriba**. En `ch` y no en px porque el H2
+  es un clamp, o sea el cap tiene que seguir a su propio tamaño de tipografía.
+- **El botón se centra con `text-align` en su wrapper** — `.btn` es `inline-flex`, así
+  que no hizo falta flexbox. ⚠️ **Inerte por debajo de 768px**, donde el bloque de
+  teléfono le da `width: 100%`.
+- **Medido a 320 / 390 / 600 / 768 / 1024 / 1280 / 1440 / 1920:** título y botón a
+  **0px del eje del container en los 8 anchos**, H2 en 2 líneas de 600 arriba (3 a 390
+  y 4 a 320, inherente a 65 caracteres en una columna de 280–350), las 5 filas con su
+  borde izquierdo intacto, y sin scroll horizontal.
+  ⚠️ **Los 30 elementos "fuera del viewport" que reporta la sonda por debajo de 768 no
+  son de este cambio ni son un defecto**: son las cards del strip `jobs-why__grid`,
+  que es un scroller horizontal CONTENIDO (verificado elemento por elemento). Es
+  exactamente el falso positivo que este archivo ya documenta para los seams.
+
+**2026-08-19 — REDISEÑO DE BREADCRUMBS, EN LAS 53 PÁGINAS QUE LO LLEVAN: CERO
+SUBRAYADOS, LA PÁGINA ACTUAL EN REGULAR, Y LA OPACIDAD BAJANDO HACIA ATRÁS**
+(cliente: "saca los underlines, no va a haber underlines en ningún momento … el
+último, o sea en la que estamos, no esté bold, sea regular y más gris, después
+Leistungen con un poco menos opacidad y Startseite con menos opacidad aún").
+Todo en `css/components.css`; **cero markup**. La plantilla está en
+[docs/page-conventions.md §3](docs/page-conventions.md).
+
+- ⚠️⚠️ **LA ESCALA SE ANCLA AL FINAL DEL TRAIL, NO AL PRINCIPIO, y eso es
+  exactamente lo que el cliente se tomó el trabajo de explicar** ("si vamos a
+  Leistungen vamos a tener Leistungen con la opacidad que tiene Interventionsdienst
+  ahora y Startseite va a tener la opacidad que tiene Leistungen ahora"). O sea el
+  peso de un crumb sale de su **distancia a la página actual**, no de su
+  profundidad. Por eso los selectores cuentan con `:nth-last-child` y **el valor más
+  bajo es la BASE**: cualquier trail, a cualquier profundidad, termina igual.
+  Medido en las 8 páginas de muestra: 2 niveles → **75/60**, 3 → **75/60/50**,
+  4 → **75/60/50/50**.
+- ⚠️ **Los `<li>` alternan item / separador / item**, así que los crumbs caen en
+  posiciones IMPARES: el padre es `:nth-last-child(3)`, **no** `(2)`.
+- **Los valores están medidos contra el piso de contraste, no elegidos a ojo:** son
+  labels de **15px**, o sea texto normal con piso de 4,5:1 —
+  85 % = **14,79:1**, 60 % = **7,33:1**, 50 % = **5,29:1** sobre `#010101`.
+  ⚠️ **La página actual arrancó en 75 % y el cliente la subió a 85 % el mismo día**
+  ("dale un poco más de opacidad al último, onda la página en la que estamos"). Sigue
+  por debajo de la tinta plena a propósito: eso es lo que la mantiene "regular y más
+  gris" en vez de volver al blanco bold de antes. Efecto secundario deseable: el salto
+  al padre pasa de 192→153 a **217→153**, o sea la escala se lee más clara.
+  ⚠️ **La base no puede bajar de ~46 %, que es donde se rompe el 4,5:1.** Por eso
+  las 16 combo (4 niveles) comparten la base en sus dos primeros crumbs en vez de
+  estrenar un cuarto escalón.
+- **El chevrón baja a 40 % (3,67:1) y queda por debajo del label más apagado**, que
+  es lo correcto: **un chevrón no puede pesar más que una palabra**. Antes estaba en
+  `--color-text-muted` (0,65), o sea más fuerte que dos de los tres tiers nuevos. Es
+  `aria-hidden`, así que no le aplica ningún mínimo.
+- **`color-mix` sobre `--color-text`, NO un blanco literal con alfa:** ese token se
+  invierte a tinta oscura dentro de `.section--light`, así que la escala sobrevive el
+  día que un breadcrumb caiga sobre un hero claro. **Hoy ninguno lo hace —
+  verificado en las 54 páginas, no asumido.**
+- **El hover resuelve a la tinta PLENA en vez de devolver un subrayado**
+  ("en ningún momento"), y `:focus-visible` conserva el anillo global de base.css,
+  que es el cue no-cromático de verdad. **Verificado con puntero real**
+  (`Input.dispatchMouseEvent`, porque `:hover` no responde a un `dispatchEvent` de
+  página): `rgb(255,255,255)` y `text-decoration-line: none`.
+- ⚠️⚠️ **`/kontakt/` SE HABRÍA QUEDADO EN EL DISEÑO VIEJO EN SILENCIO.** Tenía el
+  tratamiento entero re-declarado a **(0,2,0)** en `page-contact.css` —sus propios
+  inks `--kc-*`, la página actual en bold y **un subrayado de vuelta en hover**— y la
+  especificidad más alta gana siempre. Esas reglas se **BORRARON**, que es además lo
+  que pedía el comentario de ese mismo bloque desde julio ("THIS IS MEANT TO BE
+  SITE-WIDE… el lugar correcto es components.css"). `--kc-ink` es `--color-white`, o
+  sea la misma tinta a la que resuelve la regla compartida, así que **nada más de esa
+  página se movió**. Sobrevive sólo su `gap` de `--space-3`.
+  **Lección: antes de cambiar un componente compartido, grepear los overrides
+  page-scoped — un cambio en components.css no llega a una página que lo re-declara.**
+- **Medido en 18 páginas** (los 12 tipos: servicio, hub, ciudad, combo de 4 niveles,
+  case study, Ratgeber, legales, `/jobs/`, `/kontakt/`, `/angebot/`,
+  `/sicherheitskonzept/`, homepage) y **re-medido después de subir el último a 85 %**:
+  **45 crumbs, 0 con subrayado y 0 fuera del peso 400** —la página actual incluida—, la escala en el orden correcto en las 17 que
+  llevan trail, los separadores todos en 0,4, y la homepage sin breadcrumb como
+  corresponde.
+- **Contraste verificado contra el BACKDROP REAL de cada glifo, no sobre el token:**
+  se ocultó el trail, se capturó y se muestreó **el rect de cada crumb** en los dos
+  heroes con foto (`/werkschutz/` y `/leistungen/`) a 1440 y 390 — **todos pasan**,
+  y el peor caso es **4,76:1** (el "Startseite" al 50 % contra el píxel p95 más claro
+  de la foto de werkschutz). Es la razón por la que la base no puede bajar más.
+- ⚠️⚠️ **TRAMPA DE ENTORNO QUE YA ME COMIÓ DOS VECES HOY Y QUE ESTE ARCHIVO DEBERÍA
+  HABERME AHORRADO: un server de medición se murió a mitad de la sesión y la sonda
+  devolvió "no existe el elemento", que se lee como bug de la página.** El tell es
+  `location.href === "chrome-error://chromewebdata/"`. Se confirma con
+  `curl -o /dev/null -w "%{http_code}"` → **000**. **Levantar el server con `nohup`
+  + `disown`** (sin eso no sobrevive entre llamadas) y chequear el 200 antes de creer
+  una medición vacía.
+- ⚠️ **Nota de medición: `Input.dispatchMouseEvent` necesita DOS `mouseMoved`** — el
+  primero desde otra coordenada. Con uno solo `matches(':hover')` devuelve `false` y
+  parece que el hover no aplica.
+
+**2026-08-19 — `/werkschutz/`: LA CAJA "Werkschutz + Technik aus einem Konzept" VA
+CENTRADA** (cliente: "esto en werkschutz hacelo centrado"). Una declaración de CSS y
+una clase en el markup.
+
+- **Se centra LA CAJA, el texto de adentro sigue a la izquierda**, y eso no es una
+  interpretación libre: es la regla que este componente ya tiene escrita del
+  **2026-08-17** (`.service-prose` / `.service-trust` ya lo centran así) con su razón
+  — el contenido es un párrafo de 3–4 líneas en una caja de 46rem, y la convención
+  del proyecto para prosa centrada es medida más angosta + `hyphens: none`
+  (`/referenzen/`), que en un callout no aplica. **Si el cliente quiere también el
+  texto centrado, son dos declaraciones más; no se hizo de arriba.**
+- ⚠️ **LA CAUSA: `.service-highlight` está capado a 46rem y NO tiene auto-márgenes
+  propios**, así que en cualquier sección donde no se los dé alguien, la caja queda
+  pegada al borde izquierdo. Es la misma trampa que este archivo documenta nueve
+  veces: **`max-width` no centra nada — `margin-inline: auto` centra la CAJA,
+  `text-align` centra el TEXTO.**
+- ⚠️ **Va por CLASE OPT-IN (`.service-highlight--centred`), no por scope de
+  sección**, y la razón es de alcance: la misma caja vive en `.service-scope` también
+  en **`/brandwache/` y `/objektschutz/`**, y en `.service-points` en **2 páginas
+  combo** — un selector por sección habría movido páginas que el cliente todavía no
+  revisó (está corrigiendo los servicios de a uno). **Sumar cualquiera de esas es
+  agregar la clase.**
+- **Medido a 320 / 390 / 600 / 768 / 1024 / 1152 / 1440 / 1920:** caja a **0px del eje
+  del container** en los 8 anchos, con aire **idéntico a los dos lados** (249/249 a
+  1440, 312/312 a 1920, 122/122 a 1152, 67/67 a 1024), texto en `start` y sin scroll
+  horizontal. **Debajo de 1024 el cap de 46rem es inerte** (la caja llena la columna),
+  o sea ahí no cambió nada.
+- ✅ **Verificado que NO se movió ninguna otra página**: las 7 que publican esta caja
+  medidas a 1440 — `/brandwache/`, `/objektschutz/` y las 2 combo siguen pegadas a la
+  izquierda (`margin 0px`), y `/empfangsdienst/` y `/veranstaltungsschutz/` siguen
+  centradas por la regla del 08-17. Sólo `/werkschutz/` cambió.
+
+**2026-08-19 — EL CONTORNO DEL HERO DE CIUDAD CRECE ~50 % EN TELÉFONO Y ~75 % EN
+TABLET** (cliente: "in both tablet and mobile, make the map image bigger"). Un solo
+valor en `css/page-city.css`, y con eso las 10 páginas.
+
+- **`max-height: clamp(6.5rem, 16vw, 12rem)` → `clamp(9.5rem, 28vw, 18rem)`.** A/B
+  medido sobre `/sicherheitsdienst-wuerzburg/`, viejo → nuevo:
+
+  | | mapa | CTA termina en | fold |
+  |---|---|---|---|
+  | 390 teléfono | 71x104 → **104x152** (+46 %) | 753 → **801** | 844 |
+  | 768 tablet | 84x123 → **147x215** (+75 %) | 642 → **734** | 1024 |
+  | 834 tablet | 91x133 → **160x234** (+76 %) | 656 → **756** | 1112 |
+
+- ⚠️⚠️ **EL TECHO NO ES ESTÉTICO, ES EL CTA: cada píxel de mapa empuja el H1 y el
+  botón el mismo píxel hacia abajo**, porque el contorno va ARRIBA del copy en una
+  columna. **Quedan 43px de fold en teléfono**, y la nota del valor anterior ya
+  señalaba los ~150px como el punto donde el H1 sale del alcance cómodo — 152 está
+  justo ahí. **No volver a subirlo sin re-medir el CTA a 390.** Se probaron tres
+  valores y se descartó `clamp(10rem, 30vw, 20rem)` porque dejaba sólo 35px.
+- ⚠️ **DOS COSTOS MEDIDOS Y ACEPTADOS, los dos en la trust band y los dos en anchos
+  que ya estaban al límite**: a 600x900 termina en 998 (antes 890 de un fold de 900)
+  y a 1023x900 en 1078 (antes 895). Ninguno tenía más de 10px de aire antes, y en
+  teléfono esa banda ya caía abajo del fold.
+- ✅ **Achicó el salto del breakpoint en vez de agrandarlo**: a 1024 el mapa pasa a
+  458px, así que la discontinuidad es **286 → 458** en vez de 164 → 458.
+- **Medido en las 10 ciudades a 320 / 390 / 768 / 834 / 1023**: **el ALTO es idéntico
+  en las diez** (152 / 215 / 234 / 286) — que es el punto de dimensionar por alto y no
+  por ancho — el ancho varía por la forma real de cada ciudad (104px Würzburg a 223px
+  Coburg en teléfono), **todos entran en el container y sin scroll horizontal**.
+- ⚠️⚠️ **HALLAZGO PRE-EXISTENTE, ENCONTRADO MIDIENDO Y **NO** ARREGLADO (es otro
+  defecto y otro pedido): a 320px la COLUMNA DE COPY del hero mide 389px dentro de un
+  viewport de 320, y en Coburg eso CORTA 44px del H1.** No lo causa este cambio —
+  verificado volviendo al tamaño viejo: los mismos 389px. Y es invisible para las
+  sondas de siempre: `.service-hero` es `overflow: hidden`, así que **la página no
+  scrollea de costado, CLIPEA**, y `hScroll: 0` da "todo bien". La causa es la que
+  este archivo ya documenta cinco veces — `.btn` es `white-space: nowrap` y el
+  min-content de "Unverbindliches Angebot einholen" (~325px + padding) fija el ancho
+  de la columna. **El arreglo es el mismo de siempre, `white-space: normal` +
+  `max-width: 100%` en el bloque de teléfono, y toca las 10 páginas.**
+
+**2026-08-19 — LAS 10 PÁGINAS DE CIUDAD: EL EINSATZFELDER PIERDE SU EYEBROW Y PASA A
+HEADER CENTRADO, Y EL REVIEW DE GOOGLE DE BAMBERG QUEDA CENTRADO** (cliente: "centra
+el review de google" + "saca el eyebrow de esta sección … y centrá el título y el
+texto debajo", después "todas estas secciones de las ciudades").
+
+- **Los 10 eyebrows se BORRARON, no se ocultaron** — "Vor Ort im Einsatz" en nueve y
+  "Heimmarkt" en Bamberg. ✅ **Verificado contra los `.docx` antes de tocarlos: NINGUNO
+  es copy del cliente.** "Vor Ort im Einsatz" no aparece en ningún draft de ciudad, y
+  "Heimmarkt" sólo sale en notas de producción (el título del documento, la nota de
+  "Struktur-Variante", el encabezado "7 — Trust (Heimmarkt-Ausbau)") y dentro de una
+  frase de prosa que sigue en la página. **Nada de lo que escribió Chris salió.**
+  ⚠️ `.section-eyebrow` NO se borró: la sigue usando el callout de Brandwache y otros
+  tipos de página. Y si alguna vez vuelve acá **necesita `justify-content: center`**,
+  porque es `display: flex` y el centrado del padre no mueve un hijo flex — la misma
+  trampa que la plantilla de servicio ya documentó al borrar los suyos.
+- **El centrado son DOS selectores que YA EXISTÍAN, no reglas nuevas**: `.city-fields`
+  se sumó a `.city-why, .city-services`, que ya centraban su header en este archivo. O
+  sea el bloque pasa a la composición que el resto de la página ya usaba, y el comentario
+  de esa regla —que decía "sólo dos siguen rangeadas a la izquierda, el Einsatzfelder y
+  Kosten"— quedó actualizado. **Kosten es la única que queda, y no se puede centrar:**
+  su intro vive en la columna izquierda de una grilla de dos.
+- ⚠️ **Los ITEMS se quedan a la izquierda a propósito** (`text-align: start`, medido en
+  las 10): header centrado sobre contenido rangeado a la izquierda es el par que esta
+  página ya usa en todos lados, y centrar cuatro bloques de prosa a 2 columnas le saca
+  al ojo el borde por el que baja leyendo.
+- **El lede entró a la lista de `hyphens: none`** — base.css pone `hyphens: auto` en
+  todo `<p>`, y una línea centrada ya tiene dos bordes irregulares: un compuesto alemán
+  partido al medio ahí se lee como falla de render. Misma decisión que el resto del
+  archivo.
+  ⚠️ **Sólo 3 de las 10 tienen lede en esta sección** (Würzburg, Bamberg, Erlangen); las
+  otras seis van H2 + items directo, así que ahí no hay nada que centrar debajo del
+  título. No es un bug de la sonda: está en el propio dato.
+- ✅ **BUG REAL EN MI PRIMER INTENTO DE CENTRAR LA CARD, y el síntoma era el opuesto de
+  lo buscado: la achicó en vez de moverla.** Puse
+  `width: calc((100% - var(--space-6)) / 2)` en el `.testimonial:only-child` — **el
+  porcentaje de un grid item resuelve contra su PROPIA ÁREA DE GRILLA, no contra la
+  grilla**, así que ese 100% era UNA columna y el calc la volvió a partir al medio:
+  **medido 284px contra los 601 que debía tener.** `grid-column: 1 / -1` primero hace
+  que el área sea toda la grilla y recién ahí el calc devuelve exactamente el ancho de
+  una columna. Medido después a 900 / 1024 / 1100 / 1280 / 1440 / 1920: **card = media
+  grilla exacta y desvío 0 en los seis**, o sea la card se MOVIÓ y no cambió de tamaño.
+- ⚠️ **`:only-child` en vez de una clase modificadora, a propósito:** la regla sigue al
+  CONTENIDO, así que **los dos testimonios de Nürnberg quedan intactos** (verificado:
+  601px cada uno, sin desvío) y el día que Bamberg sume una segunda cita se
+  des-centra sola, sin markup que nadie tenga que acordarse de cambiar.
+- **El generador quedó en sincro**: el eyebrow se sacó de `r_fields` y sus 9 claves
+  `"eyebrow"` se borraron del dato en vez de quedar sin leer, así que **re-correr
+  `city-pages.py` ya no lo devuelve**. Verificado en dos pasos: el diff generador ↔
+  páginas era **exactamente la línea del eyebrow y nada más** en las 9, y después de
+  adoptar la salida vuelve a dar 9/9 idénticas. Nürnberg se editó a mano porque es la
+  única que no sale del generador.
+- **Medido en las 10 a 320 / 390 / 768 / 1024 / 1440**, con un `Range` sobre los NODOS
+  DE TEXTO (el rect del elemento miente cuando la caja está capada): **H2 y lede a 0px
+  del eje del container en los 5 anchos de las 10 páginas**, cero eyebrows, items a la
+  izquierda, y **sin scroll horizontal en ninguna**. Capturas revisadas de Coburg
+  (header sin eyebrow) y del bloque de Bamberg con la card centrada.
+- ⚠️ **La trampa de medición del Chrome degradado volvió a aparecer y otra vez casi
+  reporto un bug inexistente**: una corrida dijo que `.city-trust__quotes` **no existía**
+  en Bamberg a 1024 y 900. Medida de a una, la sección está en los cuatro anchos. Es el
+  mismo caso ya documentado hoy — **una instancia de Chrome se degrada en una corrida
+  larga y devuelve datos de otra página; chequear `location.pathname` NO alcanza.**
+
+**2026-08-19 — `/referenzen/`: EL WIDGET DE GOOGLE SALE DEL HERO Y LA FOTO DEL EQUIPO
+CRECE EXACTAMENTE LO QUE ÉL OCUPABA** (cliente: "saca el google rating de la hero,
+dejalo nomás más abajo, y por lo tanto como se va el google rating agrandá la imagen
+de las tres personas"). Un bloque de markup menos y **un solo número** de CSS.
+
+- ⚠️⚠️ **REVIERTE UNA RESTAURACIÓN DE HACE DOS DÍAS, y las dos mitades están anotadas
+  en el código.** El widget volvió al hero el 2026-08-17 porque el Webtext 27 (línea
+  12) y el feedback 3.6.1 lo piden ahí; esta instrucción es POSTERIOR y gana, igual
+  que G9 ganó sobre las remociones de badge. **El par de CTA se queda** — el pedido
+  nombra sólo el rating.
+- ⚠️ **NO SE PERDIÓ NINGÚN DATO: la misma `.review-card--sm` sigue renderizando en la
+  sección de Kundenstimmen** (agregada el 2026-08-17), que es la mitad "dejalo nomás
+  más abajo". **Verificado sobre el markup servido: exactamente 1 widget en toda la
+  página**, 1 "4,7", 1 "Bewertungen", cero tokens sin resolver. El `aggregateRating`
+  del JSON-LD no se tocó — sigue publicando 4.7/97 una vez.
+- ⚠️⚠️ **LAS DOS EDICIONES SON UNA SOLA COSA, y separarlas rompe la página en una
+  dirección o en la otra.** `.ref-hero__media` no tiene ancho: tiene un **presupuesto
+  de ALTO** (`width: min(100%, 62rem, calc((100svh - Xrem) * 1.648))`), donde X es
+  "todo lo que hay en la primera pantalla que NO es la foto". Sacar el widget liberó
+  **80px** — 48 de la card más los 32 de su propio `margin-top`
+  (`.service-hero__trust`, page-service.css) — así que X baja **35.25 → 30.25rem** y
+  esos 80px se los come la foto. Revertir una sin la otra deja el CTA abajo del fold o
+  la foto chica sin motivo.
+- **Medido A/B con dos builds en paralelo (8177 nuevo / 8178 viejo), no estimado.**
+  La foto gana **+132px de ancho en TODOS los anchos de escritorio**:
+  554 → **686** a 1440 y 1512 (+24 %), 389 → **521** a 1280 (+34 %), 336 → **468** a
+  1024 (+39 %), 850 → **982** a 1920 (+16 %).
+  ✅ **La confirmación de que los 5rem son el número exacto: el CTA ahora termina en
+  898 / 794 / 752 / 1078 — los MISMOS píxeles donde terminaba el widget antes.** O sea
+  el último bloque sobre el fold quedó donde estaba y todo el espacio liberado fue a la
+  foto.
+- **En teléfono no cambia nada y es correcto**: a 390 la foto mide 350px porque manda
+  el `100%` de la columna, no el presupuesto — el cap de alto sólo ata en escritorio.
+- ✅ **Ganancia lateral en un caso degenerado: a 320x568 la foto medía 7px de ancho**
+  (el presupuesto de 35.25rem = 564px se comía casi los 568 del viewport). Ahora mide
+  **138**. ⚠️ A ese tamaño los CTA caen abajo del fold (665/568) — **pre-existente**,
+  antes también (585/568), y es inherente a un viewport de 568px de alto.
+- **`.ref-hero__trust` se BORRÓ del selector de centrado, no se dejó como regla
+  muerta** — una regla que nada puede matchear es una regla que el próximo tiene que
+  demostrar que no se usa. Queda anotado que si el widget vuelve al hero necesita ese
+  `justify-content: center` o renderiza pegado a la izquierda bajo un título centrado.
+- **`js/hero-reveal.js` no necesitó una línea**: arma su cascada con `.filter(Boolean)`,
+  así que un `.hero__trust` ausente es un paso menos. **Verificado con motion PRENDIDO**
+  (Chrome aparte, sin `--force-prefers-reduced-motion`) empujando el timeline a mano
+  (`gsap.globalTimeline.time(8)`): las 5 palabras del H1 en opacidad 1, lede y CTA en
+  transform identidad, y **0 elementos del hero por debajo de opacidad 1**.
+- **Medido a 320 / 390 / 1024 / 1280 / 1440 / 1512 / 1920**: sin scroll horizontal en
+  ninguno. Capturas revisadas a 1440 (hero), 390 (teléfono) y del bloque de
+  Kundenstimmen con el rating en su lugar nuevo.
+- **Dos comentarios obsoletos corregidos de paso en `page-referenzen.css`**: la
+  cabecera de `.ref-hero` (afirmaba el estado del 08-17) y el bloque de teléfono, que
+  todavía decía "este hero es foto + dos líneas de texto centrado" — dejó de ser cierto
+  cuando volvieron los CTA hace dos días.
+- ⚠️⚠️ **TRAMPA DE ENTORNO QUE COSTÓ ~20 MINUTOS Y VA A VOLVER: un `rsync` del repo al
+  scratchpad NO TERMINA.** El proyecto vive en el Desktop, que está en iCloud, así que
+  rsync se queda copiando `assets/` (y `.git`, que nadie excluye) durante minutos y
+  cualquier comando en primer plano se muere en el timeout de 2 min. **Lo que funciona
+  es `cp -R` de las carpetas de fuente** (build.js, pages, partials, css, js, content)
+  **más un SYMLINK por subcarpeta de `assets/` dentro de `dist/assets/`** — build en
+  0,15s.
+  ⚠️ Dos detalles: `ln -sfn origen dir` **cuando `dir` YA EXISTE crea el link ADENTRO**
+  (`dist/assets/assets`), así que hay que linkear `images`/`icons`/`fonts`/`js`/
+  `documents` uno por uno; y **`node build.js` borra `dist/` y se lleva los symlinks
+  puestos a mano** — hay que rehacerlos después de cada build (una captura salió con
+  todos los PNG rotos por eso).
+- ⚠️ **Nota de medición: `Runtime.evaluate` con `returnByValue` sobre
+  `gsap.globalTimeline.time(8)` explota con "Object reference chain is too long"** —
+  devuelve el timeline. Hay que envolverlo y devolver un escalar.
+
+**2026-08-19 — `/angebot/`: LA SECCIÓN "Was nach dem Absenden passiert" VA CENTRADA
+ENTERA** (cliente: "hace esta seccion centrada"). Cuatro reglas en
+`css/page-angebot.css`, cero markup. **Ni una palabra de copy cambió.**
+
+- **Centrado el HEADER Y EL CONTENIDO**, no el split header-centrado /
+  contenido-a-la-izquierda que usa la mayoría de las secciones del sitio. La razón es
+  la misma que ya documentó `.city-proof` de `/sicherheitsdienst-nuernberg/`: son
+  **tres items cortos con numeral**, no citas de cuatro líneas ni bloques de
+  beneficios que necesiten un borde izquierdo al que el ojo vuelva. Precedente
+  directo: los tres pasos de postulación de `/jobs/`, que son este mismo bloque.
+- ⚠️ **EL NUMERAL PASÓ DE AL LADO A ARRIBA, y no es cosmético:** con la badge
+  pinneada a la izquierda, el texto centrado se lee como un item alineado a la
+  izquierda que casualmente está centrado. `flex-direction: column` +
+  `align-items: center`.
+- **Medida capada a 22rem** — el valor que ya usan los pasos centrados de `/jobs/`.
+  Texto centrado quiere una columna más angosta que el mismo copy rangeado: dos
+  bordes irregulares hacen más difícil seguir una línea larga. **Debajo del corte de
+  3 columnas el cap es inerte** (la columna es más angosta), así que no hizo falta
+  meterlo en una media query.
+- ⚠️ **`hyphens: none`, y acá se VEÍA:** base.css pone `hyphens: auto` en todo `<p>`
+  y esta sección venía renderizando **"mel-det" y "kosten-freies"** — con el texto
+  centrado eso duplica la irregularidad y se lee como falla de render. Misma decisión
+  que ya toman el copy centrado de `/referenzen/` y el bloque de keyword de
+  `/leistungen/`. **Chequeado que no desborda**: la palabra más larga es
+  "Sicherheitsexperte" (18 caracteres) y a 320px la columna tiene 280.
+- **Medido a 320 / 390 / 600 / 768 / 1024 / 1440 / 1920:** H2, numeral, título y
+  párrafo **a 0px del eje de su propia columna en los 7 anchos**, link de cierre a
+  **0px del eje del container** (antes caía bajo la primera columna), los tres steps
+  con **alto idéntico** en cada ancho, `hyphens: none` aplicado y sin scroll
+  horizontal salvo el caso pre-existente de abajo. Capturas revisadas a 1440, 768 y
+  390.
+- ⚠️ **COSTO MEDIDO Y ESPERABLE: la sección crece.** 742 → **790px a 1440** (+48) y
+  1011 → **1107px a 390** (+96) — es el numeral ocupando su propio renglón en vez de
+  compartirlo con el título. Si alguna vez molesta, la palanca es el `gap` del step
+  (hoy `--space-3`), no el cap de medida.
+- ⚠️ **NO tocado, pre-existente y ya anotado en este archivo: `/angebot/` sigue con
+  28px de scroll horizontal a 320px** (`.ag-metric__sym`). Es de otra sección y el
+  pedido era el centrado.
+- ⚠️⚠️ **TRAMPA DE ENTORNO QUE COSTÓ UNA RONDA ENTERA DE MEDICIÓN, y va a volver: el
+  `localhost:8123` que estaba mirando el cliente NO sirve `dist/` de este repo.**
+  Lo sirve otra sesión desde su propio scratch
+  (`/private/tmp/.../<otra-sesión>/scratchpad/build/dist`), o sea un snapshot
+  congelado — mi primera pasada midió `flex-direction: row` y `hyphens: auto`
+  **después** de haber aplicado el cambio y buildeado, y parecía que el CSS no había
+  aplicado. **Se detecta con `lsof -a -p <pid> -d cwd` + `ps -o command=` sobre el
+  proceso del puerto**, no leyendo el CSS. Para medir hay que levantar un server
+  propio contra el `dist/` propio (usé 8124). **Y el cliente sigue viendo el árbol
+  viejo hasta que se rebuildee ese preview o cambie de puerto.**
+- ⚠️ **Nota de medición: `getClientRects().length` NO cuenta líneas acá.** El `<p>`
+  del step es hijo de un `display: flex`, así que se blockifica y devuelve un rect
+  siempre (reportó 1 línea para párrafos de 3). Es la misma trampa ya documentada
+  para las etiquetas de los marcos del Ratgeber; para contar líneas hay que leer el
+  ALTO o usar un `Range`.
+
 **2026-08-14 — EL RETRATO DE ALEXANDER JÄGER LLEGÓ Y ENTRÓ EN `/werkschutz/`**
 (cliente: **`Alex.png`** en el Desktop). Cierra el último 🔴 de la sección
 Ansprechpartner, que arrastraba un marco reservado desde el 2026-08-03. Toca
@@ -8431,6 +9323,422 @@ explicitly-requested exceptions to that).
   city-pill list still uses the shared `icon-pin` sprite symbol and
   wasn't part of this request.
 
+**2026-08-17 — LAS 15 PÁGINAS COMBO QUE FALTABAN ESTÁN CONSTRUIDAS. Con eso las 16
+Kombiseiten están completas y NO QUEDA UN SOLO LINK INTERNO ROTO DENTRO DE `<main>`
+EN TODO EL SITIO** (cliente: "hagamos ahora las páginas de las ciudad + servicio").
+Webtexte 35–49 (Stand 25.07.2026), verbatim, alemán: Objektschutz · Werkschutz ·
+Baustellenbewachung × Nürnberg, y las cuatro leistungen × Würzburg · Erlangen ·
+Fürth. La plantilla corregida está en
+[docs/page-conventions.md §11.6 y §11.7](docs/page-conventions.md); acá va lo que no
+se deduce de ahí.
+
+- ⚠️⚠️ **"COPIAR /brandwache-nuernberg/ Y CAMBIAR EL COPY" ERA LA MITAD DE LA
+  VERDAD, y es la TERCERA vez que este proyecto se lleva la misma sorpresa** (ya
+  pasó con las 9 ciudades y con las 9 de servicio). §11 decía eso y los BLOQUES sí
+  estaban todos construidos — `page-combo.css` necesitó **una sola regla nueva** en
+  las 15. Lo que no se transfiere es la ESTRUCTURA: los 15 drafts traen la suya a
+  propósito y lo dicen en su propia cabecera (*"Struktur variiert ggü.
+  Brandwache-Kombi"*, *"Struktur-Variation: Prozess früh"*, *"Q&A-lastig"*). Van de
+  **6 a 9 secciones en cuatro familias de forma**. §11 está corregido.
+- ⚠️ **CONSECUENCIA: LA LISTA DE SEAMS NO SE PUEDE COPIAR.** Los tiles son del color
+  de la sección de ARRIBA y dos del mismo color no llevan seam (§9.2), así que con
+  otro orden cambia entera. Las 16 van de **5 a 7 seams**. Se **deriva** de la
+  secuencia de superficies, no se escribe.
+- ⚠️⚠️ **Y LA PARIDAD DE SUPERFICIE ES ARITMÉTICA, no gusto.** El hero es oscuro y
+  Kosten también (es la variante invertida de este tipo — card blanca sobre sección
+  negra, decisión del cliente del 2026-08-10), así que **una página alterna perfecto
+  sólo si la cantidad de secciones ENTRE los dos es IMPAR**. Once de las quince
+  tienen impar y alternan hasta abajo; las otras cuatro toman una o dos adyacencias
+  sin seam, puestas donde las dos secciones se leen como un capítulo — de
+  preferencia en **prosa → Kosten**, porque ahí la card blanca ya aporta el cambio
+  de superficie y el seam es lo que menos compra. `/objektschutz-wuerzburg/` es la
+  única con DOS, y está forzada: su draft pone el proceso de 3 pasos en la sección 2,
+  `steps` sólo puede ir en oscuro (`.service-konzept*` cablea texto blanco) y
+  `fields` sólo en claro (su azul es la mezcla profunda que sólo pasa contraste sobre
+  blanco), así que ninguna asignación evita las dos.
+- **Por eso se generaron con un script**, `docs/design-sources/combo-pages.py` +
+  `combo_pages_data.py` + `combo_drafts.py`, **de una sola pasada y en desarrollo**,
+  igual que `city-pages.py` y `service-pages.py`. No corre en `npm run build`.
+  Existe por las tres cosas que se rompen a mano y **no se ven en una captura**: la
+  paridad FAQ ↔ JSON-LD (**96 pares**), el color de cada seam, y los precios como
+  token (G10). Después son páginas normales, editables a mano; **no re-correrlo sobre
+  una página ya editada**. ⚠️ **`/brandwache-nuernberg/` NO está en el script** — se
+  construyó a mano el 2026-08-09 y el cliente la revisó varias veces desde entonces,
+  así que correrlo no puede tocarla.
+- ⚠️ **Y por una cuarta razón que apareció construyendo: NINGUNA PALABRA SE TIPEÓ.**
+  Son ~24.000 palabras de alemán, y un error de transcripción en copy aprobado no lo
+  caza ninguna medición. `combo_drafts.py` sale a máquina de los `.docx` — que **no
+  están en git**, así que ese archivo es la única copia versionada de estos 15
+  drafts.
+- ⚠️ **El split "párrafo de intro" ↔ "items de lista" se DECLARA (`prose: N`), no se
+  adivina** — es la corrección que `service_drafts.py` ya pagó: la prosa alemana está
+  llena de dos puntos, así que *"Ob die Nachtkontrolle wirklich lief, sehen Sie bei
+  FRANKONIA nicht erst nach dem Einbruch: Checkpoints belegen jede Runde …"* parsea
+  exactamente igual que una fila `Label: text`. **No volver a heurística.**
+- **`dotsplit`, un mecanismo nuevo y chico:** dos drafts (los Bausteine de
+  Objektschutz) escriben sus cuatro items **en UNA línea unida por " · "**. Se parte
+  por eso y por nada más, declarado por sección, y el generador aborta si esa sección
+  no tiene exactamente una línea.
+- ✅ **DEFECTO REAL ENCONTRADO MIDIENDO, y el síntoma es el peligroso: la página NO
+  scrolleaba de costado, CLIPEABA.** `.service-hero` es `overflow: hidden`, así que
+  el H1 de las 4 páginas de Baustellenbewachung se cortaba en silencio a 320px —
+  `documentElement.scrollWidth === innerWidth` decía "está bien" mientras una palabra
+  perdía sus últimas letras. Causa: base.css pone `hyphens: none` en headings y
+  **`overflow-wrap: break-word` no reduce el min-content**, así que
+  "Baustellenbewachung" (19 caracteres) fijaba **303px contra 280 disponibles**.
+  ⚠️ **LECCIÓN GENERAL: chequear cajas pintadas fuera del viewport, no sólo scroll
+  horizontal.** `hScroll: 0` puede significar "está bien" o "algo está cortando
+  texto", y sólo la lista de cajas fuera del viewport distingue las dos.
+  ⚠️ **El breakpoint es 360px y NO los 400 que usa `.service-hero--split`, y el
+  número está medido**: la palabra entra desde 344px, así que a 400 la regla
+  hyphenaría un H1 que sí tiene lugar — y un teléfono de 390 rompería
+  "Baustellenbewa-chung" **al medio en vez de en el espacio**, peor tipografía sin
+  ninguna ganancia. Verificado: `hyphens: auto` a 320 y 344, `none` a 360 y 390, sin
+  clipear en ninguno. Es la única regla que estas 15 páginas agregaron al CSS.
+- ✅ **GANANCIA LATERAL GRANDE: estas 15 cerraron los 4 404 planificados que
+  arrastraban las páginas de servicio** (`/objektschutz-nuernberg/`,
+  `/brandwache-wuerzburg/`, `/brandwache-erlangen/`, `/brandwache-fuerth/`).
+  **Verificado sobre el build entero: en las 54 páginas, CERO links internos rotos
+  dentro de `<main>`.**
+- ⚠️ **Los teléfonos de las respuestas de FAQ van como `tel:` y como token** (G4 y
+  G10), lo que **corrige por defecto un defecto de las 9 páginas de servicio**, que
+  los dejaron como texto literal. La paridad con el JSON-LD se sostiene porque
+  envolver en un `<a>` cambia el MARKUP y no el TEXTO — verificado, 96/96
+  byte-idénticas. ⚠️ **NO se arreglaron las 9 de servicio**: implica regenerarlas y
+  el cliente ya empezó a revisarlas de a una; queda anotado en la checklist.
+- **Medido: 16 páginas × 8 anchos** (320 / 344 / 360 / 390 / 768 / 1024 / 1440 /
+  1920) = **128 corridas, CERO problemas** — sin scroll horizontal, nada fuera del
+  viewport, un solo `<h1>`, sin saltos de nivel de heading, cero imágenes rotas.
+  **Contraste: 954 elementos**, y el único fallo es el caveat sitewide del azul del
+  CTA (**3,11:1**, blanco sobre #3D9AD3, el mismo que publica cada botón primario).
+  El markup servido —que ES lo que recibe un crawler que no ejecuta JS— trae
+  **3.414–4.718 caracteres** de texto real en `<main>`, 16–27 headings, 10–13 links,
+  **0 tiles y 0 elementos ocultos**. Con motion prendido los seams construyen sus
+  **180 tiles** cada uno y el dibujado de los iconos queda armado; con
+  `prefers-reduced-motion`, **0 tiles, los marcadores de título en `100% 100%`** (el
+  fallback `var(--mark, 1)`, no vacíos) y el riel completo.
+- **Las 15 entraron a `sitemap.xml`** con priority 0.8, agrupadas por ciudad: 53
+  URLs, XML válido, todas únicas. `/datenschutz/` sigue afuera a propósito (noindex
+  mientras su texto sea placeholder).
+- ⚠️⚠️ **PARA CHRIS — CONTRADICCIÓN DE PRECIO DENTRO DEL PROPIO DRAFT.** El Webtext
+  45 (Baustellenbewachung Erlangen) dice en su párrafo de Kosten "zwischen **25 und
+  35** Euro" mientras **la Preis-Box de la misma página** renderiza 26-32, y las
+  otras 15 combos dicen 26–32. Se publicó el token: **una página que se contradice
+  sobre su propio precio es peor que cualquiera de las dos lecturas**, y es el mismo
+  defecto que ya tenían 3 páginas de servicio.
+- ⚠️ **PARA CHRIS — dos ejemplos calculados con cifra propia, publicados VERBATIM y
+  NO tokenizados**: el Webtext 41 §6 dice "1.500 und 2.100 Euro" contra el
+  `example.weekendTotal` = 1.550–1.900, y el Webtext 43 §6 "4.000 und 6.000 Euro"
+  contra `example.nightPostMonthly` = 5.500–6.800. Tokenizar habría cambiado en
+  silencio el número del cliente, y **ninguno se contradice con nada en su propia
+  página** (la Preis-Box sólo afirma el precio por hora). Si confirma que son
+  redondeos sueltos, son dos filas más en la tabla del generador.
+  ⚠️ Dos que SÍ se tokenizaron **normalizan "bis" al guion del token**
+  ("1.550 bis 1.900" → "1.550–1.900"): misma cifra, y la alternativa era dejar un
+  precio cableado que la actualización anual se pierde.
+- ⚠️ **PARA CHRIS — la ÚNICA edición de puntuación de las 15 páginas.** El Webtext 47
+  §4 mete su notación de link a mitad de frase: "… samt Preisrahmen **— →
+  /sicherheitskonzept/,** und binnen eines Werktages …". La flecha es una instrucción
+  al builder y no copy, y cualquier forma de sacarla deja "— ," o pierde la raya. Se
+  perdió la raya (lee bien en alemán) y el destino sobrevive como `.service-link`
+  real. Está declarado como un find/replace literal que el generador **aborta** si no
+  matchea exactamente una línea, así que no puede fallar en silencio.
+- ⚠️ **Las 4 páginas de Brandwache INVIERTEN los CTA** (el teléfono es el primario),
+  que es la excepción aprobada a G2 y está en cada uno de sus drafts. **No
+  normalizarlas** contra las otras doce, que lideran con el formulario por sus
+  propios drafts.
+- **Ni un icono nuevo**: los 55 glifos de las secciones de Einsatzlagen, Warum y
+  Ablauf salen del sprite que ya existía, y **dentro de una página ninguno se repite**
+  — un icono repetido a dos secciones de distancia se lee como error, no como sistema.
+- ⚠️⚠️ **MISMO DÍA, CORRECCIÓN DEL CLIENTE: EL BLOQUE DE PROSA SE ESCAPABA DE UN
+  CONTRATO QUE EL CHASIS YA TENÍA** ("no puede quedar esto así tan largo, tiene que
+  tener dos renglones el título y el texto tener menos width", sobre
+  `/objektschutz-nuernberg/`). Eran **21 secciones en 15 de las 16 páginas**.
+  - **El defecto era de MARKUP, no de CSS.** Mi generador ponía los párrafos en un
+    `.service-prose__body` inventado, cuando las 9 páginas de servicio ya renderizan
+    este mismo bloque poniendo su párrafo en un **SEGUNDO `.section__intro`**. De eso
+    cuelgan **tres reglas que ya existían** en page-service.css:
+    `.service-prose .section__intro` → `text-align: center`; `.section__intro > p` →
+    `max-width: 42rem` **y** `hyphens: none`; y
+    `.service-prose .section__intro > p` → `margin-inline: auto`.
+  - **Mi wrapper se escapaba de las tres a la vez, y se veían las tres**: el párrafo
+    corría todo el container (**96–152 caracteres por línea** medidos, contra los
+    60–80 cómodos), quedaba alineado a la izquierda debajo de un H2 centrado —
+    **216px de desfase** entre el texto del uno y el del otro — y conservaba el
+    `hyphens: auto` de base.css, o sea partía compuestos alemanes al medio
+    ("un-kontrollierten", "Nach-weis") **dentro de texto centrado**, que es
+    exactamente lo que la convención de `/referenzen/` prohíbe.
+  - **Arreglado moviendo el markup: CERO reglas nuevas para el ancho.** Lo único que
+    quedó en `page-combo.css` es el cap del H2, porque eso el chasis no lo da (deja
+    el `.section__intro` en `max-width: none`, así que un título de 45 caracteres
+    corría **una sola línea de 1234px a 1440 y 1360 a 1920**).
+  - **`max-width: 30ch` + `margin-inline: auto` + `text-wrap: balance`.** 30ch es el
+    cap de H2 dominante del proyecto (page-city dos veces, page-service,
+    page-sicherheitskonzept), y va en `ch` porque el H2 es un clamp tipográfico y el
+    largo del título cambia por ciudad (33 a 68 caracteres en las 21 secciones).
+    ⚠️ **`margin-inline: auto` no es opcional** — es la trampa que este archivo ya
+    documenta SIETE veces: sin él, `max-width` centra el TEXTO dentro de una caja de
+    995px que sigue pegada a la izquierda.
+  - ⚠️ **NINGÚN CAP DA "EXACTAMENTE DOS LÍNEAS" PARA LOS 21, y no es alcanzable**: van
+    de 33 a 68 caracteres, así que lo que parte el más corto en dos deja el más largo
+    en tres. Lo que 30ch garantiza es que ninguno corre una línea gigante, que es el
+    defecto reportado. **Medido: 17 de 21 en dos líneas, 1 en tres, 3 en una** — y esos
+    tres son los más cortos (33, 34, 35 caracteres), donde una línea es lo correcto.
+  - **Medido después, las 21 secciones a 1440 y 1920:** H2 y párrafo **a 0px del eje
+    del container** (el desfase se fue), párrafo en **672px** centrado con
+    `hyphens: none`, y re-verificado todo lo demás tras regenerar las 15 páginas —
+    **128 corridas sin un problema**, 954 elementos de contraste con el único caveat
+    del azul del CTA, **FAQ 96/96 byte-idénticas**, 0 literales de precio en la
+    fuente, y cero links internos rotos en el sitio.
+  - ⚠️ **CORRECCIÓN A MI PROPIA AFIRMACIÓN DE HOY: dije que `.service-prose` no tenía
+    CSS en ningún archivo, y eso NUNCA SE VERIFICÓ** — el grep venía en una cadena
+    `&&` que cortó antes de llegar a él, porque un `grep -c` previo devolvió 0. Sí
+    tiene regla, en page-service.css. **Un comando que no corrió no es evidencia de
+    nada; si un chequeo importa, hay que verlo devolver salida.**
+
+- ⚠️ **Dos trampas de medición, mías, que valen para la próxima sonda:**
+  1. **`<(h1|h2|h3|p)[^>]*>` TAMBIÉN MATCHEA `<path>`.** Mi diff de copy reportó
+     frases larguísimas que "no estaban en el draft" y eran el `<path>` del contorno
+     de la ciudad arrastrando medio documento hasta el siguiente `</p>`. Va
+     `<(h1|h2|h3|p)(?=[\s>])`.
+  2. **Verificar precios contra el BUILD da falsos positivos garantizados**: ahí el
+     token ya se resolvió, así que "26 bis 32" aparece como literal aunque la fuente
+     tenga `{{price.min}}`. Los literales se chequean en `pages/`, no en `dist/`.
+  Y una de entorno: **el proyecto tiene cero dependencias, así que no hay `ws`** — el
+  arnés de CDP usa un cliente WebSocket propio de ~40 líneas
+  (`scratchpad/cdp.js`), y un lote de 16 páginas en una sola evaluación devolvió
+  vacío, así que el contraste se midió en tandas de 4.
+
+**2026-08-17 — EL HEADER DE ORIENTIERUNG DE `/leistungen/` VA CENTRADO** (cliente:
+"este título ponelo centrado", sobre "Welche Sicherheitsleistung brauchen Sie?" y su
+lede). Header centrado sobre los tres selectores alineados a la izquierda — **la misma
+composición que `.lh-why` y el FAQ de esta misma página ya usan**, o sea una decisión
+que la página ya había tomado, no una nueva.
+
+- ⚠️ **SÉPTIMA VEZ DE LA MISMA TRAMPA, y hacen falta las TRES cosas:** (1)
+  `text-align` centra el TEXTO y los auto-margins centran la CAJA — una caja capada sin
+  ellos se queda pegada a la izquierda, o sea título centrado sobre párrafo hugging
+  left, que es **peor que no centrar nada**; (2) el auto-margin va en el `<p>` MISMO,
+  no en `.section__intro`, porque el chasis deja ese wrapper en `max-width: none` (ya
+  es de ancho completo, y ahí las auto-márgenes no hacen nada); (3) el selector necesita
+  **DOS clases**, porque `.section__intro > p` del chasis es (0,1,1) y una sola clase
+  empata y pierde por orden aunque esta hoja cargue después.
+- **Sin hyphenación**, por lo que ya documenta la sección de keyword de esta misma
+  página: base.css pone `hyphens: auto` en todo `<p>`, y una línea centrada ya tiene
+  dos bordes irregulares, así que un compuesto alemán partido a mitad se lee como falla
+  de render.
+- **`text-wrap: balance` en el lede, y no es adorno**: sin él la primera línea corre
+  hasta el cap de 42rem y la segunda queda corta — centrado eso se ve como un error.
+  Medido: el lede queda en **dos líneas parejas de 379px** de 600px para arriba.
+- **Medido con un `Range` sobre los NODOS DE TEXTO reales** (el rect del elemento
+  miente acá, porque las cajas están capadas), a 320 / 390 / 600 / 768 / 900 / 1024 /
+  1280 / 1440 / 1920: **H2 y lede a 0px del eje del container en los NUEVE**, H2 en 1
+  línea de 600 arriba (3 en teléfono, inherente a 40 caracteres en una columna de 350),
+  `hyphens: none` aplicado, **los tres selectores siguen en `text-align: start`** (o sea
+  el split header-centrado / contenido-izquierda es real) y sin scroll horizontal.
+  Capturas revisadas a 1440 y 390.
+- ⚠️ **El H2 NO lleva `max-width` en `ch`**, al contrario que `.lh-why`: ahí el cap
+  existe para forzar un corte lindo en un heading largo, y acá el título entra en una
+  línea de 600px para arriba — un cap lo partiría en dos sin que nadie lo pidiera.
+
+**2026-08-17 — EL SEAM DEL HERO DE `/leistungen/` DISOLVÍA EN NAVY HACIA UNA SECCIÓN
+BLANCA. La causa: `.pixel-seam--photo` tenía el color de la sección de destino
+CABLEADO, y ese destino es el de `/werkschutz/`** (cliente: "en la sección de
+Leistungen el degradado está mal, tiene que ser blanco, ¿ves que está azul?").
+
+- **Tenía razón y era un bug real, no una preferencia.** `.pixel-seam--photo` invierte
+  el modelo normal del seam: los tiles son el color de la sección de ABAJO y aparecen
+  encima de la foto. Pero ese color estaba escrito como literal — **`#00091F` más el
+  glow celeste al 0,38**, o sea la banda navy del Risiko **de `/werkschutz/`**, que es
+  la única página que tenía este variante. Cuando `/leistungen/` adoptó el hero a
+  sangre el mismo día, heredó ese navy mientras su sección siguiente es **blanca**: la
+  foto se rompía hacia un azul que **no existe en ninguna otra parte de esa página**.
+- ⚠️ **Es LA MISMA lección que este archivo ya pagó tres veces** (`.ag-hero__alt`,
+  `.city-callout__lede`, y el `.review-card` sobre sección clara de la pasada anterior
+  del mismo día): **un bloque que cablea una superficie se rompe en el momento en que
+  su vecina cambia de color.** La diferencia acá es que el color cableado no era el
+  suyo sino el **del vecino**, que es todavía más fácil de heredar sin notarlo.
+- **El arreglo no toca los valores de werkschutz: los hoistea a dos custom properties
+  con esos mismos literales como DEFAULT** (`--pixel-photo-fill` /
+  `--pixel-photo-glow`), y agrega un modificador `.pixel-seam--photo-light` para
+  destino claro. Así `/werkschutz/` es byte-idéntico y una tercera superficie es un
+  modificador más, no una edición de los defaults.
+- ⚠️ **El glow va a `none`, NO a un gradiente más pálido**, y la razón es la que
+  documenta el propio bloque: esa rampa existe para empalmar con el **borde superior
+  ILUMINADO** de la banda navy — un `.section--light` no tiene ningún borde iluminado
+  con el que ser continuo. Y el relleno es `--color-white` exacto, por lo mismo que ya
+  usa `.pixel-seam--white`: **#FAFAFA se leería como una banda grisácea entrando a una
+  sección blanca.**
+- **Verificado midiendo los DOS lados, no sólo el arreglado:** `/leistungen/` da ahora
+  tiles `rgb(255,255,255)` con `glow: none` contra una sección siguiente de
+  `rgb(255,255,255)` — **iguales**; `/werkschutz/` sigue en `rgb(0,9,31)` con su
+  gradiente contra una sección de `rgb(0,9,31)`. **180 tiles en las dos.** Captura del
+  seam a mitad de disolución revisada: píxeles blancos rompiendo la foto, cero navy.
+- **Cero impacto de layout** — sólo cambia `background-color` / `background-image` de
+  los tiles.
+- ⚠️ **PARA LA PRÓXIMA PÁGINA QUE USE UN HERO A SANGRE:** `--photo` ya no asume nada.
+  Hay que **declarar hacia qué superficie disuelve** — sin modificador es navy. Está
+  anotado en el markup de las dos páginas.
+
+**2026-08-17 — `/referenzen/`: EL RATING GENERAL DE GOOGLE ENTRA EN LA SECCIÓN DE
+TESTIMONIOS, CON EL MISMO WIDGET DE SIEMPRE Y SÓLO LA SUPERFICIE CAMBIADA** (cliente:
+"agregame el rating general, el widget que vemos en todas las otras secciones, pero
+ponelo que quede bien en la sección"). Toca `pages/referenzen.html` y
+`css/page-referenzen.css`; **ni un componente compartido se modificó.**
+
+- **Es el MISMO `.review-card review-card--sm` que llevan los heroes**, markup
+  idéntico, para que el sitio siga teniendo UNA marca de rating y no una segunda
+  parecida. Lo único que se overridea es la SUPERFICIE, y hacía falta: ese componente
+  está diseñado para fondo negro (`--color-white` + `--shadow-md`), y esta sección es
+  blanca.
+- **Va DEBAJO del H2, dentro del `.section__intro`**, y el orden es el argumento: las
+  tres citas son EJEMPLOS de cinco estrellas y el agregado es la afirmación que las
+  respalda, así que se lee "puntaje general, y acá tres de las reseñas". **El centrado
+  sale gratis** — `.ref-intro--center` ya es `text-align: center` y el pill es
+  `inline-flex`, así que no hizo falta ni una regla de centrado.
+- ⚠️ **EL RELLENO ES EL DE `.testimonial` (rgb(59 73 86 / 0.04)), COPIADO Y NO
+  RE-DERIVADO, Y LA SOMBRA SE FUE.** Sobre blanco, un pill blanco con `--shadow-md`
+  se lee como un objeto ELEVADO 24px arriba de tres cards INSET — dos materiales para
+  una sola idea, y el relleno blanco además no hace ningún trabajo. Plano y tintado
+  vuelve al pill y a las cards una decisión. (Blanco+sombra sobre blanco **sí** es un
+  patrón válido de este sitio —`.service-cases__card`— pero no justo arriba de paneles
+  planos.)
+- ⚠️ **El RADIO se queda en `--radius-lg` mientras las cards usan `--radius-md`, a
+  propósito:** a ~48px de alto, 16px es lo que hace que esto se lea como el PILL que es
+  en los siete heroes; 8px lo convertiría en una cajita, o sea un cuarto material.
+  **La superficie sigue a la sección, la forma sigue al componente.**
+- ⚠️⚠️ **SI ESTA SECCIÓN ALGÚN DÍA PASA A OSCURA, HAY QUE BORRAR EL OVERRIDE ENTERO,
+  NO INVERTIRLO.** El blanco+sombra de la base ya es correcto sobre oscuro, y un tinte
+  de blanco al 4 % sobre negro es invisible. Es la regla que este proyecto ya pagó dos
+  veces (`.ag-hero__alt`, `.city-callout__lede`).
+- ✅ **DEFECTO REAL ENCONTRADO MIDIENDO, a 320px: el pill medía 288px dentro de una
+  columna de 280 y NO SE PUEDE CENTRAR.** Un `inline-flex` más ancho que su line box
+  no lo centra `text-align`: arranca en el borde izquierdo y desborda a la derecha, así
+  que quedaba **4,1px fuera del eje con 8px de sí mismo metido en el padding del
+  container**. ⚠️ **La página nunca scrolleó de costado, y por eso es fácil que pase
+  desapercibido** — `hScroll: 0` no significa "está bien". Arreglado bajando gap y
+  padding un paso abajo de 400px, que son **los mismos 8/12px que este badge ya usa en
+  teléfono dentro de los heroes** (G6), o sea no es un tamaño nuevo: **272px y 0px de
+  desvío**, y sigue en una fila.
+- **Los valores salen de `content/values.json`** (`{{rating.value}}` /
+  `{{rating.count}}`), nunca tipeados — G10/G5. El fill de 94 % es el modificador
+  compartido (4,7/5). **Verificado en el build: 2 pills en la página, las dos con
+  "4,7" y "97 Bewertungen", y cero tokens sin resolver.**
+- ⚠️ **NO se agregó un segundo `aggregateRating` al JSON-LD**: el grafo ya publica
+  4.7/97 una vez, y esto es la misma cifra mostrada dos veces, no una nueva. (De paso:
+  eso es justo lo que Google pide — que el rating del schema sea visible en la página.)
+- **Medido a 320 / 390 / 600 / 768 / 1024 / 1440 / 1920:** pill **272→297x48, UNA fila
+  en todos** y **0px de desvío del eje**, `box-shadow: none`, el tinte componiendo a
+  `rgb(247,248,248)`, la cifra a **8,68:1** y "97 Bewertungen" a **5,04:1** (los dos
+  sobre el piso de 4,5:1), **sin scroll horizontal**. Aire 24px al H2 y 64px a la
+  grilla — asimétrico a propósito, el pill pertenece al grupo del encabezado. Capturas
+  revisadas a 1440 y 390.
+  ⚠️ Las estrellas doradas siguen a 1,84:1: es el estado **pre-existente y ya
+  documentado** de este componente en las 8 páginas que lo llevan (son un gráfico con
+  la cifra al lado), no algo que introdujo esta pasada.
+- ⚠️ **Chequeado antes de tocar: `.ref-quotes` tiene un `padding-top` real** y el
+  comentario de esa regla advierte que con `padding-top: 0` volvería la banda negra de
+  margin-collapse. El wrapper nuevo es el SEGUNDO hijo (el h2 es el primero), así que
+  su `margin-top` no puede escapar de la sección igual. Verificado en captura: sin
+  banda.
+- ⚠️ **TRAMPA DE ENTORNO QUE COSTÓ UNA CORRIDA: el server de `dist/` en el puerto 8099
+  NO era mío** (estaba levantado al empezar la sesión) **y se murió a mitad del
+  trabajo.** El `--dump-dom` devolvió 187KB de la **página de error de Chrome** y la
+  sonda reportó "NONE", que parece un bug de la sonda. Se detecta con
+  `curl -o /dev/null -w "%{http_code}"` → **000**. Levantar un server propio en un
+  puerto propio antes de medir, y no heredar el de otra sesión.
+
+**2026-08-17 — LOS 3 MARCOS DE TITELBILD DE LOS ARTÍCULOS DEL RATGEBER, RESERVADOS
+ANTES DE QUE EXISTAN LAS FOTOS. Y ARREGLÓ UNA DESALINEACIÓN PRE-EXISTENTE DE 33,5px
+QUE EL PROPIO COMENTARIO DE LA REGLA CREÍA ESTAR EVITANDO** (feedback 3.11, "add a
+title image (hero)" en los tres artículos).
+
+- **Qué es y por qué ahora:** las fotos no existen, así que cada hero lleva un marco
+  16/9 vacío con etiqueta entre corchetes. Es el patrón que este repo ya midió dos
+  veces (`.cs-figure` de las case studies, el retrato reservado de Jäger): **el marco
+  toma el espacio real hoy, así que meter el `<picture>` después no mueve nada** — con
+  Jäger la medición fue 416x520 antes y después, CLS 0. Y reservar es lo que **fija la
+  proporción ANTES de que el cliente exporte**, en vez de recibir tres fotos con tres
+  ratios y recortarlas.
+- ⚠️⚠️ **EL HALLAZGO GRANDE, y era un bug en vivo en 2 de las 3 páginas: la columna
+  del hero NO estaba alineada con el cuerpo del artículo.** `.rg-hero
+  .service-hero__content` es un grid item con `max-width: 44rem` + `margin-inline:
+  auto`, y **un auto margin CANCELA `justify-self: stretch`**, lo que la vuelve
+  content-sized: su ancho salía del renglón más largo de adentro, o sea **del largo
+  del byline de cada página**. Medido a 1440: `paragraph-34a-erklaert` daba 704px
+  (su byline lleva "(Geschäftsführender Gesellschafter)" y llegaba al cap) pero
+  `kosten` y `brandwache` **637px auto-centrados, borde izquierdo 401,5 contra los
+  368 de `.rg-article`**. O sea **33,5px** — casi exactamente los 32px que el
+  comentario de esa misma regla predecía que "se leerían como una falla de render",
+  llegando por otra puerta. Es la misma trampa que `page-service.css` documenta para
+  la price card. `width: 100%` lo cierra: **`h1 == marco == artículo` en los 27
+  anchos medidos.**
+  ✅ **Y de-riesga el marco:** un `<img>` tiene ancho intrínseco, así que dentro de
+  una caja content-sized habría ensanchado la columna al cargar — un layout shift
+  causado por el elemento agregado para evitar uno.
+- **El `--empty` está separado a propósito, y es lo que hace el swap gratis:** el
+  `aspect-ratio`, el radio y el `overflow` viven en `.rg-hero__frame` (lo que necesita
+  una imagen REAL) y sólo la piel de placeholder —borde punteado, relleno, centrado—
+  en `.rg-hero__frame--empty`. Así el día que lleguen las fotos son **dos ediciones de
+  markup y CERO CSS**: borrar esa clase y cambiar el `<span>` por un `<picture>`.
+- ⚠️ **El borde es `--color-border-strong`, NO el `--color-border` que usa el marco
+  idéntico de las case studies, y es una diferencia de SUPERFICIE, no de gusto:** el
+  de ellas vive dentro de `.section--light`, que re-declara ese token a un valor
+  oscuro. Acá el hero es negro, donde `--color-border` es blanco al 0,12 — punteado en
+  eso es casi invisible, y **un marco reservado que el cliente no puede ver en el
+  preview falla en lo único que tiene que hacer**. 0,42 mide ~3,7:1 sobre este negro.
+- ⚠️ **Las 3 etiquetas son INFERIDAS del tema de cada artículo, y eso es una
+  diferencia real con las case studies:** los tres `.docx` del Ratgeber **no mencionan
+  imágenes** (los tres chequeados a máquina), mientras los de las case studies nombran
+  su motivo ("Begehungssituation am Werkstor"). Van marcadas como pregunta para Chris
+  en los tres markups, no como dirección aprobada.
+- **Export spec para el cliente: 16:9, mínimo 1600x900.** El marco mide **704px de
+  ancho como máximo** (el cap de 44rem, verificado como tope en todos los viewports),
+  así que 1408 cubre DPR 2 exacto y 1600 deja margen.
+- **`.hero__trust` en el `<figure>` es el HOOK de `js/hero-reveal.js`, no un estilo** —
+  verificado que no tiene ni una regla en estas páginas (sólo menciones en
+  comentarios). Es el patrón de dos clases que ya usa la trust band de `/ueber-uns/`, y
+  hace que la imagen llegue como tercer beat de la cascada del hero. **Seguro por
+  contrato:** ese script pone el estado oculto con `gsap.set` y sólo en JS, así que sin
+  JS y con `prefers-reduced-motion` el marco está visible (medido `opacity: 1`,
+  `transform: none`).
+- **Medido en los 3 × 9 anchos (320 / 390 / 600 / 768 / 1023 / 1024 / 1280 / 1440 /
+  1920):** ratio **1,7778 exacto** en las 27, marco 704x396 a 1440, **`hScroll` 0 y
+  cero elementos fuera del viewport**, etiqueta a **8,47:1** y `hyphens: manual` (o sea
+  no puede partirse a mitad de palabra — la trampa que el `<p>` de la nota de Jäger sí
+  pagó; un `<span>` la evita estructuralmente). Capturas revisadas a 1440 y 390.
+- ⚠️ **Costo medido y aceptado: +428px de hero** en las tres (1440: 427→855, 403→831,
+  348→776), que es exactamente el marco (396) más su margen (32). **A 1440x900 sigue
+  entrando en la primera pantalla.**
+- ✅ **El hub se verificó por A/B real, no por razonamiento** (la regla que cambió es
+  compartida con `.rg-hero--hub`): se buildeó con y sin `width: 100%` y se midieron los
+  9 anchos. **De 9 filas cambió UNA**: a 320px la columna pasa de 288 a **280px** —
+  o sea deja de desbordar 8px su propio container— con **alto y borde izquierdo
+  idénticos** y sin nada recortado. De 1024 arriba **no cambia nada** porque ahí el hub
+  ya pone `margin-inline: 0`, así que el stretch nunca estuvo cancelado.
+- ⚠️⚠️ **TRES TRAMPAS DE MEDICIÓN, y dos casi me hacen reportar bugs que no existían:**
+  1. **Con motion PRENDIDO el marco mide `opacity: 0` y NO es un bug.** Bajo
+     `--virtual-time-budget` el ticker rAF de GSAP no avanza: medido
+     **`gsap.globalTimeline.time()` = 0,03s después de 5 segundos**, y el **byline y
+     las palabras del H1 —que están en vivo desde hace semanas— también daban 0**. Eso
+     es lo que lo distingue de un bug real: si los hermanos ya aprobados están
+     congelados, el congelado es el harness. **El estado final se verifica empujando el
+     timeline a mano** (`gsap.globalTimeline.time(6)`) → los tres pasan a `opacity: 1`
+     y transform identidad. **Y las capturas hay que sacarlas con reduced motion**, si
+     no el hero sale vacío.
+  2. **`getClientRects().length` NO cuenta líneas en un flex item.** Reportó `1` para
+     una etiqueta que a 320px claramente envuelve — porque el `<span>` es hijo de un
+     `display: flex` y se **blockifica**, así que devuelve un rect siempre. El wrap
+     real se lee en el ALTO: 67px (3 líneas) a 320, 45 (2) a 390, 24 (1) de 768 arriba.
+  3. **Un `<textarea>` con `value` puesto por JS no serializa en `--dump-dom`** —
+     `.value` no cambia el nodo de texto hijo. La primera corrida entera devolvió
+     vacío por eso. Usar `textContent` en un `<div>`.
+- ⚠️ **Visto midiendo y NO tocado (es pre-existente y cosmético):** el byline queda muy
+  pegado a la última línea del H1 en los tres artículos. No entraba en el pedido.
+- ⚠️ **Feedback 3.10.2 pide además Titelbilder en las CARDS del hub** — otro marco,
+  otra proporción, **no reservado en esta pasada**. La misma foto puede alimentar los
+  dos, pero el recorte de la card es una decisión aparte.
+
 **2026-08-17 — "VERWANDTE LEISTUNGEN UND EINSATZGEBIETE" REDISEÑADA: DE DOS CARDS A
 UN ÍNDICE EDITORIAL. Toca las 13 páginas que cargan el bloque** (cliente: "se siente
 genérico, pesado y tipo card de SaaS… quiero que se sienta premium, editorial, mínimo
@@ -9011,15 +10319,53 @@ lo que faltaba y no dependía de nadie.
   - **Medido a 320 / 390 / 768 / 1024 / 1440**: sin scroll horizontal, dos columnas
     desde 1024 (668/494 a 1440), dibujo 416x462 a 1440 y 240x267 a 390, los 2 sellos
     cargados, hero 622px a 1440.
-- ⚠️⚠️ **LOS 4 LINKS DE BRANDWACHE QUEDARON ESCRITOS PERO NO APLICADOS, cada uno con
-  su comentario 🔴 en el punto exacto del markup.** `/brandwache/`,
-  `/veranstaltungsschutz/` y `/baustellenbewachung/` **son 404 hoy** (verificado, no
-  supuesto), y uno de los cuatro es el **CTA primario de conversión** de la página.
-  Es la misma decisión que ya se tomó con las case studies mientras
-  `/sicherheitskonzept/` no existía: el destino se queda vivo y el cambio es una línea
-  el día que la página salga. Cada comentario dice la edición exacta.
-  ⚠️ **`/sicherheitstechnik/` también es 404** y el feedback no lo menciona — está
-  enlazado desde el "Weiterführend" de esa case study.
+- ✅ **LOS 4 LINKS DE BRANDWACHE — APLICADOS EL 2026-08-17.** Quedaron escritos y no
+  aplicados en su momento, cada uno con su comentario 🔴 en el punto exacto del
+  markup, porque `/brandwache/`, `/veranstaltungsschutz/` y `/baustellenbewachung/`
+  **eran 404** y uno de los cuatro es el **CTA primario de conversión** de la página —
+  la misma decisión que ya se había tomado con las case studies mientras
+  `/sicherheitskonzept/` no existía. **Esas tres páginas salieron el 2026-08-16 con las
+  nueve de servicio, así que la condición que la pasada anterior había puesto ("once
+  their target pages are available") se cumplió** — y nadie volvió a aplicarlos hasta
+  que el cliente lo preguntó. Los cuatro, en
+  `pages/ratgeber/brandwache-wann-vorgeschrieben.html`:
+  1. Fall 3 → link directo a `/veranstaltungsschutz/` (el del hub `/leistungen/` se
+     queda: era la ruta interina Y carga la mitad "und die übrigen Leistungen").
+  2. Tercer bullet de "Weitere Fälle" → `/baustellenbewachung/`.
+  3. `.rg-source` de Kosten: "Konkretes Angebot" pasa de `/angebot/` a `/brandwache/`,
+     que es lo que finalmente hace que el artículo ALIMENTE su página de servicio.
+  4. El CTA de cierre "Brandwache anfragen" pasa a `/brandwache/`.
+  - **Verificado 200 en los tres destinos ANTES de editar**, no asumido, y los 4
+    comentarios 🔴 se reemplazaron por notas de aplicado que conservan el por qué
+    esperaron. `🔴 PENDING` restantes en el archivo: **0**. Los **31 links** de la
+    página resuelven.
+  - ⚠️ **Los 3 links inline nuevos miden 23px de alto y ESO ESTÁ BIEN**: es la
+    excepción explícita de WCAG 2.5.8 para un target limitado por el line-height de
+    una frase, y **son idénticos a los 2 links inline que la página ya tenía** (23px,
+    sin padding, `display: inline`) — o sea el tratamiento que el cliente ya revisó,
+    sin regresión. Contraste **4,88:1** (`#4673AB`, la mezcla profunda) calculado a
+    mano, porque `color-mix()` computa como `color(srgb …)` y la sonda genérica lo
+    saltea. El único link padeado de la página sigue siendo el teléfono (12px/12px,
+    `inline-block`, 57px — la regla G4).
+  - ⚠️ **TRAMPA DE MEDICIÓN NUEVA, y casi me hace inventar una inconsistencia:**
+    `getBoundingClientRect().height` sobre un link inline que ENVUELVE devuelve la
+    UNIÓN de sus cajas de línea. "alle Sicherheitsdienstleistungen im Überblick" medía
+    **56px** y parecía un target padeado al lado de mis 23px sin padding, en el mismo
+    párrafo — son **3 cajas de 23px** y padding 0. **Para un inline hay que leer
+    `getClientRects()` caja por caja, no el rect del elemento.**
+  - ⚠️ **PARA CHRIS, dos cosas anotadas en el markup y no decididas unilateralmente:**
+    el punto 1 deja la palabra "Veranstaltungsschutz" dos veces en una línea corta (una
+    como texto, una dentro del anchor nuevo) — la versión ajustada es enlazar la palabra
+    que ya estaba, pero eso cambia el anchor text que la nota de 3.11 especificó; y el
+    punto 3 deja una tensión con G3 ("el destino lo fija la ETIQUETA"): el anchor
+    promete una acción de formulario ("kostenfreie Begehung anfordern") y aterriza en
+    una página de SERVICIO. Es defendible — `/brandwache/` tiene su propio CTA de
+    begehung y su propio `#anfrage` — pero si querés paridad estricta, la etiqueta pasa
+    a "Alles zur Brandwache" y el formulario vuelve a `/angebot/`.
+  - ✅ **`/sicherheitstechnik/`, que este archivo marcaba como 404 en el mismo párrafo,
+    también existe desde el 2026-08-16**, así que el link del "Weiterführend" de esa
+    case study tampoco está roto. Medido: **cero links internos rotos dentro de `<main>`
+    en las 54 páginas.**
 - **Barrido final**: 7 páginas × 4 anchos, sin scroll horizontal, un solo `<h1>`, cero
   imágenes rotas, cero tokens sin resolver.
 

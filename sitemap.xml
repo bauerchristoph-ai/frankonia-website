@@ -177,14 +177,106 @@
     <priority>0.8</priority>
   </url>
   <!--
-    Combo pages (service × city). Priority 0.8 like the city and service pages:
-    they carry the most specific commercial intent on the site and double as the
-    Google-Ads landing pages (Webtext 34 marks this one K2/K5). The other fifteen
-    follow (docs/build-checklist.md Bloque 6).
+    Combo pages (service × city) — ALL SIXTEEN, grouped by city so the geo
+    hierarchy is legible in the file itself. Priority 0.8, like the city and
+    service pages: they carry the most specific commercial intent on the site and
+    several double as Google-Ads landing pages (Webtext 34 marks Brandwache
+    Nürnberg K2/K5, Webtext 37 notes a CPC up to 17,69 € for Baustellenbewachung
+    Nürnberg). docs/build-checklist.md Bloque 6 is closed with these.
   -->
   <url>
     <loc>https://frankonia-sicherheit.de/brandwache-nuernberg/</loc>
     <lastmod>2026-08-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/objektschutz-nuernberg/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/werkschutz-nuernberg/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/baustellenbewachung-nuernberg/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/brandwache-wuerzburg/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/objektschutz-wuerzburg/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/werkschutz-wuerzburg/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/baustellenbewachung-wuerzburg/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/brandwache-erlangen/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/objektschutz-erlangen/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/werkschutz-erlangen/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/baustellenbewachung-erlangen/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/brandwache-fuerth/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/objektschutz-fuerth/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/werkschutz-fuerth/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/baustellenbewachung-fuerth/</loc>
+    <lastmod>2026-08-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

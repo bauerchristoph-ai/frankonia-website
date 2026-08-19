@@ -78,15 +78,10 @@
 }
 
 /* (.ag-hero__badge promoted to the shared .hero-badge in components.css, 2026-08-14 —
-   the two were byte-identical. The `.icon` rule below still applies.) */
+   the two were byte-identical. Its `.icon` rule followed it there on 2026-08-19 — it was one of two identical
+   copies, and the 12 badge pages loading NEITHER file were rendering the glyph as an
+   invisible black blob.) */
 
-.hero-badge .icon {
-  width: 1.125rem;
-  height: 1.125rem;
-  color: var(--color-accent);
-  fill: none;
-  stroke: currentColor;
-}
 
 .ag-hero__lead {
   /* No max-width here: .service-hero__lead already carries the homepage's 32rem
@@ -128,6 +123,32 @@
   width: 100%;
 }
 
+/* ---- Centre the card while the layout is ONE column -------------------------
+   Client 2026-08-19, from a tablet: "encargate de que este form esté centrado".
+
+   Measured cause: `.conversion__form-wrap` (lead-form.css) caps itself at
+   38.75rem = 620px but declares NO auto margins — on every other page that is
+   invisible, because there the card's parent is `.conversion__panel`, a FLEX
+   container that centres it. Here the parent is `.ag-hero__grid`, a grid, so a
+   capped item just sits at the start of its track. Measured offsets from the
+   container axis before the fix: 0px at 660 (the column is still under the cap,
+   so the card fills it), −18px at 700, −50px at 767. Checked the other pages that
+   share the component at the same width — homepage and /werkschutz/ both measured
+   0px — which is why this is fixed HERE and lead-form.css was left alone.
+
+   ⚠️ SCOPED TO ONE COLUMN ON PURPOSE. From 768px up this card is the right-hand
+   track of a two-column grid, and auto margins on a grid item cancel
+   `justify-self: stretch` and make it content-sized — the trap
+   `.service-price__box` documents after measuring 397px against a 432px cap. It
+   would also fight the two-column tablet layout the client approved on 2026-08-14
+   to keep the submit button above the fold. Centring is only ever right while the
+   card is the only thing in its row. */
+@media (max-width: 767.98px) {
+  .ag-hero__form {
+    margin-inline: auto;
+  }
+}
+
 /* ⚠️ THIS LINE WAS INVISIBLE IN PRODUCTION until 2026-08-14 — white on white.
    Found by pixel-sampling while implementing client rule G4 (every phone number
    is a clickable tel: link), which is how a 4× crop of the link's own box came
@@ -160,6 +181,14 @@
 }
 
 /* ---- The three steps ---------------------------------------------------- */
+/* CENTRED COMPOSITION (client 2026-08-19: "hace esta seccion centrada").
+   Heading AND content, not the header-centred / content-left split most sections
+   on this site use: these are three short items led by a numeral, so there is no
+   four-line paragraph whose left edge the eye needs to return to. Same call
+   /jobs/ makes for its three application steps and /sicherheitsdienst-nuernberg/
+   for its .city-proof strip. */
+.ag-steps .section__intro { text-align: center; }
+
 .ag-steps__list {
   list-style: none;
   margin: 0;
@@ -174,7 +203,21 @@
 
 .ag-step {
   display: flex;
-  gap: var(--space-4);
+  /* The numeral sits ABOVE its copy, not beside it: centred text with a badge
+     pinned to its left reads as a left-aligned item that happens to be centred. */
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+}
+
+/* Centred text wants a narrower measure than the same copy ranged left — two
+   ragged edges make a long line harder to track. 22rem is the value /jobs/'s
+   centred steps already use. Below the 3-column breakpoint the column is
+   narrower than this cap, so it is inert there. */
+.ag-step > div {
+  max-width: 22rem;
+  margin-inline: auto;
 }
 
 /* A real numeral, not a decorative marker: the <ol> numbers itself for assistive
@@ -205,10 +248,18 @@
 .ag-step__text {
   color: rgb(59 73 86 / 0.75);
   line-height: var(--line-height-base);
+  /* base.css sets `hyphens: auto` on every <p>: right for prose, wrong here. A
+     centred line already has two ragged edges, so a German compound broken
+     mid-word doubles the raggedness — this section was rendering "mel-det" and
+     "kosten-freies" before the centring, and centred it reads as a render fault.
+     Same decision /referenzen/ and /leistungen/ make for their centred copy. */
+  hyphens: none;
 }
 
 .ag-steps__link {
   margin-top: var(--space-7);
+  /* .service-link is inline-flex, so the parent's text-align centres it. */
+  text-align: center;
 }
 
 

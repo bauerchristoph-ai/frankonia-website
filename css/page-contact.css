@@ -129,35 +129,24 @@
    components.css + the shared markup, which this page may not touch — see
    docs/page-conventions.md, "Breadcrumbs", for exactly what to move there.
    Until then, every new page repeats this block. */
+/* ⚠️ COLOUR, WEIGHT AND UNDERLINE ALL LEFT TO components.css SINCE 2026-08-19.
+   This page used to restate the whole breadcrumb treatment at (0,2,0) — its own
+   `--kc-*` inks, a bold current page, and an UNDERLINE BACK ON HOVER. The client's
+   new rule is "no va a haber underlines en ningún momento" plus a ramp that fades
+   backwards from the current page, so every one of those overrides would have
+   silently kept /kontakt/ on the old design: highest specificity always wins.
+   Deleting them is also what this block's own note above asked for.
+   `--kc-ink` is `--color-white`, i.e. the same ink the shared rule resolves to on
+   this dark hero, so nothing else about this page moved.
+   ⚠️ Only the GAP stays page-scoped (the reference wanted a wider trail than the
+   shared 8px). If the breadcrumb spacing is ever unified, this rule is what goes. */
 .page-contact .breadcrumbs__list {
   gap: var(--space-3);
-  color: var(--kc-ink-muted);
-}
-
-/* No underline at rest (the reference has none) — safe here, unlike an inline
-   link in a sentence: these sit alone inside a <nav>, so they aren't
-   distinguished from surrounding text by colour alone (WCAG 1.4.1). The
-   underline comes back on hover/focus. */
-.page-contact .breadcrumbs__link {
-  color: var(--kc-ink-muted);
-  text-decoration: none;
-}
-
-.page-contact .breadcrumbs__link:hover,
-.page-contact .breadcrumbs__link:focus-visible {
-  color: var(--kc-accent);
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-}
-
-.page-contact .breadcrumbs__current {
-  color: var(--kc-ink);
 }
 
 .page-contact .breadcrumbs__sep {
   display: inline-flex;
   align-items: center;
-  color: rgb(255 255 255 / 0.45);
 }
 
 /* The sprite chevron points left; mirrored here instead of adding a second
@@ -772,92 +761,99 @@
    and only .contact-form's own margin is left, which is the point — the ask was
    a shorter card, so the space is NOT redistributed to something else. */
 
-/* Highlight-Box (Webtext 25 §2). Sits under the three contact rows in the aside
-   column. A tile, not a card: 5%-grey fill and no border, per §5's "Card / tile"
-   row — the three rows above already carry borders and a fourth bordered object
-   would read as a fourth contact method rather than as a statement about them.
-   The blue left rule is what marks it as the emphasis, and blue-dark is the only
-   blue that passes on white. */
-/* Compact trust statement, NOT a card (client brief 2026-08-07: the filled block
-   "creates unnecessary visual weight" and "avoid creating another visual focal
-   point"). What went: the 5%-white fill, the 16px radius, and all of the inner
-   padding. What stayed: the blue rule, which is now the only thing marking it —
-   a single accent line instead of a surface.
+/* ---- Highlight-Box + DEKRA row: BOTH GONE FROM HERE (client 2026-08-19) ----
+   `.contact-highlight*` is deleted outright — the client asked for the
+   "24/7 erreichbar, weil Sicherheit keinen Feierabend kennt" block to go, copy
+   and all (see the markup comment in pages/kontakt.html for what the page still
+   says without it, and what it no longer says anywhere).
 
-   ⚠️ The COPY is unchanged, deliberately. The brief offers a condensed
-   "24/7 erreichbar · direkter Ansprechpartner · keine Warteschleife" as one
-   option, but it also says not to rewrite approved German copy unless asked, and
-   this is the Highlight-Box verbatim from Webtext 25 §2 — condensing it would
-   drop "keine Weiterleitungen" and re-word the rest. So the weight came out of
-   the styling, not out of the sentence. Say the word if the short version is
-   wanted instead; it is a one-line swap.
+   `.contact-cert*` is not deleted so much as REBUILT: the seals close this column
+   as `.contact-trust` (§5b, just below), now carrying the badge line with them and
+   without their caption. Do not restore a rule here — a second seal treatment on
+   one page is exactly the drift the restore of 2026-08-14 avoided by reusing the
+   old rule verbatim. Git has both blocks.
 
-   It sits directly under the list, per the brief, so the margin is the whole
-   separation — there is no auto-margin pushing it to the column's bottom any
-   more. */
-.contact-highlight {
-  margin-top: var(--space-5);
-  padding: 0;
-  padding-inline-start: var(--space-4);
-  border-inline-start: 2px solid var(--kc-accent);
-}
+   ⚠️ The mobile `.contact-cert { flex-wrap: wrap }` override further down went
+   with them; `.contact-trust` wraps for its own, different reason (its label is
+   a whole sentence, not a 46-character caption). */
 
-/* The `margin-top: auto` + padding override that used to sit here is gone with
-   the bottom-alignment approach it belonged to — see the note in the layout
-   @media above. The block's own margin below is the whole gap now. */
+/* --------------------------------------------------------------------------
+   5b. Left column: the DEKRA seals + badge line that close it
+   -------------------------------------------------------------------------- */
 
-/* Down from --font-size-md (20px) — at that size it read as a third heading in
-   the column and competed with the contact values above it. It is a statement,
-   so it stays solid white and simply stops being big. */
-.contact-highlight__title {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-regular);
-  letter-spacing: normal;
-  line-height: var(--line-height-heading);
-  color: var(--kc-ink);
-}
+/* Two seals, a vertical rule, then "Ihr fester Ansprechpartner — 24/7
+   erreichbar". Client 2026-08-19, in two steps the same day: the seals first came
+   UP from the bottom of this column to sit beside the badge at the top, then the
+   pair went back DOWN to close the column after the Adresse row. The ROW is what
+   was designed; only its position changed, which is why this is one block and not
+   two similar ones.
 
-.contact-highlight__text {
-  margin-top: var(--space-1);
-  font-size: var(--font-size-sm);
-  color: var(--kc-ink-muted);
-  line-height: var(--line-height-base);
-}
+   ⚠️ It lives in the aside now, NOT in `.contact-intro` — so it is deliberately
+   outside that block's load-in cascade (§2 above). Do not re-add a
+   `.hero-badge` up there to "put the badge back": the badge text is on the page,
+   which is all G9 asks, and a second copy would state 24/7 twice.
 
-/* ---- DEKRA certification row ---- */
-/* RESTORED 2026-08-14 (client: "add the DEKRA certification symbols/seals"),
-   byte-for-byte the rule that was deleted on 2026-08-04 when the same client
-   asked for a lighter left column. Later instruction wins; restoring the old
-   rule rather than designing a second one is what keeps this page's seals
-   identical to what was approved before.
-   Real DEKRA seals, used as supplied (never cropped or recoloured — CLAUDE.md).
-   Source files are 399x600 portrait; height is fixed and width left auto so the
-   ratio cannot drift. */
-.contact-cert {
+   ⚠️ 2.75rem is a measured floor, not a look: the restore of 2026-08-14 first
+   shipped the seals at 2.25rem and they rendered 24x36px, at which the DEKRA
+   wordmark inside a 399x600 seal is unreadable — a certification symbol nobody can
+   identify does not make the claim. With the caption now gone that argument is
+   STRONGER, not weaker: the seals are the only thing left carrying it visually.
+
+   Width is left `auto` against a fixed height so the 399:600 ratio cannot drift —
+   the artwork may be scaled proportionally and never cropped or recoloured
+   (CLAUDE.md). */
+.contact-trust {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  /* Sits under the Highlight-Box now (which did not exist in the earlier
-     version), so it needs its own separation from it. */
+  /* Was `margin-bottom` when this row opened the column — the gap it needed was
+     the one down to the H1. It closes the column now, so the separation it owns
+     is the one UP from the contact list, and it is the same --space-5 the
+     Highlight-Box used from the same edge, so the column's rhythm below the list
+     did not change when one block replaced the other. */
   margin-top: var(--space-5);
 }
 
-/* 2.75rem — the hero trust bands' size, and the SMALLEST the seals are used at
-   anywhere else on the site (.trust-certs runs 5–7rem). The block that was
-   deleted in August used 2.25rem, and restoring that exactly is what this rule
-   first did; measured, it renders 24x36px, at which the DEKRA wordmark inside a
-   399x600 seal is not readable — a certification symbol nobody can identify does
-   not do the job the client asked for. 44px tall is still modest: it supports the
-   decision without competing with the phone tile above it or the form beside it. */
-.contact-cert__seal {
+.contact-trust__seal {
   height: 2.75rem;
   width: auto;
 }
 
-.contact-cert__text {
+.contact-trust__label {
+  /* ⚠️ NOT `--kc-line` (0.14 white), and that was measured rather than judged:
+     at the page's own hairline value this rule renders rgb(36,36,36) on the black
+     section — one pixel at 1,36:1, which sampling the render confirmed is present
+     but invisible next to two saturated DEKRA seals, i.e. it would not be the line
+     the client asked for. The token is right for the contact rows below because
+     those are 544px LONG horizontal rules; the same alpha over a 44px vertical
+     stub is not the same object. 0.3 renders rgb(77,77,77) — unmistakably a line,
+     still quieter than any text on the column. It is a graphic separator, so no
+     text ratio applies. */
+  padding-inline-start: var(--space-3);
+  border-inline-start: 1px solid rgb(255 255 255 / 0.3);
+  /* ⚠️ THE RULE HAS TO RUN THE HEIGHT OF THE ROW, NOT OF THE SENTENCE.
+     `align-items: center` on the row leaves this box at its own text height, so
+     on desktop — where the label is one line — the border measured 24px against
+     44px seals and read as a tick rather than as a separator. `align-self:
+     stretch` hands it the row's height and the inner flex centring keeps the text
+     where `align-items: center` had it, so the line matches the seals at every
+     width and nothing else moves. On a phone the label already wraps to ~45px, so
+     this changes nothing there. */
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  /* Matches the shared `.hero-badge` it replaces (components.css) — same size,
+     same muted colour, so the badge line itself did not change appearance; only
+     what sits beside it did. */
   font-size: var(--font-size-sm);
-  color: rgb(59 73 86 / 0.75);
+  color: var(--kc-ink-muted);
+  /* base.css hyphenates `p`, which on this short line broke it as
+     "Ansprech-partner" in the narrow column. */
+  -webkit-hyphens: none;
+  hyphens: none;
 }
+
+
 
 /* (The "Lieber direkt sprechen? …" line under the form is gone entirely —
    client 2026-07-31. The card ends on the submit button. The phone is still
@@ -1166,14 +1162,6 @@
   .contact-form__submit {
     justify-self: stretch;
     width: 100%;
-  }
-
-  /* Two seals plus a 46-character caption do not fit one phone line; wrapping
-     puts the caption under the pair instead of squeezing it to two words.
-     (Restored with the block itself, 2026-08-14.) */
-  .contact-cert {
-    flex-wrap: wrap;
-    gap: var(--space-3);
   }
 
   /* The form is the primary action and comes first in the DOM, so the gap

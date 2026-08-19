@@ -370,8 +370,11 @@
           </div>
         </div>
 
-        <!-- The photo column. AFTER the copy in the DOM, which is also the stacking
-             order on a phone: the H1 opens the page, the photo closes the hero.
+        <!-- The photo column. AFTER the copy in the DOM and it stays that way: the
+             H1 has to open the page for a crawler and a screen reader. Below 1280px
+             (tablet + phone) it is moved ABOVE the copy VISUALLY with `order: -1`
+             (client 2026-08-19) — see the stacked-order block in page-jobs.css for
+             why that is safe here and when it would stop being safe.
              No frame, no radius, no placeholder tint: the shot's own background is
              black, so it blends into this section's black instead of sitting in a
              visible box — the frame only reserves its 3:2 space so there is no CLS

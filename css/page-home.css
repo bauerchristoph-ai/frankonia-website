@@ -592,25 +592,39 @@ main h2 {
        in weight. Still ~13:1 against the wash behind it. */
     color: rgb(255 255 255 / 0.76);
   }
+  /* ⚠️ THE STACK OPENS AT 639.98, NOT AT THIS BLOCK'S 767.98 — client
+     2026-08-19, one CTA rule site-wide; the reasoning and the measurement are at
+     .service-hero__actions in page-service.css's phone block. The homepage hero
+     was the worst case of the bug the client reported: at 767px BOTH buttons
+     rendered ~720px wide, because G6 (2026-08-14) had deliberately made the
+     phone pill match the primary. That decision is untouched — it just stops
+     applying where the pair fits a row.
+     ⚠️ `margin-top` stays OUTSIDE the nested query: it is the message/action
+     separation, not part of the stacking, and it is wanted at every width in
+     this block. */
   .hero__actions {
-    /* Explicit column, not a wrapping row: the primary is full-width and the
-       phone is not, so they must not share a line. align-items decides the
-       phone's width (it shrinks to content), while the primary overrides it. */
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-3);
-    /* The one deliberately large gap in the column — it separates the message
-       group above from the action group below. */
     margin-top: var(--space-6);
+  }
+  @media (max-width: 639.98px) {
+    .hero__actions {
+      /* Explicit column, not a wrapping row: the primary is full-width and the
+         phone is not, so they must not share a line. align-items decides the
+         phone's width (it shrinks to content), while the primary overrides it. */
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-3);
+    }
   }
   /* Primary stays the strongest interactive element: full width, and the only
      filled surface in the column. 3rem is the accessible sweet spot for a
      primary action (44px is the floor, not the target) — deliberately NOT
      reduced further. */
-  .hero__actions .btn--primary {
-    width: 100%;
-    justify-content: center;
-    min-height: 3rem;
+  @media (max-width: 639.98px) {
+    .hero__actions .btn--primary {
+      width: 100%;
+      justify-content: center;
+      min-height: 3rem;
+    }
   }
   /* ⚠️ THIS PILL USED TO BE DELIBERATELY COMPACT, and it is not any more —
      client rule G6, 2026-08-14, asked directly because it reverses their own
@@ -622,10 +636,12 @@ main h2 {
      It now matches the primary exactly, like the other eight heroes. Height goes
      back to the shared 3rem so the two buttons are one pair rather than a large
      one and a small one. */
-  .hero__phone {
-    width: 100%;
-    justify-content: center;
-    min-height: 3rem;
+  @media (max-width: 639.98px) {
+    .hero__phone {
+      width: 100%;
+      justify-content: center;
+      min-height: 3rem;
+    }
   }
   .hero__reassurance {
     /* One vertical list of three rows (client 2026-07-31). Was a 2-column grid
@@ -4942,6 +4958,123 @@ main h2 {
   .pixel-seam__band {
     height: 120px;
   }
+}
+
+/* ==========================================================================
+   PREIS-LEISTUNG — the client's section "6b" (2026-08-17 pricing/positioning
+   update). Kicker + H2 + one paragraph + three ticks + one CTA.
+   --------------------------------------------------------------------------
+   THE PANEL IS LOAD-BEARING, not decoration. This section deliberately shares
+   .section--subtle with the Services list directly above it, because a shared
+   surface is what lets it be inserted without a new pixel seam (a seam only
+   exists where the colour actually changes, and its tiles are the colour of the
+   section above — see page-conventions §9.2 and the markup comment). The cost of
+   that choice is that nothing separates the two sections on its own, so the
+   panel does that job. It is also exactly what the client asked for: "no
+   elaborate design needed; a highlight-style text block is perfect".
+
+   Every value here is COPIED from .konzept one section up, not re-derived — that
+   block is the same shape (copy + tick list + CTA) and the two have to read as
+   one design rather than two similar ones. Keep them in step. The two
+   deliberate departures, both because this block is meant to be COMPACT and its
+   tick lines are much longer than konzept's:
+     · the ticks are --font-size-md, a step below konzept's --font-size-lg;
+     · the panel caps its own width instead of living in a two-column grid.
+
+   The panel's max-width is not a round number: 48rem minus the 2rem padding on
+   each side leaves the inner column at 42rem, which is the site's own prose
+   measure (`.section__intro > p`, page-service.css). So the paragraph sits on the
+   same measure as every other lede on the site even though the panel is new.
+   ========================================================================== */
+.pricevalue__panel {
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: clamp(var(--space-5), 3.4vw, var(--space-7));
+  background-color: rgb(255 255 255 / 0.045);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: var(--radius-lg);
+}
+
+/* Centred heading + centred CTA, client 2026-08-19 ("make this title centered…
+   and the Unverbindliches Angebot einholen cta also"). The paragraph and the
+   three tick lines stay ranged left ON PURPOSE — that is this site's existing
+   "centred header, left-aligned content" split (.lh-why, the city pages, the
+   FAQ), and a six-line centred paragraph would need its own narrower measure to
+   stay readable. Say the word if the paragraph should follow; it is one line.
+
+   `text-align` is enough here and no `margin-inline: auto` is needed, which is
+   the OPPOSITE of the trap this project keeps hitting: that one bites when the
+   element carries a `max-width`, because then the box stays pinned left while
+   only its text centres. This h2 has no max-width (`main h2` sets font-size and
+   weight only), so its box already spans the panel.
+
+   `text-wrap: balance` is not decoration: centred over two lines, the default
+   break left a very short second line, which reads as a mistake once both edges
+   are ragged. */
+.pricevalue__copy h2 {
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* max-width 40rem and the 0.85 alpha are .konzept__lede's own values. */
+.pricevalue__lede {
+  margin-top: var(--space-4);
+  max-width: 40rem;
+  color: rgb(255 255 255 / 0.85);
+}
+
+.pricevalue__points {
+  list-style: none;
+  margin: var(--space-6) 0 0;
+  padding: 0;
+}
+
+.pricevalue__point {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+  border-top: 1px solid rgb(255 255 255 / 0.2);
+  /* --font-size-md, NOT konzept's --font-size-lg: these three lines run 57-105
+     characters against konzept's 44-84, so at lg the shortest of them still fits
+     one line while the longest takes three, and the list stops reading as a set
+     of peers. See this block's header for the other departure. */
+  font-size: var(--font-size-md);
+  line-height: 1.4;
+}
+
+.pricevalue__point:last-child {
+  border-bottom: 1px solid rgb(255 255 255 / 0.2);
+}
+
+/* Copied wholesale from .konzept__tick — including the explicit fill/stroke,
+   which is NOT optional: #icon-check is a stroke symbol and the sprite's own
+   presentation attributes do not survive <use>, so without these the tick
+   renders as a solid black wedge on a near-black surface. */
+.pricevalue__tick {
+  flex-shrink: 0;
+  width: 1.4rem;
+  height: 1.4rem;
+  margin-top: 0.1em;
+  color: var(--color-accent);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* .konzept__actions' own values. Kept as a flex row even with one button so a
+   second action can be added later without re-thinking the spacing. */
+.pricevalue__actions {
+  margin-top: var(--space-6);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  /* Centred with the heading (client 2026-08-19). This is a block-level flex row,
+     so it ALREADY spans the panel — what has to be centred is its content, not its
+     box. An auto margin here would do nothing. */
+  justify-content: center;
 }
 
 /* ==========================================================================

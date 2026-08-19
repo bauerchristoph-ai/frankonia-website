@@ -138,6 +138,22 @@
               <span aria-hidden="true">·</span> Lesezeit: ~6 Min.
             </span>
           </p>
+
+          <!-- RESERVED TITLE IMAGE — client 2026-08-16, feedback 3.11 ("add
+               hero/title image"). The photo does not exist yet, so this frame
+               holds its exact space (16/9, 704x396 at 1440) and dropping the real
+               <picture> in later shifts nothing.
+               ⚠️ The label is INFERRED from this article's topic — none of the
+               three Ratgeber documents names a shot, unlike the case studies.
+               Confirm the motif with Chris.
+               Swap recipe, export spec and the full reasoning: css/page-ratgeber.css §1c.
+               ⚠️ `.hero__trust` is the js/hero-reveal.js animation hook, not a
+               style — it carries no rules on this page (checked). Keep both classes. -->
+          <figure class="rg-hero__figure hero__trust">
+            <div class="rg-hero__frame rg-hero__frame--empty">
+              <span class="rg-hero__caption">[Titelbild folgt: Brandwache im Einsatz, z.&nbsp;B. Nachkontrolle nach Heißarbeiten]</span>
+            </div>
+          </figure>
         </div>
       </div>
     </section>
@@ -159,25 +175,31 @@
 
           <h2>Fall 3 — Veranstaltungen und Versammlungsstätten</h2>
           <p>Nach der Versammlungsstättenverordnung kann die Behörde für Veranstaltungen eine Brandsicherheitswache auflegen, etwa bei Bühnen, Pyrotechnik oder erhöhter Brandlast. Je nach Bundesland und Auflage stellt sie die Feuerwehr oder ein qualifizierter privater Dienst; die Details stehen im Auflagenbescheid. Früh klären spart Kosten: Eine private Brandsicherheitswache ist meist günstiger als eine Wache durch die Feuerwehr.</p>
-          <!-- 🔴 PENDING, ONE LINK — client 2026-08-16 (3.11): add "Mehr zum
-               Veranstaltungsschutz" -> /veranstaltungsschutz/ at the end of Fall 3.
-               ⚠️ NOT APPLIED YET: /veranstaltungsschutz/ is a 404 today.
-               THE EDIT, ready to paste as a second sentence in this <p>:
-                 · <a href="/veranstaltungsschutz/">Mehr zum Veranstaltungsschutz</a>
-               ✅ Nothing is lost meanwhile: this line already routes the reader to
-               the same service through the /leistungen/ hub, which resolves. -->
-          <p class="rg-source">Veranstaltungsschutz und die übrigen Leistungen: <a href="/leistungen/">alle Sicherheitsdienstleistungen im Überblick</a></p>
+          <!-- ✅ APPLIED 2026-08-17 (client 3.11): the direct link to
+               /veranstaltungsschutz/ at the end of Fall 3. It waited because that
+               page was a 404 — it shipped with the nine service pages on 2026-08-16,
+               so the condition the earlier pass set ("once their target pages are
+               available") is met. Verified 200 before editing, not assumed.
+               The /leistungen/ hub link STAYS: it was the interim route to this same
+               service, and it also carries the "und die übrigen Leistungen" half of
+               the sentence, which the direct link does not replace.
+               ⚠️ FOR CHRIS: this leaves the word "Veranstaltungsschutz" twice in one
+               short line — once as plain text opening it, once inside the new anchor.
+               The tighter version is to link the word that is already there
+               (`<a …>Veranstaltungsschutz</a> und die übrigen Leistungen: …`) and drop
+               the added clause; that changes the anchor text the 3.11 note specified,
+               so it was not done unilaterally. -->
+          <p class="rg-source">Veranstaltungsschutz und die übrigen Leistungen: <a href="/leistungen/">alle Sicherheitsdienstleistungen im Überblick</a> · <a href="/veranstaltungsschutz/">Mehr zum Veranstaltungsschutz</a></p>
 
           <h2>Weitere Fälle aus der Praxis</h2>
           <ul class="rg-list">
             <li><strong>Sprinkler/Löschanlage außer Betrieb:</strong> analog zum BMA-Ausfall — Versicherer-Auflage prüfen.</li>
             <li><strong>Nach einem Brandereignis:</strong> Glutnester-Überwachung, bis die Feuerwehr das Objekt freigibt bzw. der Versicherer entwarnt.</li>
-            <!-- 🔴 PENDING, ONE LINK — client 2026-08-16 (3.11): add "Mehr zur
-                 Baustellenbewachung" -> /baustellenbewachung/ to THIS third bullet.
-                 ⚠️ NOT APPLIED YET: /baustellenbewachung/ is a 404 today.
-                 THE EDIT, ready to paste before the closing </li>:
-                   <a href="/baustellenbewachung/">Mehr zur Baustellenbewachung</a> -->
-            <li><strong>Erhöhte Brandlast auf Baustellen:</strong> je nach Baustellenordnung des Auftraggebers oder SiGe-Plan.</li>
+            <!-- ✅ APPLIED 2026-08-17 (client 3.11): the link to /baustellenbewachung/
+                 on this third bullet. It waited because that page was a 404; it
+                 shipped with the nine service pages on 2026-08-16. Verified 200
+                 before editing. -->
+            <li><strong>Erhöhte Brandlast auf Baustellen:</strong> je nach Baustellenordnung des Auftraggebers oder SiGe-Plan. <a href="/baustellenbewachung/">Mehr zur Baustellenbewachung</a></li>
           </ul>
 
           <h2>Wer darf eine Brandwache stellen, und mit welcher Qualifikation?</h2>
@@ -193,18 +215,22 @@
                would break G10 — every price on this site is a token so the annual
                update stays a one-file edit. -->
           <p>In der Regel {{price.min}} bis {{price.max}} Euro pro Stunde netto, mit Zuschlägen für Nacht, Wochenende und Feiertag, also genau die Zeiten, in denen Brandwachen am häufigsten gebraucht werden.</p>
-          <!-- 🔴 PENDING, ONE ATTRIBUTE — client 2026-08-16 (3.11, "internal linking
-               corrections"): this article is meant to FEED /brandwache/, which it
-               does not link at all today. "Konkretes Angebot" must point to
-               /brandwache/ instead of /angebot/; the /ratgeber/kosten-… link beside
-               it stays as it is.
-               ⚠️ NOT APPLIED YET because /brandwache/ is a 404 right now (verified,
-               not assumed). Chris's own rule is "do not ship a linked 404", and this
-               is the same call already made for the case studies while
-               /sicherheitskonzept/ did not exist — the destination stays live and the
-               swap is one line the day the page ships.
-               THE EDIT: href="/angebot/" -> href="/brandwache/" on the second <a>. -->
-          <p class="rg-source">Details und Beispielrechnung: <a href="/ratgeber/kosten-sicherheitsdienst/">Was kostet ein Sicherheitsdienst?</a> · Konkretes Angebot: <a href="/angebot/">kostenfreie Begehung anfordern</a></p>
+          <!-- ✅ APPLIED 2026-08-17 (client 3.11, "internal linking corrections"):
+               "Konkretes Angebot" now points at /brandwache/, so this article finally
+               FEEDS the service page it is written to support. It waited because
+               /brandwache/ was a 404 and Chris's own rule is "do not ship a linked
+               404" — the same call the case studies made while /sicherheitskonzept/
+               did not exist. /brandwache/ shipped 2026-08-16; verified 200 before
+               editing. The /ratgeber/kosten-… link beside it is unchanged.
+               ⚠️ FOR CHRIS, a label/destination tension worth one look (rule G3, "the
+               destination of a CTA is set by its LABEL"): the anchor text promises a
+               form action ("kostenfreie Begehung anfordern") and now lands on a
+               SERVICE page. It is defensible — /brandwache/ carries its own free-visit
+               CTA and its own #anfrage form, so the reader is one click from what the
+               label promises — but if you want strict parity the label becomes
+               "Alles zur Brandwache" and the form link moves back to /angebot/. Not
+               changed unilaterally: the 3.11 note specified the href, not the label. -->
+          <p class="rg-source">Details und Beispielrechnung: <a href="/ratgeber/kosten-sicherheitsdienst/">Was kostet ein Sicherheitsdienst?</a> · Konkretes Angebot: <a href="/brandwache/">kostenfreie Begehung anfordern</a></p>
 
           <h2>Häufige Fragen zur Brandwache</h2>
           <!-- ⚠️ Byte-identical to the FAQPage above. Edit both or neither. -->
@@ -249,14 +275,16 @@
           <p>FRANKONIA stellt qualifizierte Brandwachen in ganz Franken, kurzfristig, dokumentiert, abgestimmt mit Behörde und Versicherer.</p>
         </div>
         <div class="rg-close__actions" data-reveal>
-          <!-- 🔴 PENDING, ONE ATTRIBUTE — client 2026-08-16 (3.11): this closing CTA
-               must lead to /brandwache/, not /angebot/.
-               ⚠️ NOT APPLIED YET: /brandwache/ is a 404 today, and this is the page's
-               PRIMARY conversion action — publishing it as a 404 is the worst version
-               of "do not ship a linked 404". /angebot/ resolves and is the right
-               interim destination (it is the request form).
-               THE EDIT: href="/angebot/" -> href="/brandwache/". -->
-          <a class="btn btn--primary" href="/angebot/">Brandwache anfragen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          <!-- ✅ APPLIED 2026-08-17 (client 3.11): the page's PRIMARY conversion action
+               now leads to /brandwache/. It was the last of the four to wait, and for
+               the strongest reason: publishing the primary CTA as a 404 is the worst
+               version of "do not ship a linked 404", so it pointed at /angebot/ (the
+               request form, which resolves) in the meantime. /brandwache/ shipped
+               2026-08-16; verified 200 before editing.
+               ✅ The label needs no change: "Brandwache anfragen" lands on the page
+               whose own primary action is exactly that — /brandwache/ carries its own
+               #anfrage form — so label and destination agree (rule G3). -->
+          <a class="btn btn--primary" href="/brandwache/">Brandwache anfragen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
           <!-- Secondary CTA, client rule G1 (2026-08-14): every page carries the
                same outline phone pill next to its primary action. This block had
                only a primary button and a quiet "Alle Ratgeber-Artikel" text link,

@@ -92,6 +92,16 @@
 }
   </script>
 
+  <!-- Hero photograph — the page's LCP element since 2026-08-19: preloaded +
+       eager + fetchpriority, same as every other hero on the site.
+       imagesrcset/imagesizes REPEAT the <picture>'s own srcset/sizes verbatim.
+       That is not belt-and-braces, it is required: preloading one fixed URL makes
+       the browser fetch that file and then load a different candidate for the real
+       <img> — two downloads and a wasted preload (measured on /jobs/). -->
+  <link rel="preload" as="image" type="image/webp"
+        imagesrcset="/assets/images/uu-hero-team-640.webp 640w, /assets/images/uu-hero-team-960.webp 960w, /assets/images/uu-hero-team-1280.webp 1280w"
+        imagesizes="(min-width: 1024px) min(37vw, 37rem), min(34rem, 100vw)">
+
   <!-- include: head-common -->
   <link rel="stylesheet" href="/css/lead-form.css">
   <link rel="stylesheet" href="/css/page-service.css">
@@ -128,7 +138,7 @@
     </nav>
 
     <!-- ============ 1. HERO ============ -->
-    <section class="service-hero uu-hero" data-hero-reveal>
+    <section class="service-hero service-hero--split uu-hero" data-hero-reveal>
       <div class="container service-hero__grid">
         <div class="service-hero__content hero__content">
           <p class="hero-badge">
@@ -192,6 +202,30 @@
               <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
             </div>
           </div>
+        </div>
+
+        <!-- ⚠️ THIS HERO HAD NO PHOTO UNTIL 2026-08-19 — it was the only one on the
+             site with neither a photograph nor (before 08-10) a trust band, on the
+             page whose whole subject is whether to trust the company. The client
+             supplied `UberUns.png` and asked for it on the right, which is the
+             layout docs/page-conventions.md §8.2 already prescribes and which
+             `.service-hero--split` (page-service.css) already implements — so this
+             page borrows that modifier rather than growing a second split hero.
+             What it overrides is only the FRAME, in page-ueber-uns.css.
+
+             ⚠️ 4:3 is the SOURCE's own ratio (1448x1086 = 1.3333 exactly), declared
+             here and not inherited: §8.2's rule is that the frame ratio comes from
+             the real file, because a shared ratio leaves a strip of the frame's own
+             background showing on any photo that does not match it.
+
+             The three men are the reason this belongs in THIS hero specifically —
+             the badge one line up says "Inhabergeführt aus Bamberg", and an
+             owner-led claim is best evidenced by the owners. -->
+        <div class="service-hero__media uu-hero__media">
+          <picture>
+            <source srcset="/assets/images/uu-hero-team-640.webp 640w, /assets/images/uu-hero-team-960.webp 960w, /assets/images/uu-hero-team-1280.webp 1280w" sizes="(min-width: 1024px) min(37vw, 37rem), min(34rem, 100vw)" type="image/webp">
+            <img src="/assets/images/uu-hero-team-1280.jpg" alt="Die drei Geschäftsführer von FRANKONIA Sicherheitsdienst" width="1280" height="1037" loading="eager" fetchpriority="high">
+          </picture>
         </div>
       </div>
     </section>
@@ -443,7 +477,7 @@
       <div class="container">
         <div class="section__intro">
           <h2>Ein Sicherheitsdienst, der digital arbeitet</h2>
-          <p>FRANKONIA investiert in Werkzeuge, die unsere Arbeit für Sie sichtbar und überprüfbar machen.</p>
+          <p>FRANKONIA investiert in Werkzeuge, die unsere Arbeit für Sie sichtbar und überprüfbar machen. Auch intern arbeiten wir KI-gestützt: Automatisierte Prozesse halten unsere Verwaltung schlank — ein Effizienzvorteil, der direkt in Ihre Preise fließt und uns das beste Preis-Leistungs-Verhältnis der Region ermöglicht.</p>
         </div>
         <!-- A real <ul>: five parallel tools, no order between them, so no numerals
              (unlike the six promises, which are numbered). Each icon is a truthful

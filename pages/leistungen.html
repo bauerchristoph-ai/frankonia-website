@@ -199,7 +199,14 @@
            Because it is no longer a SIBLING before the orientation section, that
            section also stops reserving the 200px band — correct, the band is not
            in it any more. -->
-      <div class="pixel-seam pixel-seam--photo" data-pixel-seam
+      <!-- ⚠️ `--photo-light` is REQUIRED here, not decoration (client 2026-08-17:
+           "el degradado está mal, tiene que ser blanco, está azul"). `--photo`'s
+           default tile paint is /werkschutz/'s navy Risiko band, because that is
+           the section ITS hero dissolves into. The section below THIS hero is the
+           white Orientierung one, so without this modifier the photo broke up into
+           a navy that exists nowhere else on the page. Any future page that adopts
+           `--photo` has to declare which surface it is dissolving INTO. -->
+      <div class="pixel-seam pixel-seam--photo pixel-seam--photo-light" data-pixel-seam
            data-seam-start="top 95%" data-seam-end="top 45%" aria-hidden="true"></div>
     </section>
 

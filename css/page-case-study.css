@@ -85,12 +85,37 @@
   color: rgb(255 255 255 / 0.82);
 }
 
+/* The dot breathes (client 2026-08-19: "que esté tintineando… onda suavemente").
+   It REUSES @keyframes section-eyebrow-blink from components.css rather than
+   declaring a second pulse, and that is the point: the client asked for this exact
+   effect once before, in the same word ("un bullet cuadrado que tintinea"), and it
+   already drives the shared .section-eyebrow's own dot. One blink definition on the
+   site, two consumers — a near-identical second keyframe is how two dots end up
+   drifting apart.
+
+   The DURATION is the "suavemente" lever: 2.4s against the eyebrow's 1.6s. Slowing
+   the same curve is what makes it read as breathing rather than as a blink, and it
+   costs no new values. If it should be softer still, raise this number; making the
+   dip shallower instead would mean a second @keyframes, which is why it was not
+   done pre-emptively.
+
+   ⚠️ Reduced motion needs NO rule here, and the reason is in the keyframes, not in
+   an override: motion.css collapses every animation to `0.01ms` with
+   `iteration-count: 1`, so the dot lands on the 100% frame — and that frame is
+   `opacity: 1`, the resting state. This is the same trap `@keyframes
+   service-price-float` documents: a two-stop `alternate` version would freeze the
+   dot mid-fade for a reduced-motion visitor. Do not "simplify" the 0%, 100% pair
+   into a single stop.
+
+   Only `opacity` animates, so this is compositor work — it cannot cause layout or
+   CLS on a 6px element in the hero. */
 .cs-hero__badge-dot {
   width: 0.4rem;
   height: 0.4rem;
   border-radius: 50%;
   background-color: var(--color-accent);
   flex-shrink: 0;
+  animation: section-eyebrow-blink 2.4s ease-in-out infinite;
 }
 
 /* Hero H1: the homepage hero's own clamp, which §2 makes mandatory for ANY
@@ -350,11 +375,19 @@
     margin-top: var(--space-7);
   }
 
-  .cs-pitch__actions .btn {
-    width: 100%;
-    /* .btn is white-space: nowrap, and this label's min-content exceeds a
-       360px column — the exact trap the price card's CTA hit at 320px. */
-    white-space: normal;
+  /* ⚠️ 639.98, NOT this block's 767.98 — client 2026-08-19, one CTA rule
+     site-wide (full reasoning at .service-hero__actions, page-service.css).
+     This pair is the ONE on the site that does not fit a 640px row: 384 + 210 +
+     16 = 610px against 598px available. It wraps to two content-width buttons
+     there rather than overflowing, which is the intended fallback and is
+     measured — not an oversight. */
+  @media (max-width: 639.98px) {
+    .cs-pitch__actions .btn {
+      width: 100%;
+      /* .btn is white-space: nowrap, and this label's min-content exceeds a
+         360px column — the exact trap the price card's CTA hit at 320px. */
+      white-space: normal;
+    }
   }
 
   .cs-related {

@@ -205,6 +205,105 @@
   margin-bottom: var(--space-3);
 }
 
+/* ---- The Einsatzlagen are CARDS, one row, on the combo pages only -----------
+   Client 2026-08-19: "que sean cards en una misma línea con el icono, cards como
+   las blancas que tenemos en otras secciones, con el drop shadow", plus a centred
+   section title.
+
+   ⚠️⚠️ SCOPED TO `.combo-fields` ON EVERY SELECTOR, AND THAT IS LOAD-BEARING.
+   This block's markup is `.city-fields__*`, which page-city.css styles for the TEN
+   city pages as well — a bare `.city-fields__item` here would restyle
+   /sicherheitsdienst-bamberg/ and its nine siblings, which are ruled blocks by
+   design and were approved that way. The combo pages are the only ones that load
+   this file, so the scope is what keeps the blast radius at 16 instead of 26.
+
+   The card is `.city-why__item`'s, values COPIED rather than re-derived — that
+   block is the white elevated panel this page type already uses two sections down,
+   so the two have to be one treatment and not two similar ones. Same 1.5rem radius
+   (the site's single off-scale value, shared with the cases card and the price
+   card), same hairline, same two-layer shadow: a wide low-opacity spread plus a
+   tight contact shadow, which is what makes a white panel read as lifted off a
+   white section. Neither gets any smaller — on this surface they are the only
+   things defining the card's edge.
+
+   ⚠️ NO HOVER LIFT, deliberately, and not an oversight. `data-item-reveal="li"`
+   points GSAP at the <li>, which IS the card, and GSAP writes
+   `translate: none; rotate: none; scale: none` inline on whatever it animates — so
+   a hover `translate` here would be dead on arrival. That is the exact bug
+   CLAUDE.md records for `.city-why__item`, still live on two pages. These cards
+   are not links, so there is nothing to afford; adding the rule would only add a
+   second copy of a known-dead one. If a lift is ever wanted, the fix is structural:
+   wrap the card in the <li> and move `data-item-reveal` to the wrapper. */
+.combo-fields .city-fields__item {
+  display: grid;
+  /* Content at the TOP, so a row of cards is equal height (grid `stretch`) while
+     the icons and titles still line up across it. */
+  align-content: start;
+  /* Replaces the ruled block's asymmetric `padding-top` — left as-is it would hang
+     the card's copy off its own bottom edge. The block's `border-top` needs no
+     reset: the `border` shorthand below rewrites all four sides, and a `border-top:
+     0` in front of it would be a declaration that reads as doing something and is
+     overridden on the next line. */
+  padding: var(--space-6);
+  border-radius: 1.5rem;
+  border: 1px solid rgb(1 1 1 / 0.07);
+  background-color: var(--color-white);
+  box-shadow: 0 18px 48px rgb(1 1 1 / 0.07), 0 2px 6px rgb(1 1 1 / 0.04);
+}
+
+/* ---- Section header centred (same client message) ----
+   Header centred, card content left — the composition this page type already uses
+   for Vertrauen, Brandwache, Warum and the FAQ, so it is a decision the family has
+   made rather than a new one.
+   ⚠️ THREE PARTS, and with any one missing it looks broken rather than centred —
+   this is the trap CLAUDE.md has now logged eight times:
+     · TWO classes, because the chassis' `.section__intro > p` is (0,1,1) and a
+       single-class selector ties and loses on source order;
+     · `text-align` centres the TEXT, `margin-inline: auto` centres the BOX — the
+       lede is capped at 42rem by the chassis, so without the auto margins it stays
+       pinned left under a centred heading;
+     · the cap goes in `ch` on the H2, because this heading is a different length on
+       every one of the 16 pages. */
+.combo-fields .section__intro {
+  text-align: center;
+}
+
+.combo-fields .section__intro h2 {
+  max-width: 34ch;
+  margin-inline: auto;
+  text-wrap: balance;
+}
+
+.combo-fields .section__intro > p {
+  margin-inline: auto;
+}
+
+@media (min-width: 1100px) {
+  /* ONE ROW, whatever the count. The 16 drafts give three or four Einsatzlagen, so
+     `grid-auto-flow: column` + equal auto columns beats a `repeat(N)` that would
+     need a per-page class — and it keeps working if a future draft gives five.
+     `grid-template-columns: none` is required, not tidy: the inherited 900px rule
+     declares two explicit columns, and auto-flow would fill those first and spill
+     the rest into implicit ones.
+
+     1100px is this project's measured number for a four-across row (the same one
+     `.city-why__grid` and the Anwendungsfälle use), not a round guess. Below it the
+     inherited 2-up at 900 and single column below that both still apply. */
+  .combo-fields .city-fields__list {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    column-gap: var(--space-6);
+  }
+
+  /* The three-item pages mark their last item `--wide` so it spans the 2-up grid
+     and closes the orphan hole. In a single row there is no hole and no row to
+     span, so it goes back to being one card among equals. */
+  .combo-fields .city-fields__item--wide {
+    grid-column: auto;
+  }
+}
+
 /* ==========================================================================
    3. ABLAUF — the three steps
    ==========================================================================
@@ -522,3 +621,115 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* ==========================================================================
+   9. 320px — THE H1 NEEDS A BREAK POINT
+   ==========================================================================
+   ⚠️ FOUND BY MEASURING, and the symptom is the dangerous one: the page did NOT
+   scroll sideways, it CLIPPED. `.service-hero` is `overflow: hidden`, so a
+   too-wide H1 is silently cut instead of pushing the document out — which means
+   `documentElement.scrollWidth === innerWidth` reads as "fine" while a word is
+   losing its last letters. Always check for boxes painted past the viewport as
+   well as for horizontal scroll.
+
+   THE CAUSE: base.css sets `hyphens: none` on every heading (correct — an
+   auto-hyphenated 48px display heading reads as a typo), and `overflow-wrap:
+   break-word` does NOT reduce an element's min-content width. So a single
+   unbreakable German compound sets the whole column's minimum. Measured at 320px
+   with the H1 at 32,64px:
+
+     "Baustellenbewachung"  19 chars  min-content 303px   against 280px available
+     "Werkschutz Nürnberg"            min-content 160px   (breaks at the space)
+
+   i.e. this only bites the four Baustellenbewachung combos. `hyphens: auto` gives
+   the word real syllable break points — the page is `lang="de"`, so Chrome uses
+   the German dictionary rather than breaking arbitrarily.
+
+   `min-width: 0` on the grid children is the other half: without it the hero's
+   grid track cannot shrink below min-content however the text wraps.
+
+   ⚠️ THE BREAKPOINT IS 360px, NOT THE 400px `.service-hero--split` USES, and the
+   number is measured rather than borrowed. The content column is the viewport
+   minus 2x20px of inset, so the word fits from 344px up:
+
+     320px  ->  280px available   303 needed   CLIPS
+     360px  ->  320px available   303 needed   fits
+
+   At 400 the rule would hyphenate a heading that has room, and a 390px phone then
+   breaks "Baustellenbewa-chung" mid-word instead of at the space — worse
+   typography for no gain. 360 leaves every current phone on clean word-boundary
+   breaks and only the 320-class viewport hyphenates. */
+@media (max-width: 359.98px) {
+  .combo-hero .city-hero__content h1 {
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }
+
+  .combo-hero .city-hero__grid > * {
+    min-width: 0;
+  }
+}
+
+/* ==========================================================================
+   10. LA SECCIÓN DE PROSA: EL H2 EN DOS RENGLONES
+   ==========================================================================
+   Cliente 2026-08-17, sobre /objektschutz-nuernberg/: "no puede quedar esto así
+   tan largo, tiene que tener dos renglones el título y el texto tener menos
+   width".
+
+   ⚠️⚠️ EL ANCHO DEL TEXTO NO SE ARREGLÓ ACÁ, Y ESA ES LA PARTE QUE IMPORTA. El
+   defecto era de MARKUP, no de CSS: mi generador ponía los párrafos en un
+   `.service-prose__body` inventado, cuando el chasis ya tiene un contrato para este
+   bloque — las 9 páginas de servicio ponen su párrafo en un SEGUNDO
+   `.section__intro`. Tres reglas que ya existían en page-service.css cuelgan de eso:
+
+     .service-prose .section__intro      ->  text-align: center
+     .section__intro > p                 ->  max-width: 42rem  Y  hyphens: none
+     .service-prose .section__intro > p  ->  margin-inline: auto
+
+   Mi wrapper se escapaba de las tres, así que el párrafo corría todo el container
+   (**96–152 caracteres por línea**, medido; lo cómodo son 60–80), quedaba alineado a
+   la izquierda debajo de un H2 centrado — 216px de desfase entre el texto del H2 y
+   el del párrafo — y conservaba el `hyphens: auto` de base.css, o sea partía
+   compuestos alemanes al medio DENTRO de texto centrado. Los tres se arreglaron
+   moviendo el markup, con CERO reglas nuevas. Ver r_prose en
+   docs/design-sources/combo-pages.py.
+
+   ⚠️ Y una corrección al paso: `.service-prose` SÍ tiene CSS en el chasis. Un grep
+   anterior dijo que no, y ese grep nunca corrió — venía en una cadena `&&` que se
+   cortó antes. Es la regla de las líneas ~4029 de page-service.css.
+
+   LO ÚNICO QUE QUEDA ACÁ ES EL CAP DEL H2, porque eso el chasis no lo da: deja el
+   `.section__intro` en `max-width: none`, así que un título de 45 caracteres corre
+   UNA sola línea de 1234px a 1440 y de 1360 a 1920 — exactamente lo reportado.
+
+   **30ch** es el cap de H2 dominante del proyecto (page-city.css dos veces,
+   page-service.css, page-sicherheitskonzept.css). En `ch` y no en px a propósito: el
+   H2 es un clamp tipográfico, así que la medida tiene que seguir al tamaño de letra,
+   y el largo del título cambia por ciudad (33 a 68 caracteres en las 21 secciones).
+
+   ⚠️ NINGÚN CAP DA "EXACTAMENTE DOS LÍNEAS" PARA LOS 21, y no es alcanzable: van de
+   33 a 68 caracteres, así que cualquier medida que parta el más corto en dos deja el
+   más largo en tres. Lo que 30ch garantiza es que **ninguno corre una sola línea
+   gigante**, que es el defecto reportado. Medido: 17 de 21 en dos líneas, 1 en tres,
+   y 3 en una — y esos 3 son los más cortos (33, 34 y 35 caracteres), donde una línea
+   es lo correcto.
+
+   ⚠️ `margin-inline: auto` NO ES OPCIONAL, y es la trampa que este proyecto ya
+   documenta SIETE veces: la sección está centrada, así que `max-width` sin márgenes
+   automáticos centra el TEXTO dentro de una caja de 995px que sigue pegada a la
+   izquierda. Hacen falta las dos.
+
+   `text-wrap: balance` reparte las dos líneas en vez de dejar una larga y una de dos
+   palabras. */
+/* ⚠️ ESTA REGLA SE PROMOVIÓ AL CHASIS EL 2026-08-19 y se BORRÓ de acá — vive como
+   `.service-prose .section__intro h2, .service-trust .section__intro h2` en
+   page-service.css, con los mismos tres valores. Motivo: el cliente reportó el mismo
+   defecto en `/baustellenbewachung/`, o sea en las 12 páginas de SERVICIO, que no
+   llevan `.combo-prose`. **Las 21 secciones combo llevan LAS DOS clases**
+   (`service-prose combo-prose`), así que la regla del chasis las alcanza igual y
+   dejar esta copia era decir lo mismo dos veces. Verificado midiendo las 21 después
+   de borrarla: mismo cap, mismos cortes de línea.
+   Todo el razonamiento de arriba (por qué 30ch, por qué en `ch`, por qué el
+   `margin-inline: auto` no es opcional, y por qué ningún cap da dos líneas para los
+   21) sigue siendo la referencia — no re-derivar esos números. */

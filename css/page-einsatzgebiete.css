@@ -185,9 +185,36 @@
 }
 
 /* The map is capped below the two-column split so it does not become the
-   biggest thing on a tablet screen. */
+   biggest thing on a tablet screen.
+
+   ⚠️ `margin-inline: auto` IS NOT OPTIONAL — it is the trap this project has now
+   paid for ten times: **`max-width` caps a box, it does not centre it.** A grid
+   item whose max-width stops it stretching falls back to its `justify-self`
+   start position, i.e. hard against the content edge, with all the slack pooling
+   on one side. Measured before (client 2026-08-19, on a 741px tablet: "make the
+   image of this map centred, is aligned to the right"): the box sat **8px off
+   axis at 600, 49 at 768, 111 at 900 and 163 at 1023** — the wider the tablet,
+   the worse, because the cap is fixed while the column keeps growing.
+   ✅ Centring the BOX centres the DRAWING here, and that is measured, not assumed:
+   `getBBox()` reports the ink spanning x 0→1000 of a 0→1000 viewBox, so the two
+   are the same rectangle. A future generator run that changes the viewBox padding
+   would break that identity — re-measure rather than trusting this line.
+   ⚠️ Inert at phone widths (0px at 390, 8 at 600), where the column is narrower
+   than the cap and there is no slack to split. Only the copy stays ranged left;
+   this centres the map alone, not the section. */
 @media (max-width: 1023.98px) {
-  .eg-hero__map { max-width: 34rem; }
+  .eg-hero__map {
+    /* ⚠️ `width: 100%` IS LOAD-BEARING, and leaving it out is a SECOND trap in the
+       same three lines — caught by measuring, not by looking. An auto inline margin
+       on a grid item cancels its default `justify-self: stretch` and makes it
+       CONTENT-sized; an <svg> has no intrinsic pixel width, so it collapsed to the
+       replaced-element default: measured **544px → 300px at every width below 1024**,
+       perfectly centred and 45 % smaller. Same failure page-service.css documents for
+       the price card. The cap only bites once the box is told to fill its track. */
+    width: 100%;
+    max-width: 34rem;
+    margin-inline: auto;
+  }
 }
 
 /* ---- The city cards ------------------------------------------------------

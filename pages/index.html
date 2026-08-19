@@ -150,7 +150,7 @@
           "name": "Was kostet ein Sicherheitsdienst pro Stunde?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Ein professioneller Sicherheitsdienst kostet in der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde, zuzüglich tariflicher Zuschläge für Nacht, Wochenende und Feiertage. Wo Ihr Auftrag in der Spanne liegt, bestimmen Qualifikation, Leistungsumfang und Startzeitraum — dafür bekommen Sie ein durchdachtes System mit digitalen Nachweisen statt bloßer Stunden. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
+            "text": "Ein professioneller Sicherheitsdienst kostet in der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde, zuzüglich tariflicher Zuschläge für Nacht, Wochenende und Feiertage. Wo Ihr Auftrag in der Spanne liegt, bestimmen Qualifikation, Einsatzzeiten, Startzeitraum sowie Umfang und Anzahl der eingesetzten Kräfte. Weil KI-automatisierte Prozesse unsere Verwaltung schlank halten, bieten wir zertifizierte Qualität zum besten Preis-Leistungs-Verhältnis — Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages."
           }
         },
         {
@@ -1644,6 +1644,66 @@
       </div>
     </section>
 
+    <!-- ============ 3.5. PREIS-LEISTUNG ============ -->
+    <!-- NEW 2026-08-17, client pricing/positioning update, their section "6b".
+         The client numbers by the WEBTEXT's own Sektion numbers, not this file's:
+         their "section 6 (services grid)" is Sektion 6 "Leistungs-Übersicht",
+         which is section 3 ABOVE — NOT this file's "6. FREE SECURITY ANALYSIS".
+         Verified against Webtext 01's own section list before placing it, so
+         "directly below the services grid" is exactly here.
+
+         SURFACE: .section--subtle, the SAME surface as Services above — which is
+         why this insertion costs NO new pixel seam. A seam only exists where the
+         colour actually changes (page-conventions §9.2) and its tiles are the
+         colour of the section ABOVE it; the existing --subtle seam below now sits
+         under THIS section instead of Services, and its tile colour is still
+         correct because both are --subtle. Do NOT add a seam between Services and
+         this one: black tiles over black dissolve nothing.
+
+         Because the two share a surface, the PANEL is what separates this block
+         from the services list — without it the two read as one long section.
+         That is also the client's own brief: "no elaborate design needed; a
+         highlight-style text block is perfect".
+
+         The price is a token, never typed (client rule G10), so the yearly rate
+         change reaches this section too. Note it renders the BOX format
+         ("24,50-32 €/Std.") inside a sentence rather than the body form
+         ("24,50 bis 32 Euro"): that is the client's own wording for this
+         paragraph, quoted verbatim from Webtext 01 rev. 17.08.
+
+         ⚠️ NO EYEBROW/KICKER, and that is deliberate: the client's 2026-08-17
+         document specifies "Kicker: BESTES PREIS-LEISTUNGS-VERHÄLTNIS" and it was
+         built with the shared .section-eyebrow, then removed on their instruction
+         2026-08-19. Do NOT restore it as a missing item from that document — the
+         later instruction wins. It also puts the homepage back to carrying a
+         single eyebrow ("Unser System"), which was its own convention before this
+         section existed, and matches the call already made for /jobs/, where every
+         section eyebrow was removed. The section now opens on its H2.
+
+         Reveal hooks mirror .konzept one section up, which is the same shape
+         (copy + tick list + CTA): data-reveal on the copy, data-item-reveal on
+         the tick list as a SIBLING, never nested inside a data-reveal — two
+         reveal timelines over one subtree is what makes a reveal look broken. The
+         h2 is animated by js/title-reveal.js on its own, like every other h2. -->
+    <section class="section section--subtle pricevalue" aria-labelledby="pricevalue-title">
+      <div class="container">
+        <div class="pricevalue__panel">
+          <div class="pricevalue__copy" data-reveal>
+            <h2 id="pricevalue-title">Premium-Sicherheit muss nicht teuer sein</h2>
+            <p class="pricevalue__lede">Wir wissen: Sicherheit ist selten die Lieblings-Kostenstelle — sie trägt nicht direkt zur Wertschöpfung bei, muss aber jeden Tag zuverlässig funktionieren. Genau deshalb haben wir es uns zur Aufgabe gemacht, unsere Verwaltung mit KI-automatisierten Prozessen so schlank zu halten, dass wir zertifizierte Qualität zum besten Preis anbieten können: in der Regel {{price.range}} {{price.unit}} netto, abhängig von Qualifikation, Einsatzzeiten sowie Umfang und Anzahl der eingesetzten Kräfte.</p>
+          </div>
+          <ul class="pricevalue__points" data-item-reveal=".pricevalue__point">
+            <li class="pricevalue__point"><svg class="icon pricevalue__tick" aria-hidden="true"><use href="#icon-check"></use></svg><span>KI-automatisierte Prozesse statt teurem Verwaltungsapparat — der Effizienzvorteil landet in Ihrem Angebot</span></li>
+            <li class="pricevalue__point"><svg class="icon pricevalue__tick" aria-hidden="true"><use href="#icon-check"></use></svg><span>Sicherheitskonzepte, die Sparpotenziale finden: Kunden sparten bis zu 30 % Kosten</span></li>
+            <li class="pricevalue__point"><svg class="icon pricevalue__tick" aria-hidden="true"><use href="#icon-check"></use></svg><span>Transparente Preisspannen, offen auf jeder Leistungsseite</span></li>
+          </ul>
+          <div class="pricevalue__actions" data-reveal>
+            <a class="btn btn--primary" href="#sicherheitsanalyse">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Pixel-transition "seam" (client request, 2026-07-21) — recreates
          the look of a WebGL shader demo the client linked
          (github.com/J0SUKE/gsap-threejs-codrops — a per-image "pixel
@@ -1666,8 +1726,13 @@
          or prefers-reduced-motion is set, this div stays empty and
          effectively invisible, so Services and Uniforms simply meet
          normally with nothing between them, same as if this feature
-         didn't exist. Services is .section--subtle, so the tiles use
-         .pixel-seam--subtle (~#090909) to match it (client 2026-07-25). -->
+         didn't exist. The section ABOVE this seam is .section--subtle, so the
+         tiles use .pixel-seam--subtle (~#090909) to match it (client
+         2026-07-25). ⚠️ That section used to be Services; since 2026-08-17 it is
+         the Preis-Leistung block, deliberately on the SAME --subtle surface, so
+         the tile colour did not have to change. If that section ever changes
+         surface, this modifier has to change with it. -->
+
     <div class="pixel-seam pixel-seam--subtle" data-pixel-seam aria-hidden="true"></div>
 
     <!-- ============ 4. UNIFORMS / OUTFIT VIEWER ============ -->
@@ -2337,7 +2402,7 @@
           </article>
           <article class="philosophy__item">
             <h3 class="philosophy__item-title">Innovativ, langfristig, auf Ihrer Seite</h3>
-            <p class="philosophy__item-text">Wir sehen Sicherheit anders als viele in der Branche: nicht als verkaufte Stunden, sondern als System, das laufend besser wird. Digitale Nachweise statt Behauptungen, ein kostenfreies Sicherheitskonzept, das mit unserer KI-gestützten Software auch Einsparpotenziale findet, und Bestandskundenpflege, die so weit geht, dass wir eigene Stunden reduzieren, wenn es für Sie die richtige Entscheidung ist. Kunden haben so <span class="philosophy__mark">bis zu 30 % Kosten gespart</span> — bei gleichbleibender Sicherheit.</p>
+            <p class="philosophy__item-text">Wir sehen Sicherheit anders als viele in der Branche: nicht als verkaufte Stunden, sondern als System, das laufend besser wird. Digitale Nachweise statt Behauptungen, ein kostenfreies Sicherheitskonzept, das mit unserer KI-gestützten Software auch Einsparpotenziale findet, und Bestandskundenpflege, die so weit geht, dass wir eigene Stunden reduzieren, wenn es für Sie die richtige Entscheidung ist. Kunden haben so <span class="philosophy__mark">bis zu 30 % Kosten gespart</span> — bei gleichbleibender Sicherheit. Und weil KI-automatisierte Prozesse unsere Verwaltung schlank halten, bekommen Sie diese Qualität zum besten Preis-Leistungs-Verhältnis der Region.</p>
           </article>
         </div>
       </div>
@@ -2359,7 +2424,7 @@
         <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
           <details class="faq-item">
             <summary><h3>Was kostet ein Sicherheitsdienst pro Stunde?</h3></summary>
-            <p class="faq-item__answer">Ein professioneller Sicherheitsdienst kostet in der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde, zuzüglich tariflicher Zuschläge für Nacht, Wochenende und Feiertage. Wo Ihr Auftrag in der Spanne liegt, bestimmen Qualifikation, Leistungsumfang und Startzeitraum — dafür bekommen Sie ein durchdachtes System mit digitalen Nachweisen statt bloßer Stunden. Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
+            <p class="faq-item__answer">Ein professioneller Sicherheitsdienst kostet in der Regel zwischen {{price.min}} und {{price.max}} Euro pro Stunde, zuzüglich tariflicher Zuschläge für Nacht, Wochenende und Feiertage. Wo Ihr Auftrag in der Spanne liegt, bestimmen Qualifikation, Einsatzzeiten, Startzeitraum sowie Umfang und Anzahl der eingesetzten Kräfte. Weil KI-automatisierte Prozesse unsere Verwaltung schlank halten, bieten wir zertifizierte Qualität zum besten Preis-Leistungs-Verhältnis — Ihr unverbindliches Angebot erhalten Sie innerhalb eines Werktages.</p>
           </details>
           <details class="faq-item">
             <summary><h3>Ist FRANKONIA offiziell zertifiziert?</h3></summary>

@@ -47,12 +47,24 @@
 /* ---- 1. Hero ------------------------------------------------------------- */
 /* REBUILT 2026-08-05 (client, reference: the old WordPress Referenzen hero — a
    centred team photo with the title centred just below it). A single CENTRED
-   column: photo → H1 → subline, and nothing else. The CTA, the phone pill and the
-   Google rating card were removed on instruction, and the draft's Badge with them
-   (see the markup comment for what that means and how to restore it).
-   `.ref-hero__badge` / `__badge-icon`, `.ref-hero__actions` and `.ref-hero__trust`
-   were DELETED here rather than left as dead rules — git has them, and this file
-   is the only place they existed.
+   column.
+   ⚠️ THE COLUMN IS: photo → badge → H1 → subline → CTA pair. THREE STATES SO FAR,
+   ALL CLIENT CALLS, so check the date before "restoring" anything:
+     · 2026-08-05 → 2026-08-17: photo → H1 → subline and nothing else (the client
+       removed the CTAs, the phone and the DEKRA seals by name);
+     · 2026-08-17: the CTA pair AND the Google widget came back (3.6.1 in the
+       consolidated feedback of 2026-08-13, which supersedes that removal), and the
+       Badge had already come back under rule G9;
+     · 2026-08-19: the GOOGLE WIDGET GOES BACK OUT, on its own ("saca el google
+       rating de la hero, dejalo nomás más abajo") — the CTA pair stays. The rating
+       is not lost: the same `.review-card--sm` renders in the Kundenstimmen section
+       below. The full history is on the markup in pages/referenzen.html.
+   ⚠️ That last removal is HALF of one change — the other half is the photo's height
+   budget below, which shrank by exactly the widget's height so the photo grows into
+   the space it left. Do not revert one without the other.
+   Still accurate: `.ref-hero__badge` / `__badge-icon` do not exist — the badge uses
+   the shared `.hero-badge` from components.css instead. And the DEKRA seals stayed
+   out of this hero on purpose.
    The hero is sized by its own content: .service-hero forces a full first screen
    at ≥1024px because of its portrait service photo, which would leave a
    screen-tall band of empty black under a short centred block. */
@@ -89,6 +101,33 @@
   text-align: center;
 }
 
+/* ---- The restored CTA pair (2026-08-17) ------------------------------------
+   ONE reason for this rule: `text-align: center` on the content column above
+   centres INLINE content, and this block is `display: flex` in the chassis
+   (.service-hero__actions, page-service.css) — so it renders full-width with its
+   items packed at `flex-start`, i.e. hard left inside a centred composition. This
+   is the same gotcha documented for `.section-eyebrow` and for every centred
+   `.section__intro` on the site: a parent's text-align does not move a flex child.
+   The Badge needs no equivalent rule either, but NOT for the reason this comment
+   used to give ("`.hero-badge` is `inline-flex`, so the text-align above already
+   centres it"). That was only true while the badge fitted one line: at 390px it
+   measured 350px inside a 350px column, so the inline-flex filled the line box,
+   text-align had nothing to move, and the icon sat pinned hard left while the text
+   centred without it. The badge is plain inline flow as of 2026-08-19
+   (components.css) and centres as text, at every width.
+   ⚠️ `.ref-hero__trust` USED TO BE IN THIS SELECTOR and was removed with the hero's
+   Google widget (client 2026-08-19 — the full history is on the markup in
+   pages/referenzen.html). It is not left behind as a dead selector on purpose: a
+   rule nothing can match is a rule the next person has to prove is unused. If the
+   widget ever comes back into this hero it needs this centring again, or it renders
+   hard left under a centred title.
+   Nothing else is overridden on purpose: gaps, margins, wrapping and the phone
+   pill's own styling all come from the chassis, so this hero stays the same
+   component as every other one and only its alignment is local. */
+.ref-hero__actions {
+  justify-content: center;
+}
+
 /* 46rem is what keeps the title on two balanced lines ("Unsere Kunden / und ihre
    Ergebnisse"). Without its own cap it would follow the wider column above and
    run onto one very long line. */
@@ -123,7 +162,32 @@
      turns that into a width — so the box shrinks on a short screen and the text always clears the
      fold. On a tall screen the 60rem cap takes over and nothing changes.
      Same idea the service hero already uses to fit its portrait photo. */
-  width: min(100%, 62rem, calc((100svh - 24.5rem) * 1.648));
+  /* ⚠️ THE SUBTRAHEND IS "EVERYTHING IN THE FIRST SCREEN THAT IS NOT THE PHOTO", so
+     it moves every time a block is added to or removed from this hero — it is
+     arithmetic, never a taste value. Its history, because each step explains the
+     next:
+       · 24.5rem while the hero was photo → H1 → subline;
+       · 34.5 → 35.25rem on 2026-08-17, when the CTA pair and the Google widget came
+         back and added 160px + the widget's own bottom margin of it. Without moving
+         the budget the photo kept its height and pushed both new blocks off screen —
+         measured 90px below the fold for the CTAs and 170px for the widget at
+         1440x900, 1440x800, 1512x900 and 1024x768 alike. A CTA under the fold is not
+         a CTA.
+       · 30.25rem on 2026-08-19, when the client took the Google widget back out of
+         this hero and asked for a bigger team photo — which is ONE change, not two:
+         the widget was the last block above the fold, so its 80px (48px of card +
+         its 32px `margin-top` from .service-hero__trust) is exactly the space the
+         photo grows into. 80px = 5rem, hence 35.25 → 30.25. MEASURED after: the CTA
+         row now lands where the widget's bottom used to, a few px inside the fold,
+         at every desktop size.
+     ⚠️ THE COST IS REAL AND RUNS BOTH WAYS: the photo's height IS the leftover
+     budget (width = leftover × 1.648 and the ratio turns it straight back), so at a
+     900px viewport 5rem of budget is ~132px of photo width. That is why "make the
+     photo bigger" and "put one more thing above the fold" are the same lever pulled
+     in opposite directions, and why the answer is always a client call. Do not
+     "optimise" it by shrinking the gaps: they are chassis values shared with every
+     other hero. */
+  width: min(100%, 62rem, calc((100svh - 30.25rem) * 1.648));
   /* A small positive gap. ⚠️ It was briefly NEGATIVE, on the belief that the photo
      faded to nothing before its box ended — it does not. That reading came from
      measuring the BRIGHTEST pixel per row, which drops to ~21 near the bottom; but
@@ -340,6 +404,58 @@
    child with a top margin comes back, `padding-top: 0` would reopen it. */
 .ref-quotes {
   padding-top: var(--space-4);
+}
+
+/* ---- 3b. The overall Google rating, above the three quotes ----------------
+   Client 2026-08-17: "agregame el rating general … el widget que vemos en todas
+   las otras secciones, pero que quede bien en la sección". So the markup is the
+   SAME `.review-card--sm` pill every hero carries — the site keeps ONE rating
+   mark — and only its SURFACE is overridden here, because that component is
+   designed to sit on black.
+
+   ⚠️ The fill is `.testimonial`'s own value (rgb(59 73 86 / 0.04), testimonials.css)
+   copied rather than re-derived, and the shadow is removed. The base component is
+   `--color-white` + `--shadow-md`, which on this white section would paint an
+   ELEVATED pill 24px above three INSET cards — two materials for one idea, and the
+   white fill would do no work anyway. Flat and tinted makes the pill and the cards
+   below read as one decision. (White-on-white + shadow IS a valid pattern on this
+   site — `.service-cases__card` — but not directly above flat panels.)
+
+   ⚠️ The radius deliberately stays `--radius-lg` from the base component while the
+   cards below use `--radius-md`: at ~40px tall, 16px is what makes this read as the
+   PILL it is in all seven heroes, and 8px would turn it into a small box, i.e. a
+   fourth material. Surface follows the section; shape follows the component.
+
+   ⚠️⚠️ IF THIS SECTION EVER FLIPS TO DARK, DELETE THIS OVERRIDE ENTIRELY — do not
+   invert it. The base white + shadow is already correct on a dark surface, and a 4%
+   WHITE tint on black is invisible. Same rule this project has paid for twice
+   (`.ag-hero__alt`, `.city-callout__lede`): a block that hardcodes a surface stops
+   working the moment its section changes colour. */
+.ref-quotes__rating {
+  /* Safe as a margin here, unlike on this section's FIRST child: `.ref-quotes`
+     keeps a real `padding-top` (see the note above it) and this is the h2's
+     sibling, so nothing can collapse out of the section as a dark band. */
+  margin-top: var(--space-5);
+}
+
+.ref-quotes__rating .review-card {
+  background-color: rgb(59 73 86 / 0.04);
+  box-shadow: none;
+}
+
+/* ⚠️ At 320px the pill measured 288px inside a 280px content column, and an
+   inline-flex box WIDER than its line box cannot be centred by `text-align` — it
+   starts at the left edge and overflows right, so it rendered 4px off-axis with 8px
+   of itself sitting in the container's padding (the page never scrolled, which is
+   exactly why this is easy to miss). Stepping the gap and inline padding down one
+   notch brings it to ~272px, so it fits and centres properly.
+   These are the SAME 8/12px this badge already uses on a phone inside the heroes
+   (rule G6), so it is not a new size — and it stays one row rather than wrapping. */
+@media (max-width: 399.98px) {
+  .ref-quotes__rating .review-card {
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-3);
+  }
 }
 
 .ref-quotes__grid {
@@ -685,9 +801,13 @@
     padding-block: var(--space-3) var(--space-8);
   }
 
-  /* The stacked-CTA and trust-row rules that were here went out with the markup
-     they styled (client 2026-08-05) — this hero is photo + two lines of centred
-     text now, so there is nothing to stack. */
+  /* No phone-specific CTA or trust-row rules here on purpose. The pair of rules
+     that once lived at this spot went out with the markup they styled on
+     2026-08-05; the CTA pair came back on 2026-08-17 and needs none of it (the
+     chassis already stacks .service-hero__actions full-width below 640px — it was
+     768 until the site-wide CTA rule of 2026-08-19), and the
+     Google widget is out of this hero again since 2026-08-19 — see the history at
+     .ref-hero above. Measured at 390 and 320: the CTAs stack, nothing overflows. */
 
   /* One step down on a phone. Both groups have to be restated: the optical
      normalisation above uses an attribute selector, so a bare `.ref-marquee__logo`

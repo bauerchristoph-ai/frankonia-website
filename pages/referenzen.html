@@ -169,16 +169,17 @@
     <!-- REBUILT 2026-08-05 (client, reference: the old WordPress Referenzen hero —
          a centred photo of the team with the title centred just below it). Now a
          centred composition: photo → H1 → subline, and nothing else.
-         REMOVED, on instruction ("saca lo que hay hoy de los dekra, el cta y el
-         numero, solo el texto"): the primary CTA, the phone pill and the Google
-         rating card. The "Über 300 Unternehmen und Einrichtungen vertrauen
-         FRANKONIA" badge went with them — the client quoted only the H1 and the
-         subline as "the text". That badge line IS the draft's own hero Badge, so
-         it is one line to restore if wanted; the "über 300" claim also still runs
-         in this page's meta description.
-         ⚠️ This hero no longer has a conversion action above the fold. The page
-         still converts through the closing form (#anfrage) and the header CTA,
-         but flagging it because the form is this site's primary page goal.
+         ⚠️ HISTORY, AND THIS PARAGRAPH IS NOW THE OPPOSITE OF WHAT IT USED TO SAY.
+         On 2026-08-05 the primary CTA, the phone pill, the Google rating card AND
+         the DEKRA seals were all REMOVED on the client's instruction ("saca lo que
+         hay hoy de los dekra, el cta y el numero, solo el texto"), and the Badge
+         went with them because he quoted only the H1 and the subline as "the text".
+         Since then: the Badge came back under rule G9, and on 2026-08-17 the CTA
+         pair and the Google widget came back under 3.6.1 (see the block below).
+         The DEKRA seals are the only part still out, deliberately.
+         So this hero DOES have a conversion action above the fold again — verified
+         at 1440x900, 1440x800, 1512x900, 1600x900, 1920x1080, 1280x800, 1024x768,
+         834 and 768: the widget's bottom edge lands inside the fold at every one.
          MOTION: js/hero-reveal.js — the H1's words rise out of their masks and the
          subline follows, ON LOAD.
          ⚠️ It was briefly switched to js/title-reveal.js, the per-character
@@ -237,6 +238,62 @@
           <p class="hero__lead service-hero__lead ref-hero__lead">
             Echtes Vertrauen entsteht nicht durch Versprechen, sondern durch Beweise: echte Kunden, messbare Ergebnisse, ehrliche Stimmen.
           </p>
+
+          <!-- ⚠️⚠️ CTA PAIR + GOOGLE WIDGET: RESTORED 2026-08-17, AND BOTH HALVES OF THE
+               HISTORY ARE HERE ON PURPOSE — DO NOT DELETE THIS WHILE "CLEANING UP".
+               They were removed 2026-08-05 on the client's own explicit instruction
+               ("saca lo que hay hoy de los dekra, el cta y el numero, solo el texto"),
+               which is what the section comment above still describes.
+               They come back because the consolidated feedback of 2026-08-13 — which
+               opens with "This document replaces all previous change-request
+               documents" — asks for them in 3.6.1, and because Webtext 27 line 12
+               specifies them verbatim:
+                 "CTA primär: Unverbindliches Angebot einholen · CTA sekundär:
+                  +49 951 964352-0 · Google-Widget"
+               So the later instruction wins, exactly as it did for the Badge above
+               (rule G9). This also closes G1 on this page: /referenzen/ was one of
+               three pages with no secondary CTA anywhere.
+               ⚠️ THE DEKRA SEALS DELIBERATELY DO NOT COME BACK. Neither Webtext 27
+               nor 3.6.1 lists them for the hero — both name only the Google widget —
+               and the client removed them by name. The page still carries them in its
+               own certifications block further down. Do not "complete" the trust band
+               with them.
+               ⚠️ Order is H1 → lede → actions → trust: that is the homepage's
+               documented order AND the order js/hero-reveal.js animates these blocks
+               in (.hero__lead → .hero__actions → .hero__reassurance → .hero__trust).
+               The `.hero__*` class on each is what the script keys off; the
+               `.service-hero__*` class is what styles it, and `.ref-hero__*` only
+               centres it. All three are load-bearing. -->
+          <div class="service-hero__actions hero__actions ref-hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn btn--secondary hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+          </div>
+
+          <!-- ⚠️ THE GOOGLE WIDGET IS DELIBERATELY NOT IN THIS HERO (client 2026-08-19:
+               "en referenzen saca el google rating de la hero, dejalo nomás más abajo, y
+               por lo tanto como se va el google rating agrandá la imagen de las tres
+               personas"). DO NOT "RESTORE" IT — the two halves of the history:
+                 · Webtext 27 line 12 and feedback 3.6.1 both list it for the hero, which
+                   is why it was put back on 2026-08-17 (the full note is above);
+                 · this instruction is LATER and wins, exactly as G9 won over the earlier
+                   badge removal. Same rule, opposite direction.
+               ⚠️ NOTHING WAS LOST FROM THE PAGE: the identical `.review-card--sm` still
+               renders in the Kundenstimmen section below (added 2026-08-17), which is the
+               "dejalo nomás más abajo" half of the instruction — so the rating is stated
+               once, next to the quotes it summarises, instead of twice.
+               ⚠️ IT PAID FOR THE PHOTO: `.ref-hero__media`'s width is a HEIGHT budget
+               (see page-referenzen.css) — whatever the first screen does not spend on
+               everything else becomes the photo. Removing this block freed its height and
+               the budget shrank by exactly that, which is what makes the team photo
+               bigger. The two edits are one change; reverting one without the other
+               either pushes the widget under the fold or shrinks the photo for nothing.
+               ⚠️ The DEKRA seals still do not belong here either (see the note above).
+               js/hero-reveal.js needs no change: it builds its cascade with
+               `.filter(Boolean)`, so a missing `.hero__trust` is simply one fewer step. -->
+
         </div>
       </div>
     </section>
@@ -335,6 +392,49 @@
              above; the two read as one white chapter. -->
         <div class="section__intro ref-intro--center">
           <h2>Das sagen unsere Kunden</h2>
+
+          <!-- THE OVERALL GOOGLE RATING — client 2026-08-17 ("agregame el rating
+               general, el widget que vemos en todas las otras secciones, pero que
+               quede bien en la sección"). Deliberately the SAME `.review-card--sm`
+               pill the heroes carry, markup identical, so it reads as the site's
+               one rating mark rather than a second invention — only its surface is
+               overridden for a white section (css/page-referenzen.css §3b).
+               Under the H2 on purpose: the three quotes below are five-star
+               EXAMPLES, and the aggregate is the claim they support, so the order
+               reads "overall score, then three of the reviews". Centring is free —
+               `.ref-intro--center` is text-align: center and the pill is
+               inline-flex.
+               ⚠️ Values come from content/values.json (rule G10/G5) — never typed
+               here. The 94% star fill is 4,7/5 and is the shared modifier; if the
+               rating ever changes, that modifier changes with it, sitewide.
+               ⚠️ Do NOT add a second `aggregateRating` to this page's JSON-LD for
+               this: the graph already publishes 4.7/97 once, and this is the same
+               figure shown a second time, not a new one. -->
+          <div class="ref-quotes__rating">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                  <svg class="icon"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+          </div>
         </div>
 
         <div class="ref-quotes__grid" data-item-reveal=".testimonial" data-item-reveal-strong>

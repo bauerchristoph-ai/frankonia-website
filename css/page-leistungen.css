@@ -156,15 +156,10 @@
 }
 
 /* (.lh-hero__badge promoted to the shared .hero-badge in components.css, 2026-08-14 —
-   the two were byte-identical. The `.icon` rule below still applies.) */
+   the two were byte-identical. Its `.icon` rule followed it there on 2026-08-19 — it was one of two identical
+   copies, and the 12 badge pages loading NEITHER file were rendering the glyph as an
+   invisible black blob.) */
 
-.hero-badge .icon {
-  width: 1.125rem;
-  height: 1.125rem;
-  color: var(--color-accent);
-  fill: none;
-  stroke: currentColor;
-}
 
 /* ---- The hero's family list: REMOVED ------------------------------------
    `.lh-hero__families*` styled a three-row list in the hero's right column. That
@@ -197,6 +192,37 @@
    dissolve band. That rule and a bare `.lh-orient` are both (0,1,0), and this
    sheet loads later — so re-adding a padding-top here would win and drop 200px of
    tiles straight onto the heading. */
+
+/* Header centred (client 2026-08-17), the three selectors below it left-aligned —
+   the same split `.lh-why` and this page's FAQ already use, so it is a decision the
+   page has already made rather than a new one.
+
+   ⚠️ THIS NEEDS THREE DECLARATIONS, NOT ONE, and it is the trap CLAUDE.md has now
+   recorded six times:
+     · `text-align` centres the TEXT, auto margins centre the BOX — a capped box
+       without them stays pinned left, which renders as a centred heading over a
+       left-hugging paragraph, worse than not centring at all;
+     · the auto margin has to go on the `<p>` ITSELF, not on `.section__intro`: the
+       chassis leaves that wrapper at `max-width: none`, so it is already full width
+       and auto margins on it do nothing (the same measured trap `.lh-why`'s comment
+       records two sections down);
+     · and the selector needs TWO classes, because the chassis's
+       `.section__intro > p` is (0,1,1) — a single-class rule ties and loses on
+       source order even though this sheet loads later.
+
+   ⚠️ NO HYPHENATION, for the reason the keyword section below documents: base.css
+   sets `hyphens: auto` on every <p>, and a centred line already has two ragged
+   edges, so a German compound breaking mid-word reads as a render fault. */
+.lh-orient .section__intro {
+  text-align: center;
+}
+
+.lh-orient .section__intro > p {
+  margin-inline: auto;
+  text-wrap: balance;
+  -webkit-hyphens: none;
+  hyphens: none;
+}
 
 .lh-orient__list {
   list-style: none;

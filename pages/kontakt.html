@@ -211,8 +211,8 @@
              CSS load-in instead (.contact-intro > *, page-contact.css) — the
              same reasoning as the homepage's load-time hero cascade, minus the
              GSAP dependency. -->
-        <!-- ⚠️ THIS BADGE HAS BEEN REMOVED AND RESTORED, and the next person needs
-             both halves of that story.
+        <!-- ⚠️ THE BADGE IS NOT MISSING FROM THIS INTRO — IT MOVED, and the next
+             person needs the whole story before "restoring" it here.
              REMOVED 2026-08-06 (client): the page stated 24/7 twice — here and in
              the Highlight-Box further down — and the client chose to keep the
              lower one.
@@ -220,17 +220,16 @@
              subpages as specified in the page documents"). Webtext 25 does specify
              it, verbatim, and G9 is the later instruction, so it wins — the same
              way G6 overrode the compact homepage phone pill.
-             ⚠️ THAT MEANS THE 2026-08-06 DUPLICATION IS BACK BY DESIGN: this page
-             now says "24/7 erreichbar" in the badge AND in the Highlight-Box. If
-             the client would rather not repeat it, the fix is to drop it from ONE
-             of the two — do not silently delete the badge again, because that is
-             what G9 asks for. Flagged to the client with this pass. -->
+             MOVED 2026-08-19 (client) into the aside column, where it now sits with
+             the DEKRA seals AFTER the Adresse row — see `.contact-trust` down
+             there. G9 is satisfied by the badge being ON THE PAGE, not by it being
+             in the intro, so the rule is still met.
+             ⚠️ The 2026-08-06 duplication is DOWN TO ONE AND A HALF: the
+             Highlight-Box that carried the second "24/7" is gone in the same pass,
+             so what is left is the badge plus the phone row's own "Rund um die Uhr
+             erreichbar" line. Do not add a second badge here to fill the gap — that
+             would put 24/7 back on the page three times. -->
         <div class="contact-intro">
-          <!-- Hero badge, verbatim from Webtext 25 (client rule G9). -->
-          <p class="hero-badge">
-            <svg class="icon" aria-hidden="true"><use href="#icon-clock"></use></svg>
-            Ihr fester Ansprechpartner &mdash; 24/7 erreichbar
-          </p>
           <h1>Kontakt zu FRANKONIA</h1>
           <p class="contact-intro__lead">Rufen Sie an oder schreiben Sie uns — Angebot innerhalb eines Werktages, Beratung kostenfrei.</p>
         </div>
@@ -432,61 +431,76 @@
             </li>
           </ul>
 
-          <!-- Highlight-Box from Webtext 25 §2 ("Aufbau: 3 Kacheln (Telefon,
-               E-Mail, Adresse) + Highlight-Box"). It had never been built — the
-               three Kacheln were, the box was simply missed, so this is a real
-               gap being closed 2026-08-05, not a reversal of anything.
+          <!-- ⚠️ THE DEKRA SEALS + THE BADGE LINE CLOSE THIS COLUMN.
+               Client 2026-08-19, in two steps on the same day: first the seals
+               moved from the bottom of this column UP beside the badge (with a
+               vertical rule between them and their "DEKRA-zertifiziert nach
+               DIN 77200-1 und ISO 9001" caption dropped), then the whole pair
+               moved back DOWN to here, after the Adresse row. So the row itself is
+               the thing that was designed; only where it sits changed.
 
-               The doc gives it as one sentence with an em dash in the middle;
-               the dash is the structural break, so the first clause is the
-               heading and the rest is the paragraph. Joining the two back with
-               " — " reproduces the doc line character for character (verified).
+               ⚠️ It is no longer inside `.contact-intro`, which means it is no
+               longer part of that block's load-in cascade (page-contact.css §2) —
+               it sits in the aside now and reveals with the column instead. Do NOT
+               re-add a `.hero-badge` to the intro to "put the badge back at the
+               top": G9 asks for the badge text to be PRESENT on the page, and this
+               is where the client put it. A second copy would say 24/7 twice.
 
-               <h3>, not <h2>: it sits inside the .contact-aside group whose own
-               (visually hidden) h2 labels it, so an h2 here would compete with
-               the form block's heading for the same level.
-
-               Colours are the prescribed "on white" set for this light page
-               (docs/page-conventions.md §5): 5%-grey tile, black title,
-               0.75-grey body, and blue-dark for the accent rule — #3D9AD3 does
-               not pass contrast on white. -->
-          <div class="contact-highlight">
-            <h3 class="contact-highlight__title">24/7 erreichbar, weil Sicherheit keinen Feierabend kennt</h3>
-            <p class="contact-highlight__text">Einsatz- und Bereichsleiter sind als direkte Ansprechpartner rund um die Uhr für Sie da: keine Warteschleifen, keine Weiterleitungen.</p>
-          </div>
-
-          <!-- ⚠️ THE DEKRA ROW IS BACK (client 2026-08-14, Kontakt 3: "add the
-               DEKRA certification symbols/seals"). It was removed on 2026-08-04 —
-               same client, opposite instruction: the left column was said to
-               compete with the form. The later instruction wins, and this restores
-               the exact block that was deleted (markup + .contact-cert* in
-               page-contact.css), not a new design of it.
-               It also closes something this file flagged as a real loss at the
-               time: the certification claim had left /kontakt/ entirely.
-
-               Placed AFTER the Highlight-Box, which did not exist when this block
-               was removed — the seals are the evidence under the page's claims,
-               so they read as the column's closing line rather than as a fourth
-               item competing with the three contact tiles.
+               ⚠️ This row is the ONLY place /kontakt/ still makes the certification
+               claim — the Highlight-Box that used to sit here is gone and the seals
+               lost their caption — so the two `alt` strings are what carries it in
+               words. Do not empty them "because the seals are decorative": without
+               the caption they ARE the claim.
 
                Real DEKRA artwork, used as supplied: proportional resizing only,
                never cropped or recoloured (CLAUDE.md). 399x600 portrait sources
-               with the height fixed and width auto, so the ratio cannot drift.
-               2.25rem, deliberately smaller than every other seal pair on the
-               site — this row supports the decision, it does not compete with the
-               phone tile above it or the form beside it. -->
-          <div class="contact-cert" data-reveal>
-            <img class="contact-cert__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
-            <img class="contact-cert__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
-            <p class="contact-cert__text">DEKRA-zertifiziert nach DIN 77200-1 und ISO 9001</p>
+               with the height fixed and the width auto, so the ratio cannot drift.
+
+               The badge text is unchanged and still verbatim from Webtext 25
+               (client rule G9 — G9 fixes the words, not the treatment). Its clock
+               icon went with the pill: the row opens on two real certification
+               marks, and a third glyph beside a divider reads as clutter. That also
+               closed a live bug — the sprite's own `fill: none; stroke:
+               currentColor` lives on its <g id="icon-defs"> and does NOT survive
+               <use>, and this page has no `.hero-badge .icon` rule of its own
+               (page-leistungen.css and page-angebot.css each carry one), so that
+               clock was rendering as a BLACK FILLED blob on a black section. -->
+          <div class="contact-trust">
+            <img class="contact-trust__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+            <img class="contact-trust__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            <p class="contact-trust__label">Ihr fester Ansprechpartner &mdash; 24/7 erreichbar</p>
           </div>
+
+          <!-- ⚠️ THE HIGHLIGHT-BOX IS GONE (client 2026-08-19: "sacá esto por
+               completo") — markup and .contact-highlight* in page-contact.css
+               both deleted, not hidden. It carried Webtext 25 §2's
+               "24/7 erreichbar, weil Sicherheit keinen Feierabend kennt / Einsatz-
+               und Bereichsleiter sind als direkte Ansprechpartner rund um die Uhr
+               für Sie da: keine Warteschleifen, keine Weiterleitungen."
+
+               ⚠️ THAT IS APPROVED COPY LEAVING THE PAGE, on instruction — worth
+               knowing what the page still says without it: the 24/7 claim survives
+               in the hero badge at the top of this column ("Ihr fester
+               Ansprechpartner — 24/7 erreichbar") and in the phone tile's own
+               supporting line ("Rund um die Uhr erreichbar, an 365 Tagen im
+               Jahr…"), which is the duplication the client resolved on 2026-08-06
+               by keeping the box and again on 2026-08-14 by keeping the badge.
+               What is NOT said anywhere else on this page is "keine
+               Warteschleifen, keine Weiterleitungen". Git has the block.
+
+               ⚠️ THE DEKRA ROW DID NOT DISAPPEAR — it is directly above this
+               comment as `.contact-trust`, now carrying the badge line with it and
+               without its "DEKRA-zertifiziert nach DIN 77200-1 und ISO 9001"
+               caption. Do not re-add a second seal row. -->
 
           <!-- REMOVED 2026-08-04 (client brief: the left column "combines
                introductory content, three contact methods, DEKRA certifications
                and a secondary services CTA" and competes with the form):
                - ✅ the DEKRA row — RESTORED 2026-08-14 on the client's own later
-                 instruction ("add the DEKRA certification symbols/seals"); it is
-                 the block right above this comment. What follows was the reason
+                 instruction ("add the DEKRA certification symbols/seals"), and
+                 rebuilt on 2026-08-19 as `.contact-trust` — the seals plus the
+                 badge line, no caption — which is the block right above this
+                 comment. What follows was the reason
                  for its removal, kept because it is also the argument for keeping
                  the restored version small: ⚠️ taking it out took the
                  certification claim OFF this page entirely — it appeared nowhere

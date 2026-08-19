@@ -35,9 +35,15 @@
    MOST of this page's headers are centred: Warum and Leistungen (here), plus
    Brandwache, Vertrauen, Erreichbarkeit and Umgebung in their own blocks below,
    plus the FAQ (centred by the chassis) and the form (centred by lead-form.css).
-   Only two are still ranged left — the Einsatzfelder strip, and Kosten, whose
-   intro lives in the left column of a two-column grid and cannot be centred
-   without breaking that layout.
+   ⚠️ THE EINSATZFELDER STRIP JOINED THEM ON 2026-08-19 (client: "saca el eyebrow
+   de esta sección y centrá el título y el texto debajo", asked for all ten city
+   pages), which is also when its eyebrow went — see the note in r_fields
+   (docs/design-sources/city-pages.py) for why that cost no client copy. The ITEMS
+   stay ranged left: a centred header over left-aligned content is this page's own
+   pairing everywhere else, and centring four 2-up blocks of running copy would
+   take away the left edge the eye reads down.
+   Only KOSTEN is still ranged left, and it cannot be centred — its intro lives in
+   the left column of a two-column grid.
    ⚠️ THE `> p` NEEDS TWO CLASSES, and this is the FOURTH and FIFTH time the same
    trap has come up on this page. The chassis sets
    `.section__intro > p { max-width: 42rem }` at (0,1,1), so a single-class rule
@@ -50,14 +56,17 @@
    four carry their own measured max-widths and notes, and consolidating them is a
    refactor of working rules rather than part of this request. */
 .city-why .section__intro,
-.city-services .section__intro {
+.city-services .section__intro,
+.city-fields .section__intro {
   text-align: center;
 }
 
 .city-why .section__intro > h2,
 .city-why .section__intro > p,
 .city-services .section__intro > h2,
-.city-services .section__intro > p {
+.city-services .section__intro > p,
+.city-fields .section__intro > h2,
+.city-fields .section__intro > p {
   margin-inline: auto;
 }
 
@@ -77,6 +86,7 @@
 .city-services__more-label,
 .city-services__name,
 .city-services__text,
+.city-fields .section__intro > p,
 .city-fields__title,
 .city-fields__item p,
 .city-callout__points li,
@@ -249,16 +259,30 @@
     order: -1;
   }
 
-  /* MEASURED, not a round number. The budget is what the outline may cost before
-     the H1 on a phone: at 390 the H1 already starts at 271px and the trust band
-     already falls past an 844px fold, so the outline has to stay well under the
-     ~150px that would push the H1 out of comfortable reach. The shape is portrait
-     (viewBox 1000×1432, ratio 0.698), so its HEIGHT is the whole cost — the width
-     follows and is never the constraint in a one-column hero.
+  /* MEASURED, not a round number, and RAISED on 2026-08-19 (client: "in both
+     tablet and mobile, make the map image bigger") from
+     `clamp(6.5rem, 16vw, 12rem)`. The shape is portrait, so its HEIGHT is the
+     whole cost — the width follows and is never the constraint in a one-column
+     hero — and every pixel of it pushes the H1 and the CTA down by the same
+     pixel. So the ceiling is the CTA, not taste. A/B measured on
+     /sicherheitsdienst-wuerzburg/, old → new:
+         390 phone   71x104 → 104x152  (+46%)   CTA ends 753 → 801 of an 844 fold
+         768 tablet  84x123 → 147x215  (+75%)   CTA ends 642 → 734 of 1024
+         834 tablet  91x133 → 160x234  (+76%)   CTA ends 656 → 756 of 1112
+     43px of fold left on the phone is the whole remaining budget — the previous
+     value's own note called ~150px the point where the H1 leaves comfortable
+     reach, and 152 sits on it. **Do not raise this again without re-measuring the
+     CTA at 390.**
+     ⚠️ TWO COSTS, MEASURED AND ACCEPTED, both on the trust band and both at
+     viewports that were already marginal: at 600x900 it ends at 998 (was 890 of a
+     900 fold) and at 1023x900 at 1078 (was 895). Neither had more than 10px of
+     slack before, and on every phone the band already fell past the fold.
+     ✅ It also SHRANK the step at the 1024 breakpoint rather than widening it:
+     286 → 458px now, against 164 → 458 before.
      The desktop rule caps against the viewport height; here it must not, or a
      short landscape phone would collapse it to nothing. */
   .city-map {
-    max-height: clamp(6.5rem, 16vw, 12rem);
+    max-height: clamp(9.5rem, 28vw, 18rem);
   }
 
   /* ⚠️ The stroke weight for this small size is NOT set here — it lives in its own
@@ -1443,6 +1467,28 @@
   .city-trust__quotes .testimonial {
     height: 100%;
   }
+
+  /* ONE quote centres itself (client 2026-08-19, on /sicherheitsdienst-bamberg/:
+     "centra el review de google"). Bamberg has a single testimonial and Nürnberg
+     has two, so in a 2-up grid Bamberg's sat in column 1 with an empty column
+     beside it — a centred heading over a card pinned hard left.
+     ⚠️ `:only-child` rather than a modifier class ON PURPOSE: the rule then
+     follows the CONTENT, so Nürnberg's pair is untouched (verified by measuring
+     it), and a second Bamberg quote would un-centre itself the day it is added,
+     with no markup to remember to change.
+     The width is deliberately the one it already had — half the grid minus the
+     gap — so this MOVES the card and does not resize it. */
+  .city-trust__quotes .testimonial:only-child {
+    /* ⚠️ `grid-column: 1 / -1` IS LOAD-BEARING, not tidiness. A grid item's
+       percentage resolves against its own GRID AREA, so without it `100%` is one
+       COLUMN and this calc halved the card again — measured 284px against the
+       601px it should be, i.e. the fix made the card smaller instead of moving
+       it. Spanning both columns makes 100% the grid's full width, so the calc
+       gives back exactly one column's width. */
+    grid-column: 1 / -1;
+    width: calc((100% - var(--space-6)) / 2);
+    margin-inline: auto;
+  }
 }
 
 /* ==========================================================================
@@ -1935,30 +1981,42 @@ a.city-nearby__tile:focus-visible .city-nearby__arrow {
   }
 
   /* Both hero CTAs full width and stacked — the same treatment every other page
-     gives them on a phone. */
-  .city-hero .service-hero__actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-3);
-  }
+     gives them on a phone.
+     ⚠️ 639.98, NOT the enclosing block's 767.98: client 2026-08-19, one CTA rule
+     site-wide. The full reasoning (and the measurement that says the pair fits a
+     row from 640px) is at .service-hero__actions in page-service.css's phone
+     block. This nested query has to mirror it exactly, or the city hero keeps
+     stretching in a band where every other hero has stopped. */
+  @media (max-width: 639.98px) {
+    .city-hero .service-hero__actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-3);
+    }
 
-  .city-hero .service-hero__actions .btn {
-    width: 100%;
-    justify-content: center;
+    .city-hero .service-hero__actions .btn {
+      width: 100%;
+      justify-content: center;
+    }
   }
 
   /* The phone full width, the link stacked under it and CENTRED — the brief's
      mobile spec, and now consistent with the intro above, which stays centred
      too. `align-items: stretch` is what makes the button fill the column; the
      link centres inside its own full-width row. */
-  .city-callout__actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-3);
-  }
+  /* ⚠️ Same 639.98 as the hero above, same reason — the callout's phone button
+     needs 314px and the column has 598 at 640, so stretching it there produced
+     the same over-wide pill the client flagged. */
+  @media (max-width: 639.98px) {
+    .city-callout__actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-3);
+    }
 
-  .city-callout__link {
-    justify-content: center;
+    .city-callout__link {
+      justify-content: center;
+    }
   }
 
   /* ⚠️ `white-space: normal` is the load-bearing half, and leaving it out cost
@@ -1968,10 +2026,12 @@ a.city-nearby__tile:focus-visible .city-nearby__arrow {
      inside its inset at 320 — and `width: 100%` alone cannot shrink a box whose
      content refuses to wrap. Exactly the trap the price card's CTA already
      documents for the same reason. */
-  .city-callout__actions .btn {
-    width: 100%;
-    justify-content: center;
-    white-space: normal;
+  @media (max-width: 639.98px) {
+    .city-callout__actions .btn {
+      width: 100%;
+      justify-content: center;
+      white-space: normal;
+    }
   }
 
   /* ⚠️ STAYS CENTRED ON A PHONE — and that REVERSES what this block said a few

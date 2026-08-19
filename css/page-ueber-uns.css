@@ -11,6 +11,172 @@
    .uu-promises below for why it took its own block instead.
    ========================================================================== */
 
+/* ---- Hero photograph (2026-08-19) ----------------------------------------
+   Client: "add this image at the right side" (`UberUns.png`, the three managing
+   partners on a studio black). The LAYOUT is the shared `.service-hero--split`
+   from page-service.css — two columns, copy | photo, released content cap, the
+   1.1/0.9 desktop split and the `picture`/`img` sizing mechanics — so this page
+   adds a photo to the site's existing split hero instead of inventing a second
+   one. What follows overrides ONLY the frame, and each override is measured.
+
+   ⚠️ NO RADIUS, NO OVERFLOW CLIP, NO PLACEHOLDER TINT — the base modifier sets
+   all three because the nine service photos are documentary frames. This one is a
+   studio shot on black, so it is the SAME case as `.uu-lead__photo` twelve
+   sections down, and the two photographs on this page have to be one treatment or
+   they read as two. A radius here would round nothing but black and a tint would
+   flash light-then-dark as the image lands.
+
+   ⚠️ AND THAT DECISION RESTS ON A MEASUREMENT, not on "the backdrop looks black".
+   docs/design-sources/portrait-key-backdrop.py normalises a backdrop to #010101
+   literally, and its CASE A assumption does NOT hold for this file: the two
+   portraits' reachable backdrop is 56 % / 9 % of the frame at lum <= 2, this one's
+   is 1,87 %, because it is a lit grey sweep rather than flat black. Running the
+   normaliser would have recoloured a couple of percent of the corners and cut a
+   hard step into a gradient. Measured on the encoded exports instead, per edge:
+
+       top     median  5   p95  6      left    median 3   p95  6
+       bottom  median 11   p95 19      right   median 6   p95 22
+
+   The page is rgb(1,1,1). Top and left are within a handful of levels, i.e. the
+   tolerance that file already documents as invisible. The BOTTOM is the one real
+   mismatch — a floor spill — which is exactly what the fade below covers, and it
+   is the same fade `.uu-lead__photo` already runs for its own bottom edge. The
+   right edge's p95 is a rim light on the third man's shoulder: that is SUBJECT,
+   not backdrop, and its median is 6. Re-measure before swapping this photo. */
+/* ⚠️ SPECIFICITY, AND IT BIT ME: this file loads AFTER page-service.css, but
+   `.service-hero--split .service-hero__media` is (0,2,0) and a bare
+   `.uu-hero__media` is (0,1,0) — so a single-class override LOSES on weight no
+   matter the file order. Measured on the built page: a `max-width`,
+   `border-radius`, `overflow` and `background-color` written that way all reported
+   the base modifier's values back, i.e. four declarations that looked applied and
+   did nothing. `aspect-ratio` was the only one that took, because the base rule
+   does not set it. Anything that has to beat that rule needs two classes.
+
+   ⚠️ THE FRAME IS THE BASE MODIFIER'S, DELIBERATELY — radius, overflow clip and
+   the `--color-bg` fill are all inherited, not overridden, and the reason is
+   measured: this photo's four corners sample 1–4 against the page's own 1, so a
+   16px radius rounds nothing but black and the fill sits behind a photo that
+   covers it. Overriding them would have been three declarations to produce no
+   visible change. The one thing that IS overridden below is the bottom edge, which
+   is the only edge that genuinely mismatches. */
+.uu-hero__media {
+  /* ⚠️ 1448/1173, NOT the source photo's own 4:3 — the export carries 8 % of
+     HEADROOM in #010101 on top (docs/design-sources/… no script: it is baked into
+     the export, see below). Per §8.2 the ratio is declared from the real file, so
+     it has to follow the padded canvas or `cover` starts cropping.
+
+     WHY THE HEADROOM EXISTS, and why it is NOT a gradient: the backdrop glow ramps
+     from 1 to 39 within ~15px of the original crop, and that onset reads as a
+     horizontal line at the frame's top edge. A fade was the obvious fix and is not
+     available — the men's hair begins at 1,6 % of the original frame, measured, so
+     any top fade wide enough to matter eats it. Padding solves it without touching
+     a pixel of the photograph: the ramp now starts a clear 8 % inside the frame,
+     where it reads as the picture's own lighting, and the first 8 % of the frame is
+     the page's colour exactly. That is also why the client's "solo abajo el
+     gradiente" costs nothing here — the top edge does not need one. */
+  aspect-ratio: 1448 / 1173;
+  position: relative;
+}
+
+@media (min-width: 1280px) {
+  /* Bigger photo (client 2026-08-19, "hacé la imagen un poco más grande"), and the
+     ONLY place it can come from is the copy column — so the number is set by what
+     that column actually needs, measured with a Range over the real text nodes
+     rather than estimated:
+
+       H1 longest line   493px  (the "Sicherheit, auf die Sie / sich verlassen
+                                 können" break; below this it goes to three lines)
+       lede cap          512px  (--service-hero lead's own 32rem)
+       CTA row min       325px
+       trust row min     297px
+
+     An even split leaves the copy 513px at 1280 and 584px at 1440 — above all four
+     — and takes the photo from 462→513 and 526→584, i.e. **+11 %**, which is the
+     "un poco" part. Anything more starts eating the H1's two-line break.
+
+     ⚠️ 1280 AND NOT 1024, deliberately: at 1024 the shared modifier already leaves
+     the copy 444px, under the 493 the H1 needs, so that band renders three lines
+     today. An even split there would drop it to ~403 and cost a fourth. That band
+     keeps the 1.1/0.9 it inherits.
+
+     ⚠️ Two classes again — `.service-hero--split .service-hero__grid` is (0,2,0)
+     and sets this same property inside its own `min-width: 1024px` block. */
+  .uu-hero .service-hero__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 1023.98px) {
+  /* TWO classes, for the reason above. The base modifier caps the stacked photo at
+     `min(22rem, 68vw)` because a PORTRAIT photo would otherwise take a whole phone
+     screen; this one is landscape, so at 768px that cap was rendering it 352x264 in
+     a ~720px container — measured — which reads as a thumbnail rather than as the
+     hero's photograph. A landscape frame at the same cap is 3/4 the height of a
+     portrait one, so it can afford the width. */
+  .uu-hero .service-hero__media {
+    max-width: min(34rem, 100%);
+  }
+}
+
+.uu-hero__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* ⚠️ BOTTOM ONLY — client 2026-08-19, explicitly: "solo abajo el gradiente".
+     A pass earlier the same day also faded the LEFT, RIGHT and TOP edges to kill
+     the frame's rectangle; the client did not want the sides, so all three are
+     gone. Do not put them back to "fix" an edge — the measurements that made them
+     look necessary are below, and the honest read of them is that only this edge
+     ever needed one.
+
+     What the other three actually measure on the encoded export, against the
+     page's own rgb(1,1,1):  top 5 · left 3 · right 6 · bottom 11.
+     Top and left are inside the handful of levels CLAUDE.md already documents as
+     invisible, the right edge's brighter spots are a rim light on the third man's
+     shoulder (subject, not backdrop), and the bottom is the one real mismatch — a
+     floor spill, plus the crop straight through the men's hands. So this ramp does
+     two jobs: it hides the spill and it stops the photo ending on a hard cut, the
+     "corte muy seco" the client rejected on Steffen's portrait.
+
+     ⚠️ ON A PSEUDO-ELEMENT, never on the <img>: a filter or mask on the image would
+     fade whatever sits behind it too, and would fight `object-fit`.
+     It lands on `--color-bg`, not a literal black, so it follows the section if this
+     block is ever moved onto another surface. Values copied from `.uu-lead__photo`
+     rather than re-derived, so the page's two photographs share one edge. */
+  background-image: linear-gradient(
+    to bottom,
+    rgb(1 1 1 / 0) 58%,
+    rgb(1 1 1 / 0.35) 78%,
+    rgb(1 1 1 / 0.8) 92%,
+    var(--color-bg) 100%
+  );
+}
+
+/* ⚠️⚠️ "SACALE EL FONDO NEGRO" CANNOT BE DONE ON THIS PHOTOGRAPH, and the evidence
+   is worth keeping so nobody spends the afternoon on it twice.
+
+   The ask is the same one Alex.png got on 2026-08-14, where the answer was to
+   normalise the backdrop to #010101 so the photo's edge IS the page. That does not
+   transfer here: this backdrop is a LIT SWEEP, not flat black — 1,87 % of the frame
+   sits at lum <= 2 against 56 % for Alex — so there is nothing to normalise.
+
+   Two ways to actually remove it were tested, and both fail for the SAME reason —
+   the men wear near-black suits, so subject and backdrop occupy the same tones:
+
+   · An alpha key is the trap CLAUDE.md already documents: dark hair shares
+     luminance with a dark backdrop, so the key eats it, and composited over black
+     that is INVISIBLE. Composite over magenta to see it.
+   · A global `filter: contrast()` on the <img> — the same lever /werkschutz/'s hero
+     uses to lift its night photo — does crush the backdrop to black, and takes the
+     JACKETS with it. Rendered at 1.0 / 1.25 / 1.4 / 1.6: by 1.25 the three suits
+     are gone and what is left is heads and white shirts floating on the page. That
+     is a real content loss on a page whose subject is the owners.
+
+   So the glow behind the men stays, where it reads as studio lighting rather than
+   as a box. If the glow itself has to go, that is a re-shoot or a hand-cut PNG from
+   the client, not a CSS or a script change. */
+
 /* ---- Die Geschichte ------------------------------------------------------ */
 /* Same centring as .uu-zert / .uu-inno below — client 2026-08-10.
    ⚠️ Two classes, not one — the same specificity trap: page-service.css styles
@@ -275,6 +441,70 @@
        it, see .uu-lead__photo) without becoming the dominant element. */
     grid-template-columns: 1fr 0.8fr;
     gap: var(--space-9);
+  }
+}
+
+/* ---- TABLET ONLY (768–899.98): centre the whole block ------------------------
+   Client 2026-08-19, from a tablet: "encargate que esta sección, sólo en tablet,
+   esté centrada, porque la imagen no está centrada y el texto queda raro… SOLO EN
+   TABLET".
+
+   The cause is the same one `/angebot/`'s form card had: `.uu-lead__photo` caps
+   itself at 30rem but declares no auto margins, so in the single-column grid it
+   sits at the start of the track while the text runs the full width. Neither
+   element is at the container's axis and neither is at its edge, which is what
+   reads as untidy rather than as a deliberate left-aligned block. Measured before,
+   offset from the grid's axis:
+
+     600   photo −40px    700   photo −90px     767   photo −120px
+     768   photo −81px    834   photo −112px    899   photo −142px
+
+   Centring the text as well as the photo is what puts them on ONE axis; centring
+   only the photo would have swapped which element looked stray.
+
+   ⚠️ BOTH declarations are needed on the paragraph, and this is the eighth time
+   this trap has appeared in this project: `text-align` centres the TEXT inside the
+   box, `margin-inline: auto` centres the BOX. The paragraph carries
+   `max-width: 46rem`, and at 899 its box measures exactly that cap — so without
+   the auto margin it would keep hugging the left under a centred heading, which is
+   worse than not centring at all. The selector needs two classes because
+   `.uu-lead__text p` above is (0,1,1).
+
+   ⚠️ Hyphenation OFF, and it is part of the "emprolijalo": base.css sets
+   `hyphens: auto` on every <p>, which was splitting the COMPANY NAME across lines
+   ("FRAN-KONIA") and "Kon-zepte" right underneath it. A centred paragraph already
+   has two ragged edges, so a word broken mid-compound reads as a render fault —
+   the same call `/referenzen/` and the keyword block on `/leistungen/` already
+   make for their own centred copy. `overflow-wrap: break-word` stays as the global
+   safety net, and the column is 641–736px wide here, so nothing can overflow.
+
+   THE BAND IS 600–899.98, and the lower bound was 768 for a few minutes and WRONG.
+   The client reported it still uncentred from a device whose paragraph was wrapping
+   at ~80 characters, i.e. a text box near 700px and a viewport in the 700–767 band —
+   just under the boundary. 768 was a guess at what "tablet" means; 600 is derived
+   from the thing that actually causes the defect: the photo caps at 30rem = 480px,
+   the column is the viewport minus 2×20px of container padding, so the cap starts to
+   bite above ~520px and is 40px off by 600. Below 600 the column is at or under the
+   cap, so the photo already centres itself and only the text would change — and
+   centring five lines of German in a ~350px column is harder to read than the same
+   copy ranged left, which is the call this project already made for /jobs/'s steps.
+   So: centred wherever the photo cannot fill its column, left-aligned below that.
+
+   From 900px up this is a two-column layout (text left, photo right — the client's
+   own 2026-08-10 arrangement), where centring would undo that composition AND auto
+   margins on a grid item would make the photo content-sized. */
+@media (min-width: 600px) and (max-width: 899.98px) {
+  .uu-lead__text {
+    text-align: center;
+  }
+
+  .uu-lead .uu-lead__text p {
+    margin-inline: auto;
+    hyphens: none;
+  }
+
+  .uu-lead__photo {
+    margin-inline: auto;
   }
 }
 

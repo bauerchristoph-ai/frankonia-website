@@ -66,7 +66,6 @@ WUERZBURG = {
         },
         {
             "type": "fields", "n": 2, "comment": "DER WIRTSCHAFTSRAUM (LOKALE EINSATZFELDER)",
-            "eyebrow": "Vor Ort im Einsatz",  # UI
             "h2": "Wo Sicherheitsdienste in Würzburg gebraucht werden",
             "lede": "Universitätsstadt, Klinikstandort, Industrie- und Logistikdrehscheibe, Besucher-Magnet: Würzburg hat viele Gesichter, und jedes eigene Sicherheitsanforderungen.",
             "items": [
@@ -238,7 +237,6 @@ BAMBERG = {
         },
         {
             "type": "fields", "n": 2, "comment": "ZUHAUSE-SEKTION (STRUKTUR-VARIANTE)",
-            "eyebrow": "Heimmarkt",  # UI
             "h2": "In Bamberg kennt man uns, und wir kennen Bamberg",
             "lede": "Unsere Teams schützen Einrichtungen der Stadt, der Sozialstiftung und der Universität Bamberg, und stehen bei Festen wie der Sandkerwa in der Welterbe-Innenstadt am Einlass. Wenn der Inhaber am selben Ort wohnt wie seine Kunden, ist Verantwortung keine Floskel.",
             "items": [
@@ -395,7 +393,6 @@ ERLANGEN = {
         },
         {
             "type": "fields", "n": 2, "comment": "DER STANDORT (LOKALE EINSATZFELDER)",
-            "eyebrow": "Vor Ort im Einsatz",  # UI
             "h2": "Sicherheit für Erlangen heißt: Wissen schützen",
             "lede": "Erlangen ist Medizin- und Technologiestandort: Weltkonzern-Zentralen, ein neuer Forschungscampus im Süden, das Universitätsklinikum mitten in der Stadt und die Friedrich-Alexander-Universität mit Einrichtungen im ganzen Stadtgebiet. Hier geht es beim Thema Sicherheit selten nur um Sachwerte, sondern um Know-how, sensible Bereiche und Menschen im 24-Stunden-Betrieb.",
             "items": [
@@ -587,7 +584,6 @@ FUERTH = {
         },
         {
             "type": "fields", "n": 4, "comment": "LOKALE EINSATZFELDER IN FÜRTH",
-            "eyebrow": "Vor Ort im Einsatz",  # UI
             "h2": "Wo Sicherheitsdienste in Fürth gebraucht werden",
             "items": [
                 {"title": "Gewerbegebiet Hardhöhe und Stadtgrenze zu Nürnberg",
@@ -721,7 +717,6 @@ BAYREUTH = {
         },
         {
             "type": "fields", "n": 4, "comment": "LOKALE EINSATZFELDER IN BAYREUTH",
-            "eyebrow": "Vor Ort im Einsatz",  # UI
             "h2": "Wo Sicherheitsdienste in Bayreuth gebraucht werden",
             "items": [
                 {"title": "Kultur und Veranstaltungen in Bayreuth",
@@ -855,7 +850,6 @@ SCHWEINFURT = {
         },
         {
             "type": "fields", "n": 4, "comment": "LOKALE EINSATZFELDER IN SCHWEINFURT",
-            "eyebrow": "Vor Ort im Einsatz",  # UI
             "h2": "Wo Sicherheitsdienste in Schweinfurt gebraucht werden",
             "items": [
                 {"title": "Industrieareale und Hafen in Schweinfurt",
@@ -992,7 +986,6 @@ COBURG = {
         },
         {
             "type": "fields", "n": 4, "comment": "LOKALE EINSATZFELDER IN COBURG",
-            "eyebrow": "Vor Ort im Einsatz",  # UI
             "h2": "Wo Sicherheitsdienste in Coburg gebraucht werden",
             "items": [
                 {"title": "Verwaltungs- und Konzernstandorte in Coburg",
@@ -1136,7 +1129,6 @@ FORCHHEIM = {
         },
         {
             "type": "fields", "n": 4, "comment": "LOKALE EINSATZFELDER IN FORCHHEIM",
-            "eyebrow": "Vor Ort im Einsatz",  # UI
             "h2": "Wo Sicherheitsdienste in Forchheim gebraucht werden",
             "items": [
                 {"title": "Industrie und Gewerbe im Forchheimer Süden",
@@ -1267,7 +1259,6 @@ ANSBACH = {
         },
         {
             "type": "fields", "n": 4, "comment": "LOKALE EINSATZFELDER IN ANSBACH",
-            "eyebrow": "Vor Ort im Einsatz",  # UI
             "h2": "Wo Sicherheitsdienste in Ansbach gebraucht werden",
             "items": [
                 {"title": "Behörden und Verwaltung in Ansbach",

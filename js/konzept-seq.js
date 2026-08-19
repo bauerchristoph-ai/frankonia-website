@@ -375,149 +375,28 @@
   });
 
   /* ==========================================================================
-     MOBILE / TABLET TOOLTIPS (client 2026-08-03)
+     MOBILE / TABLET TOOLTIPS — REMOVED 2026-08-19 (client: "saca los tooltips en
+     el mobile, no es necesario que escroleemos y vaya apareciendo el punto en
+     distintos lugares del diagrama y se asocie a la palabra que esté abajo, deja
+     nomás los diagramas con todas las ilustraciones y abajo que diga los nombres
+     de lo que incluye").
 
-     The in-SVG .kz-tip boxes are laid out OUTSIDE the cube's 0 0 1079 1110
-     viewBox (x=-250 / x=1050) so the desktop split composition can use the space
-     beside the diagram. Below 1024px the SVG clips at its own box, which is why
-     css/konzept-seq.css hides them outright — un-hiding is not an option, they
-     have to be re-anchored.
+     What used to live here: buildMobileTips() rebuilt each in-SVG .kz-tip as an
+     HTML chip (dot + leader line) over the cube below 1024px, plus a ScrollTrigger
+     that lit ONE chip at a time off the diagram's scroll progress and mirrored it
+     as .is-active on the matching .konzept-seq__terms row. Its CSS (.kz-mtips /
+     .kz-mtip*) and the .is-synced dimming went in the same pass.
 
-     So this branch rebuilds them as real HTML, over the diagram:
-       - POSITION comes from each tip's own anchor dot (cx/cy), expressed as a %
-         of the viewBox. The SVG is width:--kz-frame / height:auto with
-         preserveAspectRatio="xMidYMid meet", so its rendered box has exactly the
-         viewBox aspect and the mapping is exact at any width.
-       - COPY comes from the .konzept-seq__terms list, not from the SVG <text>
-         nodes: the list already holds each term as one clean name + one clean
-         description, while the SVG splits its sub-line into two/three manually
-         wrapped <text> elements. Matching is by label text, so a tip with no
-         term (or the reverse) is simply skipped instead of mispairing.
-       - ONE tip is visible at a time, indexed off the diagram's scroll progress —
-         3 (or 5) boxes at once over a ~350px cube is unreadable clutter, which is
-         the whole reason the desktop layout puts them outside the cube.
+     ⚠️ THE LIST IS NOW THE WHOLE MOBILE TREATMENT, and that is the point: the
+     terms live once, as plain crawlable text under the diagram, at full contrast.
+     The dimming only ever existed to mark which chip was lit — with no chips there
+     is nothing to mark, so .is-synced is never added and every name reads equally.
+     Removing the build is what removes the dimming; they were one mechanism.
 
-     JS-only-ever-enhances, same contract as everything else here: every chip is
-     created at runtime, nothing in the HTML/CSS depends on it, and no-JS /
-     reduced-motion / a GSAP failure all leave the plain term list, which carries
-     the same words as crawlable text.
+     ⚠️ Do not "restore" this by un-hiding the in-SVG .kz-tip boxes on mobile: they
+     are laid out outside the 0 0 1079 1110 viewBox (x=-250 / x=1050) for the
+     desktop split, so below 1024px they were clipped to two or three letters —
+     which is why they are display:none there in the first place.
      ========================================================================== */
-  var VB_W = 1079, VB_H = 1110;
 
-  function buildMobileTips(layer) {
-    var diagram = layer.querySelector(".konzept-seq__diagram");
-    var terms = Array.prototype.slice.call(layer.querySelectorAll(".konzept-seq__terms li"));
-    if (!diagram || !terms.length) return null;
-
-    /* Label text -> anchor point, read off the SVG tips already in the markup.
-       ALL the label's <text> lines joined, not just the first: an SVG label is one
-       line per <text> element, and "Brandmeldeanlage (BMA)" is set on two of them
-       (it overran the viewport as one line — see the note in pages/index.html).
-       With querySelector this key came out "Brandmeldeanlage", never matched the
-       list item's "Brandmeldeanlage (BMA)", and that tip silently lost its chip:
-       12 built where 13 were expected, measured 2026-08-14. Joining the lines
-       keeps any future two-line label pairing correctly. */
-    var anchors = {};
-    Array.prototype.slice.call(layer.querySelectorAll(".kz-tip")).forEach(function (t) {
-      var lines = Array.prototype.slice.call(t.querySelectorAll(".kz-tip__label"));
-      var label = lines.length
-        ? lines.map(function (n) { return n.textContent.trim(); }).join(" ")
-        : "";
-      var dot = t.querySelector(".kz-tip__dot");
-      if (!label || !dot) return;
-      anchors[label] = {
-        x: +dot.getAttribute("cx") / VB_W,
-        y: +dot.getAttribute("cy") / VB_H,
-      };
-    });
-
-    var overlay = document.createElement("div");
-    overlay.className = "kz-mtips";
-    overlay.setAttribute("aria-hidden", "true");
-
-    var items = [];
-    terms.forEach(function (li) {
-      var nameEl = li.querySelector(".konzept-seq__term-name");
-      if (!nameEl) return;
-      var a = anchors[nameEl.textContent.trim()];
-      if (!a) return;
-
-      /* Which way the leader line points: away from whichever edge is closer, so
-         it runs into the open half of the drawing instead of off it. */
-      var left = a.x > 0.5;
-
-      /* Dot + line ONLY, no text (client 2026-08-14, point 14: "the aspects
-         appear in the graphic AND are listed below — that's redundant … only
-         animate the connector lines to the elements"). The words live once, in
-         the .konzept-seq__terms list below, and the pairing is carried by the
-         sync instead: the lit dot in the drawing and the white row in that list
-         are always the same aspect. The .kz-mtip__body/__name/__sub markup and
-         its three CSS rules were deleted rather than hidden, so nothing here
-         builds a node the design no longer has a place for — which is also why
-         the old maxWidth calculation is gone: it capped a text box. */
-      var chip = document.createElement("div");
-      chip.className = "kz-mtip" + (left ? " kz-mtip--left" : "");
-      chip.style.left = (a.x * 100).toFixed(2) + "%";
-      chip.style.top = (a.y * 100).toFixed(2) + "%";
-      chip.innerHTML =
-        '<span class="kz-mtip__dot"></span><span class="kz-mtip__line"></span>';
-
-      overlay.appendChild(chip);
-      items.push({ chip: chip, li: li });
-    });
-
-    if (!items.length) return null;
-    diagram.appendChild(overlay);
-    /* Dims the resting term chips so the active one reads as the current one.
-       Set here, not in CSS, so the list only ever dims when the tooltips it is
-       tracking actually exist. */
-    var list = layer.querySelector(".konzept-seq__terms");
-    if (list) list.classList.add("is-synced");
-    return { overlay: overlay, items: items, list: list };
-  }
-
-  mm.add("(max-width: 1023.98px) and (prefers-reduced-motion: no-preference)", function () {
-    var built = [];
-
-    layers.forEach(function (layer) {
-      var b = buildMobileTips(layer);
-      if (!b) return;
-      built.push(b);
-
-      var n = b.items.length;
-      var current = -1;
-      function setActive(i) {
-        if (i === current) return;
-        current = i;
-        b.items.forEach(function (it, j) {
-          it.chip.classList.toggle("is-active", j === i);
-          it.li.classList.toggle("is-active", j === i);
-        });
-      }
-
-      /* Equal slice of the diagram's own pass through the viewport per tip. The
-         range is deliberately short of the section edges so the first tip is
-         already up once the cube is properly on screen and the last one is still
-         up as it leaves. */
-      ScrollTrigger.create({
-        trigger: b.overlay.parentNode,
-        start: "top 82%",
-        end: "bottom 25%",
-        invalidateOnRefresh: true,
-        onUpdate: function (self) {
-          var i = Math.floor(self.progress * n);
-          setActive(i < 0 ? 0 : i > n - 1 ? n - 1 : i);
-        },
-        onLeaveBack: function () { setActive(0); },
-      });
-    });
-
-    return function cleanup() {
-      built.forEach(function (b) {
-        b.items.forEach(function (it) { it.li.classList.remove("is-active"); });
-        if (b.list) b.list.classList.remove("is-synced");
-        if (b.overlay.parentNode) b.overlay.parentNode.removeChild(b.overlay);
-      });
-    };
-  });
 })();

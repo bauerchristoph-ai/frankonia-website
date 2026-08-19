@@ -360,9 +360,16 @@ def r_fields(c, s):
             <h3 class="city-fields__title">{esc(it['title'])}</h3>
             <p>{esc(it['text'])}</p>{link}
           </li>""")
-    eyebrow = ""
-    if s.get("eyebrow"):
-        eyebrow = f'\n          <p class="section-eyebrow">{esc(s["eyebrow"])}</p>'
+    # ⚠️ NO EYEBROW HERE, and the key is gone from the data rather than left
+    # unread (client 2026-08-19: "saca el eyebrow de esta sección y centrá el
+    # título y el texto debajo", asked for all ten city pages). Every one of them
+    # carried one — "Vor Ort im Einsatz", or "Heimmarkt" on Bamberg — and none of
+    # it was draft copy: the eyebrows were UI furniture this build added. So
+    # nothing the client wrote left the page. `.section-eyebrow` itself stays: the
+    # Brandwache callout still uses it (see r_callout), and so do other page types.
+    # ⚠️ If one ever comes back here it needs `justify-content: center` too — it is
+    # `display: flex`, so the centring below does NOT move it. Same gotcha the
+    # service template documents after deleting its own.
     lede = f"\n          <p>{esc(s['lede'])}</p>" if s.get("lede") else ""
     return LIGHT, f"""    <!-- ============ {s['n']}. {s['comment']} ============ -->
     <!-- The section that makes this a CITY page rather than a service page with a
@@ -376,7 +383,7 @@ def r_fields(c, s):
          Raum-Bamberg-only service, from a Nürnberg page. -->
     <section class="section section--light city-fields" data-nav-theme="light">
       <div class="container">
-        <div class="section__intro">{eyebrow}
+        <div class="section__intro">
           <h2>{esc(s['h2'])}</h2>{lede}
         </div>
 

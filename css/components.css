@@ -234,6 +234,34 @@
   stroke: none;
 }
 
+/* ---- Every OTHER icon inside a button is a stroke icon ----
+   ⚠️ ADDED 2026-08-19 because the submit button's arrow was INVISIBLE on 14 pages
+   — the shared lead form (12), /jobs/ and /kontakt/ each render
+   `<svg class="icon"><use href="#icon-arrow-diagonal">` after the label with no
+   paint rule anywhere, so it computed `fill: black; stroke: none` and left a ~20px
+   hole inside the button. Same root cause as the `.hero-badge .icon` fix above and
+   as `.btn__icon` right here: the sprite's paint lives on its `<g id="icon-defs">`
+   wrapper and does not survive `<use>`.
+
+   ⚠️ It is worth knowing WHY this was invisible rather than a black smudge, because
+   that is what let it survive: `#icon-arrow-diagonal` is
+   `M7 17L17 7M17 7H9M17 7V15` — three straight subpaths, so filling it encloses no
+   area at all. A filled black arrow paints literally nothing. Do not conclude from
+   "no black blob" that a `<use>` is painted correctly; read the computed style.
+
+   `:not(.btn__icon)` keeps the one genuinely FILLED symbol (#icon-phone, the rule
+   above) out of it — a blanket `fill: none` there would erase the phone glyph,
+   which is the exact trap that rule's own comment warns about, in the other
+   direction. `.btn__arrow` matches too and that is intentional: it already sets
+   `stroke: currentColor` to the same value, and it gains the `fill: none` its
+   comment claims it has as "belt-and-suspenders" but never actually declared.
+   Rotation is NOT added here — a static arrow is what the submit buttons are
+   supposed to have; `.btn__arrow` stays opt-in for the ones that animate. */
+.btn > .icon:not(.btn__icon) {
+  fill: none;
+  stroke: currentColor;
+}
+
 /* Compact spacing for tight contexts (e.g. the header). Padding only.
    Horizontal side narrowed alongside .btn's own default, 2026-07-17 —
    was var(--space-4). */
@@ -631,22 +659,64 @@
   color: var(--color-text-muted);
 }
 
+/* ---- The trail fades BACKWARDS from the current page (client, 2026-08-19) -----
+   "saca los underlines, no va a haber underlines en ningún momento … el último,
+   o sea en la que estamos, no esté bold, sea regular y más gris, después
+   Leistungen con un poco menos opacidad y Startseite con menos opacidad aún."
+
+   ⚠️ THE RAMP IS ANCHORED AT THE END OF THE TRAIL, NOT AT THE START, and that is
+   the whole point the client spelled out: on /leistungen/ the word "Leistungen"
+   takes the brightest step and "Startseite" the one below it — i.e. a crumb's
+   weight comes from its distance to the current page, not from its depth. So the
+   selectors count with :nth-last-child and the DIMMEST value is the base: any
+   trail, at any depth, ends the same way. The 16 combo pages are 4 levels deep
+   (Startseite › Einsatzgebiete › Nürnberg › Werkschutz) and just take the base
+   for everything above the parent — deliberate, because a fourth step down would
+   have to go under the contrast floor below.
+
+   ⚠️ THE <li>s ALTERNATE ITEM / SEPARATOR / ITEM, so the crumbs sit at odd
+   positions: the parent link is :nth-last-child(3), not (2).
+
+   Steps measured on this page background (#010101), because the floor is real —
+   these are 15px labels, i.e. normal text at 4,5:1:
+     current  85% → 14,79:1   ·   parent 60% → 7,33:1   ·   rest 50% → 5,29:1
+   (the current page went 75% → 85% on 2026-08-19, client: "dale un poco más de
+   opacidad al último, onda la página en la que estamos". Still short of the full
+   ink, which is what keeps it "regular y más gris" rather than the old bold white.)
+   ⚠️ Do not push the base below ~46%, which is where 4,5:1 breaks.
+
+   color-mix on --color-text rather than a literal white alpha: the token flips to
+   dark ink inside .section--light, so the ramp survives a breadcrumb landing on a
+   light hero (none does today — checked all 54 pages). */
 .breadcrumbs__link {
-  color: var(--color-text-muted);
-  text-decoration: underline;
+  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+  text-decoration: none;
 }
 
-.breadcrumbs__link:hover {
+/* The parent crumb — one step brighter than everything above it. */
+.breadcrumbs__list li:nth-last-child(3) .breadcrumbs__link {
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+}
+
+/* Hover/focus resolves to the full ink instead of an underline, since the client
+   ruled underlines out "en ningún momento". :focus-visible keeps the global ring
+   (base.css) on top of this, so keyboard users still get a non-colour cue. */
+.breadcrumbs__link:hover,
+.breadcrumbs__link:focus-visible {
   color: var(--color-text);
 }
 
+/* Regular weight, not bold: it is the brightest crumb, and that is enough to
+   read as "you are here" — it also still carries aria-current="page". */
 .breadcrumbs__current {
-  color: var(--color-text);
-  font-weight: var(--font-weight-bold);
+  color: color-mix(in srgb, var(--color-text) 85%, transparent);
+  font-weight: var(--font-weight-regular);
 }
 
+/* Quieter than the dimmest label: a chevron must never outrank a word. It is
+   aria-hidden decoration, so no contrast minimum applies to it. */
 .breadcrumbs__sep {
-  color: var(--color-text-muted);
+  color: color-mix(in srgb, var(--color-text) 40%, transparent);
 }
 
 /* ---- FAQ ---- */
@@ -741,13 +811,87 @@
    ⚠️ NAME COLLISION TO KNOW ABOUT: `.hero__badge` in page-home.css is NOT this
    component — it sizes a DEKRA seal IMAGE in the homepage trust band. Different
    thing, confusingly similar name. Do not merge them. */
+/* ⚠️ INLINE FLOW, NOT FLEX — and the flex version was a real bug on 5 of the 17
+   badge pages (client 2026-08-19, on /referenzen/ at phone width: "queda un icono
+   ahí flotando").
+
+   It was `display: inline-flex; align-items: center; gap`. That is correct while the
+   badge fits one line and wrong the moment its text wraps, which at 390px it does on
+   /referenzen/ (3 lines), /jobs/ (3), /sicherheitskonzept/, /objektschutz/ and
+   /brandwache/ (2 each) — measured. `align-items: center` then centres the icon
+   against the WHOLE wrapped block, so it floats half-way down the left edge instead
+   of sitting on the first line: measured 23px down a 45px badge.
+
+   ⚠️ AND IT BROKE CENTRING IN THE SAME PLACES, which is the part that made it
+   obvious. An `inline-flex` is only centred by a parent's `text-align` while it is
+   NARROWER than the line box; at 390 the badge measured 350px inside a 350px column,
+   so on /referenzen/'s centred hero the box filled the line, the icon pinned to x=0
+   and only the text centred inside what was left. (page-referenzen.css used to state
+   the opposite as the reason it needed no rule of its own — corrected there.)
+
+   As inline flow both fall out for free: the icon is part of the first line, so it
+   travels with the text, and `text-align` moves the two together because there is no
+   flex box between them. */
 .hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
+  display: block;
   margin-bottom: var(--space-4);
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
+  /* base.css hyphenates every <p>, which is right for prose and wrong for a short
+     label — and the inline-flow fix above is what exposed it: the icon now sits on
+     line 1, so it takes 26px off that line's text, and at 390px /referenzen/ started
+     breaking "vertrau-en FRANKONIA" mid-word. A badge is a label; the site already
+     turns hyphenation off for exactly this case in a dozen places.
+     `overflow-wrap: break-word` (base.css, sitewide) still guards a genuinely
+     unbreakable compound at 320px. */
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* ⚠️ THIS RULE IS NOT DECORATION — WITHOUT IT THE GLYPH IS AN INVISIBLE BLACK BLOB,
+   and it was missing on 12 of the 17 pages that render a badge until 2026-08-19.
+   PROMOTED HERE from two byte-identical page-scoped copies (page-leistungen.css and
+   page-angebot.css, both deleted in the same edit) after the client spotted the
+   symptom: on /jobs/ the badge line sat indented with nothing in the indent, i.e. a
+   ~26px hole where the icon should be.
+
+   THE CAUSE, which this project has now paid for four times (`.service-link__arrow`,
+   `.service-related__arrow`, the five Innovation icons on /ueber-uns/, this): every
+   symbol in partials/icon-sprite.html gets its `fill: none; stroke: currentColor`
+   from the sprite's `<g id="icon-defs">` wrapper, and **inherited presentation
+   attributes do not cross the shadow boundary a `<use>` creates**. So a stroked
+   symbol referenced through `<use>` falls back to the SVG default — `fill: black`,
+   `stroke: none` — which on this site's black sections renders as nothing at all.
+   Any new `<use>` of a stroked symbol needs its paint restated in CSS. Grep the
+   sprite before assuming a symbol is filled: `#icon-star` is the only one that
+   declares its own paint.
+
+   The blue is `--color-accent`, so it follows the surface — blue-light on a dark
+   hero, blue-dark inside `.section--light`. As a GRAPHIC it needs 3:1, which both
+   clear (6.8:1 and 3.71:1). 1.125rem is a fixed 18px rather than the `.icon`
+   default's 1.25em, so the glyph does not shrink with the badge's own 15px type. */
+.hero-badge .icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--color-accent);
+  fill: none;
+  stroke: currentColor;
+  /* ⚠️ `display: inline-block` IS REQUIRED, and leaving it out is a silent
+     one-liner: reset.css sets `img, picture, svg, video { display: block }`
+     sitewide, so as long as the badge was `inline-flex` this svg was a FLEX ITEM
+     and its display was ignored — the moment the badge became inline flow, that
+     block took its own line and sat hard left above the text (measured: icon at
+     y=0, first text line at y=21). The flex version was hiding a rule that was
+     always there. */
+  display: inline-block;
+  /* Replaces the flex `gap`, which does not exist in inline flow. */
+  margin-inline-end: var(--space-2);
+  /* ⚠️ -0.2em is MEASURED, not a feel: rendered against a capital-letter block and
+     compared centre to centre, `middle` puts the glyph 1,5px off (it aligns to half
+     the x-height, and this icon is 18px against 15px text), -0.25em puts it 0,5px
+     the other way, and -0.2em and -0.15em both land within 0,5px. Re-measure if the
+     icon size or the badge's font-size changes — the two are what set it. */
+  vertical-align: -0.2em;
 }
 
 .faq-item__answer {

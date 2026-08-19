@@ -15,9 +15,16 @@ Ya pasó dos veces que las notas del proyecto decían algo distinto del código.
 La homepage está lista en desktop y mobile. Falta verla en un teléfono de
 verdad (todo se probó con un navegador automatizado, no con la mano).
 
-De 52 páginas hay 8 terminadas (homepage, Kontakt, Werkschutz, Referenzen, Jobs
-y las **3 case studies**) — Werkschutz espera aprobación como plantilla y Jobs
-espera la lista real de vacantes para poder emitir el schema `JobPosting`.
+**2026-08-17 — LAS 52 PÁGINAS ESTÁN CONSTRUIDAS.** `npm run build` compila **54**
+(las 52 del set de copy más `/impressum/` y `/datenschutz/`). Con las 15 combos de
+hoy se cerró el último bloque, y **no queda un solo link interno roto dentro de
+`<main>` en todo el sitio** — verificado sobre el build entero, cero 404.
+
+Lo que sigue abierto no es "construir páginas": es Jobs esperando la lista real de
+vacantes para poder emitir `JobPosting`, `/datenschutz/` esperando su texto legal
+(por eso lleva `noindex` y no está en el sitemap), el formulario que todavía no
+envía a ningún lado (Paso 4), las fotos que faltan, y el feedback del cliente
+página por página.
 
 **El total pasó de 49 a 52 páginas el 2026-08-05**: el copy v2
 (`NewVersionCopiesFrankonia/`) agrega los Webtexte 50–52, las tres case studies
@@ -609,12 +616,95 @@ que la lista de factores de precio ya usa para ese caso.
         `/ratgeber/brandwache-wann-vorgeschrieben/`, `/einsatzgebiete/`). Es la
         convención del proyecto (§8.3) — y el CTA primario sí es el teléfono real
         y el secundario el formulario vivo de la propia página.
-- [ ] Los otros 15 — copiar la página, cambiar copy + meta + JSON-LD + contorno +
-      `prefix` del formulario. **`page-combo.css` no se toca.** Ojo: las otras tres
-      de Nürnberg varían su sección 2 a propósito (Objekt-Typen / Industrie-Fokus /
-      Bauphasen) y **su hero lidera con el formulario, no con el teléfono**.
+- [x] **Los otros 15 — 2026-08-17.** Webtexte 35–49 (Stand 25.07.2026), verbatim,
+      alemán. Con esto **el Bloque 6 está cerrado y no queda un solo link interno
+      roto dentro de `<main>` en todo el sitio** (verificado sobre el build: las 54
+      páginas, cero 404 — estas 15 cerraron de paso los 4 que arrastraban las
+      páginas de servicio).
+  - [x] ⚠️ **"Copiar la página y cambiar el copy" era la mitad de la verdad**, igual
+        que con las ciudades y los servicios. Los 15 drafts traen **su propia
+        estructura a propósito** y lo dicen en su cabecera ("Struktur variiert
+        ggü. Brandwache-Kombi", "Struktur-Variation: Prozess früh", "Q&A-lastig"):
+        van de **6 a 9 secciones en cuatro formas distintas**. Los BLOQUES sí
+        estaban todos construidos. §11 corregido.
+  - [x] **Consecuencia: la lista de seams no se puede copiar.** Los tiles son del
+        color de la sección de ARRIBA y dos del mismo color no llevan seam (§9.2),
+        así que con otro orden cambia entera. Las 16 páginas van de **5 a 7 seams**.
+        Se **deriva** de la secuencia de superficies, no se escribe.
+  - [x] Por eso se generaron con un script, **de una sola pasada y en desarrollo**
+        (`docs/design-sources/combo-pages.py` + `combo_pages_data.py` +
+        `combo_drafts.py`), como `city-pages.py` y `service-pages.py`. No corre en
+        `npm run build`. Existe por las tres cosas que se rompen a mano y **no se
+        ven en una captura**: la paridad FAQ ↔ JSON-LD (**96 pares**), el color de
+        cada seam, y los precios como token. Después son páginas normales,
+        editables a mano; **no re-correrlo sobre una página ya editada**, y
+        `/brandwache-nuernberg/` no está en el script porque el cliente ya la
+        revisó varias veces.
+  - [x] **Ni una palabra se tipeó**: son ~24.000 palabras de alemán y un error de
+        transcripción en copy aprobado no lo caza ninguna medición.
+        `combo_drafts.py` sale a máquina de los `.docx` — que **no están en git**,
+        así que ese archivo es la única copia versionada de estos 15 drafts.
+  - [x] **`css/page-combo.css` se tocó UNA vez**, y por un defecto real de 320px
+        (abajo). El chasis, `page-city.css` y los bloques del generador
+        (`.city-fields*`, `.city-why--3`, `.service-konzept--4`, `.service-points*`,
+        `.service-scope*`, `.service-price` invertida) alcanzaron para las 15.
+  - [x] ✅ **DEFECTO REAL ENCONTRADO MIDIENDO, y el síntoma es el peligroso: la
+        página no scrolleaba de costado, CLIPEABA.** `.service-hero` es
+        `overflow: hidden`, así que el H1 de los 4 Baustellenbewachung se cortaba en
+        silencio a 320px — `documentElement.scrollWidth === innerWidth` decía "está
+        bien" mientras una palabra perdía sus últimas letras. Causa: base.css pone
+        `hyphens: none` en headings y `overflow-wrap: break-word` **no reduce el
+        min-content**, así que "Baustellenbewachung" (19 caracteres) fijaba **303px
+        contra 280 disponibles**. Arreglado con `hyphens: auto` **abajo de 360px**
+        (número medido: entra desde 344; a 400 partiría un H1 que sí tiene lugar y
+        un teléfono de 390 rompería "Baustellenbewa-chung" al medio en vez de en el
+        espacio). **Lección: chequear cajas pintadas fuera del viewport, no sólo
+        scroll horizontal.**
+  - [x] **Medido: 16 páginas × 8 anchos** (320 / 344 / 360 / 390 / 768 / 1024 /
+        1440 / 1920) = **128 corridas, cero problemas** — sin scroll horizontal,
+        nada fuera del viewport, un solo `<h1>`, sin saltos de nivel, cero imágenes
+        rotas. Contraste: **954 elementos**, y el único fallo es el caveat sitewide
+        del azul del CTA (3,11:1). FAQ ↔ `FAQPage` **96/96 byte-idénticas**.
+        El markup servido —lo que recibe un crawler— trae **3.414–4.718 caracteres**
+        de texto real en `<main>`, 16–27 headings, **0 tiles y 0 elementos ocultos**.
+        Con motion prendido los seams construyen sus 180 tiles cada uno; con
+        `prefers-reduced-motion` **0 tiles, los marcadores de título en `100% 100%`**
+        (el fallback, no vacíos) y el riel completo.
+  - [x] Las 15 entraron a `sitemap.xml` con priority 0.8, agrupadas por ciudad.
+        53 URLs, XML válido, todas únicas (`/datenschutz/` sigue afuera a propósito).
+  - [ ] ⚠️ **PARA CHRIS — contradicción de precio DENTRO del propio draft.** El
+        Webtext 45 (Baustellenbewachung Erlangen) dice en su párrafo de Kosten
+        "zwischen **25 und 35** Euro" mientras **la Preis-Box de la misma página**
+        renderiza 26-32, y las otras 15 combos dicen 26–32. Se publicó el token
+        (26–32): una página que se contradice sobre su propio precio es peor que
+        cualquiera de las dos lecturas. Es el mismo defecto que ya tenían 3 páginas
+        de servicio.
+  - [ ] ⚠️ **PARA CHRIS — dos ejemplos calculados con cifra propia**, publicados
+        verbatim y NO tokenizados (tokenizar habría cambiado en silencio el número
+        del cliente, y ninguno se contradice con nada en su propia página):
+        Webtext 41 §6 dice "1.500 und 2.100 Euro" contra el
+        `example.weekendTotal` = 1.550–1.900, y Webtext 43 §6 dice "4.000 und
+        6.000 Euro" contra `example.nightPostMonthly` = 5.500–6.800. Si confirma
+        que son redondeos sueltos, son dos filas más en la tabla del generador.
+  - [ ] ⚠️ **PARA CHRIS — la única edición de puntuación de las 15 páginas.** El
+        Webtext 47 §4 mete su notación de link a mitad de frase: "… samt
+        Preisrahmen **— → /sicherheitskonzept/,** und binnen eines Werktages …".
+        La flecha es una instrucción al builder, no copy, y cualquier forma de
+        sacarla deja "— ," o pierde la raya. Se perdió la raya (lee bien en
+        alemán) y el destino sobrevive como `.service-link` real.
+  - [ ] ⚠️ **`/brandwache/` INVIERTE los CTA en las 4 páginas de Brandwache** (el
+        teléfono es el primario), que es la excepción aprobada a G2 y está en cada
+        draft. **No normalizarla** contra las otras doce.
+  - [ ] 🟡 **Defecto pre-existente encontrado de paso, NO arreglado:** las 9
+        páginas de servicio dejan los teléfonos de sus respuestas de FAQ como
+        texto literal, sin `tel:` y sin token — o sea contra G4 y G10. Estas 15
+        los emiten como link y token (la paridad con el JSON-LD se sostiene porque
+        cambia el markup y no el texto). Arreglarlo en las 9 significa
+        regenerarlas, y el cliente ya empezó a revisarlas de a una — merece su
+        propia pasada.
 
-*Es el tipo de página más corto y el más repetitivo. Puro ensamblado.*
+*Es el tipo de página más corto, pero **no** el más repetitivo: cuatro familias
+de estructura, no una.*
 
 ### Bloque 7 — Los 3 índices
 - [x] `/leistungen/` — **2026-08-09**, copy verbatim del draft 23, alemán.
@@ -732,6 +822,35 @@ que la lista de factores de precio ya usa para ese caso.
       Medido a 520/768/1440: sin scroll horizontal, un solo `<h1>`, sin saltos de
       nivel, FAQ visible ↔ `FAQPage` **4/4 byte-idénticas en los tres**, 0
       placeholders sin resolver, y **cero 404 dentro de `<main>`**.
+  - [x] **Los 3 marcos de Titelbild RESERVADOS — 2026-08-17** (feedback 3.11, "add
+        a title image (hero)"). Las fotos no existen todavía, así que cada hero
+        lleva un marco 16/9 con etiqueta entre corchetes, el patrón de `.cs-figure`
+        y del retrato reservado de Jäger: **el espacio ya está tomado, así que meter
+        el `<picture>` después no mueve nada**. Medido en los 3 × 9 anchos
+        (320→1920): ratio **1,7778 exacto**, marco **704x396 a 1440**, `hScroll` 0,
+        nada fuera del viewport, etiqueta a **8,47:1**. El swap (2 ediciones de
+        markup, cero CSS) y el spec de export están en `css/page-ratgeber.css` §1c.
+        ✅ **Arregló un bug PRE-EXISTENTE de alineación en 2 de las 3 páginas**: la
+        columna del hero es un grid item con `margin-inline: auto`, que **cancela
+        `justify-self: stretch`** y la volvía content-sized — su ancho salía del
+        largo del byline, así que `kosten` y `brandwache` median 637px auto-centrados
+        (borde izquierdo 401,5) contra los 368 de `.rg-article`. **33,5px de
+        desalineación**, justo el defecto que el comentario de esa regla decía estar
+        evitando. `width: 100%` lo cierra: los 3 ahora dan `h1 == frame == artículo`
+        en los 27 anchos medidos. Es la misma trampa que `page-service.css` ya
+        documenta para la price card.
+        ⚠️ **Costo medido y aceptado: +428px de hero** en las tres (a 1440: 427→855,
+        403→831, 348→776). A 1440x900 sigue entrando en la primera pantalla.
+  - [ ] ⚠️ **Las 3 etiquetas de esos marcos son INFERIDAS del tema de cada artículo,
+        NO del cliente** — los 3 `.docx` del Ratgeber no mencionan imágenes (los tres
+        chequeados), al contrario que las 3 case studies, cuyos documentos nombran su
+        motivo. **Confirmar con Chris** los tres motivos y pedirle el export:
+        **16:9, mínimo 1600x900** (el marco mide 704px de ancho como máximo, así que
+        1408 cubre DPR 2 y 1600 deja margen).
+  - [ ] ⚠️ **Feedback 3.10.2 pide además Titelbilder en las CARDS del hub** — eso es
+        otro marco, con otra proporción, y **no se reservó en esta pasada**. La misma
+        foto puede alimentar los dos, pero el recorte de la card es una decisión
+        aparte.
   - [ ] ⚠️ **`/ratgeber/kosten-sicherheitsdienst/` perdió la columna "Details" de
         su tabla de precios**, y es una decisión de 404: el draft manda cada una de
         las 9 filas a su página de servicio y **8 de las 9 no existen**. Esa columna
@@ -780,6 +899,23 @@ que la lista de factores de precio ya usa para ese caso.
       Trust + formulario). Arregla un 404 que ya estaba linkeado desde el header
       y el footer de todas las páginas. Medida sin scroll horizontal en
       320/360/390/430/768/1024/1440.
+  - [x] **El rating general de Google entró en la sección de Kundenstimmen —
+        2026-08-17** (cliente: "el widget que vemos en todas las otras secciones,
+        pero que quede bien en la sección"). Es el MISMO `.review-card--sm` de los
+        heroes, markup idéntico; **sólo se overridea la superficie** — relleno
+        `rgb(59 73 86 / 0.04)` (el valor exacto de `.testimonial`, copiado) y sin
+        sombra, porque un pill blanco con `--shadow-md` sobre una sección blanca se
+        lee como objeto elevado arriba de tres cards planas. Va debajo del H2: las
+        3 citas son ejemplos, el agregado es la afirmación que respalda.
+        Medido a 320→1920: **272→297x48, una fila y 0px de desvío del eje**, cifra
+        **8,68:1** y "97 Bewertungen" **5,04:1**, sin scroll horizontal. Valores
+        desde `values.json` (G10/G5), y **sin segundo `aggregateRating`** en el
+        JSON-LD — es la misma cifra mostrada dos veces.
+        ✅ Arregló de paso un defecto a 320px: el pill medía 288 en una columna de
+        280 y un `inline-flex` más ancho que su line box **no se centra**, así que
+        quedaba 4,1px fuera del eje (sin scroll horizontal, o sea invisible a esa
+        sonda). Gap y padding un paso abajo de 400px, los mismos 8/12px que ya usa
+        en los heroes.
   - [ ] 🔴 **Falta el texto de las 3 case studies** — el draft lo marca
         `[ERGÄNZEN ... siehe Prüfkatalog F13]`: los resultados de 25.000 € /
         30 % / 20 % escritos como Ausgangslage → Konzept → Ergebnis. No se
@@ -895,9 +1031,15 @@ lanzamientos con todo lo demás listo.
 
 - [ ] **Redirigir las URLs viejas de WordPress** 🔴 falta la lista.
       Sin esto se pierde el posicionamiento que ya tienen en Google.
-- [ ] Traducir al alemán las páginas que falten (Werkschutz ✅ 2026-08-03)
-- [ ] Arreglar enlaces rotos que ya están online: el índice de servicios y las
-      10 ciudades se enlazan pero no existen
+- [x] Traducir al alemán las páginas que falten — **cerrado 2026-08-17**: las 52
+      están en alemán, `lang="de"` y `og:locale="de_DE"`. Ya no queda nada en
+      inglés en el sitio (la homepage inglesa se borró el 2026-08-14, Q8).
+- [x] Arreglar enlaces rotos que ya están online — **cerrado 2026-08-17** con las
+      15 combos. Verificado sobre el build entero: en las 54 páginas, **cero links
+      internos rotos dentro de `<main>`**. El índice de servicios, las 10 ciudades
+      y las 16 combos existen todos.
+      ⚠️ Lo único que queda "roto" a propósito es `/datenschutz/`, que existe pero
+      lleva `noindex` mientras su texto sea placeholder.
 - [ ] Confirmar los números "300+", "1.000.000+" y "10+" con el cliente
 - [ ] Revisar velocidad y accesibilidad de cada página
       *Caveat conocido que va a aparecer en la auditoría:* el blanco sobre el azul

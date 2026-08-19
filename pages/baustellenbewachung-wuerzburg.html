@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- COMBO PAGE — Baustellenbewachung × Würzburg. Built from
+     NewVersionCopiesFrankonia/"2026-08-04 Webtext 41 Kombi Baustellenbewachung Wuerzburg.docx"
+     (Stand 25.07.2026), verbatim, in German.
+
+     WHAT A COMBO PAGE IS: service × city, sixteen of them (4 services × 4
+     cities). This is one of the fifteen that followed /brandwache-nuernberg/,
+     the type's first page.
+
+     ⚠️ UWG / "kein Scheinstandort" is the rule that governs this whole page type
+     (docs/page-conventions.md §10.1). FRANKONIA has ONE address, in Bamberg, and
+     a combo page may not imply a branch. It lands in three places here: the hero
+     badge says "Einsatzgebiet", never "Standort"; the LocalBusiness JSON-LD
+     carries the real Bamberg NAP with areaServed: Würzburg and NO local
+     address; and nothing on this page promises a response time or a travel
+     distance (Prüfkatalog F10) — the draft's own wording is careful about that
+     ("nach Absprache auch kurzfristig", never "in X Minuten"). Do not "improve"
+     any of it into a speed or proximity claim.
+
+     STRUCTURE IS THIS DRAFT'S OWN, not /brandwache-nuernberg/'s. All fifteen
+     drafts say so in their own headers ("Struktur variiert", "Struktur-Variation:
+     Prozess früh"), and they run 6–9 sections in four different shapes — which is
+     also why the seam list below is DERIVED from the surface sequence rather than
+     copied. Colour rhythm on this page: ▪ ▫ ▪ ▫ ▪ ▫ ▪ ▫
+
+     REUSE MODEL: every new class is `.combo-*`, never `.baustellenbewachung-*`,
+     and the stylesheet stack is chassis → city layer → combo layer:
+     css/page-service.css (inset, `main h2`, breadcrumb chevron, .section--light,
+     .service-hero*, .service-konzept*, the whole Kosten block, .service-related*,
+     .pixel-seam*) → css/page-city.css (the Einsatzgebiet badge, the two-column
+     hero, the outline, the hero ticks, .city-fields*, .city-why*, and the phone
+     rhythm under body.page-city) → css/page-combo.css. NONE of the three was
+     touched to build this page.
+
+     GENERATED ONCE by docs/design-sources/combo-pages.py, then hand-editable.
+     ⚠️ If you edit the FAQ below, edit the FAQPage graph above it too — they must
+     stay byte-identical with markup stripped. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title (54 chars) and description (144) are the draft's own —
+       docs/page-conventions.md §12. -->
+  <title>Baustellenbewachung Würzburg | Schutz 24/7 – FRANKONIA</title>
+  <meta name="description" content="Baustellenbewachung in Würzburg: Schutz vor Diebstahl &amp; Vandalismus für Neubau &amp; Sanierung, feste Teams, dokumentiert. Angebot in einem Werktag.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/baustellenbewachung-wuerzburg/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/baustellenbewachung-wuerzburg/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/baustellenbewachung-wuerzburg/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Baustellenbewachung Würzburg | Schutz 24/7 – FRANKONIA">
+  <meta property="og:description" content="Baustellenbewachung in Würzburg: Schutz vor Diebstahl &amp; Vandalismus für Neubau &amp; Sanierung, feste Teams, dokumentiert. Angebot in einem Werktag.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/baustellenbewachung-wuerzburg/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- NO hero image preload: like the city page, this page has no photograph at
+       all, so it has NO LCP image — nothing to preload, decode or compress. The
+       hero's visual is an inline outline of Würzburg's administrative
+       boundary, which costs zero requests. -->
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://frankonia-sicherheit.de/#organization",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "url": "https://frankonia-sicherheit.de/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+        "width": 800,
+        "height": 83
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://frankonia-sicherheit.de/#localbusiness",
+      "name": "FRANKONIA Sicherheitsdienst GmbH & Co. KG",
+      "logo": "https://frankonia-sicherheit.de/assets/icons/logo-wide-right-icon.png",
+      "url": "https://frankonia-sicherheit.de/",
+      "telephone": "{{phone.display}}",
+      "email": "{{email}}",
+      "priceRange": "€€",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{address.street}}",
+        "postalCode": "{{address.postal}}",
+        "addressLocality": "{{address.city}}",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 49.9019037,
+        "longitude": 10.9067377
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Würzburg",
+        "containedInPlace": { "@type": "AdministrativeArea", "name": "Bayern" }
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "reviewCount": "{{rating.count}}",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "parentOrganization": { "@id": "https://frankonia-sicherheit.de/#organization" }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://frankonia-sicherheit.de/baustellenbewachung-wuerzburg/#service",
+      "name": "Baustellenbewachung Würzburg",
+      "serviceType": "Baustellenbewachung",
+      "description": "Baustellenbewachung in Würzburg: Schutz vor Diebstahl &amp; Vandalismus für Neubau &amp; Sanierung, feste Teams, dokumentiert. Angebot in einem Werktag.",
+      "provider": { "@id": "https://frankonia-sicherheit.de/#localbusiness" },
+      "areaServed": {
+        "@type": "City",
+        "name": "Würzburg",
+        "containedInPlace": { "@type": "AdministrativeArea", "name": "Bayern" }
+      },
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "EUR",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "minPrice": "{{price.min}}",
+          "maxPrice": "{{price.max}}",
+          "priceCurrency": "EUR",
+          "unitCode": "HUR"
+        }
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://frankonia-sicherheit.de/baustellenbewachung-wuerzburg/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Wie schnell startet die Bewachung meiner Würzburger Baustelle?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Bei akuten Vorfällen, etwa nach einem Wochenend-Einbruch, organisieren wir die erste Besetzung nach Absprache umgehend: {{phone.display}}."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Reicht ein Wochenend-Schutz für meine Würzburger Baustelle?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Oft ja, die meisten Vorfälle passieren nachts und am Wochenende. Die kostenfreie Begehung liefert die Empfehlung samt Kostenvergleich der Varianten."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Funktioniert Bewachung auch bei engen Innenstadt-Baustellen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, gerade dort: Fußkontrollen, Gerüst- und Zugangs-Checks zu variierenden Zeiten sind für Bestands- und Sanierungsprojekte oft wirksamer als starre Posten."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Womit muss ich über die Projektlaufzeit rechnen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Das bestimmen Phasen und Besetzung, ein reiner Wochenend-Schutz von Freitagabend bis Montagfrüh bewegt sich grob zwischen 1.500 und 2.100 Euro netto."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Geht auch eine Kombination mit Videoüberwachung?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, mobile Videotürme und Alarmtechnik reduzieren Personalstunden, wo Dauerpräsenz unnötig ist. Beides planen wir im selben Konzept."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Stellt FRANKONIA auch die Brandwache bei Heißarbeiten?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, aus einer Hand mit der Bewachung, inklusive Nachkontrolle:"
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://frankonia-sicherheit.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Einsatzgebiete",
+          "item": "https://frankonia-sicherheit.de/einsatzgebiete/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Sicherheitsdienst Würzburg",
+          "item": "https://frankonia-sicherheit.de/sicherheitsdienst-wuerzburg/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Baustellenbewachung",
+          "item": "https://frankonia-sicherheit.de/baustellenbewachung-wuerzburg/"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+
+  <!-- Shared, in cascade order (docs/page-conventions.md §9.1 and §11):
+       lead-form → page-service.css (the CHASSIS) → page-city.css (the geo layer)
+       → page-combo.css. -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-city.css">
+  <link rel="stylesheet" href="/css/page-combo.css">
+
+  <!-- The documented generic effect stack plus the two hooks this page type uses:
+       js/steps-sequence.js (the Ablauf rail and its title highlight) and
+       js/svg-draw.js (the Einsatzlagen icons drawing themselves).
+       Nothing page-specific — docs/page-conventions.md §4.1. -->
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/steps-sequence.js" defer></script>
+  <script src="/js/svg-draw.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+</head>
+<!-- ⚠️ `page-city` IS NOT A LABEL. page-city.css's phone block — the 80px seam
+     band with its matching reservations, the reduced section padding and the
+     full-width hero CTAs — is scoped to `.page-city`, and this page type wants
+     every one of those. `page-combo` carries the few overrides in
+     css/page-combo.css. -->
+<body class="page-city page-combo">
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- ============ BREADCRUMBS ============ -->
+    <!-- Chevron separators, not slashes — §3. Four levels, matching the
+         BreadcrumbList above: a combo page hangs off its CITY page, which is what
+         makes the geo hierarchy legible to a crawler. The breadcrumb sits ABOVE
+         the hero (unlike /werkschutz/, whose hero is a full-bleed photograph)
+         because this hero has no photo. -->
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/einsatzgebiete/">Einsatzgebiete</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/sicherheitsdienst-wuerzburg/">Würzburg</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Baustellenbewachung</span></li>
+      </ol>
+    </nav>
+
+
+    <!-- ============ 1. HERO ============ -->
+    <!-- The draft's own Hero-Aufbau: badge → H1 → subline → double CTA →
+         3 ticks → trust band. .hero__lead / .hero__actions /
+         .hero__reassurance / .hero__trust are LOAD-BEARING class names, not
+         decoration — js/hero-reveal.js animates exactly those four blocks in that
+         order, so this page needs no JS of its own (§4.1).
+
+         Primary = the free-offer form, secondary = the phone pill: rule G2's
+         default order. Only the Brandwache combos inverts it, on their drafts'
+         own instruction.
+
+         The badge says "Einsatzgebiet", never "Standort" — the UWG disclosure of
+         §10.1, and the draft's own words.
+
+         The trust band (Google rating + the two DEKRA seals) is not in the
+         draft's Hero-Aufbau and is added here deliberately: this hero's ticks
+         claim qualified, certified personnel and the seals are that claim's
+         evidence. Same band the city page and /werkschutz/ carry, unchanged. -->
+    <section class="service-hero city-hero combo-hero" data-hero-reveal>
+      <div class="container service-hero__grid city-hero__grid">
+        <div class="service-hero__content city-hero__content">
+          <p class="city-hero__badge">
+            <svg class="icon city-hero__badge-icon" aria-hidden="true"><use href="#icon-pin"></use></svg>
+            Einsatzgebiet Würzburg — Bewachung, die dem Bau folgt
+          </p>
+
+          <h1>Baustellenbewachung Würzburg</h1>
+
+          <p class="hero__lead service-hero__lead">
+            Ob Neubau im Umland oder Sanierung in der Innenstadt: FRANKONIA schützt Würzburger Baustellen vor Diebstahl und Vandalismus, mit Konzepten je Bauphase.
+          </p>
+
+          <div class="hero__actions service-hero__actions">
+            <a class="btn btn--primary" href="#anfrage">Unverbindliches Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            <a class="btn btn--secondary service-hero__phone" href="{{phone.href}}">
+              <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+              {{phone.display}}
+            </a>
+          </div>
+
+          <!-- The draft's lines VERBATIM, so a stacked list rather than the
+               homepage hero's row of chips: these are full sentences and need
+               ~1000px in a row at this type size against the ~640px this column
+               has. .city-hero__points turns the shared row into a column and
+               supplies the align-items: flex-start the shared centred rule would
+               otherwise apply horizontally (§10.4). -->
+          <ul class="hero__reassurance service-hero__points city-hero__points">
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Nacht- und Wochenendbewachung oder Kontrollen zu variierenden Zeiten
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Zufahrtskontrolle für Lieferverkehr und Subunternehmer
+            </li>
+            <li class="service-hero__point">
+              <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+              Dokumentation für Bauherren, Partnerfirmen und Versicherung
+            </li>
+          </ul>
+
+          <div class="hero__trust service-hero__trust">
+            <div class="review-card review-card--sm">
+              <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+              <span class="review-card__stars">
+                <span class="review-card__stars-track" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+                <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-star"></use></svg>
+                </span>
+              </span>
+              <span class="review-card__score">
+                <span class="review-card__value">{{rating.value}}</span>
+                <span class="review-card__count">{{rating.count}} Bewertungen</span>
+              </span>
+            </div>
+
+            <div class="service-hero__badges">
+              <img class="service-hero__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+              <img class="service-hero__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach ISO 9001:2015" width="399" height="600" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- Würzburg'S REAL ADMINISTRATIVE OUTLINE, as an inline path.
+             Generated once in development by docs/design-sources/city-outline.py
+             from assets/data/coverage-boundaries/wuerzburg.geojson (OSM/Nominatim,
+             July). Never hand-edit the coordinates; re-run the script.
+             Why an outline and not a photo or a live map — §10.3: no city
+             photography exists and the draft asks for none; an AREA is the honest
+             visual for an Einsatzgebiet where a single pin would read as a branch
+             office (§10.1); and as a path it costs zero requests and no
+             third-party tiles.
+             ⚠️ pathLength="1" IS LOAD-BEARING: the outline draws itself with a
+             pure-CSS dash, and that attribute renormalises the perimeter to 1 so
+             `stroke-dasharray: 1` is one exact lap at any size for any city. A
+             path pasted in without it draws nothing at all.
+             ⚠️ The guides are PERCENTAGES because every city's viewBox height
+             differs; this one is 1462. -->
+        <div class="city-hero__map" aria-hidden="true">
+          <svg class="city-map" viewBox="0 0 1000 1462" fill="none" focusable="false">
+            <line class="city-map__guide" x1="50%" y1="0" x2="50%" y2="100%"></line>
+            <line class="city-map__guide" x1="0" y1="50%" x2="100%" y2="50%"></line>
+            <path class="city-map__area" pathLength="1" d="M0.0 523.9 L5.6 551.2 L23.6 546.3 L29.9 536.0 L43.6 522.3 L48.8 527.6 L48.2 531.9 L65.7 537.0 L76.4 549.6 L75.5 552.5 L87.3 561.5 L85.7 564.2 L113.9 585.3 L125.7 592.5 L172.1 610.2 L186.4 628.8 L184.6 632.0 L193.8 647.8 L202.9 654.8 L205.8 654.1 L217.6 662.1 L218.2 664.6 L240.2 687.6 L262.9 715.9 L274.2 734.1 L283.7 753.6 L268.1 756.7 L258.6 747.4 L240.9 742.9 L242.3 738.6 L220.1 739.1 L220.5 736.8 L208.0 729.7 L200.2 719.3 L196.6 696.7 L189.1 701.2 L184.7 706.0 L183.5 705.1 L175.3 707.2 L175.1 709.3 L156.4 708.5 L153.5 717.6 L150.1 716.2 L147.9 721.5 L151.4 722.3 L147.5 732.0 L153.5 734.3 L151.7 738.1 L133.3 753.9 L96.8 767.5 L96.4 770.9 L85.7 775.1 L60.9 781.5 L47.2 788.5 L38.6 794.8 L27.9 797.5 L19.6 802.0 L33.0 815.5 L37.2 824.4 L34.9 833.9 L28.7 842.4 L26.0 842.8 L21.4 847.0 L21.7 860.6 L38.5 850.4 L81.3 832.9 L102.6 829.2 L111.6 829.4 L121.4 834.0 L135.9 836.7 L148.1 836.3 L164.9 838.7 L172.6 837.4 L173.4 843.6 L170.8 854.9 L153.5 871.7 L152.9 875.9 L143.9 889.0 L141.3 900.3 L143.2 901.3 L134.0 913.1 L123.7 933.1 L105.8 940.1 L92.5 954.5 L85.1 959.3 L83.2 958.8 L78.2 963.5 L64.8 968.7 L54.6 978.0 L47.9 992.7 L35.8 1001.3 L75.5 1069.3 L78.0 1071.7 L88.9 1074.3 L94.1 1077.9 L96.6 1077.3 L107.1 1092.2 L112.4 1095.2 L126.1 1088.6 L130.8 1091.3 L132.4 1095.6 L140.4 1094.5 L162.7 1097.9 L180.6 1093.5 L187.3 1089.6 L189.3 1090.6 L216.1 1061.8 L231.9 1076.4 L255.8 1087.3 L280.7 1101.5 L314.9 1134.4 L338.3 1146.0 L357.1 1158.7 L370.3 1163.9 L391.9 1168.8 L401.1 1173.6 L421.3 1194.1 L435.8 1196.2 L434.8 1209.8 L436.8 1228.5 L433.7 1248.0 L450.9 1248.6 L456.0 1252.0 L453.8 1265.1 L468.2 1264.5 L466.2 1267.0 L464.0 1267.2 L474.3 1278.7 L457.0 1286.5 L475.2 1315.2 L452.7 1330.6 L453.9 1334.1 L468.9 1361.8 L504.3 1347.2 L528.7 1382.0 L531.6 1402.1 L535.0 1404.6 L537.9 1451.9 L536.9 1459.5 L567.1 1452.0 L570.2 1423.4 L593.9 1423.7 L607.2 1427.6 L613.9 1447.7 L638.0 1439.5 L639.7 1461.7 L650.2 1459.3 L651.3 1461.5 L663.6 1457.1 L699.7 1452.6 L700.1 1454.8 L703.1 1454.1 L703.8 1458.5 L764.1 1439.0 L775.3 1432.0 L773.8 1410.8 L781.7 1404.5 L784.3 1398.6 L784.0 1393.1 L787.5 1390.2 L797.4 1363.9 L799.0 1353.9 L798.7 1332.2 L750.9 1331.0 L740.2 1307.9 L712.0 1263.6 L710.2 1258.9 L710.2 1242.8 L715.3 1228.9 L759.7 1224.7 L764.9 1220.5 L761.2 1189.9 L770.6 1182.4 L789.8 1178.4 L789.6 1165.4 L791.7 1156.3 L788.7 1147.6 L788.7 1134.2 L791.3 1124.2 L791.7 1112.2 L796.7 1095.5 L790.8 1071.7 L792.1 1062.6 L791.1 1058.9 L781.8 1036.1 L774.0 1022.0 L767.0 1010.9 L754.1 996.3 L749.7 987.9 L738.8 951.9 L725.8 931.9 L715.0 918.7 L713.0 919.6 L707.8 915.1 L693.7 908.9 L690.8 906.1 L682.4 903.4 L669.3 902.0 L652.1 896.8 L627.7 892.5 L592.3 881.5 L578.5 872.7 L579.4 863.0 L576.6 856.9 L571.0 852.2 L573.7 844.3 L577.3 840.9 L616.3 857.5 L619.1 851.2 L620.3 837.1 L622.6 832.2 L626.1 829.2 L631.4 816.7 L643.2 805.5 L645.0 801.9 L645.4 793.3 L659.4 795.0 L680.5 787.3 L691.5 796.4 L705.4 788.0 L714.6 779.5 L722.9 786.1 L725.0 792.7 L754.7 802.2 L760.5 801.6 L755.7 776.6 L755.2 764.1 L744.6 765.2 L734.2 736.2 L731.6 712.3 L731.6 708.7 L733.6 707.8 L734.6 692.9 L725.0 682.6 L736.0 682.4 L735.6 678.5 L742.5 678.5 L754.3 674.8 L767.7 665.1 L774.3 655.5 L785.7 629.5 L792.0 622.6 L799.2 619.5 L798.1 599.6 L819.7 599.4 L819.9 602.9 L848.2 605.0 L858.6 609.4 L851.5 615.2 L865.7 618.4 L874.3 628.1 L878.9 629.3 L899.0 628.6 L918.9 580.3 L925.5 582.2 L931.5 572.1 L943.3 559.2 L962.1 542.3 L964.2 538.2 L949.4 489.9 L1000.0 471.7 L990.9 447.7 L968.0 455.6 L951.3 447.4 L965.3 412.7 L936.4 399.5 L932.6 367.8 L928.7 367.8 L926.0 347.1 L927.4 307.3 L919.7 293.6 L927.5 287.3 L925.3 283.6 L906.0 295.7 L901.5 290.6 L903.6 287.9 L895.5 278.3 L897.1 276.9 L856.2 238.7 L848.3 228.5 L841.0 232.7 L834.2 239.4 L827.8 234.8 L819.4 222.0 L817.0 215.3 L823.0 199.5 L816.1 181.7 L814.6 166.0 L822.8 132.8 L824.5 115.5 L821.2 98.6 L810.5 74.0 L775.0 92.7 L765.3 81.4 L759.2 66.5 L740.9 77.0 L732.5 74.0 L729.5 70.2 L724.7 68.1 L701.3 62.3 L683.2 65.1 L683.6 61.8 L617.5 76.6 L587.9 90.0 L548.9 96.3 L545.4 99.2 L544.8 102.8 L553.9 107.9 L561.0 115.6 L526.1 132.0 L524.3 127.0 L490.5 131.0 L491.1 123.7 L467.0 126.9 L462.0 105.6 L434.9 110.5 L436.1 109.8 L433.7 102.2 L426.0 82.6 L401.6 37.3 L390.5 40.9 L378.2 50.0 L350.7 8.8 L343.9 2.1 L337.3 0.0 L337.9 9.7 L344.8 21.1 L344.1 27.2 L340.6 30.0 L331.4 30.4 L325.9 20.0 L323.0 17.4 L306.4 11.5 L292.4 3.7 L268.4 14.3 L267.3 42.3 L263.4 57.5 L263.5 106.6 L261.9 134.9 L264.2 135.4 L262.3 178.3 L261.3 179.8 L256.2 179.4 L249.5 218.4 L235.7 216.9 L232.4 221.0 L225.9 220.2 L224.4 227.9 L220.6 229.3 L200.8 224.7 L202.7 213.6 L197.2 214.3 L176.3 210.7 L160.0 199.4 L116.2 221.2 L100.7 226.3 L114.7 250.7 L109.6 255.2 L109.3 262.2 L75.7 274.1 L70.9 262.1 L64.4 264.3 L58.2 252.1 L47.1 251.5 L45.4 250.2 L41.6 236.7 L4.9 254.0 L7.7 260.5 L11.5 279.5 L7.3 314.1 L7.7 323.4 L25.0 403.3 L35.3 429.0 L42.1 440.6 L53.8 455.8 L83.0 510.5 L75.8 517.6 L53.5 493.8 L44.4 490.9 L39.5 500.8 L44.9 503.6 L40.2 512.2 L35.5 509.5 L26.7 521.6 L19.4 526.0 L7.6 528.5 L0.0 523.9 Z">
+          </svg>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 2. DIE WÜRZBURGER BAUSTELLEN-LAGE (EIGENCONTENT) ============ -->
+    <!-- THE EIGENCONTENT SECTION — what stops this being /baustellenbewachung/ with a
+         place name pasted in. 3 real local situations, every word the draft's.
+         Rendered with the city page's own blocks (.city-fields*): the draft
+         writes each one as "Titel: Satz", so the colon is the split and nothing
+         is rewritten.
+         ⚠️ A <ul>, not an <ol>: with the 01–03 numerals gone (client
+         2026-08-10) these are a parallel SET, not a sequence, and an <ol> would
+         keep telling assistive tech about an order the page no longer shows.
+         ONE LINE ICON PER ITEM, at the block tier (44px), and it is the item's
+         only marker. THE LINES DRAW THEMSELVES WITH THE SCROLL via the existing
+         js/svg-draw.js — the same primitive /werkschutz/ uses, not a second
+         implementation. Every glyph is already in the sprite; no new symbol was
+         drawn for these pages, which is also why they read as one family. -->
+    <section class="section section--light city-fields combo-fields" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Warum Baustellen in Würzburg besonderen Schutz brauchen</h2>
+          <p data-reveal data-reveal-delay>Würzburg baut anders als das flache Umland: viel Sanierung im Bestand, enge Innenstadt-Baustellen mit schwer kontrollierbaren Zugängen, und draußen Wohn- und Gewerbeprojekte mit Großgerät. Beides zieht Täter an; beides braucht ein eigenes Bewachungskonzept.</p>
+        </div>
+
+        <ul class="city-fields__list" data-item-reveal="li">
+          <li class="city-fields__item">
+            <svg class="icon combo-icon combo-fields__icon" aria-hidden="true" data-svg-draw data-svg-draw-start="top 84%" data-svg-draw-end="top 44%"><use href="#icon-building"></use></svg>
+            <h3 class="city-fields__title">Innenstadt und Bestand</h3>
+            <p>Gerüste, offene Fassaden, Materiallager im öffentlichen Raum — Kontrolle zu unvorhersehbaren Zeiten wirkt hier am stärksten.</p>
+          </li>
+          <li class="city-fields__item">
+            <svg class="icon combo-icon combo-fields__icon" aria-hidden="true" data-svg-draw data-svg-draw-start="top 84%" data-svg-draw-end="top 44%"><use href="#icon-crane"></use></svg>
+            <h3 class="city-fields__title">Neubau im Umland</h3>
+            <p>Bagger, Kraftstoff und Gebäudetechnik über Wochen auf dem Gelände, feste Nachtposten in den kritischen Phasen.</p>
+          </li>
+          <li class="city-fields__item city-fields__item--wide">
+            <svg class="icon combo-icon combo-fields__icon" aria-hidden="true" data-svg-draw data-svg-draw-start="top 84%" data-svg-draw-end="top 44%"><use href="#icon-factory"></use></svg>
+            <h3 class="city-fields__title">Gewerbeprojekte am Main</h3>
+            <p>Hochwertige Technik kurz vor Übergabe — Sonderschutz, wenn der Wert auf der Baustelle am höchsten ist.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 3. KONZEPT JE BAUPHASE ============ -->
+    <!-- The draft's own copy, verbatim — an explanation rather than a list, so it
+         renders as prose and not as invented bullets.
+         ⚠️ The paragraphs sit in a SECOND `.section__intro`, which is the chassis'
+         own contract for `.service-prose` (the nine service pages do the same). It
+         is what gives them the centred alignment, the 42rem reading measure and
+         `hyphens: none` — all three from rules that already exist. A wrapper of its
+         own escapes all three. -->
+    <section class="section service-prose combo-prose">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Bewachung, die mit Ihrem Würzburger Projekt mitwächst</h2>
+        </div>
+
+        <div class="section__intro">
+          <p data-reveal data-reveal-delay>Rohbau, Ausbau, Übergabe: Jede Phase wird eigen kalkuliert — Posten, Kontrollen, mobile Videotechnik oder die Kombination. Bei Heißarbeiten (Dachabdichtung, Schweißen) stellen wir die vorgeschriebene Brandwache aus einer Hand.</p>
+        </div>
+
+        <p class="service-points__outro" data-reveal><a class="service-link" href="/brandwache-wuerzburg/">Brandwache Würzburg<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></p>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 4. NACHWEISBAR BEWACHT ============ -->
+    <!-- The draft's own copy, verbatim — an explanation rather than a list, so it
+         renders as prose and not as invented bullets.
+         ⚠️ The paragraphs sit in a SECOND `.section__intro`, which is the chassis'
+         own contract for `.service-prose` (the nine service pages do the same). It
+         is what gives them the centred alignment, the 42rem reading measure and
+         `hyphens: none` — all three from rules that already exist. A wrapper of its
+         own escapes all three. -->
+    <section class="section section--light service-prose combo-prose" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Nachweise statt Behauptungen, auch auf Ihrer Baustelle</h2>
+        </div>
+
+        <div class="section__intro">
+          <p data-reveal data-reveal-delay>Checkpoints auf dem Gelände belegen jede Runde technisch, Feststellungen werden mit Foto und Meldekette dokumentiert, Zufahrten protokolliert. Für Bauherren, Partnerfirmen und Versicherung zählt genau das im Ernstfall.</p>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 5. KOSTEN ============ -->
+    <!-- ⚠️ DARK SECTION WITH A WHITE CARD, i.e. the inverse of every other Kosten
+         block on the site. It is the combo type's own treatment (client
+         2026-08-10, on /brandwache-nuernberg/) and it is what makes this page
+         alternate all the way down: the chassis' Preis-Box is glossy BLACK, which
+         forces its section light, which used to strand Warum + Kosten + FAQ as
+         one three-section light run with no colour change in it (§11.2). Putting
+         the black card back means putting that run back and deleting the two
+         seams around this section. See .combo-price in css/page-combo.css.
+         The white card is not a new surface either: the lead form two sections
+         below is already a white card on this page's black, and every value comes
+         from that card, so the two read as one system.
+
+         The shared Preis-Box partial's `range` comes from content/values.json, so
+         the annual rate change stays ONE edit across the ~27 pages that publish it
+         (client rule G10).
+         ⚠️ NO .service-price__factors list, and that follows the copy: this draft
+         states its factors inside its own sentence rather than as a list, and
+         splitting an approved sentence into bullets would be rewriting it. The
+         Kosten grid places its items by column explicitly, so an absent factor
+         list simply leaves its row empty.
+         GEO shape, straight from the draft: question H2, the number in the first
+         sentence. -->
+    <section class="section service-price combo-price">
+      <div class="container service-price__layout">
+        <div class="section__intro service-price__intro">
+          <h2>Was kostet Baustellenbewachung in Würzburg?</h2>
+          <p class="service-price__answer" data-reveal data-reveal-delay>Würzburger Baustellen bewachen wir für {{price.min}} bis {{price.max}} Euro netto je Stunde, tarifliche Zuschläge für Nacht- und Wochenendeinsätze kommen hinzu. Die Kalkulation folgt Ihren Bauabschnitten und wird bei Verzug angepasst, das Angebot liegt einen Werktag nach der Begehung vor.</p>
+        </div>
+
+        <!-- include: price-box range="{{price.range}}" note="netto, Richtwerte für Baustellenbewachung in Würzburg" -->
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 6. FAQ ============ -->
+    <!-- The draft's 6 combo-specific questions, verbatim, mirroring the FAQPage
+         JSON-LD at the top of this file 1:1.
+         The draft ends some answers with a bare "→ /sicherheitstechnik/, /brandwache-wuerzburg/", which is
+         authoring notation rather than copy. The destination is not lost — every one
+         of them is either in Weiterführend at the foot of this page or already a
+         link earlier in it.
+         ⚠️ The visible copy and the schema copy must stay BYTE-IDENTICAL with
+         markup stripped. They are generated from one source by
+         docs/design-sources/combo-pages.py, so an edit here has to be made in
+         BOTH places by hand. It is the one thing on this page type that is easy
+         to break with a small edit and impossible to see.
+         The phone numbers are real tel: links (client rule G4) — that changes the
+         MARKUP and not the TEXT, so the schema copy stays identical. -->
+    <section class="section section--light city-faq service-faq combo-faq" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Baustellenbewachung Würzburg: die häufigsten Fragen</h2>
+        </div>
+
+        <div class="faq__list faq__list--cards" data-item-reveal=".faq-item" data-item-reveal-strong>
+          <details class="faq-item">
+            <summary><h3>Wie schnell startet die Bewachung meiner Würzburger Baustelle?</h3></summary>
+            <p class="faq-item__answer">Bei akuten Vorfällen, etwa nach einem Wochenend-Einbruch, organisieren wir die erste Besetzung nach Absprache umgehend: <a href="{{phone.href}}">{{phone.display}}</a>.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Reicht ein Wochenend-Schutz für meine Würzburger Baustelle?</h3></summary>
+            <p class="faq-item__answer">Oft ja, die meisten Vorfälle passieren nachts und am Wochenende. Die kostenfreie Begehung liefert die Empfehlung samt Kostenvergleich der Varianten.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Funktioniert Bewachung auch bei engen Innenstadt-Baustellen?</h3></summary>
+            <p class="faq-item__answer">Ja, gerade dort: Fußkontrollen, Gerüst- und Zugangs-Checks zu variierenden Zeiten sind für Bestands- und Sanierungsprojekte oft wirksamer als starre Posten.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Womit muss ich über die Projektlaufzeit rechnen?</h3></summary>
+            <p class="faq-item__answer">Das bestimmen Phasen und Besetzung, ein reiner Wochenend-Schutz von Freitagabend bis Montagfrüh bewegt sich grob zwischen 1.500 und 2.100 Euro netto.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Geht auch eine Kombination mit Videoüberwachung?</h3></summary>
+            <p class="faq-item__answer">Ja, mobile Videotürme und Alarmtechnik reduzieren Personalstunden, wo Dauerpräsenz unnötig ist. Beides planen wir im selben Konzept.</p>
+          </details>
+          <details class="faq-item">
+            <summary><h3>Stellt FRANKONIA auch die Brandwache bei Heißarbeiten?</h3></summary>
+            <p class="faq-item__answer">Ja, aus einer Hand mit der Bewachung, inklusive Nachkontrolle:</p>
+          </details>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 7. ABSCHLUSS-CTA (PRIMARY CONVERSION) ============ -->
+    <!-- The shared lead-form partial with this page's own field prefix
+         (`bbw-`) — unique per page, or two forms in one document would
+         break every <label for>.
+         The draft's separate Formulartitel ("Ihre Baustellen-Anfrage Würzburg") is not rendered as a
+         second heading: the section H2 and the lede already say it, the same call
+         every other page on the site made.
+         The form still submits nowhere sitewide (action="#", native validation
+         only) — docs/build-checklist.md Paso 4. -->
+    <section id="anfrage" class="conversion">
+      <div class="conversion__panel conversion__panel--form">
+        <div class="section__intro conversion__intro">
+          <h2>Jetzt Baustellenbewachung für Würzburg anfragen</h2>
+          <p class="conversion__intro-lede">Baustelle, Bauphase und Zeitraum kurz beschreiben — Begehung kostenfrei, Angebot in einem Werktag.</p>
+        </div>
+
+        <div class="conversion__form-wrap">
+          <!-- include: lead-form prefix="bbw" messageLabel="Baustelle, Bauphase und Zeitraum kurz beschreiben" -->
+
+          <p class="conversion__form-alt">Lieber direkt sprechen? <a href="{{phone.href}}">{{phone.display}}</a></p>
+        </div>
+      </div>
+    </section>
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+    <!-- ============ 8. WEITERFÜHREND ============ -->
+    <!-- The draft's own closing links, in its order and with its own labels: the
+         service page first, the city page second. The chassis' .service-related*
+         block, i.e. the same closing navigation /werkschutz/ ends on — ONE column
+         here rather than two, because two links do not make two groups (see
+         .combo-related in css/page-combo.css).
+         ⚠️ /baustellenbewachung/ is a confirmed URL from guidelines §2.2 that is not
+         built yet; linking confirmed-but-unbuilt URLs is this project's own
+         convention (§8.3) and the page's conversion never depends on one.
+         /sicherheitsdienst-wuerzburg/ is live and links back here. -->
+    <section class="section section--light service-related combo-related" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Weiterführend</h2>
+        </div>
+
+        <div class="service-related__cols">
+          <div class="service-related__col">
+            <ul class="service-related__list" data-item-reveal="li">
+              <li><a class="service-related__link" href="/baustellenbewachung/"><span class="service-related__label">Alles zur Baustellenbewachung</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+              <li><a class="service-related__link" href="/sicherheitsdienst-wuerzburg/"><span class="service-related__label">Sicherheitsdienst Würzburg</span><svg class="icon service-related__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

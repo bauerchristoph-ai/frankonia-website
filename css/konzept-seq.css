@@ -720,101 +720,58 @@
 /* Mobile: normal vertical flow only (JS never enhances < 1024px). The cube can
    now use the full width since the annotations no longer need side room. */
 @media (max-width: 640px) {
-  .konzept-seq { --kz-frame: 90vw; padding-block: var(--space-8); }
+  /* ⚠️ 78vw, NOT 90 (client 2026-08-19, "un poco más pequeños"), and the number
+     is derived rather than picked: below 1024px the SVG is now `overflow: visible`
+     so the whole drawing shows, and the drawing is 1158 viewBox units wide against
+     a 1079-unit box — 7.3% wider than the frame. 78vw of frame therefore paints
+     78 x 1.0732 = 83.7vw of drawing, which at 393px is 329px inside a 393px
+     viewport, i.e. ~32px clear either side. At the old 90vw the drawing would have
+     wanted 96.6vw and gone straight off the screen.
+     Change this and the visible width changes by 1.0732x, not 1x. */
+  .konzept-seq { --kz-frame: 78vw; padding-block: var(--space-8); }
   .konzept-seq__layers { gap: var(--space-7); padding-inline: var(--space-3); }
   .konzept-seq__label { max-width: none; }
 }
 
 /* ==========================================================================
-   Mobile tooltips (client 2026-08-03) — the HTML stand-in for the in-SVG
-   .kz-tip boxes, which cannot render below 1024px (they are laid out outside
-   the cube's viewBox; see the Responsive note above).
+   Mobile: THE WHOLE DRAWING, and nothing over it (client 2026-08-19)
+   --------------------------------------------------------------------------
+   Two asks in one pass: "los diagramas están cortados a la derecha, tienen que
+   estar centrados y un poco más pequeños" and "saca los tooltips en el mobile …
+   deja nomás los diagramas con todas las ilustraciones y abajo que diga los
+   nombres de lo que incluye".
 
-   Built entirely by js/konzept-seq.js at runtime, anchored on each tip's own
-   dot, ONE visible at a time. Nothing here is ever visible without that script:
-   no .kz-mtips element exists in the HTML, so no-JS / reduced-motion / a GSAP
-   failure all fall back to the .konzept-seq__terms list, which carries the same
-   words as real text.
+   1. THE CUT WAS THE viewBox, NOT THE CONTAINER, and that is why it looked like
+      a layout bug and was not one. Measured on the deployed build at a real
+      393px viewport: the SVG's own box sits at x 20..373 with 20px of margin
+      either side — comfortably inside — but `getBBox()` reports the DRAWING
+      spanning x -37..1121 against a `viewBox="0 0 1079 1110"`. So 42 viewBox
+      units hang off the right edge and 37 off the left, and an SVG root clips at
+      its viewport by default: ~14px of drawing sliced on the right, ~12px on the
+      left, at every phone width.
+      `overflow: visible` is the fix, and it is only safe BELOW 1024px because
+      `.kz-tip` is `display: none` there (see the Responsive note above) — the
+      only thing outside the viewBox on a phone is the cube's own geometry. Above
+      1024px `.konzept-seq--enhanced .konzept-seq__svg` already sets this for the
+      annotation labels, which is exactly why desktop never showed the cut.
+      ⚠️ Do NOT widen the viewBox attribute instead: it is shared with desktop,
+      where the annotations are positioned against those same coordinates.
+
+   2. THE FRAME SHRINKS TO PAY FOR IT. With overflow visible the drawing renders
+      1158/1079 = 7.3% WIDER than its box, so keeping the old 90vw would have put
+      it past the viewport. See the phone query above for the number and how it
+      was derived.
+
+   3. THE TOOLTIP CHIPS ARE GONE — `.kz-mtips` / `.kz-mtip*` and the `.is-synced`
+      dimming were DELETED here, not hidden, together with the code that built
+      them (js/konzept-seq.js, same date; the full story is in that file's note).
+      Consequence worth knowing: `.konzept-seq__terms` is now the entire mobile
+      annotation, at FULL contrast. The 45% dimming only ever existed to mark
+      which chip was lit, and `.is-synced` was added by that script — with no
+      script there is no class, so nothing here needs to change to un-dim it.
    ========================================================================== */
 @media (max-width: 1023.98px) {
-  .konzept-seq__diagram { position: relative; }
-
-  /* Same box as the SVG itself: it is width:--kz-frame, height:auto with
-     preserveAspectRatio="xMidYMid meet", so its rendered box is exactly the
-     viewBox aspect — the chips' percentage coordinates land on the drawing. */
-  .kz-mtips {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: var(--kz-frame);
-    aspect-ratio: 1079 / 1110;
-    pointer-events: none;
-  }
-
-  .kz-mtip {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    /* The dot (10px, first child) has to sit ON the anchor, not beside it. */
-    transform: translate(-5px, -50%);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.35s var(--easing-premium), visibility 0.35s;
-  }
-  /* Anchors past the halfway line open leftwards so the box stays on the cube.
-     Right edge on the anchor, and row-reverse puts the dot back on that edge. */
-  .kz-mtip--left {
-    flex-direction: row-reverse;
-    transform: translate(calc(-100% + 5px), -50%);
-    text-align: right;
-  }
-  .kz-mtip.is-active { opacity: 1; visibility: visible; }
-
-  .kz-mtip__dot {
-    flex: none;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--kz-route-color);
-    box-shadow: 0 0 0 4px rgb(61 154 211 / 0.18), 0 0 10px rgb(61 154 211 / 0.75);
-  }
-  /* 28px, not the 14 it had while a text box sat at the end of it: with the box
-     gone (client 2026-08-14, point 14 — the words are in the list below now) this
-     line IS the callout, and at 14px on a ~350px cube it read as a nub on the dot
-     rather than as a leader pointing somewhere. The draw-on-scroll is the effect
-     the client asked to keep, so it stays a scaleX from the dot outwards.
-     .kz-mtip__body / __name / __sub were DELETED here, not hidden — see the note
-     in js/konzept-seq.js's buildMobileTips(), which no longer builds them. */
-  .kz-mtip__line {
-    flex: none;
-    width: 28px;
-    height: 1px;
-    background: rgb(255 255 255 / 0.45);
-    transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform 0.3s var(--easing-premium);
-  }
-  .kz-mtip--left .kz-mtip__line { transform-origin: right center; }
-  .kz-mtip.is-active .kz-mtip__line { transform: none; }
-
-  /* Layer 2 is the risk diagnosis — its dots are red in the SVG too. */
-  .konzept-seq__layer[data-kz-layer="2"] .kz-mtip__dot {
-    background: var(--kz-risk);
-    box-shadow: 0 0 0 4px rgb(255 91 82 / 0.18), 0 0 10px rgb(255 91 82 / 0.75);
-  }
-
-  /* The term chip below the cube tracks whichever tooltip is currently up, so
-     the list reads as the diagram's legend rather than a separate block.
-     `.is-synced` is added by the script and is what dims the resting state — the
-     list must not sit at 45% opacity for anyone who never gets the tooltips.
-     Only COLOR changes: the phone layout is a wrapped row of nowrap chips, so
-     changing weight on the active one would reflow the whole row on every step. */
-  .konzept-seq__term-name {
-    transition: color 0.3s var(--easing-premium);
-  }
-  .konzept-seq__terms.is-synced .konzept-seq__term-name { color: rgb(255 255 255 / 0.45); }
-  .konzept-seq__terms.is-synced li.is-active .konzept-seq__term-name { color: #fff; }
+  .konzept-seq__svg { overflow: visible; }
 }
 
 /* Reduced motion: nothing to add — enhanced is JS/matchMedia-gated off, so the

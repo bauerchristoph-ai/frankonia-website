@@ -286,11 +286,51 @@ botón azul. Una regla en components.css cubre todos los casos.
 El **orden** dentro del hero y el **destino** de cada etiqueta son las reglas G2 y
 G3 — ver §11.3 y §11.3b.
 
+⚠️⚠️ **UNA FILA DE CTA SE APILA A TODO EL ANCHO SÓLO POR DEBAJO DE 640px, EN TODAS
+LAS PÁGINAS** (cliente 2026-08-19: "que queden con un width normal, no que se
+alarguen así, y esto en toda la web"). El full-width es un patrón de TELÉFONO, no
+de tablet:
+
+- **≤ 639.98px** — columna, `align-items: stretch`, `width: 100%` **y**
+  `white-space: normal` (las dos: un ancho no reduce el min-content de una etiqueta
+  `nowrap`, y esa omisión ya causó el mismo scroll horizontal cinco veces).
+- **≥ 640px** — la fila normal: botones al ancho de su contenido,
+  `flex-wrap: wrap` para que un par que no entre caiga a dos líneas en vez de
+  desbordar.
+
+**640 no es un número redondo, es donde se termina el motivo de la regla:** el par
+estándar pide `325 + 209 + 24 = 558px` y a 640 hay **598px** disponibles, medido en
+todas las páginas que lo publican. Hasta el 2026-08-19 estas reglas llegaban a
+767.98px, así que en el tope de esa banda la píldora del teléfono —209px de
+contenido— renderizaba **720px de ancho**. Tres componentes ya cortaban en 639.98
+(`.faq__cta`, `.rg-cta__actions`/`.rg-close__actions`, `.sk-actions`/`.sk-cta-box`),
+o sea el sitio tenía dos umbrales para una decisión; ahora hay uno.
+
+⚠️ **El razonamiento canónico vive en `.service-hero__actions`, en el bloque de
+teléfono de `page-service.css`.** Las otras siete reglas (page-city ×2, page-home,
+page-case-study, page-jobs, y `.service-konzept__actions` y `.service-panel__cta`
+del propio chasis) llevan un puntero de una línea. **Un CTA nuevo hereda esto
+gratis si vive en una fila `flex-wrap: wrap`; si necesita `width: 100%`, va dentro
+de `@media (max-width: 639.98px)`, nunca en el bloque de 767.98.**
+
+⚠️ **La excepción es un botón que llena su CARD, no el viewport:**
+`.service-price__cta` no depende del ancho de pantalla sino del de la caja de
+precios, que pasa a columna completa por debajo de 900px — medía **648px a 767 en
+las 36 páginas** que publican la caja. Lleva `max-width: 22.5rem` desde 640px, que
+es **el ancho que ese mismo botón ya tiene en escritorio** (la card topa en 432px y
+su interior mide 360), así que el cap es inerte donde la card es angosta y el
+"nearly full width inside the card" del cliente sigue valiendo.
+
+⚠️ **El submit del formulario compartido NO entra en esta regla.** Es un control
+dentro de una card blanca, no una fila de CTA, y su ancho completo es una decisión
+propia (`lead-form.css`). Sigue siendo full-width en teléfono y tablet.
+
 ### Breadcrumbs
 
 Trail con **chevrones**, no con barras (cliente 2026-07-31, imagen de
-referencia): links en gris sin subrayado, chevrón fino más claro, página actual
-en negro y bold.
+referencia), y desde el **2026-08-19** con el degradado que pidió el cliente:
+**cero subrayados en cualquier estado**, la página actual en **regular y no bold**,
+y la opacidad **bajando hacia atrás desde la página actual**.
 
 ```html
 <nav class="breadcrumbs container" aria-label="Breadcrumb">
@@ -308,16 +348,43 @@ en negro y bold.
   `transform: scaleX(-1)` en vez de agregar un segundo símbolo.
 - El separador es decoración (`aria-hidden`): el orden ya lo da el `<ol>`.
 - La página actual es texto, no link, con `aria-current="page"`.
-- Sin subrayado en reposo: acá los links están solos adentro de un `<nav>`, no
-  metidos en una frase, así que no dependen del color para distinguirse del
-  texto que los rodea (WCAG 1.4.1). El subrayado vuelve en hover/focus.
-- Separación entre items: `--space-3`.
+- **Escala (cliente 2026-08-19), sobre `--color-text` con `color-mix`:**
 
-> 🔧 **Pendiente:** hoy esto vive en `css/page-contact.css` porque esa página no
-> podía tocar los archivos compartidos. El lugar correcto es
-> `css/components.css` (`.breadcrumbs__sep-icon` y los colores) y el markup de
-> cada página. Mientras no se mueva, **cada página nueva repite el bloque**, y
-> `components.css` sigue teniendo la versión con `/`.
+  | crumb | valor | sobre `#010101` |
+  |---|---|---|
+  | página actual (`__current`, **regular**) | 85 % | 14,79:1 |
+  | su padre (el último link) | 60 % | 7,33:1 |
+  | todo lo de más arriba | 50 % | 5,29:1 |
+  | chevrón | 40 % | 3,67:1 |
+
+- ⚠️⚠️ **LA ESCALA SE ANCLA AL FINAL DEL TRAIL, NO AL PRINCIPIO**, y es lo que el
+  cliente subrayó: en `/leistungen/` la palabra "Leistungen" se lleva el paso más
+  fuerte y "Startseite" el que sigue. O sea el peso de un crumb sale de su
+  **distancia a la página actual**, no de su profundidad. Por eso los selectores
+  cuentan con `:nth-last-child` y el valor **más bajo es la base**: cualquier trail,
+  a cualquier profundidad, termina igual.
+- ⚠️ **Los `<li>` alternan item / separador / item**, así que los crumbs caen en
+  posiciones impares: el padre es `:nth-last-child(3)`, **no** `(2)`.
+- ⚠️ **Las 16 páginas combo tienen CUATRO niveles** (Startseite › Einsatzgebiete ›
+  Nürnberg › Werkschutz) y los dos primeros comparten la base. Es a propósito: un
+  cuarto escalón hacia abajo tendría que pasar por debajo del piso de contraste
+  (**~46 %**, donde se rompe el 4,5:1 de texto de 15px). **No agregar un tier más
+  sin cambiar el tamaño de tipografía.**
+- **Sin subrayado en NINGÚN estado**, tampoco en hover — el hover resuelve a la
+  tinta plena. Los links están solos adentro de un `<nav>`, o sea no dependen del
+  color para distinguirse del texto que los rodea (WCAG 1.4.1), y `:focus-visible`
+  conserva el anillo global de base.css, que es el cue no-cromático real.
+- **`color-mix` sobre `--color-text`, no un blanco literal con alfa**: ese token se
+  invierte a tinta oscura dentro de `.section--light`, así que la escala sobrevive
+  si algún día un breadcrumb cae sobre un hero claro (hoy ninguno lo hace —
+  chequeadas las 54 páginas).
+- Separación entre items: `--space-2` (`--space-3` sólo en `/kontakt/`, ver abajo).
+
+> ✅ **RESUELTO 2026-08-19:** el color, el peso y el subrayado viven en
+> `css/components.css` y ninguna página los repite. Lo único que quedó
+> page-scoped es el `gap` de `/kontakt/` (`--space-3`) y —pendiente todavía— la
+> regla `.breadcrumbs__sep-icon`, que está duplicada **sin scope** en
+> `page-contact.css` y `page-service.css`.
 
 ### Navegación: la página actual
 
@@ -1388,8 +1455,9 @@ Las secciones 5, 7 y 8 son genéricas a propósito porque
   de servicio son verticales (820×1227) y no hay original más grande, así que un
   hero de fondo las recortaría a una banda. Orden del hero: badge de
   certificación → H1 → subline → 3 pruebas con tick → CTA + teléfono → rating +
-  sellos DEKRA. En teléfono los dos CTA van full-width y apilados, y la foto
-  cierra el hero (el H1 tiene que abrir la página).
+  sellos DEKRA. **Por debajo de 640px** los dos CTA van full-width y apilados (ver
+  §3, "CTAs" — era 768 hasta el 2026-08-19), y la foto cierra el hero (el H1 tiene
+  que abrir la página).
 - **Un solo primario por pantalla**, y en esta plantilla hay **dos CTA azules en
   toda la página**: el del hero y el de la caja de precios. Cualquier otro link
   es `.service-link` (texto + flecha, con hairline), nunca un tercer botón.
@@ -1635,6 +1703,61 @@ nunca al nombre del servicio.
   ya numera). ⚠️ **El conteo de columnas se DECLARA, no se auto-ajusta**: los
   drafts dan 2, 3, 4, 5 y 6 items, y un `repeat(4)` fijo deja huérfanos — el mismo
   hueco que `.city-why__grid--3` existe para cerrar.
+  - ⚠️⚠️ **EL MARCO DE TODA SECCIÓN `.service-points` / `.service-scope` VA CENTRADO,
+    Y LA LISTA NO** (cliente 2026-08-19, con siete capturas: "el título, y si tiene un
+    texto abajo también, y si hay un box abajo o un comentario abajo de los items
+    también centrados … **no toques la lista de contenidos**"). Es **incondicional**,
+    no una clase: título (cap de 30ch + `text-wrap: balance`), lede, `__outro` y la
+    caja `.service-highlight`. Los items conservan su borde izquierdo.
+    - ⚠️ **`.service-flow__intro` está EXCLUIDO y tiene que seguir excluido**: es el
+      heading pinneado del scrollytelling de `/werkschutz/`.
+    - ⚠️ **`.service-price` y `.service-contact` NO se centran EN ESCRITORIO**: su intro
+      vive en una columna de un grid de dos y centrarlo rompe la maqueta.
+      - ⚠️ **PERO `.service-contact` SÍ VA CENTRADO APILADO, debajo de 900px** (cliente
+        2026-08-19, con captura de teléfono de `/werkschutz/`: "this section has to be
+        centered"). Ahí la grilla es de UNA columna, así que el argumento de arriba no
+        aplica — y el `.service-contact__certs` de abajo se centra desde el 2026-08-07,
+        o sea el bloque venía con la franja de certificados centrada bajo un título, una
+        foto y dos acciones rangeados a la izquierda. Son 4 declaraciones y cada una hace
+        una parte distinta: `text-align` centra el texto, `justify-self` + `width: 100%`
+        la foto (⚠️ **sin el `width: 100%` el marco COLAPSA A 0x0** — `justify-self`
+        vuelve content-sized al grid item y el `<img>` a `width: 100%` deja de tener
+        contra qué resolver), `margin-inline: auto` el párrafo capado a 34rem, y
+        `justify-content` la fila flex de acciones. **Vale para las 5 páginas** que
+        publican el bloque (werkschutz · objektschutz · brandwache · sicherheitstechnik ·
+        baustellenbewachung), no una.
+    - **`.service-section--centred` sigue existiendo pero ya sólo significa "además
+      angostá el bloque de la lista"** (62rem, 72rem si es `--4`). El marco lo centra
+      la regla incondicional.
+  - **`--cards` (cliente 2026-08-19): la PRIMERA sección de cada página de
+    servicio va como CARD, la card de las páginas de ciudad.** Es un modificador
+    **opt-in** que se compone con `--3`/`--4`, más un
+    `<svg class="icon service-points__icon">` como primer hijo de cada item. Hoy lo
+    llevan las **7 páginas** cuya primera sección es el pitch de riesgo
+    (`.service-section--centred`): objektschutz · brandwache · kaufhausdetektei ·
+    revier-schliessdienst · sicherheitstechnik · veranstaltungsschutz ·
+    baustellenbewachung. **Las otras 13 secciones de `.service-points` siguen
+    rayadas** — eso es jerarquía, no inconsistencia: el pitch de apertura va
+    carded, las secciones de apoyo no.
+  - ⚠️ **Valores COPIADOS de `.city-why__item`, no re-derivados** (radio 1.5rem,
+    borde `rgb(1 1 1 / 0.07)`, sombra de dos capas, icono de 1.75rem, paddings
+    24/48/24 por banda) — es la **TERCERA copia** de esa card en el proyecto
+    (`.service-cases__card`, `.city-why__item`, ésta), así que la promoción a
+    clase compartida ya está vencida. No se hizo porque tocaría /werkschutz/ y las
+    10 páginas de ciudad, todas ya revisadas por el cliente.
+  - ⚠️ **SIN estado hover, por dos razones independientes**: estas cards no tienen
+    link ni nada que clickear, y la lista lleva `data-item-reveal="li"`, o sea GSAP
+    anima ESE elemento y escribe `translate/rotate/scale: none` inline — que le gana
+    a cualquier regla de hoja. Es exactamente por eso que el hover de la card de
+    ciudad está muerto en producción.
+  - ⚠️ **La regla azul de 3rem (`::before`) pasa a `content: none`** en `--cards`:
+    el icono la reemplaza, y dejar las dos deja dos cosas compitiendo por abrir la
+    card. La regla base NO se borra — las otras 13 secciones la necesitan.
+  - **Un icono por item, y ninguno repetido DENTRO de una sección.** Los 23 salen
+    del sprite que ya existía. ⚠️ Si un item no tiene glifo que lo signifique de
+    verdad, **la sección va sin iconos** — un icono equivocado es peor que ninguno,
+    y por eso `/empfangsdienst/` (4 tipos de ubicación contra 2 glifos de edificio)
+    no entró en esta tanda.
 - **`.service-scope*`** — tick + título + frase, dos columnas desde 900px, con un
   `.service-link` opcional por item. `.service-scope__tick` ya estaba estilado
   desde el 2026-08-03 y simplemente no tenía markup.
@@ -2400,8 +2523,13 @@ clases y el `margin-inline: auto`.
 Referencia: `pages/brandwache-nuernberg.html` + `css/page-combo.css`
 (2026-08-09). Son **16 páginas** — 4 servicios (Brandwache · Objektschutz ·
 Werkschutz · Baustellenbewachung) × 4 ciudades (Nürnberg · Würzburg · Erlangen ·
-Fürth). [build-checklist.md](build-checklist.md) las llama "puro ensamblado" y
-tiene razón: **`css/page-combo.css` son cuatro reglas**.
+Fürth), **las 16 construidas al 2026-08-17**.
+
+[build-checklist.md](build-checklist.md) las llama "puro ensamblado", y eso quedó
+confirmado **para el CSS**: las otras quince necesitaron **una sola regla nueva** en
+`page-combo.css` (el arreglo de 320px de §11.7). Lo que NO es puro ensamblado es la
+ESTRUCTURA — cada draft trae la suya. **Leer §11.6 antes de armar otra**, que es
+donde está esa corrección y las cuatro familias de forma.
 
 ### 11.1 Tres capas de CSS, y la del medio es la de ciudad
 
@@ -2428,7 +2556,11 @@ Es deliberado — el badge, las cards de Warum y las filas tienen que ser UN dis
 en los dos tipos de página, no dos parecidos — pero hay que medir los dos tipos
 después de tocarla.
 
-### 11.2 Las 8 secciones y el ritmo de color
+### 11.2 Las secciones y el ritmo de color
+
+⚠️ **La tabla siguiente es la de `/brandwache-nuernberg/`, que son 8 secciones.
+Las otras quince van de 6 a 9 y en cuatro formas distintas — ver §11.6.** Lo que
+sí vale para las 16 es qué bloque renderiza cada cosa y qué superficie admite.
 
 | # | Sección | De dónde |
 |---|---|---|
@@ -2781,14 +2913,128 @@ cada elemento de `<main>`**.
 
 ### 11.6 Para armar la siguiente combo
 
-Copiar `pages/brandwache-nuernberg.html` y cambiar: meta y JSON-LD (incluido
-`areaServed`, el `Service` y el `FAQPage`), todo el copy del draft de esa
-combinación, el contorno si cambia la ciudad, el `note` de la Preis-Box, los links
-de Weiterführend y el `prefix` del formulario (único por página). **`page-combo.css`
-no se toca** — si el copy no entra, son más `<li>`. Ojo con dos cosas: las otras
-tres varían su sección 2 a propósito (Objekt-Typen / Industrie-Fokus / Bauphasen,
-todas "N bloques de título + párrafo", o sea el mismo `.city-fields*`), y **su hero
-lidera con el formulario**, no con el teléfono.
+⚠️⚠️ **CORREGIDO 2026-08-17, con las 16 construidas: "copiar
+`/brandwache-nuernberg/` y cambiar el copy" ERA LA MITAD DE LA VERDAD.** Los
+BLOQUES sí están todos construidos — eso se confirmó, `page-combo.css` sólo
+necesitó una regla nueva en 15 páginas. Lo que **no** se transfiere es la
+estructura: los 15 drafts restantes traen la suya a propósito y lo dicen en su
+propia cabecera ("Struktur variiert ggü. Brandwache-Kombi", "Struktur-Variation:
+Prozess früh", "Q&A-lastig"). Van de **6 a 9 secciones en cuatro formas**:
+
+| Familia | Forma |
+|---|---|
+| **Brandwache** (4) | hero ▪ · Einsatzlagen ▫ · Ablauf ▪ · Warum ▫ · Kosten ▪ · FAQ ▫ · form ▪ · related ▫ |
+| **Objektschutz** (4) | las cuatro distintas: Objekt-Typen + Bausteine + Risiko + 4 Schritte, en cuatro órdenes |
+| **Werkschutz** (4) | contexto + 1–2 bloques de prosa (Haftung / Besetzung / Wirtschaftlichkeit), y una con Leistungsumfang como tick list |
+| **Baustellenbewachung** (4) | Lage · Konzept je Bauphase · Nachweisbar bewacht |
+
+⚠️ **CONSECUENCIA QUE CUESTA CARO SI SE COPIA: la lista de seams cambia entera.**
+Los tiles son del color de la sección de ARRIBA y dos secciones del mismo color no
+llevan seam (§9.2), así que la secuencia hay que **derivarla** de las superficies,
+no copiarla. Las 16 van de **5 a 7 seams**.
+
+⚠️ **LA PARIDAD DE SUPERFICIE ES ARITMÉTICA.** El hero es oscuro y Kosten también
+(es la variante invertida de este tipo, §11.2), así que una página alterna perfecto
+**sólo si la cantidad de secciones ENTRE los dos es impar**. Con par, una
+adyacencia sin seam es inevitable — conviene ponerla en **prosa → Kosten**, donde
+la card blanca de esa sección ya aporta el cambio de superficie y el seam es lo que
+menos compra. Cuatro de las 16 están en ese caso.
+
+**Cómo se construyeron las 15** (2026-08-17): con
+`docs/design-sources/combo-pages.py` + `combo_pages_data.py` + `combo_drafts.py`,
+**una sola pasada, en desarrollo**, igual que `city-pages.py` y `service-pages.py`.
+No corre en `npm run build`, y **no hay que re-correrlo sobre una página ya
+editada a mano**. Existe por lo que se rompe a mano y no se ve en una captura: la
+paridad FAQ ↔ JSON-LD (96 pares), el color de cada seam, y los precios como token
+(G10). Una combo número 17 es una entrada de datos, no un archivo.
+
+**Si igual se hace a mano**, lo que cambia por página: meta y JSON-LD (incluido
+`areaServed`, el `Service` y el `FAQPage`), todo el copy del draft, el contorno si
+cambia la ciudad, el `note` de la Preis-Box, los links de Weiterführend y el
+`prefix` del formulario (único por página, o dos formularios en un documento rompen
+cada `<label for>`). Y **sólo las 4 de Brandwache lideran con el teléfono** — las
+otras doce con el formulario, cada una por su propio draft.
+
+
+### 11.7 320px: el H1 necesita dónde cortar
+
+⚠️ **Encontrado midiendo las 15, y el síntoma es el peligroso: la página NO
+scrolleaba de costado, CLIPEABA.** `.service-hero` es `overflow: hidden`, así que
+un H1 demasiado ancho se corta en silencio en vez de empujar el documento — o sea
+`documentElement.scrollWidth === innerWidth` se lee como "está bien" mientras una
+palabra pierde sus últimas letras. **Chequear cajas pintadas fuera del viewport,
+no sólo scroll horizontal.**
+
+La causa: base.css pone `hyphens: none` en todo heading (correcto — un display de
+48px auto-hyphenado se lee como typo) y **`overflow-wrap: break-word` NO reduce el
+min-content**. Así que un compuesto alemán sin cortes fija el mínimo de la columna.
+Medido a 320px con el H1 en 32,64px:
+
+| palabra | min-content | disponible |
+|---|---|---|
+| `Baustellenbewachung` (19) | **303px** | 280px → clipea |
+| `Werkschutz Nürnberg` | 160px (corta en el espacio) | 280px → entra |
+
+O sea muerde sólo a las 4 páginas de Baustellenbewachung. Arreglo: `hyphens: auto`
+en `.combo-hero .city-hero__content h1` **abajo de 360px**, más `min-width: 0` en
+los hijos de la grilla (sin eso la pista no puede achicarse por debajo del
+min-content, pase lo que pase con el texto).
+
+⚠️ **360 y no los 400 que usa `.service-hero--split`, y el número está medido:** la
+palabra entra desde 344px, así que a 400 la regla hyphenaría un H1 que sí tiene
+lugar y un teléfono de 390 rompería "Baustellenbewa-chung" al medio en vez de en el
+espacio. Verificado: `hyphens: auto` a 320 y 344, `none` a 360 y 390, sin clipear en
+ninguno.
+
+
+### 11.8 El bloque de prosa: usar el contrato del chasis, no inventar un wrapper
+
+⚠️⚠️ **Los párrafos de una sección `.service-prose` van en un SEGUNDO
+`.section__intro`.** No es cosmético: el chasis ya tiene un contrato para este
+bloque (las 9 páginas de servicio lo renderizan así) y de él cuelgan tres reglas
+que ya existen en `page-service.css`:
+
+| regla | qué da |
+|---|---|
+| `.service-prose .section__intro` | `text-align: center` |
+| `.section__intro > p` | `max-width: 42rem` **y** `hyphens: none` |
+| `.service-prose .section__intro > p` | `margin-inline: auto` |
+
+Las 15 combos salieron con un `.service-prose__body` propio y **se escapaban de las
+tres a la vez** (cliente, 2026-08-17): el párrafo corría todo el container —
+**96–152 caracteres por línea** contra los 60–80 cómodos —, quedaba a la izquierda
+debajo de un H2 centrado con **216px de desfase**, y conservaba el `hyphens: auto`
+de base.css, o sea partía compuestos alemanes al medio dentro de texto centrado.
+Se arregló moviendo el markup, con **cero reglas nuevas** para el ancho.
+
+**El cap del H2 YA ESTÁ EN EL CHASIS** (2026-08-19): sin él, `.section__intro` queda
+en `max-width: none` y el título corre TODO el container — medido en
+`/baustellenbewachung/`, **1293px sobre 2 líneas desde 1512px de viewport**, encima de
+un párrafo de 656px. Vive en `page-service.css` como
+`.service-prose .section__intro h2, .service-trust .section__intro h2` →
+`max-width: 30ch` + `margin-inline: auto` + `text-wrap: balance`.
+
+⚠️ **La copia `.combo-prose` de esa regla se BORRÓ en la misma pasada**: las 21
+secciones combo llevan LAS DOS clases (`service-prose combo-prose`), así que el chasis
+las alcanza igual. Verificado midiendo las 21 antes y después: **63 filas
+byte-idénticas**. No la re-agregues.
+
+⚠️ **El cap NO ata en teléfono ni en tablet** (la columna ya es más angosta), así que
+esto sólo cambia escritorio. Medido en las 11 secciones × 6 anchos: **20 de 66 casos se
+angostaron y CERO se ensancharon**, y por debajo de 1024 no se movió nada.
+⚠️ **Un título más corto que el cap conserva su ancho natural**: a 60px, 30ch = 1001px,
+así que el más ancho que queda es el de `/empfangsdienst/` con **941px**. Si alguna vez
+hay que acercar TODOS los títulos a la medida del copy (672px), la palanca es el cap
+(24–26ch), no el tamaño de letra.
+
+⚠️ `margin-inline: auto` es obligatorio — sin él, `max-width` centra el TEXTO dentro
+de una caja que sigue pegada a la izquierda. **Es la octava vez que este proyecto
+pisa esa trampa.**
+
+⚠️ **No buscar "exactamente dos líneas": no es alcanzable.** Los 21 títulos van de 33
+a 68 caracteres, así que cualquier medida que parta el más corto en dos deja el más
+largo en tres. Medido con 30ch: 17 en dos líneas, 1 en tres, 3 en una (los de 33–35
+caracteres, donde una línea es lo correcto).
 
 ---
 

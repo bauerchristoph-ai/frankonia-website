@@ -52,8 +52,30 @@
    article paragraph still share ONE left line down the page. At 48rem the hero
    column would be 64px wider than the article's, so its left edge would land 32px
    further left — a mismatch small enough to read as a render fault rather than a
-   design. Change one measure and you must change the other. */
+   design. Change one measure and you must change the other.
+
+   ⚠️⚠️ `width: 100%` IS LOAD-BEARING, and without it the "one left line" this
+   comment promises was NOT actually true on two of the three article pages —
+   measured, not theorised. This is a grid item (§9.1's `.service-hero__grid`),
+   and `margin-inline: auto` CANCELS the default `justify-self: stretch`, which
+   makes the box content-sized: its width then came from the longest line inside
+   it, i.e. from how long that page's byline happens to be. Measured at 1440
+   before the fix: `paragraph-34a-erklaert` 704px (its byline carries
+   "(Geschäftsführender Gesellschafter)", so it reached the cap) but
+   `kosten-sicherheitsdienst` and `brandwache-wann-vorgeschrieben` only 637px,
+   auto-centred → left edge 401.5 against `.rg-article`'s 368. That is a 33.5px
+   misalignment, almost exactly the 32px this comment predicted would "read as a
+   render fault", arriving through a different door.
+   It is the same trap `page-service.css` documents for the price card ("an auto
+   margin looks like the obvious way to push a grid item to its column's edge and
+   it silently shrinks it instead"), and the fix is the same one: state the width,
+   cap it, and let the auto margins only ever centre it.
+   ✅ It also de-risks the reserved title-image frame below (§1c): a real <img>
+   has an intrinsic width, so in a content-sized box it would have driven the
+   column wider the moment it loaded — a layout shift caused by the very element
+   added to prevent one. */
 .rg-hero .service-hero__content {
+  width: 100%;
   max-width: 44rem;
   margin-inline: auto;
 }
@@ -175,6 +197,83 @@
   font-size: clamp(1.875rem, 1.25rem + 2.4vw, 3rem);
   line-height: 1.14;
   max-width: 22ch;
+}
+
+/* ---- 1c. Article hero: the title image, RESERVED before it exists ----------
+   Client 2026-08-16 (3.11) asks for a Titelbild in each of the three article
+   heroes, and the photos are still coming. So these are RESERVED FRAMES holding
+   the real space now — the same pattern as `.cs-figure` on the case studies and
+   /werkschutz/'s reserved Jäger portrait, whose payoff was measured: swapping a
+   placeholder for a <picture> left the frame at 416x520, ratio unchanged, CLS 0.
+   Reserving is also what fixes the ratio BEFORE the client exports, instead of
+   receiving three photos at three ratios and cropping them afterwards.
+
+   ⚠️ The bracketed labels in the markup are INFERRED FROM EACH ARTICLE'S TOPIC,
+   not supplied. This differs from the case studies, whose three documents each
+   name their shot ("Begehungssituation am Werkstor") — all three Ratgeber .docx
+   were checked and none mentions images at all. Treat the labels as a question
+   for Chris, not as approved direction.
+
+   THE SWAP, when the photos land — two markup edits per page and NO CSS work,
+   which is the whole point of splitting `--empty` out below:
+     1. drop `rg-hero__frame--empty` from the <div> (removes the dashed
+        placeholder skin; the reserved box itself is the unmodified class)
+     2. replace the <span> with a <picture> + <img>
+   The frame already sizes and crops a real image (see the `img` rule). The one
+   thing to add is a <link rel="preload"> in that page's <head>: at ~400px tall
+   just under the H1, the title image becomes the page's LCP element.
+
+   EXPORT SPEC for the client: 16:9, at least 1600x900. The frame's widest
+   rendered size is 704px (the 44rem measure above, which is a hard cap at every
+   viewport — verified), so 1408px covers DPR 2 and 1600 leaves margin. */
+.rg-hero__figure {
+  margin: var(--space-6) 0 0;
+}
+
+.rg-hero__frame {
+  /* 16 / 9 is `.cs-figure__frame`'s own ratio, reused rather than re-chosen, so
+     every editorial lead image on this site stays one decision. `overflow` and
+     the radius live here rather than on the placeholder skin because they are
+     what a REAL image needs — that is what keeps the swap free of CSS. */
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+/* Placeholder skin only. Everything here disappears with the class when the
+   photo arrives.
+   ⚠️ The border is `--color-border-strong`, NOT the `--color-border` the case
+   studies use for the identical frame, and that is a SURFACE difference rather
+   than a preference: their figure sits inside `.section--light`, which
+   re-declares that token to a dark value. This hero is black, where
+   `--color-border` is white at 0.12 — a dashed line in it is nearly invisible,
+   and a reserved frame the client cannot see in the preview fails at the one job
+   it has. 0.42 is calibrated to ~3.7:1 on this black (tokens.css). */
+.rg-hero__frame--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  border: 1px dashed var(--color-border-strong);
+  background-color: var(--color-bg-subtle);
+}
+
+/* `--color-bg-subtle` is white at 0.03, i.e. all but invisible on this hero, and
+   that is deliberate: it is also the placeholder tint behind the real image while
+   it loads, and the /jobs/ card rule is that a placeholder follows its IMAGE, not
+   its section. A light box would flash light-then-dark on a dark photo. */
+
+.rg-hero__caption {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.rg-hero__frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* ---- 2. Byline ----------------------------------------------------------- */
@@ -340,6 +439,15 @@
 /* Ruled rows, not a second set of cards. Two of these three point at an article
    already shown above as a card, so making them cards too would read as the same
    content twice rather than as a second way in. */
+/* Centred (client 2026-08-19), matching .rg-articles and .rg-cta above — this
+   was the one section on the page still ranged left. Only `text-align` is needed
+   on the intro, same reason as .rg-articles: it holds an H2 and no lede, and
+   page-service.css already gives `.section__intro` `max-width: none`, so there is
+   no capped box hugging the left edge for `margin-inline: auto` to fix. */
+.rg-topics .section__intro {
+  text-align: center;
+}
+
 .rg-topics__list {
   list-style: none;
   margin: var(--space-8) 0 0;
@@ -347,6 +455,14 @@
   display: grid;
   gap: 0;
   max-width: 56rem;
+  /* ⚠️ The list DOES need the auto margins the intro does not: it is capped at
+     56rem inside a much wider container, so without them a centred heading would
+     sit above a block still pinned to the left edge.
+     The ROWS stay left-aligned on purpose — this is the site's centred-header /
+     left-aligned-content pattern (/leistungen/ Warum, the city pages' Vertrauen).
+     Centring the row text would also fight `.rg-topic__arrow`, which is pinned to
+     the row's right edge. */
+  margin-inline: auto;
 }
 
 .rg-topic {
@@ -521,6 +637,22 @@
   font-weight: 500;
   color: var(--color-text);
   width: 26%;
+}
+
+/* The price column gets an explicit width because the table gained a THIRD column
+   on 2026-08-17 ("Wo in der Spanne — und warum", Webtext 32 rev. 13.08.). Left to
+   distribute by content, the long third column squeezed the range onto two lines
+   ("24,50-32" / "€"), which reads as a broken figure. 22% is measured, not round:
+   at this font size the widest value in that column, "24,50-32 € je Kraft", needs
+   ~150px and 22% clears it from 640px up, while the two non-hourly rows
+   ("je Kontrollfahrt", "Bereitschafts- + Einsatzpauschale") still wrap normally —
+   which is why this is a width and NOT `white-space: nowrap`.
+   The stacked phone layout below needed no change at all: every cell announces its
+   own data-label, so a third column is a third labelled block for free. */
+@media (min-width: 640px) {
+  .rg-table td:first-of-type {
+    width: 22%;
+  }
 }
 
 .rg-table td {
