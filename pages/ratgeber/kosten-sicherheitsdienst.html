@@ -95,7 +95,9 @@
 }
   </script>
 
-  <!-- include: head-common -->
+  <link rel="preload" as="image" type="image/webp" imagesrcset="/assets/images/art-kosten-768.webp 768w, /assets/images/art-kosten-1408.webp 1408w" imagesizes="(min-width: 768px) 704px, 100vw">
+
+  <!-- include: head-common ogimage="/assets/images/og/art-kosten.jpg" ogimagealt="Kalkulation am Schreibtisch: Stundenaufstellung neben Laptop, Taschenrechner und Funkgerät" -->
   <link rel="stylesheet" href="/css/page-service.css">
   <link rel="stylesheet" href="/css/page-ratgeber.css">
 
@@ -154,8 +156,11 @@
                ⚠️ `.hero__trust` is the js/hero-reveal.js animation hook, not a
                style — it carries no rules on this page (checked). Keep both classes. -->
           <figure class="rg-hero__figure hero__trust">
-            <div class="rg-hero__frame rg-hero__frame--empty">
-              <span class="rg-hero__caption">[Titelbild folgt: neutrales Motiv zur Kalkulation, z.&nbsp;B. Dienstplanung am Objekt]</span>
+            <div class="rg-hero__frame">
+              <picture>
+                <source type="image/webp" srcset="/assets/images/art-kosten-768.webp 768w, /assets/images/art-kosten-1408.webp 1408w" sizes="(min-width: 768px) 704px, 100vw">
+                <img src="/assets/images/art-kosten-1408.jpg" width="1408" height="792" alt="Kalkulation am Schreibtisch: eine ausgedruckte Stundenaufstellung neben Laptop, Taschenrechner und Funkgerät" loading="eager" fetchpriority="high" decoding="async">
+              </picture>
             </div>
           </figure>
         </div>

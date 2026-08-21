@@ -233,15 +233,31 @@
   margin: var(--space-6) 0 var(--space-7);
 }
 
+/* Split 2026-08-21, when the real photos arrived. Mirrors .rg-hero__frame
+   exactly: the base class carries only what a REAL image needs, so dropping the
+   --empty class is the entire swap and no CSS moves with it. */
 .cs-figure__frame {
   aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+/* Placeholder skin only — kept for the next case study whose photo is still
+   outstanding. No page uses it after this pass. */
+.cs-figure__frame--empty {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-4);
   border: 1px dashed var(--color-border);
-  border-radius: var(--radius-md);
   background-color: var(--color-bg-subtle);
+}
+
+.cs-figure__frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .cs-figure__caption {

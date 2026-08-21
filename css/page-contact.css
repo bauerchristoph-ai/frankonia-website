@@ -1056,7 +1056,12 @@
         default black tiles, because the tiles always match the section ABOVE.
      2. white map section -> black footer. .pixel-seam--white, as before. */
 
-.pixel-seam + .contact-location {
+/* 2026-08-21: the photo section now sits between the seam and the map, so the
+   band reservation names IT. An adjacent-sibling selector left on
+   .contact-location would simply have stopped matching, and 200px of tiles would
+   have painted over the new photos. .contact-location keeps .section's own
+   padding, which is right now that nothing dissolves in front of it. */
+.pixel-seam + .contact-office {
   padding-top: calc(var(--space-8) + 200px);
 }
 
@@ -1068,7 +1073,7 @@
 
   /* The phone's own section rhythm (the 2026-08-04 mobile pass trimmed this
      section's top padding to --space-6) plus the shorter mobile band. */
-  .pixel-seam + .contact-location {
+  .pixel-seam + .contact-office {
     padding-top: calc(var(--space-6) + 120px);
   }
 }
@@ -1225,7 +1230,8 @@
 /* Same treatment as .contact-intro h1 above — the homepage's `main h2` scale at
    regular weight. Without it this heading falls back to base.css's bold 800,
    which is the one type style this page's own headings never use. */
-.contact-location h2 {
+.contact-location h2,
+.contact-office h2 {
   font-size: clamp(2.25rem, 0.4rem + 3.7vw, 3.75rem);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-tight);
@@ -1394,7 +1400,8 @@
      Scoped to the phone: at ≥768px this heading is back on the shared clamp, so
      "every section title is one size" (docs/page-conventions.md §2) still holds
      wherever the comparison is actually visible. */
-  .contact-location h2 {
+  .contact-location h2,
+  .contact-office h2 {
     font-size: 1.75rem;
   }
 
@@ -1414,5 +1421,56 @@
      pixel seam into the footer needs its reserved band below. */
   .contact-location {
     padding-top: var(--space-6);
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   Bildsektion "Unser Büro in Bamberg" (2026-08-21)
+   --------------------------------------------------------------------------
+   The second white island on this page. Like the form card and the map section,
+   it deliberately does NOT consume the page's dark-theme variables — it carries
+   its own "on white" values, which is this file's established pattern.
+   Its h2 is added to the map section's existing rule rather than copied, so the
+   two headings stay one decision.
+   -------------------------------------------------------------------------- */
+.contact-office {
+  background-color: var(--color-white);
+  /* No bottom padding: the map section directly below brings its own top
+     padding, and two full section paddings between two white blocks reads as a
+     gap rather than as rhythm. */
+  padding-bottom: 0;
+}
+
+.contact-office__lead,
+.contact-office__pair li {
+  margin: 0;
+  border: 1px solid rgb(59 73 86 / 0.12);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* width/height on the <img> reserve the 16:9 box, so nothing shifts as the
+   photos arrive; height:auto lets the real ratio drive the box. */
+.contact-office__lead img,
+.contact-office__pair img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.contact-office__pair {
+  list-style: none;
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-5);
+}
+
+/* 700px, not 768: these two are supporting images, and a 16:9 pair is still
+   comfortably readable at half of 700 (~340px). */
+@media (min-width: 700px) {
+  .contact-office__pair {
+    grid-template-columns: 1fr 1fr;
   }
 }

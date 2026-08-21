@@ -91,7 +91,9 @@
 }
   </script>
 
-  <!-- include: head-common -->
+  <link rel="preload" as="image" type="image/webp" imagesrcset="/assets/images/art-brandwache-768.webp 768w, /assets/images/art-brandwache-1408.webp 1408w" imagesizes="(min-width: 768px) 704px, 100vw">
+
+  <!-- include: head-common ogimage="/assets/images/og/art-brandwache.jpg" ogimagealt="Mitarbeiter in Warnschutzweste und Schutzhelm bei einem Kontrollgang durch einen Industriegang" -->
   <link rel="stylesheet" href="/css/page-service.css">
   <link rel="stylesheet" href="/css/page-ratgeber.css">
 
@@ -150,8 +152,11 @@
                ⚠️ `.hero__trust` is the js/hero-reveal.js animation hook, not a
                style — it carries no rules on this page (checked). Keep both classes. -->
           <figure class="rg-hero__figure hero__trust">
-            <div class="rg-hero__frame rg-hero__frame--empty">
-              <span class="rg-hero__caption">[Titelbild folgt: Brandwache im Einsatz, z.&nbsp;B. Nachkontrolle nach Heißarbeiten]</span>
+            <div class="rg-hero__frame">
+              <picture>
+                <source type="image/webp" srcset="/assets/images/art-brandwache-768.webp 768w, /assets/images/art-brandwache-1408.webp 1408w" sizes="(min-width: 768px) 704px, 100vw">
+                <img src="/assets/images/art-brandwache-1408.jpg" width="1408" height="792" alt="Mitarbeiter in Warnschutzweste und Schutzhelm bei einem Kontrollgang durch einen Industriegang, an der Wand eine Brandmelderzentrale" loading="eager" fetchpriority="high" decoding="async">
+              </picture>
             </div>
           </figure>
         </div>

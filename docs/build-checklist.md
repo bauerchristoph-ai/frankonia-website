@@ -31,6 +31,59 @@ página por página.
 anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
+
+**2026-08-21 — BLOQUE A: LAS 12 FOTOS DEL CLIENTE ESTÁN DENTRO.** Los 7 marcos
+reservados que el proyecto arrastraba están todos llenos y **no queda un solo
+`[Bild folgt: …]` en el build** (verificado, 0 apariciones):
+
+- [x] `/objektschutz/` — foto REEMPLAZADA. La vieja era una leitstelle, el draft
+      pedía un Kontrollgang en el exterior del edificio; la nueva lo muestra.
+      Exportada a **820x1227 exactos**, o sea las medidas que el markup ya
+      declaraba, así que fue un swap puro sin tocar layout.
+      ⚠️ Arrastró TRES derivados, y ninguno se ve en la página que cambió:
+      el thumbnail de la lista del homepage (`services-thumb/`, recortado de
+      nuevo — los valores viejos eran de la foto de leitstelle), el share image
+      (`og/`) y **los dos `alt`**, que describían la leitstelle.
+- [x] 3 títulos del Ratgeber (`art-34a`, `art-kosten`, `art-brandwache`) en los
+      `.rg-hero__frame`. Ese bloque ya estaba construido para el swap, así que
+      costó **cero CSS**, tal como su propio comentario prometía.
+- [x] 4 fotos en las case studies (`cs-werkstor`, `cs-schranke`, `cs-software`,
+      `cs-schichtuebergabe`).
+      ⚠️ **`.cs-figure__frame` NO estaba partido para el swap** (borde punteado,
+      padding y tinte de placeholder estaban en la clase base), así que se partió
+      en base + `--empty` copiando la línea que `.rg-hero__frame` ya usaba.
+      ⚠️ **`cs-werkstor` fue al marco de la case study, NO al hero del hub**
+      (decisión del cliente, 2026-08-21): el marco vacío tenía literalmente esa
+      bildunterschrift, y `/referenzen/` ya tiene su hero del equipo aprobado.
+- [x] `/kontakt/` — sección de fotos nueva, entre el seam y "So finden Sie uns".
+      ⚠️ **LA RESERVA DEL SEAM TUVO QUE MUDARSE**: `page-contact.css` reservaba
+      la banda de 200px con `.pixel-seam + .contact-location`, un selector de
+      hermano adyacente. Insertar una sección en medio lo deja sin matchear, y
+      200px de tiles habrían pintado encima de las fotos nuevas.
+- [x] 4 logos de partner en `assets/images/partner/` (para el bloque B).
+- [x] **Share images regenerados/ampliados**, que es la regla que fijó el cliente
+      el 2026-08-21: foto nueva = share image nuevo. 7 páginas dejaron de caer al
+      hero del homepage y tienen la suya. Reparto ahora: **33 en el fallback, 21
+      propias**.
+
+- [ ] 🔴 **FALTA LA FOTO DEL HERO DEL HOMEPAGE.** El cliente la manda después; el
+      placeholder actual (`herofinal-*`) se queda mientras tanto.
+      ⚠️ **Cuando llegue son CUATRO cosas, no una**: la foto en sus 3 tamaños, el
+      `alt`, **`og/herofinal.jpg` regenerado** (es el fallback de 33 páginas, así
+      que una foto nueva ahí cambia la tarjeta social de más de la mitad del
+      sitio) y su `ogimagealt` en `content/values.json`.
+      El generador es `docs/design-sources/og-images.ps1`.
+- [ ] 🟡 `kontakt-tuerschild` NO se publicó. El brief lo marca como opcional y es
+      el único vertical del lote, así que rompía la fila 16:9 de esa sección.
+      Está en la carpeta de origen si se lo quiere.
+- [ ] 🟡 **Copy nuevo que necesita OK: el H2 "Unser Büro in Bamberg"** de la
+      sección de fotos de `/kontakt/`. El brief dio las fotos y su ubicación pero
+      ningún título, y una sección necesita uno para el outline del documento.
+- [ ] 🟡 `cs-schranke-1408.webp` pesa **176KB**, el más pesado del lote (escena
+      nocturna con mucho detalle). Va lazy y bajo el fold, así que se aceptó en
+      vez de degradarla; es el mismo trade-off que este archivo ya documenta para
+      baustellenbewachung y revier-schliessdienst.
+
 - [ ] Ver la homepage en un teléfono real
 - [ ] 🔴 Subir `content-de/` a git — son los 49 textos y **no están guardados**
 

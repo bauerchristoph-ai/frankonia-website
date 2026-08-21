@@ -122,7 +122,7 @@
 }
   </script>
 
-  <!-- include: head-common -->
+  <!-- include: head-common ogimage="/assets/images/og/kontakt.jpg" ogimagealt="Glasfassade des FRANKONIA-Büros mit Logo und Schriftzug im Fenster" -->
   <link rel="stylesheet" href="/css/page-contact.css">
 
   <!-- ---- Motion stack (client 2026-07-31: this page must get the same
@@ -546,10 +546,45 @@
          LocalBusiness JSON-LD `geo` block (geocoded once from Nominatim during
          this build, never at runtime). Keep the two in sync if the address
          ever changes. -->
-    <!-- data-nav-theme="light": the one white section on the page, so the
-         sticky header switches to its frosted dark-text state while this is
-         behind it (initHeaderScrollTheme, js/main.js). Same mechanism the
-         homepage and every service page use for their white sections. -->
+    <!-- Bildsektion, 2026-08-21. See a5-kontakt in the build notes: light
+         surface on purpose, and it is now the seam's adjacent sibling, so the
+         200px band reservation moved onto THIS section in page-contact.css.
+         kontakt-tuerschild is not used here — the brief marks it optional and it
+         is the only portrait file in the set, so it would break the 16:9 row. -->
+    <section class="section contact-office" data-nav-theme="light" aria-labelledby="buero-title">
+      <div class="container">
+        <div class="section__intro contact-office__intro" data-reveal>
+          <h2 id="buero-title">Unser Büro in Bamberg</h2>
+        </div>
+
+        <figure class="contact-office__lead" data-reveal>
+          <picture>
+              <source type="image/webp" srcset="/assets/images/kontakt-buero-aussen-768.webp 768w, /assets/images/kontakt-buero-aussen-1408.webp 1408w" sizes="(min-width: 1024px) 1100px, 100vw">
+              <img src="/assets/images/kontakt-buero-aussen-1408.jpg" width="1408" height="792" alt="Glasfassade des FRANKONIA-Büros mit Logo und Schriftzug FRANKONIA Sicherheitsdienst im Fenster" loading="lazy" decoding="async">
+            </picture>
+        </figure>
+
+        <ul class="contact-office__pair" data-item-reveal="li">
+          <li>
+            <picture>
+              <source type="image/webp" srcset="/assets/images/kontakt-empfang-768.webp 768w, /assets/images/kontakt-empfang-1408.webp 1408w" sizes="(min-width: 700px) 50vw, 100vw">
+              <img src="/assets/images/kontakt-empfang-1408.jpg" width="1408" height="792" alt="Mitarbeiter am Empfangstresen des FRANKONIA-Büros vor der Logowand" loading="lazy" decoding="async">
+            </picture>
+          </li>
+          <li>
+            <picture>
+              <source type="image/webp" srcset="/assets/images/kontakt-arbeitsplatz-768.webp 768w, /assets/images/kontakt-arbeitsplatz-1408.webp 1408w" sizes="(min-width: 700px) 50vw, 100vw">
+              <img src="/assets/images/kontakt-arbeitsplatz-1408.jpg" width="1408" height="792" alt="FRANKONIA-Mitarbeiter am Schreibtisch mit zwei Bildschirmen im Büro" loading="lazy" decoding="async">
+            </picture>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- data-nav-theme="light": the second white section on the page (the photo
+         section above is the first), so the sticky header switches to its frosted
+         dark-text state while this is behind it (initHeaderScrollTheme,
+         js/main.js). Same mechanism the homepage and every service page use. -->
     <section class="section contact-location" data-nav-theme="light" aria-labelledby="anfahrt-title">
       <div class="container">
         <div class="section__intro contact-location__intro" data-reveal>

@@ -100,7 +100,9 @@
 }
   </script>
 
-  <!-- include: head-common -->
+  <link rel="preload" as="image" type="image/webp" imagesrcset="/assets/images/art-34a-768.webp 768w, /assets/images/art-34a-1408.webp 1408w" imagesizes="(min-width: 768px) 704px, 100vw">
+
+  <!-- include: head-common ogimage="/assets/images/og/art-34a.jpg" ogimagealt="Schulungssituation: Ein Ausbilder erklärt an einem Bildschirm rechtliche Grundlagen, davor mehrere Teilnehmende" -->
   <link rel="stylesheet" href="/css/page-service.css">
   <link rel="stylesheet" href="/css/page-ratgeber.css">
 
@@ -164,8 +166,11 @@
                just being there. Keep both classes; same two-class pattern as
                /ueber-uns/'s trust band. -->
           <figure class="rg-hero__figure hero__trust">
-            <div class="rg-hero__frame rg-hero__frame--empty">
-              <span class="rg-hero__caption">[Titelbild folgt: Unterrichtung oder Sachkundeprüfung, z.&nbsp;B. Schulungssituation]</span>
+            <div class="rg-hero__frame">
+              <picture>
+                <source type="image/webp" srcset="/assets/images/art-34a-768.webp 768w, /assets/images/art-34a-1408.webp 1408w" sizes="(min-width: 768px) 704px, 100vw">
+                <img src="/assets/images/art-34a-1408.jpg" width="1408" height="792" alt="Schulungssituation: Ein Ausbilder erklärt an einem Bildschirm rechtliche Grundlagen, davor sitzen mehrere Teilnehmende mit Unterlagen" loading="eager" fetchpriority="high" decoding="async">
+              </picture>
             </div>
           </figure>
         </div>
