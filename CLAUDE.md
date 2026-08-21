@@ -99,6 +99,112 @@ strategically and optimize it carefully," not "remove all animation."
 > única copia de la fuente de verdad actual y no tiene historial — conviene
 > commitearla antes de empezar a migrar.
 
+**2026-08-21 — TRES DEFECTOS LEGALES / DE SHARING: EL IMPRESSUM CITABA DOS NORMAS
+DEROGADAS Y LAS 54 PÁGINAS PEDÍAN UNA TARJETA SOCIAL SIN IMAGEN** (cliente, auditoría
+de 3 puntos). Toca `pages/impressum.html`, `partials/head-common.html`,
+`content/values.json`, 15 páginas y un generador nuevo. **Cero cambios de CSS.**
+
+- ✅ **1. EL LINK DE ODR SE BORRÓ DE LAS DOS ENTIDADES, no se pasó a `https://`.** La
+  plataforma ODR de la UE **cerró el 20.07.2025** y el Art. 14 ODR-VO —la norma que
+  obligaba al aviso— está derogado, así que apuntar a ella es engañoso, no sólo viejo.
+  Y encima iba en `http://` pelado, en la única página que la ley obliga a tener
+  permanentemente accesible.
+  ⚠️ **Se fue con él el "Unsere E-Mail-Adresse finden sie oben im Impressum."**: esa
+  frase existía SÓLO porque el Art. 14 pedía el e-mail al lado del link. Sola no afirma
+  nada. ✅ Con eso queda cerrado de paso el typo del "sie" en minúscula que este archivo
+  venía marcando como pendiente desde el 2026-08-13 — la frase ya no existe.
+  ⚠️ **NO se reemplazó por una declaración del § 36 VSBG**, y es deliberado: esa norma
+  obliga a declarar **SI** la empresa participa en arbitraje de consumo, y eso sólo lo
+  puede contestar el cliente. Queda anotado en el markup, no inventado.
+
+- ✅ **2. REGISTERGERICHT + REGISTERNUMMER AGREGADOS a las dos entidades.** Son
+  obligatorios por **§ 5 Abs. 1 Nr. 4 DDG** y la página publicaba sólo los dos
+  USt-IdNr. Salen del membrete de las facturas del propio cliente: **HRA 12064**
+  (Sicherheitsdienst) y **HRA 13044** (Werkschutz), **HRB 8535 en las dos** → o sea
+  **una sola GmbH complementaria sirve a las dos KG**, no es un copy-paste.
+  - ⚠️ **LA STEUERNUMMER NO SE PUBLICA, y está en el mismo membrete.** El § 5 DDG pide
+    la USt-IdNr., nunca la Steuernummer; publicarla es riesgo propio sin obligación.
+  - ⚠️⚠️ **"Amtsgericht Bamberg" ES UNA INFERENCIA — la única de toda la pasada.** Los
+    membretes imprimen los números y **nunca nombran el juzgado**. Bamberg lleva su
+    propio Handelsregister y la sede está en Bamberg, así que es sólido, pero **hay que
+    confirmarlo en handelsregister.de**; por eso está marcado como pregunta en el markup
+    y no como dato cerrado. Dejar el campo vacío era una infracción segura; esto es una
+    probabilidad alta de acierto.
+  - ⚠️ **La GmbH complementaria va identificada SÓLO por su número** (HRB 8535): ningún
+    documento del proyecto la nombra, y un nombre inventado en un Impressum es peor que
+    un dato incompleto.
+  - ✅ **El punto 2 de la auditoría decía que faltaba el Vertretungsberechtigter y ESO
+    ERA FALSO** — "Vertreten durch: Steffen Walde" ya estaba en los dos bloques desde el
+    2026-08-13. Verificado midiendo el build: 2 bloques. No se tocó.
+
+- ✅ **HALLAZGO PROPIO, mismo riesgo y no estaba en la auditoría: LA PÁGINA CITABA EL
+  TMG, DEROGADO EL 14.05.2024.** Sus deberes de información pasaron al **DDG**, que
+  conservó la numeración. Corregido en las **9 apariciones**: el lede visible, el
+  disclaimer (`§ 7 Abs.1` y `§§ 8 bis 10`), la meta description y la og:description.
+  ⚠️ **Es la ÚNICA vez que se pisa la regla "verbatim" del encabezado de ese archivo**, y
+  la razón es la misma que el ODR: una cita a una norma que ya no existe no es una
+  preferencia de redacción. **Verificado sobre el build: 0 apariciones de "TMG" y 0 de
+  "ec.europa.eu" en las 54 páginas.**
+
+- ✅ **3. IMAGEN SOCIAL EN LAS 54 PÁGINAS, DERIVADA DEL HERO DE CADA UNA** (regla del
+  cliente: "immer das Titelbild der Seite nehmen, als Fallback das der Homepage"). El
+  defecto era real y medible: **las 54 declaraban
+  `twitter:card="summary_large_image"` y sólo UNA declaraba `og:image`** — apuntando a
+  `/assets/images/og-home.jpg`, **un archivo que nunca se creó**. O sea 54 páginas
+  pedían una tarjeta con imagen grande y no entregaban ninguna.
+  - **La mecánica NO necesitó tocar `build.js`.** Es el sistema de parámetros de include
+    que ya existía: `head-common.html` emite el bloque con `{{ogimage}}`,
+    `content/values.json` trae el **default = hero del homepage**, y las 15 páginas con
+    foto propia pasan `<!-- include: head-common ogimage="…" -->`. Las otras 39 no pasan
+    nada y heredan el fallback. Mismo patrón y misma razón que `nameRequired` /
+    `priceBoxTick1` — clave de nivel superior, porque **un parámetro de include es plano
+    y no puede pisar una clave anidada**.
+  - ⚠️⚠️ **NO se apuntó `og:image` a los archivos del hero, y por dos razones medidas:**
+    **nueve de los quince heroes son VERTICALES** (820x~1222), y una og:image vertical la
+    recortan todas las plataformas al centro para armar una tarjeta apaisada — que es
+    exactamente el recorte que este archivo documenta como cortacabezas para esas nueve;
+    y **WebP en og:image no es confiable** (LinkedIn sobre todo), que es lo que el propio
+    comentario placeholder de `index.html` ya decía. Son **JPEG 1200x630**, 44–140KB.
+  - **Generador reproducible: `docs/design-sources/og-images.ps1`** (PowerShell +
+    System.Drawing — en esta máquina **no hay Python, ni Pillow, ni ImageMagick, ni
+    ffmpeg**, sólo Node y PowerShell; los `.py` de esa carpeta son de la época macOS).
+    Corre una vez, en desarrollo, **fuera de `npm run build`**.
+  - ⚠️ **EL RECORTE VERTICAL NO SE INVENTÓ: sale del `object-position` de cada hero**, o
+    sea del encuadre que el cliente ya aprobó en pantalla (herofinal 42 %,
+    hero-werkschutz 42 %, leistungen 50 %, jobs/ueber-uns/referenzen 50 % por default,
+    las 9 de servicio 32 %). El horizontal es irrelevante: **las 15 fuentes son más
+    angostas de proporción que 1.905:1, así que siempre se conserva el ancho completo y
+    sólo se recorta el alto.**
+  - ⚠️⚠️ **DOS DE LAS NUEVE NECESITARON SU PROPIO VALOR, Y LO CAZÓ MIRAR, NO EL NÚMERO:**
+    a 32 % el recorte **clipeaba la corona del casco** en `baustellenbewachung` y **las
+    dos cabezas** en `interventionsdienst`. La causa es que **el 32 % está calibrado para
+    el hero EN PÁGINA, que es una caja mucho más ALTA que 1.905:1** — en teléfono ronda
+    0.45:1, así que `cover` recorta esas fotos 0.668:1 por el ANCHO y el porcentaje
+    vertical casi no actúa. Una ventana de 1200x630 es un corte mucho más duro (430px de
+    1222). Los dos pasaron a **15 %**. Revisado en un contact sheet de los 15, antes y
+    después.
+    ⚠️ **`veranstaltungsschutz` se dejó en 32 % a propósito**: su sujeto está de espaldas
+    y el lettering "FRANKONIA SICHERHEITSDIENST" cae en y≈750, así que **ninguna ventana
+    de 430px sostiene la cabeza Y el lettering**. Cabeza + multitud es la tarjeta fuerte.
+  - **Sin `og:image:alt`**, y es una decisión: es opcional, y un texto compartido
+    describiría la foto equivocada en 53 de 54 páginas.
+  - **El origen absoluto se escribe UNA vez** en head-common (una og:image relativa no la
+    resuelven los scrapers de forma confiable), contra las 54 veces que ese mismo origen
+    ya está cableado en los `canonical`.
+  - **Medido sobre el build, las 54 páginas: exactamente 1 `og:image` y 1
+    `twitter:image` por página, iguales entre sí, con width/height, URL válida, los 15
+    archivos presentes en `dist/`, y 0 tokens sin resolver.** Reparto: **40 con el hero
+    del homepage** (39 sin foto + el homepage) y 14 con la propia.
+  - ⚠️ **`index.html` pasa su imagen EXPLÍCITAMENTE** aunque coincida con el default: si
+    algún día el fallback pasa a ser una tarjeta de marca genérica, el homepage no tiene
+    que perder su hero en silencio.
+
+- ⚠️ **Trampas de entorno de esta máquina (Windows), que van a volver:** el `/tmp` de Git
+  Bash **no es el `/tmp` que resuelve Node** (que lo lee como `C:\tmp`) — hay que usar
+  rutas Windows completas; un heredoc de bash **se come un nivel de backslash**, así que
+  un `.replace(/\\/g,"/")` escrito así llega roto (usar `split(path.sep).join("/")`); y
+  `python` / `ffmpeg` / `magick` **no existen** acá.
+
 **2026-08-19 — EL H2 DE `.service-prose` / `.service-trust` SE CAPA A 30ch: CORRE EL
 ANCHO ENTERO DEL CONTAINER DESDE 1512px** (cliente, sobre `/baustellenbewachung/`: "the
 width of the title is too long in this section"). Una regla en `css/page-service.css`,

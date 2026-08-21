@@ -18,3 +18,36 @@
      changes — see js/pause-offscreen.js and the .is-anim-paused rule in
      motion.css for why, and for the rootMargin that keeps it that way. -->
 <script src="/js/pause-offscreen.js" defer></script>
+
+<!-- SOCIAL-SHARE IMAGE, on every page (2026-08-21).
+     Before this, all 54 pages sent twitter:card="summary_large_image" and only
+     the homepage declared an og:image at all — pointing at
+     /assets/images/og-home.jpg, a file that was never created. So every link
+     shared into WhatsApp, LinkedIn or Slack asked for a large-image card and
+     supplied nothing, and rendered as a bare text row. On a B2B site whose
+     whole job is a decision-maker forwarding a service page to a colleague,
+     that is a live conversion surface rendering broken.
+
+     {{ogimage}} defaults to the homepage hero (content/values.json) and is
+     overridden per page by a parameter on this include:
+         <!-- include: head-common ogimage="/assets/images/og/brandwache.jpg" -->
+     which is the client's rule: each page shows its own hero, a page without a
+     hero photograph shows the homepage's.
+
+     The origin is written out because og:image must be an ABSOLUTE URL —
+     relative paths are not resolved reliably by scrapers. One occurrence here
+     replaces what would otherwise be 54, and every page already hardcodes the
+     same origin in its canonical tag.
+
+     og:image:alt is per page too ({{ogimagealt}}, client 2026-08-21). It is a
+     DESCRIPTION of the share image, written from the rendered crop rather than
+     from the page's topic - the 39 pages on the fallback all show the homepage
+     hero, so the default describes that photograph and is correct for them.
+
+     Width/height let a scraper lay the card out before it has fetched the file. -->
+<meta property="og:image" content="https://frankonia-sicherheit.de{{ogimage}}">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:image" content="https://frankonia-sicherheit.de{{ogimage}}">
+<meta property="og:image:alt" content="{{ogimagealt}}">
