@@ -32,6 +32,74 @@ anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
 
+**2026-08-22 — BLOQUE B: BANDA DE MITGLIEDSCHAFTEN UND PARTNER EN EL HOMEPAGE.**
+Sección nueva `.partners` (page-home.css) más los tres logos en
+`assets/images/partner/`. **Cero seams nuevos y cero cambios en otras páginas.**
+
+- [x] **Va DESPUÉS de la sección FAQ** (decisión del cliente, 2026-08-22). El brief
+      pedía "debajo del FAQ, encima del CTA de cierre" y **ese lugar no existe**:
+      el FAQ es la última sección del homepage y el CTA de cierre vive DENTRO de
+      ella, al final. Se le ofrecieron las tres salidas y eligió sección propia
+      después del FAQ, sin tocar la estructura aprobada.
+- [x] **BLANCA, y eso es lo que la hace barata:** el FAQ de arriba ya es blanco,
+      así que dos secciones claras se encuentran y **no necesitan seam entre
+      ellas** (§9.2), y el borde blanco → footer oscuro es el que la página ya
+      tenía. Cero trabajo de seams. Por eso también el badge de bauerchristoph usa
+      su archivo NORMAL (oscuro); `partner-bauerchristoph-white.svg` queda en el
+      repo para una superficie oscura.
+- [x] **Título pequeño, y es una excepción DECLARADA a §2** (un tamaño por título
+      de sección). §2 existe para que los títulos no compitan entre sí; acá el
+      punto es justamente que esta banda no compita con nada. Un
+      "Mitgliedschaften und Partner" a 60px sobre tres logos chicos convertiría al
+      bloque más silencioso de la página en su heading más fuerte. Sigue siendo un
+      `<h2>` real, así que el outline no se rompe.
+- [x] ⚠️ **NORMALIZADO POR ALTURA ÓPTICA, NO POR ANCHO, y el logo ancho necesita
+      su propio cap para que eso signifique algo.** Los tres ratios son **4,47**
+      (DMB), **1,52** (Wirtschaftsclub) y **1,05** (bauerchristoph), o sea una
+      altura compartida dejaría al DMB **más de cuatro veces más ancho** que los
+      otros dos y se quedaría con la fila. Se lo capa por ANCHO, que en un elemento
+      reemplazado recalcula su altura y no deforma nada — el mismo arreglo que la
+      fila de logos de `/referenzen/` ya usa. Medido: DMB **208x47**,
+      Wirtschaftsclub **67x44**, bauerchristoph **46x44**.
+- [x] **Medido a 1200 / 700 / 599 / 390 / 320:** `hScroll = 0` en todos, los tres
+      logos cargados y visibles en todos, título en UNA línea en todos, y los
+      targets táctiles en **52–63px** (mínimo 44). **Una fila a 390, dos filas a
+      320**, que es el wrap que pedía el brief.
+      ⚠️ **Las dos primeras lecturas de 390px eran FALSAS y casi reporto dos bugs
+      inexistentes** ("falta el tercer logo", "el título se sale"): `--window-size=390`
+      da un viewport de layout de **512px**, la trampa que este proyecto ya
+      documenta. La medición real necesita un iframe de ancho fijo dentro de una
+      ventana ≥500px.
+
+- [x] ⚠️⚠️ **LA URL DEL DMB DEL BRIEF ESTÁ MAL Y NO SE USÓ.** El brief dice
+      `mittelstands-bund.de` (con guion) y **ese host sirve un certificado
+      autofirmado**, o sea no es el DMB. La verificada es
+      **`www.mittelstandsbund.de`** ("Deutscher Mittelstands-Bund (DMB) e.V."), que
+      además es la que `/referenzen/` y `/ueber-uns/` ya enlazan.
+      ⚠️ `dmb.de` es OTRA organización (el Mieterbund) — nunca "acortar" a eso.
+- [x] **El logo del Wirtschaftsclub se DERIVÓ en blanco para el marquee**
+      (decisión del cliente): el archivo nuevo es una kachel azul opaca y el
+      marquee de `/referenzen/` corre ~30 siluetas blancas.
+      ⚠️ **La derivación por COLOR sola no alcanza, y falló dos veces antes de
+      salir:** la esquina inferior derecha de la kachel es un chaflán **blanco
+      opaco** (elemento de diseño, no defecto — verificado renderizándolo), así que
+      cuenta como CONTENIDO; y por eso un flood del FONDO desde el borde tampoco
+      podía pasarlo. Lo que funciona es la conectividad **del lado del contenido**:
+      se marca contenido (la W roja, el wordmark blanco), se floodea desde el borde
+      sobre contenido y ese componente se descarta. La W y el wordmark son
+      interiores y sobreviven; el chaflán y el contorno antialiaseado del borde se
+      van. **Es la misma lección que los retratos ya dejaron escrita: un umbral no
+      separa esto, sólo la alcanzabilidad.**
+- [x] **El marquee se re-midió después del cambio, porque el logo nuevo es más
+      angosto** (240x160 contra 320x160) y este componente es sensible al largo del
+      track: **las 3 filas con grupos pares y slack de 1229–1383px**, 102 logos,
+      **0 roto**. Ninguna duración necesitó re-derivarse. El tier de tamaño sigue
+      aplicando porque el nombre de archivo no cambió.
+- [ ] 🟡 Las menciones en TEXTO de las dos membresías en `/referenzen/`,
+      `/ueber-uns/` y la página de Nürnberg **se quedan donde están** — la sección
+      las complementa, no las reemplaza (instrucción del brief).
+
+
 **2026-08-21 — BLOQUE A: LAS 12 FOTOS DEL CLIENTE ESTÁN DENTRO.** Los 7 marcos
 reservados que el proyecto arrastraba están todos llenos y **no queda un solo
 `[Bild folgt: …]` en el build** (verificado, 0 apariciones):

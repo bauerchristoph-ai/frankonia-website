@@ -2477,6 +2477,50 @@
       </div>
     </section>
 
+    <!-- ============ 8. MITGLIEDSCHAFTEN UND PARTNER ============ -->
+    <!-- Deliberately small and quiet: a trust signal, not a content block
+         (client brief). Three real outbound links, nothing else.
+
+         ⚠️ The heading is SMALL, which is a declared exception to
+         docs/page-conventions.md §2 (one size for every section title). §2 exists
+         so section titles do not compete with each other; here the whole point is
+         that this band does not compete at all. A 60px "Mitgliedschaften und
+         Partner" over three small logos would make the quietest block on the page
+         its loudest heading. It is still a real <h2> so the outline stays valid.
+
+         ⚠️ THE DMB URL IS NOT THE ONE IN THE BRIEF. The brief says
+         mittelstands-bund.de (with a hyphen); that host serves a self-signed
+         certificate, i.e. it is not the DMB. The verified domain is
+         mittelstandsbund.de, which /referenzen/ and /ueber-uns/ already link.
+         Note dmb.de is a different organisation (Mieterbund) — never "shorten"
+         the link to that. -->
+    <section class="section partners" data-nav-theme="light" aria-labelledby="partners-title">
+      <div class="container">
+        <h2 class="partners__title" id="partners-title" data-no-title-reveal>Mitgliedschaften und Partner</h2>
+
+        <ul class="partners__list" data-reveal>
+          <li>
+            <a class="partners__link" href="https://www.mittelstandsbund.de/" target="_blank" rel="noopener">
+              <img class="partners__logo partners__logo--wide" src="/assets/images/partner/partner-deutscher-mittelstands-bund.svg" alt="Deutscher Mittelstands-Bund" width="1024" height="229" loading="lazy" decoding="async">
+              <span class="visually-hidden"> (öffnet in einem neuen Tab)</span>
+            </a>
+          </li>
+          <li>
+            <a class="partners__link" href="https://wirtschaftsclub-bamberg.de/" target="_blank" rel="noopener">
+              <img class="partners__logo" src="/assets/images/partner/partner-wirtschaftsclub-bamberg.png" alt="Wirtschaftsclub Bamberg" width="900" height="593" loading="lazy" decoding="async">
+              <span class="visually-hidden"> (öffnet in einem neuen Tab)</span>
+            </a>
+          </li>
+          <li>
+            <a class="partners__link" href="https://bauerchristoph.de" target="_blank" rel="noopener">
+              <img class="partners__logo" src="/assets/images/partner/partner-bauerchristoph.svg" alt="bauerchristoph.de" width="297" height="283" loading="lazy" decoding="async">
+              <span class="visually-hidden"> (öffnet in einem neuen Tab)</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
   </main>
 
   <!-- include: footer-de -->

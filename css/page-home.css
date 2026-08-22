@@ -5217,3 +5217,99 @@ main h2 {
   /* The lead form's own two inline-link touch targets moved to
      css/lead-form.css with the rest of that section (2026-08-03). */
 }
+
+
+/* --------------------------------------------------------------------------
+   8. Mitgliedschaften und Partner (2026-08-21)
+   --------------------------------------------------------------------------
+   A quiet trust band after the FAQ. White, like the FAQ above it, so the pair
+   needs no pixel seam between them and the white -> dark footer boundary is
+   unchanged.
+   -------------------------------------------------------------------------- */
+.partners {
+  background-color: var(--color-white);
+  /* Half the usual section rhythm on top: this continues the white area the FAQ
+     already opened rather than starting a new chapter. */
+  padding-top: var(--space-7);
+}
+
+/* Small on purpose — see the markup comment for why this is a declared exception
+   to the one-size-per-section-title rule. Treated as a label, so per
+   design-system §2 it takes label metrics, not display metrics. */
+.partners__title {
+  margin: 0 0 var(--space-6);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.08em;
+  line-height: var(--line-height-base);
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--color-gray);
+}
+
+.partners__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  /* Generous horizontal gap, tight vertical: on a phone the row wraps and the
+     logos should still read as one band rather than as a stack. */
+  gap: var(--space-4) var(--space-8);
+}
+
+/* The link, not the image, carries the hit area — 44px minimum with the padding
+   below even at the smallest logo height. */
+.partners__link {
+  display: flex;
+  align-items: center;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  opacity: 0.78;
+  transition: opacity var(--duration-base) var(--easing-standard);
+}
+
+.partners__link:hover,
+.partners__link:focus-visible {
+  opacity: 1;
+}
+
+/* ⚠️ NORMALISED BY OPTICAL HEIGHT, NOT BY WIDTH, and the wide mark needs its own
+   cap for that to mean anything. The three ratios are 4.47 (DMB), 1.52
+   (Wirtschaftsclub) and 1.05 (bauerchristoph), so one shared height would render
+   the DMB lockup more than four times wider than the other two and it would own
+   the row. Capping it by WIDTH instead recomputes its height on a replaced
+   element, so nothing distorts — the same fix the /referenzen/ logo row already
+   uses for its wide wordmarks. Measured at these values: DMB 208x47,
+   Wirtschaftsclub 67x44, bauerchristoph 46x44. */
+.partners__logo {
+  display: block;
+  width: auto;
+  height: 2.75rem;
+  max-width: 100%;
+}
+
+.partners__logo--wide {
+  height: auto;
+  max-width: 13rem;
+}
+
+@media (max-width: 599.98px) {
+  .partners {
+    padding-top: var(--space-6);
+  }
+
+  .partners__list {
+    gap: var(--space-4) var(--space-6);
+  }
+
+  .partners__logo {
+    height: 2.25rem;
+  }
+
+  .partners__logo--wide {
+    max-width: 10.5rem;
+  }
+}
