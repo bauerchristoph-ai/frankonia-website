@@ -1442,7 +1442,7 @@
   padding-bottom: 0;
 }
 
-.contact-office__lead,
+.contact-office__row li,
 .contact-office__pair li {
   margin: 0;
   border: 1px solid rgb(59 73 86 / 0.12);
@@ -1452,19 +1452,38 @@
 
 /* width/height on the <img> reserve the 16:9 box, so nothing shifts as the
    photos arrive; height:auto lets the real ratio drive the box. */
-.contact-office__lead img,
+.contact-office__row img,
 .contact-office__pair img {
   display: block;
   width: 100%;
   height: auto;
 }
 
+.contact-office__row,
 .contact-office__pair {
   list-style: none;
-  margin: var(--space-5) 0 0;
+  margin: 0;
   padding: 0;
   display: grid;
   gap: var(--space-5);
+}
+
+.contact-office__pair {
+  margin-top: var(--space-5);
+}
+
+/* 2.35fr / 1fr is arithmetic, not taste: a 16:9 cell and a 3:4 cell are the same
+   height when the wide one is 2.37x the narrow one, so this row levels itself at
+   every width instead of needing a fixed height anywhere. align-items: start
+   keeps it honest if a future photo has a different ratio — a ragged bottom edge
+   is better than a cropped sign.
+   900px, not 700: below that the portrait would be too narrow to read the two
+   signs, so it stacks instead. */
+@media (min-width: 900px) {
+  .contact-office__row {
+    grid-template-columns: 2.35fr 1fr;
+    align-items: start;
+  }
 }
 
 /* 700px, not 768: these two are supporting images, and a 16:9 pair is still

@@ -73,12 +73,21 @@ reservados que el proyecto arrastraba están todos llenos y **no queda un solo
       que una foto nueva ahí cambia la tarjeta social de más de la mitad del
       sitio) y su `ogimagealt` en `content/values.json`.
       El generador es `docs/design-sources/og-images.ps1`.
-- [ ] 🟡 `kontakt-tuerschild` NO se publicó. El brief lo marca como opcional y es
-      el único vertical del lote, así que rompía la fila 16:9 de esa sección.
-      Está en la carpeta de origen si se lo quiere.
-- [ ] 🟡 **Copy nuevo que necesita OK: el H2 "Unser Büro in Bamberg"** de la
-      sección de fotos de `/kontakt/`. El brief dio las fotos y su ubicación pero
-      ningún título, y una sección necesita uno para el outline del documento.
+- [x] `kontakt-tuerschild` **SÍ se publicó** (cliente 2026-08-22: "veröffentlichen
+      wenn sinnvoll"). Sí lo es, y no como decoración: el Impressum nombra DOS
+      sociedades en esta única dirección, y esta foto es la que muestra los dos
+      carteles en la puerta. Va **en vertical y sin recortar** — verificado
+      renderizando el crop: un 16:9 centrado **parte los dos carteles por la
+      mitad**, o sea elimina justamente aquello para lo que sirve la foto.
+      ⚠️ **La proporción de la fila es aritmética, no gusto:** un 16:9 de ancho a
+      mide 0,5625a de alto y un 3:4 de ancho b mide 1,333b, así que a = 2,37b
+      iguala las dos alturas. De ahí el `2.35fr 1fr`: la fila se nivela sola a
+      cualquier ancho en vez de necesitar una altura fija. Medido: 400 contra
+      405px. Debajo de 900px se apila, porque más angosto los carteles no se leen.
+- [x] El H2 **"Unser Büro in Bamberg"** de esa sección está **aprobado** por el
+      cliente (2026-08-22). Era copy escrito para el build — el brief dio las
+      fotos y su ubicación pero ningún título, y una sección necesita uno para el
+      outline del documento.
 - [ ] 🟡 `cs-schranke-1408.webp` pesa **176KB**, el más pesado del lote (escena
       nocturna con mucho detalle). Va lazy y bajo el fold, así que se aceptó en
       vez de degradarla; es el mismo trade-off que este archivo ya documenta para
