@@ -119,7 +119,7 @@ der Nürnberg-Seite sind unangetastet — die Sektion ergänzt sie.
 
 ## 5 — Block C: Meilensteine auf /ueber-uns/
 
-Commit `672fcce` · `pages/ueber-uns.html`, `css/page-ueber-uns.css`
+Commit `0ada177` · `pages/ueber-uns.html`, `css/page-ueber-uns.css`
 
 | ☐ | Was | Wo prüfen | Woran erkennbar |
 |---|---|---|---|
