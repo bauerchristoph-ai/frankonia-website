@@ -317,7 +317,7 @@ anderen Seiten „Startseite".
 
 ## 9 — Block F: vier von acht Blogartikeln portiert
 
-Commit `PLATZHALTER` · 4 neue Seiten in `pages/ratgeber/`, 4 Karten im Hub,
+Commit `432a3d2` · 4 neue Seiten in `pages/ratgeber/`, 4 Karten im Hub,
 4 Einträge in `sitemap.xml`, eine neue CSS-Regel
 
 Die Aufteilung hast du am 23.08. freigegeben: **vier portieren, vier nur umleiten.**
