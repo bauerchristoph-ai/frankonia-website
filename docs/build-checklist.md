@@ -32,6 +32,54 @@ anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
 
+**2026-08-23 — BLOQUE C: LOS CINCO MEILENSTEINE DE `/ueber-uns/` SON OTROS, Y ESO
+INVALIDÓ LA MATEMÁTICA DE LA ZEITLEISTE.** Copy del cliente, verbatim.
+
+- [x] 2016 Bischberg · 2021 Umzug Bamberg · 2022 50 Mitarbeiterinnen und
+      Mitarbeiter · 2023 Gründung Werkschutz KG · 2024 100 Mitarbeiterinnen und
+      Mitarbeiter. **Cero años inventados, cero prosa agregada, y FRANKONIA
+      Security NO aparece** (verificado sobre el build: 0 apariciones).
+- [x] ⚠️⚠️ **LOS SALTOS DE AÑO PASARON DE 2,2,3,1 A 5,1,1,1, así que la
+      repartición proporcional vieja no quedó imprecisa: quedó INVERTIDA.** Medido
+      con el `2fr 2fr 3fr` todavía puesto, a 1440: el salto de CINCO años recibía
+      **54px por año** y los de UN año 269, 404 y 247 — o sea el tramo más largo
+      renderizaba como el paso más corto. Es exactamente el defecto que esta
+      sección existe para no tener.
+- [x] **Ahora `5fr 1fr 1fr 1fr` con pisos medidos**, no elegidos: las pistas 2 y 3
+      sostienen UNA etiqueta (132px de cap + 16 de aire = **9.5rem**) y la 4
+      sostiene DOS, la suya y la última alineada a la derecha (108 + 16 + 132 =
+      **16rem**). Medido a 1440: **639 / 152 / 152 / 256**, y a 1920 sale
+      **exactamente proporcional** (158px por año en los tres primeros saltos).
+- [x] ⚠️ **QUEDA UNA INCONSISTENCIA Y ES ESTRUCTURAL, no un olvido:** el último
+      salto es más ancho que los otros dos de un año, porque es el único que tiene
+      que sostener dos etiquetas (el último punto va sobre el borde de contenido).
+      La alternativa es darles a los tres saltos de un año esos 256px, y entonces
+      al de cinco años le quedan 431 — **1,7× un salto de un año**, o sea el lector
+      deja de verle los cinco años. Se prioriza que el tramo largo se lea.
+- [x] **El cap de 132px se RE-VERIFICÓ contra el copy nuevo** en vez de darse por
+      bueno: la palabra más larga pasó a ser "Mitarbeiterinnen" (16 caracteres,
+      más angosta que el "Sicherheitsdienst" para el que se había medido), así que
+      sigue entrando en una línea y el `hyphens: none` sigue siendo seguro.
+- [x] **Medido a 1100 / 1130 / 1280 / 1440 / 1920**: sin scroll horizontal, sin
+      etiquetas superpuestas (huecos de 16–26px), y la banda proporcional entra a
+      1100 como corresponde. **Por debajo de 1100 las columnas siguen iguales**,
+      que es la decisión ya documentada: ahí los pisos suman más de lo que el ancho
+      puede ceder y el salto de cinco años dejaría de leerse como el largo.
+      Teléfono verificado a 390 real (iframe): riel vertical, 5 puntos, etiquetas
+      de 1–2 líneas, sin desborde.
+      ⚠️ **Nota de medición: mi sonda reportó "kollision=JA" a 768 y es un falso
+      positivo** — ahí el layout es VERTICAL y estaba midiendo huecos horizontales.
+
+- [ ] ⚠️⚠️ **CONTRADICCIÓN DE CONTENIDO, NO CORREGIDA POR MÍ (es copy existente):
+      el lede de esa misma sección dice "2016 in Bamberg gegründet" y el
+      Meilenstein nuevo dice "Gründung in Bischberg".** Están a ~100px de
+      distancia en la misma pantalla y no pueden ser los dos ciertos; el
+      Meilenstein viejo decía "Gründung in Bamberg" y sí concordaba. Es la ÚNICA
+      afirmación de lugar de fundación en todo el proyecto (los otros hits de
+      "2016" son el año de la ISO 9001). **Decisión del cliente:** o el lede pasa
+      a Bischberg, o el Meilenstein vuelve a Bamberg.
+
+
 **2026-08-22 — BLOQUE B: BANDA DE MITGLIEDSCHAFTEN UND PARTNER EN EL HOMEPAGE.**
 Sección nueva `.partners` (page-home.css) más los tres logos en
 `assets/images/partner/`. **Cero seams nuevos y cero cambios en otras páginas.**

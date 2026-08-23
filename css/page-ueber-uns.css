@@ -331,31 +331,48 @@
 /* ---- The rail spans the whole content width, and the hops are not equal ----
    Client 2026-08-10: the dots have to run the full width of the content column,
    the labels have to be narrower, and equal hops make no sense for years that are
-   two, two, three and one apart.
+   different distances apart.
+
+   ⚠️ RE-DERIVED 2026-08-23, when the client replaced the five milestones. The
+   year gaps went from 2, 2, 3, 1 to 5, 1, 1, 1, so every number in the previous
+   version of this comment described data that no longer exists. Measured with the
+   old 2 : 2 : 3 track ratio still in place, the result was not merely off, it was
+   INVERTED: at 1440 the five-year hop got 54px per year while the one-year hops
+   got 269, 404 and 247 — the longest span rendered as the shortest step.
 
    THE LAST DOT SITS ON THE CONTENT'S RIGHT EDGE, which is what makes the rail
    reach it: its track is 0 wide, so the fourth item's segment reaching `right`
    lands exactly on it, and the item itself escapes that track (justify-self: end
    + an explicit width) with its year and label right-aligned under it.
 
-   ⚠️ THE FOURTH TRACK HAS A FLOOR AND THAT IS THE WHOLE TRADE-OFF OF THIS BLOCK.
-   Every other track only has to hold its own label; the 2023 → 2024 hop has to
-   hold BOTH the 2023 label and the right-aligned 2024 one, and it is also the
-   shortest span. Measured: 105px (the 2023 label wrapped) + 19px clear + 132px
-   (the 2024 label) = 256px = 16rem. Strictly proportional it would be 1/8 of the
-   width — 154px at 1440 — and the two labels would sit on top of each other.
-   So it is pinned at 16rem and the remaining space goes to the other three in
-   2 : 2 : 3. At 1440 that reads 279 / 279 / 419 / 256px: the three-year hop is
-   clearly the longest and the one-year hop the shortest, which is the point.
-   Below ~1100px the floor grows past the two-year hops and the order stops
-   reading, which is why this layout starts there and 768–1099 keeps the equal
-   columns above.
-   ⚠️ Raising any label's max-width raises that floor. They are measured values,
+   ⚠️ THE FLOORS ARE WHAT THE TRACKS ACTUALLY NEED, AND THEY ARE MEASURED:
+   · tracks 2 and 3 hold one label each — 132px capped label + 16px clear = 148,
+     so 9.5rem (152px);
+   · track 4 holds TWO labels, its own and the right-aligned last one, because the
+     final dot sits on the content edge: 108px (the 2023 label, wrapped at its
+     narrower cap) + 16px clear + 132px = 256px = 16rem.
+   With three of the four gaps now a single year, those floors bind at every
+   width, so the remaining space all goes to the five-year hop. At 1440 that reads
+   639 / 152 / 152 / 256px — i.e. 128px per year for the long span against 152 for
+   the short ones.
+
+   ⚠️ THE ONE INCONSISTENCY THAT IS LEFT IS STRUCTURAL, NOT AN OVERSIGHT: the last
+   hop renders wider than the other two one-year hops (256 vs 152) because it is
+   the only one that has to hold two labels. The alternative is giving all three
+   one-year hops 256px, which leaves the five-year hop just 431px — only 1.7x a
+   one-year hop, so the reader would no longer see that it is five years. Keeping
+   the long span unmistakable is the point of this layout, so the last hop is
+   allowed to be the wide one.
+
+   Below ~1100px the floors add up to more than the width can spare and the
+   five-year hop stops reading as the long one, which is why this layout starts
+   there and 768–1099 keeps the equal columns above.
+   ⚠️ Raising any label's max-width raises these floors. They are measured values,
    not round ones. */
 @media (min-width: 1100px) {
   .uu-miles {
     grid-template-columns:
-      minmax(0, 2fr) minmax(0, 2fr) minmax(0, 3fr) minmax(16rem, 1fr) 0;
+      minmax(0, 5fr) minmax(9.5rem, 1fr) minmax(9.5rem, 1fr) minmax(16rem, 1fr) 0;
     /* No gutter: the labels' own max-width leaves the breathing room, and a gap
        would push the last dot off the content edge. */
     gap: 0;
@@ -368,9 +385,11 @@
   .uu-mile:nth-child(4)::after { right: calc(var(--uu-dot) + 6px); }
 
   .uu-mile__what {
-    /* 8.25rem = 132px is not a round number: it is the narrowest cap that still
-       fits "Sicherheitsdienst" (130px measured, the longest word in the five
-       labels) on one line of its own. */
+    /* 8.25rem = 132px. Kept from the previous milestone set, and re-checked
+       against the new one: the longest word is now "Mitarbeiterinnen" (16
+       characters, narrower than the "Sicherheitsdienst" this cap was originally
+       measured against), so it still fits on a line of its own and the
+       hyphens: none below is still safe. */
     max-width: 8.25rem;
     /* ⚠️ AND THAT CAP IS WHAT MAKES THIS SAFE. base.css sets hyphens: auto on
        li, correct for prose and wrong for a stack of four-word labels: measured,
@@ -386,8 +405,10 @@
   }
 
   /* One step narrower, because this is the label that shares its hop with the
-     final one: wrapping it to "100 / Mitarbeitende" gives 105px instead of 122
-     and buys the floor above 27px. */
+     final one — every pixel here comes straight off the 16rem floor above. It is
+     now the longest of the five ("Gründung der FRANKONIA Werkschutz GmbH & Co.
+     KG"), so at 108px it wraps to five lines. Narrowing it further would buy a
+     little width and cost a sixth line. */
   .uu-mile:nth-child(4) .uu-mile__what { max-width: 6.75rem; }
 
   .uu-mile:last-child {
