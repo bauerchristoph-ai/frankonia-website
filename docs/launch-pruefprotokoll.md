@@ -232,7 +232,7 @@ nichts.
 
 ## 7 — Block E: sieben Personen- und Verweisseiten
 
-Commit `PLATZHALTER` · 7 neue Seiten in `pages/`, `css/page-person.css`,
+Commit `60e5fc1` · 7 neue Seiten in `pages/`, `css/page-person.css`,
 `docs/design-sources/person-pages.js`, 3 Porträts, 5 vCards, `vercel.json`
 
 Alle sieben liegen unter der **identischen URL wie auf der alten Seite**, weil sie
