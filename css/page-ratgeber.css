@@ -655,6 +655,30 @@
   }
 }
 
+/* ---- 6b. Four-column variant ---------------------------------------------
+   `--four` exists because BOTH widths above are tuned for a table with TWO data
+   columns, and qualifikationen-sicherheitsdienst (Block F, 2026-08-23) compares
+   THREE. Left on those values the row-label column keeps 26 % for labels as short
+   as "Dauer" and "Zugang", while the widest data cell — "Prüfungsgebühr je
+   Kammer, Vorbereitungskurse ca. 1.600–4.000 €" — is squeezed into 194px.
+   Measured at 1440 before: 183/155/172/194. After: the label column drops to 20 %
+   and the three data columns share the rest evenly.
+   `td:first-of-type` has to be reset to `auto` as well, not just overridden with
+   another percentage: that rule exists to protect a PRICE column from wrapping,
+   and this table has no price column in that position.
+   The stacked phone layout needs nothing — every cell announces its own
+   data-label, so a third data column is a third labelled block for free
+   (verified at 320 and 390: full-width blocks, no horizontal scroll). */
+@media (min-width: 640px) {
+  .rg-table--four tbody th {
+    width: 20%;
+  }
+
+  .rg-table--four td:first-of-type {
+    width: auto;
+  }
+}
+
 .rg-table td {
   color: rgb(59 73 86 / 0.85);
 }

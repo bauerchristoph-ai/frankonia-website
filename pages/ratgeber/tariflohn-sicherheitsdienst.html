@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- Built 2026-08-23. BLOCK F, portiert von der alten WordPress-Seite
+     /tariflohn-2026-im-sicherheitsdienst/ (dort veröffentlicht am 14.02.2026).
+     Portiert, weil die Tariflogik AUS SICHT DER BESCHÄFTIGTEN in keinem
+     bestehenden Ratgeber vorkommt: kosten-sicherheitsdienst.html behandelt, was
+     der KUNDE pro Stunde zahlt, und paragraph-34a-erklaert.html nennt
+     "übertariflich" nur als Arbeitgeber-Versprechen. Der Satz "der Tarif knüpft an
+     die ausgeübte Tätigkeit, nicht an die höchste Qualifikation" stand bisher
+     nirgends.
+
+     ⚠️⚠️ DAS JAHR IST AUS SLUG UND TITEL RAUS, und das ist eine Korrektur, keine
+     Kosmetik: der alte Artikel heißt "Tariflohn 2026" und seine
+     Meta-Description verspricht "So viel verdienst du 2026" — im Text steht
+     danach KEINE EINZIGE LOHNZAHL. Er erklärt ausschließlich die Systematik.
+     Titel und Description sagen hier deshalb, was der Artikel wirklich liefert.
+     Zahlen wurden NICHT ergänzt: verifizierbare Lohntabellen lagen nicht vor, und
+     erfundene Löhne wären der schlimmste denkbare Fehler auf dieser Seite.
+
+     Die einzigen Zahlen im Artikel sind die tariflichen ZUSCHLÄGE, und die kommen
+     aus content/values.json (Regel G10) — dieselben Werte, dieselbe Quelle und
+     dieselbe Formulierung wie in kosten-sicherheitsdienst.html, damit die
+     Kunden- und die Bewerberseite sich nicht widersprechen können.
+
+     Ansprache "du" wie bei allen Karrierethemen (siehe /jobs/).
+
+     ⚠️ DATUM: datePublished ist das Build-Datum, nicht das alte vom 14.02.2026.
+     ⚠️ TITELBILD RESERVIERT, kein Platzhalterbild — gebraucht wird ein Motiv
+     Dienstplan/Abrechnung, 16:9, mindestens 1600x900 (css/page-ratgeber.css §1c).
+
+     Chassis: css/page-service.css (§9.1). -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tariflohn im Sicherheitsdienst: was ihn wirklich bestimmt</title>
+  <meta name="description" content="Tariflohn im Sicherheitsdienst: Warum die ausgeübte Tätigkeit über die Lohnstufe entscheidet und nicht die Qualifikation — plus die tariflichen Zuschläge.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/ratgeber/tariflohn-sicherheitsdienst/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/ratgeber/tariflohn-sicherheitsdienst/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/ratgeber/tariflohn-sicherheitsdienst/">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Tariflohn im Sicherheitsdienst: was ihn wirklich bestimmt">
+  <meta property="og:description" content="Tariflohn im Sicherheitsdienst: Warum die ausgeübte Tätigkeit über die Lohnstufe entscheidet und nicht die Qualifikation — plus die tariflichen Zuschläge.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/ratgeber/tariflohn-sicherheitsdienst/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "@id": "https://frankonia-sicherheit.de/ratgeber/tariflohn-sicherheitsdienst/#article",
+      "headline": "Tariflohn im Sicherheitsdienst: warum die Tätigkeit über die Lohnstufe entscheidet",
+      "description": "Wie der Tariflohn im Sicherheitsgewerbe zustande kommt: Er knüpft an die ausgeübte Tätigkeit, nicht an die höchste Qualifikation. Dazu die tariflichen Zuschläge und was übertariflich bedeutet.",
+      "inLanguage": "de-DE",
+      "datePublished": "2026-08-23",
+      "dateModified": "2026-08-23",
+      "author": { "@type": "Organization", "name": "FRANKONIA Redaktion" },
+      "contributor": { "@type": "Person", "name": "Steffen Walde", "jobTitle": "Geschäftsführender Gesellschafter" },
+      "publisher": { "@id": "https://frankonia-sicherheit.de/#organization" },
+      "mainEntityOfPage": "https://frankonia-sicherheit.de/ratgeber/tariflohn-sicherheitsdienst/"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Verdiene ich mit der Sachkundeprüfung automatisch mehr?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Nicht automatisch. Der Tariflohn knüpft an die Tätigkeit, die du tatsächlich ausübst. Wenn du auf einem Posten arbeitest, für den die Unterrichtung ausreicht, gilt tariflich die Unterrichtungsstufe. Die Sachkunde öffnet dir aber die besser bezahlten Tätigkeiten und verbessert deine Verhandlungsposition." }
+        },
+        {
+          "@type": "Question",
+          "name": "Welche Zuschläge sind im Sicherheitsgewerbe tariflich vorgeschrieben?",
+          "acceptedAnswer": { "@type": "Answer", "text": "In Bayern gelten laut Lohntarifvertrag aktuell {{price.surcharge.night}} % Nachtzuschlag ({{price.surcharge.nightWindow}}), {{price.surcharge.sunday}} % Sonntagszuschlag und {{price.surcharge.holiday}} % Feiertagszuschlag. Sie sind nicht verhandelbar und gehen an die Sicherheitskraft, nicht an den Arbeitgeber." }
+        },
+        {
+          "@type": "Question",
+          "name": "Was heißt übertarifliche Bezahlung?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Der Tarif ist eine Untergrenze, kein Deckel. Übertariflich heißt, dass der Arbeitgeber freiwillig über der Tarifstufe zahlt — meist für Flexibilität, Zusatzqualifikationen, geringen Einarbeitungsaufwand oder Verantwortung im Einsatz." }
+        },
+        {
+          "@type": "Question",
+          "name": "Woher bekomme ich die aktuellen Tariflöhne?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Die geltenden Lohntabellen und Zuschlagssätze pro Bundesland veröffentlicht der Branchenverband BDSW in seinen Tarifübersichten. Verlass dich auf diese Quelle statt auf Zahlen aus Foren — die Tarife werden regelmäßig neu verhandelt." }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://frankonia-sicherheit.de/" },
+        { "@type": "ListItem", "position": 2, "name": "Ratgeber", "item": "https://frankonia-sicherheit.de/ratgeber/" },
+        { "@type": "ListItem", "position": 3, "name": "Tariflohn im Sicherheitsdienst", "item": "https://frankonia-sicherheit.de/ratgeber/tariflohn-sicherheitsdienst/" }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- include: head-common -->
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-ratgeber.css">
+
+  <script src="/assets/js/vendor/gsap.min.js" defer></script>
+  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="/css/vendor/lenis.css">
+  <script src="/assets/js/vendor/lenis.min.js" defer></script>
+  <script src="/js/smooth-scroll.js" defer></script>
+  <script src="/js/hero-reveal.js" defer></script>
+  <script src="/js/title-reveal.js" defer></script>
+  <script src="/js/item-reveal.js" defer></script>
+  <script src="/js/text-reveal.js" defer></script>
+  <script src="/js/pixel-transition.js" defer></script>
+</head>
+<body>
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <nav class="breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/ratgeber/">Ratgeber</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Tariflohn im Sicherheitsdienst</span></li>
+      </ol>
+    </nav>
+
+    <!-- ============ 1. HERO ============ -->
+    <section class="service-hero rg-hero rg-hero--article" data-hero-reveal>
+      <div class="container service-hero__grid">
+        <div class="service-hero__content hero__content">
+          <h1>Tariflohn im Sicherheitsdienst: warum die Tätigkeit über die Lohnstufe entscheidet</h1>
+          <p class="rg-byline hero__lead">
+            FRANKONIA Redaktion, geprüft von Steffen Walde (Geschäftsführender Gesellschafter)
+            <span class="rg-byline__meta">
+              <span aria-hidden="true">·</span> Stand: <time datetime="2026-08-23">23. August 2026</time>
+              <span aria-hidden="true">·</span> Lesezeit: ~6 Min.
+            </span>
+          </p>
+
+          <figure class="rg-hero__figure hero__trust">
+            <div class="rg-hero__frame rg-hero__frame--empty">
+              <span>[Bild folgt: Dienstplan und Stundenabrechnung am Arbeitsplatz]</span>
+            </div>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 2. ARTIKEL ============ -->
+    <section class="section section--light rg-body" data-nav-theme="light">
+      <div class="container">
+        <div class="rg-article">
+
+          <p class="rg-lede">Im Sicherheitsgewerbe knüpft der Tariflohn an die Tätigkeit, die du tatsächlich ausübst — nicht an die höchste Qualifikation, die du besitzt. Wer mit Sachkunde oder GSSK auf einem Posten arbeitet, für den die IHK-Unterrichtung ausreicht, wird tariflich nach der Unterrichtungsstufe bezahlt. Dieser Artikel erklärt, warum das so geregelt ist und was du daraus für deine Planung ableiten kannst.</p>
+
+          <h2>Der Tariflohn hängt an der Tätigkeit, nicht am Zeugnis</h2>
+          <p>Die Löhne im Sicherheitsgewerbe sind tarifvertraglich geregelt und werden regelmäßig neu verhandelt. Sie unterscheiden sich nach Qualifikationsstufe: IHK-Unterrichtung, Sachkundeprüfung nach § 34a GewO und Geprüfte Schutz- und Sicherheitskraft (GSSK). Auf den ersten Blick entsteht daraus der Eindruck, eine höhere Ausbildung führe automatisch zu einem höheren Lohn.</p>
+          <p>In der Praxis stimmt das nur zum Teil. Maßgeblich ist die ausgeübte Tätigkeit. Das ist juristisch eindeutig und dient der Abgrenzung von Tätigkeitsprofilen: Es soll verhindern, dass für einfache Bewachungsaufgaben höhere Lohnstufen greifen, nur weil die eingesetzte Person mehr Qualifikationen mitbringt.</p>
+
+          <h2>Ein Beispiel aus dem Alltag</h2>
+          <p>Eine Sicherheitskraft mit bestandener Sachkundeprüfung wird für einen einfachen Objektschutz eingesetzt. Rechtlich wäre diese Tätigkeit auch mit einer IHK-Unterrichtung zulässig. Tariflich ist der Arbeitgeber in diesem Fall verpflichtet, den Unterrichtungssatz zu zahlen — auch wenn die Person höher qualifiziert ist.</p>
+          <p>Dieses Prinzip wird häufig missverstanden, es ist aber fester Bestandteil der tariflichen Logik im Sicherheitsgewerbe. Umgekehrt gilt es genauso: Sobald die Tätigkeit selbst die höhere Qualifikation voraussetzt, entsteht auch der tarifliche Anspruch darauf.</p>
+
+          <h2>Die Zuschläge sind der zweite, oft unterschätzte Teil</h2>
+          <p>Der Stundensatz ist nur die Basis. Für Nacht-, Sonntags- und Feiertagsarbeit kommen tarifliche Zuschläge dazu, und die sind nicht verhandelbar: Sie gehen an die Sicherheitskraft. In Bayern gelten laut Lohntarifvertrag aktuell {{price.surcharge.night}} % Nachtzuschlag ({{price.surcharge.nightWindow}}), {{price.surcharge.sunday}} % Sonntagszuschlag und {{price.surcharge.holiday}} % Feiertagszuschlag.</p>
+          <p>Für dich heißt das zwei Dinge. Erstens macht die Schichtlage einen erheblichen Unterschied im Monatsergebnis — ein reiner Nachtposten liegt deutlich über einem Tagesposten mit demselben Grundlohn. Zweitens ist eine saubere Zuschlagsabrechnung ein Qualitätsmerkmal des Arbeitgebers: Wer sie „wegrechnet“, verstößt gegen geltendes Tarifrecht.</p>
+          <p class="rg-source">Aktuelle Lohntabellen und Zuschlagssätze je Bundesland: <a href="https://www.bdsw.de/">Tarifübersichten des BDSW</a></p>
+
+          <h2>Über- und außertarifliche Bezahlung</h2>
+          <p>Die tarifliche Regelung ist eine Untergrenze, kein Deckel. Viele Unternehmen zahlen bewusst übertariflich, um qualifizierte und zuverlässige Mitarbeitende zu halten. Typische Gründe:</p>
+          <ul class="rg-list">
+            <li><strong>Höhere Flexibilität</strong> durch zusätzliche Qualifikationen.</li>
+            <li><strong>Breitere Einsatzmöglichkeiten:</strong> wer mehrere Objekte übernehmen kann, ist in der Dienstplanung wertvoller.</li>
+            <li><strong>Geringerer Einarbeitungsaufwand,</strong> etwa bei vorhandener Technik- oder Brandschutzschulung.</li>
+            <li><strong>Mehr Verantwortung im Einsatz,</strong> zum Beispiel als Objektverantwortlicher.</li>
+          </ul>
+          <p>Besonders in Leitungsfunktionen — Einsatzleitung, Objektverantwortung, Dienstplanung — wird häufig unabhängig von der formalen Tarifstufe besser vergütet.</p>
+
+          <h2>Wo die GSSK wirklich greift</h2>
+          <p>Die Geprüfte Schutz- und Sicherheitskraft wird vor allem bei anspruchsvollen Tätigkeiten eingesetzt, etwa im hochwertigen <a href="/werkschutz/">Werkschutz</a> oder an sicherheitskritischen Industrieobjekten. Dort setzt die Tätigkeit die Qualifikation voraus, also greift in der Regel auch die entsprechende Lohnstufe.</p>
+          <p>Genau hier zeigt sich der Unterschied zwischen formaler Möglichkeit und praktischer Anwendung: Die Qualifikation allein erzeugt keinen Anspruch, die dazu passende Tätigkeit schon.</p>
+
+          <h2>Was du daraus mitnehmen kannst</h2>
+          <p>Eine höhere Qualifikation garantiert keinen höheren Lohn, aber sie verbessert drei Dinge gleichzeitig: die Zahl der Einsatzbereiche, die für dich überhaupt in Frage kommen, deine Verhandlungsposition, und die Wahrscheinlichkeit, auf einen Posten zu kommen, der die höhere Stufe auch auslöst.</p>
+          <p>Wer den Zusammenhang zwischen Ausbildung, Tätigkeit und Vergütung kennt, entwickelt realistische Erwartungen und kann den nächsten Schritt gezielt planen — statt sich auf eine Zahl zu verlassen, die im eigenen Einsatz gar nicht greift.</p>
+          <p class="rg-source">Was die einzelnen Qualifikationen kosten und wie lange sie dauern: <a href="/ratgeber/qualifikationen-sicherheitsdienst/">Qualifikationen im Sicherheitsdienst im Vergleich</a></p>
+
+          <h2>Häufige Fragen zum Tariflohn im Sicherheitsdienst</h2>
+          <!-- Die vier Antworten unten sind byte-identisch mit dem FAQPage oben.
+               ⚠️ Beide oder keine ändern: dieses Paar entscheidet, ob Google denselben
+               Text sieht wie der Besucher.
+               ⚠️ Die Zuschlagssätze stehen in BEIDEN Kopien als Token — nicht als
+               Zahl. Der Build ersetzt Tokens auch im JSON-LD (macht
+               kosten-sicherheitsdienst.html genauso), also bleibt das Paar bei einer
+               Tarifänderung von selbst identisch. Zahlen hier auszuschreiben würde
+               die Paarung beim nächsten Tarifabschluss lautlos aufbrechen. -->
+          <div class="faq__list faq__list--cards rg-faq">
+            <details class="faq-item">
+              <summary><h3>Verdiene ich mit der Sachkundeprüfung automatisch mehr?</h3></summary>
+              <div class="faq-item__answer">
+                <p>Nicht automatisch. Der Tariflohn knüpft an die Tätigkeit, die du tatsächlich ausübst. Wenn du auf einem Posten arbeitest, für den die Unterrichtung ausreicht, gilt tariflich die Unterrichtungsstufe. Die Sachkunde öffnet dir aber die besser bezahlten Tätigkeiten und verbessert deine Verhandlungsposition.</p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary><h3>Welche Zuschläge sind im Sicherheitsgewerbe tariflich vorgeschrieben?</h3></summary>
+              <div class="faq-item__answer">
+                <p>In Bayern gelten laut Lohntarifvertrag aktuell {{price.surcharge.night}} % Nachtzuschlag ({{price.surcharge.nightWindow}}), {{price.surcharge.sunday}} % Sonntagszuschlag und {{price.surcharge.holiday}} % Feiertagszuschlag. Sie sind nicht verhandelbar und gehen an die Sicherheitskraft, nicht an den Arbeitgeber.</p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary><h3>Was heißt übertarifliche Bezahlung?</h3></summary>
+              <div class="faq-item__answer">
+                <p>Der Tarif ist eine Untergrenze, kein Deckel. Übertariflich heißt, dass der Arbeitgeber freiwillig über der Tarifstufe zahlt — meist für Flexibilität, Zusatzqualifikationen, geringen Einarbeitungsaufwand oder Verantwortung im Einsatz.</p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary><h3>Woher bekomme ich die aktuellen Tariflöhne?</h3></summary>
+              <div class="faq-item__answer">
+                <p>Die geltenden Lohntabellen und Zuschlagssätze pro Bundesland veröffentlicht der Branchenverband BDSW in seinen Tarifübersichten. Verlass dich auf diese Quelle statt auf Zahlen aus Foren — die Tarife werden regelmäßig neu verhandelt.</p>
+              </div>
+            </details>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <div class="pixel-seam pixel-seam--white" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ============ 3. ABSCHLUSS-CTA ============ -->
+    <section class="section rg-close">
+      <div class="container">
+        <div class="section__intro">
+          <h2>Übertariflich, planbar, mit festem Objekt</h2>
+          <p>FRANKONIA sucht Verstärkung in ganz Franken — mit sauberer Zuschlagsabrechnung und Dienstplänen, die deine Wünsche kennen.</p>
+        </div>
+        <div class="rg-close__actions" data-reveal>
+          <a class="btn btn--primary" href="/jobs/">Offene Stellen ansehen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+          <a class="btn btn--secondary" href="{{phone.href}}">
+            <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+            {{phone.display}}
+          </a>
+          <a class="service-link" href="/ratgeber/">Alle Ratgeber-Artikel
+            <svg class="service-link__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

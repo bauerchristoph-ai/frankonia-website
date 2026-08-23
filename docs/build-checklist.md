@@ -32,6 +32,136 @@ anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
 
+**2026-08-23 — BLOQUE F: DE LOS 8 ARTÍCULOS DEL BLOG VIEJO SE PORTARON 4, LOS OTROS
+4 SON SÓLO UN 301.** `pages/ratgeber/{bewerbung,tariflohn,voraussetzungen,
+qualifikationen}-sicherheitsdienst.html`, más 4 cards en el hub, 4 URLs en el
+sitemap y **una sola regla nueva de CSS** (`.rg-table--four`).
+
+- [x] **Los 8 se bajaron de la página viva y se leyeron enteros.** La sitemap viva
+      confirma que son exactamente esos 8 posts, no hay un noveno.
+- [x] ⚠️⚠️ **LA DECISIÓN DEL BLOQUE ES NO PORTAR 5 DE LOS 8, y sale de una matriz de
+      afirmaciones, no de los títulos.** Cinco de los ocho tratan el mismo cluster
+      —Unterrichtung / Sachkunde / GSSK— desde cinco ángulos, y **tres de esos
+      ángulos ya están literalmente en `paragraph-34a-erklaert`**: los 400–500 €, las
+      40 horas, "sin examen", Türsteher/Ladendetektiv y el formato de la
+      Sachkundeprüfung. Portar los cinco habría dejado **seis páginas peleando por un
+      keyword**. Los que se quedan fuera: jobchancen, einsatzmoeglichkeiten,
+      so-schwierig (→ 34a) y fortbildung (→ el artículo nuevo de qualifikationen).
+      **Su sustancia no se perdió**: el formato de examen de la GSSK y la horquilla de
+      precios de los cursos se incorporaron al artículo portado.
+- [x] ⚠️ **ABGRENZUNG QUE HAY QUE MANTENER:** `paragraph-34a-erklaert` es dueño de
+      "qué es el § 34a y qué me PERMITE"; `qualifikationen-sicherheitsdienst` de
+      "cuánto dura, cuánto cuesta, qué tan difícil, y GSSK". Está anotado en la
+      cabecera de la página nueva — **quien agregue ahí Einsatzbereiche construye
+      canibalización**.
+- [x] **Ansprache "du" en los cuatro**, como todo tema de carrera (`/jobs/` y el
+      artículo del 34a). Los textos viejos eran impersonales, así que había que
+      elegir un lado.
+- [x] **Re-datados al día del build** (2026-08-23), en el byline visible, en
+      `datePublished`/`dateModified`, en la card del hub y en el sitemap — cuatro
+      lugares por artículo, hay que moverlos juntos si el livegang se corre.
+
+- [x] ⚠️⚠️ **DOS ERRORES DE HECHO DEL TEXTO VIEJO, CORREGIDOS CON FUENTE:**
+      1. **"cinco años de experiencia, en buena parte en el sector"** → la
+         Rechtsvorschrift pide **mínimo TRES años en la Sicherheitswirtschaft** de
+         esos cinco. "Buena parte" es indeterminado y se lee generoso: en una
+         pregunta de admisión eso le cuesta a alguien la inscripción.
+      2. **La Sachkunde oral no dura "unos 20 minutos" sino ~15** — que es además lo
+         que ya dice `paragraph-34a-erklaert`, o sea las dos páginas se habrían
+         contradicho. Verificado también el escrito: **120 minutos**.
+      **Verificados y confirmados**: GSSK 24 años, 2 años tras Ausbildung,
+      Erste-Hilfe ≤ 24 meses, 3 Handlungsbereiche, oral 30–40 min, Ergänzungsprüfung
+      ≤ 20 min.
+- [x] ⚠️ **NO VERIFICABLE, y por eso va marcado como Richtwert en la página**: la
+      tasa de examen de la GSSK (Schwerin publica 405 €, el texto viejo decía ~450),
+      los cursos de 1.600–4.000 €, los 200–240 UE / 5–7 meses, y los 150–180 min por
+      parte escrita — **la vorschrift dice ≥2h por tarea y ≤5h en total**, así que en
+      la página está la norma y no la práctica de los proveedores.
+- [x] ⚠️ **Las horquillas de Unterrichtung (400–500 €) y Sachkunde (160–200 €) son
+      LAS DEL ARTÍCULO EXISTENTE, no los valores sueltos del blog (450 / 160):** dos
+      ratgeber con precios distintos para el mismo examen es peor que una horquilla
+      imprecisa.
+- [x] ⚠️⚠️ **`tariflohn-2026` NO TENÍA UNA SOLA CIFRA DE SUELDO** pese al título y a
+      su meta description ("So viel verdienst du 2026"). **El año salió del slug y
+      del título** y la description dice lo que el artículo realmente entrega. **No
+      se inventó ninguna cifra.** Las únicas cifras del artículo son los **recargos
+      tarifarios, y salen de `content/values.json`** (regla G10) — mismos valores,
+      misma fuente (BDSW) y misma formulación que `kosten-sicherheitsdienst`, así
+      que el lado cliente y el lado bewerber no pueden divergir.
+      ⚠️ **Los tokens van en las DOS copias de la FAQ, también dentro del JSON-LD** —
+      el build los resuelve ahí igual (lo hace ya `kosten-sicherheitsdienst`), así que
+      el par sigue idéntico solo tras un acuerdo tarifario nuevo. Escribir la cifra a
+      mano rompería la paridad en silencio.
+
+- [x] ✅ **LA TABLA DE 4 COLUMNAS NO NECESITÓ CSS NUEVO PARA FUNCIONAR — pero sí para
+      funcionar BIEN, y eso lo dijo la medición.** Las dos reglas de ancho existentes
+      (`tbody th: 26%` y `td:first-of-type: 22%`) están calibradas para una tabla de
+      DOS columnas de datos; con tres, la columna de etiquetas se queda 26 % para
+      palabras como "Dauer" mientras la celda más larga va apretada a 194px.
+      `.rg-table--four` baja la etiqueta a 20 % y **resetea el 22 % a `auto`** (esa
+      regla existe para proteger una columna de PRECIO, que esta tabla no tiene).
+      **Medido a 1440: 183/155/172/194 y 607px de alto → 141/159/187/217 y 559px.**
+      El layout apilado de teléfono no necesitó nada: cada celda anuncia su propio
+      `data-label`.
+      **Verificado que la tabla del 34a quedó byte-idéntica** (183/170/351, 487px).
+- [x] **Medido en los 4 artículos + el hub a 320 / 390 / 640 / 768 / 900 / 1024 /
+      1440 / 1920** (48 corridas): **sin scroll horizontal, nada fuera del viewport,
+      un solo `<h1>`, sin saltos de nivel de heading**, el marco reservado en
+      **ratio 1,778 exacto** en todos los anchos, y **el hero y la columna del
+      artículo con el MISMO ancho y el MISMO borde izquierdo** (704@361 a 1440) — que
+      es el invariante que la cabecera de `.rg-hero` exige.
+- [x] **Contraste medido sobre el render, no deducido** (con `color-mix` parseado
+      como `color(srgb …)`, la trampa que este archivo ya documenta): lo más bajo es
+      **4,60:1** (quelle, hinweis y respuestas de FAQ), links de prosa **4,90:1**,
+      cuerpo 6,03, H2 y lede 20,87. **Cero por debajo de 4,5:1.**
+- [x] **Con `prefers-reduced-motion`: 0 elementos ocultos y 0 tiles** en los cuatro.
+      Con motion: 2 seams × 180 tiles y el estado pre-scroll normal — **medido
+      también en los dos artículos existentes y da el mismo patrón** (282 y 336), o
+      sea no hay regresión.
+- [x] **FAQ visible ↔ `FAQPage`: 4/4 byte-idénticas en los 7 artículos.** Sitemap 57
+      URLs. Hub con 7 cards. **Fremdtext en el `<head>`: 0 de 65 páginas** (el guard
+      del defecto del 21-08 sigue verde).
+
+- [ ] ⚠️ **HACEN FALTA 4 FOTOS, y por eso hay 4 marcos RESERVADOS** (no imágenes
+      placeholder — es el patrón documentado, y los tres artículos existentes
+      salieron así el 17-08 y el cliente mandó las fotos después). 16:9, mínimo
+      1600x900: **Bewerbungsgespräch · Dienstplan/Abrechnung · Anmeldeunterlagen ·
+      Lernsituation im Kurs**. Sacar los cuatro marcos son 2 líneas de markup por
+      página y cero CSS.
+- [ ] 🟡 **El hub queda con 7 cards, o sea 3+3+1 y una card sola en la última fila.**
+      Se dejó a propósito: el arreglo de "fila huérfana" que este proyecto usa dos
+      veces es para bloques de cantidad FIJA y semántica (5 Einsatzfelder, 6
+      promesas); una lista de artículos crece, y cualquier regla que centre la
+      huérfana optimiza para exactamente 7. Revisado en captura: se lee como índice
+      de artículos.
+- [ ] 🟡 **El byline sigue muy pegado a la última línea del H1**, ahora en 7
+      artículos en vez de 3. Es el pendiente cosmético que este archivo ya anotaba el
+      17-08, no una regresión de esta pasada.
+- [ ] 🟡 **Pendientes compartidos que estas 4 páginas heredan** (idénticos a los
+      artículos existentes, medidos): el `<summary>` de la FAQ mide 34–40px y
+      `.service-link` 29px contra el mínimo táctil de 44.
+
+- [ ] ⚠️ **PARA EL BLOQUE G — los 4 redirects que sustituyen a los artículos no
+      portados**, más los 4 portados: jobchancen / einsatzmoeglichkeiten /
+      so-schwierig → `/ratgeber/paragraph-34a-erklaert/`, fortbildung →
+      `/ratgeber/qualifikationen-sicherheitsdienst/`. ⚠️ **La URL de so-schwierig
+      lleva `%c2%a7` (el §) codificado** — hay que probarla codificada y sin codificar.
+- [ ] ⚠️ **HALLAZGO PARA EL BLOQUE G, de la sitemap viva: hay 4 páginas viejas que no
+      están en la lista de redirects** — `/sicherheitsanalyse/`,
+      `/kundenstory-kunde-1/`, `/kundenstory-kunde-2/` (las tres devuelven 200) y
+      `/veranstaltungsschutz/`, que **ya coincide con el slug nuevo** y por eso no
+      necesita regla.
+
+- ⚠️ **Dos trampas de entorno de esta máquina, las dos nuevas:**
+  1. **`npm run build` falla con `EPERM` sobre `dist/` si un server de prueba tiene
+     ahí su cwd.** `rmSync` no puede borrar un directorio que otro proceso tiene
+     abierto. El server hay que levantarlo **desde afuera** y pasarle la raíz como
+     argumento.
+  2. **El scratchpad de la sesión se vació a mitad del trabajo** y se llevó los
+     scripts de medición. Los resultados ya estaban en el hilo, pero conviene volver
+     a escribir la sonda en vez de asumir que sigue ahí.
+
+
 **2026-08-23 — BLOQUE E: LAS 7 PÁGINAS DE PERSONA / PUNTERO, EN SUS URLS
 ORIGINALES.** Reconstruidas, no redirigidas: están impresas en tarjetas y códigos QR.
 Generador `docs/design-sources/person-pages.js` + `css/page-person.css`.
@@ -78,9 +208,20 @@ Generador `docs/design-sources/person-pages.js` + `css/page-person.css`.
       `TITLE:Vetriebsleiter` (falta una "r"). Eso entra así en la agenda de todos
       los que escaneen la tarjeta. En la PÁGINA dice bien "Vertriebsleiter" — es
       sólo el archivo. Son dos líneas.
-- [ ] ⚠️ **PARA EL BLOQUE G: falta `/frankonia-baustellenbewachung` en la lista de
-      redirects.** La página viva de Marco Bayer la enlazaba; G1 nombra siete URLs
-      viejas de servicio y ésta es la octava.
+- [x] ⚠️⚠️ **CORRECCIÓN A MI PROPIA NOTA DEL BLOQUE E, hecha al abrir el Bloque G: el
+      link de Baustellenbewachung NO necesita redirect y mi nota anterior estaba
+      EQUIVOCADA.** Escribí que la página viva de Marco Bayer enlazaba
+      `/frankonia-baustellenbewachung` y que esa URL faltaba en la lista de G1.
+      Medido contra la fuente viva: el `href` real es **`/baustellenbewachung/`, sin
+      prefijo**, y `/frankonia-baustellenbewachung/` **devuelve 404** en la página
+      viva, o sea nunca existió. `/baustellenbewachung/` es además exactamente el
+      slug que ya tiene la página nueva, así que la URL vieja **sigue funcionando
+      sola** y un redirect ahí sería una regla que no puede disparar.
+      ⚠️ **Es la misma lección de siempre en otra forma: no deduje esa URL del
+      `href`, la deduje del PATRÓN de las otras siete.** Baustellenbewachung y
+      Veranstaltungsschutz son las dos únicas páginas de servicio viejas que nunca
+      llevaron el prefijo — el `page-sitemap.xml` vivo lo confirma, y las dos ya
+      coinciden con el slug nuevo.
 - [ ] 🟡 **No enlazados a propósito**: la vacante de Büromanagement en la subdomain
       jobs (el cliente la confirmó vencida el 22-08) y el ancla
       `/#dienstleistungen`, que apuntaba a un id de sección que no existe en el

@@ -265,9 +265,16 @@ enthalten `TITLE:Vetriebsleiter` (ein „r" fehlt). Das landet so in den Adressb
 aller Empfänger. Auf der Seite selbst steht korrekt „Vertriebsleiter" — es betrifft
 nur die Datei. Sag Bescheid, dann ändere ich beide Zeilen.
 
-⚠️ **Für Block G vorgemerkt:** die Marco-Bayer-Seite verlinkte
-`/frankonia-baustellenbewachung` — diese alte URL fehlt in deiner Redirect-Liste
-(G1 nennt sieben, diese ist die achte).
+⚠️⚠️ **Korrektur an meiner eigenen Notiz von vorhin — hier stand ein Fehler von mir.**
+Ich hatte notiert, die Marco-Bayer-Seite verlinke `/frankonia-baustellenbewachung`
+und diese URL fehle in deiner Redirect-Liste. Am Quelltext der Live-Seite geprüft:
+der Link heißt **`/baustellenbewachung/`, ohne Präfix**, und
+`/frankonia-baustellenbewachung/` liefert auf der alten Seite **404** — die URL hat
+es also nie gegeben. `/baustellenbewachung/` ist zugleich genau der Slug, den die
+neue Seite schon hat, also **funktioniert die alte Adresse von selbst weiter** und
+ein Redirect wäre eine Regel, die nie greifen kann. Baustellenbewachung und
+Veranstaltungsschutz sind die beiden einzigen alten Leistungsseiten ohne Präfix;
+das bestätigt auch die Live-Sitemap. **Deine Liste ist an dieser Stelle vollständig.**
 
 ⚠️ **Nicht verlinkt, mit Absicht:** die Büromanagement-Stellenanzeige auf der
 jobs-Subdomain (du hast sie am 22.08. als veraltet bestätigt) und der Anker
@@ -308,11 +315,110 @@ anderen Seiten „Startseite".
 
 ---
 
-## Noch offen (Blöcke F, G, J, K)
+## 9 — Block F: vier von acht Blogartikeln portiert
+
+Commit `PLATZHALTER` · 4 neue Seiten in `pages/ratgeber/`, 4 Karten im Hub,
+4 Einträge in `sitemap.xml`, eine neue CSS-Regel
+
+Die Aufteilung hast du am 23.08. freigegeben: **vier portieren, vier nur umleiten.**
+
+| ☐ | Alte URL | Neue URL |
+|---|---|---|
+| ☐ | `/bewerbung-im-sicherheitsdienst-die-3-haeufigsten-fehler/` | `/ratgeber/bewerbung-sicherheitsdienst/` |
+| ☐ | `/tariflohn-2026-im-sicherheitsdienst/` | `/ratgeber/tariflohn-sicherheitsdienst/` |
+| ☐ | `/voraussetzungen-im-sicherheitsdienst/` | `/ratgeber/voraussetzungen-sicherheitsdienst/` |
+| ☐ | `/qualifikationen-im-sicherheitsdienst/` | `/ratgeber/qualifikationen-sicherheitsdienst/` |
+
+| ☐ | Was | Wo prüfen | Woran erkennbar |
+|---|---|---|---|
+| ☐ | Vier Artikel da | `/ratgeber/` | Sieben Karten statt drei; die vier neuen tragen das Datum 23. August 2026 |
+| ☐ | Aufbau wie gehabt | jeder neue Artikel | H1, Byline mit „geprüft von Steffen Walde", Zwei-Satz-Antwort, Kapitel, FAQ, CTA — wie bei den drei bestehenden |
+| ☐ | Ansprache | jeder neue Artikel | durchgehend „du", wie im 34a-Artikel und auf `/jobs/` |
+| ☐ | Vergleichstabelle | `/ratgeber/qualifikationen-sicherheitsdienst/` | Vier Spalten (Kriterium, Unterrichtung, Sachkunde, GSSK); auf dem Handy wird sie zu beschrifteten Blöcken, ohne Querscrollen |
+| ☐ | Interne Verlinkung | alle vier | Jeder Artikel verweist auf die passenden anderen Ratgeber, auf Leistungsseiten und auf `/jobs/` |
+| ☐ | Im Index | Seitenquelle | `index,follow`, alle vier stehen in `/sitemap.xml` |
+
+**Warum nur vier von acht.** Fünf der acht alten Artikel behandeln dasselbe Thema —
+Unterrichtung, Sachkunde, GSSK — aus fünf Blickwinkeln, und drei dieser Blickwinkel
+stehen **wörtlich schon im bestehenden 34a-Artikel**: die 400–500 €, die 40 Stunden,
+„keine Prüfung", Türsteher und Ladendetektiv, der Prüfungsablauf. Hätte ich alle fünf
+portiert, würden sechs Seiten um ein Keyword konkurrieren und sich gegenseitig
+schwächen. Verloren geht dabei nichts: das GSSK-Prüfungsformat und die Kursspanne aus
+den nicht portierten Texten sind in den Qualifikationen-Artikel eingearbeitet.
+
+Die vier nicht portierten bekommen in Block G einen 301: `jobchancen`,
+`einsatzmoeglichkeiten` und `so-schwierig` auf den 34a-Artikel, `fortbildung` auf den
+neuen Qualifikationen-Artikel.
+
+⚠️⚠️ **Zwei Sachfehler im alten Text, mit Quelle korrigiert.**
+1. Bei den GSSK-Voraussetzungen stand „mindestens fünf Jahre Berufserfahrung, davon
+   ein erheblicher Teil im Sicherheitsgewerbe". Die Vorschrift verlangt von diesen
+   fünf Jahren **mindestens drei Jahre in der Sicherheitswirtschaft**. „Ein erheblicher
+   Teil" liest man im Zweifel zu großzügig — bei einer Zulassungsfrage kostet das
+   jemanden die Prüfungsanmeldung.
+2. Die mündliche Sachkundeprüfung dauert nicht „etwa 20 Minuten", sondern **rund 15** —
+   so steht es auch schon im bestehenden 34a-Artikel. Die beiden Seiten hätten sich
+   also widersprochen. Der schriftliche Teil dauert **120 Minuten**.
+
+Bestätigt und übernommen: GSSK-Mindestalter 24 Jahre, zwei Jahre Berufspraxis nach
+abgeschlossener Ausbildung, Erste-Hilfe-Kurs nicht älter als 24 Monate, drei
+Handlungsbereiche, mündlich 30–40 Minuten.
+
+⚠️ **Nicht verifizierbar, deshalb in der Seite ausdrücklich als Richtwert
+gekennzeichnet:** die GSSK-Prüfungsgebühr (der alte Text sagt ~450 €, die IHK Schwerin
+veröffentlicht 405 € — das legt jede Kammer selbst fest), Vorbereitungskurse
+1.600–4.000 €, 200–240 Unterrichtseinheiten über 5–7 Monate, und die „150–180 Minuten"
+je schriftlichem Prüfungsteil. Bei letzterem steht jetzt die Vorschrift in der Seite
+(mindestens zwei Stunden je Aufgabe, höchstens fünf Stunden insgesamt) statt der
+Anbieterpraxis.
+
+⚠️ Die Spannen für Unterrichtung (400–500 €) und Sachkunde (160–200 €) sind
+**absichtlich die des bestehenden 34a-Artikels** und nicht die Einzelwerte des alten
+Blogtexts (450 € / 160 €): zwei Ratgeber mit verschiedenen Preisen für dieselbe
+Prüfung sind schlimmer als eine unscharfe Spanne.
+
+⚠️⚠️ **`tariflohn-2026` enthält keine einzige Lohnzahl** — trotz Titel und trotz der
+Beschreibung „So viel verdienst du 2026". Der Text erklärt ausschließlich die
+Systematik. Ich habe **keine Zahlen erfunden**: das Jahr ist aus Slug und Titel raus,
+und Titel und Beschreibung sagen jetzt, was der Artikel wirklich liefert. Die einzigen
+Zahlen darin sind die tariflichen Zuschläge, und die kommen aus derselben zentralen
+Datei wie auf der Kostenseite — Kunden- und Bewerberseite können sich also nicht
+widersprechen.
+
+⚠️ **Vier Fotos fehlen.** Die vier Artikel haben oben einen reservierten Rahmen mit
+Beschriftung, kein Platzhalterbild — genau wie die drei bestehenden Artikel, als sie am
+17.08. rausgingen. Gebraucht wird je 16:9, mindestens 1600x900:
+
+| ☐ | Artikel | Motiv |
+|---|---|---|
+| ☐ | Bewerbung | Bewerbungsgespräch, Unterlagen auf dem Tisch |
+| ☐ | Tariflohn | Dienstplan und Stundenabrechnung am Arbeitsplatz |
+| ☐ | Voraussetzungen | Anmeldeunterlagen und Ausweis auf einem Tisch |
+| ☐ | Qualifikationen | Lernsituation, Unterlagen und Laptop im Kurs |
+
+Wenn du die Rahmen bis dahin lieber ganz weg hättest: das sind zwei Zeilen pro Seite
+und kein CSS. Sag einfach Bescheid.
+
+**Gemessen, nicht geschätzt:** die vier Artikel und der Hub bei 320 / 390 / 640 / 768 /
+900 / 1024 / 1440 / 1920 Pixel Breite — **kein Querscrollen, nichts außerhalb des
+Bildschirms, genau eine H1 pro Seite, keine übersprungene Überschriftenebene**, und
+Hero und Artikelspalte auf derselben linken Linie. Kontrast auf dem echten Rendering
+gemessen: der schlechteste Wert ist **4,60:1** bei 4,5:1 Minimum, Prosalinks 4,90:1.
+FAQ-Text sichtbar und im strukturierten Datenblock **byte-identisch, 4 von 4, in allen
+sieben Artikeln**. Mit abgeschalteten Animationen ist kein Element versteckt.
+
+🟡 **Kleinigkeiten, die ich bewusst nicht angefasst habe:** der Hub hat jetzt sieben
+Karten, also 3 + 3 + 1 — die letzte Karte steht allein in ihrer Reihe. Das gleiche
+gilt für den Abstand zwischen H1 und Byline, der schon bei den drei bestehenden
+Artikeln etwas eng ist. Beides sind Kosmetikpunkte; sag Bescheid, wenn dich eines
+davon störst.
+
+---
+
+## Noch offen (Blöcke G, J, K)
 
 Wird hier fortgeschrieben, sobald die Blöcke durch sind.
 
-- F — acht Blogartikel prüfen und portieren
 - G — Redirects in `vercel.json`
 - J — `/datenschutz/` Übergangsfassung
 - K — Datenstruktur für Stellenanzeigen (ohne Schema, es gibt keine Vakanz)

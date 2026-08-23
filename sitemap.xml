@@ -321,6 +321,33 @@
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
+  <!-- Block F, 2026-08-23: die vier aus dem alten Blog portierten Artikel.
+       Gleiche Priorität und changefreq wie die drei bestehenden Ratgeber-Artikel —
+       datierte redaktionelle Stücke, die nicht laufend umgeschrieben werden. -->
+  <url>
+    <loc>https://frankonia-sicherheit.de/ratgeber/qualifikationen-sicherheitsdienst/</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/ratgeber/voraussetzungen-sicherheitsdienst/</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/ratgeber/tariflohn-sicherheitsdienst/</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/ratgeber/bewerbung-sicherheitsdienst/</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
   <!-- Conversion landing page, built 2026-08-10. Priority with the service
        pages: it is the destination of the free-analysis CTA, not a leaf. -->
   <url>
