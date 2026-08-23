@@ -213,6 +213,170 @@ function resolveCoverage(content, sourceLabel, locations) {
   });
 }
 
+// ---------------------------------------------------------------------------
+// Vacancies (content/vacancies.json)
+// ---------------------------------------------------------------------------
+// A vacancy marker:
+//     <!-- vacancies: list -->
+//     <!-- vacancies: schema -->
+//
+// ⚠️ THE POINT OF THIS RENDERER IS THAT IT USUALLY PRINTS NOTHING. There is no
+// real opening right now, and JobPosting data without a real vacancy breaks
+// Google's rich-results rules: stale or invented postings are not merely
+// ignored, they cost the domain its standing for every future posting. So an
+// empty array renders NOTHING — no section, no heading, no schema — and /jobs/
+// looks exactly as it did before this existed. The first real opening is one
+// entry in content/vacancies.json and nothing else.
+//
+// ⚠️ THAT IS ALSO WHY `list` SITS INSIDE AN EXISTING SECTION rather than being
+// its own. Every colour change on this site pays for a pixel-seam band, and the
+// following section reserves that band's height with an adjacent-sibling rule.
+// A renderer that emitted a whole new <section> would shift that alternation the
+// day the first vacancy landed — a layout regression triggered by a data edit,
+// with nobody looking. Inside a section, an empty array is a true no-op and a
+// filled one adds a block.
+const VACANCIES_FILE = path.join(ROOT, "content", "vacancies.json");
+const VACANCY_RE = /<!--\s*vacancies:\s*([\w-]+)\s*-->/g;
+const EMPLOYMENT_TYPES = [
+  "FULL_TIME", "PART_TIME", "CONTRACTOR", "TEMPORARY",
+  "INTERN", "VOLUNTEER", "PER_DIEM", "OTHER",
+];
+
+function loadVacancies() {
+  if (!fs.existsSync(VACANCIES_FILE)) return [];
+  let data;
+  try {
+    data = JSON.parse(fs.readFileSync(VACANCIES_FILE, "utf8"));
+  } catch (err) {
+    throw new Error(`content/vacancies.json is not valid JSON — ${err.message}`);
+  }
+  const list = Array.isArray(data) ? data : data.vacancies;
+  if (!Array.isArray(list)) {
+    throw new Error('content/vacancies.json: expected a "vacancies" array');
+  }
+  // Validated loudly, because the whole risk of this feature is a half-filled
+  // posting reaching Google. A missing validThrough is allowed (it is optional
+  // in the schema) but a missing date format is not.
+  for (const v of list) {
+    for (const key of ["id", "title", "location", "employmentType", "datePosted"]) {
+      if (!v[key]) {
+        throw new Error(
+          `content/vacancies.json: every vacancy needs ${key} — got ${JSON.stringify(v)}`
+        );
+      }
+    }
+    if (!EMPLOYMENT_TYPES.includes(v.employmentType)) {
+      throw new Error(
+        `content/vacancies.json: employmentType "${v.employmentType}" is not one of ` +
+          EMPLOYMENT_TYPES.join(", ")
+      );
+    }
+    for (const key of ["datePosted", "validThrough"]) {
+      if (v[key] && !/^\d{4}-\d{2}-\d{2}$/.test(v[key])) {
+        throw new Error(
+          `content/vacancies.json: ${key} must be YYYY-MM-DD — got "${v[key]}"`
+        );
+      }
+    }
+  }
+  return list;
+}
+
+const EMPLOYMENT_LABELS = {
+  FULL_TIME: "Vollzeit",
+  PART_TIME: "Teilzeit",
+  CONTRACTOR: "Freie Mitarbeit",
+  TEMPORARY: "Befristet",
+  INTERN: "Praktikum",
+  VOLUNTEER: "Ehrenamt",
+  PER_DIEM: "Auf Abruf",
+  OTHER: "Sonstiges",
+};
+
+function escapeHtml(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+const VACANCY_RENDERERS = {
+  // The visible list. Classes are the page's own (css/page-jobs.css owns
+  // .jobs-openings*), so the markup can be read where it is used.
+  list(list) {
+    const items = list
+      .map((v) => {
+        const meta = [escapeHtml(v.location), EMPLOYMENT_LABELS[v.employmentType]]
+          .filter(Boolean)
+          .join(" · ");
+        const summary = v.summary
+          ? `\n              <p class="jobs-openings__summary">${escapeHtml(v.summary)}</p>`
+          : "";
+        return (
+          `            <li class="jobs-openings__item" id="stelle-${escapeHtml(v.id)}">\n` +
+          // h4, nicht h3: die Liste hängt unter der h3 "Aktuell offene Stellen".
+          // Auf gleicher Ebene wäre die Überschrift der Liste ein Geschwister
+          // ihrer eigenen Einträge — für einen Screenreader wäre die Gruppierung
+          // damit unsichtbar.
+          `              <h4 class="jobs-openings__title">${escapeHtml(v.title)}</h4>\n` +
+          `              <p class="jobs-openings__meta">${meta}</p>${summary}\n` +
+          `              <a class="service-link" href="#bewerbung">Auf diese Stelle bewerben` +
+          `<svg class="service-link__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>\n` +
+          `            </li>`
+        );
+      })
+      .join("\n");
+    return (
+      `        <div class="jobs-openings">\n` +
+      `          <h3 class="jobs-openings__label">Aktuell offene Stellen</h3>\n` +
+      `          <ul class="jobs-openings__list">\n${items}\n          </ul>\n` +
+      `        </div>`
+    );
+  },
+  // A separate JSON-LD block rather than an extra node inside the page's own
+  // @graph: appending to that graph would mean parsing and re-serialising the
+  // page's hand-written JSON on every build, and a second script tag is equally
+  // valid to every consumer.
+  schema(list) {
+    const nodes = list.map((v) => ({
+      "@type": "JobPosting",
+      title: v.title,
+      description: v.summary || v.title,
+      datePosted: v.datePosted,
+      ...(v.validThrough ? { validThrough: v.validThrough } : {}),
+      employmentType: v.employmentType,
+      hiringOrganization: { "@id": "https://frankonia-sicherheit.de/#organization" },
+      jobLocation: {
+        "@type": "Place",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: v.location,
+          addressCountry: "DE",
+        },
+      },
+      directApply: true,
+      url: `https://frankonia-sicherheit.de/jobs/#stelle-${v.id}`,
+    }));
+    return (
+      '  <script type="application/ld+json">\n' +
+      JSON.stringify({ "@context": "https://schema.org", "@graph": nodes }, null, 2) +
+      "\n  </script>"
+    );
+  },
+};
+
+function resolveVacancies(content, sourceLabel, list) {
+  return content.replace(VACANCY_RE, (_match, name) => {
+    const render = VACANCY_RENDERERS[name];
+    if (!render) {
+      throw new Error(
+        `${sourceLabel}: unknown vacancy block "${name}" — expected one of ` +
+          Object.keys(VACANCY_RENDERERS).join(", ")
+      );
+    }
+    // The silent case, and the only one that happens today.
+    if (!list.length) return "";
+    return render(list);
+  });
+}
+
 // "phone.display" -> values.phone.display
 function lookup(scope, dottedKey) {
   return dottedKey.split(".").reduce(
@@ -308,6 +472,7 @@ function buildPages() {
 
   const values = loadValues();
   const coverage = loadCoverage();
+  const vacancies = loadVacancies();
 
   for (const pageFile of pageFiles) {
     const sourceLabel = path.relative(ROOT, pageFile);
@@ -316,6 +481,9 @@ function buildPages() {
     // AFTER the includes, so a marker inside a partial (the footer's city list)
     // is rendered too — the partial arrives as ordinary content by this point.
     content = resolveCoverage(content, sourceLabel, coverage);
+    // Same position and the same reason: after the includes, before the
+    // placeholders, so a vacancy's own text could carry {{…}} if it ever needs to.
+    content = resolveVacancies(content, sourceLabel, vacancies);
     // Then the page's own placeholders (the ones outside any include).
     content = resolveVars(content, [values], sourceLabel);
 

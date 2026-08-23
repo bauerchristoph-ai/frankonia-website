@@ -56,7 +56,16 @@
        this @graph with a real title, datePosted, validThrough, jobLocation and
        employmentType. A JobPosting with invented dates would be worse than none:
        Google drops stale postings and penalises the domain's job markup.
-       The FAQPage below mirrors the five visible questions 1:1. -->
+       The FAQPage below mirrors the five visible questions 1:1.
+
+       ✅ 2026-08-23, Block K: der Mechanismus dafür steht jetzt bereit. Der
+       Marker unten gibt einen eigenen JSON-LD-Block mit einem JobPosting pro
+       Eintrag aus content/vacancies.json aus — und gibt heute NICHTS aus, weil
+       das Array leer ist. Ein zweiter Script-Block statt eines Knotens in diesem
+       @graph, weil das Anhängen bedeuten würde, dieses handgeschriebene JSON bei
+       jedem Build zu parsen und neu zu serialisieren; für jeden Konsumenten sind
+       zwei Blöcke gleichwertig. -->
+  <!-- vacancies: schema -->
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -514,6 +523,20 @@
         <div class="section__intro">
           <h2>Vom Quereinsteiger bis zur Meisterin: dein Einstieg bei FRANKONIA</h2>
         </div>
+
+        <!-- OFFENE STELLEN — Block K, 2026-08-23. Rendert content/vacancies.json,
+             und rendert heute NICHTS: das Array ist leer, weil es keine echte
+             Vakanz gibt. JobPosting-Daten ohne reale Stelle sind ein Verstoß gegen
+             Googles Rich-Results-Richtlinien und kosten die Domain ihre
+             Glaubwürdigkeit für alle künftigen Anzeigen.
+             Der Platz ist hier und nicht in einer eigenen Sektion, weil jeder
+             Farbwechsel dieser Seite eine Pixel-Übergangsbande kostet und die
+             folgende Sektion deren Höhe reserviert — eine Sektion, die durch eine
+             Datenänderung erscheint, würde diese Abfolge verschieben. Innerhalb
+             der Sektion ist ein leeres Array wirklich wirkungslos.
+             Inhaltlich passt es auch: erst was JETZT offen ist, dann wen wir
+             generell suchen. -->
+        <!-- vacancies: list -->
 
         <ol class="jobs-levels__list" data-item-reveal=".jobs-levels__item" data-item-reveal-strong>
           <li class="jobs-levels__item">

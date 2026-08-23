@@ -532,6 +532,74 @@
    above.
    The numbers are aria-hidden decoration — the <ol> already numbers itself for
    assistive tech, and the visible 01–05 must not be read twice. */
+/* ---- Offene Stellen (Block K, 2026-08-23) ----------------------------------
+   Steht HEUTE IN KEINEM MARKUP, und das ist der Zweck. build.js rendert diesen
+   Block aus content/vacancies.json, das absichtlich leer ist — es gibt keine
+   echte Vakanz, und JobPosting-Daten ohne reale Stelle verbrennen die
+   Glaubwürdigkeit der Domain für alle künftigen Anzeigen. Die Regeln stehen
+   trotzdem hier, weil der Auftrag lautet: "dann ist die erste echte Stelle ein
+   Ein-Zeilen-Commit". Ohne CSS wäre der erste Eintrag ungestylt, und aus einer
+   Zeile würden zwei Commits.
+
+   Die Formensprache ist die der Leiter direkt darunter — Haarlinie zwischen den
+   Einträgen, kein Kartenraster: zwei verschiedene Listenformen in einer Sektion
+   lesen sich als zwei Sektionen. Die Stellen stehen ÜBER der Leiter, also
+   trennt sie eine eigene Unterüberschrift und Abstand nach unten, sonst wirkt
+   der erste Leitersprosse wie eine weitere Stelle. */
+.jobs-openings {
+  margin-top: var(--space-7);
+  margin-bottom: var(--space-8);
+}
+
+.jobs-openings__label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-4);
+}
+
+.jobs-openings__list {
+  list-style: none;
+  display: grid;
+  gap: 0;
+}
+
+.jobs-openings__item {
+  display: grid;
+  gap: var(--space-2);
+  padding-block: var(--space-5);
+  border-top: 1px solid var(--color-border);
+  /* Wie bei .jobs-levels__item: Grid-Kinder haben min-width: auto, und ein
+     unteilbares deutsches Kompositum in einer Stellenbezeichnung könnte damit
+     die Spur breiter machen als ihren Anteil — die gemessene Ursache für echtes
+     Querscrollen an anderen Stellen dieser Seite. */
+  min-width: 0;
+}
+
+.jobs-openings__item:last-child {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.jobs-openings__title {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  letter-spacing: normal;
+  line-height: var(--line-height-base);
+}
+
+.jobs-openings__meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.jobs-openings__summary {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+  max-width: 46rem;
+}
+
 .jobs-levels__list {
   list-style: none;
   display: grid;

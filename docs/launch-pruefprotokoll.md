@@ -600,12 +600,77 @@ bleibt leer. Sein Host muss in `vercel.json` eingetragen werden.
 
 ---
 
-## Noch offen (Block K)
+## 12 — Block K: Stellenanzeigen vorbereitet, sichtbar ist nichts
 
-Wird hier fortgeschrieben, sobald die Blöcke durch sind.
+Commit `PLATZHALTER` · `content/vacancies.json`, `build.js`, `pages/jobs.html`,
+`css/page-jobs.css`
 
-- K — Datenstruktur für Stellenanzeigen (ohne Schema, es gibt keine Vakanz)
+**Das Ergebnis ist absichtlich unsichtbar: `/jobs/` sieht heute exakt so aus wie
+vorher.** Es gibt keine echte Vakanz, und JobPosting-Daten ohne reale Stelle sind ein
+Verstoß gegen Googles Richtlinien — eine veraltete oder erfundene Anzeige wird nicht
+bloß ignoriert, sie kostet die Domain ihre Glaubwürdigkeit für alle künftigen
+Anzeigen. Der Renderer gibt bei leerer Liste deshalb **nichts** aus: keine Sektion,
+keine Überschrift, kein strukturierter Datenblock.
 
-**Nicht in diesem Durchgang, bleibt offen:** H und I (brauchen Zugangsdaten),
-das Hero-Foto der Startseite, der finale Datenschutztext nach dem
-Cookiebot-Scan, echte Stellenanzeigen.
+| ☐ | Was | Wo prüfen | Woran erkennbar |
+|---|---|---|---|
+| ☐ | Nichts hat sich verändert | `/jobs/` | Die Seite ist unverändert; zwischen der Überschrift „Vom Quereinsteiger bis zur Meisterin" und der Leiter steht nichts Neues |
+| ☐ | Kein Stellen-Schema | Seitenquelle `/jobs/` | Genau ein Block strukturierter Daten, kein `JobPosting` darin |
+
+**Die erste echte Stelle ist ein Eintrag in `content/vacancies.json`, und sonst
+nichts.** Dann erscheinen gleichzeitig die
+sichtbare Liste auf `/jobs/` und der JobPosting-Block für Google. Welche Felder ein
+Eintrag braucht, steht ausführlich in der Datei selbst — Bezeichnung, Ort,
+Beschäftigungsart, Veröffentlichungsdatum und Gültigkeit bis.
+
+⚠️ **Ein Feld lohnt besondere Aufmerksamkeit: „gültig bis".** Es ist technisch
+optional, aber ohne es bleibt die Anzeige aus Googles Sicht unbegrenzt offen. Eine
+Stelle, die längst besetzt ist und trotzdem in den Suchergebnissen steht, schadet
+mehr als sie bringt.
+
+**Geprüft, nicht angenommen.** Ich habe zwei Testanzeigen eingetragen, gebaut und
+angesehen: zwei Einträge in der Liste, zwei Stellen im strukturierten Datenblock,
+beide Blöcke technisch gültig, die Angabe „gültig bis" nur dort wo sie gesetzt war,
+deutsche Bezeichnungen für die Beschäftigungsart (Vollzeit, Teilzeit), eigene
+Sprungmarken je Stelle und die Verknüpfung mit dem bestehenden Unternehmenseintrag.
+Danach wieder auf leer gestellt — die gebaute Seite ist wieder identisch mit der
+vorherigen.
+
+⚠️ **Eine Einbau-Entscheidung, die du kennen solltest:** die Stellenliste erscheint
+INNERHALB der bestehenden Sektion „Wen wir suchen", nicht als eigene Sektion. Jeder
+Farbwechsel dieser Website kostet eine Pixel-Übergangsbande, und die nachfolgende
+Sektion reserviert deren Höhe. Eine Sektion, die durch eine reine Dateneingabe
+plötzlich erscheint, würde diese Abfolge verschieben — ein Layoutfehler, ausgelöst
+durch das Eintragen einer Stelle, und niemand schaut dabei zu. Innerhalb der Sektion
+ist der leere Zustand wirklich wirkungslos. Inhaltlich passt es auch: erst was jetzt
+offen ist, dann wen wir generell suchen.
+
+---
+
+## Noch offen
+
+Alle Blöcke dieses Durchgangs sind durch. Was bleibt, und von wem es abhängt:
+
+**Du oder dein Team:**
+
+| ☐ | Was | Wo im Protokoll |
+|---|---|---|
+| ☐ | Hero-Foto der Startseite | offen seit Block A |
+| ☐ | Vier Titelbilder für die portierten Ratgeber-Artikel | Abschnitt 9 |
+| ☐ | Drei Fehler im Datenschutztext entscheiden (§ 83 StBerG, doppelte Nummerierung 2.1, Stand 2018) | Abschnitt 11 |
+| ☐ | Tippfehler „Vetriebsleiter" in den beiden Jäger-vCards | Abschnitt 7 |
+| ☐ | Zwei Fragen zu Block F beantworten: Google-Profil-URL fürs Badge, Anker `/#dienstleistungen` | Abschnitte 6 und 7 |
+
+**Nach dem Deploy, technisch:**
+
+| ☐ | Was | Wie |
+|---|---|---|
+| ☐ | Redirects live prüfen | `node docs/design-sources/redirect-test.js https://…` |
+| ☐ | www auf die nackte Domain umleiten | Vercel, Domain-Einstellungen (nicht im Code) |
+| ☐ | HTTP auf HTTPS kontrollieren | macht Vercel automatisch |
+
+**Bleibt bewusst außerhalb dieses Durchgangs:** H und I (brauchen Zugangsdaten),
+der finale Datenschutztext nach dem Cookiebot-Scan — dessen Host muss dann in die
+Sicherheitsrichtlinie in `vercel.json` eingetragen werden, sonst wird das Werkzeug
+stillschweigend geblockt — und echte Stellenanzeigen, für die die Struktur jetzt
+bereitliegt.

@@ -32,6 +32,70 @@ anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
 
+**2026-08-23 — BLOQUE K: LA ESTRUCTURA DE VACANTES EXISTE Y NO RENDERIZA NADA.**
+`content/vacancies.json` (vacío), un renderer en `build.js`, dos marcadores en
+`pages/jobs.html` y el CSS de `.jobs-openings*`. **`/jobs/` no cambió ni un byte.**
+
+- [x] **Sin `JobPosting`, y eso es el punto**: no hay vacante real, y datos de
+      JobPosting sin una vacante real violan las Rich-Results-Richtlinien de Google
+      — una anuncio caducado o inventado no se ignora sin más, le cuesta al dominio
+      su credibilidad para TODAS las futuras. Con el array vacío el renderer devuelve
+      **cadena vacía**: ni sección, ni encabezado, ni schema.
+- [x] ⚠️ **Es `content/vacancies.json`, no `data/vacancies.ts` como pedía el
+      briefing**, y la razón es la misma que ya se aclaró para el stack entero: este
+      proyecto es HTML estático sin dependencias, no hay TypeScript ni bundler. El
+      patrón equivalente ya existe y se copió literal — `content/coverage.json` + un
+      renderer con marcador de include en `build.js`.
+- [x] ⚠️⚠️ **LA LISTA VA DENTRO DE UNA SECCIÓN EXISTENTE, NO EN UNA PROPIA, y eso es
+      una decisión estructural.** Cada cambio de color de este sitio paga su banda de
+      pixel-seam, y la sección siguiente reserva ese alto con un selector de hermano
+      adyacente. Un renderer que emitiera una `<section>` nueva **desplazaría esa
+      alternancia el día que entre la primera vacante** — una regresión de layout
+      disparada por una edición de datos, sin nadie mirando. Dentro de una sección un
+      array vacío es un no-op de verdad. Va en "Wen wir suchen", arriba de la
+      escalera: primero lo que está abierto AHORA, después a quién se busca en
+      general.
+- [x] **El schema es un `<script>` aparte, no un nodo dentro del `@graph` de la
+      página**: anexar significaría parsear y re-serializar ese JSON escrito a mano
+      en cada build, y dos bloques son equivalentes para cualquier consumidor.
+- [x] **El loader valida en voz alta y aborta el build**: los cinco campos
+      obligatorios, `employmentType` contra la lista de schema.org, y las fechas
+      contra `AAAA-MM-TT`. El riesgo entero de esta función es que una vacante a
+      medio llenar llegue a Google. `validThrough` es opcional (lo es en el schema)
+      pero está documentado como muy recomendable: sin él la oferta queda
+      indefinidamente abierta a ojos de Google.
+- [x] ✅ **PROBADO DE PUNTA A PUNTA, no deducido.** Con dos vacantes de prueba:
+      **2 items en el markup, 2 nodos `JobPosting`, los dos bloques JSON-LD válidos**,
+      `validThrough` omitido donde no existe, `summary` sólo donde existe, los labels
+      alemanes correctos (`Bamberg · Vollzeit`, `Raum Nürnberg · Teilzeit`), anclas
+      `#stelle-…` reales y `hiringOrganization` apuntando al nodo Organization que ya
+      tenía la página. Captura revisada. Después se revirtió a vacío y **el
+      `/jobs/` construido volvió a ser idéntico** al de antes del bloque
+      (normalizando espacios).
+      ⚠️ La única diferencia real que queda es **una línea con 8 espacios de sangría**
+      donde estaba el marcador: el stripper de comentarios se lleva el comentario y
+      deja la indentación de su línea. 9 bytes, cero efecto de render — se dejó
+      así porque hacer que el regex del marcador se coma los saltos de línea es más
+      riesgoso que eso.
+- [x] ⚠️ **Bug propio encontrado midiendo: el título de cada vacante salía como `h3`,
+      igual que el `h3` "Aktuell offene Stellen" que las agrupa** — o sea la
+      agrupación era invisible para un lector de pantalla. Pasó a `h4`. Verificado en
+      las 65 páginas: **cero saltos de nivel de heading**.
+- [x] **El CSS de `.jobs-openings*` existe aunque hoy no lo use ningún markup**, y es
+      deliberado: el pedido dice "dann ist die erste echte Stelle ein
+      Ein-Zeilen-Commit". Sin CSS el primer anuncio saldría sin estilo y de una línea
+      pasarían a ser dos commits. El lenguaje formal es el de la escalera de abajo
+      (hairline entre items, no cards): dos formas de lista distintas en una sección
+      se leen como dos secciones.
+- [x] **Regresión del build medida en las 65 páginas** (el cambio toca `build.js`, o
+      sea todas): 0 tokens sin resolver, 0 textos ajenos en el `<head>`, un solo
+      `<h1>` por página, sin saltos de heading, sitemap con 58 URLs todas existentes,
+      y el test de redirects sigue en 0 problemas.
+
+- [ ] 🟡 **La primera vacante real es un objeto en `content/vacancies.json`.** El
+      formato completo, campo por campo, está en el `_comment` del propio archivo.
+
+
 **2026-08-23 — BLOQUE J: `/datenschutz/` DEJA DE SER UNA SHELL. Entra la
 Übergangsfassung de la página viva, sale el `noindex`, y la URL entra al sitemap.**
 `pages/datenschutz.html` + 4 reglas nuevas en `css/page-legal.css` + `sitemap.xml`.
