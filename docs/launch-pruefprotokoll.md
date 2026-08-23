@@ -532,7 +532,7 @@ Kunden erzählt. Änderbar in einer Zeile.
 
 ## 11 — Block J: /datenschutz/ ist befüllt
 
-Commit `PLATZHALTER` · `pages/datenschutz.html`, `css/page-legal.css`, `sitemap.xml`
+Commit `88ce96c` · `pages/datenschutz.html`, `css/page-legal.css`, `sitemap.xml`
 
 | ☐ | Was | Wo prüfen | Woran erkennbar |
 |---|---|---|---|
@@ -602,7 +602,7 @@ bleibt leer. Sein Host muss in `vercel.json` eingetragen werden.
 
 ## 12 — Block K: Stellenanzeigen vorbereitet, sichtbar ist nichts
 
-Commit `PLATZHALTER` · `content/vacancies.json`, `build.js`, `pages/jobs.html`,
+Commit `9243115` · `content/vacancies.json`, `build.js`, `pages/jobs.html`,
 `css/page-jobs.css`
 
 **Das Ergebnis ist absichtlich unsichtbar: `/jobs/` sieht heute exakt so aus wie
