@@ -29,10 +29,18 @@
      that is a live conversion surface rendering broken.
 
      {{ogimage}} defaults to the homepage hero (content/values.json) and is
-     overridden per page by a parameter on this include:
-         <!-- include: head-common ogimage="/assets/images/og/brandwache.jpg" -->
-     which is the client's rule: each page shows its own hero, a page without a
-     hero photograph shows the homepage's.
+     overridden per page by passing an `ogimage` parameter on this partial's own
+     include marker — see any of the 15 pages that have their own hero photo for
+     the exact form. That is the client's rule: each page shows its own hero, a
+     page without a hero photograph shows the homepage's.
+
+     ⚠️ THE LINE ABOVE USED TO SPELL THAT MARKER OUT IN FULL, and it broke every
+     page on the site for two days. An HTML comment cannot contain the marker's
+     closing delimiter: it ends the comment early, and everything after it — the
+     rest of this note — was dumped as visible text at the top of all 61 pages.
+     It survived because the checks that followed read the meta tags
+     programmatically and never looked at the top of a rendered page.
+     Refer to the marker by name here. Never write it with its delimiters.
 
      The origin is written out because og:image must be an ABSOLUTE URL —
      relative paths are not resolved reliably by scrapers. One occurrence here

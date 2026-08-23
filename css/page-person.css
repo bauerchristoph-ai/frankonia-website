@@ -1,0 +1,326 @@
+/* ==========================================================================
+   Person- und Verweisseiten (Block E, 2026-08-23)
+   ==========================================================================
+   Serves seven URLs that the old WordPress site already published and that are
+   printed on business cards and QR codes:
+     /marco-bayer-sicherheitsdienst-2/   /marco-bayer-werkschutz-2/
+     /alexander-jaeger-sicherheitsdienst/ /alexander-jaeger-werkschutz/
+     /bryan-van-wey-werkschutz/           /sicherheitscheck-walde/
+     /linktree/
+
+   ⚠️ DELIBERATELY SLIM, and that is a decision rather than an omission. These are
+   landing targets for a QR code on a printed card: someone points a phone at it
+   in a car park and wants the number. So there is no photo hero, no scrollytelling
+   and — see the pages themselves — no motion JavaScript at all. The site's own
+   header and footer supply the chrome; everything here is one centred column.
+
+   ⚠️ THE CTA ORDER DOES NOT FOLLOW RULE G2, on purpose. G2 fixes the order of the
+   offer/phone pair in a SERVICE hero. On a business card the primary action is
+   saving the contact, so "Kontakt speichern" is the primary button and the
+   vCard is the thing it downloads. The phone numbers are not repeated as buttons
+   because the contact rows above them are already tappable.
+   ========================================================================== */
+
+.person {
+  /* One centred column. No grid: there is never a second column here. */
+  text-align: center;
+}
+
+.person__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* 34rem, the measure this project already uses for a centred text block. */
+  max-width: 34rem;
+}
+
+/* ---- Portrait ------------------------------------------------------------
+   The source files are 350x350 with the subject inside an OPAQUE WHITE circle
+   and transparent corners — that is how the client's own cards render them, so
+   they are used unchanged. Two consequences worth knowing:
+   · they ship as WebP + PNG, not JPEG: a JPEG fallback cannot carry the
+     transparency, and without it the corners would come out white squares on
+     this dark page. Same reason the uniform photos are WebP + PNG.
+   · NO `border-radius` here. The circle is already in the pixels; clipping a
+     square whose inscribed circle is the content would shave its antialiased
+     edge and leave a hard rim. */
+.person__portrait {
+  display: block;
+  width: 10.9375rem; /* 175px — the 350px source is then exactly DPR 2 */
+  max-width: 60%;
+  margin-bottom: var(--space-5);
+}
+
+.person__portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---- Name, role, credential --------------------------------------------- */
+/* The name is the page's <h1>. It is NOT on the sitewide page-title scale
+   (docs/page-conventions.md §2) and that is a declared exception: §2 exists so
+   every page title carries the same weight, and a 60px name over three lines of
+   contact detail would turn a business card into a poster. */
+.person__name {
+  margin: 0;
+  font-size: clamp(1.875rem, 1.6rem + 1.2vw, 2.5rem);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+}
+
+.person__role {
+  margin: var(--space-2) 0 0;
+  font-size: var(--font-size-md);
+  color: var(--color-accent);
+}
+
+.person__cred {
+  margin: var(--space-1) 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.person__lede {
+  margin: var(--space-4) 0 0;
+  color: var(--color-text-muted);
+  /* A centred line already has two ragged edges; a hyphenated German compound on
+     top of that reads as a rendering fault. Same call /referenzen/ makes. */
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* ---- Tappable contact rows ---------------------------------------------- */
+/* The utility of the whole page. Each row is a real tel:/mailto: link and is at
+   least 44px tall, because the expected visitor is holding a phone. */
+.person__contact {
+  list-style: none;
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  width: 100%;
+  display: grid;
+  gap: var(--space-1);
+}
+
+.person__contact a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  text-decoration: none;
+  /* Numbers and addresses are data: the line must never break mid-value. */
+  white-space: nowrap;
+  transition: background-color var(--duration-fast) var(--easing-standard);
+}
+
+.person__contact a:hover,
+.person__contact a:focus-visible {
+  background-color: rgb(255 255 255 / 0.06);
+}
+
+/* The mail address is the one row that can be too long for a narrow phone, so it
+   is the one row allowed to shrink rather than overflow. */
+.person__contact .person__mail {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* ⚠️ #icon-phone is the sprite's one FILLED symbol and does not declare its own
+   paint — the `fill: none; stroke: currentColor` it would inherit lives on the
+   sprite's <g id="icon-defs"> and does not survive `<use>`. Without this it
+   renders as a black blob. #icon-mail is a stroke symbol and needs the opposite.
+   This project has paid for that distinction several times; both are stated. */
+.person__contact .icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.person__contact .person__icon--filled {
+  fill: currentColor;
+  stroke: none;
+}
+
+.person__contact .person__icon--stroked {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+}
+
+/* ---- Actions ------------------------------------------------------------ */
+.person__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+/* ---- Service links ------------------------------------------------------ */
+/* Ruled rows, not buttons: the actions above are the buttons, and a second row of
+   pills would compete with them. */
+.person__links {
+  list-style: none;
+  margin: var(--space-7) 0 0;
+  padding: 0;
+  width: 100%;
+  border-top: 1px solid var(--color-border);
+}
+
+.person__links li + li {
+  border-top: 1px solid var(--color-border);
+}
+
+.person__links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 2.75rem;
+  padding: var(--space-3) var(--space-2);
+  color: var(--color-text);
+  text-decoration: none;
+  text-align: left;
+  transition: color var(--duration-fast) var(--easing-standard);
+}
+
+.person__links a:hover,
+.person__links a:focus-visible {
+  color: var(--color-accent);
+}
+
+/* ⚠️ #icon-arrow-diagonal is three straight subpaths, so FILLING it paints
+   literally nothing — an unpainted `<use>` here is invisible rather than a black
+   smudge, which is exactly how this bug survived elsewhere on the site. */
+.person__links .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  flex-shrink: 0;
+}
+
+.person__note {
+  margin: var(--space-6) 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   /sicherheitscheck-walde/ — three booking options
+   ==========================================================================
+   ⚠️ The three targets are HubSpot scheduling pages, i.e. a third party. They are
+   LINKS, never an embed: vercel.json ships `default-src 'self'`, so an embedded
+   HubSpot widget or script would be blocked outright and the page would simply
+   look empty. A link navigates and is unaffected by CSP.
+   ========================================================================== */
+.check-options {
+  list-style: none;
+  margin: var(--space-7) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-5);
+  width: 100%;
+  text-align: left;
+}
+
+@media (min-width: 900px) {
+  .check-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.check-option {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-subtle);
+}
+
+.check-option h2 {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.check-option p {
+  margin: 0;
+  flex: 1;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ⚠️ The booking pages sit at 34rem like the person cards would, which is too
+   narrow for three columns — so this page widens its own column instead of
+   changing the shared one. */
+.person--wide .person__inner {
+  max-width: 64rem;
+}
+
+/* ==========================================================================
+   /linktree/ — a plain list of destinations
+   ========================================================================== */
+.linktree {
+  list-style: none;
+  margin: var(--space-7) 0 0;
+  padding: 0;
+  width: 100%;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.linktree a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: 3rem;
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: border-color var(--duration-fast) var(--easing-standard),
+    background-color var(--duration-fast) var(--easing-standard);
+}
+
+.linktree a:hover,
+.linktree a:focus-visible {
+  border-color: var(--color-white);
+  background-color: rgb(255 255 255 / 0.08);
+}
+
+/* A quiet divider label between groups of destinations. Not a heading: the page
+   has one <h1> and these are three words of orientation, not sections. */
+.linktree__label {
+  margin: var(--space-5) 0 calc(-1 * var(--space-1));
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 599.98px) {
+  .person__contact a,
+  .person__links a {
+    /* Left-align on a phone: centred rows of mixed-length data are harder to
+       scan, and the icon column gives the eye a left edge to follow. */
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .person__links a {
+    justify-content: space-between;
+  }
+}

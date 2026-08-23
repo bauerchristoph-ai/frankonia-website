@@ -230,11 +230,88 @@ nichts.
 
 ---
 
-## Noch offen (Blöcke E bis K)
+## 7 — Block E: sieben Personen- und Verweisseiten
+
+Commit `PLATZHALTER` · 7 neue Seiten in `pages/`, `css/page-person.css`,
+`docs/design-sources/person-pages.js`, 3 Porträts, 5 vCards, `vercel.json`
+
+Alle sieben liegen unter der **identischen URL wie auf der alten Seite**, weil sie
+auf gedruckten Karten und QR-Codes stehen.
+
+| ☐ | Was | Wo prüfen | Woran erkennbar |
+|---|---|---|---|
+| ☐ | Fünf Personenkarten | `/alexander-jaeger-sicherheitsdienst/`, `/alexander-jaeger-werkschutz/`, `/marco-bayer-sicherheitsdienst-2/`, `/marco-bayer-werkschutz-2/`, `/bryan-van-wey-werkschutz/` | Rundes Porträt, Name, Funktion, darunter Telefon, Mobil und E-Mail als antippbare Zeilen |
+| ☐ | Daten stimmen | jede Karte | Nummern, Funktionen und Zusatzzeilen wie auf der Live-Seite; nichts umformuliert |
+| ☐ | Kontakt speichern | „Kontakt speichern" antippen, am besten mit dem Handy | Es öffnet sich die Kontakt-Speichern-Ansicht, nicht ein Datei-Download |
+| ☐ | Leistungslinks | Marco-Bayer-Seiten und `/alexander-jaeger-werkschutz/` | Führen auf die **neuen** Leistungsseiten, ohne Umleitungs-Zwischenschritt |
+| ☐ | Terminbuchung | `/sicherheitscheck-walde/` | Drei Optionen (Büro, Online, vor Ort), jede öffnet die HubSpot-Buchung in neuem Tab |
+| ☐ | Linktree | `/linktree/` | Liste aller wichtigen Seiten, gruppiert nach Leistungen und Unternehmen |
+| ☐ | Nicht im Index | Seitenquelle jeder der sieben | `noindex,follow`, und keine der sieben steht in `/sitemap.xml` |
+
+**Die Porträts kommen von der Live-Seite, nicht aus den Studio-Ordnern.** Genau
+diese Gesichter stehen heute auf den gedruckten Karten, und alle drei sind derselbe
+runde Ausschnitt aus demselben Shooting — damit sehen die drei Karten wie ein Satz
+aus. Aus den Studio-Ordnern hätte ich aus durchnummerierten Vorschauen raten müssen.
+
+**Die vCards sind unverändert deine Dateien**, mit Adresse, Fax, Arbeits-URL und
+(in vier von fünf) eingebettetem Foto. Selbst erzeugte hätten Felder verloren.
+
+**Absichtlich ohne Animations-JavaScript.** Jede andere Seite lädt GSAP, ScrollTrigger
+und Lenis; hier wären das rund 50 KB Fremd-JavaScript vor einer Telefonnummer, für
+jemanden, der mit einer Karte in der Hand auf dem Parkplatz steht.
+
+⚠️ **Tippfehler in deinen vCards, nicht von mir korrigiert:** beide Jäger-Dateien
+enthalten `TITLE:Vetriebsleiter` (ein „r" fehlt). Das landet so in den Adressbüchern
+aller Empfänger. Auf der Seite selbst steht korrekt „Vertriebsleiter" — es betrifft
+nur die Datei. Sag Bescheid, dann ändere ich beide Zeilen.
+
+⚠️ **Für Block G vorgemerkt:** die Marco-Bayer-Seite verlinkte
+`/frankonia-baustellenbewachung` — diese alte URL fehlt in deiner Redirect-Liste
+(G1 nennt sieben, diese ist die achte).
+
+⚠️ **Nicht verlinkt, mit Absicht:** die Büromanagement-Stellenanzeige auf der
+jobs-Subdomain (du hast sie am 22.08. als veraltet bestätigt) und der Anker
+`/#dienstleistungen`, der auf eine Sektions-ID zeigte, die es auf der neuen
+Startseite nicht gibt. `/jobs/` und „Alle Leistungen im Überblick" decken beides ab.
+
+---
+
+## 8 — Behobener Fehler, der seit dem 21.08. auf allen Seiten live war
+
+⚠️⚠️ **Ganz oben auf jeder Seite stand ausgelaufener Kommentartext.** Bei der
+Social-Share-Arbeit (Abschnitt 2) habe ich in einen HTML-Kommentar in
+`partials/head-common.html` einen Include-Marker **mit seinen Delimitern**
+geschrieben. Das darin enthaltene `-->` beendet den Kommentar zu früh — der Rest der
+Notiz wurde als sichtbarer Text ausgegeben, auf **allen 61 Seiten**.
+
+**Warum es so lange durchging:** ich habe nach jeder Änderung die Meta-Tags
+programmatisch geprüft und Ausschnitte gerendert, aber nie den Seitenanfang
+angesehen. Meine Ausschnitte begannen jeweils unterhalb der Kopfzeile.
+
+Behoben: der Marker wird im Kommentar nur noch benannt, nicht geschrieben.
+**Geprüft: 0 von 61 Seiten haben noch Fremdtext im Kopfbereich.** Zusätzlich gibt es
+jetzt eine Prüfung, die genau diesen Fehler findet (verschachteltes `<!--` in den
+Quellen und Fremdtext im `<head>` der gebauten Seiten).
+
+| ☐ | Was | Wo prüfen | Woran erkennbar |
+|---|---|---|---|
+| ☐ | Kein Kommentartext mehr sichtbar | beliebige Seite, ganz oben | Direkt unter der Kopfzeile beginnt der Inhalt; kein englischer Fließtext über dem Logo |
+
+Ein zweiter, kleinerer Fund derselben Runde: der Breadcrumb-Chevron war auf den
+neuen Seiten unsichtbar, weil seine Regel in `page-service.css` lag, die diese
+Seiten nicht laden. Die Regel existierte bereits **zweimal wortgleich** und ist nun
+einmal in `components.css` — beide Kopien sind gelöscht, und Breadcrumbs sind auf
+allen Seitentypen gegengeprüft.
+
+⚠️ **Nur notiert, nicht geändert:** `/kontakt/` schreibt im Breadcrumb „Home", alle
+anderen Seiten „Startseite".
+
+---
+
+## Noch offen (Blöcke F, G, J, K)
 
 Wird hier fortgeschrieben, sobald die Blöcke durch sind.
 
-- E — sieben Personenseiten (inkl. `/linktree/`)
 - F — acht Blogartikel prüfen und portieren
 - G — Redirects in `vercel.json`
 - J — `/datenschutz/` Übergangsfassung

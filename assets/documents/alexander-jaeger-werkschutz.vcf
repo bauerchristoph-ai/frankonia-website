@@ -1,0 +1,16 @@
+BEGIN:VCARD
+VERSION:3.0
+N;CHARSET=UTF-8:Jäger;Alexander;;;
+FN;CHARSET=UTF-8: Alexander Jäger
+ORG;CHARSET=UTF-8:FRANKONIA Werkschutz GmbH & Co. KG
+TITLE;CHARSET=UTF-8:Vetriebsleiter
+URL;WORK:https://frankonia-werkschutz.de/
+EMAIL;type=WORK;type=PREF:a.jaeger@frankonia-werkschutz.de
+TEL;type=WORK;VOICE:+49951964352-70
+TEL;type=CELL;MOBILE:+49 176 17975703
+TEL;type=FAX;WORK:+49951964352-90
+ADR;CHARSET=UTF-8;WORK;type=pref:;;Neuerbstraße 19;Bamberg;;96052;Deutschland
+LABEL;WORK;PREF;ENCODING=QUOTED-PRINTABLE;CHARSET=UTF-8:Neuerbstraße 19=0D=0A=
+96052 Bamberg Deutschland
+REV:2026-02-27T14:44:30+01:00
+END:VCARD

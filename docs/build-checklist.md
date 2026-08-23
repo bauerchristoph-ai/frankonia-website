@@ -32,6 +32,93 @@ anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
 
+**2026-08-23 — BLOQUE E: LAS 7 PÁGINAS DE PERSONA / PUNTERO, EN SUS URLS
+ORIGINALES.** Reconstruidas, no redirigidas: están impresas en tarjetas y códigos QR.
+Generador `docs/design-sources/person-pages.js` + `css/page-person.css`.
+
+- [x] **Copy verbatim de la página viva** (leída el 2026-08-23, URL por URL):
+      nombres, funciones, los DOS teléfonos de cada persona, las líneas de
+      cualificación IHK y el claim de Bryan Van Wey. **Sólo se reescribieron los
+      DESTINOS**: las URLs viejas llevaban prefijo `frankonia-`. Se escriben
+      directas a las nuevas — un link interno no debe gastar un salto.
+- [x] ⚠️ **EL CTA PRINCIPAL ES UN vCard, no un formulario**, y eso hace que estas
+      páginas queden FUERA de la regla G2 a propósito: G2 ordena el par
+      oferta/teléfono de un hero de SERVICIO. En una tarjeta de visita la acción
+      primaria es guardar el contacto.
+      Las 5 vCards se **re-hostean tal cual**: son los registros del cliente, con
+      dirección, fax, URL de trabajo y (en 4 de 5) foto embebida. Generarlas de
+      nuevo habría perdido campos en silencio.
+- [x] ⚠️ **`vercel.json` necesitó una regla de Content-Type para `.vcf`.** Sin
+      declararlo se sirve como `application/octet-stream` y iOS ofrece "descargar
+      archivo" en vez de "añadir contacto" — que es justamente para lo que existe
+      el QR en una tarjeta impresa.
+- [x] ⚠️ **LOS RETRATOS SALEN DE LA PÁGINA VIVA, NO DE LOS SHOOTINGS.** Los
+      carpetas de estudio sólo tienen previews numeradas, o sea había que adivinar;
+      la página viva tiene exactamente la cara que está impresa en la tarjeta, y
+      las tres son el MISMO recorte circular del mismo shooting, así que las tres
+      fichas se leen como un juego. `Alexander-Jaeger.png` y `-1.png` son
+      byte-idénticas (md5), así que un archivo sirve a sus dos páginas.
+      Van como **WebP + PNG, no JPEG**: el círculo es blanco opaco con esquinas
+      TRANSPARENTES, y un fallback JPEG no lleva alfa — sin él las esquinas
+      saldrían cuadradas y blancas sobre esta página oscura.
+- [x] ⚠️ **SIN JAVASCRIPT DE MOVIMIENTO en las 7**: ni GSAP, ni ScrollTrigger, ni
+      Lenis, ni hero-reveal. Toda otra página carga ese stack; acá serían ~50KB de
+      JS de terceros delante de un número de teléfono, para alguien parado en un
+      estacionamiento con una tarjeta en la mano. El chrome sólo necesita
+      `js/main.js`, que sigue llegando por head-common.
+- [x] **`noindex, follow` en las 7 y NINGUNA en el sitemap** (verificado sobre el
+      build). Son delgadas y personales: indexadas competirían con las páginas de
+      servicio reales. Siguen alcanzables, que es el punto del QR.
+- [x] **Medido sobre el build: 0 problemas** — un solo `<h1>` por página, canonical
+      correcto, cero tokens sin resolver, **cero destinos o assets faltantes** entre
+      todos los links de las 7, las 5 vCards parsean, y la regla de `.vcf` está en
+      `vercel.json`.
+
+- [ ] ⚠️ **TIPO EN LAS vCARDS DEL CLIENTE, no corregido:** las dos de Jäger dicen
+      `TITLE:Vetriebsleiter` (falta una "r"). Eso entra así en la agenda de todos
+      los que escaneen la tarjeta. En la PÁGINA dice bien "Vertriebsleiter" — es
+      sólo el archivo. Son dos líneas.
+- [ ] ⚠️ **PARA EL BLOQUE G: falta `/frankonia-baustellenbewachung` en la lista de
+      redirects.** La página viva de Marco Bayer la enlazaba; G1 nombra siete URLs
+      viejas de servicio y ésta es la octava.
+- [ ] 🟡 **No enlazados a propósito**: la vacante de Büromanagement en la subdomain
+      jobs (el cliente la confirmó vencida el 22-08) y el ancla
+      `/#dienstleistungen`, que apuntaba a un id de sección que no existe en el
+      homepage nuevo.
+- [ ] 🟡 `/kontakt/` escribe "Home" en su breadcrumb y todas las demás
+      "Startseite". Copy existente, sólo anotado.
+
+**2026-08-23 — ⚠️⚠️ DEFECTO PROPIO QUE ESTUVO VIVO EN LAS 61 PÁGINAS DOS DÍAS, Y LA
+LECCIÓN DE MEDICIÓN QUE LO PERMITIÓ.**
+
+- [x] **En la pasada de social-share del 21-08 escribí, DENTRO de un comentario HTML
+      de `partials/head-common.html`, el marcador de include CON sus delimitadores.**
+      El `-->` que contiene cierra el comentario antes de tiempo, así que el resto
+      de la nota se imprimió como TEXTO VISIBLE arriba de todo, en las 61 páginas.
+      ⚠️ **Este archivo ya documentaba exactamente esta trampa** (2026-08-14,
+      `partials/sk-doc.html`, con la instrucción literal "referirse al marcador por
+      nombre, nunca escribirlo con sus delimitadores"). Documentarla no alcanzó.
+- [x] ⚠️⚠️ **POR QUÉ SOBREVIVIÓ TRES COMMITS: TODAS MIS VERIFICACIONES LEÍAN LOS
+      META TAGS Y MIS CAPTURAS EMPEZABAN DEBAJO DEL HEADER.** El texto salía ARRIBA
+      de la página, y ningún recorte lo incluía. Apareció recién al renderizar una
+      página nueva completa.
+      **Regla que queda: después de tocar `head-common.html` o cualquier partial
+      compartido, mirar el BORDE SUPERIOR de una página renderizada.**
+- [x] **Arreglado y verificado: 0 de 61 páginas con texto ajeno en el `<head>`.** Hay
+      ahora una sonda que caza las dos formas del defecto — un `<!--` anidado en las
+      fuentes y prosa suelta en el `<head>` del build.
+      ⚠️ **La primera versión de esa sonda reportó 61 de 61 y era un falso positivo:
+      contaba el contenido de `<title>`,** que es texto legítimo dentro de `<head>`.
+- [x] ✅ **Hallazgo lateral, arreglado como corresponde:** el chevrón del breadcrumb
+      era invisible en las páginas nuevas porque su regla vivía en
+      `page-service.css`, que ellas no cargan — y sin pintar, además, conservaba un
+      ancho por defecto que abría un hueco entre los dos crumbs. La regla ya existía
+      **DOS veces byte-idéntica** (page-service y page-contact), o sea la promoción
+      estaba vencida por la propia regla del proyecto. Ahora está **una vez en
+      `components.css`** y las dos copias se borraron. Breadcrumbs contrastados en
+      los cuatro tipos de página.
+
+
 **2026-08-23 — BLOQUE D: NAV, BADGE DE GOOGLE Y FOOTER.** Tres cosas
 independientes, y la primera destapó un defecto real de layout.
 

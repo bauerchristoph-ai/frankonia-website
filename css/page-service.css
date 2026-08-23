@@ -154,16 +154,9 @@ main h2 {
    still ships the older "/" version, so until that moves, every page repeats
    this one rule. The sprite's #icon-chevron points left; it is mirrored rather
    than adding a second symbol. */
-.breadcrumbs__sep-icon {
-  width: 0.85em;
-  height: 0.85em;
-  transform: scaleX(-1);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
+/* The chevron rule that used to sit here moved to components.css on 2026-08-23,
+   when a third page type needed it. Both page-scoped copies were byte-identical;
+   see the note at .breadcrumbs__sep-icon there. */
 
 /* ---- Shared inline "read on" link ---- */
 /* One link treatment for every cross-link in the page's body (highlight box,

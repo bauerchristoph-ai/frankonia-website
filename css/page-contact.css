@@ -151,16 +151,9 @@
 
 /* The sprite chevron points left; mirrored here instead of adding a second
    symbol. Sized in em so it tracks the breadcrumb's own font-size. */
-.breadcrumbs__sep-icon {
-  width: 0.85em;
-  height: 0.85em;
-  transform: scaleX(-1);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
+/* The chevron rule that used to sit here moved to components.css on 2026-08-23,
+   when a third page type needed it. Both page-scoped copies were byte-identical;
+   see the note at .breadcrumbs__sep-icon there. */
 
 /* The eyebrow's shared blue is calibrated for black (see components.css) and
    is too light at this size on white — same fix, same value, as

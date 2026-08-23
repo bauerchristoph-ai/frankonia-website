@@ -730,6 +730,30 @@
   color: color-mix(in srgb, var(--color-text) 40%, transparent);
 }
 
+/* PROMOTED HERE 2026-08-23, from two byte-identical page-scoped copies
+   (page-service.css and page-contact.css, both now deleted). The project's own
+   rule is that a third consumer promotes rather than copies again — and the third
+   consumer arrived as a bug, not as a choice: the new person pages do not load
+   page-service.css, so their chevron had no size and no paint at all. Unpainted it
+   was invisible AND it kept a default icon width, which left a visible gap between
+   the two crumbs. Every page's breadcrumb gets it from here now.
+
+   ⚠️ `fill: none; stroke: currentColor` is not belt-and-braces: #icon-chevron's own
+   paint lives on the sprite's <g id="icon-defs"> and does not survive `<use>`, so
+   without these two lines the glyph is a filled black blob.
+   ⚠️ `scaleX(-1)` is load-bearing too — the sprite's chevron points LEFT
+   (M15 5l-7 7 7 7), and a breadcrumb separator has to point the other way. */
+.breadcrumbs__sep-icon {
+  width: 0.85em;
+  height: 0.85em;
+  transform: scaleX(-1);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 /* ---- FAQ ---- */
 /* Native <details>/<summary> — zero JS, keyboard-operable and readable
    with CSS entirely disabled, content never depends on JavaScript.
