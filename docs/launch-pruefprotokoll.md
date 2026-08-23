@@ -163,7 +163,7 @@ derselben Aussage.
 
 ## 6 — Block D: Navigation, Google-Badge, Footer
 
-Commit `PLATZHALTER` · `partials/header-de.html`, `css/site-chrome.css`,
+Commit `acad12c` · `partials/header-de.html`, `css/site-chrome.css`,
 `css/components.css`, `css/page-home.css`, `css/page-referenzen.css`, `build.js`,
 `content/coverage.json`
 
