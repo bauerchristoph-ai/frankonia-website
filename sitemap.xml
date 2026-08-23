@@ -397,14 +397,20 @@
     both were live 404s
     linked from every page's footer, so they need to exist and be crawlable, but
     neither should ever compete with a service page for attention.
-    ⚠️ /datenschutz/ IS DELIBERATELY NOT LISTED. It currently ships
-    `robots: noindex` because its text is a placeholder awaiting the client's
-    automated privacy scanner, and listing a noindex URL in a sitemap sends two
-    contradictory signals. ADD IT HERE the same day that noindex comes off.
+    ✅ /datenschutz/ IST SEIT DEM 23.08.2026 GELISTET (Block J). Der Grund für die
+    frühere Auslassung ist entfallen: die Seite trägt kein `noindex` mehr, weil sie
+    keinen Platzhalter mehr enthält, sondern die Übergangsfassung des echten
+    Datenschutztextes von der alten Live-Seite.
   -->
   <url>
     <loc>https://frankonia-sicherheit.de/impressum/</loc>
     <lastmod>2026-08-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.1</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/datenschutz/</loc>
+    <lastmod>2026-08-23</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.1</priority>
   </url>

@@ -32,6 +32,79 @@ anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
 
+**2026-08-23 — BLOQUE J: `/datenschutz/` DEJA DE SER UNA SHELL. Entra la
+Übergangsfassung de la página viva, sale el `noindex`, y la URL entra al sitemap.**
+`pages/datenschutz.html` + 4 reglas nuevas en `css/page-legal.css` + `sitemap.xml`.
+
+- [x] **El texto es el de la página viva, palabra por palabra, y NO se transcribió a
+      mano**: se extrajo por script del HTML servido (encabezados, párrafos y listas
+      en orden de documento, con la agrupación `<ul>` conservada). En un texto legal
+      un typo es un cambio de contenido.
+- [x] **Dos ajustes estructurales, ninguno de texto**: los niveles h4/h5 pasan a
+      h3/h4 porque la página ya tiene h1 y h2 y un salto de nivel va contra las
+      reglas del proyecto (la misma desviación que `/impressum/` hace respecto de la
+      página viva), y las direcciones de e-mail y el teléfono quedan enlazados.
+- [x] ⚠️⚠️ **NO SE PUBLICARON LOS DOS ÚLTIMOS APARTADOS: "Google Analytics" y
+      "reCAPTCHA".** Esta web no usa ninguno de los dos — no hay analytics, ni tag
+      manager, ni reCAPTCHA, y la CSP de `vercel.json` es `script-src 'self'` sin un
+      solo tercero. Publicarlos declararía un tratamiento que **no ocurre**: eso no es
+      una cuestión de redacción sino una afirmación falsa en un documento
+      jurídicamente vinculante. Vuelven cuando los servicios existan de verdad, junto
+      con el banner de consentimiento y la declaración de Cookiebot.
+- [x] ✅ **El bloque de Verantwortlicher ganó lo que la shell no tenía: el
+      DATENSCHUTZBEAUFTRAGTE** (Michael Lang, con su e-mail), que el Art. 13 Abs. 1
+      Buchst. b) DSGVO exige en cuanto hay uno nombrado. Y el responsable con nombre
+      y su propia extensión.
+      ⚠️ **La dirección postal se queda aunque el Impressum esté enlazado**, y no por
+      simetría: el apartado 5.6 del texto remite a "unsere zu Beginn dieser
+      Datenschutzerklärung aufgeführte Postadresse" — sin ese bloque la remisión
+      apunta al vacío. **El bloque de contacto genérico anterior SALIÓ**: con el
+      responsable y su extensión ahí, dos vías de contacto en paralelo dejan sin
+      saber cuál vale para una solicitud de datos.
+- [x] **`noindex` fuera y la URL en el sitemap** (priority 0.1, como el Impressum).
+      El comentario del sitemap que decía "deliberately not listed" quedó actualizado
+      en la misma edición, no colgando.
+- [x] ✅ **DOS DEFECTOS DE ESTILO QUE APARECIERON AL IMPORTAR, arreglados en
+      `css/page-legal.css` y medidos, no supuestos:**
+      1. ⚠️⚠️ **LA JERARQUÍA ESTABA INVERTIDA: la h4 renderizaba 25px/700 y su propia
+         h3 madre 20px/500** — o sea el subapartado se leía más importante que el
+         apartado. La página nunca había tenido h4, así que caía a la regla base de
+         headings, que además le daba el tracking de −1px reservado para tamaños
+         display. Ahora 16px/600 con tracking normal.
+      2. **Las listas no tenían viñeta ni sangría**: `reset.css` pone
+         `list-style: none` en todo el sitio — correcto para navegación y grillas de
+         cards, que es de lo que esta página constaba. Acá hay enumeraciones reales
+         (qué datos se guardan, cuándo se ceden, qué derechos hay) y sin viñeta se
+         leen como frases cortadas en fila. En un texto legal eso es pérdida de
+         comprensión, no un detalle estético.
+      **Verificado que `/impressum/` no se movió** (comparte `.legal-doc`): su `<dl>`
+      de datos registrales renderiza igual y no apareció ninguna viñeta.
+- [x] **Medido: 0 tokens sin resolver, un solo `<h1>`, sin saltos de nivel, sin
+      scroll horizontal, columna de 704px.** Y en las 65 páginas: 58 indexables, 7
+      con `noindex` (las de persona del Bloque E), **cero páginas noindex en el
+      sitemap y cero indexables fuera de él**.
+
+- [ ] ⚠️⚠️ **TRES ERRORES EN EL TEXTO DEL CLIENTE, NO CORREGIDOS por instrucción
+      explícita** ("Ändere keine bestehenden Webtexte inhaltlich… notiere ihn im
+      Bericht"). Los tres están en el prüfprotokoll:
+      1. El apartado 5.1 invoca **"die Verschwiegenheitspflicht gem. § 83 StBerG"** —
+         el Steuerberatungsgesetz. Es un módulo de una plantilla para asesores
+         fiscales; para un prestador de seguridad la norma no aplica.
+      2. El segundo subtítulo del apartado 2 dice **"2.1 Aufruf der Webseite"** otra
+         vez, aunque debajo se describe el formulario de contacto. Debería ser
+         "2.2 Kontaktformular".
+      3. El apartado 6 declara como Stand el **18.05.2018**.
+- [ ] ⚠️ **LO QUE EL TEXTO NO CUBRE y el definitivo necesita**: las teselas de mapa
+      de **CARTO** en `/` y `/kontakt/` (una llamada a un tercero que transmite la IP
+      del visitante), los **datos de candidatura incluido el upload de CV** en
+      `/jobs/`, y la **reserva de citas de HubSpot** enlazada desde
+      `/sicherheitscheck-walde/`. Los tres los va a encontrar el scanner.
+- [ ] ⚠️ **Cuando llegue el scanner sigue vigente el aviso viejo: la CSP lo va a
+      bloquear.** `script-src 'self'` sin terceros, así que un scanner servido como
+      `<script>` externo se bloquea en silencio. Hay que agregar su host, y
+      `connect-src` si además baja su texto en runtime.
+
+
 **2026-08-23 — BLOQUE G: 58 REDIRECTS EN `vercel.json`, Y NINGUNA DE LAS 31 URLS
 VIEJAS QUEDA HUÉRFANA.** `vercel.json` + dos scripts nuevos en
 `docs/design-sources/` (`redirects-build.js`, `redirect-test.js`). **Cero cambios de

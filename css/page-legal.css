@@ -123,6 +123,55 @@
   margin-bottom: var(--space-3);
 }
 
+/* h4 kam mit der Datenschutz-Übergangsfassung dazu (Block J, 2026-08-23) — der
+   importierte Text hat Unterabschnitte wie "2.1 Aufruf der Webseite" unter seinen
+   numerierten Abschnitten. OHNE diese Regel war die Hierarchie UMGEKEHRT, und das
+   war messbar, nicht gefühlt: die h3 rendert 20px bei Schriftschnitt 500, die h4
+   fiel auf die Basisregel für Überschriften zurück und rendert **25px bei 700** —
+   also größer und fetter als ihre eigene Elternüberschrift. Dazu trug sie die
+   −1px-Laufweite aus base.css, die für Display-Größen gedacht ist und bei 16–20px
+   die Buchstaben zusammenschiebt (design-system §2, dieselbe Begründung wie eine
+   Regel weiter oben bei h3). Körpergröße mit mehr Gewicht ist der Unterschied,
+   der eine Unterüberschrift von einem Absatz trennt, ohne mit der h3 zu
+   konkurrieren. */
+.legal-doc h4 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  letter-spacing: normal;
+  line-height: var(--line-height-base);
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-3);
+}
+
+/* Listen ebenfalls neu mit der Übergangsfassung. reset.css setzt sitewide
+   `list-style: none` — richtig für Navigationslisten und Kartenraster, aus denen
+   diese Seite bis dahin bestand, aber hier stehen echte Aufzählungen: welche
+   Daten gespeichert werden, wann weitergegeben wird, welche Rechte bestehen.
+   Ohne Punkt und Einzug lesen die sich als abgebrochene Sätze hintereinander —
+   in einem Rechtstext ist das ein Verlust an Verständlichkeit, kein
+   Schönheitsfehler. Die Zeilenhöhe ist die des Absatzes, damit ein Listenpunkt
+   von drei Zeilen nicht dichter setzt als der Absatz darüber. */
+.legal-doc ul,
+.legal-doc ol {
+  margin-bottom: var(--space-4);
+  padding-left: var(--space-5);
+  list-style: disc;
+}
+
+.legal-doc ol {
+  list-style: decimal;
+}
+
+.legal-doc li {
+  font-size: var(--font-size-base);
+  line-height: 1.7;
+  margin-bottom: var(--space-2);
+}
+
+.legal-doc li::marker {
+  color: var(--color-text-muted);
+}
+
 .legal-doc > *:first-child {
   margin-top: 0;
 }

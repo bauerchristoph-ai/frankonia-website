@@ -530,11 +530,80 @@ Kunden erzählt. Änderbar in einer Zeile.
 
 ---
 
-## Noch offen (Blöcke J, K)
+## 11 — Block J: /datenschutz/ ist befüllt
+
+Commit `PLATZHALTER` · `pages/datenschutz.html`, `css/page-legal.css`, `sitemap.xml`
+
+| ☐ | Was | Wo prüfen | Woran erkennbar |
+|---|---|---|---|
+| ☐ | Text ist da | `/datenschutz/` | Sechs numerierte Abschnitte, Verantwortlicher mit Datenschutzbeauftragtem, Rechte-Kapitel 5.1 bis 5.8 |
+| ☐ | Wortgleich | Stichprobe gegen die alte Seite | Kein Satz umformuliert — der Text ist maschinell aus der Live-Seite übernommen, nicht abgeschrieben |
+| ☐ | Indexierbar | Seitenquelle | `index,follow,max-image-preview:large`, kein `noindex` mehr |
+| ☐ | In der Sitemap | `/sitemap.xml` | `/datenschutz/` ist gelistet, mit derselben Priorität wie das Impressum |
+| ☐ | Aus dem Footer erreichbar | beliebige Seite, Fußzeile | Link führt auf die befüllte Seite, nicht mehr auf einen Platzhalter |
+| ☐ | Aus dem Formular erreichbar | Einwilligungs-Checkbox in einem Formular | Der Link in „Ich habe die Datenschutzerklärung gelesen" öffnet den echten Text |
+
+**Der Text ist wortgleich deiner.** Er ist per Skript aus der ausgelieferten
+Live-Seite gelesen worden, nicht abgetippt: bei einem Rechtstext ist ein Tippfehler
+eine inhaltliche Änderung. Geändert habe ich nur zwei strukturelle Dinge, keinen
+Satz — die Überschriftenebenen (h4/h5 auf h3/h4, weil die Seite schon h1 und h2 hat
+und eine übersprungene Ebene gegen die Projektregeln geht) und die Verlinkung der
+E-Mail-Adressen und der Telefonnummer.
+
+⚠️⚠️ **Zwei Abschnitte habe ich NICHT übernommen: „Hinweise zur Datenverarbeitung im
+Zusammenhang mit Google Analytics" und „reCAPTCHA".** Diese Website setzt beides
+nicht ein — es gibt kein Analytics, keinen Tag Manager, kein reCAPTCHA, und die
+Sicherheitsrichtlinie des Hostings erlaubt überhaupt keine Fremdskripte. Sie zu
+veröffentlichen würde eine Datenverarbeitung erklären, die nicht stattfindet. Das ist
+keine Formulierungsfrage: es wäre eine falsche Aussage in einem rechtlich
+verbindlichen Dokument. Sie kommen zurück, sobald die Dienste wirklich laufen — dann
+zusammen mit dem Consent-Banner und der Cookiebot-Deklaration.
+
+✅ **Ein echter Gewinn gegenüber der Platzhalterseite: der Datenschutzbeauftragte
+steht jetzt drin** (Herr Michael Lang, mit E-Mail-Adresse). Art. 13 Abs. 1 Buchst. b)
+DSGVO verlangt diese Angabe, sobald ein Beauftragter benannt ist — die Shell nannte
+ihn überhaupt nicht. Dazu der Verantwortliche mit Namen und Durchwahl.
+
+⚠️⚠️ **Drei Fehler in deinem Text, absichtlich NICHT korrigiert** — du hattest
+ausdrücklich gesagt, ich soll bestehende Texte nicht eigenmächtig ändern, sondern
+melden:
+
+| ☐ | Wo | Was |
+|---|---|---|
+| ☐ | Abschnitt 5.1 | Verweist auf „die Verschwiegenheitspflicht gem. **§ 83 StBerG**" — das Steuerberatungsgesetz. Ein Textbaustein aus einer Steuerberater-Vorlage; für einen Sicherheitsdienstleister ist die Norm ohne Bedeutung. |
+| ☐ | Abschnitt 2 | Der zweite Unterpunkt heißt nochmals **„2.1 Aufruf der Webseite"**, obwohl darunter das Kontaktformular beschrieben wird. Müsste „2.2 Kontaktformular" heißen. |
+| ☐ | Abschnitt 6 | Als Stand ist der **18.05.2018** angegeben. |
+
+⚠️ **Was der Text nicht abdeckt und der endgültige braucht.** Drei Dinge auf der
+neuen Seite kommen in der alten Erklärung nicht vor, und der Scanner wird alle drei
+finden:
+
+| ☐ | Was | Wo |
+|---|---|---|
+| ☐ | Kartenkacheln von CARTO — ein Aufruf an einen Dritten, der die IP der Besucher überträgt | Startseite und `/kontakt/` |
+| ☐ | Bewerbungsunterlagen samt Lebenslauf-Upload | `/jobs/` |
+| ☐ | Terminbuchung über HubSpot | verlinkt von `/sicherheitscheck-walde/` |
+
+✅ **Zwei Darstellungsfehler, die beim Einbau auffielen und behoben sind** — beide
+entstanden dadurch, dass diese Seite vorher weder Unterüberschriften noch Listen
+hatte:
+die Hierarchie war **umgekehrt** (die Unterüberschrift rendert 25 Pixel fett, ihre
+eigene Überschrift darüber nur 20 Pixel normal), und die Aufzählungen hatten **weder
+Punkt noch Einzug**, weil die Seite sitewide `list-style: none` erbt. In einem
+Rechtstext, der aufzählt welche Daten gespeichert werden, ist das ein Verlust an
+Verständlichkeit. Gegengeprüft, dass das Impressum sich dadurch nicht verändert hat.
+
+⚠️ **Für den Scanner gilt weiter der alte Hinweis: die Sicherheitsrichtlinie wird ihn
+blockieren.** `script-src 'self'` erlaubt keine Fremdskripte, ein als externes
+`<script>` ausgeliefertes Werkzeug wird also stillschweigend geblockt und die Seite
+bleibt leer. Sein Host muss in `vercel.json` eingetragen werden.
+
+---
+
+## Noch offen (Block K)
 
 Wird hier fortgeschrieben, sobald die Blöcke durch sind.
 
-- J — `/datenschutz/` Übergangsfassung
 - K — Datenstruktur für Stellenanzeigen (ohne Schema, es gibt keine Vakanz)
 
 **Nicht in diesem Durchgang, bleibt offen:** H und I (brauchen Zugangsdaten),
