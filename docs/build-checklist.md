@@ -32,6 +32,79 @@ anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
 
+**2026-08-23 — BLOQUE D: NAV, BADGE DE GOOGLE Y FOOTER.** Tres cosas
+independientes, y la primera destapó un defecto real de layout.
+
+- [x] **D1 — la Startseite entra al nav como PRIMER ítem**, en las 54 páginas.
+      `initActiveNavLink()` no necesitó una línea: compara `link.pathname` con la
+      ruta actual, y para `href="/"` eso es cierto en el homepage y falso en toda
+      página interior. El drawer móvil renderiza la misma lista, así que viene
+      gratis.
+- [x] ⚠️⚠️ **EL SÉPTIMO ÍTEM ROMPIÓ EL NAV Y LA CAUSA NO SE VE MIRANDO LA FILA:**
+      a 1418px "Über uns" pasaba a DOS líneas (36x61 en vez de 65x36, medido).
+      No era falta de lugar en el header — sobraban ~120px a cada lado. Es que
+      `.site-nav__list` es `position: absolute; left: 50%`, así que su ancho
+      shrink-to-fit está capado por **la mitad** del header (709px a 1418) aunque
+      el `translate(-50%)` después lo centre. Siete ítems más seis gaps de 32px
+      miden 731. Al ser `flex-wrap: nowrap` la fila no podía envolver, así que el
+      ítem más comprimible absorbió la diferencia partiéndose.
+      **Arreglado con `width: max-content`.** Medido a viewport 1400 / 1418 / 1490
+      / 1578 / 1898: **una sola línea en los cinco**, y en el más angosto quedan
+      95px de aire al logo y 99 al CTA. **Un OCTAVO ítem tiene que re-medir eso.**
+- [x] **D2 — el badge de Google pierde la pastilla**: sin relleno, sin radio, sin
+      sombra, sin padding. Está en **42 páginas** y como card blanca elevada se
+      leía como un BOTÓN al lado del CTA primario.
+- [x] ⚠️⚠️ **Y POR ESO LOS COLORES PASARON A TOKEN, no a blanco literal como pedía
+      el brief.** Mientras era una pastilla blanca podía cablear sus valores "on
+      white" cayera en la sección que fuera. Sin relleno hereda la sección, y la
+      sección **no siempre es oscura**: 41 de los 42 están en un hero oscuro, pero
+      el de `/referenzen/` (Kundenstimmen) vive dentro de un `.section--light`.
+      Ese scope re-declara `--color-text` y `--color-text-muted`, así que con token
+      las dos superficies salen bien sin una segunda regla — mientras que el blanco
+      literal habría sido **invisible** en ese 42.º. Es el mismo modo de falla que
+      este archivo ya pagó con `.ag-hero__alt` y `.city-callout__lede`.
+- [x] **Se borraron DOS overrides page-scoped que sólo existían por la pastilla:**
+      el relleno tintado de `/referenzen/` (habría quedado como la ÚNICA pastilla
+      del sitio, o sea lo contrario del cambio) y el bloque de teléfono del
+      homepage, cuyos valores existían para recomprar el ancho que costaba el
+      padding. **La regla G6 (más padding en el badge) queda superseded**: no hay
+      esquina que proteger, así que es moot, no revertida.
+- [x] ⚠️ **NO HAY LINK AL PERFIL DE GOOGLE, y nunca lo hubo.** El brief dice "die
+      Verlinkung bleibt", pero el badge **no está enlazado en ninguna página**
+      (verificado en las 42). Las únicas URLs de Google del proyecto son links de
+      RUTA a Maps en `/kontakt/`. No se inventó una: hace falta la dirección del
+      perfil.
+- [x] **D3 — los 5 Einsatzgebiete sin página propia entran al footer**, después de
+      Forchheim y antes de "Alle Einsatzgebiete". Verificado sobre el build: el
+      orden es 10 links, 5 spans, el hub al final, **en las 54 páginas**.
+      El renderer de `footer` en build.js ahora emite `<a>` o `<span>` según haya
+      href, y su filtro pasó de "sólo con href" a "todos". `chips` y `mentions` no
+      se tocan.
+- [x] ⚠️ **EL HOVER TUVO QUE ESCOPARSE A `a.footer-pill`**, y esto es lo único
+      delicado de D3: un `<span>` SÍ matchea `:hover`, así que la regla sin
+      escopar les habría dado estado de link — exactamente el "parece un link, se
+      siente como un link y no hace nada" que el cliente pidió evitar. Foco y tab
+      stop no necesitan guarda: un `<span>` no es focuseable.
+      El día que uno consiga página, alcanza con darle href en `coverage.json`.
+
+- [x] ⚠️⚠️ **TRAMPA DE MEDICIÓN QUE CASI PUBLICÓ UNA REGRESIÓN INEXISTENTE, y es
+      nueva en este archivo: UNA PÁGINA-PROBE AISLADA NO TIENE EL SPRITE.** Extraje
+      la sección de `/referenzen/` a una página propia con sus stylesheets para
+      medirla, y las cinco estrellas doradas del badge **no se dibujaban** — el
+      logo G (que es un `<img>`) y el texto sí. Reporté eso como regresión propia.
+      No lo era: sin `<!-- include: icon-sprite -->` un `<use href="#icon-star">`
+      no resuelve nada. **Se descartó con un A/B controlado** — el mismo markup y
+      los mismos stylesheets sobre blanco puro, sobre `.section--light` y sobre
+      negro, con el sprite incluido: en los tres las estrellas salen doradas y en
+      `.section--light` el texto sale oscuro, que es justo el caso de
+      `/referenzen/`.
+      ⚠️ **Y el escaneo de píxeles casi confirmó el bug falso:** contó 372 píxeles
+      "dorados" en la página aislada, que agrupados por fila resultaron ser
+      **antialiasing de texto repartido en 37 formas** a lo ancho de dos
+      encabezados. Sólo 36 caían en la fila del badge, o sea el logo G. **Un
+      conteo de color sin agrupar por región no dice nada.**
+
+
 **2026-08-23 — BLOQUE C: LOS CINCO MEILENSTEINE DE `/ueber-uns/` SON OTROS, Y ESO
 INVALIDÓ LA MATEMÁTICA DE LA ZEITLEISTE.** Copy del cliente, verbatim.
 
@@ -70,7 +143,12 @@ INVALIDÓ LA MATEMÁTICA DE LA ZEITLEISTE.** Copy del cliente, verbatim.
       ⚠️ **Nota de medición: mi sonda reportó "kollision=JA" a 768 y es un falso
       positivo** — ahí el layout es VERTICAL y estaba midiendo huecos horizontales.
 
-- [ ] ⚠️⚠️ **CONTRADICCIÓN DE CONTENIDO, NO CORREGIDA POR MÍ (es copy existente):
+- [x] ✅ **RESUELTO 2026-08-23, sin cambiar nada** (cliente: "Bischberg gehört zu
+      Bamberg deswegen passt das so wie es ist"). Bischberg está en el Landkreis
+      Bamberg, o sea el lede habla de la región y el Meilenstein del municipio —
+      dos niveles de precisión de la misma afirmación, no una contradicción. Queda
+      registrado porque la próxima persona que lea las dos líneas va a volver a
+      tropezar con ellas. Lo que se había observado era:
       el lede de esa misma sección dice "2016 in Bamberg gegründet" y el
       Meilenstein nuevo dice "Gründung in Bischberg".** Están a ~100px de
       distancia en la misma pantalla y no pueden ser los dos ciertos; el

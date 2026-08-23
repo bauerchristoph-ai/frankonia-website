@@ -418,26 +418,36 @@
 }
 
 /* ---- Google review card ---- */
-/* Matches a client-supplied reference: a light card with the real Google
-   "G" mark and gold stars, used as a deliberate bright "spotlight" surface
-   against the site's dark theme (same idea as the conversion form card).
+/* The real Google "G" mark and gold stars.
    Two colors here are documented exceptions to "five brand colors only":
    Google's own multi-color logo (assets/icons/google-icon.png) and the
    gold star color below, both kept for third-party recognizability —
    same reasoning as the WhatsApp button's brand green. Don't reuse gold
-   anywhere else on the site. Because the card is a light surface
-   regardless of the page's dark theme, its internal text colors are
-   deliberately hardcoded "on white" values, not the page's dark-mode
-   --color-text tokens. */
+   anywhere else on the site.
+   ⚠️ This used to describe a light "spotlight" CARD whose internal text colors
+   were deliberately hardcoded "on white" values rather than the page's tokens.
+   Both halves of that stopped being true on 2026-08-21 — there is no card and the
+   colors ARE tokens now, for the reason spelled out directly below. The two
+   third-party color exceptions above are the only part that still stands. */
 
+/* ⚠️ THE PILL IS GONE (client 2026-08-21): no fill, no radius, no shadow, no
+   padding — just the Google mark, the stars and the numbers, sitting on whatever
+   is behind them. It appears on 42 pages, and as a white elevated card it read as
+   a BUTTON next to the primary CTA and pulled attention off it.
+
+   ⚠️ AND THAT IS WHY THE COLOURS BELOW ARE TOKENS NOW. While this was a white
+   pill it could hardcode its own "on white" values whatever section it landed in.
+   Without a fill it inherits the section, and the section is not always dark:
+   41 of the 42 sit in a dark hero, but the one in /referenzen/'s Kundenstimmen is
+   inside a .section--light. That scope re-declares --color-text and
+   --color-text-muted, so token-based colour is correct on both surfaces for free —
+   whereas the white text the brief asks for, written literally, would have been
+   invisible on that 42nd one. Same failure this project has already paid for with
+   .ag-hero__alt and .city-callout__lede. */
 .review-card {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--space-5);
-  background-color: var(--color-white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  gap: var(--space-2);
 }
 
 .review-card__logo {
@@ -463,9 +473,11 @@
   height: 1.125rem;
 }
 
-/* Muted gray-on-white track, not a page token — see comment above. */
+/* The unfilled part of the rating. It used to be a fixed grey-on-white; with the
+   pill gone it has to follow the surface, so it is the ambient text colour held
+   back by opacity — which works on black and on white without a second rule. */
 .review-card__stars-track {
-  color: rgb(59 73 86 / 0.25);
+  opacity: 0.3;
 }
 
 /* Google's review-star gold — the one place this hue is used. Width is
@@ -488,12 +500,12 @@
 .review-card__value {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
-  color: var(--color-gray);
+  color: var(--color-text);
 }
 
 .review-card__count {
   font-size: var(--font-size-sm);
-  color: rgb(59 73 86 / 0.8);
+  color: var(--color-text-muted);
 }
 
 /* .review-card__stars-fill (above) has no width of its own — it's set
@@ -513,26 +525,25 @@
    white, is untouched — only size and boldness change here). Doesn't
    touch the base .review-card rules, so the full-size card elsewhere
    (.trust__review) is unaffected. */
-/* ⚠️ PADDING AND GAP BOTH STEPPED UP ONE (client rule G6, 2026-08-14: "give the
-   Google rating badge a bit more padding/whitespace"). It was --space-2/--space-3
-   (8/12px), which on a pill holding a logo, five stars, "4,7" and "97 Bewertungen"
-   left the text almost touching the rounded corner. Now 12/16px with a 12px gap.
-   The badge is an inline-flex pill, so this grows it in both axes and nothing
-   around it has a fixed height that could clip — verified in the three heroes
-   that carry it at 390 / 767 / 1440. */
-.review-card--sm {
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-}
+/* ⚠️ SUPERSEDES RULE G6 (2026-08-14), which stepped this badge's padding UP so the
+   text would not touch the rounded corner. There is no corner any more, so that
+   padding has nothing left to protect and the rule is moot rather than reversed.
 
+   What is left here is size. The client asked for the badge to be smaller so it
+   reads as clearly secondary to the primary CTA, and losing the pill already did
+   most of that; the logo and stars step down one notch on top. The numbers stay at
+   --font-size-sm, which is the smallest type token this project has. */
+/* No `gap` here any more: it would now repeat the base value exactly. The
+   modifier is still what carries the size difference below, and it stays in the
+   markup on all 42 pages. */
 .review-card--sm .review-card__logo {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .review-card--sm .review-card__stars .icon {
-  width: 0.875rem;
-  height: 0.875rem;
+  width: 0.8125rem;
+  height: 0.8125rem;
 }
 
 .review-card--sm .review-card__value {

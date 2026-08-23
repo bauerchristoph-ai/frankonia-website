@@ -889,11 +889,25 @@ a.site-nav__link {
      a check via npm run dev; if it collides, the breakpoint needs
      raising further, same as every previous round of this fight (see
      this file's own history a few lines up). */
+  /* ⚠️ `width: max-content` IS LOAD-BEARING, added 2026-08-21 with the seventh nav
+     item, and the reason is not obvious from looking at the row.
+     This list is absolutely positioned with `left: 50%`, so its shrink-to-fit width
+     is capped by the space from the centre to the RIGHT edge — half the header —
+     even though `translate(-50%)` then pulls it back to look centred. Seven items
+     plus six 32px gaps measure 731px, and half of a 1418px viewport is 709. So the
+     box was clamped to ~702 and, being `flex-wrap: nowrap`, the row could not wrap:
+     instead the widest shrinkable item absorbed it and "Über uns" broke onto two
+     lines, making that one item 36x61 instead of 65x36 (measured).
+     Sizing to the content removes the cap. It is safe because the row has room
+     where it actually matters: at 1400 the logo ends at 232 and the CTA starts at
+     ~1156, and a 731px centred list runs 334..1065. If this row ever gains an
+     EIGHTH item, measure that clearance rather than assuming it still holds. */
   .site-nav__list {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    width: max-content;
     flex-direction: row;
     align-items: center;
     flex-wrap: nowrap;
@@ -1232,8 +1246,14 @@ a.site-nav__link {
   flex-shrink: 0;
 }
 
-.footer-pill:hover,
-.footer-pill:focus-visible {
+/* ⚠️ SCOPED TO a.footer-pill ON PURPOSE (2026-08-21). This list now also contains
+   five Einsatzgebiete with no page of their own; they render as <span> with the
+   SAME class so they look identical to their neighbours. A <span> still matches
+   :hover, so an unscoped rule here would hand them a link's hover state — which is
+   exactly the "looks like a link, does nothing" trap to avoid. (Focus and the tab
+   stop need no guard: a <span> is not focusable.) */
+a.footer-pill:hover,
+a.footer-pill:focus-visible {
   border-color: var(--color-white);
   background-color: rgb(255 255 255 / 0.08);
   color: var(--color-white);

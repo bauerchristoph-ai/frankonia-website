@@ -685,35 +685,17 @@ main h2 {
     border-top: 1px solid rgb(255 255 255 / 0.14);
     gap: var(--space-3);
   }
-  /* The rating pill measured 273px of a 358px row, leaving the two seals to
-     squeeze into the remaining 85px — the row only just fitted at 390px and
-     wrapped below it. Tightening the pill's own padding and star size brings the
-     whole row inside 360px without enlarging anything. */
-  /* ⚠️ NOW THE FULL DESKTOP PADDING, 12/16px (client rule G6: more padding on the
-     rating badge — asked for a second time in the mobile review, point 20).
-     An earlier pass the same day stopped one step short of this, at 8/12px, on the
-     grounds that "at the desktop 12/16px the row overflowed". Re-measured isolating
-     the padding alone, that does not hold: at 390px the row is 358px wide and its
-     content is 327px (pill 257 + gap 12 + seals 59), so there is 31px of slack and
-     the +8px this costs leaves 23px. That earlier test moved the padding AND the
-     star/logo sizes together, which is why it overflowed — those two reductions
-     (below) are what bought the room, and they stay.
-     Below ~360px the row wraps, as it already did at 8/12px: the pill alone is then
-     265px inside a 288px row, and .hero__trust is flex-wrap: wrap, so it wraps
-     instead of overflowing. If this row ever gains a fourth element, re-measure. */
-  .hero__rating .review-card--sm {
-    gap: var(--space-2);
-    padding: var(--space-3) var(--space-4);
-  }
-  .hero__rating .review-card--sm .review-card__logo {
-    width: 1.125rem;
-    height: 1.125rem;
-  }
-  .hero__rating .review-card--sm .review-card__stars .icon {
-    width: 0.75rem;
-    height: 0.75rem;
-  }
-  /* Matching the (now shorter) rating pill's height balances the row. */
+  /* ⚠️ THE PHONE-ONLY OVERRIDE FOR THE RATING BADGE IS GONE (2026-08-21), and it
+     is worth knowing why rather than retuning it: every value in it existed to
+     make a PILL fit beside the two DEKRA seals in a 358px row. It trimmed the
+     pill's padding, its logo and its star size to buy back width, and the long
+     note that used to be here argued about exactly how much padding the row could
+     afford. The badge has no padding, no fill and no radius any more, so the width
+     problem it solved does not exist — the whole row got narrower for free.
+     Re-measured after removing it; the seals keep their own height rule below. */
+  /* The seals stay at 2rem: they were matched to the pill's height, and the mark
+     that replaced it is shorter still, so this is now the taller of the two and
+     what sets the row's height. */
   .hero__badge { height: 2rem; }
 }
 

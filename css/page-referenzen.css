@@ -438,25 +438,18 @@
   margin-top: var(--space-5);
 }
 
-.ref-quotes__rating .review-card {
-  background-color: rgb(59 73 86 / 0.04);
-  box-shadow: none;
-}
+/* ⚠️ THE SURFACE OVERRIDE THAT USED TO SIT HERE IS DELETED (2026-08-21). It gave
+   this badge a tinted fill because the base component was a white pill designed
+   for black. The base has no fill at all now, so keeping this would have left
+   /referenzen/ with the ONLY pill on the site — the opposite of the change. The
+   long note above it is kept because it still explains why the badge is here and
+   why its shape follows the component; only the surface half no longer applies. */
 
-/* ⚠️ At 320px the pill measured 288px inside a 280px content column, and an
-   inline-flex box WIDER than its line box cannot be centred by `text-align` — it
-   starts at the left edge and overflows right, so it rendered 4px off-axis with 8px
-   of itself sitting in the container's padding (the page never scrolled, which is
-   exactly why this is easy to miss). Stepping the gap and inline padding down one
-   notch brings it to ~272px, so it fits and centres properly.
-   These are the SAME 8/12px this badge already uses on a phone inside the heroes
-   (rule G6), so it is not a new size — and it stays one row rather than wrapping. */
-@media (max-width: 399.98px) {
-  .ref-quotes__rating .review-card {
-    gap: var(--space-2);
-    padding: var(--space-3) var(--space-3);
-  }
-}
+/* The 320px fix that used to sit here is gone with the padding it trimmed: the
+   badge measured 288px in a 280px column BECAUSE of its inline padding, and an
+   inline-flex box wider than its line box cannot be centred by `text-align`.
+   Without a pill it is far narrower than the column, so there is nothing to
+   correct. Re-measured at 320px after the change. */
 
 .ref-quotes__grid {
   display: grid;

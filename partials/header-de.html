@@ -30,6 +30,17 @@
         <span class="visually-hidden">Menü schließen</span>
       </button>
       <ul class="site-nav__list">
+        <!-- The homepage, added 2026-08-21. It was the one page missing from its
+             own menu. A plain item, no submenu, first in the row.
+             initActiveNavLink() (js/main.js) needs no change: it marks a link whose
+             pathname equals the current path, which for "/" is true on the homepage
+             and false everywhere else. The mobile drawer renders this same list, so
+             it is covered there too.
+             ⚠️ This takes the nav from six items to SEVEN. That row has already
+             forced the desktop breakpoint up three times (1024 -> 1200 -> 1320 ->
+             1400) because logo + nav + CTA stopped fitting, so it was re-measured
+             after adding this. -->
+        <li><a class="site-nav__link" href="/">Startseite</a></li>
         <li class="site-nav__item site-nav__item--has-submenu">
           <a class="site-nav__link" href="/leistungen/">
             Leistungen

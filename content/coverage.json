@@ -128,6 +128,7 @@
       "id": "hof",
       "name": "Hof",
       "href": null,
+      "row": 2,
       "center": [50.3135, 11.9128],
       "map": { "side": "start", "major": false }
     },
@@ -135,6 +136,7 @@
       "id": "kronach",
       "name": "Kronach",
       "href": null,
+      "row": 2,
       "center": [50.2405, 11.3244],
       "map": { "side": "start", "major": false }
     },
@@ -142,6 +144,7 @@
       "id": "kulmbach",
       "name": "Kulmbach",
       "href": null,
+      "row": 2,
       "center": [50.1039, 11.4517],
       "map": { "side": "start", "major": false }
     },
@@ -149,6 +152,7 @@
       "id": "lichtenfels",
       "name": "Lichtenfels",
       "href": null,
+      "row": 2,
       "center": [50.1462, 11.0638],
       "map": { "side": "end", "major": false }
     },
@@ -156,6 +160,7 @@
       "id": "schwandorf",
       "name": "Schwandorf",
       "href": null,
+      "row": 2,
       "center": [49.3304, 12.1077],
       "map": { "side": "end", "major": false }
     }

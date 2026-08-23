@@ -159,11 +159,27 @@ const COVERAGE_RENDERERS = {
       `aria-pressed="false">${icon}${loc.name}</button></li>`
     );
   },
-  // The footer's own city list: links only, no map hooks (the footer is on
-  // every page, most of which have no map).
+  // The footer's own city list: no map hooks (the footer is on every page, most
+  // of which have no map). Unlike the other two lists this one shows EVERY
+  // location, with or without a page of its own (client 2026-08-21).
+  //
+  // ⚠️ A location without a page renders as a <span>, never an <a>, and that is
+  // the whole point of this renderer: it has to LOOK exactly like its neighbours —
+  // same classes, same icon, same type, same spacing, no dimmed colour and no
+  // separate heading, so the five do not read as second class — while not
+  // BEHAVING like a link. A <span> gets no pointer cursor and no tab stop for
+  // free; the hover/focus rules are scoped to a.footer-pill in site-chrome.css so
+  // they cannot follow either. An element that looks and feels like a link and
+  // does nothing is the one failure to avoid here.
+  //
+  // The day one of them gets a city page, giving it an href in coverage.json is
+  // the entire change: it becomes an <a> and nothing else moves.
   footer(loc) {
     const icon = PIN_ICON.replace("%CLS%", "footer-pill");
-    return `<li><a class="footer-pill" href="${loc.href}">${icon}${loc.name}</a></li>`;
+    const inner = `${icon}${loc.name}`;
+    return loc.href
+      ? `<li><a class="footer-pill" href="${loc.href}">${inner}</a></li>`
+      : `<li><span class="footer-pill">${inner}</span></li>`;
   },
 };
 
@@ -180,10 +196,11 @@ function resolveCoverage(content, sourceLabel, locations) {
     let m;
     while ((m = PARAM_RE.exec(rawParams)) !== null) params[m[1]] = m[2];
 
-    // "mentions" is by definition the ones without a page; every other list is
-    // links, so it can only ever contain the ones that have one.
+    // "mentions" is by definition the ones without a page. "chips" are real
+    // links, so only entries that have one. "footer" shows everything and marks
+    // the difference in the markup instead (see its renderer above).
     let list = locations.filter((loc) =>
-      name === "mentions" ? !loc.href : Boolean(loc.href)
+      name === "mentions" ? !loc.href : name === "footer" ? true : Boolean(loc.href)
     );
     if (params.row) list = list.filter((loc) => String(loc.row) === params.row);
     if (!list.length) {
