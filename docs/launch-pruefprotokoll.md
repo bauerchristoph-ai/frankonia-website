@@ -12,6 +12,11 @@ es beschreibt — dieselbe Regel, die schon für
 
 Vorschau zum Prüfen: `npm run dev` (baut und serviert `dist/`).
 
+**Wenn du wenig Zeit hast:** ganz unten steht der [Abschlussbericht](#abschlussbericht)
+mit den fünf Listen — Redirect-Tabelle, portierte Artikel, nicht verifizierbare
+Zahlen, Umgebungsvariablen, offene Punkte. Die Abschnitte 1 bis 12 sind die
+Einzelheiten dazu.
+
 Legende: ☐ noch prüfen · ⚠️ braucht eine Entscheidung von dir · ✅ erledigt und
 von dir bestätigt
 
@@ -674,3 +679,129 @@ der finale Datenschutztext nach dem Cookiebot-Scan — dessen Host muss dann in 
 Sicherheitsrichtlinie in `vercel.json` eingetragen werden, sonst wird das Werkzeug
 stillschweigend geblockt — und echte Stellenanzeigen, für die die Struktur jetzt
 bereitliegt.
+
+---
+
+# Abschlussbericht
+
+Die fünf Listen, die du am Ende sehen wolltest. Sie fassen zusammen, was in den
+Abschnitten 1 bis 12 im Einzelnen steht.
+
+## 1 — Redirect-Tabelle
+
+⚠️ **Die Statuscodes sind die konfigurierten, nicht live gemessene.** Vor dem Deploy
+geht das nicht: `npm run dev` liefert nur die gebauten Seiten aus und liest
+`vercel.json` überhaupt nicht — Weiterleitungen sind Hosting-Konfiguration. Statisch
+geprüft ist dafür alles, was statisch prüfbar ist: dass jede Quelle genau eine Regel
+trifft, dass jedes Ziel im Build existiert, und dass **kein Ziel selbst wieder Quelle
+ist** (das ist die Kettenprüfung). Nach dem Deploy einmal
+`node docs/design-sources/redirect-test.js https://…` — dann stehen dort echte Codes.
+
+| ☐ | Alte URL | Code | Ziel | Hops |
+|---|---|---|---|---|
+| ☐ | `/frankonia-werkschutz/` | 301 | `/werkschutz/` | 1 |
+| ☐ | `/frankonia-objektschutz/` | 301 | `/objektschutz/` | 1 |
+| ☐ | `/frankonia-sicherheitstechnik/` | 301 | `/sicherheitstechnik/` | 1 |
+| ☐ | `/frankonia-veranstaltungsschutz/` | 301 | `/veranstaltungsschutz/` | 1 |
+| ☐ | `/frankonia-revier-schliessdienst/` | 301 | `/revier-schliessdienst/` | 1 |
+| ☐ | `/frankonia-kaufhausdetektei/` | 301 | `/kaufhausdetektei/` | 1 |
+| ☐ | `/frankonia-empfangsdienst/` | 301 | `/empfangsdienst/` | 1 |
+| ☐ | `/sicherheitsanalyse/` | 301 | `/sicherheitskonzept/` | 1 |
+| ☐ | `/kundenstory-kunde-1/` | 301 | `/referenzen/` | 1 |
+| ☐ | `/kundenstory-kunde-2/` | 301 | `/referenzen/` | 1 |
+| ☐ | `/bewerbung-im-sicherheitsdienst-die-3-haeufigsten-fehler/` | 301 | `/ratgeber/bewerbung-sicherheitsdienst/` | 1 |
+| ☐ | `/tariflohn-2026-im-sicherheitsdienst/` | 301 | `/ratgeber/tariflohn-sicherheitsdienst/` | 1 |
+| ☐ | `/voraussetzungen-im-sicherheitsdienst/` | 301 | `/ratgeber/voraussetzungen-sicherheitsdienst/` | 1 |
+| ☐ | `/qualifikationen-im-sicherheitsdienst/` | 301 | `/ratgeber/qualifikationen-sicherheitsdienst/` | 1 |
+| ☐ | `/jobchancen-als-sicherheitskraft/` | 301 | `/ratgeber/paragraph-34a-erklaert/` | 1 |
+| ☐ | `/einsatzmoeglichkeiten-…-wirklich-erlauben/` | 301 | `/ratgeber/paragraph-34a-erklaert/` | 1 |
+| ☐ | `/so-schwierig-sind-…-§34a/` (3 Schreibweisen) | 301 | `/ratgeber/paragraph-34a-erklaert/` | 1 |
+| ☐ | `/wie-viel-kostet-die-fortbildung-zur-sicherheitskraft/` | 301 | `/ratgeber/qualifikationen-sicherheitsdienst/` | 1 |
+| ☐ | `/hallo-welt/` | 301 | `/` | 1 |
+| ☐ | `/feed/`, `/comments/feed/`, `/…/feed/` | 301 | `/` | 1 |
+| ☐ | `/author/…` | 301 | `/ueber-uns/` | 1 |
+| ☐ | `/category/…`, `/tag/…` | 301 | `/ratgeber/` | 1 |
+| ☐ | `/wp-admin/`, `/wp-login.php` | **404** | — | 0 |
+| ☐ | `/wp-content/…` | **404** | — | 0 |
+
+Jede Adresse existiert zusätzlich in der Variante ohne Schrägstrich am Ende, damit
+auch dort genau eine Weiterleitung anfällt und nicht zwei. **13 weitere Adressen der
+alten Seite brauchen gar keine Regel**, weil sie auf der neuen Seite unter demselben
+Pfad liegen: die Startseite, Baustellenbewachung, Veranstaltungsschutz, Jobs,
+Angebot, Referenzen, Linktree und die sechs Personenseiten.
+
+## 2 — Portierte Blogartikel, und warum vier nicht portiert wurden
+
+| ☐ | Alte URL | Neue URL |
+|---|---|---|
+| ☐ | `/bewerbung-im-sicherheitsdienst-die-3-haeufigsten-fehler/` | `/ratgeber/bewerbung-sicherheitsdienst/` |
+| ☐ | `/tariflohn-2026-im-sicherheitsdienst/` | `/ratgeber/tariflohn-sicherheitsdienst/` |
+| ☐ | `/voraussetzungen-im-sicherheitsdienst/` | `/ratgeber/voraussetzungen-sicherheitsdienst/` |
+| ☐ | `/qualifikationen-im-sicherheitsdienst/` | `/ratgeber/qualifikationen-sicherheitsdienst/` |
+
+**Nicht portiert, mit Begründung:**
+
+| Alter Artikel | Warum nicht | Landet auf |
+|---|---|---|
+| `jobchancen-als-sicherheitskraft` | Staffelt die drei Qualifikationen nach Jobchancen — genau das Kapitel „Welche Jobs kann ich mit welcher Qualifikation machen?" im bestehenden 34a-Artikel | `/ratgeber/paragraph-34a-erklaert/` |
+| `einsatzmoeglichkeiten-…-wirklich-erlauben` | Derselbe Kern: was jede Stufe erlaubt. Steht dort schon | `/ratgeber/paragraph-34a-erklaert/` |
+| `so-schwierig-sind-…-§34a` | Prüfungsablauf der Sachkunde steht im 34a-Artikel; der GSSK-Teil ist in den portierten Qualifikationen-Artikel eingearbeitet | `/ratgeber/paragraph-34a-erklaert/` |
+| `wie-viel-kostet-die-fortbildung-…` | Kosten sind im portierten Qualifikationen-Artikel ein eigenes Kapitel, inklusive der GSSK-Kursspanne aus diesem Text | `/ratgeber/qualifikationen-sicherheitsdienst/` |
+
+Der Grund in einem Satz: fünf der acht behandeln denselben Themenkreis aus fünf
+Blickwinkeln, drei davon stehen wörtlich schon im bestehenden 34a-Artikel. Alle fünf
+zu portieren hätte sechs Seiten um dasselbe Suchwort konkurrieren lassen — sie hätten
+sich gegenseitig geschwächt. Inhaltlich ist nichts verloren.
+
+## 3 — Zahlen aus den migrierten Artikeln, die ich nicht verifizieren konnte
+
+| ☐ | Zahl | Woher | Wie sie jetzt dasteht |
+|---|---|---|---|
+| ☐ | GSSK-Prüfungsgebühr (alter Text: rund 450 €) | Blogartikel | Nicht als Zahl übernommen — „Prüfungsgebühr je Kammer". Die IHK Schwerin veröffentlicht 405 €, jede Kammer legt sie selbst fest |
+| ☐ | GSSK-Vorbereitungskurse 1.600–4.000 € | Blogartikel | Als Richtwert gekennzeichnet, mit dem Hinweis, mehrere Bildungsträger anzufragen |
+| ☐ | GSSK-Kursumfang 200–240 Unterrichtseinheiten über 5–7 Monate | Blogartikel | Als Anbieterangabe gekennzeichnet, ausdrücklich nicht als Vorschrift |
+| ☐ | „150 bis 180 Minuten" je schriftlichem GSSK-Prüfungsteil | Blogartikel | **Ersetzt durch die Vorschrift**: mindestens zwei Stunden je Aufgabe, höchstens fünf Stunden insgesamt |
+| ☐ | Fachbücher ca. 20 €, Lern-Apps 5–20 € | Blogartikel | Nicht übernommen — Marktpreise, die monatlich schwanken |
+| ☐ | Kostenübernahme durch die Agentur für Arbeit | Blogartikel | Als Einzelfallentscheidung formuliert, nicht als Zusage |
+
+**Zwei Zahlen habe ich mit Quelle korrigiert statt übernommen:** die GSSK-Zulassung
+verlangt von den fünf Jahren Berufspraxis mindestens drei in der Sicherheitswirtschaft
+(alter Text: „ein erheblicher Teil"), und die mündliche Sachkundeprüfung dauert rund
+15 Minuten, nicht 20 — so steht es auch im bestehenden 34a-Artikel, die beiden Seiten
+hätten sich sonst widersprochen.
+
+⚠️ **Und der auffälligste Fund: `tariflohn-2026` nennt keine einzige Lohnzahl**, trotz
+Titel und Beschreibung „So viel verdienst du 2026". Ich habe keine erfunden. Das Jahr
+ist aus Slug und Titel raus, und Titel und Beschreibung sagen jetzt, was der Artikel
+wirklich liefert. Die einzigen Zahlen darin sind die tariflichen Zuschläge, und die
+kommen aus derselben zentralen Datei wie auf der Kostenseite.
+
+## 4 — Umgebungsvariablen
+
+**Gesetzt: keine. Gebraucht: derzeit keine.** Das ist kein Versäumnis, sondern die
+Architektur: die Seite ist statisches HTML ohne Abhängigkeiten und ohne Backend. Im
+ganzen Projekt gibt es kein `process.env`, keine `.env`-Datei und keinen Dienst, der
+einen Schlüssel bräuchte. Die Kartenkacheln von CARTO und die HubSpot-Terminlinks
+funktionieren beide ohne Konto und ohne Token.
+
+Was Variablen brauchen wird, sobald die jeweilige Entscheidung fällt:
+
+| ☐ | Wofür | Variable | Status |
+|---|---|---|---|
+| ☐ | Formularempfang — **alle 40 Formulare senden derzeit nirgendwohin** (`action="#"`) | Endpunkt und Schlüssel des gewählten Dienstes | fehlt, blockiert Leads |
+| ☐ | Spamschutz reCAPTCHA v3 | Site Key und Secret | fehlt, erst nach der Consent-Entscheidung |
+| ☐ | Cookiebot | Domain-Gruppen-ID | fehlt, kommt mit dem Scan |
+| ☐ | GA4 und Google Ads über den Tag Manager | Mess-ID, Container-ID, Conversion-Label | fehlt, erst nach dem Consent-Banner |
+| ☐ | Google-Bewertung live statt gepflegt | Places-API-Schlüssel | fehlt, bewusst — braucht Abrechnung und Consent |
+
+⚠️ **Der erste Punkt ist der wichtigste der ganzen Liste.** Solange die Formulare
+nirgendwohin senden, erreicht keine Anfrage euch — und das Formular ist das
+Hauptziel jeder Seite.
+
+## 5 — Offene Punkte
+
+Sie stehen vollständig im Abschnitt „Noch offen" direkt darüber. In einem Satz: das
+Hero-Foto der Startseite und vier Titelbilder für die neuen Ratgeber-Artikel, drei
+Entscheidungen im Datenschutztext, der Tippfehler in zwei vCards, der
+Formularempfang, und nach dem Deploy die Live-Prüfung der Redirects samt der
+www-Umleitung in den Vercel-Einstellungen.
