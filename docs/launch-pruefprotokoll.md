@@ -417,7 +417,7 @@ davon störst.
 
 ## 10 — Block G: Redirects
 
-Commit `PLATZHALTER` · `vercel.json`, `docs/design-sources/redirects-build.js`,
+Commit `e4ed850` · `vercel.json`, `docs/design-sources/redirects-build.js`,
 `docs/design-sources/redirect-test.js`
 
 **Das Wichtigste in einem Satz: von den 31 Adressen der alten Seite werden 18
