@@ -415,11 +415,125 @@ davon störst.
 
 ---
 
-## Noch offen (Blöcke G, J, K)
+## 10 — Block G: Redirects
+
+Commit `PLATZHALTER` · `vercel.json`, `docs/design-sources/redirects-build.js`,
+`docs/design-sources/redirect-test.js`
+
+**Das Wichtigste in einem Satz: von den 31 Adressen der alten Seite werden 18
+umgeleitet, 13 existieren auf der neuen Seite unter genau demselben Pfad, und keine
+einzige wird nach dem Umzug ein 404.**
+
+Die 13 unveränderten sind die Startseite, `/baustellenbewachung/`,
+`/veranstaltungsschutz/`, `/jobs/`, `/angebot/`, `/referenzen/`, `/linktree/` und die
+sechs Personenseiten — also genau das, was Block E absichtlich unter der alten URL
+wieder aufgebaut hat. **Deine Liste war vollständig**; dazuzählen musste ich nur Block E.
+
+### Die Weiterleitungen
+
+| ☐ | Alte URL | Neue URL |
+|---|---|---|
+| ☐ | `/frankonia-werkschutz/` | `/werkschutz/` |
+| ☐ | `/frankonia-objektschutz/` | `/objektschutz/` |
+| ☐ | `/frankonia-sicherheitstechnik/` | `/sicherheitstechnik/` |
+| ☐ | `/frankonia-veranstaltungsschutz/` | `/veranstaltungsschutz/` |
+| ☐ | `/frankonia-revier-schliessdienst/` | `/revier-schliessdienst/` |
+| ☐ | `/frankonia-kaufhausdetektei/` | `/kaufhausdetektei/` |
+| ☐ | `/frankonia-empfangsdienst/` | `/empfangsdienst/` |
+| ☐ | `/sicherheitsanalyse/` | `/sicherheitskonzept/` |
+| ☐ | `/kundenstory-kunde-1/` | `/referenzen/` |
+| ☐ | `/kundenstory-kunde-2/` | `/referenzen/` |
+| ☐ | `/bewerbung-im-sicherheitsdienst-…/` | `/ratgeber/bewerbung-sicherheitsdienst/` |
+| ☐ | `/tariflohn-2026-im-sicherheitsdienst/` | `/ratgeber/tariflohn-sicherheitsdienst/` |
+| ☐ | `/voraussetzungen-im-sicherheitsdienst/` | `/ratgeber/voraussetzungen-sicherheitsdienst/` |
+| ☐ | `/qualifikationen-im-sicherheitsdienst/` | `/ratgeber/qualifikationen-sicherheitsdienst/` |
+| ☐ | `/jobchancen-als-sicherheitskraft/` | `/ratgeber/paragraph-34a-erklaert/` |
+| ☐ | `/einsatzmoeglichkeiten-…-erlauben/` | `/ratgeber/paragraph-34a-erklaert/` |
+| ☐ | `/so-schwierig-sind-…-§34a/` | `/ratgeber/paragraph-34a-erklaert/` |
+| ☐ | `/wie-viel-kostet-die-fortbildung-…/` | `/ratgeber/qualifikationen-sicherheitsdienst/` |
+| ☐ | `/hallo-welt/`, `/feed/`, `/…/feed/` | `/` |
+| ☐ | `/author/…` | `/ueber-uns/` |
+| ☐ | `/category/…`, `/tag/…` | `/ratgeber/` |
+
+⚠️ **`tariflohn-2026` geht auf die portierte Fassung, nicht auf die Kostenseite** wie
+in der Fallback-Liste vorgesehen: die Kostenseite ist die Kundenseite, der alte
+Artikel war ein Bewerberthema.
+
+### Was bewusst NICHT umgeleitet wird
+
+`/wp-admin/` und `/wp-login.php` — so hast du es vorgegeben, 404 ist hier richtig.
+**Ich habe gegengeprüft, dass keine der 58 Regeln sie versehentlich fängt**, denn ein
+zu weit gefasster Platzhalter hätte das lautlos getan.
+
+`/wp-content/*` habe ich ebenfalls nicht umgeleitet, und das ist eine Entscheidung:
+du hattest „410 oder `/`" offengelassen. Die URL eines Bildes auf eine HTML-Seite zu
+leiten ist ein sogenannter Soft-404 — Google bewertet das schlechter als einen
+saubern 404 und Besucher gewinnt man damit auch nicht zurück. Ein echtes 410 lässt
+sich über die Redirect-Liste gar nicht senden. **Ein 404 ist hier die richtige
+Antwort, und die liefert das Hosting ohne jede Regel.** Alle Bilder der neuen Seite
+liegen unter `/assets/`, dort ist also nichts zu retten.
+
+### Warum es 58 Regeln für 27 Adressen sind
+
+Jede alte Adresse braucht **zwei** Regeln, eine mit und eine ohne Schrägstrich am
+Ende. Ohne die zweite leitet Vercel `/foo` zuerst auf `/foo/` um und erst danach
+greift unsere Regel: das wären zwei Weiterleitungen hintereinander, und genau solche
+Ketten wolltest du ausgeschlossen haben. Damit die beiden Varianten nicht irgendwann
+auseinanderlaufen, erzeugt sie ein kleiner Generator aus einer Tabelle.
+
+⚠️ **Die URL mit dem Paragrafenzeichen steht in drei Schreibweisen** in der Liste:
+klein kodiert (so führt sie die alte Sitemap), groß kodiert (andere Programme
+kodieren so) und mit dem echten `§`. Es ist nicht garantiert, welche Form Vercel
+beim Abgleich sieht — mit allen drei ist jeder Weg abgedeckt.
+
+### Prüfung
+
+| ☐ | Was | Ergebnis |
+|---|---|---|
+| ☐ | Jede alte URL trifft genau eine Regel, mit und ohne Schrägstrich | 27 von 27 ok |
+| ☐ | Keine Kette: kein Ziel ist selbst wieder Quelle | 0 Ketten |
+| ☐ | Jedes Ziel existiert wirklich im Build | 0 Ziele fehlen |
+| ☐ | Was bleiben soll, wird nicht gefangen | 16 geprüft, 0 fälschlich gefangen |
+| ☐ | Vollständigkeit gegen die Sitemap der alten Seite | 31 Adressen, 0 verwaist |
+
+⚠️⚠️ **Ein Punkt, den du wissen solltest: die Redirects lassen sich vor dem Deploy
+nicht live testen.** `npm run dev` liefert nur die gebauten Seiten aus und liest
+`vercel.json` überhaupt nicht — Weiterleitungen sind Hosting-Konfiguration, kein
+Seiteninhalt. Alles oben ist deshalb statisch geprüft: gegen die Regelliste und gegen
+den Build. **Nach dem Deploy bitte einmal**
+
+```
+node docs/design-sources/redirect-test.js https://frankonia-website.vercel.app
+```
+
+Dann prüft dasselbe Skript live, dass jede alte Adresse mit **genau einem** 301
+direkt am Ziel landet und dass `/wp-admin/` einen 404 liefert.
+
+### Noch bei Vercel einzustellen, nicht im Code
+
+| ☐ | Was | Wo |
+|---|---|---|
+| ☐ | `www.frankonia-sicherheit.de` → `frankonia-sicherheit.de` | Vercel, Domain-Einstellungen |
+| ☐ | HTTP → HTTPS | macht Vercel automatisch, nur kontrollieren |
+
+Im Code würde die www-Umleitung erst greifen, nachdem die Anfrage schon bei der
+Anwendung angekommen ist — als Domain-Redirect passiert sie eine Stufe früher.
+`trailingSlash: true` war schon gesetzt.
+
+🟡 **Zwei Punkte für dich, nicht umgesetzt:** alte WordPress-Links in der Form
+`/?p=123` sind nicht abgedeckt (technisch möglich, aber es gibt keine Liste der
+IDs — falls sie in der Search Console auftauchen, sind es ein paar Regeln mehr). Und
+`/kundenstory-kunde-1/` geht wie vorgegeben auf `/referenzen/`, obwohl die Geschichte
+thematisch zur Case Study Sicherheitstechnik passt; ich habe den Hub gewählt, weil
+die alte Geschichte anonym ist und die Case Study von einem namentlich genannten
+Kunden erzählt. Änderbar in einer Zeile.
+
+---
+
+## Noch offen (Blöcke J, K)
 
 Wird hier fortgeschrieben, sobald die Blöcke durch sind.
 
-- G — Redirects in `vercel.json`
 - J — `/datenschutz/` Übergangsfassung
 - K — Datenstruktur für Stellenanzeigen (ohne Schema, es gibt keine Vakanz)
 

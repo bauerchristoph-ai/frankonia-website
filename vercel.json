@@ -23,6 +23,276 @@
       "source": "/en/:path*/",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/frankonia-werkschutz",
+      "destination": "/werkschutz/",
+      "permanent": true
+    },
+    {
+      "source": "/frankonia-werkschutz/",
+      "destination": "/werkschutz/",
+      "permanent": true
+    },
+    {
+      "source": "/frankonia-objektschutz",
+      "destination": "/objektschutz/",
+      "permanent": true
+    },
+    {
+      "source": "/frankonia-objektschutz/",
+      "destination": "/objektschutz/",
+      "permanent": true
+    },
+    {
+      "source": "/frankonia-sicherheitstechnik",
+      "destination": "/sicherheitstechnik/",
+      "permanent": true
+    },
+    {
+      "source": "/frankonia-sicherheitstechnik/",
+      "destination": "/sicherheitstechnik/",
+      "permanent": true
+    },
+    {
+      "source": "/frankonia-veranstaltungsschutz",
+      "destination": "/veranstaltungsschutz/",
+      "permanent": true
+    },
+    {
+      "source": "/frankonia-veranstaltungsschutz/",
+      "destination": "/veranstaltungsschutz/",
+      "permanent": true
+    },
+    {
+      "source": "/frankonia-revier-schliessdienst",
+      "destination": "/revier-schliessdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/frankonia-revier-schliessdienst/",
+      "destination": "/revier-schliessdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/frankonia-kaufhausdetektei",
+      "destination": "/kaufhausdetektei/",
+      "permanent": true
+    },
+    {
+      "source": "/frankonia-kaufhausdetektei/",
+      "destination": "/kaufhausdetektei/",
+      "permanent": true
+    },
+    {
+      "source": "/frankonia-empfangsdienst",
+      "destination": "/empfangsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/frankonia-empfangsdienst/",
+      "destination": "/empfangsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/sicherheitsanalyse",
+      "destination": "/sicherheitskonzept/",
+      "permanent": true
+    },
+    {
+      "source": "/sicherheitsanalyse/",
+      "destination": "/sicherheitskonzept/",
+      "permanent": true
+    },
+    {
+      "source": "/kundenstory-kunde-1",
+      "destination": "/referenzen/",
+      "permanent": true
+    },
+    {
+      "source": "/kundenstory-kunde-1/",
+      "destination": "/referenzen/",
+      "permanent": true
+    },
+    {
+      "source": "/kundenstory-kunde-2",
+      "destination": "/referenzen/",
+      "permanent": true
+    },
+    {
+      "source": "/kundenstory-kunde-2/",
+      "destination": "/referenzen/",
+      "permanent": true
+    },
+    {
+      "source": "/bewerbung-im-sicherheitsdienst-die-3-haeufigsten-fehler",
+      "destination": "/ratgeber/bewerbung-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/bewerbung-im-sicherheitsdienst-die-3-haeufigsten-fehler/",
+      "destination": "/ratgeber/bewerbung-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/tariflohn-2026-im-sicherheitsdienst",
+      "destination": "/ratgeber/tariflohn-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/tariflohn-2026-im-sicherheitsdienst/",
+      "destination": "/ratgeber/tariflohn-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/voraussetzungen-im-sicherheitsdienst",
+      "destination": "/ratgeber/voraussetzungen-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/voraussetzungen-im-sicherheitsdienst/",
+      "destination": "/ratgeber/voraussetzungen-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/qualifikationen-im-sicherheitsdienst",
+      "destination": "/ratgeber/qualifikationen-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/qualifikationen-im-sicherheitsdienst/",
+      "destination": "/ratgeber/qualifikationen-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/jobchancen-als-sicherheitskraft",
+      "destination": "/ratgeber/paragraph-34a-erklaert/",
+      "permanent": true
+    },
+    {
+      "source": "/jobchancen-als-sicherheitskraft/",
+      "destination": "/ratgeber/paragraph-34a-erklaert/",
+      "permanent": true
+    },
+    {
+      "source": "/einsatzmoeglichkeiten-im-sicherheitsdienst-was-unterrichtung-sachkunde-und-gssk-wirklich-erlauben",
+      "destination": "/ratgeber/paragraph-34a-erklaert/",
+      "permanent": true
+    },
+    {
+      "source": "/einsatzmoeglichkeiten-im-sicherheitsdienst-was-unterrichtung-sachkunde-und-gssk-wirklich-erlauben/",
+      "destination": "/ratgeber/paragraph-34a-erklaert/",
+      "permanent": true
+    },
+    {
+      "source": "/wie-viel-kostet-die-fortbildung-zur-sicherheitskraft",
+      "destination": "/ratgeber/qualifikationen-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/wie-viel-kostet-die-fortbildung-zur-sicherheitskraft/",
+      "destination": "/ratgeber/qualifikationen-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/so-schwierig-sind-unterrichtung-sachkunde-und-gssk-%c2%a734a",
+      "destination": "/ratgeber/paragraph-34a-erklaert/",
+      "permanent": true
+    },
+    {
+      "source": "/so-schwierig-sind-unterrichtung-sachkunde-und-gssk-%c2%a734a/",
+      "destination": "/ratgeber/paragraph-34a-erklaert/",
+      "permanent": true
+    },
+    {
+      "source": "/so-schwierig-sind-unterrichtung-sachkunde-und-gssk-%C2%A734a",
+      "destination": "/ratgeber/paragraph-34a-erklaert/",
+      "permanent": true
+    },
+    {
+      "source": "/so-schwierig-sind-unterrichtung-sachkunde-und-gssk-%C2%A734a/",
+      "destination": "/ratgeber/paragraph-34a-erklaert/",
+      "permanent": true
+    },
+    {
+      "source": "/so-schwierig-sind-unterrichtung-sachkunde-und-gssk-§34a",
+      "destination": "/ratgeber/paragraph-34a-erklaert/",
+      "permanent": true
+    },
+    {
+      "source": "/so-schwierig-sind-unterrichtung-sachkunde-und-gssk-§34a/",
+      "destination": "/ratgeber/paragraph-34a-erklaert/",
+      "permanent": true
+    },
+    {
+      "source": "/hallo-welt",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/hallo-welt/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/feed",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/feed/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/comments/feed",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/comments/feed/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/author/:path*",
+      "destination": "/ueber-uns/",
+      "permanent": true
+    },
+    {
+      "source": "/author/:path*/",
+      "destination": "/ueber-uns/",
+      "permanent": true
+    },
+    {
+      "source": "/category/:path*",
+      "destination": "/ratgeber/",
+      "permanent": true
+    },
+    {
+      "source": "/category/:path*/",
+      "destination": "/ratgeber/",
+      "permanent": true
+    },
+    {
+      "source": "/tag/:path*",
+      "destination": "/ratgeber/",
+      "permanent": true
+    },
+    {
+      "source": "/tag/:path*/",
+      "destination": "/ratgeber/",
+      "permanent": true
+    },
+    {
+      "source": "/:path*/feed",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/:path*/feed/",
+      "destination": "/",
+      "permanent": true
     }
   ],
   "headers": [

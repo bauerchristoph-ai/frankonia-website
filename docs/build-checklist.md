@@ -32,6 +32,91 @@ anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
 
+**2026-08-23 — BLOQUE G: 58 REDIRECTS EN `vercel.json`, Y NINGUNA DE LAS 31 URLS
+VIEJAS QUEDA HUÉRFANA.** `vercel.json` + dos scripts nuevos en
+`docs/design-sources/` (`redirects-build.js`, `redirect-test.js`). **Cero cambios de
+markup y cero CSS.**
+
+- [x] **58 reglas = 27 URLs de origen × 2 variantes + las 4 de `/en`.**
+- [x] ⚠️⚠️ **CADA URL NECESITA DOS REGLAS, con y sin barra final, y eso es lo único
+      que impide una CADENA.** Con `trailingSlash: true` Vercel manda `/foo` a
+      `/foo/` con su propio 308 y **después** entra la regla propia: dos saltos. Y
+      "las cadenas son el problema más habitual de esta migración" es literalmente
+      el punto G6 del pedido. Es la misma razón por la que las 4 reglas de `/en`
+      están así desde el 2026-08-14.
+- [x] **Por eso hay generador**: `docs/design-sources/redirects-build.js` tiene UNA
+      tabla y emite las dos variantes. Mantener 54 entradas a mano es garantizar que
+      un día divergen. ⚠️ Corre en desarrollo, **no** en `npm run build`, y
+      **sobreescribe la lista `redirects` entera** — una edición a mano ahí se pierde.
+- [x] ⚠️ **La URL del § va en TRES escrituras**: `%c2%a7` (como la publica la sitemap
+      viva), `%C2%A7` (otros clientes codifican en mayúscula, y una regla literal
+      sólo matchea su propia escritura) y el `§` decodificado, porque no está
+      garantizado si Vercel matchea el path crudo o el decodificado. Las tres apuntan
+      al mismo destino, así que cualquiera de los tres caminos funciona.
+- [x] **G3 refleja la decisión del Bloque F, no el fallback del pedido**: los 4
+      portados van a su propia versión nueva y los 4 no portados al artículo
+      existente que cubre su tema. ⚠️ En particular `tariflohn-2026` va a
+      `/ratgeber/tariflohn-sicherheitsdienst/` y **no** a `kosten-sicherheitsdienst`
+      como decía el fallback — ese artículo es del lado CLIENTE y el viejo es del
+      lado bewerber.
+- [x] ⚠️⚠️ **`/wp-content/*` NO se redirige, y es una decisión, no un olvido.** El
+      pedido lo dejaba condicional ("410 o `/`, sólo si ya no se necesitan assets").
+      Redirigir la URL de una imagen a una página HTML es un soft-404: Google lo
+      trata peor que un 404 limpio y no recupera nada de tráfico. Y un 410 real no se
+      puede emitir desde `redirects` de `vercel.json`. **404 es la respuesta
+      correcta y es lo que ya hace el hosting sin ninguna regla.** Los assets nuevos
+      viven todos bajo `/assets/`, así que no hay nada que rescatar de ahí.
+- [x] ⚠️ **`/wp-admin/` y `/wp-login.php` sin regla, por instrucción explícita.**
+      **Verificado que ninguna de las 58 reglas los captura** — el test lo comprueba,
+      porque un wildcard mal puesto los habría tragado en silencio.
+- [x] ⚠️ **G5 no está en el código a propósito**: www → dominio pelado va en la
+      configuración de dominios de Vercel (en código recién actuaría después de que
+      la petición llegue a la función). HTTP → HTTPS lo hace Vercel solo.
+      `trailingSlash: true` ya estaba.
+- [x] ✅ **`/comments/feed` está declarado explícitamente aunque el wildcard
+      `/:path*/feed` ya lo cubre** — el pedido lo nombra aparte y una regla de más es
+      inofensiva (gana la primera que matchea). El wildcard es lo que atrapa los
+      `/cualquier-cosa/feed/` que WordPress servía por página y por categoría.
+- [x] **Los wildcards van DESPUÉS de todas las reglas exactas**, porque gana la
+      primera coincidencia.
+
+- [x] ✅ **EL RESULTADO QUE IMPORTA, medido: de las 31 direcciones de la sitemap
+      vieja, 18 se redirigen, 13 existen con el MISMO path en la nueva, y CERO
+      quedan huérfanas.** Las 13 son la home, baustellenbewachung,
+      veranstaltungsschutz, jobs, angebot, referenzen, linktree y las 6 páginas de
+      persona — o sea lo que el Bloque E reconstruyó a propósito bajo su URL original.
+      **La lista del cliente estaba completa**; lo único que faltaba contar era el
+      Bloque E.
+- [x] **`docs/design-sources/redirect-test.js`, y prueba cuatro cosas distintas:**
+      que cada URL vieja pega en exactamente una regla y con el destino esperado (con
+      y sin barra), que **ningún destino es a su vez origen** (cadenas), que cada
+      destino **existe en `dist/`** (redirect a un 404), y que las URLs que deben
+      quedarse quietas no las captura nadie. **27 URLs, 16 intocables, 31 de la
+      sitemap vieja: 0 problemas.**
+      ⚠️ **Su lista de expectativas está escrita aparte y NO sale de `vercel.json`** —
+      un test que deriva su expectativa del objeto que prueba no prueba nada.
+- [x] ⚠️⚠️ **NO SE PUEDE PROBAR EN VIVO ANTES DEL DEPLOY, y no es pereza: `npm run
+      dev` sirve `dist/` y no lee `vercel.json` en absoluto.** Los redirects son
+      configuración de hosting. El test acepta una URL base
+      (`node docs/design-sources/redirect-test.js https://…`) y entonces sí verifica
+      **exactamente un 301 por URL** siguiendo la cadena real y que `/wp-admin/` da
+      404. **Hay que correrlo una vez contra el preview.**
+- [x] ⚠️ **El matcher del test es una reimplementación MÍNIMA de path-to-regexp**
+      (sólo literales y `:name*`, que es todo lo que estas reglas usan). Demuestra que
+      las reglas pegan y que no pegan donde no deben; **no** demuestra que Vercel
+      compile la misma regex. Para eso está la pasada en vivo.
+
+- [ ] ⚠️ **PARA EL CLIENTE, decisión suya y NO aplicada:** los permalinks viejos de
+      WordPress con query (`/?p=123`) no están cubiertos. Vercel puede matchear query
+      con `has`, pero el pedido no los menciona y no hay lista de ids. Si aparecen en
+      Search Console después del cambio, son unas reglas más.
+- [ ] 🟡 **`/kundenstory-kunde-1/` va a `/referenzen/` como pedía el pedido**, aunque
+      su contenido (técnica como complemento del personal) tiene vecino temático en
+      `/referenzen/case-study-sicherheitstechnik/`. Se dejó el hub: la historia vieja
+      es anónima y la case study es de un cliente concreto, o sea el lector aterrizaría
+      en otra historia. Cambiarlo es una línea.
+
+
 **2026-08-23 — BLOQUE F: DE LOS 8 ARTÍCULOS DEL BLOG VIEJO SE PORTARON 4, LOS OTROS
 4 SON SÓLO UN 301.** `pages/ratgeber/{bewerbung,tariflohn,voraussetzungen,
 qualifikationen}-sicherheitsdienst.html`, más 4 cards en el hub, 4 URLs en el
