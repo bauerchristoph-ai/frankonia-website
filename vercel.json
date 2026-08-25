@@ -225,6 +225,26 @@
       "permanent": true
     },
     {
+      "source": "/marco-bayer-sicherheitsdienst-2",
+      "destination": "/alexander-jaeger-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/marco-bayer-sicherheitsdienst-2/",
+      "destination": "/alexander-jaeger-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/marco-bayer-werkschutz-2",
+      "destination": "/alexander-jaeger-werkschutz/",
+      "permanent": true
+    },
+    {
+      "source": "/marco-bayer-werkschutz-2/",
+      "destination": "/alexander-jaeger-werkschutz/",
+      "permanent": true
+    },
+    {
       "source": "/hallo-welt",
       "destination": "/",
       "permanent": true

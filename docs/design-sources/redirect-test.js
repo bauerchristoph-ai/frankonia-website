@@ -50,6 +50,8 @@ const ERWARTET = {
   "/sicherheitsanalyse/": "/sicherheitskonzept/",
   "/kundenstory-kunde-1/": "/referenzen/",
   "/kundenstory-kunde-2/": "/referenzen/",
+  "/marco-bayer-sicherheitsdienst-2/": "/alexander-jaeger-sicherheitsdienst/",
+  "/marco-bayer-werkschutz-2/": "/alexander-jaeger-werkschutz/",
   // G3
   "/bewerbung-im-sicherheitsdienst-die-3-haeufigsten-fehler/": "/ratgeber/bewerbung-sicherheitsdienst/",
   "/tariflohn-2026-im-sicherheitsdienst/": "/ratgeber/tariflohn-sicherheitsdienst/",
@@ -112,6 +114,24 @@ const ALTE_SEITE = [
   "/so-schwierig-sind-unterrichtung-sachkunde-und-gssk-%c2%a734a/",
   "/qualifikationen-im-sicherheitsdienst/",
   "/wie-viel-kostet-die-fortbildung-zur-sicherheitskraft/",
+  /* ⚠️ 2026-08-25: DIESE ZEHN STANDEN NICHT IN DER SITEMAP DER ALTEN SEITE und
+     wären beim Umzug still zu 404 geworden. Gefunden über die WordPress-Schnittstelle
+     (/wp-json/wp/v2/pages), die ALLE veröffentlichten Seiten listet — 34 statt der
+     23 aus der Sitemap. Eine Sitemap ist eine Empfehlung an Suchmaschinen, kein
+     Verzeichnis; für eine Migration ist sie die falsche Quelle.
+     Sie warten auf die Entscheidung des Kunden, welche wegfallen — bis dahin stehen
+     sie hier, damit die Prüfung sie als verwaist meldet und sie nicht vergessen
+     werden. */
+  "/bryan-van-wey-security/",
+  "/christoph-bauer-sicherheitsdienst-2/",
+  "/daniel-wettengel-sicherheitsdienst/",
+  "/steffen-walde-sicherheitsdienst/",
+  "/steffen-walde-werkschutz/",
+  "/thomas-windisch-sicherheitsdienst/",
+  "/thomas-windisch-werkschutz/",
+  "/homepage-2/",
+  "/morelo-werkschutz-team-2/",
+  "/testformular/",
 ];
 
 /* ---- minimaler path-to-regexp ------------------------------------------- */

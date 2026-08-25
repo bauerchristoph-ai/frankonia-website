@@ -161,46 +161,6 @@ const PEOPLE = [
     more: true,
   },
   {
-    slug: "marco-bayer-sicherheitsdienst-2",
-    title: "Marco Bayer Sicherheitsdienst | FRANKONIA Sicherheit",
-    description:
-      "Marco Bayer, Sicherheitsbeauftragter bei FRANKONIA Sicherheitsdienst in Bamberg — Kontaktdaten direkt speichern.",
-    name: "Marco Bayer",
-    role: "Sicherheitsbeauftragter",
-    cred: "IHK-geprüfte Schutz- und Sicherheitskraft",
-    portrait: "person-marco-bayer",
-    tel: "+49 951 964352-40",
-    mobile: "+49 176 42888330",
-    mail: "m.bayer@frankonia-sicherheit.de",
-    vcard: "marco-bayer-sicherheitsdienst.vcf",
-    links: [
-      ["Objektschutz", "/objektschutz/"],
-      ["Veranstaltungsschutz", "/veranstaltungsschutz/"],
-      ["Baustellenbewachung", "/baustellenbewachung/"],
-      ["Kaufhausdetektei", "/kaufhausdetektei/"],
-    ],
-  },
-  {
-    slug: "marco-bayer-werkschutz-2",
-    title: "Marco Bayer Werkschutz | FRANKONIA Sicherheit",
-    description:
-      "Marco Bayer, Bereichsleiter Werkschutz bei FRANKONIA in Bamberg — Kontaktdaten direkt speichern.",
-    name: "Marco Bayer",
-    role: "Bereichsleiter Werkschutz",
-    cred: "IHK-geprüfte Schutz- und Sicherheitskraft",
-    portrait: "person-marco-bayer",
-    tel: "+49 951 964352-40",
-    mobile: "+49 176 42888330",
-    mail: "m.bayer@frankonia-werkschutz.de",
-    vcard: "marco-bayer-werkschutz.vcf",
-    links: [
-      ["Werkschutz", "/werkschutz/"],
-      ["Empfangsdienst", "/empfangsdienst/"],
-      ["Revier- und Schließdienst", "/revier-schliessdienst/"],
-      ["Sicherheitstechnik", "/sicherheitstechnik/"],
-    ],
-  },
-  {
     slug: "bryan-van-wey-werkschutz",
     title: "Bryan Van Wey Werkschutz | FRANKONIA Sicherheit",
     description:

@@ -61,6 +61,16 @@ const EXACT = [
   ["/so-schwierig-sind-unterrichtung-sachkunde-und-gssk-%C2%A734a", "/ratgeber/paragraph-34a-erklaert/", "G3"],
   ["/so-schwierig-sind-unterrichtung-sachkunde-und-gssk-§34a", "/ratgeber/paragraph-34a-erklaert/", "G3"],
 
+  // 2026-08-25, Kunde: Marco Bayer ist nicht mehr im Unternehmen, seine beiden
+  // Visitenkartenseiten sind gelöscht. Die URLs bleiben trotzdem in Umlauf —
+  // gedruckte Karten und QR-Codes kann man nicht zurückrufen —, also gehen sie auf
+  // die entsprechende Seite von Alexander Jäger. Variantentreu: Sicherheitsdienst
+  // auf Sicherheitsdienst, Werkschutz auf Werkschutz. Jäger ist der
+  // Vertriebsleiter, also der nächstliegende Ansprechpartner; der Kunde hat auch
+  // Steffen Walde als Ziel angeboten, das wären zwei geänderte Zeilen.
+  ["/marco-bayer-sicherheitsdienst-2", "/alexander-jaeger-sicherheitsdienst/", "G2"],
+  ["/marco-bayer-werkschutz-2", "/alexander-jaeger-werkschutz/", "G2"],
+
   // G4 — WordPress-Altlasten.
   ["/hallo-welt", "/", "G4"],
   ["/feed", "/", "G4"],
