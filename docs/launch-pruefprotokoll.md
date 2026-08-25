@@ -245,7 +245,7 @@ auf gedruckten Karten und QR-Codes stehen.
 
 | ☐ | Was | Wo prüfen | Woran erkennbar |
 |---|---|---|---|
-| ☐ | Fünf Personenkarten | `/alexander-jaeger-sicherheitsdienst/`, `/alexander-jaeger-werkschutz/`, `/marco-bayer-sicherheitsdienst-2/`, `/marco-bayer-werkschutz-2/`, `/bryan-van-wey-werkschutz/` | Rundes Porträt, Name, Funktion, darunter Telefon, Mobil und E-Mail als antippbare Zeilen |
+| ☐ | Drei Personenkarten | `/alexander-jaeger-sicherheitsdienst/`, `/alexander-jaeger-werkschutz/`, `/bryan-van-wey-werkschutz/` | Rundes Porträt, Name, Funktion, darunter Telefon, Mobil und E-Mail als antippbare Zeilen. ⚠️ Es waren fünf: die beiden Marco-Bayer-Seiten sind am 25.08. gelöscht worden (siehe Abschnitt 14) und leiten auf Alexander Jäger weiter. |
 | ☐ | Daten stimmen | jede Karte | Nummern, Funktionen und Zusatzzeilen wie auf der Live-Seite; nichts umformuliert |
 | ☐ | Kontakt speichern | „Kontakt speichern" antippen, am besten mit dem Handy | Es öffnet sich die Kontakt-Speichern-Ansicht, nicht ein Datei-Download |
 | ☐ | Leistungslinks | Marco-Bayer-Seiten und `/alexander-jaeger-werkschutz/` | Führen auf die **neuen** Leistungsseiten, ohne Umleitungs-Zwischenschritt |
@@ -721,6 +721,75 @@ noch länger als der Bildschirm — sonst würde der Umlauf sichtbar springen.
 ⚠️ **Der Google-Link ist der Kurzlink, den du geschickt hast.** Er löst auf dein
 Unternehmensprofil auf; die dauerhafte Kennung dahinter steht als Ausweichlösung im
 Kommentar im Quelltext, falls Google solche Kurzlinks irgendwann austauscht.
+
+---
+
+## 14 — Marco Bayer entfernt, und zehn alte Seiten, die keine Sitemap kannte
+
+Commit `PLATZHALTER` · 2 Seiten und 4 Dateien gelöscht, `vercel.json`,
+`docs/design-sources/person-pages.js`, `docs/design-sources/redirect-test.js`
+
+### Marco Bayer
+
+| ☐ | Was | Woran erkennbar |
+|---|---|---|
+| ☐ | Beide Seiten weg | `/marco-bayer-sicherheitsdienst-2/` und `/marco-bayer-werkschutz-2/` leiten auf die entsprechende Jäger-Seite weiter |
+| ☐ | Kontaktdatei weg | Seine vCards und sein Porträt sind aus dem Projekt entfernt |
+| ☐ | Kommt nicht zurück | Der Generator kennt ihn nicht mehr, sonst hätte ihn der nächste Lauf neu erzeugt |
+
+Die Weiterleitung ist variantentreu — Sicherheitsdienst auf Sicherheitsdienst,
+Werkschutz auf Werkschutz. Du hattest Alexander Jäger **oder** Steffen Walde
+angeboten; ich habe Jäger genommen, weil er als Vertriebsleiter der nächstliegende
+Ansprechpartner ist. Auf Walde umzustellen sind zwei Zeilen, sag einfach Bescheid.
+
+Die URLs bleiben umgeleitet und werden nicht einfach zu 404: gedruckte Karten und
+QR-Codes kann man nicht zurückrufen.
+
+### ⚠️⚠️ Der wichtigere Fund: zehn Seiten, die in keiner Sitemap stehen
+
+Die alte Seite hat **34 veröffentlichte Seiten, ihre Sitemap listet 23.** Die
+Differenz ist über die WordPress-Schnittstelle sichtbar, nicht über die Sitemap —
+eine Sitemap ist eine Empfehlung an Suchmaschinen und kein Verzeichnis. Für eine
+Migration ist sie die falsche Quelle, und ich habe sie in Block G genau so benutzt.
+**Zehn dieser Adressen wären beim Umzug still zu 404 geworden.**
+
+Sie warten jetzt auf deine Entscheidung. Der Redirect-Test meldet sie bis dahin
+absichtlich als verwaist — das ist die Erinnerung, kein Fehler.
+
+| ☐ | Alte URL | Was es ist | Stand |
+|---|---|---|---|
+| ☐ | `/steffen-walde-sicherheitsdienst/` | Personenkarte | 11/2023 |
+| ☐ | `/steffen-walde-werkschutz/` | Personenkarte | 11/2023 |
+| ☐ | `/thomas-windisch-sicherheitsdienst/` | Personenkarte | 11/2024 |
+| ☐ | `/thomas-windisch-werkschutz/` | Personenkarte | 11/2024 |
+| ☐ | `/christoph-bauer-sicherheitsdienst-2/` | Personenkarte | 04/2025 |
+| ☐ | `/daniel-wettengel-sicherheitsdienst/` | Personenkarte | 11/2023 |
+| ☐ | `/bryan-van-wey-security/` | ältere zweite Variante zu `/bryan-van-wey-werkschutz/` | 11/2023 |
+| ☐ | `/morelo-werkschutz-team-2/` | kundenspezifische Teamseite | 05/2025 |
+| ☐ | `/testformular/` | Testseite | 01/2024 |
+| ☐ | `/homepage-2/` | die alte Startseite als Seite (WordPress-Eigenheit) | 08/2025 |
+
+Mein Vorschlag, du entscheidest:
+
+- **`/testformular/` und `/homepage-2/`**: nicht weiterleiten. Eine Testseite hat
+  keine Nachfolgerin, und `/homepage-2/` ist die technische Innenansicht der alten
+  Startseite — beide sind bei einem 404 richtig aufgehoben.
+- **`/morelo-werkschutz-team-2/`**: auf `/referenzen/`, dort steht die
+  MORELO-Geschichte.
+- **Personenkarten von Leuten, die noch da sind**: nachbauen wie die drei
+  bestehenden, oder auf die nächste passende Person umleiten. Bei Steffen Walde
+  würde ich nachbauen — er ist Geschäftsführer und `/sicherheitscheck-walde/` gibt
+  es schon.
+- **Personenkarten von Leuten, die weg sind**: wie bei Marco Bayer weiterleiten.
+
+Sag mir einfach pro Zeile „bleibt", „weiterleiten auf …" oder „404", dann setze ich
+das um.
+
+### Norbert Wedebert
+
+Eine solche Seite existiert nicht. Weder die Seitenliste der alten Website noch ihre
+eigene Suche kennen sie, und die naheliegenden Adressen antworten mit 404. Falls es
+sie einmal gab, ist sie schon gelöscht — es ist also nichts zu tun.
 
 ---
 
