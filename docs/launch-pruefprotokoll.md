@@ -684,7 +684,7 @@ bereitliegt.
 
 ## 13 — Kundenrunde vom 25.08.: Google-Link, drei Logos, vCard
 
-Commit `PLATZHALTER` · 42 Seiten, `css/components.css`, `pages/referenzen.html`,
+Commit `fcfabc1` · 42 Seiten, `css/components.css`, `pages/referenzen.html`,
 `css/page-referenzen.css`, 3 Logos, `docs/design-sources/client-logos.js`,
 2 vCards
 
