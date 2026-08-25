@@ -450,6 +450,29 @@
   gap: var(--space-2);
 }
 
+/* Das kompakte Badge ist seit dem 25.08.2026 ein LINK auf das Google-Profil
+   (Kunde: URL geliefert). Auf 42 Seiten, also hier und nicht pro Seite.
+   `.review-card` war schon `inline-flex`, ein <a> verhält sich damit identisch —
+   deshalb erbt der Link Form und Maße unverändert und braucht nur einen Zustand
+   für Zeiger und Tastatur.
+   ⚠️ Kein `text-decoration` und keine Farbänderung: die großen Ziffern und die
+   Sterne sind die Marke Google, ein Unterstrich darunter liest sich als Fehler.
+   Der Zustand kommt stattdessen über Deckkraft — dasselbe Mittel, das die
+   sekundären Buttons benutzen, und es funktioniert auf beiden Untergründen, weil
+   es keine Farbe voraussetzt. Der globale Fokusring aus base.css bleibt, er ist
+   der nicht-farbliche Hinweis. */
+a.review-card {
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: opacity var(--duration-base) var(--easing-standard);
+}
+
+a.review-card:hover,
+a.review-card:focus-visible {
+  opacity: 0.82;
+}
+
 .review-card__logo {
   width: 2.25rem;
   height: 2.25rem;

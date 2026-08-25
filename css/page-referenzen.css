@@ -38,7 +38,6 @@
    this page's. docs/page-conventions.md §7. */
 .ref-hero__lead,
 .ref-results__label,
-.ref-marquee__name,
 .ref-case p {
   -webkit-hyphens: none;
   hyphens: none;
@@ -587,9 +586,9 @@
    old durations meant 10.78 and 10.74 px/s, i.e. both rows now dragging behind
    Objektschutz instead of outrunning it. Re-derived proportionally from the
    measured half-track and re-verified: 11.5 px/s on both, desktop and phone. */
-.ref-marquee--objektschutz  { --ref-marquee-duration: 270s; }
+.ref-marquee--objektschutz  { --ref-marquee-duration: 237s; }
 .ref-marquee--baustelle     { --ref-marquee-duration: 213s; }
-.ref-marquee--veranstaltung { --ref-marquee-duration: 228s; }
+.ref-marquee--veranstaltung { --ref-marquee-duration: 237s; }
 
 .ref-marquee--baustelle .ref-marquee__track {
   animation-direction: reverse;
@@ -643,21 +642,16 @@
   height: clamp(3.25rem, 1.8rem + 2vw, 4.25rem);
 }
 
-/* 3 of the 35 companies have no logo file yet, so they ride the same row as
-   their NAME set in type. Deliberately not a pill and not a heading — a wordmark
-   among wordmarks, one step quieter than a real mark so the logos still lead the
-   row. When a logo arrives it is one <span> → one <img>, nothing else. */
-.ref-marquee__name {
-  flex-shrink: 0;
-  white-space: nowrap;
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  /* Held back to 0.62: at 0.72 a plain name read BRIGHTER than the real marks
-     beside it (checked in a screenshot), which inverts the hierarchy — the logos
-     are the proof, the names are the companies still waiting for one. */
-  color: rgb(255 255 255 / 0.62);
-}
+/* ✅ 2026-08-25: DIE DREI NAMEN OHNE LOGO SIND WEG — Norma, Schöner Leben und
+   nacht arena haben jetzt eines. Der Kunde hat seinen Marketingordner freigegeben,
+   dort lagen alle drei. Damit trägt jede der 35 Firmen im Band ein Logo, und die
+   Regel .ref-marquee__name ist gelöscht statt als toter Selektor stehen zu
+   bleiben — sie beschrieb einen Zustand, den es nicht mehr gibt.
+   Die Aufbereitung (weiße Silhouette, 160 Pixel hoch, Tintenmessung je nach
+   Quelle) macht docs/design-sources/client-logos.js reproduzierbar; die
+   Begründung, warum die Messung pro Logo verschieden ist, steht dort.
+   Falls doch wieder eine Firma ohne Logo dazukommt: die Regel steht in der
+   Git-Historie, ein <span class="ref-marquee__name"> reicht. */
 
 /* Reduced motion: no marquee. The rows become static wrapped blocks with every
    company visible — which is also what a no-CSS-animation browser gets, since
@@ -835,21 +829,17 @@
     height: 2.75rem;
   }
 
-  .ref-marquee__name {
-    font-size: var(--font-size-sm);
-  }
-
   /* A duration is not a speed: the groups are clamped against vw, so every track
      is narrower on a phone and the same duration would crawl. Roughly halved to
      hold the ~11px/s pace — the same correction the homepage's marquee needed
      below 1024px. */
-  .ref-marquee--objektschutz  { --ref-marquee-duration: 190s; }
+  .ref-marquee--objektschutz  { --ref-marquee-duration: 162s; }
   /* 115s → 152s → 136s: re-derived from the measured half-track twice, first when
      Bodo Freimuth Tiefbau was restored as a name (1751px) and again when its logo
      replaced that name and the track shrank to 1579px. Veranstaltungsschutz took
      the second correction only (2033 → 1901px). See the desktop block's note. */
   .ref-marquee--baustelle     { --ref-marquee-duration: 136s; }
-  .ref-marquee--veranstaltung { --ref-marquee-duration: 164s; }
+  .ref-marquee--veranstaltung { --ref-marquee-duration: 167s; }
 
   .ref-results,
   .ref-quotes__grid,

@@ -682,6 +682,48 @@ bereitliegt.
 
 ---
 
+## 13 — Kundenrunde vom 25.08.: Google-Link, drei Logos, vCard
+
+Commit `PLATZHALTER` · 42 Seiten, `css/components.css`, `pages/referenzen.html`,
+`css/page-referenzen.css`, 3 Logos, `docs/design-sources/client-logos.js`,
+2 vCards
+
+| ☐ | Was | Wo prüfen | Woran erkennbar |
+|---|---|---|---|
+| ☐ | Bewertungs-Badge ist verlinkt | beliebiger Hero mit dem Google-Badge | Klick öffnet dein Google-Profil in einem neuen Tab; das Badge sieht unverändert aus und wird beim Überfahren nur leicht heller |
+| ☐ | Norma, Schöner Leben, nacht arena als Logo | `/referenzen/`, Kundenband | Alle 35 Firmen tragen jetzt ein Logo, keine mehr nur ihren Namen |
+| ☐ | Bandgeschwindigkeit gleich | `/referenzen/` | Die drei Reihen laufen gleich schnell; keine ist erkennbar flotter |
+| ☐ | vCard | „Kontakt speichern" auf einer Jäger-Seite | Berufsbezeichnung steht als „Vertriebsleiter" im Adressbuch |
+
+**Das Badge ist auf allen 42 Seiten ein Link**, nicht nur auf der Startseite — es
+war überall dasselbe Bauteil. Kein Unterstrich und keine Farbänderung: die Ziffern
+und Sterne sind die Marke Google, ein Unterstrich darunter liest sich als Fehler.
+Der Zustand kommt über die Deckkraft, und der Fokusrahmen für Tastaturbedienung
+bleibt. Screenreader hören zusätzlich „Google-Profil, öffnet in einem neuen Tab".
+
+⚠️ **Die drei Logos mussten aufbereitet werden, und zwar jedes anders.** Im Band
+sind alle Logos weiße Silhouetten auf Transparenz — anders geht es nicht, weil die
+Sektion dunkel ist und die helle Variante mit einer Farbumkehr arbeitet, die nur bei
+einfarbigen Zeichen funktioniert. Norma ist ein weißer Schriftzug in einem roten
+Kasten, dort ist also das Weiße die Tinte; Schöner Leben und nacht arena sind dunkel
+auf weiß, dort ist es umgekehrt. Beide Wege stecken in
+`docs/design-sources/client-logos.js`, damit das nächste Logo nicht wieder von Hand
+gedeutet werden muss.
+
+⚠️ **Und die Bandgeschwindigkeit musste nachgerechnet werden.** Ein Logo ist breiter
+als ein getippter Name, also wurde die Strecke pro Umlauf länger — bei gleicher
+Dauer heißt das: schneller. Gemessen liefen die drei Reihen danach mit 10,1 / 11,5 /
+11,9 Pixeln pro Sekunde. Die Baustellenreihe hat sich nicht geändert, also war ihre
+Geschwindigkeit der Maßstab; die beiden anderen sind darauf zurückgerechnet. Jetzt
+laufen alle drei mit 11,5, auf dem Telefon wie am Rechner, und jede Reihe ist immer
+noch länger als der Bildschirm — sonst würde der Umlauf sichtbar springen.
+
+⚠️ **Der Google-Link ist der Kurzlink, den du geschickt hast.** Er löst auf dein
+Unternehmensprofil auf; die dauerhafte Kennung dahinter steht als Ausweichlösung im
+Kommentar im Quelltext, falls Google solche Kurzlinks irgendwann austauscht.
+
+---
+
 # Abschlussbericht
 
 Die fünf Listen, die du am Ende sehen wolltest. Sie fassen zusammen, was in den

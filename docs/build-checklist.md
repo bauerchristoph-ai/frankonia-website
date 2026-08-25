@@ -32,6 +32,72 @@ anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
 
+**2026-08-25 — KUNDENRUNDE: DAS GOOGLE-BADGE IST EIN LINK (42 Seiten), DIE DREI
+LETZTEN NAMEN IM KUNDENBAND HABEN EIN LOGO, UND DER vCARD-TIPPFEHLER IST WEG.**
+
+- [x] **Badge → Link auf allen 42 Seiten**, nicht nur der Startseite: es war überall
+      dasselbe Bauteil. `.review-card` war schon `inline-flex`, also verhält sich ein
+      `<a>` identisch — Form und Maße unverändert, EINE neue Regel für Zeiger und
+      Tastatur. ⚠️ **Kein Unterstrich und keine Farbänderung**: Ziffern und Sterne
+      sind die Marke Google. Der Zustand läuft über Deckkraft (funktioniert auf
+      beiden Untergründen, weil er keine Farbe voraussetzt), der globale Fokusring
+      bleibt der nicht-farbliche Hinweis.
+      ⚠️ **Nur die `--sm`-Variante.** Das große `.review-card` in den Kundenstimmen
+      bleibt ein `<div>` — dort ist die Karte ein Zitat, kein Verweis.
+      ⚠️ **URL ist der Kurzlink des Kunden**; die Knowledge-Graph-ID dahinter steht
+      als Ausweichlösung im Kommentar, falls Google solche Kurzlinks austauscht.
+- [x] ⚠️⚠️ **DIE TINTENMESSUNG IST PRO LOGO VERSCHIEDEN, und das ist der Kern von
+      `docs/design-sources/client-logos.js`.** Alle Logos im Band sind weiße
+      Silhouetten (nachgemessen an den bestehenden: reines Weiß mit Alpha, 160px
+      hoch) — anders geht es nicht, weil die Sektion dunkel ist und die Lichtvariante
+      `filter: invert(1)` benutzt, was nur bei einfarbigen Zeichen funktioniert.
+      · **Norma** ist ein WEISSER Schriftzug in einem roten Kasten → Alpha =
+        Weißheit, der Kasten fällt weg. Eine Silhouette des Kastens mit
+        ausgestanzten Buchstaben wäre das Gegenteil der Marke.
+      · **Schöner Leben / nacht arena** sind dunkel auf weiß → Alpha = Farbdeckung,
+        `255 - min(R,G,B)`. ⚠️ **NICHT `255 - Helligkeit`**: der orange Schriftzug
+        unter dem Wortzeichen hat mittlere Helligkeit und wäre danach halb
+        durchsichtig, also blasser als der Rest DESSELBEN Logos.
+- [x] ⚠️⚠️ **ZWEI FEHLER, DIE ERST DIE MESSUNG GEZEIGT HAT:**
+      1. **Flachlegen auf Weiß ruinierte Norma.** Die Quelle ist ein PNG mit
+         Transparenz, und flachgelegt wird der transparente Rand zu Weiß — also zu
+         Tinte, weil bei diesem Fall Weiß die Tinte IST. Der Zuschnitt umfasste
+         danach das ganze Bild statt des Schriftzugs (2000x750 statt 1895x410).
+         Flachlegen passiert jetzt nur im dunklen Fall.
+      2. **Auf den Höchstwert normalisieren brachte fast nichts.** Bei Schöner Leben
+         liegt die Masse des Wortzeichens bei Deckung 169, ein paar JPEG-Artefakte
+         aber bei 186 — Faktor 1,37, die Marke blieb bei 232 statt 255, gemessen
+         **55 volldeckende Pixel in einem 646x160-Logo**. Bezug ist jetzt das **90.
+         Perzentil** der Tintenpixel, also der Flächenton der Marke. Im Kontaktblatt
+         gegen die bestehenden Logos verglichen, nicht nur gerechnet.
+- [x] ⚠️⚠️ **DIE BANDGESCHWINDIGKEIT MUSSTE NACHGERECHNET WERDEN, und das ist die
+      Falle, die dieses Archiv schon zweimal dokumentiert: eine Dauer ist keine
+      Geschwindigkeit.** Ein Logo ist breiter als ein getippter Name, also wuchs die
+      Strecke pro Umlauf — bei gleicher Dauer heißt das schneller. Gemessen nach der
+      Umstellung: **10,08 / 11,49 / 11,93 px/s**. Die Baustellenreihe hat sich nicht
+      geändert, also war ihre 11,49 der Maßstab. Neu: **objektschutz 270→237s,
+      veranstaltung 228→237s** (beide Halbstrecken sind jetzt identisch 2721px),
+      mobil **190→162s** und **164→167s**.
+      **Nachgemessen bei 1440 und 390: 11,48–11,61 px/s in allen sechs Fällen**,
+      Überhang überall positiv (also kein Sprung im Umlauf) und die Gruppenzahl je
+      Reihe weiter GERADE (2 / 6 / 4) — die halbe Strecke muss auf eine
+      Gruppengrenze fallen.
+- [x] **`.ref-marquee__name` GELÖSCHT statt als toter Selektor stehen gelassen** (die
+      Regel und ihre zwei Nebenvorkommen). Sie beschrieb einen Zustand, den es nicht
+      mehr gibt; die Git-Historie hat sie, falls wieder eine Firma ohne Logo dazukommt.
+- [x] **Verifiziert**: 42 Badges als Link, 0 als `div`, kein verschachtelter Link,
+      Hinweistext auf allen 42, `norma`/`schoener-leben`/`nacht-arena` je 2/2/4 Bilder
+      im Markup, 0 verbleibende Namensfelder. Kontaktblatt und Live-Ausschnitt
+      angesehen.
+- [x] **vCards: Tippfehler in der Berufsbezeichnung** in beiden Dateien behoben, nach
+      Bestätigung des Kunden. Die Seiten sagten es schon richtig.
+
+- [ ] 🟡 **Nebenbefund, nicht angefasst: im Band 768–1023px laufen alle drei Reihen
+      langsamer** (7,9–9,5 px/s), weil dort die Mobil-Dauern noch nicht greifen, die
+      Strecken aber schon schmaler sind. Vorbestehend, unabhängig von dieser Runde,
+      und mit einem dritten Dauern-Satz zu lösen.
+
+
 **2026-08-23 — BLOQUE K: LA ESTRUCTURA DE VACANTES EXISTE Y NO RENDERIZA NADA.**
 `content/vacancies.json` (vacío), un renderer en `build.js`, dos marcadores en
 `pages/jobs.html` y el CSS de `.jobs-openings*`. **`/jobs/` no cambió ni un byte.**
