@@ -726,7 +726,7 @@ Kommentar im Quelltext, falls Google solche Kurzlinks irgendwann austauscht.
 
 ## 14 — Marco Bayer entfernt, und zehn alte Seiten, die keine Sitemap kannte
 
-Commit `PLATZHALTER` · 2 Seiten und 4 Dateien gelöscht, `vercel.json`,
+Commit `eec5293` · 2 Seiten und 4 Dateien gelöscht, `vercel.json`,
 `docs/design-sources/person-pages.js`, `docs/design-sources/redirect-test.js`
 
 ### Marco Bayer
