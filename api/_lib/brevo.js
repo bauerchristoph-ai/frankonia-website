@@ -1,0 +1,249 @@
+/*
+ * Brevo: Kontakt, Bestätigungsmail, Event, interne Benachrichtigung.
+ * 2026-08-26.
+ *
+ * ⚠️⚠️ DIE ATTRIBUTNAMEN SIND DEUTSCH, UND DAS IST DIE FALLE DIESER DATEI.
+ * Der Brevo-Account ist deutschsprachig: Vor- und Nachname heißen VORNAME und
+ * NACHNAME, nicht FIRSTNAME / LASTNAME. Wer die englischen Namen benutzt, legt
+ * keine Fehlermeldung, sondern DUBLETTEN an — Brevo akzeptiert unbekannte
+ * Attribute nicht, aber der Kontakt wird trotzdem geschrieben, nur ohne Namen.
+ * Ebenso: die Marketing-Einwilligung heißt OPT_IN und existiert bereits;
+ * MARKETING_OPT_IN wäre ein zweites Feld für dieselbe Aussage.
+ *
+ * ⚠️ DIE BESTÄTIGUNGSMAIL GEHT DIREKT ÜBER DEN TRANSAKTIONS-ENDPOINT, nicht
+ * über eine Brevo-Automation. Sie ist geschäftskritisch: über
+ * /v3/smtp/email steht in der Antwort, ob sie angenommen wurde, und das
+ * funktioniert unabhängig vom Tarif. Eine Automation kann still ausfallen —
+ * und "still" ist bei einer Eingangsbestätigung der schlechteste Fehler.
+ * Das Event unten ist die Grundlage für spätere Nurture-Strecken und hängt
+ * ausdrücklich NICHT an der Bestätigungsmail.
+ */
+
+const { anfrage } = require("./http");
+const { log } = require("./log");
+
+const BASIS = "https://api.brevo.com/v3";
+
+function kopf() {
+  return {
+    "api-key": process.env.BREVO_API_KEY,
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+}
+
+function konfiguriert() {
+  return Boolean(process.env.BREVO_API_KEY);
+}
+
+function absender() {
+  return {
+    email: process.env.BREVO_SENDER_EMAIL || "",
+    name: process.env.BREVO_SENDER_NAME || "FRANKONIA Sicherheitsdienst",
+  };
+}
+
+/* ------------------------------------------------------------------ Kontakt */
+
+/**
+ * Die Zuordnung Website-Feld -> Brevo-Attribut. Als Tabelle, damit sie
+ * überprüfbar bleibt und nicht in einer Objektliteral-Wand verschwindet.
+ * ⚠️ Nur diese Attribute existieren im Account. Keine weiteren anlegen —
+ * fehlt eines, ist das eine Rückfrage, keine Erweiterung.
+ */
+function kontaktAttribute(d, submissionId, hubspotId, zeitstempel) {
+  const a = {
+    VORNAME: d.first_name,
+    NACHNAME: d.last_name,
+    SOURCE: "Website",
+    FORM_TYPE: d.form_type,
+    // Brevo erwartet bei einem Datumsattribut YYYY-MM-DD.
+    LAST_FORM_SUBMISSION: zeitstempel.slice(0, 10),
+    SUBMISSION_ID: submissionId,
+    // ⚠️ Ohne Haken FALSE, nicht "nicht gesetzt". Ein fehlendes Attribut
+    // liest sich später als "unbekannt", und "unbekannt" wird irgendwann als
+    // "wahrscheinlich ja" behandelt. Eine ausdrückliche Null ist die
+    // belastbare Aussage.
+    OPT_IN: Boolean(d.marketing_opt_in),
+  };
+  if (d.phone) a.PHONE = d.phone;
+  if (d.company) a.COMPANY = d.company;
+  if (d.service) a.SERVICE = d.service;
+  if (hubspotId) a.HUBSPOT_CONTACT_ID = String(hubspotId);
+  return a;
+}
+
+async function kontaktUpsert(d, submissionId, hubspotId, zeitstempel) {
+  const res = await anfrage("brevo.kontakt", submissionId, BASIS + "/contacts", {
+    method: "POST",
+    headers: kopf(),
+    body: JSON.stringify({
+      email: d.email,
+      attributes: kontaktAttribute(d, submissionId, hubspotId, zeitstempel),
+      updateEnabled: true,
+      // ⚠️ KEINE Listen-Zuordnung. Listen sind für Marketing; eine
+      // Angebotsanfrage ist keine Anmeldung. Wer hier eine listIds ergänzt,
+      // macht aus jedem Interessenten einen Newsletter-Empfänger.
+    }),
+  });
+  // 201 (neu) und 204 (aktualisiert) sind beides Erfolg.
+  return { ok: res.ok, status: res.status };
+}
+
+/* --------------------------------------------------- Bestätigung an den Kunden */
+
+async function bestaetigungsmail(d, submissionId) {
+  const templateId = Number(process.env.BREVO_CONFIRMATION_TEMPLATE_ID);
+  if (!Number.isFinite(templateId) || templateId <= 0) {
+    log.alarm(submissionId, "brevo: BREVO_CONFIRMATION_TEMPLATE_ID fehlt oder ist keine Zahl");
+    return { ok: false };
+  }
+  const res = await anfrage("brevo.bestaetigung", submissionId, BASIS + "/smtp/email", {
+    method: "POST",
+    headers: kopf(),
+    body: JSON.stringify({
+      templateId,
+      to: [{ email: d.email, name: (d.first_name + " " + d.last_name).trim() }],
+      // Das Template nutzt {{ params.VORNAME }} und blendet die Zeile zur
+      // Leistung nur ein, wenn SERVICE gefüllt ist. Deshalb wird SERVICE
+      // immer mitgegeben — als leerer String, wenn nichts angefragt wurde,
+      // sonst wäre die Bedingung im Template nicht auswertbar.
+      params: {
+        VORNAME: d.first_name,
+        NACHNAME: d.last_name,
+        COMPANY: d.company || "",
+        SERVICE: d.service || "",
+        SUBMISSION_ID: submissionId,
+      },
+    }),
+  });
+  if (!res.ok) log.alarm(submissionId, "brevo: Bestaetigungsmail NICHT angenommen");
+  return { ok: res.ok, messageId: res.body && res.body.messageId };
+}
+
+/* --------------------------------------------------------------------- Event */
+
+async function event(d, submissionId) {
+  const res = await anfrage("brevo.event", submissionId, BASIS + "/events", {
+    method: "POST",
+    headers: kopf(),
+    body: JSON.stringify({
+      event_name: "website_form_submitted",
+      identifiers: { email_id: d.email },
+      contact_properties: {
+        FORM_TYPE: d.form_type,
+        SERVICE: d.service || "",
+        SOURCE: "Website",
+      },
+      event_properties: {
+        submission_id: submissionId,
+        form_type: d.form_type,
+        service: d.service || "",
+        page_url: d.page_url || "",
+        utm_source: d.utm_source || "",
+        utm_medium: d.utm_medium || "",
+        utm_campaign: d.utm_campaign || "",
+      },
+    }),
+  });
+  return { ok: res.ok };
+}
+
+/* ---------------------------------------------- Interne Benachrichtigung */
+
+/**
+ * ⚠️ DIESER SCHRITT ENTSCHEIDET ÜBER ERFOLG ODER FEHLER DER GANZEN ANFRAGE.
+ * Der Besucher bekommt eine Erfolgsmeldung, sobald MINDESTENS diese
+ * Benachrichtigung ODER der HubSpot-Kontakt durch ist. Deshalb steht hier
+ * kein Template, sondern reiner Text: ein Template kann im Brevo-Konto
+ * gelöscht oder deaktiviert werden, ohne dass es hier auffällt, und dann
+ * wäre der letzte Rettungsweg genau der, der ausfällt.
+ *
+ * ⚠️ HIER STEHEN PERSONENBEZOGENE DATEN IM KLARTEXT, und das ist richtig: die
+ * Mail geht an FRANKONIA und ist der Zweck der Verarbeitung. Was NICHT
+ * passiert, ist dasselbe im Serverlog — dafür sorgt api/_lib/log.js.
+ */
+async function interneBenachrichtigung(d, submissionId, hubspotId, hubspotOk) {
+  const an = process.env.INTERNAL_NOTIFICATION_EMAIL;
+  if (!an) {
+    log.alarm(submissionId, "brevo: INTERNAL_NOTIFICATION_EMAIL fehlt — keine interne Meldung moeglich");
+    return { ok: false };
+  }
+
+  const zeilen = [
+    "Neue Anfrage über die Website",
+    "",
+    "Name:        " + d.first_name + " " + d.last_name,
+    "Unternehmen: " + (d.company || "—"),
+    "E-Mail:      " + d.email,
+    "Telefon:     " + (d.phone || "—"),
+    "Leistung:    " + (d.service || "—"),
+    "",
+    "Nachricht:",
+    d.message,
+    "",
+    "— — —",
+    "Seite:          " + (d.page_url || "—"),
+    "Verweis:        " + (d.referrer || "—"),
+    "Kampagne:       " +
+      (["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"]
+        .filter((k) => d[k])
+        .map((k) => k.replace("utm_", "") + "=" + d[k])
+        .join(" · ") || "—"),
+    "Marketing:      " + (d.marketing_opt_in ? "Einwilligung erteilt" : "keine Einwilligung"),
+    "Submission-ID:  " + submissionId,
+    "HubSpot:        " + (hubspotOk && hubspotId ? "Kontakt " + hubspotId : "NICHT gespeichert — bitte manuell anlegen"),
+  ];
+
+  const res = await anfrage("brevo.intern", submissionId, BASIS + "/smtp/email", {
+    method: "POST",
+    headers: kopf(),
+    body: JSON.stringify({
+      sender: absender(),
+      to: [{ email: an }],
+      // ⚠️ Antwortadresse ist der Interessent: so führt "Antworten" im
+      // Postfach direkt zu ihm und nicht zurück an das eigene Konto.
+      replyTo: { email: d.email, name: (d.first_name + " " + d.last_name).trim() },
+      subject:
+        "Website-Anfrage: " +
+        (d.company || d.first_name + " " + d.last_name) +
+        (d.service ? " — " + d.service : ""),
+      textContent: zeilen.join("\n"),
+    }),
+  });
+  if (!res.ok) log.alarm(submissionId, "brevo: interne Benachrichtigung NICHT angenommen");
+  return { ok: res.ok };
+}
+
+/* ------------------------------------------------------------------- Ablauf */
+
+/**
+ * Der ganze Brevo-Teil. Wirft nie.
+ * Die vier Schritte laufen NACHEINANDER und unabhängig: fällt die
+ * Bestätigungsmail aus, wird das Event trotzdem gesendet und die interne
+ * Benachrichtigung trotzdem verschickt.
+ */
+async function verarbeiten(d, submissionId, hubspotId, hubspotOk, zeitstempel) {
+  if (!konfiguriert()) {
+    log.alarm(submissionId, "brevo: BREVO_API_KEY fehlt — uebersprungen, auch die interne Meldung");
+    return { ok: false, intern: false, schritte: { konfiguration: false } };
+  }
+  const schritte = {};
+  schritte.kontakt = (await kontaktUpsert(d, submissionId, hubspotId, zeitstempel)).ok;
+  schritte.bestaetigung = (await bestaetigungsmail(d, submissionId)).ok;
+  schritte.event = (await event(d, submissionId)).ok;
+  const intern = await interneBenachrichtigung(d, submissionId, hubspotId, hubspotOk);
+  schritte.intern = intern.ok;
+  return { ok: schritte.kontakt || schritte.bestaetigung || intern.ok, intern: intern.ok, schritte };
+}
+
+module.exports = {
+  verarbeiten,
+  kontaktUpsert,
+  kontaktAttribute,
+  bestaetigungsmail,
+  event,
+  interneBenachrichtigung,
+  konfiguriert,
+  BASIS,
+};
