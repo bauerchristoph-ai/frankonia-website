@@ -245,6 +245,26 @@
       "permanent": true
     },
     {
+      "source": "/thomas-windisch-sicherheitsdienst",
+      "destination": "/alexander-jaeger-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/thomas-windisch-sicherheitsdienst/",
+      "destination": "/alexander-jaeger-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/thomas-windisch-werkschutz",
+      "destination": "/alexander-jaeger-werkschutz/",
+      "permanent": true
+    },
+    {
+      "source": "/thomas-windisch-werkschutz/",
+      "destination": "/alexander-jaeger-werkschutz/",
+      "permanent": true
+    },
+    {
       "source": "/hallo-welt",
       "destination": "/",
       "permanent": true

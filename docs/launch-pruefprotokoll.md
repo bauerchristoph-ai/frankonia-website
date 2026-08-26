@@ -237,6 +237,12 @@ nichts.
 
 ## 7 — Block E: sieben Personen- und Verweisseiten
 
+> ⚠️ **Stand 26.08.: es sind elf Seiten, und neun davon sind Personenkarten.**
+> Dieser Abschnitt beschreibt den Bau vom 23.08.; sechs weitere Karten sind am
+> 26.08. dazugekommen und die drei hier gebauten haben ihren Einleitungssatz und
+> ihre Leistungslinks nachgetragen bekommen. **Siehe Abschnitt 15** — dort steht
+> auch der behobene Verlust.
+
 Commit `60e5fc1` · 7 neue Seiten in `pages/`, `css/page-person.css`,
 `docs/design-sources/person-pages.js`, 3 Porträts, 5 vCards, `vercel.json`
 
@@ -245,7 +251,7 @@ auf gedruckten Karten und QR-Codes stehen.
 
 | ☐ | Was | Wo prüfen | Woran erkennbar |
 |---|---|---|---|
-| ☐ | Drei Personenkarten | `/alexander-jaeger-sicherheitsdienst/`, `/alexander-jaeger-werkschutz/`, `/bryan-van-wey-werkschutz/` | Rundes Porträt, Name, Funktion, darunter Telefon, Mobil und E-Mail als antippbare Zeilen. ⚠️ Es waren fünf: die beiden Marco-Bayer-Seiten sind am 25.08. gelöscht worden (siehe Abschnitt 14) und leiten auf Alexander Jäger weiter. |
+| ☐ | Drei Personenkarten (heute neun, siehe Abschnitt 15) | `/alexander-jaeger-sicherheitsdienst/`, `/alexander-jaeger-werkschutz/`, `/bryan-van-wey-werkschutz/` | Rundes Porträt, Name, Funktion, darunter Telefon, Mobil und E-Mail als antippbare Zeilen. ⚠️ Es waren fünf: die beiden Marco-Bayer-Seiten sind am 25.08. gelöscht worden (siehe Abschnitt 14) und leiten auf Alexander Jäger weiter. |
 | ☐ | Daten stimmen | jede Karte | Nummern, Funktionen und Zusatzzeilen wie auf der Live-Seite; nichts umformuliert |
 | ☐ | Kontakt speichern | „Kontakt speichern" antippen, am besten mit dem Handy | Es öffnet sich die Kontakt-Speichern-Ansicht, nicht ein Datei-Download |
 | ☐ | Leistungslinks | Marco-Bayer-Seiten und `/alexander-jaeger-werkschutz/` | Führen auf die **neuen** Leistungsseiten, ohne Umleitungs-Zwischenschritt |
@@ -265,10 +271,11 @@ aus. Aus den Studio-Ordnern hätte ich aus durchnummerierten Vorschauen raten m�
 und Lenis; hier wären das rund 50 KB Fremd-JavaScript vor einer Telefonnummer, für
 jemanden, der mit einer Karte in der Hand auf dem Parkplatz steht.
 
-⚠️ **Tippfehler in deinen vCards, nicht von mir korrigiert:** beide Jäger-Dateien
-enthalten `TITLE:Vetriebsleiter` (ein „r" fehlt). Das landet so in den Adressbüchern
-aller Empfänger. Auf der Seite selbst steht korrekt „Vertriebsleiter" — es betrifft
-nur die Datei. Sag Bescheid, dann ändere ich beide Zeilen.
+✅ **Tippfehler in deinen vCards — am 25.08. nach deiner Bestätigung behoben**
+(Abschnitt 13). Beide Jäger-Dateien enthielten `TITLE:Vetriebsleiter` (ein „r"
+fehlte) und hätten das so in die Adressbücher aller Empfänger getragen. Bei den sechs
+vCards vom 26.08. nachgemessen: dort stimmt die Berufsbezeichnung jeweils mit der
+Funktion auf der Seite überein.
 
 ⚠️⚠️ **Korrektur an meiner eigenen Notiz von vorhin — hier stand ein Fehler von mir.**
 Ich hatte notiert, die Marco-Bayer-Seite verlinke `/frankonia-baustellenbewachung`
@@ -663,8 +670,7 @@ Alle Blöcke dieses Durchgangs sind durch. Was bleibt, und von wem es abhängt:
 | ☐ | Hero-Foto der Startseite | offen seit Block A |
 | ☐ | Vier Titelbilder für die portierten Ratgeber-Artikel | Abschnitt 9 |
 | ☐ | Drei Fehler im Datenschutztext entscheiden (§ 83 StBerG, doppelte Nummerierung 2.1, Stand 2018) | Abschnitt 11 |
-| ☐ | Tippfehler „Vetriebsleiter" in den beiden Jäger-vCards | Abschnitt 7 |
-| ☐ | Zwei Fragen zu Block F beantworten: Google-Profil-URL fürs Badge, Anker `/#dienstleistungen` | Abschnitte 6 und 7 |
+| ☐ | Eine Frage zu Block D: soll der Anker `/#dienstleistungen` aus dem Linktree ein Ziel auf der neuen Startseite bekommen? | Abschnitt 6 |
 
 **Nach dem Deploy, technisch:**
 
@@ -753,8 +759,13 @@ eine Sitemap ist eine Empfehlung an Suchmaschinen und kein Verzeichnis. Für ein
 Migration ist sie die falsche Quelle, und ich habe sie in Block G genau so benutzt.
 **Zehn dieser Adressen wären beim Umzug still zu 404 geworden.**
 
-Sie warten jetzt auf deine Entscheidung. Der Redirect-Test meldet sie bis dahin
-absichtlich als verwaist — das ist die Erinnerung, kein Fehler.
+✅ **Am 26.08. hast du sie Zeile für Zeile entschieden, alle zehn sind umgesetzt —
+siehe Abschnitt 15.** Sechs sind echte Seiten unter ihrer alten URL geblieben, zwei
+gehen auf Alexander Jäger, zwei liefern absichtlich 404. Der Redirect-Test meldet
+keine verwaiste Adresse mehr.
+
+Der Vorschlag von damals steht unten unverändert, damit nachvollziehbar bleibt,
+worüber entschieden wurde.
 
 | ☐ | Alte URL | Was es ist | Stand |
 |---|---|---|---|
@@ -785,11 +796,111 @@ Mein Vorschlag, du entscheidest:
 Sag mir einfach pro Zeile „bleibt", „weiterleiten auf …" oder „404", dann setze ich
 das um.
 
+⚠️ **Deine Antwort wich in zwei Punkten von diesem Vorschlag ab, und das ist so
+umgesetzt:** die MORELO-Pforte ist **nicht** auf /referenzen/ umgeleitet, sondern
+als eigene Karte geblieben (sie hat eine eigene Telefonnummer, die auf gedruckten
+Zetteln an einer Pforte steht), und Van Weys Security-Karte ist ebenfalls geblieben
+statt auf seine Werkschutz-Karte zu zeigen.
+
 ### Norbert Wedebert
 
 Eine solche Seite existiert nicht. Weder die Seitenliste der alten Website noch ihre
 eigene Suche kennen sie, und die naheliegenden Adressen antworten mit 404. Falls es
 sie einmal gab, ist sie schon gelöscht — es ist also nichts zu tun.
+
+---
+
+## 15 — Die sechs behaltenen Visitenkartenseiten, zwei Weiterleitungen, zwei bewusste 404
+
+Commit `PLATZHALTER` · 6 neue Seiten in `pages/`, 3 Porträts, 6 vCards,
+`docs/design-sources/person-pages.js`, `redirects-build.js`, `redirect-test.js`,
+`vercel.json` · **kein CSS geändert**
+
+Damit sind die zehn Seiten aus Abschnitt 14, die in keiner Sitemap standen,
+vollständig abgearbeitet — deine Entscheidung Zeile für Zeile umgesetzt.
+
+| ☐ | Deine Entscheidung | Ergebnis |
+|---|---|---|
+| ☐ | Walde behalten | `/steffen-walde-sicherheitsdienst/` und `/steffen-walde-werkschutz/` sind echte Seiten unter ihrer alten URL |
+| ☐ | Bauer behalten | `/christoph-bauer-sicherheitsdienst-2/` |
+| ☐ | Wettengel behalten | `/daniel-wettengel-sicherheitsdienst/` |
+| ☐ | Van Wey behalten | `/bryan-van-wey-security/` — die zweite Karte neben der bestehenden Werkschutz-Karte |
+| ☐ | Morelo Werkschutz Team behalten | `/morelo-werkschutz-team-2/` |
+| ☐ | Windisch auf Jäger weiterleiten | beide Varianten, variantentreu: Sicherheitsdienst auf Sicherheitsdienst, Werkschutz auf Werkschutz |
+| ☐ | Testformular auf 404 | keine Regel, und der Redirect-Test führt sie jetzt als **gewollten** 404, nicht mehr als Fehler |
+| ☐ | Homepage 2 auf 404 | dito |
+
+**Es sind jetzt neun Personenkarten statt drei.** Prüfen kannst du sie alle gleich:
+Porträt, Name, Funktion, antippbare Zeilen für Telefon, Mobil und E-Mail, „Kontakt
+speichern", „Mehr erfahren", darunter vier Leistungslinks.
+
+| ☐ | Was | Woran erkennbar |
+|---|---|---|
+| ☐ | Daten stimmen | Nummern, Funktionen und Zusatzzeilen wie auf der Live-Seite, nichts umformuliert |
+| ☐ | Kontakt speichern | Mit dem Handy antippen: es öffnet die Kontakt-Ansicht, kein Datei-Download |
+| ☐ | Leistungslinks | Führen auf die **neuen** Leistungsseiten, ohne Umleitungs-Zwischenschritt |
+| ☐ | Nicht im Index | Seitenquelle: `noindex,follow`, und keine der neun steht in `/sitemap.xml` |
+
+**Deine Dateien, unverändert.** Die drei neuen Porträts und die sechs vCards sind
+direkt deine Uploads — die vCards mit Adresse, Fax, Arbeits-URL und eingebettetem
+Foto. Selbst erzeugte hätten Felder verloren. Nachgemessen: die Berufsbezeichnung in
+jeder vCard stimmt mit der Funktion auf ihrer Seite überein, also kein zweiter Fall
+wie der Jäger-Tippfehler.
+
+### ⚠️ Drei Dinge, die dir gehören und die ich nicht eigenmächtig geändert habe
+
+**1. Van Wey steht auf einer dritten Firmierung.** Seine Security-Karte nennt
+`b.vanwey@frankonia-security.de`, und die vCard dazu sagt als Firma **„FRANKONIA
+Security GmbH & Co. KG"**. Neben `-sicherheit.de` und `-werkschutz.de` ist das eine
+dritte Marke, sie kommt **im ganzen restlichen Projekt nicht ein einziges Mal vor**,
+und im Impressum steht sie auch nicht. So steht es auf deiner Live-Karte, deshalb
+steht es so auf der neuen — aber wenn das eine Altlast ist, sind es zwei Zeilen.
+
+**2. Ein Link war auf der alten Seite kaputt, auf allen neun Karten.** Sie verlinken
+`/frankonia-baustellenbewachung`, und diese Adresse antwortet live mit **404** —
+ihre sieben Geschwister antworten mit 301. Auf der neuen Seite zeigt der Link auf
+`/baustellenbewachung/`, der Fehler ist damit weg und nicht mitgenommen.
+
+**3. Van Weys Foto: ich habe das neuere genommen.** Deine Security-Karte zeigt ein
+Foto von Dezember 2023, die Werkschutz-Karte eines von Dezember 2025. Es ist
+dieselbe Person, und zwei Aufnahmen aus zwei Jahren auf zwei Seiten derselben
+Website sehen nach Fehler aus, nicht nach Werktreue — also tragen beide Karten das
+Foto von 2025. Nachgemessen, damit das keine Behauptung bleibt: mittlere Abweichung
+**65,9 von 255**, also unstrittig zwei verschiedene Aufnahmen.
+
+### ✅ Nebenbefund, den ich gleich mit behoben habe
+
+**Die drei bereits gebauten Karten hatten ihren Einleitungssatz und ihre
+Leistungslinks verloren.** Jede der neun Live-Karten hat eine Zeile über dem
+Kontaktblock („Wenn Sie sich, Ihr Unternehmen … effektiv schützen möchten!") und
+darunter vier Leistungslinks. Beim ersten Übertrag am 23.08. sind die verloren
+gegangen: Jäger Sicherheitsdienst fehlten beide, Jäger Werkschutz hatte einen von
+vier Links, Van Wey Werkschutz fehlten die Links. Steht jetzt überall — sonst hätte
+diese Runde sechs vollständige neben drei unvollständigen Karten hinterlassen.
+
+### Warum die Morelo-Karte anders aussieht
+
+Sie ist **keine Person, sondern ein Posten** — die Pforte, die FRANKONIA beim Kunden
+MORELO besetzt. Daher drei Abweichungen, und alle drei stehen so auf deiner
+Live-Karte: **kein Porträt** (die Live-Karte hat keines), **keine Festnetznummer**
+(nur die Mobilnummer der Pforte) und kein Zusatz zur Berufsbezeichnung. Ohne Foto
+rutscht der Name nach oben, es bleibt keine Lücke — angesehen, nicht nur gerechnet.
+
+### Gemessen
+
+- **Die neun Karten und die zwei Verweisseiten:** je genau eine `<h1>`, keine
+  übersprungene Überschriftenebene, `noindex,follow` auf allen elf, keine in der
+  Sitemap, kein Animations-JavaScript, jede verlinkte Datei vorhanden, **kein toter
+  interner Link**, Titel höchstens 57 und Beschreibungen höchstens 124 Zeichen.
+- **Die Redirect-Prüfung:** 31 Quell-URLs, 18 Adressen, die nicht umgeleitet werden
+  dürfen (keine fälschlich gefangen), und die Vollständigkeitsprobe gegen die alte
+  Seite steht jetzt auf **41 Adressen — 22 umgeleitet, 17 unverändert vorhanden,
+  2 gewollt 404, 0 verwaist**. Vorher waren es 2 verwaiste.
+- **Der Test kennt „gewollt 404" jetzt als eigene Kategorie**, mit Gegenprüfung: wenn
+  eine dieser zwei Adressen doch wieder erreichbar wird, meldet er das. Bewusst eine
+  eigene Liste — hätte ich die Absicht aus der bestehenden Ausnahmeliste geraten,
+  würde der nächste echte Fall durchrutschen.
+- **Ansicht geprüft** bei 1440 und 390 Pixel Breite, Walde-Karte und Morelo-Karte.
 
 ---
 
@@ -832,14 +943,29 @@ ist** (das ist die Kettenprüfung). Nach dem Deploy einmal
 | ☐ | `/feed/`, `/comments/feed/`, `/…/feed/` | 301 | `/` | 1 |
 | ☐ | `/author/…` | 301 | `/ueber-uns/` | 1 |
 | ☐ | `/category/…`, `/tag/…` | 301 | `/ratgeber/` | 1 |
+| ☐ | `/marco-bayer-sicherheitsdienst-2/` | 301 | `/alexander-jaeger-sicherheitsdienst/` | 1 |
+| ☐ | `/marco-bayer-werkschutz-2/` | 301 | `/alexander-jaeger-werkschutz/` | 1 |
+| ☐ | `/thomas-windisch-sicherheitsdienst/` | 301 | `/alexander-jaeger-sicherheitsdienst/` | 1 |
+| ☐ | `/thomas-windisch-werkschutz/` | 301 | `/alexander-jaeger-werkschutz/` | 1 |
 | ☐ | `/wp-admin/`, `/wp-login.php` | **404** | — | 0 |
 | ☐ | `/wp-content/…` | **404** | — | 0 |
+| ☐ | `/testformular/` | **404** | — | 0 |
+| ☐ | `/homepage-2/` | **404** | — | 0 |
+
+Die letzten vier Zeilen sind **gewollte 404 auf deine Anweisung**, keine Lücke. Der
+Redirect-Test führt sie als eigene Kategorie und meldet es, wenn eine davon doch
+wieder erreichbar wird.
 
 Jede Adresse existiert zusätzlich in der Variante ohne Schrägstrich am Ende, damit
-auch dort genau eine Weiterleitung anfällt und nicht zwei. **13 weitere Adressen der
+auch dort genau eine Weiterleitung anfällt und nicht zwei. **17 weitere Adressen der
 alten Seite brauchen gar keine Regel**, weil sie auf der neuen Seite unter demselben
 Pfad liegen: die Startseite, Baustellenbewachung, Veranstaltungsschutz, Jobs,
-Angebot, Referenzen, Linktree und die sechs Personenseiten.
+Angebot, Referenzen, Linktree, der Sicherheitscheck und die neun Personenseiten.
+
+**Stand der Vollständigkeitsprüfung: 41 Adressen der alten Seite — 22 umgeleitet,
+17 unverändert vorhanden, 2 gewollt 404, 0 verwaist.** Diese Liste ist die eigentliche
+Frage der Migration; „0 verwaist" heißt, dass keine alte Adresse nach dem Umzug ins
+Leere läuft.
 
 ## 2 — Portierte Blogartikel, und warum vier nicht portiert wurden
 
@@ -912,7 +1038,11 @@ Hauptziel jeder Seite.
 ## 5 — Offene Punkte
 
 Sie stehen vollständig im Abschnitt „Noch offen" direkt darüber. In einem Satz: das
-Hero-Foto der Startseite und vier Titelbilder für die neuen Ratgeber-Artikel, drei
-Entscheidungen im Datenschutztext, der Tippfehler in zwei vCards, der
+Hero-Foto der Startseite und vier Titelbilder für die neuen Ratgeber-Artikel, der
 Formularempfang, und nach dem Deploy die Live-Prüfung der Redirects samt der
 www-Umleitung in den Vercel-Einstellungen.
+
+Erledigt seit der ersten Fassung dieses Berichts: der Tippfehler in den zwei vCards
+(Abschnitt 13), die drei Fehler im Datenschutztext (Abschnitt 11), die Google-Profil-URL
+fürs Badge (Abschnitt 13) und die zehn Seiten ohne Sitemap-Eintrag (Abschnitte 14
+und 15).

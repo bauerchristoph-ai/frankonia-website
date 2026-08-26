@@ -1,0 +1,13 @@
+BEGIN:VCARD
+VERSION:3.0
+N;CHARSET=UTF-8:Werkschutz Team;Morelo;;;
+FN;CHARSET=UTF-8: Morelo Werkschutz Team
+ORG;CHARSET=UTF-8:FRANKONIA Werkschutz GmbH & Co. KG;Pforte
+URL;WORK:https://frankonia-werkschutz.de/
+EMAIL;type=WORK;type=PREF:werkschutz.frankonia@morelo.eu
+TEL;type=CELL;MOBILE:+49 1517 5010444
+ADR;CHARSET=UTF-8;WORK;type=pref:;;Neuerbstraße 19;Bamberg;;96052;Deutschland
+LABEL;WORK;PREF;ENCODING=QUOTED-PRINTABLE;CHARSET=UTF-8:Neuerbstraße 19=0D=0A=
+96052 Bamberg Deutschland
+REV:2025-05-09T12:09:08+02:00
+END:VCARD

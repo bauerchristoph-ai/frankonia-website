@@ -52,6 +52,8 @@ const ERWARTET = {
   "/kundenstory-kunde-2/": "/referenzen/",
   "/marco-bayer-sicherheitsdienst-2/": "/alexander-jaeger-sicherheitsdienst/",
   "/marco-bayer-werkschutz-2/": "/alexander-jaeger-werkschutz/",
+  "/thomas-windisch-sicherheitsdienst/": "/alexander-jaeger-sicherheitsdienst/",
+  "/thomas-windisch-werkschutz/": "/alexander-jaeger-werkschutz/",
   // G3
   "/bewerbung-im-sicherheitsdienst-die-3-haeufigsten-fehler/": "/ratgeber/bewerbung-sicherheitsdienst/",
   "/tariflohn-2026-im-sicherheitsdienst/": "/ratgeber/tariflohn-sicherheitsdienst/",
@@ -73,18 +75,30 @@ const ERWARTET = {
   "/author/admin/": "/ueber-uns/",
 };
 
-/* URLs, die NICHT umgeleitet werden dürfen. Die ersten beiden auf Anweisung des
-   Kunden (404 ist hier richtig). Der Rest sind Adressen, die es auf der alten
-   UND der neuen Seite unter demselben Pfad gibt — würde eine Regel sie fangen,
-   wäre das im besten Fall eine unnötige Weiterleitung und im schlechtesten eine
-   Schleife: /veranstaltungsschutz/ ist gleichzeitig ZIEL einer G1-Regel. */
+/* URLs, die NICHT umgeleitet werden dürfen. Die ersten vier auf ausdrückliche
+   Anweisung des Kunden (404 ist hier richtig): /wp-admin/ und /wp-login.php, weil
+   eine Weiterleitung des Login-Pfads eine Anmeldemaske vortäuscht, die es nicht
+   mehr gibt; /testformular/ und /homepage-2/, weil eine Testseite keine
+   Nachfolgerin hat und /homepage-2/ die technische Innenansicht der alten
+   Startseite war (2026-08-26).
+   Der Rest sind Adressen, die es auf der alten UND der neuen Seite unter demselben
+   Pfad gibt — würde eine Regel sie fangen, wäre das im besten Fall eine unnötige
+   Weiterleitung und im schlechtesten eine Schleife: /veranstaltungsschutz/ ist
+   gleichzeitig ZIEL einer G1-Regel. */
 const NICHT_UMLEITEN = [
-  "/wp-admin/", "/wp-login.php",
+  "/wp-admin/", "/wp-login.php", "/testformular/", "/homepage-2/",
   "/", "/baustellenbewachung/", "/veranstaltungsschutz/", "/jobs/",
   "/angebot/", "/referenzen/", "/ratgeber/", "/werkschutz/", "/objektschutz/",
   "/sicherheitskonzept/", "/ueber-uns/", "/kontakt/",
   "/ratgeber/paragraph-34a-erklaert/", "/ratgeber/bewerbung-sicherheitsdienst/",
 ];
+
+/* Alte Adressen, die nach dem Umzug ausdrücklich einen 404 liefern SOLLEN
+   (Kunde, 2026-08-26). Sie zählen in der Vollständigkeitsprüfung unten als
+   erledigt — aber nur, weil sie hier namentlich stehen. Jede alte URL, die
+   weder umgeleitet wird noch auf der neuen Seite existiert noch hier steht,
+   bleibt ein Fehler. */
+const BEWUSST_404 = ["/testformular/", "/homepage-2/"];
 
 /* ---- Vollständigkeit: JEDE alte URL muss irgendwo landen ----------------
    Das ist die komplette Adressliste der alten Seite, abgelesen aus ihrer eigenen
@@ -119,9 +133,14 @@ const ALTE_SEITE = [
      (/wp-json/wp/v2/pages), die ALLE veröffentlichten Seiten listet — 34 statt der
      23 aus der Sitemap. Eine Sitemap ist eine Empfehlung an Suchmaschinen, kein
      Verzeichnis; für eine Migration ist sie die falsche Quelle.
-     Sie warten auf die Entscheidung des Kunden, welche wegfallen — bis dahin stehen
-     sie hier, damit die Prüfung sie als verwaist meldet und sie nicht vergessen
-     werden. */
+     ✅ 2026-08-26 vom Kunden entschieden, und alle zehn landen jetzt irgendwo:
+     · SECHS bleiben als echte Seite unter ihrer alten URL (Walde x2, Bauer,
+       Wettengel, Van Wey Security, MORELO-Pforte) — siehe person-pages.js;
+     · ZWEI gehen weiter auf Alexander Jäger (Thomas Windisch, beide Varianten);
+     · ZWEI bleiben absichtlich 404 (/testformular/, /homepage-2/) und stehen
+       deshalb oben in NICHT_UMLEITEN, wo eine Regel, die sie doch fängt, auffällt.
+     Sie bleiben hier stehen, weil diese Liste die alte Seite beschreibt und nicht
+     den Bearbeitungsstand. */
   "/bryan-van-wey-security/",
   "/christoph-bauer-sicherheitsdienst-2/",
   "/daniel-wettengel-sicherheitsdienst/",
@@ -234,16 +253,23 @@ console.log("nicht umzuleitende URLs geprueft: " + NICHT_UMLEITEN.length + " (da
 
 // Vollständigkeit gegen die Sitemap der alten Seite
 const verwaist = [];
-let umgeleitet = 0, bleibt = 0;
+let umgeleitet = 0, bleibt = 0, gewollt404 = 0;
 for (const u of ALTE_SEITE) {
   if (match(u)) { umgeleitet++; continue; }
   const p = path.join(ROOT, "dist", decodeURIComponent(u), "index.html");
   if (fs.existsSync(p)) bleibt++;
+  else if (BEWUSST_404.includes(u)) gewollt404++;
   else verwaist.push(u);
 }
 ok(verwaist.length === 0, "alte URL wird nach dem Umzug ein 404:\n      " + verwaist.join("\n      "));
+// Gegenprüfung: eine URL in BEWUSST_404, die es doch noch gibt oder die doch
+// umgeleitet wird, ist ein Widerspruch zur Kundenentscheidung.
+const widerspruch = BEWUSST_404.filter(u =>
+  match(u) || fs.existsSync(path.join(ROOT, "dist", decodeURIComponent(u), "index.html")));
+ok(widerspruch.length === 0, "soll 404 liefern, ist aber erreichbar:\n      " + widerspruch.join("\n      "));
 console.log("alte Seite: " + ALTE_SEITE.length + " Adressen — " + umgeleitet +
-  " umgeleitet, " + bleibt + " unveraendert vorhanden, " + verwaist.length + " verwaist");
+  " umgeleitet, " + bleibt + " unveraendert vorhanden, " + gewollt404 +
+  " gewollt 404, " + verwaist.length + " verwaist");
 
 /* ---- Live-Teil, optional ------------------------------------------------ */
 const base = process.argv[2];

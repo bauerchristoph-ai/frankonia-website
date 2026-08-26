@@ -71,6 +71,14 @@ const EXACT = [
   ["/marco-bayer-sicherheitsdienst-2", "/alexander-jaeger-sicherheitsdienst/", "G2"],
   ["/marco-bayer-werkschutz-2", "/alexander-jaeger-werkschutz/", "G2"],
 
+  // 2026-08-26, Kunde: Thomas Windisch ebenso, auf Jäger. Aus derselben Runde, in
+  // der zehn Seiten auftauchten, die in keiner Sitemap stehen — der Kunde hat sechs
+  // davon behalten (die sind jetzt echte Seiten unter ihrer alten URL, siehe
+  // person-pages.js), diese zwei gehen weiter, und /testformular/ sowie
+  // /homepage-2/ dürfen auf seine ausdrückliche Anweisung 404 bleiben.
+  ["/thomas-windisch-sicherheitsdienst", "/alexander-jaeger-sicherheitsdienst/", "G2"],
+  ["/thomas-windisch-werkschutz", "/alexander-jaeger-werkschutz/", "G2"],
+
   // G4 — WordPress-Altlasten.
   ["/hallo-welt", "/", "G4"],
   ["/feed", "/", "G4"],

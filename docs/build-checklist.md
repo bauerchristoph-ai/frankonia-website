@@ -32,6 +32,84 @@ anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
 
+**2026-08-26 — LAS SEIS VISITENKARTENSEITEN QUE EL CLIENTE DECIDIÓ CONSERVAR, DOS
+REDIRECTS Y DOS 404 DELIBERADOS. Con eso los diez hallazgos del 25.08 quedan
+cerrados y la prueba de completitud pasa de 2 huérfanas a CERO.** Toca
+`docs/design-sources/person-pages.js`, `redirects-build.js`, `redirect-test.js`,
+`vercel.json`, 6 páginas nuevas, 3 retratos y 6 vCards. **Cero CSS.**
+
+- **Decisión del cliente, línea por línea** ("walde behalten, windisch auf jäger
+  weiterleiten, bauer behalten, wettengel behalten, van wey behalten, morelo
+  werkschutz team behalten, testformular auf 404 und homepage 2 auch auf 404"):
+  seis páginas reconstruidas bajo su URL vieja, dos redirects a Jäger, dos 404.
+  ⚠️ **Se desvió del plan que yo había propuesto en dos puntos y así se aplicó**:
+  la pforte de MORELO NO va a `/referenzen/` (tiene su propio teléfono, impreso en
+  la pforte) y la Security-Karte de Van Wey tampoco va a su Werkschutz-Karte.
+- ⚠️⚠️ **HALLAZGO PROPIO, y era una pérdida real en 3 páginas ya construidas: LAS
+  NUEVE LIVEKARTEN LLEVAN UN LEDE Y CUATRO LINKS DE SERVICIO, y el port del 23.08
+  se comió los de tres.** El encabezado de ese generador afirmaba "every visible
+  string was read off the live page … verbatim" y eso NO era cierto: Jäger
+  Sicherheitsdienst perdió las dos cosas, Jäger Werkschutz conservó **1 de 4**
+  links y Van Wey Werkschutz perdió los links. Restaurados de las páginas vivas.
+  **Se arregló acá y no en otra pasada porque si no esta ronda dejaba seis
+  completas al lado de tres incompletas** — o sea la inconsistencia se habría leído
+  como una decisión.
+- **Los dos ledes y los dos juegos de links viven en CUATRO constantes**
+  (`LEDE_SD`/`LEDE_WS`, `LINKS_SD`/`LINKS_WS`), no repetidos nueve veces: cada
+  página es o el lado Sicherheitsdienst o el lado Werkschutz, y las vivas usan
+  exactamente un par de cada uno. Una décima tarjeta no puede estrenar una tercera
+  redacción casi igual.
+- ✅ **UN LINK ROTO DE LA VIEJA NO SE PORTÓ: las nueve enlazan
+  `/frankonia-baustellenbewachung`, que responde 404 en vivo** (medido — sus siete
+  hermanas responden 301). Apuntar a `/baustellenbewachung/` lo arregla en vez de
+  arrastrarlo. Anotado en el generador para que no parezca un descuido de mapeo.
+- ⚠️⚠️ **`/bryan-van-wey-security/` NO es la Werkschutz-Karte con otro texto: su
+  mail está en `frankonia-security.de` y su vCard firma "FRANKONIA Security GmbH &
+  Co. KG"** — una TERCERA marca junto a `-sicherheit.de` y `-werkschutz.de`, que
+  **no aparece ni una vez más en todo el proyecto** y tampoco en el Impressum.
+  Publicado verbatim (es la Livekarte) y anotado como pregunta para el cliente, no
+  reescrito por mi cuenta.
+- ⚠️ **EL RETRATO DE VAN WEY ES EL NUEVO A PROPÓSITO, y la diferencia está medida.**
+  Su Security-Karte usa `uploads/2023/12/Bryan-Van-Wey-Web_V2.png` y la
+  Werkschutz-Karte `uploads/2025/12/Bryan-Van-Wey-Werkschutz-Web.png`: **desviación
+  media 65,9 de 255**, o sea dos tomas distintas de la misma persona con dos años
+  de diferencia. Las dos páginas llevan la de 2025 — dos fotos del mismo hombre en
+  dos páginas del mismo sitio se lee como error, no como fidelidad.
+- ⚠️ **LA TARJETA DE MORELO NO ES UNA PERSONA, ES UN PUESTO**, y eso costó dos
+  campos opcionales en el template (`portrait` y `tel`), no una variante nueva:
+  la Livekarte no tiene retrato (su única imagen es un bild de empresa en el
+  JSON-LD, o sea ninguna visible), tiene sólo móvil y no tiene cred.
+  ✅ **Sin retrato el layout no necesitó una regla**: `.person__inner` es una
+  columna flex, así que el `<h1>` sube y no queda hueco. Verificado en captura, no
+  deducido.
+- **Los 3 retratos y las 6 vCards son archivos DEL CLIENTE sin editar** — las
+  vCards con dirección, fax, URL de trabajo y foto embebida; generarlas acá habría
+  perdido campos. ⚠️ **Chequeado el caso del typo de Jäger: en las seis, la
+  `TITLE` de la vCard coincide con la función que muestra su página.** Los retratos
+  se re-codificaron con el mismo perfil que los existentes (**49KB PNG / 11KB
+  WebP**, contra 49/12 de los tres viejos) y ya venían 350x350, así que no se
+  escaló ni se recortó nada.
+- ⚠️ **`BEWUSST_404` es una LISTA PROPIA en `redirect-test.js`, no se derivó de
+  `NICHT_UMLEITEN`.** Ahí conviven dos clases de URL (404 deliberados y direcciones
+  que existen en las dos versiones del sitio), y una prueba que adivina la
+  intención de esa mezcla deja pasar el próximo caso real. Lleva además
+  contra-prueba: si una de esas dos vuelve a ser alcanzable, lo reporta.
+- **Medido: `redirect-test.js` en 0 problemas** — 31 URLs fuente, 18 que no deben
+  redirigirse (0 falsamente capturadas), y **41 direcciones de la vieja: 22
+  redirigidas, 17 presentes sin cambio, 2 gewollt 404, 0 huérfanas** (antes 2).
+  Las 11 páginas de persona/puntero: **1 `<h1>` cada una, sin saltos de nivel,
+  `noindex,follow` en las 11, ninguna en el sitemap, cero JS de motion, cada archivo
+  enlazado presente, CERO links internos muertos**, títulos ≤57 y descripciones
+  ≤124 caracteres. Capturas revisadas a 1440 y 390 (Walde y MORELO).
+- ⚠️ **Trampa de medición, mía: la sonda contó "2 mailto" en las nueve y no era
+  nada** — el footer tiene el suyo. Los contadores de la tarjeta hay que medirlos
+  **dentro de `<main>`**; el `tel:` ya estaba tratado así y el `mailto:` no.
+- ⚠️ **Trampa de entorno, la de siempre y dos veces hoy: un backtick dentro de un
+  template literal** rompió el script de parcheo con un mensaje que no lo nombra
+  (`... is not a function`), y **un heredoc de bash se comió un nivel de
+  backslash**, dejando `[\s\S]` como `[sS]` → "Invalid regular expression flags".
+  Para contenido con comillas y regex, el Write tool en vez del heredoc.
+
 **2026-08-25 — KUNDENRUNDE: DAS GOOGLE-BADGE IST EIN LINK (42 Seiten), DIE DREI
 LETZTEN NAMEN IM KUNDENBAND HABEN EIN LOGO, UND DER vCARD-TIPPFEHLER IST WEG.**
 

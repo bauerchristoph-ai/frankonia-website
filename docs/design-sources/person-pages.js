@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Block E — the seven person / pointer pages
+   Block E — the eleven person / pointer pages
    ==========================================================================
    Run once, in development, from the repo root:
        node docs/design-sources/person-pages.js
@@ -7,11 +7,27 @@
    folder). Afterwards these are ordinary pages in pages/ and may be hand-edited;
    do not re-run it over an edited page.
 
-   WHY A GENERATOR FOR SEVEN PAGES
-   Five of them are the same card with different data, and three things on them are
-   easy to get silently wrong by copy-paste: the `noindex` (all seven must have it),
+   WHY A GENERATOR FOR ELEVEN PAGES
+   Nine of them are the same card with different data, and three things on them are
+   easy to get silently wrong by copy-paste: the `noindex` (all eleven must have it),
    the vCard filename (each page has its own), and the fact that they must NOT be
    added to sitemap.xml. A table plus one template cannot drift.
+
+   ⚠️ 2026-08-26 — SIX PAGES ADDED after the client went through the full page list
+   of the old site. The WordPress REST API turned up ten published pages that the
+   sitemap does not list, and the client kept six of them; of the other four, two
+   are redirected (Thomas Windisch, both variants) and two are deliberately left to
+   404 (/testformular/, /homepage-2/). Their data was read off the live pages on
+   2026-08-26, same rule as the first three.
+
+   ⚠️ 2026-08-26 — AND THE FIRST THREE GAINED THEIR LEDE AND THEIR FOUR SERVICE
+   LINKS. The note below claimed every visible string was reproduced verbatim, and
+   for those three that was not fully true: every one of these nine live pages
+   carries a one-line lede and a block of four service links, and the first port
+   dropped them (Jäger Sicherheitsdienst lost both, Jäger Werkschutz kept one of
+   the four links, Van Wey Werkschutz lost the links). Restored from the live pages,
+   so all nine are now one decision instead of three that lost content and six that
+   did not.
 
    WHERE THE CONTENT COMES FROM
    Every visible string was read off the live page at
@@ -22,10 +38,16 @@
    /werkschutz/ and so on). They are written out to the new URLs directly rather
    than left to the Block G redirects: an internal link should not spend a hop.
 
-   ⚠️ noindex, follow ON ALL SEVEN, and they are deliberately absent from
+   ⚠️ noindex, follow ON ALL ELEVEN, and they are deliberately absent from
    sitemap.xml. They are thin and person-specific; indexed they would compete with
    the real service pages for the same terms. They stay reachable — that is the
    whole point of a QR code.
+
+   ⚠️ THE FOUR SERVICE LINKS ARE REWRITTEN TO THE NEW URLs, and one of them was
+   broken on the old site: every one of these nine pages links to
+   /frankonia-baustellenbewachung, which answers 404 live (verified 2026-08-26 —
+   its seven siblings answer 301). Pointing at /baustellenbewachung/ fixes a dead
+   link rather than porting it.
 
    ⚠️ NO MOTION JAVASCRIPT on these pages: no GSAP, no ScrollTrigger, no Lenis, no
    hero-reveal. Every other page loads that stack, and here it would be ~50KB of
@@ -127,8 +149,35 @@ const FOOT = `
 `;
 
 /* -------------------------------------------------------------------------
-   The five person cards
+   The nine person cards
+   -------------------------------------------------------------------------
+   Two ledes and two link sets, because every one of these pages is either the
+   Sicherheitsdienst side of the business or the Werkschutz side, and the live
+   pages use exactly one pair of each. Written once so a tenth card cannot
+   introduce a third almost-identical wording.
+
+   ⚠️ The Revier-/Schließdienst label keeps the live card's slash spelling
+   ("Revier-/Schließdienst"), which is not the nav's ("Revier- und
+   Schließdienst"). Same destination; the label is the printed card's own wording.
    ------------------------------------------------------------------------- */
+
+const LEDE_SD =
+  "Wenn Sie sich, Ihr Unternehmen, Ihr Event oder Ihr Objekt vor Diebstahl und Beschädigung effektiv schützen möchten!";
+const LEDE_WS =
+  "Wenn Sie sich, Ihr Kapital, Know-How und Ihre Mitarbeitenden wirklich professionell schützen möchten!";
+
+const LINKS_SD = [
+  ["Objektschutz", "/objektschutz/"],
+  ["Veranstaltungsschutz", "/veranstaltungsschutz/"],
+  ["Baustellenbewachung", "/baustellenbewachung/"],
+  ["Kaufhausdetektei", "/kaufhausdetektei/"],
+];
+const LINKS_WS = [
+  ["Werkschutz", "/werkschutz/"],
+  ["Empfangsdienst", "/empfangsdienst/"],
+  ["Revier-/Schließdienst", "/revier-schliessdienst/"],
+  ["Sicherheitstechnik", "/sicherheitstechnik/"],
+];
 
 const PEOPLE = [
   {
@@ -143,6 +192,8 @@ const PEOPLE = [
     mobile: "+49 176 17975703",
     mail: "a.jaeger@frankonia-sicherheit.de",
     vcard: "alexander-jaeger-sicherheitsdienst.vcf",
+    lede: LEDE_SD,
+    links: LINKS_SD,
     more: true,
   },
   {
@@ -157,7 +208,8 @@ const PEOPLE = [
     mobile: "+49 176 17975703",
     mail: "a.jaeger@frankonia-werkschutz.de",
     vcard: "alexander-jaeger-werkschutz.vcf",
-    links: [["Werkschutz", "/werkschutz/"]],
+    lede: LEDE_WS,
+    links: LINKS_WS,
     more: true,
   },
   {
@@ -172,18 +224,144 @@ const PEOPLE = [
     mobile: "+49 151 20704942",
     mail: "b.vanwey@frankonia-werkschutz.de",
     vcard: "bryan-van-wey-werkschutz.vcf",
-    lede:
-      "Wenn Sie sich, Ihr Kapital, Know-How und Ihre Mitarbeitenden wirklich professionell schützen möchten!",
+    lede: LEDE_WS,
+    links: LINKS_WS,
+    more: true,
+  },
+
+  /* ---- 2026-08-26: die sechs vom Kunden bestätigten Seiten ---- */
+
+  {
+    slug: "steffen-walde-sicherheitsdienst",
+    title: "Steffen Walde Sicherheitsdienst | FRANKONIA Sicherheit",
+    description:
+      "Steffen Walde, Geschäftsführender Gesellschafter bei FRANKONIA Sicherheitsdienst in Bamberg — Kontaktdaten direkt speichern.",
+    name: "Steffen Walde",
+    role: "Geschäftsführender Gesellschafter",
+    cred: "Betriebswirt (B.Sc.)",
+    portrait: "person-steffen-walde",
+    tel: "+49 951 964352-10",
+    mobile: "+49 172 7866338",
+    mail: "s.walde@frankonia-sicherheit.de",
+    vcard: "steffen-walde-sicherheitsdienst.vcf",
+    lede: LEDE_SD,
+    links: LINKS_SD,
+    more: true,
+  },
+  {
+    slug: "steffen-walde-werkschutz",
+    title: "Steffen Walde Werkschutz | FRANKONIA Sicherheit",
+    description:
+      "Steffen Walde, Geschäftsführender Gesellschafter bei FRANKONIA Werkschutz in Bamberg — Kontaktdaten direkt speichern.",
+    name: "Steffen Walde",
+    role: "Geschäftsführender Gesellschafter",
+    cred: "Betriebswirt (B.Sc.)",
+    portrait: "person-steffen-walde",
+    tel: "+49 951 964352-10",
+    mobile: "+49 172 7866338",
+    mail: "s.walde@frankonia-werkschutz.de",
+    vcard: "steffen-walde-werkschutz.vcf",
+    lede: LEDE_WS,
+    links: LINKS_WS,
+    more: true,
+  },
+  {
+    slug: "christoph-bauer-sicherheitsdienst-2",
+    title: "Christoph Bauer Sicherheitsdienst | FRANKONIA Sicherheit",
+    description:
+      "Christoph Bauer, Marketing- und Projektmanager bei FRANKONIA Sicherheitsdienst in Bamberg — Kontaktdaten direkt speichern.",
+    name: "Christoph Bauer",
+    role: "Marketing- und Projektmanager",
+    cred: "Wirtschaftsinformatiker (B.Sc.)",
+    portrait: "person-christoph-bauer",
+    tel: "+49 951 964352-30",
+    mobile: "+49 151 70131270",
+    mail: "c.bauer@frankonia-sicherheit.de",
+    vcard: "christoph-bauer-sicherheitsdienst-2.vcf",
+    lede: LEDE_SD,
+    links: LINKS_SD,
+    more: true,
+  },
+  {
+    slug: "daniel-wettengel-sicherheitsdienst",
+    title: "Daniel Wettengel Sicherheitsdienst | FRANKONIA Sicherheit",
+    description:
+      "Daniel Wettengel, Einsatzleiter bei FRANKONIA Sicherheitsdienst in Bamberg — Kontaktdaten direkt speichern.",
+    name: "Daniel Wettengel",
+    role: "Einsatzleiter",
+    portrait: "person-daniel-wettengel",
+    tel: "+49 951 964352-50",
+    mobile: "+49 151 17888175",
+    mail: "d.wettengel@frankonia-sicherheit.de",
+    vcard: "daniel-wettengel-sicherheitsdienst.vcf",
+    lede: LEDE_SD,
+    links: LINKS_SD,
+    more: true,
+  },
+  {
+    /* ⚠️ DIE ZWEITE VAN-WEY-KARTE, und sie ist nicht die Werkschutz-Karte oben
+       mit anderem Text: ihre Mailadresse liegt auf frankonia-security.de, einer
+       DRITTEN Marke neben -sicherheit.de und -werkschutz.de, und ihre vCard
+       nennt als Firma "FRANKONIA Security GmbH & Co. KG". Beides steht so auf
+       der Livekarte und ist deshalb unverändert übernommen — es ist aber die
+       einzige Stelle im ganzen Projekt, an der diese Firmierung auftaucht, und
+       im Impressum kommt sie nicht vor. Für den Kunden notiert, nicht
+       eigenmächtig auf -werkschutz.de umgeschrieben.
+
+       ⚠️ PORTRÄT: bewusst das NEUERE Foto (person-bryan-van-wey, aus
+       uploads/2025/12), nicht das der Livekarte (uploads/2023/12). Es ist
+       dieselbe Person, und zwei Aufnahmen aus zwei Jahren auf zwei Seiten
+       derselben Website sind ein Fehler, keine Werktreue. Gemessen: mittlere
+       Abweichung 65,9 von 255, also klar zwei verschiedene Fotos. */
+    slug: "bryan-van-wey-security",
+    title: "Bryan Van Wey Security | FRANKONIA Sicherheit",
+    description:
+      "Bryan Van Wey, Einsatzleiter bei FRANKONIA Security in Bamberg — Kontaktdaten direkt speichern.",
+    name: "Bryan Van Wey",
+    role: "Einsatzleiter",
+    portrait: "person-bryan-van-wey",
+    tel: "+49 951 964352-60",
+    mobile: "+49 151 20704942",
+    mail: "b.vanwey@frankonia-security.de",
+    vcard: "bryan-van-wey-security.vcf",
+    lede: LEDE_SD,
+    links: LINKS_SD,
+    more: true,
+  },
+  {
+    /* ⚠️ KEINE PERSON, SONDERN EIN POSTEN: die Pforte, die FRANKONIA beim Kunden
+       MORELO besetzt. Daher drei Abweichungen von den acht anderen Karten, und
+       alle drei stehen so auf der Livekarte:
+       · KEIN PORTRÄT — die Livekarte hat keines. Ihr einziges Bild ist ein
+         Firmenbild in der JSON-LD, also kein sichtbares Foto. Das Template lässt
+         das Bild dann weg; .person__inner ist eine Flex-Spalte, der Name
+         rutscht nach oben und es bleibt keine Lücke.
+       · KEINE FESTNETZNUMMER — nur die Mobilnummer der Pforte.
+       · KEIN ZUSATZ zur Berufsbezeichnung. */
+    slug: "morelo-werkschutz-team-2",
+    title: "Morelo Werkschutz Team | FRANKONIA Sicherheit",
+    description:
+      "Morelo Werkschutz Team, Pforte bei FRANKONIA Werkschutz in Bamberg — Kontaktdaten direkt speichern.",
+    name: "Morelo Werkschutz Team",
+    role: "Pforte",
+    mobile: "+49 1517 5010444",
+    mail: "werkschutz.frankonia@morelo.eu",
+    vcard: "morelo-werkschutz-team-2.vcf",
+    lede: LEDE_WS,
+    links: LINKS_WS,
     more: true,
   },
 ];
 
 function personPage(p) {
+  // Festnetz ist optional: die MORELO-Pforte hat nur eine Mobilnummer.
   const rows = [
-    `          <li><a href="${telHref(p.tel)}">${ICON_PHONE}<span>${p.tel}</span></a></li>`,
+    p.tel
+      ? `          <li><a href="${telHref(p.tel)}">${ICON_PHONE}<span>${p.tel}</span></a></li>`
+      : null,
     `          <li><a href="${telHref(p.mobile)}">${ICON_PHONE}<span>${p.mobile}</span></a></li>`,
     `          <li><a class="person__mail" href="mailto:${p.mail}">${ICON_MAIL}<span>${p.mail}</span></a></li>`,
-  ].join("\n");
+  ].filter(Boolean).join("\n");
 
   const links = p.links
     ? `
@@ -208,12 +386,17 @@ ${p.links
     `
     <section class="section person">
       <div class="container person__inner">
-
+${
+  // Porträt ist optional — siehe die Notiz an der MORELO-Karte.
+  p.portrait
+    ? `
         <picture class="person__portrait">
           <source type="image/webp" srcset="/assets/images/${p.portrait}-350.webp">
           <img src="/assets/images/${p.portrait}-350.png" width="350" height="350" alt="Porträt von ${p.name}" loading="eager" fetchpriority="high" decoding="async">
         </picture>
-
+`
+    : ""
+}
         <h1 class="person__name">${p.name}</h1>
         <p class="person__role">${p.role}</p>
 ${p.cred ? `        <p class="person__cred">${p.cred}</p>\n` : ""}${
