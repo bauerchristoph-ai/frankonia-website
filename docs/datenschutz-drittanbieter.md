@@ -26,6 +26,20 @@ Die Reihenfolge, die dabei einzuhalten ist:
 3. **Dann der Text.** Wenn Cookiebot läuft, erzeugt es die Abschnitte in der Regel
    selbst und hält sie aktuell — dann ist der Text unten nur die Rückfallebene.
 
+## ⚠️ Abschnitt 4 der Erklärung wird ERSETZT, nicht ergänzt
+
+Seit dem 26.08. sagt Abschnitt 4 der Datenschutzerklärung ausdrücklich, dass die
+Seite **keine** Cookies und keine vergleichbaren Techniken einsetzt — das war eine
+Korrektur, weil der alte Text Session-, temporäre und Statistik-Cookies beschrieb,
+die es nachweislich nicht gab.
+
+Wenn Analytics und reCAPTCHA kommen, muss dieser Abschnitt also **ausgetauscht**
+werden. Ihn stehen zu lassen und einen Cookie-Abschnitt daneben zu setzen wäre ein
+Widerspruch in einem Dokument, und zwar der schlechtere von beiden: ein Besucher
+liest zuerst „keine Cookies". Der letzte Absatz von Abschnitt 4 ist genau darauf
+angelegt — er kündigt den Einsatz nach Einwilligung nach § 25 Abs. 1 TDDDG an und ist
+die Nahtstelle, an der der neue Text ansetzt.
+
 ## Was die CSP braucht
 
 ⚠️ Das ist der Punkt, der ohne Vorwarnung eine halbe Stunde kostet: `vercel.json`

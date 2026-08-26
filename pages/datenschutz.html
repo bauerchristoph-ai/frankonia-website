@@ -37,22 +37,52 @@
      derselbe, der die Seite überhaupt erzwungen hat: sie ist aus dem Footer jeder
      Seite UND aus der Einwilligungs-Checkbox des Formulars verlinkt.
 
-     ⚠️⚠️ DREI FEHLER IM TEXT DES KUNDEN, ABSICHTLICH NICHT KORRIGIERT (Auftrag:
-     "Ändere keine bestehenden Webtexte inhaltlich. Wenn dir ein Fehler auffällt,
-     notiere ihn im Bericht"). Alle drei stehen im Prüfprotokoll:
-       1. Abschnitt 5.1 nennt "die Verschwiegenheitspflicht gem. § 83 StBerG" —
-          das Steuerberatungsgesetz. Ein Textbaustein aus einer Steuerberater-
-          Vorlage; für einen Sicherheitsdienstleister ist die Norm irrelevant.
-       2. Die zweite Unterüberschrift in Abschnitt 2 heißt "2.1 Aufruf der
-          Webseite", obwohl darunter das Kontaktformular beschrieben wird. Sie
-          müsste "2.2 Kontaktformular" heißen.
-       3. Abschnitt 6 nennt als Stand den 18.05.2018.
+     ⚠️⚠️ 2026-08-26 — DER TEXT IST AUF AUSDRÜCKLICHE ANWEISUNG DES KUNDEN
+     ÜBERARBEITET ("Datenschutz — optimiere es einfach selbst so dass es am
+     sinnvollsten ist und am besten passt"). Damit ist für DIESE EINE SEITE die
+     Projektregel "bestehende Webtexte nicht inhaltlich ändern" aufgehoben, und
+     zwar nur hier: bei einer Datenschutzerklärung ist eine falsche Aussage kein
+     Redaktionsgeschmack, sondern eine falsche Pflichtinformation nach Art. 13
+     DSGVO. Was geändert wurde, in zwei Gruppen:
 
-     ⚠️ WAS DER TEXT NICHT ABDECKT und was der endgültige Text braucht: die
-     Kartenkacheln von CARTO auf / und /kontakt/ (ein Drittanbieter-Aufruf, der
-     die IP der Besucher überträgt), die Bewerbungsunterlagen inklusive
-     Lebenslauf-Upload auf /jobs/, und die HubSpot-Terminbuchung, die von
-     /sicherheitscheck-walde/ aus verlinkt ist.
+     BEHOBEN, weil nachweislich falsch:
+       1. Abschnitt 5.1 nannte "die Verschwiegenheitspflicht gem. § 83 StBerG" —
+          das Steuerberatungsgesetz, ein Baustein aus einer Steuerberater-Vorlage.
+          Er SCHRÄNKTE das Auskunftsrecht der Besucher unter Berufung auf eine Norm
+          ein, die für einen Sicherheitsdienstleister nicht gilt. Der Satz ist
+          gekürzt, nicht gestrichen: der zweite Grund darin (überwiegendes
+          berechtigtes Interesse eines Dritten) ist einschlägig und bleibt.
+       2. Die zweite Unterüberschrift in Abschnitt 2 hieß "2.1 Aufruf der Webseite",
+          obwohl darunter das Kontaktformular steht -> "2.2 Kontaktformular".
+       3. Abschnitt 6 nannte als Stand den 18.05.2018 -> 26.08.2026.
+       4. Abschnitt 2.1 nannte die Domain als "www.frankonia-sicherheit.de". Die
+          Seite läuft auf der nackten Domain, www wird darauf umgeleitet.
+       5. ⚠️⚠️ ABSCHNITT 4 BESCHRIEB COOKIES, DIE ES NICHT GIBT — Session-Cookies,
+          temporäre Cookies und Cookies "zu statistischen Zwecken". Gemessen: im
+          gesamten eigenen JavaScript kein einziges "document.cookie", kein
+          localStorage, kein sessionStorage, und es ist kein Analysewerkzeug
+          eingebunden. Der Abschnitt erklärte also eine Verarbeitung, die gar nicht
+          stattfindet — und beschrieb dabei ausgerechnet Analyse-Cookies, die
+          einwilligungspflichtig wären. Er sagt jetzt, was zutrifft.
+
+     ERGÄNZT, weil die Verarbeitung stattfindet und nicht genannt war:
+       6. 2.3 Bewerbungen über das Karriereformular, inklusive Lebenslauf-Upload
+          (/jobs/ nimmt name, email, phone, qualification, message und cv als
+          .pdf/.doc/.docx).
+       7. 3.1 Hosting — Art. 13 Abs. 1 Buchst. e) verlangt die Empfänger, und der
+          Logfile-Abschnitt sprach nur von "dem Server dieser Webseite".
+       8. 3.2 Kartendarstellung — die Kacheln kommen von CARTO (aus
+          OpenStreetMap-Daten) und übertragen die IP der Besucher an einen Dritten.
+          Betroffen sind /, /einsatzgebiete/ und /kontakt/.
+       9. 3.3 Verlinkte Dienste — WhatsApp, die Social-Profile, die
+          HubSpot-Terminbuchung, die Google-Route und das Google-Bewertungsprofil.
+          Alle sind reine LINKS: vor dem Klick verlässt kein Datum die Seite.
+
+     ⚠️ ZWEI PUNKTE, DIE NUR DER KUNDE ODER SEIN ANWALT BEANTWORTEN KANN und die
+     deshalb als Frage im Text stehen, nicht als Behauptung: ob mit dem Hoster ein
+     Auftragsverarbeitungsvertrag nach Art. 28 DSGVO besteht, und wie lange
+     Bewerbungsunterlagen aufbewahrt werden. Beides ist im Markup an der Stelle
+     markiert. Eine erfundene Vertragsaussage wäre schlimmer als eine Lücke.
 
      Der Verantwortlichen-Block oben stand schon vorher hier und ist um die
      Angaben aus Abschnitt 1 der alten Erklärung ergänzt — insbesondere um den
@@ -230,7 +260,7 @@
 
             <h3>2. Umfang und Zweck der Verarbeitung personenbezogener Daten</h3>
             <h4>2.1 Aufruf der Webseite</h4>
-            <p>Beim Aufruf dieser Webseite www.frankonia-sicherheit.de werden durch den Internet-Browser, den der Besucher verwendet, automatisch Daten an den Server dieser Webseite gesendet und zeitlich begrenzt in einer Protokolldatei (Logfile) gespeichert. Bis zur automatischen Löschung werden nachstehende Daten ohne weitere Eingabe des Besuchers gespeichert:</p>
+            <p>Beim Aufruf dieser Webseite frankonia-sicherheit.de werden durch den Internet-Browser, den der Besucher verwendet, automatisch Daten an den Server dieser Webseite gesendet und zeitlich begrenzt in einer Protokolldatei (Logfile) gespeichert. Bis zur automatischen Löschung werden nachstehende Daten ohne weitere Eingabe des Besuchers gespeichert:</p>
             <ul>
               <li>IP-Adresse des Endgeräts des Besuchers,</li>
               <li>Datum und Uhrzeit des Zugriffs durch den Besucher,</li>
@@ -243,8 +273,23 @@
               <li>die Administration der Webseite zu erleichtern und zu verbessern.</li>
             </ul>
             <p>Die Verarbeitung erfolgt ausdrücklich nicht zu dem Zweck, Erkenntnisse über die Person des Besuchers der Webseite zu gewinnen.</p>
-            <h4>2.1 Aufruf der Webseite</h4>
+            <h4>2.2 Kontaktformular</h4>
             <p>Besucher können über ein Online-Kontaktformular auf der Webseite Nachrichten an die FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG übermitteln. Um eine Antwort empfangen zu können, ist zumindest die Angabe einer gültigen E-Mail-Adresse erforderlich. Alle weiteren Angaben kann die anfragende Person freiwillig geben. Mit Absenden der Nachricht über das Kontaktformular willigt der Besucher in die Verarbeitung der übermittelten personenbezogenen Daten ein. Die Datenverarbeitung erfolgt ausschließlich zu dem Zweck der Abwicklung und Beantwortung von Anfragen über das Kontaktformular. Dies geschieht auf Basis der freiwillig erteilten Einwilligung gem. Art. 6 Abs. 1 Satz 1 Buchst. a) DSGVO. Die für die Benutzung des Kontaktformulars erhobenen personenbezogenen Daten werden automatisch gelöscht, sobald die Anfrage erledigt ist und keine Gründe für eine weitere Aufbewahrung gegeben sind (z. B. anschließende Beauftragung unserer FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG).</p>
+            <!-- 2.3 ergänzt 2026-08-26: /jobs/ nimmt Bewerbungen inklusive
+                 Lebenslauf-Upload an, und dafür stand in der Erklärung nichts.
+                 Die Feldliste ist die tatsächliche des Formulars, nicht
+                 allgemein gehalten.
+                 ⚠️ FRAGE AN DEN KUNDEN, absichtlich offen formuliert: die
+                 Aufbewahrungsdauer. Übliche Praxis sind sechs Monate nach
+                 Abschluss des Verfahrens (Frist des § 15 AGG plus Zuschlag), aber
+                 das ist eine Festlegung des Unternehmens und keine, die ich
+                 treffen kann. Sobald sie feststeht, tritt sie an die Stelle des
+                 zweiten Satzes im letzten Absatz. -->
+            <h4>2.3 Bewerbungen über das Karriereformular</h4>
+            <p>Über das Bewerbungsformular auf der Karriereseite können sich Interessenten bei der FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG bewerben. Dabei werden Name, E-Mail-Adresse und Telefonnummer erhoben, dazu die Angabe zur Qualifikation, die Nachricht und — freiwillig — eine hochgeladene Bewerbungsdatei (PDF- oder Word-Format). Diese Daten können weitere personenbezogene Angaben enthalten, etwa zum Lebenslauf, zur Ausbildung oder zu Zeugnissen.</p>
+            <p>Die Verarbeitung erfolgt ausschließlich zum Zweck des Bewerbungsverfahrens und ist nach Art. 6 Abs. 1 Satz 1 Buchst. b) DSGVO in Verbindung mit § 26 Abs. 1 BDSG gerechtfertigt, da sie der Entscheidung über die Begründung eines Beschäftigungsverhältnisses dient. Die Angaben werden nicht für andere Zwecke verwendet und nicht an Dritte weitergegeben, die nicht am Bewerbungsverfahren beteiligt sind.</p>
+            <p>Kommt es zu einer Anstellung, werden die Unterlagen in die Personalakte übernommen. Andernfalls werden sie nach Abschluss des Bewerbungsverfahrens gelöscht, sobald keine gesetzlichen Aufbewahrungspflichten oder Gründe zur Verteidigung von Rechtsansprüchen mehr entgegenstehen. Auf Wunsch löschen wir eine Bewerbung jederzeit vorab — eine kurze Nachricht an den oben genannten Verantwortlichen genügt.</p>
+
             <h3>3. Weitergabe von Daten</h3>
             <p>Personenbezogene Daten werden an Dritte übermittelt, wenn</p>
             <ul>
@@ -254,12 +299,46 @@
               <li>dies nach Art. 6 Abs. 1 Satz 1 Buchst. b) DSGVO für die Erfüllung eines Vertragsverhältnisses mit der betroffenen Person erforderlich ist.</li>
             </ul>
             <p>In anderen Fällen werden personenbezogene Daten nicht an Dritte weitergegeben.</p>
-            <h3>4. Cookies</h3>
-            <p>Auf der Webseite werden sog. Cookies eingesetzt. Das sind Datenpakete, die zwischen dem Server dieser Webseite und dem Browser des Besuchers ausgetauscht werden. Diese werden beim Besuch der Webseite von den jeweils verwendeten Geräten (PC, Notebook, Tablet, Smartphone etc.) gespeichert. Cookies können insoweit keine Schäden auf den verwendeten Geräten anrichten. Insbesondere enthalten sie keine Viren oder sonstige Schadsoftware. In den Cookies werden Informationen abgelegt, die sich jeweils im Zusammenhang mit dem spezifisch eingesetzten Endgerät ergeben. Die FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG kann damit keinesfalls unmittelbar Kenntnis von der Identität des Besuchers der Webseite erhalten. Cookies werden nach den Grundeinstellungen der Browser größtenteils akzeptiert. Die Browsereinstellungen können so eingerichtet werden, dass Cookies entweder auf den verwendeten Geräten nicht akzeptiert werden, oder dass jeweils ein besonderer Hinweis erfolgt, bevor ein neuer Cookie angelegt wird. Es wird allerdings darauf hingewiesen, dass die Deaktivierung von Cookies dazu führen kann, dass nicht alle Funktionen der Webseite bestmöglich genutzt werden können. Der Einsatz von Cookies dient dazu, die Nutzung des Webangebots der FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG komfortabler zu gestalten. So kann beispielsweise anhand von Session-Cookies nachvollzogen werden, ob der Besucher einzelne Seiten der Webseite bereits besucht hat. Nach Verlassen der Webseite werden diese Session-Cookies automatisch gelöscht. Zur Verbesserung der Benutzerfreundlichkeit werden temporäre Cookies eingesetzt. Sie werden für einen vorübergehenden Zeitraum auf dem Gerät des Besuchers gespeichert. Bei erneutem Besuch der Webseite wird automatisch erkannt, dass der Besucher die Seite bereits zu einem früheren Zeitpunkt aufgerufen hat und welche Eingaben und Einstellungen dabei vorgenommen wurden, um diese nicht wiederholen zu müssen. Der Einsatz von Cookies erfolgt außerdem, um die Aufrufe der Webseite zu statistischen Zwecken und zum Zwecke der Verbesserung des Angebotes zu analysieren. Diese Cookies ermöglichen es, bei einem erneuten Besuch automatisch zu erkennen, dass die Webseite bereits zuvor vom Besucher aufgerufen wurde. Hier erfolgt nach einer jeweils festgelegten Zeit eine automatische Löschung der Cookies. Die durch Cookies verarbeiteten Daten sind für die o. g. Zwecke zur Wahrung der berechtigten Interessen der FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG nach Art. 6 Abs. 1 Satz 1 Buchst. f) DSGVO gerechtfertigt.</p>
+
+            <!-- 3.1 bis 3.3 ergänzt 2026-08-26. Sie beschreiben genau das, was
+                 dieses Projekt technisch tatsächlich tut — nachgemessen im
+                 gebauten dist/, nicht aus einer Vorlage übernommen.
+                 ⚠️ FRAGE AN DEN KUNDEN im letzten Satz von 3.1: ob ein
+                 Auftragsverarbeitungsvertrag mit dem Hoster besteht. Der Satz
+                 sagt, dass der Vertrag ERFORDERLICH ist — das ist Gesetz und
+                 unstrittig. Er behauptet NICHT, dass er geschlossen wurde; sobald
+                 das bestätigt ist, wird daraus ein Aussagesatz. -->
+            <h4>3.1 Hosting</h4>
+            <p>Diese Webseite wird bei einem externen Dienstleister betrieben (Vercel Inc., USA, mit Auslieferung über deren europäische Rechenzentren). Der Anbieter verarbeitet dabei die in Abschnitt 2.1 genannten Zugriffsdaten, insbesondere die IP-Adresse, ausschließlich zu dem Zweck, die Seite auszuliefern und deren Betrieb und Sicherheit zu gewährleisten. Rechtsgrundlage ist Art. 6 Abs. 1 Satz 1 Buchst. f) DSGVO; das berechtigte Interesse liegt in der zuverlässigen und sicheren Bereitstellung des Webangebots. Für diese Verarbeitung ist ein Vertrag über die Auftragsverarbeitung nach Art. 28 DSGVO erforderlich, der die Verarbeitung auf unsere Weisung beschränkt und für Übermittlungen in die USA die Standardvertragsklauseln der EU-Kommission einbezieht.</p>
+
+            <h4>3.2 Kartendarstellung</h4>
+            <p>Auf der Startseite, auf der Seite „Einsatzgebiete" und auf der Kontaktseite wird eine interaktive Karte angezeigt. Das Kartenbild besteht aus Kacheln, die von den Servern des Anbieters CARTO (CARTO Inc., USA) geladen werden und auf Daten des OpenStreetMap-Projekts beruhen. Beim Laden dieser Kacheln übermittelt der Browser des Besuchers technisch notwendige Daten an den Anbieter, insbesondere die IP-Adresse, den verwendeten Browser und die angeforderten Kartenausschnitte. Rechtsgrundlage ist Art. 6 Abs. 1 Satz 1 Buchst. f) DSGVO; das berechtigte Interesse liegt in der verständlichen Darstellung der Einsatzgebiete und des Standorts.</p>
+            <p>Die Karte wird erst geladen, wenn sie beim Scrollen in den sichtbaren Bereich gelangt. Wer die betreffende Stelle der Seite nicht erreicht, baut auch keine Verbindung zu dem Anbieter auf. Sämtliche Inhalte dieser Seiten sind ohne die Karte vollständig lesbar; die Anschrift und die Liste der Einsatzorte stehen jeweils als Text daneben.</p>
+
+            <h4>3.3 Verlinkte Dienste Dritter</h4>
+            <p>Diese Webseite verweist an mehreren Stellen auf Angebote Dritter: auf WhatsApp (Kontaktschaltfläche), auf die Profile bei Instagram, LinkedIn und Facebook, auf ein Google-Unternehmensprofil mit Bewertungen, auf die Routenplanung von Google Maps und auf eine Terminbuchung bei HubSpot. Es handelt sich in allen Fällen um gewöhnliche Verweise, nicht um eingebettete Inhalte: solange ein Verweis nicht angeklickt wird, werden keine Daten an den jeweiligen Anbieter übertragen. Erst mit dem Klick verlassen Sie diese Webseite; ab diesem Zeitpunkt gilt die Datenschutzerklärung des jeweiligen Anbieters, auf dessen Verarbeitung wir keinen Einfluss haben.</p>
+            <!-- ⚠️⚠️ ABSCHNITT 4 IST NEU GESCHRIEBEN, 2026-08-26, und das ist die
+                 einzige inhaltlich ERSETZTE Passage der Seite. Der alte Text
+                 beschrieb Session-Cookies, temporäre Cookies und Cookies "zu
+                 statistischen Zwecken" — gemessen gibt es davon keines: im
+                 gesamten eigenen JavaScript kein "document.cookie", kein
+                 localStorage, kein sessionStorage, kein Analysewerkzeug. Eine
+                 Erklärung, die Analyse-Cookies beschreibt, die es nicht gibt, ist
+                 nicht nur falsch, sie behauptet eine einwilligungspflichtige
+                 Verarbeitung.
+                 ⚠️ WENN COOKIEBOT, GA4 UND reCAPTCHA KOMMEN, wird dieser
+                 Abschnitt wieder länger — die vorbereiteten Passagen und die
+                 nötigen CSP-Hosts stehen in docs/datenschutz-drittanbieter.md.
+                 Der letzte Absatz hier ist bewusst so formuliert, dass er dann
+                 ersetzt und nicht bloß ergänzt wird. -->
+            <h3>4. Cookies und ähnliche Techniken</h3>
+            <p>Diese Webseite setzt derzeit keine Cookies. Es werden auch keine vergleichbaren Techniken zur Speicherung von Informationen auf Ihrem Endgerät eingesetzt, insbesondere kein „Local Storage" und kein „Session Storage", und es ist kein Werkzeug zur Reichweitenmessung oder Webanalyse eingebunden. Ein Einwilligungsbanner ist daher nicht erforderlich, und es findet keine Auswertung Ihres Verhaltens auf dieser Webseite statt.</p>
+            <p>Unabhängig davon fallen die in Abschnitt 2.1 beschriebenen Zugriffsdaten in den Protokolldateien des Servers an. Diese entstehen technisch bei jedem Abruf einer Webseite und beruhen nicht auf Cookies.</p>
+            <p>Sollten künftig Cookies oder vergleichbare Techniken eingesetzt werden, die nicht für den Betrieb der Seite unbedingt erforderlich sind — etwa zur Reichweitenmessung oder für Werbezwecke —, geschieht das erst nach Ihrer ausdrücklichen Einwilligung nach § 25 Abs. 1 TDDDG, und diese Datenschutzerklärung wird vorher entsprechend ergänzt.</p>
             <h3>5. Ihre Rechte als betroffene Person</h3>
             <p>Soweit Ihre personenbezogenen Daten anlässlich des Besuchs unserer Webseite verarbeitet werden, stehen Ihnen als „betroffene Person“ im Sinne der DSGVO folgende Rechte zu:</p>
             <h4>5.1 Auskunft</h4>
-            <p>Sie können von uns Auskunft darüber verlangen, ob personenbezogene Daten von Ihnen bei uns verarbeitet werden. Kein Auskunftsrecht besteht, wenn die Erteilung der begehrten Informationen gegen die Verschwiegenheitspflicht gem. § 83 StBerG verstoßen würde oder die Informationen aus sonstigen Gründen, insbesondere wegen eines überwiegenden berechtigten Interesses eines Dritten, geheim gehalten werden müssen. Hiervon abweichend kann eine Pflicht zur Erteilung der Auskunft bestehen, wenn insbesondere unter Berücksichtigung drohender Schäden Ihre Interessen gegenüber dem Geheimhaltungsinteresse überwiegen. Das Auskunftsrecht ist ferner ausgeschlossen, wenn die Daten nur deshalb gespeichert sind, weil sie aufgrund gesetzlicher oder satzungsmäßiger Aufbewahrungsfristen nicht gelöscht werden dürfen oder ausschließlich Zwecken der Datensicherung oder der Datenschutzkontrolle dienen, sofern die Auskunftserteilung einen unverhältnismäßig hohen Aufwand erfordern würde und die Verarbeitung zu anderen Zwecken durch geeignete technische und organisatorische Maßnahmen ausgeschlossen ist. Sofern in Ihrem Fall das Auskunftsrecht nicht ausgeschlossen ist und Ihre personenbezogenen Daten von uns verarbeitet werden, können Sie von uns Auskunft über folgende Informationen verlangen:</p>
+            <p>Sie können von uns Auskunft darüber verlangen, ob personenbezogene Daten von Ihnen bei uns verarbeitet werden. Kein Auskunftsrecht besteht, soweit die Informationen wegen eines überwiegenden berechtigten Interesses eines Dritten geheim gehalten werden müssen. Hiervon abweichend kann eine Pflicht zur Erteilung der Auskunft bestehen, wenn insbesondere unter Berücksichtigung drohender Schäden Ihre Interessen gegenüber dem Geheimhaltungsinteresse überwiegen. Das Auskunftsrecht ist ferner ausgeschlossen, wenn die Daten nur deshalb gespeichert sind, weil sie aufgrund gesetzlicher oder satzungsmäßiger Aufbewahrungsfristen nicht gelöscht werden dürfen oder ausschließlich Zwecken der Datensicherung oder der Datenschutzkontrolle dienen, sofern die Auskunftserteilung einen unverhältnismäßig hohen Aufwand erfordern würde und die Verarbeitung zu anderen Zwecken durch geeignete technische und organisatorische Maßnahmen ausgeschlossen ist. Sofern in Ihrem Fall das Auskunftsrecht nicht ausgeschlossen ist und Ihre personenbezogenen Daten von uns verarbeitet werden, können Sie von uns Auskunft über folgende Informationen verlangen:</p>
             <ul>
               <li>Zwecke der Verarbeitung,</li>
               <li>Kategorien der von Ihnen verarbeiteten personenbezogenen Daten,</li>
@@ -304,7 +383,7 @@
             <h4>5.8 Beschwerde</h4>
             <p>Wenn Sie der Ansicht sind, dass die Verarbeitung der Sie betreffenden personenbezogenen Daten rechtswidrig ist, können Sie Beschwerde bei einer Aufsichtsbehörde für den Datenschutz einlegen, die für den Ort Ihres Aufenthaltes oder Arbeitsplatzes oder für den Ort des mutmaßlichen Verstoßes zuständig ist.</p>
             <h3>6. Stand und Aktualisierung dieser Datenschutzerklärung</h3>
-            <p>Diese Datenschutzerklärung hat den Stand vom 18.05.2018. Wir behalten uns vor, die Datenschutzerklärung zu gegebener Zeit zu aktualisieren, um den Datenschutz zu verbessern und/oder an geänderte Behördenpraxis oder Rechtsprechung anzupassen.</p>
+            <p>Diese Datenschutzerklärung hat den Stand vom 26.08.2026. Wir behalten uns vor, die Datenschutzerklärung zu gegebener Zeit zu aktualisieren, um den Datenschutz zu verbessern und/oder an geänderte Behördenpraxis oder Rechtsprechung anzupassen.</p>
 
             <!-- DER EINZIGE ABSATZ AUF DIESER SEITE, DER NICHT VOM KUNDEN STAMMT.
                  Er sagt zwei Dinge, die ein Betroffener hier wirklich braucht und
@@ -325,3 +404,25 @@
               <p>Diese Erklärung wird derzeit überarbeitet und anschließend automatisiert gepflegt, damit sie dauerhaft aktuell bleibt. Bis dahin gilt der vorstehende Text.</p>
               <p>Zuständige Aufsichtsbehörde für eine Beschwerde nach Abschnitt 5.8 ist für uns das Bayerische Landesamt für Datenschutzaufsicht (BayLDA), Promenade 27, 91522 Ansbach.</p>
             </div>
+
+          <!-- Querverweis auf die andere Rechtsseite, wörtlich der Block, den
+               pages/impressum.html in der Gegenrichtung schon hat. Keine
+               Kundentexte, sondern Navigation: wer über die
+               Einwilligungs-Checkbox hier landet, sucht meist die andere. -->
+          <p class="legal-crosslink">
+            <a class="service-link" href="/impressum/">
+              Zum Impressum
+              <svg class="service-link__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+            </a>
+          </p>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

@@ -32,6 +32,81 @@ anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
 
+**2026-08-26 — `/datenschutz/` REESCRITA POR INSTRUCCIÓN DEL CLIENTE, Y EL HALLAZGO
+GRANDE NO FUE UN ERROR DE TEXTO: LA PÁGINA TERMINABA A MITAD DE CONTENIDO Y SE
+SERVÍA SIN FOOTER DESDE EL BLOQUE J.** Toca `pages/datenschutz.html` y
+`docs/datenschutz-drittanbieter.md`. **Cero CSS, ninguna otra página.**
+
+- **El cliente levantó la regla, y sólo para esta página** ("Datenschutz —
+  optimiere es einfach selbst so dass es am sinnvollsten ist und am besten
+  passt"). Queda anotado en el propio markup por qué acá sí: **en una
+  Datenschutzerklärung una afirmación falsa no es gusto de redacción, es una
+  información obligatoria falsa del Art. 13 DSGVO.**
+- ⚠️⚠️ **EL DEFECTO ESTRUCTURAL: faltaban `</main>`, dos `</div>`, `</section>`,
+  el FOOTER, el botón de WhatsApp y `</body></html>`.** Un browser cierra los tags
+  abiertos solo, así que **la página SE VEÍA normal** — pero no tenía footer, o sea
+  **ni link al Impressum ni forma de navegar afuera**, justo en la única página que
+  enlazan el checkbox de consentimiento de los 40 formularios y el footer de las
+  otras 68.
+  ⚠️ **LO ENCONTRÓ LA MEDICIÓN, NO LA VISTA, y el tell es específico:** mi sonda
+  quiso recortar `<main>…</main>` y recibió un string VACÍO. Una captura no lo
+  muestra. **Barridas las 69 páginas: era la única**, y la prueba de balance de tags
+  (`main`/`body`/`html`/`footer`/`header`/`section`) quedó como herramienta.
+- **Cinco correcciones, cada una verificable:**
+  · **§ 83 StBerG** (Steuerberatungsgesetz) en el 5.1 — un bloque de plantilla de
+    estudio contable que **RESTRINGÍA el derecho de acceso del visitante** invocando
+    una norma que no aplica a un prestador de seguridad. La frase se ACORTÓ, no se
+    borró: el segundo motivo (interés preponderante de un tercero) sí aplica.
+  · segundo "2.1 Aufruf der Webseite" → **"2.2 Kontaktformular"**.
+  · Stand **18.05.2018** → 26.08.2026.
+  · la domain con **"www."** → sin www (el sitio corre en la desnuda).
+  · ⚠️⚠️ **EL ABSCHNITT 4 DESCRIBÍA COOKIES QUE NO EXISTEN** — de sesión,
+    temporales y "zu statistischen Zwecken". Medido en todo el JS propio: **cero
+    `document.cookie`, cero `localStorage`, cero `sessionStorage`, ningún
+    analizador**. O sea declaraba una verificación que no ocurre, y encima
+    describía justo cookies de análisis, **que serían einwilligungspflichtig**. Eso
+    no es un excedente inofensivo: afirma un tratamiento para el que al cliente le
+    falta el banner.
+- **Cuatro secciones AGREGADAS, y las cuatro salen de medir el proyecto, no de una
+  plantilla:** `2.3` bewerbungen con **upload de CV** (`/jobs/` toma name, email,
+  phone, qualification, message, cv `.pdf/.doc/.docx`), `3.1` Hosting (Art. 13 Abs.
+  1 lit. e pide los destinatarios y el bloque de logfiles sólo decía "der Server
+  dieser Webseite"), `3.2` Kartendarstellung (**los tiles de CARTO transfieren la IP
+  a un tercero, en `/`, `/einsatzgebiete/` y `/kontakt/`** — y el texto dice que la
+  carga es lazy, porque quien no llega a esa parte no abre conexión), y `3.3`
+  servicios enlazados.
+  ⚠️ **El 3.3 existe justamente para marcar la diferencia que importa: son LINKS,
+  no embeds.** Antes del clic no sale un solo dato — decirlo es lo que separa este
+  caso de un iframe de Instagram.
+- ⚠️⚠️ **DOS COSAS QUE NO SE AFIRMARON, A PROPÓSITO, y están marcadas como pregunta
+  EN el markup:** si existe el **Auftragsverarbeitungsvertrag** del Art. 28 con el
+  hoster (el texto dice que ese contrato **es necesario** —eso es la ley— y NO que
+  se firmó), y la **duración de conservación** de las postulaciones. **Una
+  afirmación contractual inventada es peor que un hueco.**
+- ⚠️ **Las direcciones postales de Vercel y CARTO se SACARON del borrador antes de
+  publicar**: las tenía de memoria y no las puedo verificar. Quedan la razón social
+  y el país, que es lo que el Art. 13 necesita como destinatario.
+- **`docs/datenschutz-drittanbieter.md` ganó una advertencia nueva y necesaria:
+  cuando lleguen GA4 y reCAPTCHA, el Abschnitt 4 se REEMPLAZA, no se amplía.** Hoy
+  dice "keine Cookies"; dejarlo y poner un bloque de cookies al lado es una
+  contradicción dentro de un mismo documento, y de las dos la peor, porque el
+  visitante lee primero el "keine".
+- ✅ **Cross-link "Zum Impressum"** agregado al cierre — el espejo del "Zur
+  Datenschutzerklärung" que el Impressum ya tenía, con su misma clase y su mismo
+  comentario. Con el footer ausente ese link era la única salida; ahora es
+  redundancia útil.
+- **Medido: jerarquía h1 → h2 → h3 → h4 sin un solo salto** (22 headings), los
+  cinco errores en 0 apariciones, **h3 20px/500 sobre h4 16px/600** (o sea la
+  inversión de tamaños de Bloque J sigue arreglada), footer en y=9371, botón de
+  WhatsApp presente, listas con viñetas, cero tokens sin resolver, sin scroll
+  horizontal, **69/69 páginas con tags balanceados**. Capturas a 1440 y 390.
+- ⚠️ **Trampa de medición propia, y la peor de hoy: mi primera prueba de balance de
+  tags reportó 235 problemas INEXISTENTES.** Escrita como `node -e '...'`, la clase
+  `[\\s>]` perdió un nivel de backslash y llegó como `[s>]`, así que `<main[s>]` no
+  matchea `<main id="main">` y contó 0 tags de apertura en TODAS las páginas. **Una
+  sonda que reporta que todo está roto casi siempre está rota ella.** Pasada a
+  archivo con el Write tool — tercera vez hoy con la misma causa.
+
 **2026-08-26 — LAS SEIS VISITENKARTENSEITEN QUE EL CLIENTE DECIDIÓ CONSERVAR, DOS
 REDIRECTS Y DOS 404 DELIBERADOS. Con eso los diez hallazgos del 25.08 quedan
 cerrados y la prueba de completitud pasa de 2 huérfanas a CERO.** Toca

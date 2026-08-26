@@ -544,6 +544,12 @@ Kunden erzählt. Änderbar in einer Zeile.
 
 ## 11 — Block J: /datenschutz/ ist befüllt
 
+> ⚠️ **Stand 26.08.: der Text ist überarbeitet, und dabei kam ein Fehler heraus,
+> der die Seite ohne Fußbereich ausgeliefert hat. Siehe Abschnitt 16.** Die drei
+> Textfehler, die dieser Abschnitt als „bewusst nicht korrigiert" beschreibt, sind
+> auf deine Anweisung behoben; dazu sind vier weitere gefunden und vier fehlende
+> Abschnitte ergänzt worden.
+
 Commit `88ce96c` · `pages/datenschutz.html`, `css/page-legal.css`, `sitemap.xml`
 
 | ☐ | Was | Wo prüfen | Woran erkennbar |
@@ -669,7 +675,7 @@ Alle Blöcke dieses Durchgangs sind durch. Was bleibt, und von wem es abhängt:
 |---|---|---|
 | ☐ | Hero-Foto der Startseite | offen seit Block A |
 | ☐ | Vier Titelbilder für die portierten Ratgeber-Artikel | Abschnitt 9 |
-| ☐ | Drei Fehler im Datenschutztext entscheiden (§ 83 StBerG, doppelte Nummerierung 2.1, Stand 2018) | Abschnitt 11 |
+| ☐ | Zwei Fragen zum Datenschutztext: Auftragsverarbeitungsvertrag mit dem Hoster, Aufbewahrungsdauer für Bewerbungen | Abschnitt 16 |
 | ☐ | Eine Frage zu Block D: soll der Anker `/#dienstleistungen` aus dem Linktree ein Ziel auf der neuen Startseite bekommen? | Abschnitt 6 |
 
 **Nach dem Deploy, technisch:**
@@ -904,6 +910,107 @@ rutscht der Name nach oben, es bleibt keine Lücke — angesehen, nicht nur gere
 
 ---
 
+## 16 — Datenschutzerklärung überarbeitet, und ein Fehler, der die Seite ohne Fußbereich ausgeliefert hat
+
+Commit `PLATZHALTER` · `pages/datenschutz.html`, `docs/datenschutz-drittanbieter.md`
+· **kein CSS, keine andere Seite**
+
+Auf deine Anweisung („Datenschutz — optimiere es einfach selbst so dass es am
+sinnvollsten ist und am besten passt"). Für **diese eine Seite** ist damit die
+Projektregel „bestehende Webtexte nicht inhaltlich ändern" aufgehoben, und nur hier:
+bei einer Datenschutzerklärung ist eine falsche Aussage keine Geschmacksfrage,
+sondern eine falsche Pflichtinformation nach Art. 13 DSGVO.
+
+### ⚠️⚠️ Der wichtigste Fund war kein Textfehler
+
+**Die Seite endete mitten im Inhalt.** Es fehlten das schließende `</main>`, zwei
+`</div>`, `</section>`, der **Footer**, der WhatsApp-Button und `</body></html>` —
+seit dem Bau am 23.08. Browser schließen offene Tags selbst, deshalb **sah** die
+Seite normal aus. Sie hatte aber **keinen Fußbereich**: keinen Impressum-Link, keine
+Navigation heraus, keine Kontaktangaben. Auf genau der Seite, die aus der
+Einwilligungs-Checkbox jedes Formulars und aus dem Footer jeder anderen Seite
+verlinkt ist.
+
+| ☐ | Was | Woran erkennbar |
+|---|---|---|
+| ☐ | Fußbereich ist da | Unten auf `/datenschutz/` steht der normale Footer mit Impressum, Kontakt und Social-Links |
+| ☐ | WhatsApp-Schaltfläche ist da | Grüner Kreis unten rechts, wie auf jeder anderen Seite |
+| ☐ | Querverweis | Am Textende: „Zum Impressum" — das Gegenstück zum „Zur Datenschutzerklärung" im Impressum |
+
+**Gefunden hat es die Messung, nicht das Anschauen.** Meine Prüfsonde wollte
+`<main>…</main>` ausschneiden und bekam einen leeren String zurück. **Alle 69 Seiten
+nachgeprüft: es war die einzige.** Die Prüfung ist jetzt Teil des Werkzeugkastens.
+
+### Behoben, weil nachweislich falsch
+
+| ☐ | Was war falsch | Jetzt |
+|---|---|---|
+| ☐ | Abschnitt 5.1 berief sich auf **§ 83 StBerG** (Steuerberatungsgesetz) und schränkte damit dein Auskunftsrecht unter einer Norm ein, die für einen Sicherheitsdienstleister nicht gilt | Satz gekürzt. Der zweite Grund darin (überwiegendes Interesse eines Dritten) ist einschlägig und bleibt |
+| ☐ | Zweite Unterüberschrift hieß „2.1 Aufruf der Webseite", darunter stand das Kontaktformular | „2.2 Kontaktformular" |
+| ☐ | Stand **18.05.2018** | 26.08.2026 |
+| ☐ | Domain als „www.frankonia-sicherheit.de" | ohne www — die Seite läuft auf der nackten Domain |
+| ☐ | ⚠️ **Abschnitt 4 beschrieb Cookies, die es nicht gibt** | sagt jetzt, was zutrifft |
+
+**Zum Cookie-Abschnitt, weil das der auffälligste Eingriff ist:** der alte Text
+beschrieb Session-Cookies, temporäre Cookies und Cookies „zu statistischen Zwecken".
+Nachgemessen im gesamten eigenen JavaScript: **kein einziges `document.cookie`, kein
+`localStorage`, kein `sessionStorage`, kein Analysewerkzeug eingebunden.** Die
+Erklärung erklärte also eine Verarbeitung, die nicht stattfindet — und beschrieb
+dabei ausgerechnet Analyse-Cookies, die einwilligungspflichtig wären. Das ist kein
+harmloser Überschuss: es behauptet eine Verarbeitung, für die dir ein
+Einwilligungsbanner fehlt.
+
+### Ergänzt, weil es stattfindet und nicht genannt war
+
+| ☐ | Neuer Abschnitt | Warum er nötig war |
+|---|---|---|
+| ☐ | **2.3 Bewerbungen über das Karriereformular** | `/jobs/` nimmt Name, E-Mail, Telefon, Qualifikation, Nachricht **und einen Lebenslauf-Upload** an. Dazu stand nichts in der Erklärung |
+| ☐ | **3.1 Hosting** | Art. 13 Abs. 1 Buchst. e) verlangt die Empfänger; der Logfile-Abschnitt sprach nur von „dem Server dieser Webseite" |
+| ☐ | **3.2 Kartendarstellung** | Die Kartenkacheln kommen von CARTO und übertragen die IP der Besucher an einen Dritten. Betroffen: Startseite, `/einsatzgebiete/`, `/kontakt/` |
+| ☐ | **3.3 Verlinkte Dienste Dritter** | WhatsApp, Instagram, LinkedIn, Facebook, Google-Bewertungsprofil, Google-Route, HubSpot-Termin. Alle sind **reine Links**: vor dem Klick verlässt kein Datum die Seite. Das steht so drin, weil das der entscheidende Unterschied zu einem eingebetteten Inhalt ist |
+
+Die Feldlisten und die betroffenen Seiten sind **im Projekt nachgemessen**, nicht aus
+einer Vorlage übernommen — deshalb steht bei der Karte auch, dass sie erst beim
+Scrollen lädt: wer die Stelle nicht erreicht, baut keine Verbindung auf.
+
+### ⚠️ Zwei Punkte, die nur du oder dein Anwalt beantworten kann
+
+| ☐ | Frage | Wie es aktuell im Text steht |
+|---|---|---|
+| ☐ | **Besteht ein Auftragsverarbeitungsvertrag mit dem Hoster** (Vercel) nach Art. 28 DSGVO? | Der Text sagt, dass so ein Vertrag **erforderlich ist** — das ist Gesetz und unstrittig. Er behauptet **nicht**, dass er geschlossen wurde. Sobald du das bestätigst, wird daraus ein Aussagesatz |
+| ☐ | **Wie lange bewahrst du Bewerbungsunterlagen auf?** | Der Text sagt „nach Abschluss des Verfahrens, sobald keine Aufbewahrungspflichten entgegenstehen". Übliche Praxis sind sechs Monate; das ist aber eine Festlegung deines Unternehmens, keine, die ich treffen kann |
+
+Beide sind im Markup an der Stelle markiert. **Eine erfundene Vertragsaussage wäre
+schlimmer als eine Lücke** — deshalb steht sie nicht drin.
+
+### Was bewusst nicht drin steht
+
+Google Analytics und reCAPTCHA. Sie laden heute nicht, und eine Erklärung beschreibt
+den Ist-Zustand. Der Wortlaut von der alten Seite liegt vollständig in
+`docs/datenschutz-drittanbieter.md`, zusammen mit der einzuhaltenden Reihenfolge
+(Consent-Werkzeug zuerst, dann die Dienste, dann der Text) und den CSP-Hosts, die
+sonst still blockiert würden. **Wenn das kommt, wird Abschnitt 4 ERSETZT, nicht
+ergänzt** — er sagt heute „keine Cookies", und daneben einen Cookie-Abschnitt zu
+stellen wäre ein Widerspruch in einem Dokument. Das steht als Hinweis an beiden
+Stellen.
+
+### Gemessen
+
+- **Überschriftenfolge in `<main>`: h1 → h2 → h3 → h4, kein übersprungener Grad**,
+  22 Überschriften, `5.1` bis `5.8` unverändert.
+- **Nachgeprüft, dass die Fehler weg sind**: „§ 83 StBerG" 0x, „18.05.2018" 0x,
+  „www.frankonia-sicherheit.de" 0x, und keine doppelte „2.1".
+- **Größenverhältnis der Überschriften stimmt**: h3 20px/500 über h4 16px/600 —
+  vorher rutschte h4 auf 25px/700 und war damit größer als seine eigene Überschrift
+  darüber (behoben in Block J, hier erneut nachgemessen).
+- **Alle 69 gebauten Seiten auf Tag-Bilanz geprüft**: `main`, `body`, `html`,
+  `footer`, `header`, `section` je gleich viele öffnende wie schließende — 0 Seiten
+  auffällig.
+- **Kein Platzhalter offen**, kein Seitenumbruch nach rechts, Listen mit Punkten,
+  Ansicht bei 1440 und 390 Pixel geprüft.
+
+---
+
 # Abschlussbericht
 
 Die fünf Listen, die du am Ende sehen wolltest. Sie fassen zusammen, was in den
@@ -1043,6 +1150,8 @@ Formularempfang, und nach dem Deploy die Live-Prüfung der Redirects samt der
 www-Umleitung in den Vercel-Einstellungen.
 
 Erledigt seit der ersten Fassung dieses Berichts: der Tippfehler in den zwei vCards
-(Abschnitt 13), die drei Fehler im Datenschutztext (Abschnitt 11), die Google-Profil-URL
-fürs Badge (Abschnitt 13) und die zehn Seiten ohne Sitemap-Eintrag (Abschnitte 14
-und 15).
+(Abschnitt 13), die Google-Profil-URL fürs Badge (Abschnitt 13), die zehn Seiten ohne
+Sitemap-Eintrag (Abschnitte 14 und 15) und die Überarbeitung der
+Datenschutzerklärung samt des Fehlers, der diese Seite ohne Fußbereich ausgeliefert
+hat (Abschnitt 16). Beim Datenschutz sind noch zwei Fragen offen, die nur du oder
+dein Anwalt beantworten kann — sie stehen dort in einer eigenen Tabelle.
