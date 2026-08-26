@@ -1653,12 +1653,13 @@ Deshalb trägt `api/_lib/hubspot.js` jetzt die **Reihenfolge deines Portals**, a
 - Kontakt in Kontakt / Kaltakquise / Ansprechpartner / Termin vereinbart → **wird
   hochgesetzt** auf „Angebot erstellt".
 - Kunde / Fürsprecher / Upsell → **bleibt**, wird nie zurückgestuft.
-- ⚠️ **„Sonstiges" und „Kein Interesse" bleiben auch.** Sie stehen in der Liste hinter
-  dem Ziel, also rührt eine neue Anfrage sie nicht an. Das ist bewusst: wer jemanden
-  als „Kein Interesse" markiert hat, soll das nicht durch ein Formular überschrieben
-  bekommen. **Wenn du willst, dass eine neue Anfrage solche Kontakte reaktiviert**,
-  wandern die zwei Einträge in der Liste vor das Ziel — das ist eine Entscheidung über
-  den Vertriebsprozess, keine über Code, deshalb frage ich lieber.
+- ⚠️ **„Sonstiges" und „Kein Interesse" werden seit dem 26.08. ÜBERSCHRIEBEN**, also
+  ebenfalls auf „Angebot erstellt" gesetzt. Das ist die Kundenentscheidung zu der
+  Frage, die hier vorher offenstand („auf jeden Fall überschreiben in dem Moment, wo
+  jemand ein Angebot angefragt hat"), und sie ist schlüssig: wer nach so einer
+  Einordnung selbst ein Angebot anfragt, hat sein Desinteresse gerade widerlegt.
+  Die Folge für das Prüfskript steht in Abschnitt 22.3 — die Liste ist damit kein
+  Spiegel der Portalreihenfolge mehr, sondern eine eigene Rangfolge.
 
 ✅ **Nachgewiesen, nicht behauptet:** der Testkontakt stand vor dem Lauf auf
 `4000505062` (Kaltakquise) und nach dem Lauf auf `5522034896` (Angebot erstellt).
@@ -1816,6 +1817,146 @@ das ist genau der Zustand, in dem echte Anfragen verloren gehen.
 
 ---
 
+## 22 — Ratgeber ans Menüende, Vertrauensband auf den Personenseiten, und eine Korrektur zum Karten-Strip
+
+Drei Ansagen vom 26.08. plus eine Richtigstellung, die mir selbst gehört.
+
+### 22.1 Ratgeber steht im Drawer jetzt unter Kontakt
+
+Kunde: *„im Mobile- und Tabletmenu möchte ich den ganz unten unter Kontakt haben,
+nicht als Zweites"*. Eine Zeilenverschiebung in `partials/header-de.html`.
+
+Die Reihenfolge im Drawer ist jetzt Startseite · Leistungen · Einsatzgebiete ·
+Referenzen · Über uns · Karriere · Kontakt · **Ratgeber**. Der Punkt trägt weiter
+`site-nav__item--drawer-only`, ist also ab 1400px ausgeblendet — am Desktop führt
+der Fußbereich hin, weil die Navigationszeile bei sechs Punkten umbricht (der
+Umbruchpunkt ist schon von 1024 auf 1400 gewandert, siehe Abschnitt 3 dieses
+Berichts).
+
+Die Begründung steht im Markup, nicht nur hier: der Ratgeber ist ein
+Inhaltsbereich, kein Teil der Hauptnavigation. An zweiter Stelle hätte er mehr
+Gewicht getragen als „Leistungen".
+
+### 22.2 Vertrauensband unter allen neun Personenseiten
+
+Kunde: *„kannst Du unten drunter noch ein paar Trustelemente und -Elemente machen.
+So was wie das sagen unsere Kunden, Google Bewertung."*
+
+Neues `partials/person-trust.html`, eingebunden auf den neun Karten:
+
+| Seite | Pfad |
+|---|---|
+| Steffen Walde — Sicherheitsdienst | `/steffen-walde-sicherheitsdienst/` |
+| Steffen Walde — Werkschutz | `/steffen-walde-werkschutz/` |
+| Alexander Jäger — Sicherheitsdienst | `/alexander-jaeger-sicherheitsdienst/` |
+| Alexander Jäger — Werkschutz | `/alexander-jaeger-werkschutz/` |
+| Christoph Bauer | `/christoph-bauer-sicherheitsdienst-2/` |
+| Daniel Wettengel | `/daniel-wettengel-sicherheitsdienst/` |
+| Bryan Van Wey — Security | `/bryan-van-wey-security/` |
+| Bryan Van Wey — Werkschutz | `/bryan-van-wey-werkschutz/` |
+| Morelo Werkschutz Team | `/morelo-werkschutz-team-2/` |
+
+Inhalt: die freigegebene Aussage „Über 300 Unternehmen und Einrichtungen vertrauen
+FRANKONIA" (verbatim aus dem Hero von `/referenzen/`), die Google-Bewertung als
+`.review-card review-card--sm` mit Link aufs echte Profil, die zwei DEKRA-Siegel,
+und ein Weg zu den Zitaten.
+
+⚠️ **Ein Partial und keine neun Kopien** — dieselbe Aussage auf neun Seiten wären
+neun Gelegenheiten, dass eine veraltet. Die Zahlen kommen aus
+`content/values.json` (`{{rating.value}}` / `{{rating.count}}`), nicht aus dem
+Markup: eine neue Google-Note ist eine Zeile in einer Datei.
+
+⚠️⚠️ **KEIN vollständiges Kundenzitat, und das ist eine bewusste Auslassung.** Die
+drei Zitate der Website sind **332 bis 376 Zeichen** lang, und CLAUDE.md verbietet
+das Kürzen: einer namentlich genannten Person Worte zu beschneiden heißt, ihr
+andere in den Mund zu legen. Drei davon wären über 1.000 Zeichen auf einer Seite,
+die nach dem Scannen eines QR-Codes vom Handy aus geöffnet wird — und *eines*
+auszuwählen hieße, einen Kunden zum Gesicht jeder Visitenkarte zu machen. Das ist
+eine Kundenentscheidung, keine, die hier nebenbei fällt. Der Grund steht im
+Kopfkommentar des Partials, damit niemand es später „vervollständigt".
+
+⚠️ **Kein Pixel-Übergang davor:** Karte und Band liegen beide auf dem Schwarz der
+Seite, und zwei gleiche Flächen bekommen keinen Übergang (page-conventions §9.2) —
+er würde Schwarz auf Schwarz auflösen, also nichts.
+
+⚠️ **`/linktree/` und `/sicherheitscheck-walde/` bleiben außen vor.** Beide tragen
+dasselbe Kartenlayout, sind aber keine Personenseiten: das eine ist eine
+Linksammlung, das andere eine Buchungsseite mit drei HubSpot-Terminlinks.
+
+**Gemessen an 320 / 390 / 419 / 420 / 768 / 1440:** kein Überlauf, nichts außerhalb
+des Viewports, DEKRA-Verhältnis **0,665 = 399/600 exakt** (also unverzerrt — bei
+diesen Grafiken ist nur proportionales Skalieren erlaubt), Siegel 38px unter 420
+und 44px darüber, Link **44px** hoch, alle Elemente **0px** von der Mittelachse,
+Band unter 420px in einer Spalte statt gequetscht, Claim-Icon
+`fill: none; stroke: rgb(61,154,211)` — die `<use>`-Falle also nicht getreten.
+
+✅ **Die Google-Pille misst 24×247 und das ist KEIN Fehler.** Ich hatte 48px im
+Kopf; nachgemessen ist es derselbe Wert wie in ihrer bestehenden Verwendung auf
+`/ueber-uns/`. Zwei Größen für dasselbe Bauteil wären der Fehler gewesen.
+
+⚠️⚠️ **DER EINE ECHTE FEHLER WAR NUR IM BILD ZU SEHEN, NICHT IN DEN ZAHLEN:** das
+Gebäude-Zeichen vor der Aussage stand **117px** neben dem Text. Ursache:
+`.person-trust__claim` war ein Flexbox, und der umbrechende Textknoten wird darin
+zu einem Block, dessen Zeilen zentriert sind — das Icon klebte am Rand dieses
+Blocks, nicht an den Buchstaben. Alle Messwerte waren dabei in Ordnung. Jetzt
+`display: inline-block; vertical-align: -0.18em`, also Teil der Textzeile.
+**Lektion, und sie ist alt in diesem Projekt: eine Messung sagt, ob etwas dort
+ist, wo es sein soll — nicht, ob die Komposition stimmt. Für Zweites braucht es
+den Blick.**
+
+### 22.3 Lifecycle: „Sonstiges" und „Kein Interesse" werden jetzt überschrieben
+
+Kunde: *„hier Sonstiges und kein Interesse auf jeden Fall überschreiben in dem
+Moment, wo jemand ein Angebot angefragt hat"*. Damit ist die offene Frage aus
+Abschnitt 20 beantwortet.
+
+Beide Einträge stehen in `LIFECYCLE_REIHENFOLGE` nun **ganz vorne**, also
+unterhalb von allem anderen — eine neue Anfrage hebt sie auf „Angebot erstellt".
+Die Begründung ist schlüssig: wer nach so einer Einordnung selbst ein Angebot
+anfragt, hat sein Desinteresse gerade widerlegt.
+
+⚠️ **Die andere Richtung gilt unverändert:** „Kunde", „Fürsprecher" und „Upsell"
+stehen hinter dem Ziel. Ein Formular kann niemanden zurückstufen.
+
+⚠️⚠️ **FOLGE, DIE MAN KENNEN MUSS: die Liste ist damit KEIN SPIEGEL DER
+PORTALREIHENFOLGE MEHR, sondern eine eigene Rangfolge.** `setup-hubspot.mjs
+--verify` verglich bisher Element für Element und hätte ab jetzt bei **jedem Lauf**
+Alarm geschlagen, obwohl nichts kaputt ist — also genau die Art Warnung, die man
+nach dreimal ignoriert. Der Vergleich prüft jetzt die **Menge**: eine Phase, die es
+im Portal gibt und im Code nicht, gilt als unbekannt, der Kontakt wird gar nicht
+umsortiert, und **niemand merkt es** — das ist der Fall, der auffallen muss.
+
+Der Test hält beides fest: `darfPhaseSetzen("other", ziel) === true` und die
+vollständige Rangfolge als `deepEqual` — die Reihenfolge ist dort mitgeprüft, weil
+sie entscheidet, wer überschrieben wird. **63/63 Tests grün.**
+
+### 22.4 Korrektur: der Karten-Strip bei Tablet-Breite läuft, meine Messung war falsch
+
+Ich hatte gemeldet, das Band brauche bei 914px eine Maus, weil die Bildlaufleiste
+versteckt ist. **Das war ein Fehler meiner Messung, nicht der Seite.**
+
+⚠️⚠️ **Die Sonde erzwang `prefers-reduced-motion`, und genau diese Einstellung
+schaltet den Scroll-Antrieb ab.** Mit normaler Bewegung gemessen (`CDP_MOTION=1`):
+bei **768, 914 und 1023px** läuft das Band beim Nach-unten-Scrollen von selbst
+seitwärts, die Bühne bleibt `sticky` stehen, die Bahn ist **4432 / 5082 / 5567px**
+lang. Genau das Verhalten wie im Desktop.
+
+Was sich unterscheidet, ist das **Aussehen**: Desktop stapelt die Karten
+übereinander (die nächste schaut hervor), das Tablet-Band legt sie flach
+nebeneinander.
+
+Geprüft, ob der gestapelte Look ab 900px laufen kann: **er läuft** (`enhanced`
+greift, Karten 248–282px breit, Überschriften auf zwei Zeilen). Zwei Dinge müssten
+mit, und deshalb ist es eine Frage und keine Änderung: die Sektion fällt auf
+**1096px** Höhe zusammen, es bleibt also keine Scrollstrecke, und die Wischleiste
+bliebe zusätzlich sichtbar (ein vierter Schalter in `js/swipe-carousel.js`).
+
+⚠️ **Lektion für jede weitere Messung an dieser Sektion: eine Sonde mit erzwungener
+reduzierter Bewegung kann über scroll-getriebene Effekte nichts aussagen.** Sie
+misst dann den Ruhezustand und meldet ihn als Defekt.
+
+---
+
 # Abschlussbericht
 
 Die fünf Listen, die du am Ende sehen wolltest. Sie fassen zusammen, was in den
@@ -1965,6 +2106,13 @@ in HubSpot und Brevo, die Doppelklick-Sperre und zwei behobene Überläufe. Was 
 noch bei dir liegt, steht dort in einer eigenen Tabelle; die Kurzfassung ist:
 Zugangsdaten in `.env.local` und in Vercel eintragen, Consent Mode im
 Cookiebot-Konto aktivieren, die beiden Setup-Skripte einmal laufen lassen.
+
+⚠️ **Nachtrag 26.08., zweite Runde:** Abschnitt 22 — Ratgeber ans Menüende, das
+Vertrauensband auf den neun Personenseiten, und „Sonstiges" / „Kein Interesse"
+werden jetzt überschrieben. **Damit ist von den beiden Fragen, die ich offen
+gelassen hatte, nur noch eine offen:** ob der Karten-Strip bei Tablet-Breite den
+gestapelten Desktop-Look bekommen soll (22.4 — er läuft dort mechanisch, meine
+erste Gegenbehauptung war ein Messfehler).
 
 Erledigt seit der ersten Fassung dieses Berichts: der Tippfehler in den zwei vCards
 (Abschnitt 13), die Google-Profil-URL fürs Badge (Abschnitt 13), die zehn Seiten ohne

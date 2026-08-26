@@ -32,6 +32,85 @@ anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
 
+**2026-08-26, QUINTA RONDA — EL RATGEBER BAJA AL FINAL DEL DRAWER, LAS 9 PÁGINAS DE
+PERSONA GANAN UNA BANDA DE CONFIANZA, Y „Sonstiges" / „Kein Interesse" AHORA SE
+SOBREESCRIBEN** (cliente, tres instrucciones). Toca `partials/header-de.html`, un
+partial nuevo, `css/page-person.css`, las 9 páginas de persona y
+`api/_lib/hubspot.js`.
+
+- **El Ratgeber va al FINAL del drawer, bajo Kontakt** ("im Mobile- und Tabletmenu
+  möchte ich den ganz unten unter Kontakt haben, nicht als Zweites"). Es una
+  reubicación de líneas; conserva `site-nav__item--drawer-only`, o sea sigue oculto
+  desde 1400px, donde la fila del nav ya no tiene lugar para un sexto ítem. La razón
+  quedó en el markup: es un hub de contenido, no parte de la navegación principal —
+  en segundo lugar pesaba más que "Leistungen".
+
+- ✅ **`partials/person-trust.html` NUEVO, en las 9 páginas de persona** (cliente:
+  "kannst Du unten drunter noch ein paar Trustelemente machen. So was wie das sagen
+  unsere Kunden, Google Bewertung"). Contenido: la afirmación aprobada de las 300
+  empresas (verbatim del hero de `/referenzen/`), la píldora de Google enlazada al
+  perfil real, los 2 sellos DEKRA y un link a `/referenzen/`.
+  - **Un partial y no nueve copias** — es la misma afirmación en nueve páginas, y
+    nueve copias son nueve oportunidades de que una quede vieja. Las cifras salen de
+    `content/values.json`, así que una nota nueva de Google es **una línea**.
+  - ⚠️⚠️ **SIN CITA COMPLETA DE CLIENTE, Y ESO ES DELIBERADO.** Las tres citas del
+    sitio miden **332–376 caracteres** y CLAUDE.md prohíbe acortarlas (recortarle
+    palabras a una persona nombrada es ponerle otras en la boca). Tres serían >1.000
+    caracteres en una página que se abre desde un QR con el teléfono en la mano — y
+    elegir UNA convierte a un cliente en la cara de cada tarjeta de visita. Es una
+    decisión del cliente; el motivo quedó escrito en el partial para que nadie lo
+    "complete" después.
+  - ⚠️ **SIN pixel-seam antes**: la card y la banda están las dos sobre el negro de
+    la página, y dos superficies iguales no llevan seam (§9.2).
+  - ⚠️ **`/linktree/` y `/sicherheitscheck-walde/` quedan fuera**: llevan el mismo
+    layout de card pero no son páginas de persona (una es una lista de links, la otra
+    una página de reserva con tres links de HubSpot Meetings).
+  - **Medido a 320 / 390 / 419 / 420 / 768 / 1440**: sin scroll horizontal, nada
+    fuera del viewport, **ratio DEKRA 0,665 = 399/600 exacto** (o sea sin deformar —
+    en esas grafías sólo se permite escalar proporcionalmente), sellos 38/44px, link
+    **44px** de alto, todo a **0px** del eje central, y la banda pasa a una columna
+    por debajo de 420px.
+  - ⚠️⚠️ **EL ÚNICO DEFECTO REAL SÓLO SE VIO EN LA CAPTURA, NO EN LOS NÚMEROS: el
+    icono de la afirmación quedaba a 117px del texto.** `.person-trust__claim` era un
+    flexbox, y el nodo de texto que envuelve se **blockifica** dentro: sus líneas
+    quedan centradas y el icono se pega al borde de ESE bloque, no a las letras.
+    Todas las mediciones daban bien. Ahora es `inline-block` con
+    `vertical-align: -0.18em`. **Lección: una medición dice si algo está donde debe;
+    no dice si la composición se lee. Para lo segundo hace falta mirar.**
+  - ✅ **La píldora de Google mide 24×247 y NO es un defecto** — es el mismo valor
+    que en `/ueber-uns/`. Mi recuerdo de "deberían ser 48px" estaba mal; dos tamaños
+    para el mismo componente sí habrían sido el defecto.
+
+- ⚠️⚠️ **HUBSPOT: „Sonstiges" y „Kein Interesse" PASAN AL FRENTE DE
+  `LIFECYCLE_REIHENFOLGE`, o sea una anfrage nueva los SOBREESCRIBE** (cliente: "auf
+  jeden Fall überschreiben in dem Moment, wo jemand ein Angebot angefragt hat").
+  Cierra la pregunta abierta del 2026-08-26 cuarta ronda. "Kunde", "Fürsprecher" y
+  "Upsell" siguen detrás del objetivo — un formulario no puede degradar a nadie.
+  - **CONSECUENCIA QUE NO ES OBVIA: esa lista deja de ser un espejo del orden del
+    portal y pasa a ser una jerarquía propia.** `setup-hubspot.mjs --verify` comparaba
+    elemento por elemento y **habría gritado en cada corrida** sin que nada estuviera
+    roto — o sea la clase de aviso que a la tercera vez nadie mira. Ahora compara la
+    **MENGE**: una fase que existe en el portal y no en el código se trata como
+    desconocida, el contacto no se mueve, y **nadie se enteraría**. Ése es el caso que
+    tiene que sonar.
+  - El test fija las dos cosas: `darfPhaseSetzen("other", ziel) === true` y la
+    jerarquía completa como `deepEqual` (el ORDEN se verifica ahí, porque decide quién
+    se sobreescribe). **63/63 tests en verde.**
+
+- ⚠️⚠️ **CORRECCIÓN A UNA AFIRMACIÓN PROPIA: el strip de cards SÍ funciona a ancho de
+  tablet.** Había reportado que necesitaba mouse a 914px. Era un **artefacto de mi
+  sonda**, que forzaba `prefers-reduced-motion` — justamente lo que apaga el scrubber.
+  Medido con motion real (`CDP_MOTION=1`): a **768 / 914 / 1023** el strip avanza
+  lateralmente al scrollear hacia abajo, el stage queda `sticky`, y el track mide
+  **4432 / 5082 / 5567px**. Lo que difiere es el LOOK (plano contra peek-stack), no el
+  mecanismo. Probado que el peek-stack corre desde 900px (`enhanced`, cards 248–282px)
+  pero necesita dos arreglos más: la sección colapsa a **1096px** (sin distancia de
+  scroll) y la barra de swipe queda encendida. **Es una pregunta al cliente, no un
+  cambio.**
+  ⚠️ **Regla para la próxima medición de cualquier efecto scroll-driven: una sonda con
+  reduced motion forzado no puede decir nada sobre él** — mide el estado de reposo y lo
+  reporta como defecto.
+
 **2026-08-26 — `/datenschutz/` REESCRITA POR INSTRUCCIÓN DEL CLIENTE, Y EL HALLAZGO
 GRANDE NO FUE UN ERROR DE TEXTO: LA PÁGINA TERMINABA A MITAD DE CONTENIDO Y SE
 SERVÍA SIN FOOTER DESDE EL BLOQUE J.** Toca `pages/datenschutz.html` y
