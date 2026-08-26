@@ -812,7 +812,7 @@ sie einmal gab, ist sie schon gelöscht — es ist also nichts zu tun.
 
 ## 15 — Die sechs behaltenen Visitenkartenseiten, zwei Weiterleitungen, zwei bewusste 404
 
-Commit `PLATZHALTER` · 6 neue Seiten in `pages/`, 3 Porträts, 6 vCards,
+Commit `7475d91` · 6 neue Seiten in `pages/`, 3 Porträts, 6 vCards,
 `docs/design-sources/person-pages.js`, `redirects-build.js`, `redirect-test.js`,
 `vercel.json` · **kein CSS geändert**
 
