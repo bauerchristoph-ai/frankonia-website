@@ -849,6 +849,38 @@ homepage, no inventes otros:
 
 ## 6. Formularios
 
+> ⚠️⚠️ **ACTUALIZADO 2026-08-26 — EL FORMULARIO TIENE OTRO JUEGO DE CAMPOS, UN
+> ENDPOINT REAL, Y AHORA LO USAN 44 PÁGINAS INCLUIDA `/kontakt/`.** Lo que
+> cambió, porque contradice lo que sigue más abajo en §6.0:
+>
+> | Antes | Ahora |
+> |---|---|
+> | un campo `name` | `first_name` y `last_name` separados (HubSpot y Brevo llevan campos separados) |
+> | Telefon **obligatorio** | Telefon **opcional**, en las 44 |
+> | `action="#"`, no enviaba a ningún lado | `action="/api/forms/submit/"`, con vuelta a HubSpot y Brevo |
+> | sin protección antispam | Turnstile + honeypot evaluado + tiempo mínimo |
+> | sin campo de servicio | `<select name="service">`, **preseleccionado** en 27 páginas vía el parámetro `service` |
+> | una sola casilla (privacidad) | dos: privacidad (obligatoria) y marketing (opcional, **nunca** premarcada) |
+> | parámetros `nameRequired` / `companyRequired` | **eliminados**, no existen |
+>
+> ⚠️ **`/kontakt/` YA NO TIENE FORMULARIO PROPIO.** §6.0 abajo dice que lo
+> conserva; el encargo del 24.08.2026 pide expresamente unificarlo y la
+> instrucción posterior gana. Su `<h2>` sigue asociada al formulario mediante un
+> `<section aria-labelledby>` alrededor del include — el partial no puede
+> llevarlo porque no conoce el `id`.
+>
+> ⚠️ **`/jobs/` TAMPOCO TIENE EL SUYO, pero por la razón opuesta:** ahora lleva
+> el **formulario incrustado de HubSpot** (`partials/hubspot-jobs-form.html`),
+> no el compartido. Un postulante necesita otro texto y otro proceso que un
+> cliente. Consecuencia registrada: los postulantes llegan a HubSpot pero **no a
+> Brevo**, y reciben la confirmación de HubSpot, no de la plantilla 5.
+>
+> ⚠️ **`/danke/` es SOLO para consultas de clientes.** Para postulaciones vendrá
+> `/danke-bewerbung/` aparte. Nunca unificarlas: si las postulaciones cuentan
+> como conversión de lead, Google Ads optimiza con el tiempo hacia postulantes en
+> vez de clientes, y eso solo se nota después de meses de presupuesto mal
+> dirigido.
+
 ### 6.0 El formulario de cierre es un partial — se incluye, no se copia
 
 Desde 2026-08-06 el formulario de conversión vive en `partials/lead-form.html`.

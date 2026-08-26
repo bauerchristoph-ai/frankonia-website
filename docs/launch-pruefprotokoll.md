@@ -329,6 +329,10 @@ anderen Seiten „Startseite".
 
 ## 9 — Block F: vier von acht Blogartikeln portiert
 
+> ✅ **Stand 26.08.: die vier Titelbilder sind eingesetzt.** Alle **sieben**
+> Ratgeber-Artikel haben jetzt ein Bild, es gibt keinen leeren Rahmen mehr.
+> Siehe Abschnitt 17.
+
 Commit `432a3d2` · 4 neue Seiten in `pages/ratgeber/`, 4 Karten im Hub,
 4 Einträge in `sitemap.xml`, eine neue CSS-Regel
 
@@ -674,7 +678,6 @@ Alle Blöcke dieses Durchgangs sind durch. Was bleibt, und von wem es abhängt:
 | ☐ | Was | Wo im Protokoll |
 |---|---|---|
 | ☐ | Hero-Foto der Startseite | offen seit Block A |
-| ☐ | Vier Titelbilder für die portierten Ratgeber-Artikel | Abschnitt 9 |
 | ☐ | Zwei Fragen zum Datenschutztext: Auftragsverarbeitungsvertrag mit dem Hoster, Aufbewahrungsdauer für Bewerbungen | Abschnitt 16 |
 | ☐ | Eine Frage zu Block D: soll der Anker `/#dienstleistungen` aus dem Linktree ein Ziel auf der neuen Startseite bekommen? | Abschnitt 6 |
 
@@ -1011,6 +1014,167 @@ Stellen.
 
 ---
 
+## 17 — Formular-Integration: die Formulare senden jetzt wirklich
+
+Commits `e9a7ec1` (Consent, Tag Manager, CSP, `/danke/`), `19e4cbc` (Endpoint und
+Tests), `c9fc7ba` (gemeinsames Formular auf 44 Seiten), `PLATZHALTER`
+(Ratgeber-Titelbilder und Doku)
+
+**Damit ist der wichtigste offene Punkt dieses Protokolls erledigt.** Bis heute
+stand hier: „alle 40 Formulare senden derzeit nirgendwohin (`action="#"`) —
+fehlt, blockiert Leads". Es waren 45, und sie senden jetzt an einen echten
+Endpoint, der die Anfrage nach HubSpot und Brevo schreibt, dir eine
+Benachrichtigung schickt und dem Absender eine Eingangsbestätigung.
+
+### Was du selbst durchklicken solltest
+
+| ☐ | Was | Woran erkennbar |
+|---|---|---|
+| ☐ | Einwilligungsbanner | Beim ersten Aufruf erscheint der Cookiebot-Hinweis, **bevor** irgendetwas anderes lädt |
+| ☐ | Spamschutz ist trotzdem da | Im Formular steht der Cloudflare-Kasten — **auch wenn du den Banner ignorierst**. Das ist der Punkt, der sonst still fehlschlägt |
+| ☐ | Formularfelder | Vorname und Nachname getrennt in einer Zeile, E-Mail, Telefon (**freiwillig**), Unternehmen, Leistung, Nachricht |
+| ☐ | Leistung ist vorbelegt | Auf `/objektschutz/` steht dort „Objektschutz", auf der Startseite bleibt die Auswahl offen |
+| ☐ | Zwei Haken, nicht einer | Datenschutz (Pflicht) und Marketing (freiwillig, **nicht** vorausgewählt) |
+| ☐ | Absenden | Es geht auf `/danke/`, nicht auf eine JSON-Seite |
+| ☐ | Danke-Seite | Bestätigung, „innerhalb eines Werktages", Telefonnummer für den dringenden Fall, zwei Weiterklicks |
+| ☐ | Zwei Mails kommen an | eine Eingangsbestätigung beim Absender, eine Benachrichtigung an `info@frankonia-sicherheit.de` — mit dem Absender als **Antwortadresse**, „Antworten" führt also direkt zum Interessenten |
+| ☐ | HubSpot | Kontakt angelegt oder aktualisiert, das Unternehmen verknüpft, und die Nachricht als **Notiz** (nicht in einem Textfeld) |
+| ☐ | Brevo | Kontakt mit VORNAME, NACHNAME, COMPANY, SERVICE, SOURCE „Website" und `HUBSPOT_CONTACT_ID` |
+| ☐ | Bewerbung | `/jobs/` zeigt jetzt dein HubSpot-Formular, nicht mehr ein selbst gebautes |
+| ☐ | Ratgeber-Titelbilder | Alle **sieben** Artikel haben oben ein Bild, kein leerer Rahmen mehr |
+
+**Nimm für den Test eine klar erkennbare Adresse**, nicht die eines echten
+Kontakts — jeder Testlauf legt einen Kontakt in HubSpot und in Brevo an.
+
+### ⚠️⚠️ Drei Änderungen an bestehenden Formularen, die du kennen musst
+
+**1. Telefon ist überall freiwillig geworden.** Es war auf allen 45 Formularen
+Pflichtfeld. Auf einer B2B-Anfrage ist eine Telefonnummer eine Hürde, und die
+E-Mail genügt für die Rückmeldung. Wenn du sie zurück als Pflicht willst, ist das
+eine Zeile — aber dann in allen 44 gleichzeitig, was der eigentliche Gewinn des
+gemeinsamen Formulars ist.
+
+**2. `/angebot/` hat seine Sonderregel verloren.** Diese Seite stellte den Namen
+freiwillig, weil geringere Hürden der Sinn einer Ads-Landingpage sind. Der
+Auftrag verlangt für alle 44 Seiten denselben Feldsatz. Unter dem Strich hat die
+Seite dadurch trotzdem **eine Hürde weniger**: zwei Namensfelder statt einem
+freiwilligen, aber Telefon fällt als Pflicht weg.
+
+**3. Ein Feld „Name" gibt es nicht mehr.** Vorname und Nachname sind getrennt,
+weil HubSpot und Brevo beide getrennte Felder führen. Ein einzelnes Feld müsste
+serverseitig geraten geteilt werden, und bei „Anna Maria von der Heide" ist jede
+Regel falsch.
+
+### Was passiert, wenn etwas ausfällt
+
+Die Regel im Code heißt „eine Anfrage darf nie verloren gehen", und so ist sie
+umgesetzt:
+
+| Fall | Was der Besucher sieht | Was passiert |
+|---|---|---|
+| HubSpot ist aus | Erfolg | Brevo läuft, die Benachrichtigung kommt, in ihr steht **„HubSpot: NICHT gespeichert — bitte manuell anlegen"** |
+| Brevo ist aus | Erfolg | Der HubSpot-Kontakt samt Notiz steht. ⚠️ Es kommt dann **keine** Bestätigungsmail und **keine** Benachrichtigung — siehe der offene Punkt unten |
+| Beide aus | Fehlermeldung mit deiner Telefonnummer und einer Vorgangsnummer | Im Log steht `ALARM forms` — danach kann man in den Vercel-Logs suchen |
+| Cloudflare ist aus | Erfolg | Der Spamschutz lässt durch, wenn er selbst nicht erreichbar ist. Kein Prüfergebnis ist kein Bot-Hinweis, und Honeypot und Zeitmessung greifen weiter |
+| Kein JavaScript | Erfolg, Weiterleitung auf `/danke/` | Funktioniert vollständig. Nur die Kampagnenzuordnung und die Feldmeldungen fehlen |
+| Doppelklick | Erfolg, einmal | Die zweite Übermittlung bekommt die gespeicherte Antwort, es entsteht kein zweiter Kontakt |
+
+### ⚠️ Was noch fehlt oder von dir kommen muss
+
+| ☐ | Was | Warum |
+|---|---|---|
+| ☐ | **Die Zugangsdaten in Vercel eintragen** | `.env.local` gibt es hier nicht. Ohne die Schlüssel lehnt der Spamschutz **jede** Anfrage ab (Absicht: eine fehlende Konfiguration darf keinen offenen Endpoint erzeugen) |
+| ☐ | **Consent-Mode-Integration in Cookiebot aktivieren** | Ohne sie bleibt alles dauerhaft auf „verweigert" und keine Messung läuft je — **ohne Fehlermeldung** |
+| ☐ | **`d.frankonia-sicherheit.de` prüfen** | Antwortet der Tagging-Server nicht, lädt der Tag Manager sitewide gar nicht, ebenfalls ohne sichtbaren Fehler |
+| ☐ | **Auftragsverarbeitungsverträge** | Mit HubSpot, Brevo und Cloudflare. Beide Formulare übermitteln personenbezogene Daten an diese Anbieter |
+| ☐ | **Datenschutzerklärung: HubSpot-Formular ergänzen** | Das eingebettete Formular auf `/jobs/` ist eine Übermittlung an einen Dritten und gehört in den Text. Ich habe ihn **nicht** eigenmächtig ergänzt — Abschnitt 3.2 (Kartendarstellung) ist die Vorlage |
+| ☐ | **Subscription-Type-IDs aus HubSpot** | `node scripts/setup-hubspot.mjs` gibt sie aus, sobald ein Schlüssel gesetzt ist. Solange sie fehlen, setzt der Endpoint in HubSpot **keine** Marketing-Einwilligung; die Einwilligung landet in Brevo als `OPT_IN` |
+| ☐ | **Zweiter Zustellweg für die interne Meldung** | Fällt Brevo aus, gibt es aktuell keinen. Ein zweiter Anbieter oder ein Slack-/Teams-Webhook wäre die Lösung — das ist eine Entscheidung, nicht eine Umsetzung |
+| ☐ | **Belastbare Doppelklick-Sperre** | Sie liegt im Arbeitsspeicher der Funktionsinstanz. Ein echter Doppelklick wird zuverlässig gefangen; ein verteilter Angriff nicht (dagegen hilft Turnstile). Belastbar wäre nur ein gemeinsamer Speicher — die erste Laufzeit-Abhängigkeit dieses Projekts, also deine Entscheidung |
+
+### Vor dem Deploy: das Setup-Skript einmal laufen lassen
+
+```
+HUBSPOT_SERVICE_KEY=… node scripts/setup-hubspot.mjs --dry    # zeigt nur an
+HUBSPOT_SERVICE_KEY=… node scripts/setup-hubspot.mjs          # legt an
+```
+
+Es legt die zehn Felder in einer eigenen Gruppe „Website-Integration" an, damit
+sie im CRM nicht zwischen den HubSpot-Feldern verschwinden. Vorhandene Felder
+werden **übersprungen, nicht überschrieben** — ein Überschreiben kann Optionen
+und Beschriftungen zerstören.
+
+### ⚠️⚠️ Die eine Abschwächung, die du kennen sollst
+
+**Die Sicherheitsrichtlinie der Seite ist lockerer geworden.** Vorher stand dort
+`script-src 'self'`: kein fremdes JavaScript, sehr streng. Mit Cookiebot, Consent
+Mode und dem Tag Manager ist das nicht zu halten — der Tag Manager fügt den Code
+jedes Tags zur Laufzeit ein, und eine Positivliste aus Prüfsummen würde in der
+Sekunde brechen, in der du im GTM ein Tag anlegst. Still, ohne Fehlermeldung.
+
+Was bleibt: die **Host-Beschränkung**. Es kann kein fremder Server nachgeladen
+werden, nur die 26 namentlich erlaubten. Jeder von ihnen trägt seinen Grund in
+`docs/design-sources/csp-build.js` — die Datei ist der Ort, an dem die Liste
+gepflegt wird, weil JSON keine Kommentare kann.
+
+⚠️ **Wenn GA4 und Google Ads dazukommen, muss diese Liste erweitert werden.** Die
+nötigen Hosts stehen dort schon auskommentiert. Ein Tag, dessen Host fehlt,
+feuert nicht und meldet das nur in der Browser-Konsole.
+
+### Gemessen
+
+- **47 Tests, alle grün** (`npm test`, ohne Testframework — `node:test` ist in
+  Node eingebaut, dieses Projekt hat weiter null Abhängigkeiten). Abgedeckt:
+  Validierung jedes Pflichtfelds, fehlendes und abgelehntes Turnstile-Token,
+  gefüllter Honeypot, Mindestzeit, Doppelklick, Rate-Limit, HubSpot-Ausfall,
+  Brevo-Ausfall, beide aus, Netzfehler, Consent-Logik, kein Deal, kein
+  Zurückstufen eines Kunden auf „Lead", keine personenbezogenen Daten in den
+  Logs, und der ganze Weg ohne JavaScript.
+- **44 Seiten mit Formular, statisch geprüft: 0 Probleme.** Gleicher Feldsatz
+  überall, Telefon nirgends Pflicht, Marketing-Haken nirgends vorausgewählt,
+  Spamschutz und Honeypot überall, keine alten Feldnamen mehr.
+- **70 Seiten mit Consent-Kopf, 0 Probleme:** Reihenfolge Cookiebot → Consent
+  Mode → Tag Manager auf allen, und Cookiebot ist überall das **erste**
+  ausführbare Script.
+- **389 Kontaktlinks** haben ihr `data-cta` (Telefon 228, Mail 92, WhatsApp 70);
+  gegengeprüft: **0 Kontaktlinks ohne**, 0 mit doppeltem Attribut.
+- **Ansicht geprüft** bei 390, 768 und 1440 Pixel auf sieben Seiten. Namensfelder
+  in einer Zeile ab 640px, darunter gestapelt; der Spamschutz reserviert seine
+  Höhe, damit beim Nachladen nichts springt.
+- **Sieben Ratgeber-Artikel mit Titelbild**, jede Datei vorhanden, jeder alt-Text
+  beschreibt das Bild und nicht das Thema.
+
+### ⚠️ Zwei Widersprüche in der Vorgabe, die ich anders gelöst habe
+
+Beide stehen ausführlich im Code, hier die Kurzfassung:
+
+**1. „Turnstile als allererster Schritt" steht jetzt an fünfter Stelle.** Ein
+Turnstile-Token ist genau **einmal** gültig. Stünde die Prüfung vor der
+Doppelklick-Abwehr, bekäme der zweite Klick eine Fehlermeldung, obwohl die
+Anfrage längst angekommen ist. Die vier Schritte davor sind Nachschauen im
+Arbeitsspeicher und kosten nichts; vor jedem Aufruf, der Geld oder Kontingent
+kostet, steht Turnstile weiterhin. **Gefunden hat das der Test**, nicht das
+Nachdenken: er zählte einen Fremdaufruf zu viel, und der eine war Cloudflare.
+
+**2. Eine ID kann nicht beides sein.** Die Vorgabe wollte `submission_id`
+serverseitig erzeugen **und** als Doppelklick-Schlüssel verwenden — zwei Klicks
+erzeugen aber zwei serverseitige IDs, und eine Prüfung darauf fängt nie etwas.
+Jetzt sind es zwei Werte: die `submission_id` vom Server für CRM und Logs, und
+ein Schlüssel vom Browser, der genau einmal je aufgebautem Formular entsteht.
+
+### ⚠️ Ein Fehler, den ich gefunden und NICHT angefasst habe
+
+**Die Startseite scrollt bei genau 768 Pixel Breite 47 Pixel nach rechts.**
+Ursache ist die seitlich wischbare Kartenreihe im Abschnitt „Unser System", die
+in dem Band zwischen 768 und 1023 Pixeln keine eigene Anpassung hat.
+
+Ich habe A/B gemessen, um sicher zu sein, dass es nicht von dieser Arbeit kommt:
+zwei Builds parallel, einmal der Stand vor dem ersten Commit und einmal jetzt —
+**47 Pixel in beiden**, und kein einziges überstehendes Element liegt im
+Formular. Es ist also vorbestehend und gehört in einen eigenen Durchgang.
+
+---
+
 # Abschlussbericht
 
 Die fünf Listen, die du am Ende sehen wolltest. Sie fassen zusammen, was in den
@@ -1132,15 +1296,19 @@ Was Variablen brauchen wird, sobald die jeweilige Entscheidung fällt:
 
 | ☐ | Wofür | Variable | Status |
 |---|---|---|---|
-| ☐ | Formularempfang — **alle 40 Formulare senden derzeit nirgendwohin** (`action="#"`) | Endpunkt und Schlüssel des gewählten Dienstes | fehlt, blockiert Leads |
-| ☐ | Spamschutz reCAPTCHA v3 | Site Key und Secret | fehlt, erst nach der Consent-Entscheidung |
-| ☐ | Cookiebot | Domain-Gruppen-ID | fehlt, kommt mit dem Scan |
-| ☐ | GA4 und Google Ads über den Tag Manager | Mess-ID, Container-ID, Conversion-Label | fehlt, erst nach dem Consent-Banner |
+| ✅ | Formularempfang | HubSpot, Brevo, Turnstile | **erledigt am 26.08.**, siehe Abschnitt 17. Die Werte müssen noch in Vercel eingetragen werden |
+| ✅ | Spamschutz | Cloudflare Turnstile statt reCAPTCHA | **erledigt.** Turnstile setzt für die Prüfung keine Cookies und ist deshalb einwilligungsfrei — ein Spamschutz, der erst nach Cookie-Zustimmung lädt, schützt die Hälfte der Besucher nicht |
+| ✅ | Cookiebot | Domain-Gruppen-ID | **eingebaut.** ⚠️ Die Consent-Mode-Integration muss im Cookiebot-Konto noch **aktiviert** werden, sonst bleibt alles dauerhaft auf „verweigert" |
+| ✅ | Tag Manager | Container GTM-NWLGMFJN über `d.frankonia-sicherheit.de` | **Loader eingebaut.** Die Tags konfiguriert Christoph nach dem Launch; die CSP muss dann erweitert werden |
 | ☐ | Google-Bewertung live statt gepflegt | Places-API-Schlüssel | fehlt, bewusst — braucht Abrechnung und Consent |
 
-⚠️ **Der erste Punkt ist der wichtigste der ganzen Liste.** Solange die Formulare
-nirgendwohin senden, erreicht keine Anfrage euch — und das Formular ist das
-Hauptziel jeder Seite.
+✅ **Der wichtigste Punkt dieser Liste ist erledigt.** Bis zum 26.08. stand hier:
+„Solange die Formulare nirgendwohin senden, erreicht keine Anfrage euch — und das
+Formular ist das Hauptziel jeder Seite." Sie senden jetzt (Abschnitt 17).
+⚠️ **Was jetzt an derselben Stelle blockiert: die Zugangsdaten in Vercel.** Ohne
+sie lehnt der Spamschutz jede Anfrage ab — bewusst so, weil eine fehlende
+Konfiguration keinen offenen Endpoint erzeugen darf. Das ist eine Eintragung in
+den Projekteinstellungen, kein Code.
 
 ## 5 — Offene Punkte
 

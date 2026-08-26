@@ -147,10 +147,28 @@
             </span>
           </p>
 
+          <!-- TITELBILD, eingesetzt 2026-08-26. Vorher stand hier ein leerer
+               beschrifteter Rahmen; er hat genau diesen Platz gehalten (16/9,
+               704x396 bei 1440), deshalb verschiebt der Einbau nichts.
+               Markup, Breiten und sizes sind die der drei bestehenden
+               Titelbilder (art-34a, art-kosten, art-brandwache), damit die
+               sieben Artikel gleich aussehen. Export:
+               docs/design-sources/ratgeber-titelbilder.js -->
+
           <figure class="rg-hero__figure hero__trust">
-            <div class="rg-hero__frame rg-hero__frame--empty">
-              <span>[Bild folgt: Anmeldeunterlagen und Ausweis auf einem Tisch]</span>
+
+            <div class="rg-hero__frame">
+
+              <picture>
+
+                <source type="image/webp" srcset="/assets/images/art-voraussetzungen-768.webp 768w, /assets/images/art-voraussetzungen-1408.webp 1408w" sizes="(min-width: 768px) 704px, 100vw">
+
+                <img src="/assets/images/art-voraussetzungen-1408.jpg" width="1408" height="792" alt="Ein Stapel Anmeldeformulare und ein Personalausweis liegen auf dem Tresen eines Behördenschalters, dahinter eine Person hinter der Glasscheibe" loading="eager" fetchpriority="high" decoding="async">
+
+              </picture>
+
             </div>
+
           </figure>
         </div>
       </div>

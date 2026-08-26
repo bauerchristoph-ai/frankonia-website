@@ -107,6 +107,155 @@ SERVÍA SIN FOOTER DESDE EL BLOQUE J.** Toca `pages/datenschutz.html` y
   sonda que reporta que todo está roto casi siempre está rota ella.** Pasada a
   archivo con el Write tool — tercera vez hoy con la misma causa.
 
+**2026-08-26 — FORMULAR-INTEGRATION: LOS 45 FORMULARIOS DEJAN DE SER `action="#"`.
+Endpoint propio en Vercel, HubSpot + Brevo + Turnstile, Consent + GTM en las 70
+páginas, `/danke/`, y el formulario compartido reconstruido en 44 páginas.** Cuatro
+commits: `e9a7ec1` (consent/CSP/danke), `19e4cbc` (endpoint + 42 tests), `c9fc7ba`
+(frontend), y el de docs. Cierra **el punto más importante de todo el protocolo**.
+
+- ⚠️⚠️ **EL BRIEFING ASUMÍA NEXT.JS Y TYPESCRIPT, Y ESTE PROYECTO NO ES NINGUNO DE
+  LOS DOS.** Pedía rutas API, `NEXT_PUBLIC_`, `public/images/` y un framework de
+  test. Mapeo, y cada pieza respeta la restricción de CERO dependencias:
+  · endpoint → **Vercel Serverless Function en `api/`** (Vercel las reconoce también
+    en un build estático); `fetch`, `AbortController` y `crypto.randomUUID` vienen
+    en Node.
+  · `NEXT_PUBLIC_` → los 3 valores públicos entran al HTML por el `{{token}}` que
+    `build.js` ya tenía (nuevo `PUBLIC_ENV`, con fallback documentado).
+  · tests → **`node:test`**, integrado en Node.
+  ⚠️ **Los módulos compartidos van en `api/_lib/`** porque Vercel NO convierte en
+  ruta lo que empieza con `_`. Con otro nombre serían cinco endpoints públicos.
+- ⚠️⚠️ **DOS CONTRADICCIONES EN EL PROPIO BRIEFING, y las dos las encontró un test
+  o el razonamiento, no la suerte:**
+  1. **"Turnstile como primerísimo paso" + "idempotencia contra doble clic" no
+     pueden coexistir en ese orden.** Un token de Turnstile vale **exactamente una
+     vez**: con la verificación primero, el segundo clic recibe
+     `timeout-or-duplicate` y el visitante ve un error aunque su consulta ya
+     entró. **El test de idempotencia lo cazó** — contó una llamada externa de
+     más, y esa una era Cloudflare. Ahora las cuatro comprobaciones locales
+     (idempotencia, honeypot, tiempo mínimo, rate-limit) van antes: son accesos a
+     un Map en memoria, **cuestan cero**, y Turnstile sigue estando antes de todo
+     lo que cuesta cuota o dinero.
+  2. **`submission_id` no puede ser a la vez generada en el servidor Y la clave de
+     idempotencia**: dos clics generan dos IDs y la comprobación nunca dispara.
+     Ahora son dos valores — `submission_id` del servidor para CRM y logs,
+     `idempotency_key` del cliente, uno por formulario construido.
+- ⚠️⚠️ **LA CSP TUVO QUE ABRIRSE, INCLUIDO `'unsafe-inline'` EN `script-src`, y es
+  la única concesión real de esta tanda.** Antes decía `script-src 'self'`.
+  Con GTM no se sostiene: **el contenedor inyecta el código de cada tag en
+  runtime**, así que una lista de hashes se rompería en el segundo en que Christoph
+  cree un tag — **en silencio**, porque un script bloqueado no produce error
+  visible. Nonces serían lo correcto y necesitan un servidor que renderice el
+  `<head>`; este sitio es estático.
+  · **Queda la restricción de HOST**: 26 hosts nombrados, ni uno más.
+  · **Los 26 con su razón viven en `docs/design-sources/csp-build.js`**, porque
+    JSON no admite comentarios y una CSP sin justificación es exactamente la
+    configuración que la siguiente persona abre de más o deja de menos.
+  · **`frame-src` NO EXISTÍA** y caía a `default-src 'self'` → sin él, el iframe de
+    Turnstile y el del formulario de HubSpot quedaban bloqueados.
+- **El orden en el `<head>` no es negociable**: Cookiebot → Consent Mode v2
+  ("denied") → GTM. **Verificado en las 70: Cookiebot es el primer script
+  ejecutable de cada página**, y el bloque va arriba de `head-common` porque ahí
+  todavía no hay ningún `<script>` (comprobado, no supuesto).
+  ⚠️ **El bloque de Consent Mode no concede NADA.** Subirlo lo hace Cookiebot, y
+  sólo si en su cuenta está activada la integración. Si está apagada, todo queda
+  en "denied" para siempre **sin mensaje de error** — anotado como punto abierto.
+- ⚠️ **`data-cookieconsent="ignore"` en el script de Turnstile es el punto que
+  falla en silencio.** Cookiebot corre con `data-blockingmode="auto"` y bloquea
+  todo lo que considera tercero — Turnstile incluido. Entonces el antispam cargaría
+  sólo tras el consentimiento, o sea **no protege a quien ignora el banner**, que
+  es la mitad de los visitantes.
+- ⚠️ **`trailingSlash: true` habría convertido el endpoint en un 404.** Vercel
+  normaliza `/api/forms/submit` a la variante con barra por 308, y ahí el sistema
+  de archivos no encuentra la función. El cliente postea **directo a la variante
+  con barra** y una regla de rewrite la devuelve a la función: cero saltos.
+  **Hay que verificarlo en vivo después del deploy** — es lo único de este endpoint
+  que depende del hosting y no del código.
+- **El camino SIN JavaScript funciona completo**, y eso obligó a dos cosas que no
+  estaban en el briefing: el endpoint lee también `urlencoded`, y responde a un
+  navegador con **303 a `/danke/`** en vez de JSON (`Accept` decide). Para errores
+  hay una página HTML mínima **sin hoja de estilos** — aparece sólo si no hay JS Y
+  falla el envío, o sea una ruta que nadie va a mantener; que dependa de
+  `/css/app.css` sería una cosa más que puede estar rota. **5 de los 47 tests
+  cubren este camino.**
+- ⚠️ **`/kontakt/` PERDIÓ SU FORMULARIO PROPIO y eso deroga page-conventions §6**,
+  que lo fijaba expresamente. La instrucción posterior gana; la convención quedó
+  actualizada en el mismo commit. Su `<h2>` sigue asociada vía un `<section
+  aria-labelledby>` alrededor del include — el partial no puede llevarlo porque no
+  conoce el `id`, y parametrizarlo sería un parámetro que 43 páginas nunca usan.
+- ⚠️ **`/angebot/` perdió su excepción de campos** (`nameRequired=""`). Registrado
+  con su compensación medida: dos campos de nombre obligatorios en lugar de uno
+  opcional, **pero Telefon deja de ser obligatorio** — o sea una barrera menos, no
+  más.
+- ⚠️ **Telefon pasó de OBLIGATORIO a opcional en los 44 formularios.** Era Pflicht
+  en todos, incluido `/kontakt/`. En una consulta B2B un teléfono es una barrera y
+  el correo alcanza para responder.
+- **La leistung es un `<select>` PRESELECCIONADO en 27 páginas**, derivado del slug
+  vía el parámetro del include. En las 17 hub/ciudad/home queda abierta, porque ahí
+  no se refiere a una leistung concreta. ⚠️ El valor se compara contra las
+  `<option>`; **si no coincide queda vacío en lugar de inventar una entrada** — el
+  modo de fallo deliberado.
+- ⚠️ **`data-cta` en los 389 links de teléfono, mail y WhatsApp SE PONE EN EL
+  BUILD, no en runtime.** Un atributo que agrega JS no está en el HTML servido:
+  falta para cualquier clic anterior al script propio y no se ve al revisar el
+  código fuente. Gegenprobe: **0 links de contacto sin atributo, 0 con atributo
+  doble**. ⚠️ `data-cta="primary"` NO se pone así — "primario" es una afirmación
+  sobre el ROL de un botón en su página, y eso una sustitución de texto no lo puede
+  decidir.
+- ⚠️ **HALLAZGO DE LA CAPTURA, NO DEL CÓDIGO: el widget de Turnstile salía en tema
+  oscuro dentro de la tarjeta BLANCA del formulario.** Un cuadro negro en medio del
+  formulario. Pasó a `theme: "light"`. En el código no se ve; en la imagen, al
+  instante.
+- ⚠️ **`.gitignore` NO EXCLUÍA `.env*`** (sólo `.DS_Store`, `.vercel`, `*.log`,
+  `dist/`). Corregido, con `!.env.example` y **verificado con `git check-ignore`**,
+  no asumido.
+- **Ausdrücklich NO hecho, cada uno por su razón:** ningún Deal en HubSpot (hay una
+  sola pipeline y es del comercial); ninguna Marketing-Einwilligung en HubSpot
+  (falta decidir el Subscription Type — el script lo LEE y lo imprime, nunca lo
+  crea); ninguna `listIds` en Brevo (una consulta no es un alta de newsletter);
+  ningún GA4 en el código; y **nunca bajar de categoría a un cliente existente a
+  "Lead"** — eso no se nota el día de la consulta sino semanas después en el
+  reporting.
+- ⚠️ **`api/_lib/log.js` existe porque las respuestas de error de HubSpot y Brevo
+  DEVUELVEN los valores enviados.** Un `console.error(err)` normal pondría la
+  dirección de correo del interesado en los logs de Vercel. Enmascara por PATRÓN
+  (no por lista de nombres de campo: eso sólo protege lo que ya conocés) y hay un
+  test que lo prueba con una respuesta que contiene la dirección.
+- ⚠️ **Límite honesto del rate-limit y de la idempotencia: viven en la memoria de
+  la instancia.** Un doble clic real se caza siempre (mismos milisegundos, misma
+  instancia caliente); un ataque distribuido no — contra eso está Turnstile. Algo
+  vinculante necesitaría almacenamiento compartido, o sea la **primera dependencia
+  de runtime** del proyecto, y eso es decisión del cliente.
+- ⚠️ **`ALARM forms` es la palabra a grepear en los logs de Vercel.** Marca los
+  casos en que una consulta PUDO perderse. Un `ERROR` genérico se pierde entre el
+  ruido del framework.
+- **Los 4 Titelbilder del Ratgeber entraron** (§5d) y con eso los **siete**
+  artículos tienen imagen. ⚠️ `art-tariflohn` lleva **calidad propia (68/72)**: a la
+  común daba 117KB WebP y es el motivo más detallado del set (contraste de bordes
+  8,54 contra 4,84–8,04) — y es el elemento LCP de su artículo. Precedente del
+  proyecto: dos de las diez fotos de servicio ya van a WebP 62 en lugar de 72.
+  ⚠️ Los `alt` describen **lo que se ve**, leído de una hoja de contactos, no el
+  tema del artículo — y donde una persona no es identificable no se adivina.
+- **Medido:** 47 tests en verde · 44 páginas con formulario, 0 problemas · 70
+  páginas con el stack de consent, 0 problemas · 389 `data-cta` con contraprueba ·
+  7 artículos con imagen y archivo presente · 70/70 páginas con tags balanceados ·
+  redirect-test 0 problemas · vistas a 390/768/1440 en siete páginas.
+- ⚠️ **DEFECTO ENCONTRADO Y NO TOCADO, con A/B para probar que no es mío:** la
+  home scrollea **47px a la derecha exactamente a 768px**, por la tira deslizable
+  de "Unser System" en la banda 768–1023 que no tiene adaptación propia. Dos builds
+  en paralelo (estado previo al primer commit vs. ahora): **47px en ambos**, y
+  **ningún elemento desbordado está dentro del formulario**.
+- ⚠️ **La misma trampa de entorno CINCO veces en una sesión: un backtick dentro de
+  un template literal** rompe el script de parcheo con un mensaje que no lo nombra
+  (`… is not a function`, `missing ) after argument list`). Y dos veces la de
+  siempre: **un heredoc de bash se come un nivel de backslash**, dejando `[\s\S]`
+  como `[sS]`. Para contenido con comillas, regex o apóstrofos tipográficos: el
+  Write tool, nunca `node -e` ni heredoc.
+- ⚠️ **Y una propia que vale como regla: mi sonda de consent reportó 69 fallos
+  inexistentes** porque mi propio comentario contenía la palabra `<script>` como
+  literal. **Una sonda que dice que TODO está roto casi siempre está rota ella** —
+  y los comentarios HTML se tildan antes de contar tags, tercera vez que este
+  archivo lo anota.
+
 **2026-08-26 — LAS SEIS VISITENKARTENSEITEN QUE EL CLIENTE DECIDIÓ CONSERVAR, DOS
 REDIRECTS Y DOS 404 DELIBERADOS. Con eso los diez hallazgos del 25.08 quedan
 cerrados y la prueba de completitud pasa de 2 huérfanas a CERO.** Toca
