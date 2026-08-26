@@ -1192,13 +1192,48 @@ können, statt es dir aufzuschreiben. Nachgemessen: der Server antwortet mit **H
 ist damit erledigt und nicht mehr offen.
 
 **„Wieso Consent Mode deaktivieren?"** Das habe ich unklar formuliert — gemeint war
-das Gegenteil. Der Consent Mode **muss aktiviert werden**, und zwar im
-Cookiebot-Konto (Einstellung „Google Consent Mode"). Die Website bringt die Hälfte
-mit, die im Code steckt: sie setzt alle Kategorien vor dem Banner auf `denied` und
-lädt den Tag Manager erst danach. Solange die Integration im Konto aber
-ausgeschaltet ist, schreibt Cookiebot die Zustimmung nie zurück — es bleibt dauerhaft
-auf `denied`, und du siehst keine Conversions. **Das ist ein Häkchen im
-Cookiebot-Konto, kein Code.**
+das Gegenteil: er muss **aktiv** sein.
+
+⚠️ **NACHTRAG, nachdem der Kunde die Cookiebot-Anleitung geschickt hat: es gibt für
+diese Installation kein Häkchen, und mein Satz „das ist ein Häkchen im
+Cookiebot-Konto" war falsch.** Cookiebot nennt drei Wege, und welcher gilt, hängt
+davon ab, wie die CMP eingebaut ist:
+
+| Weg | Gilt hier? |
+|---|---|
+| WordPress-Plugin, Schalter in den Plugin-Einstellungen | nein — diese Website ist kein WordPress |
+| Cookiebot-Vorlage **im Tag Manager**, Consent Mode in den Tag-Einstellungen | nein — Cookiebot lädt direkt im HTML, nicht als GTM-Tag |
+| **Direktes Skript: Standardzustand setzen, bevor GTM lädt** | **ja, und das ist genau, was eingebaut ist** |
+
+Der dritte Weg ist damit **erledigt, nicht offen.** Er steht in
+`partials/head-common.html` als Block 2 von drei, und die Reihenfolge
+Cookiebot → Standardzustand → Tag Manager ist der ganze Punkt daran.
+
+**Gemessen am gebauten Stand, lokal:** der `consent default` mit allen Kategorien
+auf `denied` liegt im `dataLayer`, dazu `ads_data_redaction` und
+`url_passthrough`; Cookiebot lädt seine Konfiguration für die Domain-Gruppe
+`2335e423-…`; und Cookiebot pusht seine eigene Consent-Mode-Kennung
+(`developer_id.dMWZhNz`) — genau das tut eine aktive Integration.
+
+⚠️ **Was lokal NICHT prüfbar ist und deshalb dein 30-Sekunden-Test nach dem Deploy
+bleibt:** das `consent update` nach dem Zustimmen. Das Banner erscheint nur auf
+einer Domain, die in der Cookiebot-Domain-Gruppe steht — auf `127.0.0.1` rendert es
+nicht, also kann dort auch niemand zustimmen. Auf der Live-Seite:
+
+1. Seite öffnen, DevTools → Konsole.
+2. `dataLayer.filter(e => e[0] === "consent")` — es muss **ein** Eintrag da sein,
+   `"default"`, alles `denied`.
+3. Im Banner zustimmen, denselben Befehl noch einmal.
+4. Jetzt müssen **zwei** Einträge da sein, der zweite `"update"` mit
+   `analytics_storage: "granted"`.
+
+Kommt der zweite Eintrag nicht, ist es doch eine Sache der Kontoeinstellung — dann
+ist das der Moment, in dem man dort nachsieht. Vorher nicht.
+
+⚠️ **Und eine Falle für später, wenn du die Tags im GTM konfigurierst:** die
+Cookiebot-Vorlage NICHT zusätzlich als Tag in den Container legen. Cookiebot lädt
+schon im HTML; als GTM-Tag würde es ein zweites Mal laden, und dann konkurrieren zwei
+Instanzen um dieselbe Zustimmung.
 
 **„AV-Verträge? Die sind doch logisch, wenn ich Kunde dort bin."** Fast. Kunde sein
 und einen Auftragsverarbeitungsvertrag haben ist rechtlich nicht dasselbe — aber bei
@@ -1224,6 +1259,27 @@ lesen — es gibt die Datei nur nicht. Im Projektverzeichnis liegt ausschließli
 Geheimnisspeicher. Der Turnstile-**Site**-Key ist öffentlich und steht ohnehin im
 HTML; alles andere, besonders der HubSpot-Token und der Brevo-Schlüssel, gehört
 ausschließlich in die beiden Orte oben.
+
+⚠️⚠️ **KORREKTUR MEINER EIGENEN ANWEISUNG, nachgeprüft am Code: Schritt 1 ist
+optional, Schritt 2 ist der, der zählt.** Ich hatte `.env.local` als ersten Schritt
+genannt, als läge daran etwas. **Es liest sie niemand.** Nachgesehen: `build.js`
+liest `process.env`, und das Projekt hat null Abhängigkeiten — es gibt also kein
+`dotenv`, das eine Datei einlesen würde. `.env.local` ist ausschließlich für die
+Vercel-CLI (`vercel dev`) gedacht, also für lokale Tests. **Die Live-Seite läuft
+allein über die Environment Variables in den Vercel-Projekteinstellungen.**
+
+⚠️ **Und zum Ablageort: nicht in einen synchronisierten Firmenordner.** Ein
+HubSpot-Token und ein Brevo-Schlüssel in
+`…\FRANKONIA Verwaltungs GmbH - Dokumente\Vertrieb\Marketingunterlagen\…` liegen
+damit in der Cloud und sind für jeden lesbar, der Zugriff auf diesen Ordner hat —
+das sind bei einem Vertriebs-/Marketingordner erfahrungsgemäß deutlich mehr Leute
+als bei einem Zugangsdatum sinnvoll. Der richtige Aufbewahrungsort ist ein
+Passwortmanager, und die verbindliche Kopie sind ohnehin die Vercel-Einstellungen
+(dort verschlüsselt gespeichert).
+
+⚠️ **Und keine `.txt`-Datei.** `.env.local.txt` wird von nichts gelesen — weder von
+der Vercel-CLI noch von diesem Projekt. Wenn die Werte irgendwo aufgeschrieben
+werden sollen, dann in einen Passwortmanager, nicht in eine Textdatei.
 
 ### Telefon ist jetzt Pflichtfeld
 
@@ -1410,12 +1466,12 @@ Pixeln und darüber ist die Startseite auf allen gemessenen Breiten überlauffre
 
 | ☐ | Was | Wo |
 |---|---|---|
-| ☐ | `.env.local` anlegen und ausfüllen | Projektverzeichnis, Vorlage ist `.env.example` |
-| ☐ | Dieselben Werte eintragen | Vercel → Settings → Environment Variables |
+| ☐ | **Werte eintragen — das ist der Pflichtschritt** | Vercel → Settings → Environment Variables |
+| — | `.env.local` im Projektverzeichnis | **optional**, nur für lokale Tests mit `vercel dev`. **Nichts in diesem Projekt liest die Datei** (null Abhängigkeiten, also kein dotenv) — siehe die Korrektur unten |
 | ☐ | Consent Mode **aktivieren** | Cookiebot-Konto |
 | ☐ | Beide Skripte einmal laufen lassen und die zwei IDs eintragen | `setup-hubspot.mjs --verify`, `setup-brevo.mjs` |
 | ☐ | Brevo-Transaktionsvorlage prüfen: aktiv, Platzhalter drin | Brevo-Konto, meldet auch das Skript |
-| ☐ | AV-Verträge herunterladen und ablegen | HubSpot, Brevo, Cloudflare |
+| — | ~~AV-Verträge herunterladen und ablegen~~ | **vom Kunden gestrichen** (26.08.: „kann ich ja immer runterladen, brauch ich jetzt nicht“). Sie sind Teil der akzeptierten Bedingungen, es ist nichts zu unterschreiben — nur bei einer Behördenanfrage aus dem Konto zu ziehen |
 
 ---
 
