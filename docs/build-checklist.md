@@ -107,6 +107,55 @@ SERVÍA SIN FOOTER DESDE EL BLOQUE J.** Toca `pages/datenschutz.html` y
   sonda que reporta que todo está roto casi siempre está rota ella.** Pasada a
   archivo con el Write tool — tercera vez hoy con la misma causa.
 
+**2026-08-26, CUARTA RONDA — LA LIFECYCLE-PHASE LA ELIGIÓ EL CLIENTE („Angebot
+erstellt“), Y LA VARIABLE SOLA CASI NO HABÍA HECHO NADA.** Más el secret de
+Turnstile (estaba, comentado) y una auditoría de CTAs sobre las 70 páginas.
+**63 tests verdes.**
+
+- ⚠⚠ **`HUBSPOT_LIFECYCLE_STAGE=5522034896` NO ALCANZABA, y el motivo es la
+  trampa de fondo de este portal: sus fases son PROPIAS, con IDs numéricas.** La
+  comprobación „¿puedo escribir esta fase?“ necesita un ORDEN — si no, una consulta
+  podría retroceder a un cliente. En el código estaba la lista estándar de HubSpot
+  (`subscriber`, `lead`, `customer`…), donde una ID numérica no encaja: fase
+  desconocida → no tocar → **la fase se habría escrito SOLO en contactos nuevos.**
+  Con **2.767 contactos en „Kaltakquise“** eso era el caso normal.
+  - Ahora `LIFECYCLE_REIHENFOLGE` es **el orden de ESTE portal**, leído de la API
+    el 26.08.2026, con las etiquetas al lado en comentario — un nombre interno
+    solo no dice nada (`lead` = „Termin vereinbart“ aquí).
+  - ⚠️ **„Sonstiges“ y „Kein Interesse“ quedan DETRÁS del objetivo a propósito**:
+    son un juicio humano, y una consulta nueva no debe pisarlo. Moverlos delante
+    es una decisión sobre el proceso comercial, no sobre código — anotado, no
+    hecho.
+  - ⚠️ **La constante se vuelve obsoleta si reordenan el portal, y el efecto
+    sería SILENCIOSO** (fase desconocida = no se toca). `setup-hubspot.mjs
+    --verify` compara código y portal y **sale con código 2** si difieren; un test
+    fija la lista además.
+  - ✅ **Probado contra el CRM real:** el contacto de prueba estaba en `4000505062`
+    (Kaltakquise) y quedó en `5522034896` (Angebot erstellt).
+
+- **El secret de Turnstile YA ESTABA en `.env.local` — comentado, y DOS VECES** con
+  el mismo valor (una en un bloque „Später, noch nicht nötig“). Activada una línea,
+  la otra marcada como duplicado.
+  - ✅ **Y es válido, no sólo presente:** probado contra Cloudflare con un token
+    falso. La respuesta fue `invalid-input-response` y **no**
+    `invalid-input-secret` — esa distinción ES la prueba. Un segundo tiro por el
+    endpoint real: **400 `spamschutz`, y ni HubSpot ni Brevo se tocaron.**
+
+- **Auditoría de CTAs sobre el build entero** (respuesta a „¿tenemos algún CTA que
+  no sea pedir presupuesto?“): **un solo `form_type` en las 44 páginas**
+  (`customer_inquiry`), o sea no hay una segunda clase de consulta que pidiera otra
+  fase. Cinco rótulos distintos llevan al mismo formulario.
+  ⚠⚠ **HALLAZGO: `/sicherheitscheck-walde/` tiene TRES enlaces de HubSpot
+  Meetings.** Quien reserva ahí **no pasa por este endpoint**: HubSpot crea el
+  contacto con su propia lógica, sin „Angebot erstellt“ y sin ningún campo
+  `website_*`. Es, junto con `/jobs/`, la única entrada al CRM que no controlamos.
+
+- ⚠️ **Trampa propia, en mi cargador de `.env.local`: sobreescribía una variable
+  ya presente en el entorno.** Un `TURNSTILE_SECRET_KEY=<clave de prueba>` inline
+  fue reemplazado por el real del archivo, el endpoint devolvió 400 y parecía un
+  fallo del código. La precedencia correcta es la de dotenv: **lo que ya está en el
+  entorno gana.**
+
 **2026-08-26, TERCERA RONDA — EL PRIMER DURCHLAUF CONTRA LAS APIs REALES. Funciona de
 punta a punta, y encontró CUATRO defectos que ninguna prueba con `fetch` simulado
 podía encontrar.** Toca `api/_lib/{hubspot,log,http}.js`, los dos scripts de setup,

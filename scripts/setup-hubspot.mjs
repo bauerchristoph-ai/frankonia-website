@@ -300,6 +300,8 @@ async function subscriptionTypes() {
  * 26.08.2026 so geschrieben, also mehrere Stufen zu weit für einen
  * Formulareingang. Deshalb wird die Stufe nicht mehr geraten, sondern kommt aus
  * HUBSPOT_LIFECYCLE_STAGE — und diese Liste ist die Auswahl dazu. */
+let abweichung = false;
+
 async function lifecycleStufen() {
   console.log("\nLifecycle-Stufen dieses Portals (nur lesen)");
   const res = await api("/crm/v3/properties/contacts/lifecyclestage");
@@ -308,9 +310,32 @@ async function lifecycleStufen() {
     return;
   }
   const gesetzt = process.env.HUBSPOT_LIFECYCLE_STAGE;
+  const imPortal = [];
   for (const o of (res.body && res.body.options) || []) {
+    imPortal.push(String(o.value));
     const treffer = gesetzt && String(o.value) === String(gesetzt);
     console.log("  " + (treffer ? "\u2713" : " ") + "  " + String(o.value).padEnd(14) + o.label);
+  }
+
+  /* ⚠️ ABWEICHUNGSPRÜFUNG, und die ist der eigentliche Grund für diesen Block.
+     api/_lib/hubspot.js trägt die Reihenfolge dieses Portals als Konstante,
+     weil sich für eine portaleigene numerische ID sonst kein Vorher/Nachher
+     bestimmen lässt. Wird im Portal umsortiert oder eine Phase ergänzt, ist
+     die Konstante veraltet — und der Effekt wäre STILL: eine unbekannte Phase
+     gilt als unbekannt, der Kontakt wird gar nicht umsortiert, und niemand
+     merkt es. Deshalb hier der Vergleich. */
+  const imCode = hubspot.LIFECYCLE_REIHENFOLGE.map(String);
+  const gleich = imCode.length === imPortal.length && imCode.every((v, i) => v === imPortal[i]);
+  if (gleich) {
+    console.log("\n  \u2713 Reihenfolge stimmt mit api/_lib/hubspot.js ueberein (" + imCode.length + " Phasen).");
+  } else {
+    console.log("\n  \u2717 ABWEICHUNG zur Reihenfolge in api/_lib/hubspot.js:");
+    console.log("      im Code:   " + imCode.join(", "));
+    console.log("      im Portal: " + imPortal.join(", "));
+    console.log("      \u26a0\ufe0f Solange das abweicht, werden Kontakte in den nicht");
+    console.log("         gelisteten Phasen NICHT umsortiert \u2014 ohne Fehlermeldung.");
+    console.log("         LIFECYCLE_REIHENFOLGE in api/_lib/hubspot.js nachfuehren.");
+    abweichung = true;
   }
   if (gesetzt) {
     console.log("\n  HUBSPOT_LIFECYCLE_STAGE=" + gesetzt + " ist gesetzt.");
@@ -334,7 +359,7 @@ if (VERIFY) {
   await lifecycleStufen();
   console.log("\nSubscription Types (nur lesen)");
   await subscriptionTypes();
-  process.exit(fehler === 0 ? 0 : 2);
+  process.exit(fehler === 0 && !abweichung ? 0 : 2);
 }
 
 console.log("\n1 — Eigenschaftsgruppe");

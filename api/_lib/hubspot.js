@@ -134,16 +134,44 @@ function eigeneEigenschaften() {
  * kann. Welche Stufe fachlich richtig ist, weiß nur der Kunde — die Auswahl
  * seines Portals gibt "node scripts/setup-hubspot.mjs --verify" aus.
  */
+/* ⚠️⚠️ DAS IST DIE REIHENFOLGE DIESES PORTALS, NICHT HUBSPOTS STANDARD — und
+   das ist notwendig, nicht bequem. Vorher stand hier die Standardliste
+   (subscriber, lead, marketingqualifiedlead, …). Dieses Portal hat aber EIGENE
+   Phasen mit numerischen IDs, und für eine numerische ID findet eine
+   Standardliste keinen Platz — die Reihenfolge war damit unbestimmbar und die
+   Phase wurde nur bei NEUEN Kontakten gesetzt. Bei 2.767 Kontakten in
+   "Kaltakquise" hätte das bedeutet: die meisten Anfragen wären gar nicht
+   umsortiert worden, obwohl genau das der Zweck ist.
+
+   Reihenfolge und interne Namen sind am 26.08.2026 aus dem Portal gelesen
+   (crm/v3/properties/contacts/lifecyclestage), nicht geraten. Die Labels
+   stehen daneben, weil ein interner Name allein nichts sagt:
+
+   ⚠️ WIRD IM PORTAL UMSORTIERT ODER EINE PHASE ERGÄNZT, IST DIESE LISTE VERALTET.
+   "node scripts/setup-hubspot.mjs --verify" vergleicht sie mit dem Portal und
+   meldet die Abweichung. */
 const LIFECYCLE_REIHENFOLGE = [
-  "subscriber",
-  "lead",
-  "marketingqualifiedlead",
-  "salesqualifiedlead",
-  "opportunity",
-  "customer",
-  "evangelist",
-  "other",
+  "subscriber", //   Kontakt
+  "4000505062", //   Kaltakquise
+  "5520647375", //   Ansprechpartner / Entscheider herausgefunden
+  "lead", //         Termin vereinbart
+  "5522034896", //   Angebot erstellt   <-- Ziel der Website-Anfragen
+  "customer", //     Kunde
+  "evangelist", //   Fürsprecher
+  "4003004610", //   Upsell
+  "other", //        Sonstiges
+  "5574730996", //   Kein Interesse
 ];
+
+/* ⚠️ ZWEI FÄLLE BLEIBEN BEWUSST UNBERÜHRT, weil sie eine menschliche
+   Einschätzung sind und keine Stufe im Trichter: "Sonstiges" und "Kein
+   Interesse" stehen in dieser Liste HINTER dem Ziel, also wird ein so
+   eingeordneter Kontakt bei einer neuen Anfrage NICHT verschoben. Das ist die
+   sichere Seite — wer jemanden als "Kein Interesse" markiert hat, soll das
+   nicht durch ein Formular überschrieben bekommen. Soll eine neue Anfrage
+   solche Kontakte reaktivieren, müssen die beiden Einträge vor das Ziel
+   wandern; das ist dann eine Entscheidung über den Vertriebsprozess, nicht
+   über Code. */
 
 /** Die konfigurierte Zielphase, oder null wenn keine gesetzt ist. */
 function zielphase() {

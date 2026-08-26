@@ -686,26 +686,58 @@ test("Kein Deal in HubSpot", async () => {
 /* ============================================ 10 — Lifecycle nicht zurück */
 
 test("Lifecycle: ein bestehender Kunde wird nicht zurückgestuft", () => {
-  const ziel = "lead";
-  assert.equal(hubspot.darfPhaseSetzen("customer", ziel), false);
-  assert.equal(hubspot.darfPhaseSetzen("opportunity", ziel), false);
-  assert.equal(hubspot.darfPhaseSetzen("salesqualifiedlead", ziel), false);
-  assert.equal(hubspot.darfPhaseSetzen("lead", ziel), false);
-  // Früher als die Zielphase: darf hoch.
-  assert.equal(hubspot.darfPhaseSetzen("subscriber", ziel), true);
+  // ⚠️ Die Reihenfolge ist die DIESES PORTALS, mit eigenen numerischen IDs.
+  // Ziel der Website-Anfragen ist 5522034896 ("Angebot erstellt").
+  const ziel = "5522034896";
+
+  // Spaeter im Trichter: nicht zurueckstufen.
+  assert.equal(hubspot.darfPhaseSetzen("customer", ziel), false, "Kunde");
+  assert.equal(hubspot.darfPhaseSetzen("evangelist", ziel), false, "Fuersprecher");
+  assert.equal(hubspot.darfPhaseSetzen("4003004610", ziel), false, "Upsell");
+  // Gleiche Phase: kein Schreibvorgang.
+  assert.equal(hubspot.darfPhaseSetzen(ziel, ziel), false);
+
+  // Frueher im Trichter: darf hoch — DAS ist der haeufige Fall, im Portal
+  // stehen 2.767 Kontakte in Kaltakquise.
+  assert.equal(hubspot.darfPhaseSetzen("subscriber", ziel), true, "Kontakt");
+  assert.equal(hubspot.darfPhaseSetzen("4000505062", ziel), true, "Kaltakquise");
+  assert.equal(hubspot.darfPhaseSetzen("5520647375", ziel), true, "Ansprechpartner");
+  assert.equal(hubspot.darfPhaseSetzen("lead", ziel), true, "Termin vereinbart");
+
   // Neu oder leer: darf gesetzt werden.
   assert.equal(hubspot.darfPhaseSetzen("", ziel), true);
   assert.equal(hubspot.darfPhaseSetzen(null, ziel), true);
-  // Unbekannte aktuelle Phase: nicht anfassen.
+
+  // ⚠️ Menschliche Einschaetzung bleibt unberuehrt: beide stehen in der Liste
+  // HINTER dem Ziel, also wird nicht verschoben.
+  assert.equal(hubspot.darfPhaseSetzen("other", ziel), false, "Sonstiges");
+  assert.equal(hubspot.darfPhaseSetzen("5574730996", ziel), false, "Kein Interesse");
+
+  // Unbekannte Phase auf einer der beiden Seiten: nicht anfassen.
   assert.equal(hubspot.darfPhaseSetzen("irgendwas", ziel), false);
-  // ⚠️ PORTALEIGENE Zielphase (numerische ID): keine Reihenfolge bestimmbar,
-  // also nur bei neuen Kontakten setzen. Genau dieser Fall liegt im Portal
-  // des Kunden vor.
-  assert.equal(hubspot.darfPhaseSetzen(null, "4000505062"), true);
-  assert.equal(hubspot.darfPhaseSetzen("subscriber", "4000505062"), false);
+  assert.equal(hubspot.darfPhaseSetzen("subscriber", "99999999"), false);
   // Ohne Zielphase wird nie gesetzt.
   assert.equal(hubspot.darfPhaseSetzen(null, null), false);
   assert.equal(hubspot.darfPhaseSetzen("subscriber", null), false);
+});
+
+test("Lifecycle: die Reihenfolge enthaelt genau die Phasen des Portals", () => {
+  // ⚠️ Kein Selbstzweck: steht eine Phase NICHT in der Liste, wird sie als
+  // unbekannt behandelt und der Kontakt gar nicht umsortiert — still. Diese
+  // Zusicherung ist die Bremse dafuer. Ein Umsortieren im Portal faellt
+  // zusaetzlich bei "setup-hubspot.mjs --verify" auf.
+  assert.deepEqual(hubspot.LIFECYCLE_REIHENFOLGE, [
+    "subscriber",
+    "4000505062",
+    "5520647375",
+    "lead",
+    "5522034896",
+    "customer",
+    "evangelist",
+    "4003004610",
+    "other",
+    "5574730996",
+  ]);
 });
 
 test("Lifecycle: ohne HUBSPOT_LIFECYCLE_STAGE wird die Phase NICHT geschrieben", () => {

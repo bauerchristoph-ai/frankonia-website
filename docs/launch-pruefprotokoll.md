@@ -1577,9 +1577,9 @@ Telefonnummer steht nie direkt an einem Buchstaben, eine Kennung schon.
 
 | ☐ | Was | Woher |
 |---|---|---|
-| ☐ | **`TURNSTILE_SECRET_KEY`** | Cloudflare-Dashboard → Turnstile → dein Widget → „Secret Key" |
+| ✅ | ~~`TURNSTILE_SECRET_KEY`~~ | **war schon in `.env.local`, nur auskommentiert.** Aktiviert und gegen Cloudflare geprüft — siehe Abschnitt 20 |
 | ☐ | Alle Werte auch in **Vercel** eintragen | Settings → Environment Variables |
-| ☐ | optional: `HUBSPOT_LIFECYCLE_STAGE` wählen | Auswahl zeigt `setup-hubspot.mjs --verify` |
+| ✅ | ~~`HUBSPOT_LIFECYCLE_STAGE` wählen~~ | **gewählt: 5522034896 „Angebot erstellt“** — siehe Abschnitt 20 |
 
 ⚠️ **Ohne den Turnstile-Secret lehnt der Endpoint jede Anfrage ab** — bewusst so,
 damit eine fehlende Konfiguration keinen offenen Endpoint erzeugt. Das ist der
@@ -1603,6 +1603,163 @@ steht der Kontakt in der Marketingliste 7; für einen sauberen Start dort entfer
   Einen fremden Eintrag über die v4-API stillschweigend zu überschreiben habe ich
   nicht eingebaut — das wäre eine Entscheidung über deine CRM-Historie, nicht über
   Code.
+
+## 20 — Lifecycle-Phase „Angebot erstellt", der Turnstile-Schlüssel, und was bei einer Eintragung genau passiert
+
+### Der Turnstile-Schlüssel war schon in `.env.local` — auskommentiert
+
+Er stand **zweimal** drin, beide Zeilen mit `#` davor, beide mit demselben Wert
+(eine im Block „Später, noch nicht nötig"). Eine Zeile ist jetzt aktiv, die Dublette
+als solche markiert.
+
+✅ **Und er ist echt, nicht nur vorhanden:** gegen Cloudflare geprüft mit einem
+Dummy-Token. Die Antwort war `invalid-input-response` und **nicht**
+`invalid-input-secret` — genau diese Unterscheidung ist der Test: Cloudflare hat den
+Schlüssel akzeptiert und nur das erfundene Token abgelehnt. Ein zweiter Lauf über den
+echten Endpoint bestätigt es: **HTTP 400, `spamschutz`, und weder HubSpot noch Brevo
+wurden angefasst.** Der Spamschutz ist damit scharf.
+
+### Lifecycle-Phase: gesetzt, und dafür musste mehr geändert werden als eine Variable
+
+`HUBSPOT_LIFECYCLE_STAGE=5522034896` („Angebot erstellt").
+
+⚠️⚠️ **DIE VARIABLE ALLEIN HÄTTE FAST NICHTS BEWIRKT, und der Grund ist wichtig.**
+Die Prüfung, ob eine Phase gesetzt werden darf, braucht eine **Reihenfolge** — sonst
+könnte eine Anfrage einen bestehenden Kunden auf „Angebot erstellt" zurückstufen. Im
+Code stand HubSpots Standardliste (`subscriber`, `lead`, `customer`, …). Dein Portal
+benutzt aber **eigene Phasen mit numerischen IDs**, und für eine numerische ID findet
+diese Liste keinen Platz: unbekannte Phase → nicht anfassen → **die Phase wäre nur
+bei NEUEN Kontakten gesetzt worden.** Bei **2.767 Kontakten in „Kaltakquise"** wäre
+das der Normalfall gewesen: Anfrage kommt an, Phase bleibt, wo sie war.
+
+Deshalb trägt `api/_lib/hubspot.js` jetzt die **Reihenfolge deines Portals**, am
+26.08.2026 aus der API gelesen:
+
+| # | intern | Label |
+|---|---|---|
+| 1 | `subscriber` | Kontakt |
+| 2 | `4000505062` | Kaltakquise |
+| 3 | `5520647375` | Ansprechpartner / Entscheider herausgefunden |
+| 4 | `lead` | Termin vereinbart |
+| 5 | **`5522034896`** | **Angebot erstellt** ← Ziel |
+| 6 | `customer` | Kunde |
+| 7 | `evangelist` | Fürsprecher |
+| 8 | `4003004610` | Upsell |
+| 9 | `other` | Sonstiges |
+| 10 | `5574730996` | Kein Interesse |
+
+**Was das konkret heißt:**
+- Neuer Kontakt → „Angebot erstellt".
+- Kontakt in Kontakt / Kaltakquise / Ansprechpartner / Termin vereinbart → **wird
+  hochgesetzt** auf „Angebot erstellt".
+- Kunde / Fürsprecher / Upsell → **bleibt**, wird nie zurückgestuft.
+- ⚠️ **„Sonstiges" und „Kein Interesse" bleiben auch.** Sie stehen in der Liste hinter
+  dem Ziel, also rührt eine neue Anfrage sie nicht an. Das ist bewusst: wer jemanden
+  als „Kein Interesse" markiert hat, soll das nicht durch ein Formular überschrieben
+  bekommen. **Wenn du willst, dass eine neue Anfrage solche Kontakte reaktiviert**,
+  wandern die zwei Einträge in der Liste vor das Ziel — das ist eine Entscheidung über
+  den Vertriebsprozess, keine über Code, deshalb frage ich lieber.
+
+✅ **Nachgewiesen, nicht behauptet:** der Testkontakt stand vor dem Lauf auf
+`4000505062` (Kaltakquise) und nach dem Lauf auf `5522034896` (Angebot erstellt).
+
+⚠️ **EINE STILLE FALLE, gegen die es jetzt eine Bremse gibt:** wird im Portal
+umsortiert oder eine Phase ergänzt, ist die Konstante veraltet — und der Effekt wäre
+unsichtbar, weil eine unbekannte Phase einfach nicht angefasst wird.
+`node scripts/setup-hubspot.mjs --verify` vergleicht Code und Portal und endet mit
+Fehlercode, wenn sie auseinanderlaufen. Ein Test hält die Liste zusätzlich fest.
+
+### Die CTA-Frage: gemessen über alle 70 Seiten
+
+**Der wichtigste Befund zuerst: es gibt nur EINEN Formulartyp.** Alle 44 Formulare
+senden `form_type=customer_inquiry`. Es gibt also keine zweite Sorte
+Website-Anfrage, die eine andere Phase bräuchte.
+
+**CTAs, die zum Formular führen** — vier verschiedene Beschriftungen, ein Ziel:
+
+| Beschriftung | Anzahl |
+|---|---|
+| „Unverbindliches Angebot einholen" | 88× |
+| „Jetzt unverbindliches Angebot einholen" (der Absende-Knopf selbst) | 44× |
+| „Kostenfreie Einschätzung erhalten" | 2× (`/werkschutz/`, `/revier-schliessdienst/`) |
+| „Werkschutz anfragen" | 1× (`/werkschutz/`) |
+| „Angebot anfordern" | 1× (`/ratgeber/kosten-sicherheitsdienst/`) |
+
+**CTAs, die etwas anderes tun** — und hier ist die Antwort auf deine Frage:
+
+| Was | Anzahl | Landet wo? |
+|---|---|---|
+| Telefonnummer | 62× (51 sekundär, 11 primär) | Anruf, kein Datensatz |
+| „Jetzt Termin buchen" | **3×** auf `/sicherheitscheck-walde/` | ⚠️ **HubSpot Meetings** — eigener Weg |
+| „Offene Stellen ansehen" / „Jetzt unverbindlich bewerben" | 7× | `/jobs/`, HubSpot-Formular |
+| „Kontakt speichern" | 9× | vCard-Download auf den Personenseiten |
+| „Kostenfreies Sicherheitskonzept anfordern" | 3× | Seite `/sicherheitskonzept/`, dort dann das Formular |
+| „Brandwache anfragen" | 1× | Seite `/brandwache/`, dort dann das Formular |
+| „Mehr erfahren" / „Schreiben Sie uns" / Instagram | 11× | andere Seiten |
+
+⚠️⚠️ **DER EINE, DEN DU KENNEN MUSST: `/sicherheitscheck-walde/` hat drei
+HubSpot-Meetings-Links.** Wer dort einen Termin bucht, geht **nicht** durch unser
+Formular und damit nicht durch diesen Endpoint — HubSpot legt den Kontakt selbst an,
+mit seiner eigenen Lifecycle-Logik. Diese Buchungen bekommen also **nicht** „Angebot
+erstellt" und keines der `website_*`-Felder. Das ist kein Fehler, aber es ist die
+einzige Stelle außer `/jobs/`, an der ein Kontakt ohne unser Zutun ins CRM kommt.
+
+### Was bei einer Eintragung genau passiert — die vollständige Kette
+
+Deine fünf Schritte sind richtig, es sind aber **vierzehn**. Der Reihenfolge nach:
+
+**Im Browser, bevor überhaupt gesendet wird**
+1. Beim Aufbau der Seite setzt `js/lead-form.js` drei versteckte Felder: Zeitstempel
+   des Aufbaus, Seiten-URL und Referrer, dazu einen **Idempotenz-Schlüssel** (einmal
+   je Formular, nicht je Klick) und die UTM-Parameter aus dem `sessionStorage`.
+2. Beim Klick: Pflichtfelder prüfen, **Knopf sperren**, „Wird gesendet …".
+
+**Auf dem Server, in dieser Reihenfolge — jeder Schritt kann abbrechen**
+3. **Idempotenz.** Der Schlüssel wird sofort reserviert. Ein zweiter, gleichzeitiger
+   Klick wartet auf das Ergebnis des ersten und bekommt dieselbe Antwort.
+4. **Honeypot.** Ist das unsichtbare Feld gefüllt, endet es hier — mit **HTTP 200**,
+   damit ein Bot nicht lernt, dass er erkannt wurde.
+5. **Mindestzeit.** Unter 3 Sekunden zwischen Aufbau und Absenden: still verworfen.
+6. **Rate-Limit.** Mehr als 5 Anfragen pro IP in 10 Minuten: 429.
+7. **Turnstile.** Cloudflare prüft das Token. Erst ab hier kostet etwas Geld oder
+   erzeugt Daten — deshalb steht der Spamschutz davor.
+8. **Validierung.** Pflichtfelder, E-Mail-Form, Datenschutz-Haken.
+
+**HubSpot** (Schritte 9–12, in dieser Reihenfolge)
+9. **Kontakt suchen** über die E-Mail.
+10. **Kontakt anlegen oder aktualisieren**: 5 Standardfelder, 10 eigene
+    `website_*`-Felder, Lifecycle-Phase nach den Regeln oben, `hs_lead_status = NEW`
+    nur bei neuen Kontakten. ⚠️ Antwortet HubSpot mit 400, folgt automatisch ein
+    **zweiter Versuch nur mit den Standardfeldern** — der Lead geht nicht verloren.
+11. **Firma** anlegen/finden und mit dem Kontakt verknüpfen (nur wenn ein
+    Unternehmen angegeben wurde).
+12. **Marketing-Einwilligung**, nur mit Haken: beide Subscription-Typen mit
+    Rechtsgrundlage. Dann **Notiz** am Kontakt mit Nachricht, Leistung, Seite und
+    Kampagne.
+
+**Brevo** (Schritte 13–16)
+13. **Kontakt** anlegen/aktualisieren, 11 Attribute inklusive der HubSpot-ID — damit
+    sind beide Systeme verknüpft. Nur mit Haken kommt er in die Marketingliste.
+14. **Eingangsbestätigung** an den Absender (Vorlage 5).
+15. ⚠️ **Ein Ereignis `website_form_submitted`** — das hatte in deiner Liste gefehlt.
+    Es ist der Auslöser, an den du in Brevo eine Automation hängen kannst.
+16. **Interne Benachrichtigung** an `info@frankonia-sicherheit.de`, mit dem Absender
+    als **Antwortadresse**: „Antworten" führt direkt zum Interessenten.
+
+**Antwort an den Browser**
+17. Mit JavaScript: JSON, dann `frankonia:form_success` für den Tag Manager, dann
+    Weiterleitung auf `/danke/`. Ohne JavaScript: **303 auf `/danke/`**.
+
+⚠️ **Was als Erfolg gilt, ist bewusst großzügig:** die Anfrage ist angekommen, sobald
+**entweder** der HubSpot-Kontakt **oder** die interne Mail geklappt hat. Nur wenn
+beides scheitert, sieht der Besucher einen Fehler mit Vorgangsnummer und der
+Telefonnummer — und im Log steht dann `ALARM forms`, wonach man in den Vercel-Logs
+gezielt suchen kann.
+
+⚠️ **Was NICHT passiert:** kein Deal, kein Ticket, keine Aufgabe, keine Zuweisung an
+einen Besitzer. Wenn eine Anfrage automatisch einem Vertriebler zufallen oder einen
+Deal erzeugen soll, ist das eine Automation in HubSpot — das Datenmaterial dafür
+(`website_form_type`, `website_service`, die UTM-Felder) liegt am Kontakt.
 
 ---
 
