@@ -5,7 +5,8 @@
   "scripts": {
     "build": "node build.js",
     "dev": "node build.js && npx --yes serve dist",
-    "test": "node --test"
+    "test": "node --test",
+    "dev:api": "node scripts/dev-server.js"
   },
   "engines": {
     "node": ">=18"

@@ -1761,6 +1761,59 @@ einen Besitzer. Wenn eine Anfrage automatisch einem Vertriebler zufallen oder ei
 Deal erzeugen soll, ist das eine Automation in HubSpot — das Datenmaterial dafür
 (`website_form_type`, `website_service`, die UTM-Felder) liegt am Kontakt.
 
+## 21 — Lokal prüfen, inklusive Formular
+
+⚠️ **`npm run dev` reicht dafür NICHT.** Es liefert nur Dateien aus, und der
+Endpoint unter `/api/forms/submit/` ist eine Vercel-Serverless-Funktion — ein
+Absenden endet lokal in einem **404**. Vercel bringt für so etwas `vercel dev`
+mit, das aber die Vercel-CLI verlangt (hier nicht installiert).
+
+Deshalb gibt es jetzt:
+
+    npm run dev:api
+
+Ein Befehl. Er baut, startet einen Server auf **http://127.0.0.1:3000/** und
+führt dabei den **echten** Endpoint aus — dieselbe Datei, die Vercel ausführt,
+mit denselben `(req, res)`. Zero Abhängigkeiten, nur Node-Bordmittel.
+
+⚠️ **Turnstile läuft lokal mit Cloudflares Testschlüsseln, und das muss so.** Ein
+Site-Key ist an seine Domain gebunden; auf `127.0.0.1` würde das Widget nicht
+validieren und jede Absendung mit 400 enden. Der Site-Key steht im HTML, muss also
+VOR dem Bauen gesetzt sein — **deshalb baut das Skript selbst**, statt das von Hand
+zu verlangen. Wer es vergessen hätte, würde den Fehler im Endpoint suchen.
+Mit `DEV_TURNSTILE_ECHT=1` nimmt es die echten Schlüssel.
+
+⚠️⚠️ **HubSpot, Brevo und die Mails sind produktiv — es gibt keine Testumgebung.**
+Wer lokal absendet, legt einen echten Kontakt an und verschickt zwei echte Mails.
+Der Server sagt das beim Start. Also eine erkennbare Testadresse benutzen.
+
+### Nachgewiesen über diesen Server
+
+| Prüfung | Ergebnis |
+|---|---|
+| 8 Seiten stichprobenhaft | alle 200 |
+| `GET` auf den Endpoint | 405, ohne das Feldmodell zu beschreiben |
+| Honeypot gefüllt | still 200 (ein Bot lernt nichts) |
+| POST ohne Token | 400 `spamschutz` — der Spamschutz steht VOR der Validierung |
+| **Formular im Browser ausgefüllt und abgesendet** | **Weiterleitung auf `/danke/`**, Titel „Anfrage erhalten“ |
+| Vorbelegte Leistung | auf `/werkschutz/` kam `service: "Werkschutz"` am Server an |
+
+Damit ist die letzte ungetestete Strecke belegt: Widget → JavaScript → Endpoint →
+HubSpot/Brevo → Weiterleitung. Vorher war alles davon nur einzeln geprüft.
+
+### Vor dem Deploy
+
+| ☐ | Was | Warum |
+|---|---|---|
+| ☐ | **Alle 12 Werte in Vercel eintragen** | Ohne sie lehnt der Endpoint live JEDE Anfrage ab. `.env.local` ist nur lokal |
+| ☐ | Consent Mode im Cookiebot-Konto prüfen | siehe Abschnitt 18, der Vier-Schritte-Test |
+| ☐ | Nach dem Deploy: eine echte Anfrage über die Live-Domain | erst dort läuft Turnstile mit dem echten Schlüssel |
+| ☐ | Testkontakte aufräumen | HubSpot 244207392966, Brevo id 2, Firma 445068333287 |
+
+⚠️ **Die Reihenfolge ist nicht beliebig: erst die Variablen, dann der Deploy.**
+Sonst steht die Seite live, während jedes Formular mit „Spamschutz“ abweist — und
+das ist genau der Zustand, in dem echte Anfragen verloren gehen.
+
 ---
 
 # Abschlussbericht
