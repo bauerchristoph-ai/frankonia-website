@@ -1,0 +1,82 @@
+<!-- ⚠️ VERTRAUENSBAND FÜR DIE PERSONENSEITEN. Ein Partial und keine neun Kopien:
+     das ist dieselbe Aussage auf jeder Karte, und neun Kopien wären neun
+     Gelegenheiten, dass eine davon veraltet.
+     Kundenwunsch 26.08.2026: „kannst Du unten drunter noch ein paar
+     Trustelemente machen. Sowas wie das sagen unsere Kunden, Google Bewertung."
+
+     ⚠️⚠️ WARUM HIER KEIN ECHTES KUNDENZITAT STEHT, obwohl der Wunsch es nahelegt:
+     die drei Zitate auf der Website sind 332 bis 376 Zeichen lang, und sie werden
+     NICHT gekürzt — ein Zitat einer namentlich genannten Person zu beschneiden
+     heißt, ihr Worte in den Mund zu legen (steht so in CLAUDE.md). Drei davon
+     wären über 1.000 Zeichen auf einer Seite, die jemand nach dem Scannen eines
+     QR-Codes vom Handy aus ansieht. Und eines auszuwählen hieße, einen Kunden
+     zum Gesicht jeder Visitenkarte zu machen — das ist eine Entscheidung des
+     Kunden, nicht eine, die hier nebenbei fällt.
+     Stattdessen: die Zahl, die Bewertung, die Siegel — und ein klarer Weg zu den
+     Zitaten. Was in drei Sekunden wirkt, nicht was am meisten Text macht.
+     Soll ein Zitat mit aufs Band, ist das ein <blockquote> mehr; es braucht nur
+     die Angabe, welches.
+
+     ⚠️ Die Zahlen kommen aus content/values.json, nicht aus dem Markup. Eine neue
+     Google-Bewertung ist damit eine Zeile in einer Datei und keine Suche über
+     neun Seiten. -->
+<section class="section person-trust" aria-labelledby="person-trust-titel">
+  <div class="container person-trust__inner">
+
+    <h2 class="person-trust__titel" id="person-trust-titel">Worauf Sie sich verlassen</h2>
+
+    <!-- Verbatim aus dem Hero von /referenzen/ — freigegebenes Copy, nicht neu
+         formuliert. -->
+    <p class="person-trust__claim">
+      <svg class="person-trust__claim-icon icon" aria-hidden="true"><use href="#icon-building"></use></svg>
+      Über 300 Unternehmen und Einrichtungen vertrauen FRANKONIA
+    </p>
+
+    <div class="person-trust__band">
+      <!-- Die eine bestätigte Kennzahl der Website. Führt auf das echte
+           Google-Profil, damit die Bewertung nachprüfbar ist statt behauptet. -->
+      <a class="review-card review-card--sm" href="https://share.google/m1MUCxOYROju76cl9" target="_blank" rel="noopener">
+        <img class="review-card__logo" src="/assets/icons/google-icon.png" alt="Google" width="128" height="128" loading="lazy">
+        <span class="review-card__stars">
+          <span class="review-card__stars-track" aria-hidden="true">
+            <svg class="icon"><use href="#icon-star"></use></svg>
+            <svg class="icon"><use href="#icon-star"></use></svg>
+            <svg class="icon"><use href="#icon-star"></use></svg>
+            <svg class="icon"><use href="#icon-star"></use></svg>
+            <svg class="icon"><use href="#icon-star"></use></svg>
+          </span>
+          <!-- --94 ist 4,7 von 5. Der Modifikator gehört zum Bauteil, nicht zu
+               dieser Seite; ändert sich die Note, ändert sich dort auch der
+               Füllwert. -->
+          <span class="review-card__stars-fill review-card__stars-fill--94" aria-hidden="true">
+            <svg class="icon"><use href="#icon-star"></use></svg>
+            <svg class="icon"><use href="#icon-star"></use></svg>
+            <svg class="icon"><use href="#icon-star"></use></svg>
+            <svg class="icon"><use href="#icon-star"></use></svg>
+            <svg class="icon"><use href="#icon-star"></use></svg>
+          </span>
+        </span>
+        <span class="review-card__score">
+          <span class="review-card__value">{{rating.value}}</span>
+          <span class="review-card__count">{{rating.count}} Bewertungen</span>
+        </span>
+        <span class="visually-hidden">(öffnet in einem neuen Tab)</span>
+      </a>
+
+      <!-- ⚠️ Die Siegel sind echte DEKRA-Grafiken: proportional skalieren, nie
+           beschneiden oder verzerren. width/height sind die Originalmaße, damit
+           der Platz reserviert ist und beim Laden nichts springt. -->
+      <div class="person-trust__seals">
+        <img class="person-trust__seal" src="/assets/icons/dekra-din-77200.png" alt="DEKRA-Zertifizierungssiegel: Sicherheitsdienstleistungen nach DIN 77200" width="399" height="600" loading="lazy">
+        <img class="person-trust__seal" src="/assets/icons/dekra-iso-9001.png" alt="DEKRA-Zertifizierungssiegel: Qualitätsmanagement nach DIN EN ISO 9001" width="399" height="600" loading="lazy">
+      </div>
+    </div>
+
+    <!-- Der Weg zu den Zitaten, statt der Zitate selbst. -->
+    <a class="person-trust__more" href="/referenzen/">
+      Das sagen unsere Kunden
+      <svg class="person-trust__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+    </a>
+
+  </div>
+</section>

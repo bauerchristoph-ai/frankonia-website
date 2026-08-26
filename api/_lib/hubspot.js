@@ -147,10 +147,23 @@ function eigeneEigenschaften() {
    (crm/v3/properties/contacts/lifecyclestage), nicht geraten. Die Labels
    stehen daneben, weil ein interner Name allein nichts sagt:
 
-   ⚠️ WIRD IM PORTAL UMSORTIERT ODER EINE PHASE ERGÄNZT, IST DIESE LISTE VERALTET.
-   "node scripts/setup-hubspot.mjs --verify" vergleicht sie mit dem Portal und
-   meldet die Abweichung. */
+   ⚠️ DIE REIHENFOLGE HIER IST NICHT DIE DES PORTALS, sondern eine eigene
+   Rangfolge — siehe die beiden ersten Einträge. Ein Reihenfolgevergleich mit
+   dem Portal wäre also falsch; "node scripts/setup-hubspot.mjs --verify"
+   vergleicht deshalb nur die MENGE. Eine Phase, die es im Portal gibt und hier
+   nicht, führt zu stillem Nichtstun und wird dort gemeldet. */
 const LIFECYCLE_REIHENFOLGE = [
+  // ⚠️ Diese beiden stehen GANZ VORNE, also unterhalb von allem anderen, und
+  //    das ist eine Entscheidung über den Vertriebsprozess (Kunde, 26.08.2026:
+  //    "Sonstiges und kein Interesse auf jeden Fall überschreiben in dem
+  //    Moment, wo jemand ein Angebot angefragt hat"). Sie sind keine Sackgasse:
+  //    wer nach so einer Einordnung selbst ein Angebot anfragt, hat sein
+  //    Interesse gerade widerlegt, und der Kontakt gehört wieder in den
+  //    Trichter. Vorher standen sie hinter dem Ziel und blieben unberührt.
+  //    ⚠️ Umgekehrt gilt weiter: "Kunde", "Fürsprecher" und "Upsell" stehen
+  //    HINTER dem Ziel — ein Formular kann einen Kunden nicht zurückstufen.
+  "other", //        Sonstiges
+  "5574730996", //   Kein Interesse
   "subscriber", //   Kontakt
   "4000505062", //   Kaltakquise
   "5520647375", //   Ansprechpartner / Entscheider herausgefunden
@@ -159,19 +172,8 @@ const LIFECYCLE_REIHENFOLGE = [
   "customer", //     Kunde
   "evangelist", //   Fürsprecher
   "4003004610", //   Upsell
-  "other", //        Sonstiges
-  "5574730996", //   Kein Interesse
 ];
 
-/* ⚠️ ZWEI FÄLLE BLEIBEN BEWUSST UNBERÜHRT, weil sie eine menschliche
-   Einschätzung sind und keine Stufe im Trichter: "Sonstiges" und "Kein
-   Interesse" stehen in dieser Liste HINTER dem Ziel, also wird ein so
-   eingeordneter Kontakt bei einer neuen Anfrage NICHT verschoben. Das ist die
-   sichere Seite — wer jemanden als "Kein Interesse" markiert hat, soll das
-   nicht durch ein Formular überschrieben bekommen. Soll eine neue Anfrage
-   solche Kontakte reaktivieren, müssen die beiden Einträge vor das Ziel
-   wandern; das ist dann eine Entscheidung über den Vertriebsprozess, nicht
-   über Code. */
 
 /** Die konfigurierte Zielphase, oder null wenn keine gesetzt ist. */
 function zielphase() {

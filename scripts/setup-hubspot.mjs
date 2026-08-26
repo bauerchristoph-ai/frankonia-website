@@ -318,23 +318,29 @@ async function lifecycleStufen() {
   }
 
   /* ⚠️ ABWEICHUNGSPRÜFUNG, und die ist der eigentliche Grund für diesen Block.
-     api/_lib/hubspot.js trägt die Reihenfolge dieses Portals als Konstante,
-     weil sich für eine portaleigene numerische ID sonst kein Vorher/Nachher
-     bestimmen lässt. Wird im Portal umsortiert oder eine Phase ergänzt, ist
-     die Konstante veraltet — und der Effekt wäre STILL: eine unbekannte Phase
-     gilt als unbekannt, der Kontakt wird gar nicht umsortiert, und niemand
-     merkt es. Deshalb hier der Vergleich. */
+     Verglichen wird die MENGE der Phasen, NICHT ihre Reihenfolge — und das ist
+     eine Änderung vom 26.08.2026, die man kennen muss: die Liste im Code war
+     ursprünglich ein Spiegel der Portalreihenfolge, ist jetzt aber eine eigene
+     Rangfolge. "Sonstiges" und "Kein Interesse" stehen dort bewusst ganz vorne,
+     damit eine neue Anfrage sie überschreiben darf (Kundenentscheidung). Ein
+     Reihenfolgevergleich würde ab jetzt bei jedem Lauf Alarm schlagen, obwohl
+     nichts kaputt ist.
+     Was trotzdem auffallen MUSS: eine Phase, die es im Portal gibt und im Code
+     nicht. Deren Wirkung wäre still — sie gilt als unbekannt, der Kontakt wird
+     gar nicht umsortiert, und niemand merkt es. */
   const imCode = hubspot.LIFECYCLE_REIHENFOLGE.map(String);
-  const gleich = imCode.length === imPortal.length && imCode.every((v, i) => v === imPortal[i]);
-  if (gleich) {
-    console.log("\n  \u2713 Reihenfolge stimmt mit api/_lib/hubspot.js ueberein (" + imCode.length + " Phasen).");
+  const fehltImCode = imPortal.filter((v) => !imCode.includes(v));
+  const fehltImPortal = imCode.filter((v) => !imPortal.includes(v));
+  if (!fehltImCode.length && !fehltImPortal.length) {
+    console.log("\n  \u2713 api/_lib/hubspot.js kennt alle " + imCode.length + " Phasen des Portals.");
+    console.log("     (Die Reihenfolge im Code ist eine eigene Rangfolge, kein Spiegel.)");
   } else {
-    console.log("\n  \u2717 ABWEICHUNG zur Reihenfolge in api/_lib/hubspot.js:");
-    console.log("      im Code:   " + imCode.join(", "));
-    console.log("      im Portal: " + imPortal.join(", "));
-    console.log("      \u26a0\ufe0f Solange das abweicht, werden Kontakte in den nicht");
-    console.log("         gelisteten Phasen NICHT umsortiert \u2014 ohne Fehlermeldung.");
-    console.log("         LIFECYCLE_REIHENFOLGE in api/_lib/hubspot.js nachfuehren.");
+    console.log("\n  \u2717 ABWEICHUNG zu LIFECYCLE_REIHENFOLGE in api/_lib/hubspot.js:");
+    if (fehltImCode.length) console.log("      im Portal, im Code NICHT: " + fehltImCode.join(", "));
+    if (fehltImPortal.length) console.log("      im Code, im Portal NICHT: " + fehltImPortal.join(", "));
+    console.log("      \u26a0\ufe0f Kontakte in einer nicht gelisteten Phase werden NICHT");
+    console.log("         umsortiert \u2014 ohne Fehlermeldung. Liste nachfuehren, und dabei");
+    console.log("         entscheiden, ob die neue Phase vor oder hinter das Ziel gehoert.");
     abweichung = true;
   }
   if (gesetzt) {

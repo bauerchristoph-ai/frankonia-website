@@ -324,3 +324,155 @@
     justify-content: space-between;
   }
 }
+
+/* ==================================================== Vertrauensband
+   Unter der Personenkarte: Zahl, Google-Bewertung, Siegel, Weg zu den Zitaten.
+   Markup in partials/person-trust.html, dort steht auch, warum hier kein
+   vollständiges Kundenzitat liegt.
+
+   ⚠️ KEIN PIXEL-ÜBERGANG davor: die Personenkarte liegt auf dem Schwarz der
+   Seite und dieses Band ebenso. Zwei gleiche Flächen bekommen keinen Übergang
+   (page-conventions §9.2) — er würde Schwarz auf Schwarz auflösen, also nichts.
+
+   ⚠️ Die Seite ist eine EINSPALTIGE, ZENTRIERTE Komposition (.person setzt
+   text-align: center). Dieses Band folgt dem: alles zentriert, und jede Box, die
+   eine eigene Breite hat, braucht margin-inline: auto — text-align zentriert den
+   TEXT, nicht die KISTE. Das ist die Falle, die in diesem Projekt ein Dutzend Mal
+   dokumentiert ist. */
+.person-trust {
+  /* Die Karte darüber bringt ihren eigenen Abstand nach unten mit; hier nur
+     eine Haarlinie als Trennung, damit das Band nicht wie Teil der Karte liest. */
+  padding-top: 0;
+  text-align: center;
+}
+
+.person-trust__inner {
+  max-width: 34rem;
+  margin-inline: auto;
+  padding-top: var(--space-7);
+  border-top: 1px solid var(--color-border);
+}
+
+.person-trust__titel {
+  /* Bewusst klein: eine Zwischenüberschrift über vier Vertrauenszeichen, kein
+     neues Kapitel. In der Sektions-Skala würde sie den Namen der Person auf
+     derselben Seite überstimmen. */
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* ⚠⚠ KEIN FLEX, und das ist ein behobener Fehler: als flexbox stand das
+   Symbol 117px vom Text weg, sobald der Satz auf zwei Zeilen brach. Der Grund
+   ist nicht der gap, sondern dass der Textknoten in einer Flexbox ein eigener
+   BLOCK wird — dessen Zeilen sind zentriert (von .person geerbt), das Symbol
+   klebt aber an der Kante dieses Blocks, nicht an den Buchstaben. In der
+   Messung sah alles richtig aus; erst die Ansicht hat es gezeigt.
+   Inline fließt das Symbol mit der ersten Zeile. */
+.person-trust__claim {
+  margin: 0 auto var(--space-5);
+  max-width: 26rem;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+  color: var(--color-text);
+  /* Eine zentrierte Zeile hat schon zwei unruhige Ränder; ein getrenntes
+     Kompositum darin liest sich wie ein Fehler. Dieselbe Entscheidung wie beim
+     zentrierten Copy auf /referenzen/. */
+  hyphens: none;
+  text-wrap: balance;
+}
+
+.person-trust__claim-icon {
+  /* Inline mit dem Text, leicht abgesenkt auf die optische Mitte der
+     Kleinbuchstaben. */
+  display: inline-block;
+  vertical-align: -0.18em;
+  margin-right: 0.35em;
+  width: 1.1rem;
+  height: 1.1rem;
+  /* ⚠️ Die Angaben des Sprites leben in seinem <g id="icon-defs"> und überleben
+     ein <use> nicht — ohne diese zwei Zeilen rendert das Symbol als schwarzer
+     Fleck. In diesem Projekt fünf Mal passiert. */
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  color: var(--color-accent);
+}
+
+.person-trust__band {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.person-trust__seals {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.person-trust__seal {
+  /* Nur die HÖHE setzen, Breite automatisch: so bleiben die offiziellen
+     DEKRA-Proportionen (399:600) erhalten. Beschneiden oder verzerren ist bei
+     diesen Grafiken nicht erlaubt.
+     2,75rem ist der Wert, den die Trust-Bänder der Heroes schon benutzen — also
+     kein neuer Maßstab für dieselbe Sache. */
+  width: auto;
+  height: 2.75rem;
+}
+
+.person-trust__more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  /* 44px Mindesthöhe: das ist ein Ziel für den Finger, und diese Seiten werden
+     fast nur auf dem Handy geöffnet — sie hängen an einem QR-Code. */
+  min-height: 44px;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  text-decoration: none;
+  /* Auf dieser dunklen Fläche ist --color-accent das helle Markenblau und misst
+     6,8:1 — die eine Fläche, auf der das CTA-Blau als Text sicher ist. */
+  color: var(--color-accent);
+  border-bottom: 1px solid transparent;
+}
+
+.person-trust__more:hover,
+.person-trust__more:focus-visible {
+  color: var(--color-text);
+  border-bottom-color: var(--color-text);
+}
+
+.person-trust__arrow {
+  width: 0.9rem;
+  height: 0.9rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  rotate: 45deg;
+  transition: translate var(--duration-fast) var(--easing-standard);
+}
+
+.person-trust__more:hover .person-trust__arrow,
+.person-trust__more:focus-visible .person-trust__arrow {
+  translate: 3px -3px;
+}
+
+@media (max-width: 419.98px) {
+  /* Auf einem schmalen Handy stehen Bewertung und Siegel untereinander, statt
+     die Pille auf zwei Zeilen zu quetschen. */
+  .person-trust__band {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .person-trust__seal {
+    height: 2.4rem;
+  }
+}

@@ -708,10 +708,13 @@ test("Lifecycle: ein bestehender Kunde wird nicht zurückgestuft", () => {
   assert.equal(hubspot.darfPhaseSetzen("", ziel), true);
   assert.equal(hubspot.darfPhaseSetzen(null, ziel), true);
 
-  // ⚠️ Menschliche Einschaetzung bleibt unberuehrt: beide stehen in der Liste
-  // HINTER dem Ziel, also wird nicht verschoben.
-  assert.equal(hubspot.darfPhaseSetzen("other", ziel), false, "Sonstiges");
-  assert.equal(hubspot.darfPhaseSetzen("5574730996", ziel), false, "Kein Interesse");
+  // ⚠️ ÜBERSCHRIEBEN, und das ist eine Kundenentscheidung vom 26.08.2026:
+  // "Sonstiges" und "Kein Interesse" stehen in der Rangfolge VOR dem Ziel, also
+  // hebt eine neue Anfrage sie an. Wer nach so einer Einordnung selbst ein
+  // Angebot anfragt, hat sein Desinteresse gerade widerlegt.
+  // Vorher standen beide hinter dem Ziel und blieben unberührt.
+  assert.equal(hubspot.darfPhaseSetzen("other", ziel), true, "Sonstiges");
+  assert.equal(hubspot.darfPhaseSetzen("5574730996", ziel), true, "Kein Interesse");
 
   // Unbekannte Phase auf einer der beiden Seiten: nicht anfassen.
   assert.equal(hubspot.darfPhaseSetzen("irgendwas", ziel), false);
@@ -727,6 +730,11 @@ test("Lifecycle: die Reihenfolge enthaelt genau die Phasen des Portals", () => {
   // Zusicherung ist die Bremse dafuer. Ein Umsortieren im Portal faellt
   // zusaetzlich bei "setup-hubspot.mjs --verify" auf.
   assert.deepEqual(hubspot.LIFECYCLE_REIHENFOLGE, [
+    // ⚠️ Die REIHENFOLGE ist hier mitgeprueft, nicht nur die Menge: sie
+    // entscheidet, wer ueberschrieben wird. Die ersten zwei stehen bewusst
+    // vor dem Ziel (Kundenentscheidung), die letzten drei bewusst dahinter.
+    "other",
+    "5574730996",
     "subscriber",
     "4000505062",
     "5520647375",
@@ -735,8 +743,6 @@ test("Lifecycle: die Reihenfolge enthaelt genau die Phasen des Portals", () => {
     "customer",
     "evangelist",
     "4003004610",
-    "other",
-    "5574730996",
   ]);
 });
 
