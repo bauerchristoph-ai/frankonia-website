@@ -132,6 +132,22 @@
     document.head.appendChild(s);
   }
 
+  /* Verfuegbare Breite im Formular messen. Fallback auf das Fenster, wenn der
+     Container noch keine Breite hat (etwa weil er ausgeblendet ist). */
+  function turnstileGroesse(behaelter) {
+    var breite = 0;
+    try {
+      breite = behaelter.getBoundingClientRect().width;
+      if (!breite && behaelter.parentElement) {
+        breite = behaelter.parentElement.getBoundingClientRect().width;
+      }
+    } catch (e) {
+      breite = 0;
+    }
+    if (!breite) breite = window.innerWidth || 0;
+    return breite < 300 ? "compact" : "flexible";
+  }
+
   function turnstileRendern(form) {
     var behaelter = form.querySelector("[data-turnstile]");
     if (!behaelter || turnstileKaputt) return;
@@ -151,9 +167,22 @@
         // mitten im weissen Formular; in der Ansicht sofort zu sehen, im Code
         // nicht.
         theme: "light",
-        // Kompakt, weil das Widget in einer weißen Formularkarte steht und
-        // die Standardbreite dort ausbricht.
-        size: "flexible",
+        // ⚠️⚠️ "flexible" FUELLT die Breite des Containers, hat aber ein
+        // MINIMUM VON 300px. Ist der Container schmaler, ragt das Widget
+        // heraus — gemeldet am 26.08.2026 mit einem Screenshot bei 310px
+        // Fensterbreite, wo in der weissen Karte nur ~207px Platz sind. Das
+        // laesst sich mit CSS nicht heilen: es ist ein iframe von Cloudflare,
+        // und ein overflow:hidden wuerde einen Teil des Bedienelements
+        // abschneiden.
+        // Deshalb unterhalb von 300px die kompakte Variante (150x140), die
+        // Cloudflare genau dafuer anbietet. Gemessen, nicht geschaetzt: die
+        // Breite kommt aus dem Container selbst, nicht aus window.innerWidth,
+        // weil zwischen Fenster und Widget die Karte samt Innenabstand liegt.
+        // ⚠️ Die Groesse wird EINMAL beim Rendern entschieden. Wer das Fenster
+        // waehrend des Ausfuellens verkleinert, behaelt die grosse Variante;
+        // ein Re-Render wuerde das Token verwerfen und den Besucher aus dem
+        // Formular werfen. Das ist der bessere Kompromiss.
+        size: turnstileGroesse(behaelter),
       });
       behaelter.setAttribute("data-widget-id", id);
     } catch (e) {

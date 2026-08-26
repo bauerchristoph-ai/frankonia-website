@@ -74,6 +74,20 @@
 }
 
 .conversion__form-wrap {
+  /* ⚠️⚠️ EIGENE HOVER-FARBE FÜR LINKS, und ohne sie wird der
+     Datenschutz-Link beim Überfahren unsichtbar. Gemeldet am 26.08.2026
+     („hover ... wird Text weiß — das darf bei weißem Hintergrund natürlich nie
+     sein“). `--color-link-hover` ist in tokens.css fest weiß, weil die Seite
+     dunkel ist; diese Karte malt ihre weiße Fläche aber SELBST und ist keine
+     .section--light, erbt deren Token-Umstellung also nicht.
+     Das ist derselbe Mechanismus, den der Kommentar zwei Zeilen weiter unten
+     für die TEXTFARBE beschreibt — die Hover-Farbe war dabei übersehen worden.
+     ⚠️ Als Token und nicht als Regel für den einen Link: so gilt es für jeden
+     Link, der künftig in dieser Karte landet. Fast-Schwarz, weil der
+     Ruhezustand hier schon blau ist und ein Hover deutlicher werden muss.
+     20,87:1. */
+  --color-link-hover: var(--color-logo-black);
+
   width: 100%;
   max-width: 38.75rem;
   /* Lift the form into a floating card with a soft drop shadow (client

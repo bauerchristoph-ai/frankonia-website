@@ -899,3 +899,154 @@
   color: var(--color-text);
   font-weight: 500;
 }
+
+/* ============================================================ Weiterlesen
+   Drei weiterführende Artikel am Ende jedes Ratgeber-Beitrags, direkt über dem
+   Fußbereich (Kundenwunsch 26.08.2026). Vorher hatten zwei der sieben Artikel
+   keinen einzigen Link auf einen anderen — der Ratgeber war eine Sammlung von
+   Einzelseiten, und ein Besucher, der einen Artikel gelesen hatte, kam nur über
+   den Zurück-Knopf weiter.
+
+   ⚠️ DIESER ABSCHNITT LIEGT AUF DEM SCHWARZ DER SEITE, nicht auf Weiß, und
+   deshalb ist es NICHT dieselbe Karte wie im Hub (.rg-card ist weiß mit
+   Schlagschatten). Auf Schwarz arbeitet ein Schatten kaum, und eine weiße Karte
+   direkt über dem schwarzen Fußbereich würde blenden. Es ist der dunkle Zwilling:
+   Füllung aus Weiß bei 4,5 %, Haarlinie, kein Schatten — dieselbe Entscheidung,
+   die die Leistungs-Karten auf /leistungen/ für dunkle Sektionen schon treffen.
+
+   ⚠️ KEIN PIXEL-ÜBERGANG davor oder danach: .rg-close darüber und der Fußbereich
+   darunter liegen auf derselben Fläche. Zwei gleiche Flächen bekommen keinen
+   Übergang (page-conventions §9.2) — ein Übergang würde Schwarz auf Schwarz
+   auflösen, also nichts. */
+.rg-weiter {
+  /* Der Abstand nach oben kommt von .rg-close; hier nur nach unten Luft, damit
+     der Fußbereich nicht klebt. */
+  padding-top: 0;
+}
+
+.rg-weiter__heading {
+  /* Bewusst KLEIN, nicht in der Sektions-Skala von main h2. Das ist eine
+     Zwischenüberschrift über einer Linkliste, kein neues Kapitel — in der
+     großen Skala würde sie schwerer wirken als der Artikel darüber. */
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-5);
+}
+
+.rg-weiter__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+}
+
+/* Drei nebeneinander erst, wenn eine Karte einen zweizeiligen Titel plus Teaser
+   trägt — dieselbe Grenze und dieselbe Begründung wie bei .rg-cards im Hub. */
+@media (min-width: 900px) {
+  .rg-weiter__list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 600px) and (max-width: 899.98px) {
+  .rg-weiter__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* Drei Karten in zwei Spalten lassen die dritte allein stehen; sie nimmt
+     deshalb die ganze Zeile — dasselbe Mittel wie bei den Fünfer-Listen der
+     Stadtseiten. */
+  .rg-weiter__list > li:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.rg-weiter__card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  /* Füllung statt Schatten: siehe Kopf dieses Blocks. */
+  background-color: rgb(255 255 255 / 0.045);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color var(--duration-base) var(--easing-standard),
+    border-color var(--duration-base) var(--easing-standard);
+}
+
+/* ⚠️ KEIN transform/translate im Hover, und das ist kein Geschmack: die Liste
+   trägt data-item-reveal="li", also animiert GSAP das <li> und schreibt
+   translate/rotate/scale INLINE — ein Hover-Versatz an der Karte wäre damit tot.
+   Genau dieser Fehler ist bei .city-why__item passiert und in CLAUDE.md
+   dokumentiert. Hier tragen Füllung und Rand den Zustand. */
+.rg-weiter__card:hover,
+.rg-weiter__card:focus-visible {
+  background-color: rgb(255 255 255 / 0.08);
+  border-color: var(--color-border-strong);
+}
+
+.rg-weiter__title {
+  margin: 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  /* Ein Titel, der als Fließtext gesetzt ist, nimmt Fließtext-Metriken —
+     design-system §2. Ohne das zieht base.css die -1px Laufweite der
+     Display-Größen mit, und bei 16px kleben die Buchstaben. */
+  letter-spacing: normal;
+  color: var(--color-text);
+}
+
+.rg-weiter__text {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+  color: var(--color-text-muted);
+  /* Deutsche Komposita in einer schmalen Spalte: base.css setzt hyphens auto,
+     was hier richtig ist — es sind echte Sätze, keine Beschriftungen. */
+}
+
+.rg-weiter__more {
+  /* margin-top: auto schiebt die Zeile an den unteren Rand, damit alle drei
+     Karten sie auf derselben Höhe tragen, egal wie lang der Teaser ist. */
+  margin-top: auto;
+  padding-top: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  /* ⚠️ Auf dieser dunklen Fläche ist --color-accent das helle Marken-Blau und
+     misst 6,8:1 — die eine Fläche, auf der das CTA-Blau als Text sicher ist. */
+  color: var(--color-accent);
+}
+
+.rg-weiter__arrow {
+  width: 1rem;
+  height: 1rem;
+  /* ⚠️ fill/stroke müssen hier stehen: die Angaben des Sprites leben in seinem
+     <g id="icon-defs"> und überleben ein <use> nicht. Ohne das rendert der Pfeil
+     als schwarzer Fleck — in diesem Projekt vier Mal passiert. */
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  rotate: 45deg;
+  transition: translate var(--duration-fast) var(--easing-standard);
+}
+
+.rg-weiter__card:hover .rg-weiter__arrow,
+.rg-weiter__card:focus-visible .rg-weiter__arrow {
+  translate: 3px -3px;
+}
+
+@media (max-width: 767.98px) {
+  .rg-weiter__card {
+    padding: var(--space-4);
+  }
+}

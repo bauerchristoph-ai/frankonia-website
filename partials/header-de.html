@@ -41,6 +41,20 @@
              1400) because logo + nav + CTA stopped fitting, so it was re-measured
              after adding this. -->
         <li><a class="site-nav__link" href="/">Startseite</a></li>
+
+        <!-- ⚠️ RATGEBER STEHT NUR IM DRAWER, nicht in der Desktop-Zeile, und
+             das ist eine Platzentscheidung des Kunden (26.08.2026: "oben das
+             Menü ist voll ... man könnte es im Tablet- und mobilen Menü
+             reinbauen"). Die Desktop-Zeile trägt schon Logo + 5 Punkte + den
+             CTA-Knopf; der Breakpoint wurde deswegen bereits drei Mal
+             angehoben (1024 -> 1200 -> 1320 -> 1400). Ein sechster Punkt
+             würde sie umbrechen.
+             ⚠️ Am Desktop ist der Ratgeber deshalb über den FUSSBEREICH
+             erreichbar — dort steht er auf allen 70 Seiten. Vorher war er von
+             genau 4 Seiten aus erreichbar, also praktisch unsichtbar.
+             Versteckt wird er per CSS (.site-nav__item--drawer-only), nicht
+             per zweitem Markup: ein Link, eine Wahrheit. -->
+        <li class="site-nav__item--drawer-only"><a class="site-nav__link" href="/ratgeber/">Ratgeber</a></li>
         <li class="site-nav__item site-nav__item--has-submenu">
           <a class="site-nav__link" href="/leistungen/">
             Leistungen

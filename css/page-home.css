@@ -2605,6 +2605,11 @@ main h2 {
    taller band for a more irregular dissolve edge) — keep these two
    values in sync if the band's height ever changes again. */
 .outfits {
+  /* ⚠️ Eigene Hover-Farbe für Links: diese Sektion malt ihr Weiß selbst und
+     ist keine .section--light, erbt deren Token also nicht. Ohne diese Zeile
+     setzt base.css `a:hover` auf --color-link-hover, und das ist in tokens.css
+     fest weiß — also weiß auf weiß. Gemeldet 26.08.2026. */
+  --color-link-hover: var(--color-logo-black);
   padding-top: calc(var(--space-9) + 200px);
   background-color: #FAFAFA;
   color: var(--color-gray);
@@ -3348,6 +3353,11 @@ main h2 {
    clears it comfortably, same threshold this token already relies on
    elsewhere. */
 .references {
+  /* ⚠️ Eigene Hover-Farbe für Links: diese Sektion malt ihr Weiß selbst und
+     ist keine .section--light, erbt deren Token also nicht. Ohne diese Zeile
+     setzt base.css `a:hover` auf --color-link-hover, und das ist in tokens.css
+     fest weiß — also weiß auf weiß. Gemeldet 26.08.2026. */
+  --color-link-hover: var(--color-logo-black);
   background-color: var(--color-white);
   color: var(--color-gray);
   /* Extra top space reserves the pixel-seam band (Social -> References) that
@@ -3987,6 +3997,11 @@ main h2 {
    Everything below that names a colour explicitly is here BECAUSE of that flip:
    this block's values were all calculated against black. */
 .coverage {
+  /* ⚠️ Eigene Hover-Farbe für Links: diese Sektion malt ihr Weiß selbst und
+     ist keine .section--light, erbt deren Token also nicht. Ohne diese Zeile
+     setzt base.css `a:hover` auf --color-link-hover, und das ist in tokens.css
+     fest weiß — also weiß auf weiß. Gemeldet 26.08.2026. */
+  --color-link-hover: var(--color-logo-black);
   background-color: var(--color-white);
   color: var(--color-gray);
   /* Matches .pixel-seam__band (200px / 120px mobile) — keep in sync. */
@@ -4644,6 +4659,11 @@ main h2 {
 }
 
 .faq {
+  /* ⚠️ Eigene Hover-Farbe für Links: diese Sektion malt ihr Weiß selbst und
+     ist keine .section--light, erbt deren Token also nicht. Ohne diese Zeile
+     setzt base.css `a:hover` auf --color-link-hover, und das ist in tokens.css
+     fest weiß — also weiß auf weiß. Gemeldet 26.08.2026. */
+  --color-link-hover: var(--color-logo-black);
   background-color: var(--color-white);
   color: var(--color-gray);
   /* Extra top space reserves the pixel-seam band (Coverage -> FAQ) that now
@@ -5213,6 +5233,11 @@ main h2 {
    unchanged.
    -------------------------------------------------------------------------- */
 .partners {
+  /* ⚠️ Eigene Hover-Farbe für Links: diese Sektion malt ihr Weiß selbst und
+     ist keine .section--light, erbt deren Token also nicht. Ohne diese Zeile
+     setzt base.css `a:hover` auf --color-link-hover, und das ist in tokens.css
+     fest weiß — also weiß auf weiß. Gemeldet 26.08.2026. */
+  --color-link-hover: var(--color-logo-black);
   background-color: var(--color-white);
   /* Half the usual section rhythm on top: this continues the white area the FAQ
      already opened rather than starting a new chapter. */

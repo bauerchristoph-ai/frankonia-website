@@ -378,6 +378,23 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ⚠️ UNTER 390px SCHRUMPFT DIE ZIFFER, und das ist die direkte Folge des
+   nowrap darüber: die Kacheln stehen in einem 2x2-Raster, bei 320px ist eine
+   Spalte 132,5px breit, und „1.000.000+“ braucht bei 36px etwa 185px. Ergebnis
+   war ein waagerechter Überlauf von 35px — gemessen, und in CLAUDE.md seit
+   Wochen als offener Rest notiert.
+   Die Alternative wäre eine einzelne Spalte gewesen; dann ist der Abschnitt
+   vier Reihen hoch und die Kacheln verlieren ihre Reihenwirkung. Deshalb
+   bleibt das Raster, und die Ziffer folgt der Breite.
+   ⚠️ Bei 390px und darüber ändert sich NICHTS: dort passt 36px, und das ist die
+   Breite, in der dieses Projekt sonst prüft. Erwartet: 320 → 25px, 360 → 28px,
+   389 → 30px. */
+@media (max-width: 389.98px) {
+  .ag-metric__value {
+    font-size: clamp(1.5rem, 7.8vw, 2.25rem);
+  }
+}
+
 /* The "+" and the "/" in brand blue (client 2026-08-10). They stay real text,
    never aria-hidden: "300+" and "4,7 / 5" mean different things without them.
    This section is on the page's own black, where blue-light measures 6.8:1 —

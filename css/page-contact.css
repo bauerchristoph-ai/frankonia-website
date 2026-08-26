@@ -701,6 +701,13 @@
    floating on a white page, so a hairline border defines the edge and the
    shadow carries the depth. Values copied from that rule, not re-invented. */
 .contact-form-card {
+  /* ⚠️ Eigene Hover-Farbe für Links, aus demselben Grund wie bei
+     .conversion__form-wrap: diese Karte malt ihr Weiß selbst und ist keine
+     .section--light, erbt deren Token also nicht. --color-link-hover ist in
+     tokens.css fest weiß (richtig für die dunkle Seite), also war der
+     Datenschutz-Link hier beim Überfahren unsichtbar. Gemessen 26.08.2026. */
+  --color-link-hover: var(--color-logo-black);
+
   background-color: var(--color-white);
   border: 1px solid rgb(1 1 1 / 0.06);
   border-radius: var(--radius-lg);

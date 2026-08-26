@@ -806,16 +806,27 @@ a.site-nav__link {
   font-weight: var(--font-weight-bold);
 }
 
-/* White hover, not the inherited accent-strong border from
-   .site-nav__list a:hover — the submenu panel sits on
-   --color-bg-elevated (gray) at desktop, where blue-dark only clears
-   ~2.5:1 (fails 3:1). Same fix already applied throughout the codebase
-   wherever a blue decoration lands on an elevated surface — see the
-   caveat in tokens.css. */
-.site-nav__submenu a:hover,
-.site-nav__submenu a:focus-visible {
-  color: var(--color-white);
-  border-bottom-color: var(--color-white);
+/* ⚠️⚠️ NUR IM DRAWER, und das Fehlen dieser Begrenzung war ein Fehler, der LIVE
+   war (gemeldet 2026-08-26: "hover über Alle Leistungen — Text wird weiß").
+   Diese Regel stammt aus der Zeit, als das Submenü-Panel auf
+   --color-bg-elevated (grau) lag; ihr eigener Kommentar sagte das noch. Seit dem
+   22.07.2026 ist das Panel am Desktop WEISS — weißer Text darauf ist unsichtbar.
+
+   Und sie traf nicht alle gleich, was das Finden erschwert hat:
+     · .site-nav__submenu-list a:hover ist ebenfalls (0,2,1) und steht SPÄTER,
+       gewinnt also — die zehn Leistungs- und Stadtlinks waren nie betroffen.
+     · .site-nav__submenu-all:hover ist (0,2,0) und VERLIERT. Genau dieser eine
+       Link wurde beim Hover weiß auf weiß.
+
+   Unterhalb von 1400px liegt das Submenü im schwarzen Drawer, dort ist weiß
+   richtig. Deshalb steht die Regel jetzt in diesem Media-Query statt frei.
+   ⚠️ Wer sie wieder herauszieht, macht den Fehler erneut. */
+@media (max-width: 1399.98px) {
+  .site-nav__submenu a:hover,
+  .site-nav__submenu a:focus-visible {
+    color: var(--color-white);
+    border-bottom-color: var(--color-white);
+  }
 }
 
 /* 1400px, not 1320px: raised again to make room for the wider nav-item
@@ -1535,5 +1546,25 @@ a.footer-pill:focus-visible {
   .whatsapp-button {
     width: 3rem;
     height: 3rem;
+  }
+}
+
+/* ⚠️ NUR IM DRAWER. Der Ratgeber ist ein Inhalts-Hub und gehört in die
+   Navigation — die Desktop-Zeile hat aber keinen Platz mehr (Logo + 5 Punkte +
+   CTA-Knopf; der Breakpoint wanderte deswegen schon von 1024 auf 1400, siehe
+   dessen Kommentar). Unterhalb von 1400px ist der Drawer eine Spalte und hat
+   reichlich Raum, also erscheint er dort — Kundenentscheidung vom 26.08.2026
+   ("oben das Menü ist voll ... man könnte es im Tablet- und mobilen Menü
+   reinbauen").
+   ⚠️ Am Desktop führt der FUSSBEREICH hin, auf allen 70 Seiten. Vorher war der
+   Ratgeber von genau 4 Seiten aus erreichbar, also praktisch unsichtbar.
+   ⚠️ display:none nimmt den Punkt am Desktop auch aus dem
+   Barrierefreiheits-Baum. Das ist beabsichtigt und dasselbe Verfahren, das
+   dieser Nav für seine anderen Ansichtswechsel schon benutzt; der Link bleibt
+   über den Fußbereich erreichbar, geht also nicht verloren.
+   Steht am Dateiende, damit er jede frühere Regel überschreibt. */
+@media (min-width: 1400px) {
+  .site-nav__item--drawer-only {
+    display: none;
   }
 }

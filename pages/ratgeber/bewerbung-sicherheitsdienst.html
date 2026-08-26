@@ -279,6 +279,51 @@
       </div>
     </section>
 
+
+    <!-- ⚠️ WEITERLESEN, auf allen sieben Artikeln (Kundenwunsch 26.08.2026:
+         "am Ende jedes Artikels vom Ratgeber sollten natürlich über dem Footer
+         dann auch noch weitere Artikel verlinkt sein, immer"). Vorher hatten
+         zwei der sieben KEINEN einzigen Link auf einen anderen Artikel — der
+         Ratgeber war damit eine Sammlung von Einzelseiten.
+         ⚠️ KEIN Pixel-Übergang davor: dieser Abschnitt liegt auf dem Schwarz
+         der Seite, genau wie .rg-close darüber und der Fußbereich darunter.
+         Zwei gleiche Flächen bekommen keinen Übergang (page-conventions §9.2).
+         ⚠️ Die drei Ziele sind thematisch gewählt, nicht chronologisch — die
+         Begründung steht im Generator, docs/design-sources/. -->
+    <section class="section rg-weiter">
+      <div class="container">
+        <h2 class="rg-weiter__heading">Weiterlesen</h2>
+        <ul class="rg-weiter__list" data-item-reveal="li">
+          <li>
+            <a class="rg-weiter__card" href="/ratgeber/voraussetzungen-sicherheitsdienst/">
+              <h3 class="rg-weiter__title">Voraussetzungen im Sicherheitsdienst: wer darf anfangen?</h3>
+              <p class="rg-weiter__text">Was du für Unterrichtung, Sachkunde und GSSK brauchst — und was danach noch kommt.</p>
+              <span class="rg-weiter__more">Artikel lesen
+                <svg class="rg-weiter__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a class="rg-weiter__card" href="/ratgeber/qualifikationen-sicherheitsdienst/">
+              <h3 class="rg-weiter__title">Qualifikationen im Sicherheitsdienst: Dauer und Kosten</h3>
+              <p class="rg-weiter__text">Unterrichtung, Sachkunde und GSSK im Vergleich: wie lange, wie teuer, wie schwer.</p>
+              <span class="rg-weiter__more">Artikel lesen
+                <svg class="rg-weiter__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a class="rg-weiter__card" href="/ratgeber/tariflohn-sicherheitsdienst/">
+              <h3 class="rg-weiter__title">Tariflohn im Sicherheitsdienst: was ihn wirklich bestimmt</h3>
+              <p class="rg-weiter__text">Warum die Tätigkeit über die Lohnstufe entscheidet und nicht das Zeugnis.</p>
+              <span class="rg-weiter__more">Artikel lesen
+                <svg class="rg-weiter__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
   </main>
 
   <!-- include: footer-de -->

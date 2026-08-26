@@ -26,6 +26,15 @@
   transition: top var(--duration-fast) var(--easing-standard);
 }
 
+/* ⚠️ Eigener Hover, aus demselben Grund wie bei .section--light: der
+   Skip-Link liegt auf --color-bg-inverse (weiß) mit dunkler Schrift, und
+   base.css würde ihn beim Hover auf --color-link-hover (weiß) setzen. Er
+   ist nur sichtbar, während er den Fokus hat — mit der Maus darüber zu
+   fahren ist selten, unsichtbar werden darf er trotzdem nicht. */
+.skip-link:hover {
+  color: var(--color-bg);
+}
+
 .skip-link:focus-visible {
   top: var(--space-4);
 }

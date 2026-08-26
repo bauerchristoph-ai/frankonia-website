@@ -3999,6 +3999,24 @@ main h2 {
   --color-accent-strong: var(--color-blue-dark);
   --color-accent-subtle: rgb(82 135 201 / 0.08);
   --color-focus-ring: var(--color-blue-dark);
+
+  /* ⚠️⚠️ OHNE DIESE ZEILE WIRD JEDER EINFACHE LINK HIER BEIM HOVER UNSICHTBAR,
+     und das war live (gemeldet 2026-08-26: "hover ... wird Text weiß - das darf
+     bei weißem Hintergrund natürlich nie sein"). `--color-link-hover` ist in
+     tokens.css fest `var(--color-white)` — richtig für die dunkle Seite, und
+     dieser Block hat es schlicht vergessen, während er --color-text und
+     --color-accent umstellt. Ergebnis: base.css setzt `a:hover { color:
+     var(--color-link-hover) }`, also weiß auf weiß, Kontrast 1,0.
+
+     ⚠️ Betroffen war nicht ein Link, sondern JEDER auf einer hellen Sektion,
+     der keine eigene Hover-Regel hat — gemessen etwa die drei
+     Orientierungs-Karten auf /leistungen/. Die Links, die schon eine eigene
+     Regel haben (FAQ, Telefon in Prosa, .service-link), waren nie betroffen;
+     genau das hat den Fehler so lange verdeckt.
+
+     Fast-Schwarz und nicht ein dunkleres Blau: der Ruhezustand ist hier schon
+     blau, ein Hover muss DEUTLICHER werden, nicht ähnlich. 20,87:1. */
+  --color-link-hover: var(--color-logo-black);
 }
 
 /* Headings inherit the section's body colour, so they need the darker value
