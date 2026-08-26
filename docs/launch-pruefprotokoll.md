@@ -912,7 +912,7 @@ rutscht der Name nach oben, es bleibt keine Lücke — angesehen, nicht nur gere
 
 ## 16 — Datenschutzerklärung überarbeitet, und ein Fehler, der die Seite ohne Fußbereich ausgeliefert hat
 
-Commit `PLATZHALTER` · `pages/datenschutz.html`, `docs/datenschutz-drittanbieter.md`
+Commit `7971319` · `pages/datenschutz.html`, `docs/datenschutz-drittanbieter.md`
 · **kein CSS, keine andere Seite**
 
 Auf deine Anweisung („Datenschutz — optimiere es einfach selbst so dass es am
