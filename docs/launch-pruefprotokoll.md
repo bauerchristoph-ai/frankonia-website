@@ -1032,7 +1032,7 @@ Benachrichtigung schickt und dem Absender eine Eingangsbestätigung.
 |---|---|---|
 | ☐ | Einwilligungsbanner | Beim ersten Aufruf erscheint der Cookiebot-Hinweis, **bevor** irgendetwas anderes lädt |
 | ☐ | Spamschutz ist trotzdem da | Im Formular steht der Cloudflare-Kasten — **auch wenn du den Banner ignorierst**. Das ist der Punkt, der sonst still fehlschlägt |
-| ☐ | Formularfelder | Vorname und Nachname getrennt in einer Zeile, E-Mail, Telefon (**freiwillig**), Unternehmen, Leistung, Nachricht |
+| ☐ | Formularfelder | Vorname und Nachname getrennt in einer Zeile, E-Mail, Telefon (**Pflicht**, seit 26.08. — siehe Abschnitt 18), Unternehmen, Leistung, Nachricht |
 | ☐ | Leistung ist vorbelegt | Auf `/objektschutz/` steht dort „Objektschutz", auf der Startseite bleibt die Auswahl offen |
 | ☐ | Zwei Haken, nicht einer | Datenschutz (Pflicht) und Marketing (freiwillig, **nicht** vorausgewählt) |
 | ☐ | Absenden | Es geht auf `/danke/`, nicht auf eine JSON-Seite |
@@ -1173,6 +1173,250 @@ zwei Builds parallel, einmal der Stand vor dem ersten Commit und einmal jetzt �
 **47 Pixel in beiden**, und kein einziges überstehendes Element liegt im
 Formular. Es ist also vorbestehend und gehört in einen eigenen Durchgang.
 
+⚠️ **NACHTRAG 26.08., und dieser Absatz war zu früh beruhigt:** in dem eigenen
+Durchgang (Abschnitt 18) waren es **zwei** Fehler übereinander. Der eine war
+tatsächlich vorbestehend — das Hero-Bild bei 320 Pixeln. Der andere lag **doch im
+Formular**, nur bei einer Breite, die ich nicht gemessen hatte: bei 320 Pixeln war
+die Feldspalte breiter als das Formular, auf allen 40 Seiten. Beides steht in
+Abschnitt 18; der Formularfehler ist behoben. Die Lehre für den nächsten A/B: „kein
+überstehendes Element im Formular" gilt nur für die Breiten, die man wirklich
+gemessen hat.
+
+## 18 — Deine sieben Punkte vom 26.08.: Telefon, HubSpot-Felder, Einwilligung, Doppelklick
+
+**Vier Antworten vorweg, weil sie Aufgaben von deiner Liste streichen.**
+
+**„d.frankonia-sicherheit.de läuft doch."** Stimmt, und ich hätte das selbst prüfen
+können, statt es dir aufzuschreiben. Nachgemessen: der Server antwortet mit **HTTP
+200** und liefert **322 KB** JavaScript für Container `GTM-NWLGMFJN` aus. Der Punkt
+ist damit erledigt und nicht mehr offen.
+
+**„Wieso Consent Mode deaktivieren?"** Das habe ich unklar formuliert — gemeint war
+das Gegenteil. Der Consent Mode **muss aktiviert werden**, und zwar im
+Cookiebot-Konto (Einstellung „Google Consent Mode"). Die Website bringt die Hälfte
+mit, die im Code steckt: sie setzt alle Kategorien vor dem Banner auf `denied` und
+lädt den Tag Manager erst danach. Solange die Integration im Konto aber
+ausgeschaltet ist, schreibt Cookiebot die Zustimmung nie zurück — es bleibt dauerhaft
+auf `denied`, und du siehst keine Conversions. **Das ist ein Häkchen im
+Cookiebot-Konto, kein Code.**
+
+**„AV-Verträge? Die sind doch logisch, wenn ich Kunde dort bin."** Fast. Kunde sein
+und einen Auftragsverarbeitungsvertrag haben ist rechtlich nicht dasselbe — aber bei
+HubSpot, Brevo und Cloudflare ist der AV-Vertrag **Teil der Nutzungsbedingungen, die
+du bei der Anmeldung akzeptiert hast** (HubSpot: „Data Processing Agreement" im
+Rahmen der Terms; Brevo und Cloudflare genauso). Es ist also nichts zu verhandeln
+und nichts zu unterschreiben. Was übrig bleibt, ist reine Ablage: **einmal
+herunterladen und zu den Unterlagen legen**, damit du bei einer Anfrage der
+Aufsichtsbehörde nicht suchen musst. Ich habe es in der Liste deshalb von „fehlt" auf
+„herunterladen" geändert.
+
+**„Kannst du nicht auf .env.local zugreifen?"** Ich kann Dateien auf diesem Rechner
+lesen — es gibt die Datei nur nicht. Im Projektverzeichnis liegt ausschließlich die
+`.env.example`, die ich angelegt habe. So gibst du mir die Werte:
+
+1. `.env.example` kopieren zu **`.env.local`** (gleiches Verzeichnis) und die Werte
+   dort eintragen. Die Datei ist über `.gitignore` ausgeschlossen, wird also nie
+   mitcommittet und landet nicht auf GitHub.
+2. Dieselben Werte in **Vercel → Settings → Environment Variables**. Ohne das läuft
+   die Live-Seite nicht, denn Vercel liest keine lokale Datei.
+
+⚠️ **Nicht in einen Chat kopieren, auch nicht hierher.** Ein Chatverlauf ist kein
+Geheimnisspeicher. Der Turnstile-**Site**-Key ist öffentlich und steht ohnehin im
+HTML; alles andere, besonders der HubSpot-Token und der Brevo-Schlüssel, gehört
+ausschließlich in die beiden Orte oben.
+
+### Telefon ist jetzt Pflichtfeld
+
+Auf allen Seiten mit dem gemeinsamen Formular. Das Feld heißt sichtbar „Telefon \*",
+und der Server weist eine Anfrage ohne Nummer ab.
+
+⚠️ **Das dreht meine Empfehlung um, und ich sage dazu, was es kostet**, damit du es
+nicht später suchen musst: jedes zusätzliche Pflichtfeld senkt die Zahl der
+abgeschickten Formulare. Wer gerade keine Nummer herausgeben will, bricht ab statt
+eine E-Mail-Anfrage zu schicken. Deine Entscheidung steht, sie ist umgesetzt, und der
+Weg zurück ist eine Zeile in zwei Dateien (`partials/lead-form.html` und
+`api/_lib/validate.js` — beide tragen einen Kommentar mit dieser Notiz). Wenn die
+Anfragen nach dem Launch spürbar zurückgehen, ist das der erste Schalter, an dem man
+dreht.
+
+Zwei Dinge dazu, die nicht offensichtlich sind:
+
+- **Die Pflicht steht an zwei Stellen und muss an beiden stehen.** Das `required` im
+  Markup ist Komfort — der Browser meldet es sofort. Die Prüfung auf dem Server ist
+  die verbindliche: ein Skript, das direkt an den Endpoint sendet, sieht das Markup
+  nie. Beide Stellen verweisen im Kommentar aufeinander.
+- **Das Bewerbungsformular auf `/jobs/` ist nicht betroffen** — das ist ein
+  HubSpot-Formular, das seine Felder aus HubSpot bezieht. Dort ist Telefon
+  ohnehin schon Pflicht.
+
+### Die HubSpot-Eigenschaftsfelder: nachweislich verknüpft, nicht nur wahrscheinlich
+
+Deine Sorge war berechtigt, und sie hat einen konkreten Grund: **HubSpot lehnt bei
+einer einzigen unbekannten Eigenschaft den GANZEN Aufruf mit 400 ab.** Ein Tippfehler
+in einem von fünfzehn Feldnamen kostet also nicht ein Feld, sondern den kompletten
+Kontakt. Und die Falle dabei ist, dass in HubSpot **der interne Name zählt, nicht die
+Beschriftung**: das Feld heißt intern `firstname`, angezeigt wird „Vorname".
+`first_name`, `firstName` oder „Vorname" führen alle drei zu 400.
+
+Drei Dinge sichern das jetzt ab:
+
+1. **Die Zuordnung steht als Tabelle an einer Stelle** (`api/_lib/hubspot.js`), nicht
+   verstreut im Code. Fünf HubSpot-Standardfelder (`firstname`, `lastname`, `email`,
+   `phone`, `company`) und zehn eigene, alle mit dem Präfix `website_`.
+2. **`node scripts/setup-hubspot.mjs --verify` liest diese Tabelle und vergleicht sie
+   mit deinem Portal.** Nicht mit einer zweiten, im Skript gepflegten Liste — die
+   wäre genau die Stelle, an der Code und CRM auseinanderlaufen. Geprüft wird
+   Existenz **und Typ** jeder Eigenschaft; ohne `--verify` legt dasselbe Skript die
+   fehlenden an. Es schreibt nie an bestehenden Feldern.
+3. **Ein Test prüft, dass die falschen Schreibweisen nicht im Aufruf landen** —
+   namentlich `first_name`, `firstName`, „Vorname", „Telefon" und die übrigen
+   Verwechslungskandidaten.
+
+⚠️ **Und für den Fall, dass trotzdem etwas fehlt, verliert der Lead nicht mehr:**
+antwortet HubSpot mit 400, sendet der Endpoint **automatisch ein zweites Mal, nur mit
+den fünf Standardfeldern**. Der Kontakt entsteht dann ohne die Zusatzangaben, und das
+Log nennt den Befehl zum Nachprüfen. Vorher wäre die Anfrage in diesem Fall
+vollständig verloren gewesen. Ein Test erzwingt genau diesen Ablauf.
+
+### Marketing-Einwilligung: One-to-One in HubSpot, Liste in Brevo
+
+Beides ist eingebaut und wird **nur bei gesetztem Haken** ausgeführt.
+
+- **HubSpot:** die Einwilligung wird über die Kommunikationseinstellungen auf den
+  Subscription-Typ „One to One" geschrieben, mit Rechtsgrundlage
+  `CONSENT_WITH_NOTICE` und einem Vermerk, welche Checkbox auf welcher Seite wann
+  gesetzt wurde. Das ist der Unterschied zwischen einem Häkchen und einem
+  **Nachweis**. Zusätzlich wird der Kontakt als Marketingkontakt markiert.
+- **Brevo:** der Kontakt wandert in die Marketingliste, denn in Brevo trägt die
+  Liste die Einwilligung — wer in keiner Liste ist, kann keine Kampagne bekommen.
+- **Ohne Haken passiert nichts von beidem.** Der Kontakt entsteht trotzdem, mit
+  `OPT_IN = false`, und bekommt weiter seine Eingangsbestätigung: die ist
+  transaktional und braucht keine Einwilligung, weil sie die Antwort auf seine eigene
+  Handlung ist.
+
+⚠️ **Zwei neue Variablen, und ohne sie wird nichts geraten:**
+`HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE` und `BREVO_MARKETING_LIST_ID`. Fehlen sie,
+protokolliert der Endpoint das und lässt die Anfrage durch — die Einwilligung ist
+dann vermerkt, aber nicht im CRM nachweisbar beziehungsweise der Kontakt in keinem
+Verteiler. **Eine erfundene ID wäre schlimmer:** sie würde jemanden in einen fremden
+Verteiler legen. Die richtigen IDs liest du aus:
+
+    HUBSPOT_SERVICE_KEY=… node scripts/setup-hubspot.mjs --verify
+    BREVO_API_KEY=…      node scripts/setup-brevo.mjs
+
+Das zweite Skript ist neu und **schreibt nichts**. Es prüft, was beim Formularversand
+still schiefgehen kann: **Brevo verwirft ein unbekanntes Attribut ohne Fehlermeldung.**
+Der Kontakt wird angelegt, die Antwort ist „erfolgreich", und der Vorname fehlt
+einfach. Das Skript vergleicht deshalb die Attributnamen, die der Code tatsächlich
+sendet, mit denen in deinem Konto, prüft Absender und Marketinglisten und sagt zur
+Transaktionsvorlage, ob sie aktiv ist und ob die Platzhalter darin vorkommen — eine
+Vorlage ohne `params.VORNAME` verschickt eine anonyme Mail, technisch erfolgreich und
+inhaltlich falsch.
+
+### Doppelklick-Sperre: was ich damit gemeint habe, und der Fehler dahinter
+
+Deine Frage war berechtigt, denn ich hatte es nur benannt, nicht erklärt. Es gab schon
+zwei Verteidigungslinien: der Absendeknopf sperrt sich beim ersten Klick, und der
+Server merkt sich die Antwort zu einem Schlüssel, den jedes Formular einmal beim
+Aufbau bekommt. **Die zweite hatte eine Lücke, und zwar genau im Doppelklick-Fall:**
+sie fragte „gibt es schon eine Antwort?" — bei zwei Klicks im Abstand von
+Millisekunden fanden beide **noch keine**, arbeiteten beide vollständig durch und
+erzeugten **zwei Kontakte, zwei Notizen und zwei Bestätigungsmails**. Die Sperre
+griff also erst, wenn die erste Anfrage bereits fertig war, und damit gerade dann
+nicht, wenn ein Doppelklick passiert.
+
+Jetzt wird der Schlüssel **sofort reserviert**. Wer als Zweiter kommt, wartet auf das
+Ergebnis des Ersten und bekommt dieselbe Antwort — auch dieselbe Ablehnung, falls ein
+Pflichtfeld fehlte. Ein Schlüssel wird genau einmal ausgeführt.
+
+⚠️ **Nur Erfolge werden aufbewahrt, Ablehnungen nicht**, und das ist der Teil, der
+leicht falsch gemacht wird. Der Schlüssel gehört zum **Formular**, nicht zum Klick.
+Würde eine Ablehnung zwischengespeichert, könnte derselbe Besucher dasselbe Formular
+nie mehr abschicken: das vergessene Pflichtfeld, das abgelaufene Spamschutz-Token,
+die zu schnell abgesendete Anfrage wären alle endgültig.
+
+**Zwei der vier neuen Tests würden ohne diese Änderung durchfallen** — ich habe es
+gegengeprüft, indem ich die Sperre kurz wieder herausgenommen habe. Ein Test, der auch
+ohne die Änderung bestünde, prüft nichts.
+
+⚠️ **Ehrliche Grenze, unverändert:** der Server merkt sich das im Arbeitsspeicher der
+Funktionsinstanz. Ein Doppelklick trifft praktisch immer dieselbe Instanz, deshalb
+wirkt die Sperre dort. Verteilt sich das auf zwei Instanzen, entstehen zwei Kontakte —
+HubSpot und Brevo führen sie über die E-Mail-Adresse zusammen, doppelt wären nur die
+Notiz und die Bestätigungsmail. Eine belastbare Zusicherung bräuchte einen
+gemeinsamen Speicher (Vercel KV oder Redis) und damit die erste
+Laufzeit-Abhängigkeit dieses Projekts. Das ist deine Entscheidung, nicht meine
+Nebenbei-Änderung.
+
+### Der Überlauf auf der Startseite — es waren zwei Fehler, einer davon meiner
+
+Du hast mir freigestellt, ihn zu beheben. Beim Nachmessen war es nicht der Fehler, den
+ich im letzten Bericht beschrieben hatte.
+
+**Erstens, und das war meiner:** in dem Formular, das ich in dieser Sitzung gebaut
+habe, war die Feldspalte bei 320 Pixeln Bildschirmbreite **300 Pixel breit in einem
+223 Pixel breiten Formular** — auf **jeder** der 40 Seiten mit Formular. Ursache ist
+eine Falle, die in diesem Projekt schon mehrfach dokumentiert ist: ein Eingabefeld
+bringt eine eigene Wunschbreite mit, und eine Grid-Spalte darf sie nicht unterbieten,
+solange man es ihr nicht ausdrücklich erlaubt. Ich hatte diese Erlaubnis nur den zwei
+halbbreiten Feldern gegeben, nicht den übrigen — **ein einziges Feld zieht die ganze
+Spalte auf**. Behoben, und die Eigenschaft steht jetzt einmal für alle Kinder statt
+klassenweise.
+
+**Zweitens, und das war nicht meiner:** die Kundenstimmen-Karten haben die Startseite
+im Bereich **768 bis 833 Pixel** um bis zu 62 Pixel überlaufen — genau die Breite
+eines iPads im Hochformat. Dieselbe Falle, an drei Karten in einer Reihe: gemessene
+Kette Karte 249 = Innenabstand 48 + Kopfzeile 201, und die Kopfzeile 201 = Avatar 44 +
+längstes Wort im Namensblock 109 + Google-Zeichen 20 samt Abständen. Drei mal 249 plus
+Abstände brauchen 795 Pixel, der Container gibt bei 768 aber nur 722 her. **Ab 834
+passt es von allein** — deshalb war der Fehler auf ein 66 Pixel breites Band
+beschränkt und in den üblichen Messbreiten unsichtbar.
+
+⚠️ **Mein erster Anlauf war eine Regression, und die Messung hat sie gefangen:** ich
+habe der Kopfzeile erlaubt umzubrechen, und das Google-Zeichen rutschte daraufhin auf
+**allen** Breiten in eine zweite Zeile, auch bei 1440 Pixeln, wo reichlich Platz ist.
+Der Grund ist, dass der Namensblock von Natur aus so breit ist wie Name und Rolle
+ungebrochen. Mit einer Flex-Basis von 0 wächst er stattdessen in den freien Raum, und
+umgebrochen wird nur noch, wenn der Platz wirklich fehlt.
+
+**Nachgemessen, A/B mit zwei Builds:** bei **900, 1024, 1440 und 1920 Pixeln sind alle
+Werte identisch** — Kartenbreite, Kartenhöhe, Abschnittshöhe, Seitenhöhe. Bei 834
+wird die Karte 4 Pixel schmaler, bei 768 verschwindet der Überlauf vollständig. Das
+Band, das du und ich schon abgenommen haben, ist also unberührt.
+
+⚠️ **Was bei 320 Pixeln übrig bleibt, ist vorbestehend und habe ich nicht angefasst:**
+das Hero-Bild der Startseite läuft dort um 36 Pixel über, bei 360 Pixeln um 9. Ich
+habe es per A/B gegen den Stand vor dieser Arbeit geprüft — **in beiden Builds
+dieselben Zahlen**. Es ist die Grenze, die in `CLAUDE.md` seit Juli als bewusst nicht
+verfolgt dokumentiert ist (kleinste Zielbreite dieses Projekts: 400 Pixel; jedes
+aktuelle Telefon ist mindestens 360 breit). Das Hero anzufassen wäre eine
+Designänderung an dem Element, das du am häufigsten überarbeitet hast — das gehört in
+einen eigenen Durchgang mit dir, nicht in eine Fehlerbehebung nebenbei. Bei **390
+Pixeln und darüber ist die Startseite auf allen gemessenen Breiten überlauffrei.**
+
+### Nachgemessen
+
+- **58 Tests grün** (vorher 48). Neu: sechs für die HubSpot-Feldzuordnung und die
+  Marketing-Einwilligung, vier für die Doppelklick-Sperre.
+- **Überlauf** auf Startseite, `/referenzen/`, `/jobs/` und `/danke/` bei 390, 768,
+  834, 1024 und 1440 Pixeln: **null**.
+- **Kundenstimmen-Karten** auf allen fünf Seiten, die sie benutzen, bei 768 bis 1440:
+  Google-Zeichen neben der Person, keine Zeile umgebrochen, keine Karte über ihrem
+  Container.
+- Alle berührten Dateien syntaktisch geprüft, `npm run build` läuft durch: **70
+  Seiten**.
+
+### Was davon noch bei dir liegt
+
+| ☐ | Was | Wo |
+|---|---|---|
+| ☐ | `.env.local` anlegen und ausfüllen | Projektverzeichnis, Vorlage ist `.env.example` |
+| ☐ | Dieselben Werte eintragen | Vercel → Settings → Environment Variables |
+| ☐ | Consent Mode **aktivieren** | Cookiebot-Konto |
+| ☐ | Beide Skripte einmal laufen lassen und die zwei IDs eintragen | `setup-hubspot.mjs --verify`, `setup-brevo.mjs` |
+| ☐ | Brevo-Transaktionsvorlage prüfen: aktiv, Platzhalter drin | Brevo-Konto, meldet auch das Skript |
+| ☐ | AV-Verträge herunterladen und ablegen | HubSpot, Brevo, Cloudflare |
+
 ---
 
 # Abschlussbericht
@@ -1300,6 +1544,7 @@ Was Variablen brauchen wird, sobald die jeweilige Entscheidung fällt:
 | ✅ | Spamschutz | Cloudflare Turnstile statt reCAPTCHA | **erledigt.** Turnstile setzt für die Prüfung keine Cookies und ist deshalb einwilligungsfrei — ein Spamschutz, der erst nach Cookie-Zustimmung lädt, schützt die Hälfte der Besucher nicht |
 | ✅ | Cookiebot | Domain-Gruppen-ID | **eingebaut.** ⚠️ Die Consent-Mode-Integration muss im Cookiebot-Konto noch **aktiviert** werden, sonst bleibt alles dauerhaft auf „verweigert" |
 | ✅ | Tag Manager | Container GTM-NWLGMFJN über `d.frankonia-sicherheit.de` | **Loader eingebaut.** Die Tags konfiguriert Christoph nach dem Launch; die CSP muss dann erweitert werden |
+| ✅ | Marketing-Einwilligung | `HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE`, `BREVO_MARKETING_LIST_ID` | **eingebaut am 26.08.** (Abschnitt 18). Die beiden IDs liest du mit den zwei Setup-Skripten aus; ohne sie wird nichts geraten |
 | ☐ | Google-Bewertung live statt gepflegt | Places-API-Schlüssel | fehlt, bewusst — braucht Abrechnung und Consent |
 
 ✅ **Der wichtigste Punkt dieser Liste ist erledigt.** Bis zum 26.08. stand hier:
@@ -1316,6 +1561,13 @@ Sie stehen vollständig im Abschnitt „Noch offen" direkt darüber. In einem Sa
 Hero-Foto der Startseite und vier Titelbilder für die neuen Ratgeber-Artikel, der
 Formularempfang, und nach dem Deploy die Live-Prüfung der Redirects samt der
 www-Umleitung in den Vercel-Einstellungen.
+
+⚠️ **Nachtrag 26.08.:** dazu kommt Abschnitt 18 — Telefon als Pflichtfeld, die
+nachweisbare Verknüpfung der HubSpot-Eigenschaftsfelder, die Marketing-Einwilligung
+in HubSpot und Brevo, die Doppelklick-Sperre und zwei behobene Überläufe. Was davon
+noch bei dir liegt, steht dort in einer eigenen Tabelle; die Kurzfassung ist:
+Zugangsdaten in `.env.local` und in Vercel eintragen, Consent Mode im
+Cookiebot-Konto aktivieren, die beiden Setup-Skripte einmal laufen lassen.
 
 Erledigt seit der ersten Fassung dieses Berichts: der Tippfehler in den zwei vCards
 (Abschnitt 13), die Google-Profil-URL fürs Badge (Abschnitt 13), die zehn Seiten ohne

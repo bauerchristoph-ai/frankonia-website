@@ -32,10 +32,25 @@
    Filled card, --radius-md (was --radius-lg): "moderate rounded corners",
    client brief 2026-07-21, the same less-soft direction taken elsewhere on the
    site. */
+/* ⚠️ 2026-08-26: DIESE KARTE HAT DIE STARTSEITE BEI 768px 62px BREIT
+   ÜBERLAUFEN LASSEN, und zwar über ihre min-content-Breite. Die Ursache
+   ist die in CLAUDE.md mehrfach dokumentierte Falle: die automatische
+   Mindestbreite eines Grid-Kindes ist inhaltsabhängig, also kann ein
+   1fr-Track NICHT unter die min-content-Breite seines Inhalts schrumpfen.
+   Gemessen war die Kette: Karte 249 = Innenabstand 48 + Kopfzeile 201,
+   und die Kopfzeile 201 = Avatar 44 + Abstand 12 + längstes Wort im
+   Namensblock 109 + Abstand 12 + Google-Zeichen 20. Drei Spuren zu 249
+   plus zwei Abstände brauchen 795px; der Container gibt bei 768px aber nur
+   722px her. Bei 834px passt es von allein, deshalb war der Fehler auf das
+   Band 768–833 beschränkt und in den üblichen Messbreiten unsichtbar.
+   Die drei Gegenmittel stehen hier, bei .testimonial__header und im Grid
+   von page-home.css — sie wirken nur zusammen. */
 .testimonial {
   display: flex;
   flex-direction: column;
   height: 100%;
+  /* Hebt die inhaltsabhängige Mindestbreite als Grid-/Flex-Kind auf. */
+  min-width: 0;
   padding: var(--space-5);
   border-radius: var(--radius-md);
   background-color: rgb(59 73 86 / 0.04);
@@ -46,6 +61,17 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  /* ⚠️ WRAP IST DAS EIGENTLICHE GEGENMITTEL, nicht Kosmetik: eine
+     nowrap-Zeile addiert Avatar, Name und Google-Zeichen zu einer
+     Mindestbreite, die keine Spalte mehr unterbieten kann. Mit wrap ist
+     die Mindestbreite nur noch die des breitesten Kindes (165 statt 201),
+     die Karte kommt auf 213 und passt in die 224px-Spur bei 768px.
+     ⚠️ Das ist selbstbegrenzend: gewickelt wird nur, wenn der Platz
+     wirklich fehlt — ab 834px bleibt die Zeile einzeilig, dort ändert
+     sich also nichts. Gemessen, nicht angenommen. Ein Zahlenwert (etwa
+     ein kleinerer Avatar) wäre die Alternative gewesen und wäre beim
+     nächsten längeren Kundennamen wieder gebrochen. */
+  flex-wrap: wrap;
   gap: var(--space-4);
   margin-bottom: var(--space-4);
 }
@@ -53,6 +79,18 @@
 .testimonial__person {
   display: flex;
   align-items: center;
+  /* ⚠️ flex: 1 1 0 IST PFLICHT, SOBALD DIE KOPFZEILE WICKELN DARF, und das
+     hat eine Messung gezeigt: die natürliche Breite dieses Blocks ist die
+     max-content-Breite von Name und Rolle (gemessen 320px), also größer als
+     die Kopfzeile — mit erlaubtem Wickeln rutschte das Google-Zeichen dadurch
+     auf ALLEN Breiten in die zweite Zeile, auch bei 1440px, wo reichlich Platz
+     ist. Mit Flex-Basis 0 wächst der Block stattdessen in den freien Raum,
+     genau wie vorher beim Schrumpfen aus nowrap. Gewickelt wird jetzt nur noch,
+     wenn 165 + 16 + 20 nicht mehr passen.
+     min-width: 0 gehört dazu: sonst hebelt die inhaltsabhängige Mindestbreite
+     die Flex-Basis wieder aus. */
+  flex: 1 1 0;
+  min-width: 0;
   gap: var(--space-3);
 }
 

@@ -159,15 +159,34 @@
 
 .conversion__form {
   display: grid;
-  grid-template-columns: 1fr;
+  /* ⚠️ minmax(0, 1fr), NICHT 1fr, und die Regel darunter gehört dazu. Bei
+     320px war die Spur gemessene 300px breit in einem 223px breiten
+     Formular — 36px waagerechter Überlauf auf JEDER Seite mit Formular. Die
+     Ursache ist die in CLAUDE.md mehrfach dokumentierte Falle: die
+     automatische Mindestbreite eines Grid-Kindes ist inhaltsabhängig, und
+     ein <input> bringt eine eigene Wunschbreite mit, die ein 1fr-Track nicht
+     unterbieten darf. Sichtbar war der Fehler erst unter 400px, also unter
+     der kleinsten Breite, in der dieses Projekt sonst messt. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6);
   /* No top margin: the card's own padding is the whole spacing now that the
      heading + lede live outside the card. */
 }
 
+/* ⚠️ Gilt für ALLE Kinder, nicht nur für die beiden halbbreiten Felder. Genau
+   das war der Fehler: .lead-form__half hatte min-width: 0, die übrigen Felder
+   nicht — und ein einziges Feld mit inhaltsabhängiger Mindestbreite zieht die
+   ganze Spur auf. Deshalb steht die Eigenschaft hier einmal für alle statt
+   klassenweise; die vorherige Einzelregel für .lead-form__half ist damit
+   überflüssig und entfernt. Die Klasse bleibt im Markup, weil sie die Absicht
+   benennt (siehe ihren Kommentar weiter unten). */
+.conversion__form > * {
+  min-width: 0;
+}
+
 @media (min-width: 640px) {
   .conversion__form {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 }
 
@@ -381,9 +400,9 @@
    verschiebt, sieht am Namen, dass die Nebeneinanderstellung gewollt war.
    Unter 640px liegen sie untereinander, was bei zwei kurzen Feldern auf einem
    Telefon richtig ist. */
-.lead-form__half {
-  min-width: 0;
-}
+/* Keine Deklarationen mehr: min-width: 0 gilt seit dem 26.08.2026 für alle
+   Kinder von .conversion__form (siehe oben). Die Klasse bleibt als Absicht
+   im Markup. */
 
 /* ---- Auswahlfeld "Leistung" --------------------------------------------
    Dieselbe Unterstrich-Optik wie die Textfelder. Ein `select` bringt von sich

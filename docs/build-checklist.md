@@ -107,6 +107,140 @@ SERVÍA SIN FOOTER DESDE EL BLOQUE J.** Toca `pages/datenschutz.html` y
   sonda que reporta que todo está roto casi siempre está rota ella.** Pasada a
   archivo con el Write tool — tercera vez hoy con la misma causa.
 
+**2026-08-26, MISMA SESIÓN — SIETE PUNTOS DEL CLIENTE SOBRE LA INTEGRACIÓN: TELEFON
+OBLIGATORIO, LAS PROPIEDADES DE HUBSPOT VERIFICABLES, LA EINWILLIGUNG DE MARKETING, Y
+LA SEMÁFORO DE DOBLE CLIC. Más dos overflows, uno de ellos MÍO.** Toca `api/_lib/`
+(guard, hubspot, brevo, validate), `api/forms/submit.js`, `partials/lead-form.html`,
+`css/{lead-form,testimonials,page-home}.css`, dos scripts de setup y los tests.
+**58 tests verdes** (eran 48).
+
+- ⚠️⚠️ **TELEFON ES OBLIGATORIO OTRA VEZ, Y ESO REVIERTE MI PROPIA RECOMENDACIÓN DEL
+  MISMO DÍA** (cliente: "kannst du telefon trotzdem überall pflicht machen"). Queda
+  anotado en los dos sitios porque **la obligatoriedad vive en DOS lugares y tiene
+  que vivir en los dos**: el `required` del markup es comodidad (el navegador avisa
+  al instante) y `FORM_TYPES.customer_inquiry.pflicht` de `validate.js` es la
+  verdadera — un script que postea directo al endpoint nunca ve el markup. El costo
+  está dicho en el protocolo: un campo obligatorio más baja la tasa de envío. Si las
+  consultas caen después del lanzamiento, ése es el primer interruptor.
+
+- **LA ZUORDNUNG DE HUBSPOT PASÓ DE CÓDIGO DISPERSO A UNA TABLA DECLARATIVA**
+  (`STANDARD_MAP` / `EIGEN_MAP` / `EIGEN_SERVER` en `api/_lib/hubspot.js`), y
+  `scripts/setup-hubspot.mjs` **la lee de ahí con `createRequire`** en vez de tener su
+  propia copia. Eso es el punto entero: una segunda lista mantenida a mano es
+  exactamente el lugar donde el código y el CRM se separan sin que nadie lo note.
+  - ⚠️ **HUBSPOT RECHAZA LA LLAMADA COMPLETA CON 400 SI UNA SOLA PROPIEDAD NO
+    EXISTE.** Un typo en uno de quince nombres no cuesta un campo, cuesta el
+    contacto. Y lo que cuenta es el **nombre interno, no la etiqueta**: es
+    `firstname`, no `first_name`, `firstName` ni "Vorname".
+  - ✅ **Y AHORA UN 400 NO PIERDE EL LEAD:** `kontaktUpsert()` reintenta
+    automáticamente **sólo con los cinco campos estándar** y registra el comando de
+    verificación. El contacto entra sin los extras en vez de no entrar. Un test
+    fuerza ese camino exacto.
+  - `--verify` no escribe nada y comprueba **existencia Y tipo**; sin la bandera crea
+    las diez propias en el grupo `website_integration`. Nunca toca una existente.
+  - Un test comprueba que las grafías equivocadas **no** aparecen en la llamada.
+
+- **MARKETING-EINWILLIGUNG, sólo con el tic.** HubSpot:
+  `/communication-preferences/v3/subscribe` sobre el tipo "One to One" con
+  `legalBasis: CONSENT_WITH_NOTICE` y el texto de qué checkbox, en qué página, cuándo
+  — eso es la diferencia entre un tic y un **nachweis**. Brevo: la lista de marketing,
+  porque **en Brevo la LISTA carga la einwilligung** (sin lista no hay campaña
+  posible).
+  - ⚠️ **SIN LAS DOS VARIABLES NUEVAS NO SE ADIVINA NADA.**
+    `HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE` y `BREVO_MARKETING_LIST_ID`: si faltan, se
+    protocoliza y la anfrage pasa igual. **Una ID inventada es peor que una ausente**
+    — metería a alguien en un verteiler ajeno.
+  - **La eingangsbestätigung sigue saliendo sin tic**: es transaccional, es la
+    respuesta a una acción del propio destinatario.
+
+- **`scripts/setup-brevo.mjs` (nuevo) NO ESCRIBE NADA, y existe por un modo de fallo
+  silencioso: BREVO DESCARTA UN ATRIBUTO DESCONOCIDO SIN AVISAR.** El contacto se
+  crea, la respuesta es 201, y el nombre simplemente no está. El script compara los
+  atributos que el código **realmente envía** (llamando a `kontaktAttribute()` con
+  datos de ejemplo, no una lista aparte) contra la cuenta, revisa absender y listas, y
+  de la plantilla transaccional dice si está **activa** y si contiene los
+  placeholders — una plantilla sin `params.VORNAME` manda un correo anónimo,
+  técnicamente exitoso y materialmente equivocado.
+
+- ⚠️⚠️ **DEFECTO REAL EN LA IDEMPOTENCIA: LA SEMÁFORO DE DOBLE CLIC NO CUBRÍA EL
+  DOBLE CLIC.** `idempotenzTreffer()` preguntaba "¿ya hay una respuesta?", y con dos
+  clics separados por milisegundos **ninguno la encontraba**: los dos trabajaban
+  completo y creaban **dos contactos, dos notas y dos mails de confirmación**. La
+  semáforo sólo actuaba cuando la primera petición ya había TERMINADO, o sea
+  justamente cuando no hay doble clic.
+  - Ahora el schlüssel se **reserva de entrada**. El segundo espera el resultado del
+    primero y devuelve la misma respuesta — incluida la misma ablehnung.
+  - ⚠️ **SÓLO SE CONSERVAN LOS ÉXITOS, las ablehnungen no**, y eso no es un detalle:
+    el schlüssel pertenece **al formulario, no al clic** (se genera una vez por
+    formulario construido, en `js/lead-form.js`). Conservar un rechazo dejaría al
+    visitante sin poder reenviar nunca ese formulario — el campo olvidado, el token
+    de Turnstile caducado y el envío demasiado rápido serían definitivos.
+  - **Un wachhund de 30s libera una reserva que nunca se cierra** (una excepción
+    inesperada), con `unref()` para no mantener vivo ni el proceso ni un test. Sin él
+    el schlüssel quedaría bloqueado diez minutos.
+  - **La respuesta se ESPEJA según la petición que repite, no según la primera:** se
+    guarda sólo la nutzlast JSON, y si el repetidor no acepta JSON obtiene la
+    redirección a `/danke/` o una página HTML. Un visitante sin JavaScript no puede
+    terminar viendo JSON crudo.
+  - ✅ **DOS DE LOS CUATRO TESTS NUEVOS FALLAN SIN EL CAMBIO** — comprobado quitando
+    la reserva y volviéndola a poner. Un test que pasaría igual sin el arreglo no
+    prueba nada.
+  - ⚠️ Límite honesto, sin cambio: el estado vive en la memoria de la instancia. Dos
+    instancias → dos contactos (HubSpot y Brevo los unen por e-mail; se duplicarían
+    la nota y el correo). Una garantía real necesita almacenamiento compartido, o sea
+    la primera dependencia de runtime del proyecto: decisión del cliente.
+
+- ⚠️⚠️ **DOS OVERFLOWS, Y EL PRIMERO ERA MÍO — de esta misma sesión.** El informe
+  anterior decía "47px a 768, preexistente, verificado por A/B, otro pase". Medido de
+  verdad, eran **dos defectos superpuestos**:
+  1. **EL FORMULARIO, en las 40 páginas que lo llevan:** a 320px la pista del grid
+     medía **300px dentro de un formulario de 223px**. La trampa que este archivo ya
+     documenta varias veces — la mínima automática de un ítem de grid es
+     content-based y un `<input>` trae su propio ancho deseado — y yo le había dado
+     `min-width: 0` **sólo a los dos campos `--half`**. **Un solo campo sin la
+     propiedad estira la pista entera.** Ahora es `minmax(0, 1fr)` + una regla para
+     TODOS los hijos, y la regla suelta de `.lead-form__half` se borró en vez de
+     quedar como segundo mecanismo para la misma decisión.
+  2. **LAS TARJETAS DE KUNDENSTIMMEN, banda 768–833:** hasta **62px**, o sea el ancho
+     exacto de un iPad en vertical. La cadena medida: tarjeta 249 = padding 48 +
+     cabecera 201, y 201 = avatar 44 + palabra más larga del bloque de nombre 109 +
+     el glifo de Google 20 con sus gaps. Tres por 249 más gaps piden 795px y el
+     container da 722 a 768. **A 834 entra solo**, y por eso el defecto vivía en una
+     banda de 66px invisible en los anchos habituales de medición.
+     - ⚠️ **MI PRIMER ARREGLO FUE UNA REGRESIÓN Y LA CAZÓ LA MEDICIÓN:** dejar que la
+       cabecera envuelva mandó el glifo de Google a una segunda línea **en TODOS los
+       anchos**, también a 1440. La causa es que el bloque de nombre tiene el ancho
+       max-content de nombre + rol; con **`flex: 1 1 0`** crece hacia el espacio libre
+       en lugar de reclamarlo, y sólo envuelve cuando falta de verdad.
+     - **A/B con dos builds: a 900 / 1024 / 1440 / 1920 TODOS los valores idénticos**
+       (ancho y alto de tarjeta, alto de sección, alto de página). A 834 la tarjeta
+       pierde 4px; a 768 el overflow desaparece. La banda ya revisada por el cliente
+       no se movió.
+  - ⚠️ **LO QUE QUEDA A 320 ES PREEXISTENTE Y NO SE TOCÓ:** el hero del homepage,
+    36px a 320 y 9px a 360, **idéntico en los dos builds del A/B**. Es el límite que
+    CLAUDE.md documenta desde julio como deliberadamente no perseguido. Tocar el hero
+    es un cambio de diseño en el elemento que el cliente más ha revisado.
+    ⚠️ **De paso corrige una afirmación de CLAUDE.md**: dice "sin scroll horizontal a
+    360"; hoy son 9px. A 390 y por encima está limpio.
+
+- ⚠️ **Trampas de entorno de esta pasada, todas van a volver:**
+  - **`cd` PERSISTE ENTRE LLAMADAS DE BASH.** Después de arrancar un servidor con
+    `cd dist`, leí `css/testimonials.css` **del build minificado** y saqué de ahí los
+    anchors del parche — que no existen en la fuente. No se aplicó nada por suerte.
+    **Comprobar `pwd` antes de derivar un anchor.**
+  - **`npm run build` falla con EPERM si un proceso tiene su cwd dentro de `dist/`.**
+    El servidor de medición tiene que arrancarse desde fuera y recibir la raíz como
+    argumento.
+  - **`netstat` en alemán imprime `ABHÖREN`, no `LISTENING`**, así que un
+    `grep LISTENING` para matar el servidor no encuentra nada y falla en silencio.
+  - **Un backtick dentro de un template literal rompe el script de parche** — cuarta
+    vez. Los parches con prosa alemana se escriben con el Write tool.
+  - **`--window-size` no da un viewport real** (mínimo de layout ~500px): hace falta
+    `Emulation.setDeviceMetricsOverride`, y con `mobile: true` el viewport de layout
+    **se ensancha solo** cuando hay overflow — a 768 medí `innerWidth` 815 y eso ERA
+    el defecto, no un error de la sonda. Para medir un overflow hay que usar
+    `mobile: false` y `documentElement.clientWidth`.
+
 **2026-08-26 — FORMULAR-INTEGRATION: LOS 45 FORMULARIOS DEJAN DE SER `action="#"`.
 Endpoint propio en Vercel, HubSpot + Brevo + Turnstile, Consent + GTM en las 70
 páginas, `/danke/`, y el formulario compartido reconstruido en 44 páginas.** Cuatro

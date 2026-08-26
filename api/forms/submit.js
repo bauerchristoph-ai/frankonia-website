@@ -143,6 +143,36 @@ function htmlAntwort(res, status, titel, text) {
   );
 }
 
+/**
+ * Gibt die Antwort einer bereits bearbeiteten Anfrage erneut aus.
+ *
+ * ⚠️ DIE FORM RICHTET SICH NACH DIESER Anfrage, nicht nach der ersten:
+ * gespeichert wird nur die JSON-Nutzlast, und ob daraus eine Weiterleitung
+ * oder eine HTML-Seite wird, entscheidet der Accept-Kopf des Wiederholers.
+ * Sonst könnte ein Besucher ohne JavaScript eine JSON-Antwort angezeigt
+ * bekommen, weil derselbe Schlüssel vorher aus einem Skript kam.
+ */
+function spiegeln(req, res, ergebnis) {
+  const status = ergebnis && ergebnis.status ? ergebnis.status : 200;
+  const nutzlast = (ergebnis && ergebnis.nutzlast) || { ok: false };
+  if (!willJson(req)) {
+    if (nutzlast.ok) {
+      res.setHeader("Location", "/danke/");
+      res.setHeader("Cache-Control", "no-store");
+      return res.status(303).end();
+    }
+    return htmlAntwort(
+      res,
+      status,
+      "Anfrage nicht übernommen",
+      nutzlast.hinweis ||
+        "Die Anfrage konnte nicht übernommen werden. Bitte versuchen Sie es noch einmal " +
+          "oder rufen Sie uns an."
+    );
+  }
+  return antwort(res, status, nutzlast);
+}
+
 function antwort(res, status, nutzlast) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   // Kein Zwischenspeichern: die Antwort ist pro Anfrage verschieden und
@@ -181,11 +211,42 @@ module.exports = async function handler(req, res) {
      Daten. Deshalb ist es unbedenklich, diese Prüfung vor Turnstile zu
      stellen — siehe die Begründung im Kopf dieser Datei. */
   const idemKey = String(roh.idempotency_key || "").slice(0, 64);
-  const treffer = guard.idempotenzTreffer(idemKey);
-  if (treffer) {
+  const anspruch = guard.idempotenzBeanspruchen(idemKey);
+
+  if (anspruch.art === "fertig") {
     log.info(submissionId, "idempotenz: Wiederholung, gespeicherte Antwort");
-    return antwort(res, 200, treffer);
+    return spiegeln(req, res, anspruch.ergebnis);
   }
+
+  /* ⚠️ DER GLEICHZEITIGE FALL, und der ist der eigentliche Doppelklick: die
+     erste Anfrage läuft noch, also gibt es noch keine gespeicherte Antwort.
+     Vorher liefen dann BEIDE vollständig durch und erzeugten zwei Kontakte,
+     zwei Notizen und zwei Bestätigungsmails. Jetzt hängt der Zweite am
+     Ergebnis des Ersten und gibt dieselbe Antwort aus.
+     Liefert der Erste nichts — unerwartete Ausnahme oder Zeitüberschreitung
+     —, arbeitet dieser Versuch selbst weiter. Ein doppelter Kontakt ist
+     immer noch besser als eine verlorene Anfrage. */
+  if (anspruch.art === "laeuft") {
+    const ergebnis = await anspruch.warten();
+    if (ergebnis) {
+      log.info(submissionId, "idempotenz: gleichzeitiger Doppelklick, Antwort der ersten Anfrage");
+      return spiegeln(req, res, ergebnis);
+    }
+    log.warn(submissionId, "idempotenz: erste Anfrage ohne Ergebnis, dieser Versuch arbeitet selbst");
+  }
+
+  /* ⚠️⚠️ AB HIER IST DER SCHLÜSSEL RESERVIERT. Jeder Ausgang muss
+     anspruch.abschliessen() aufrufen — sonst hängt ein gleichzeitiger
+     Doppelklick bis zur Zeitüberschreitung und der Schlüssel bleibt bis zum
+     Wachhund reserviert. Der zweite Parameter sagt, ob die Antwort
+     AUFBEWAHRT wird: nur Erfolge. Eine Ablehnung darf nicht konserviert
+     werden, weil der Schlüssel zum FORMULAR gehört und nicht zum Klick —
+     sonst könnte der Besucher nach einem vergessenen Pflichtfeld nie mehr
+     absenden. Ausführliche Begründung in api/_lib/guard.js. */
+  const fertig = (status, nutzlast) => {
+    anspruch.abschliessen({ status, nutzlast }, status === 200 && nutzlast.ok === true);
+    return antwort(res, status, nutzlast);
+  };
 
   /* ---- 2. Honeypot ------------------------------------------------------
      ⚠️ ANTWORT IST 200 UND DIE ANFRAGE WIRD STILL VERWORFEN. Dem Bot nicht
@@ -194,18 +255,18 @@ module.exports = async function handler(req, res) {
      Das Feld heißt `website` — so wie in den bestehenden Formularen. */
   if (String(roh.website || "").trim()) {
     log.info(submissionId, "honeypot: still verworfen");
-    return antwort(res, 200, { ok: true, submission_id: submissionId });
+    return fertig(200, { ok: true, submission_id: submissionId });
   }
 
   /* ---- 3. Mindestzeit --------------------------------------------------- */
   if (guard.zuSchnell(roh.rendered_at)) {
     log.info(submissionId, "mindestzeit: still verworfen");
-    return antwort(res, 200, { ok: true, submission_id: submissionId });
+    return fertig(200, { ok: true, submission_id: submissionId });
   }
 
   /* ---- 4. Rate-Limit --------------------------------------------------- */
   if (guard.rateLimited(ip, submissionId)) {
-    return antwort(res, 429, {
+    return fertig(429, {
       ok: false,
       fehler: "zu_viele_anfragen",
       hinweis: "Bitte rufen Sie uns an, wenn es dringend ist.",
@@ -216,6 +277,8 @@ module.exports = async function handler(req, res) {
   const tokenFeld = roh["cf-turnstile-response"] || roh.turnstile_token;
   const ts = await turnstile.verify(tokenFeld, ip, submissionId);
   if (!ts.ok) {
+    const n = { ok: false, fehler: "spamschutz", grund: ts.grund };
+    anspruch.abschliessen({ status: 400, nutzlast: n }, false);
     if (!willJson(req)) {
       return htmlAntwort(
         res,
@@ -225,7 +288,7 @@ module.exports = async function handler(req, res) {
           "oder rufen Sie uns an."
       );
     }
-    return antwort(res, 400, { ok: false, fehler: "spamschutz", grund: ts.grund });
+    return antwort(res, 400, n);
   }
 
   /* ---- 6. Validieren --------------------------------------------------- */
@@ -233,6 +296,8 @@ module.exports = async function handler(req, res) {
   if (!geprueft.ok) {
     // Feldnamen, keine Werte — die Antwort geht an den Client zurück.
     log.info(submissionId, "validierung: abgelehnt", { felder: geprueft.fehler });
+    const n = { ok: false, fehler: "validierung", felder: geprueft.fehler };
+    anspruch.abschliessen({ status: 400, nutzlast: n }, false);
     if (!willJson(req)) {
       return htmlAntwort(
         res,
@@ -242,7 +307,7 @@ module.exports = async function handler(req, res) {
           "rufen Sie uns einfach an."
       );
     }
-    return antwort(res, 400, { ok: false, fehler: "validierung", felder: geprueft.fehler });
+    return antwort(res, 400, n);
   }
   const d = geprueft.daten;
   log.info(submissionId, "eingang", { form_type: d.form_type, service: d.service || "-", opt_in: d.marketing_opt_in });
@@ -267,6 +332,14 @@ module.exports = async function handler(req, res) {
       brevo: bv.schritte,
       form_type: d.form_type,
     });
+    const n = {
+      ok: false,
+      fehler: "zustellung",
+      submission_id: submissionId,
+      hinweis:
+        "Ihre Anfrage konnte technisch nicht übermittelt werden. Bitte rufen Sie uns an: +49 951 964352-0",
+    };
+    anspruch.abschliessen({ status: 502, nutzlast: n }, false);
     if (!willJson(req)) {
       return htmlAntwort(
         res,
@@ -276,13 +349,7 @@ module.exports = async function handler(req, res) {
           "wir nehmen sie sofort telefonisch auf. Vorgangsnummer: " + submissionId + "."
       );
     }
-    return antwort(res, 502, {
-      ok: false,
-      fehler: "zustellung",
-      submission_id: submissionId,
-      hinweis:
-        "Ihre Anfrage konnte technisch nicht übermittelt werden. Bitte rufen Sie uns an: +49 951 964352-0",
-    });
+    return antwort(res, 502, n);
   }
 
   const nutzlast = {
@@ -293,7 +360,9 @@ module.exports = async function handler(req, res) {
     form_type: d.form_type,
     service: d.service || null,
   };
-  guard.idempotenzSpeichern(idemKey, nutzlast);
+  // Aufbewahren: eine spätere Wiederholung desselben Schlüssels bekommt genau
+  // diese Antwort, ohne HubSpot und Brevo noch einmal anzufassen.
+  anspruch.abschliessen({ status: 200, nutzlast }, true);
 
   // Teilerfolge sind kein Fehler für den Besucher, aber sie müssen sichtbar
   // sein: sonst fällt ein dauerhaft kaputter Brevo-Schritt monatelang nicht

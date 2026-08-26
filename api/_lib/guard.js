@@ -4,9 +4,11 @@
  * ⚠️⚠️ EHRLICHE GRENZE DIESER DATEI, VORWEG: der Zustand liegt IM
  * ARBEITSSPEICHER DER FUNKTIONSINSTANZ. Serverlose Funktionen teilen keinen
  * Speicher, und eine kalte Instanz startet leer. Das heißt:
- *   · Ein Doppelklick wird zuverlässig gefangen, weil beide Klicks binnen
- *     Millisekunden kommen und praktisch immer dieselbe warme Instanz
- *     treffen.
+ *   · Ein Doppelklick wird gefangen, weil beide Klicks binnen Millisekunden
+ *     kommen und damit praktisch immer dieselbe warme Instanz treffen. Auf
+ *     zwei Instanzen verteilt greift die Sperre NICHT — dann entstehen zwei
+ *     Kontakte. HubSpot führt sie über die E-Mail zusammen, Brevo ebenso;
+ *     doppelt wären nur die Notiz und die Bestätigungsmail.
  *   · Ein verteilter Angriff von vielen IPs wird NICHT gefangen; dagegen
  *     hilft Turnstile, nicht diese Datei.
  *   · Ein hartnäckiger Angreifer von einer IP kann das Limit umgehen, indem
@@ -28,6 +30,18 @@ const MAX_PRO_FENSTER = 5;
 // Idempotenz: so lange wird das Ergebnis zu einem Schlüssel behalten.
 const IDEMPOTENZ_MS = 10 * 60 * 1000;
 
+// ⚠️ Notbremse für eine Reservierung, die nie abgeschlossen wird — etwa weil
+// der Handler eine unerwartete Ausnahme wirft. Ohne sie bliebe der Schlüssel
+// bis IDEMPOTENZ_MS blockiert, und der Besucher könnte dasselbe Formular zehn
+// Minuten lang nicht erneut abschicken. Der Wert liegt über jeder möglichen
+// Laufzeit der Funktion (Vercel bricht vorher ab), greift also im Normalfall
+// nie.
+const RESERVIERUNG_MS = 30000;
+
+// So lange wartet eine zweite, gleichzeitige Anfrage auf das Ergebnis der
+// ersten. Danach gibt sie auf — siehe warten().
+const WARTEN_MAX_MS = 25000;
+
 // Mindestzeit zwischen Formularaufruf und Absenden.
 // ⚠️ 3 Sekunden ist der Richtwert aus dem Auftrag, und er ist ein Kompromiss:
 // ein Mensch, der ein Formular mit Vorname, Nachname, E-Mail, Unternehmen und
@@ -42,7 +56,7 @@ const MINDESTZEIT_MS = 3000;
 const MAX_EINTRAEGE = 5000;
 
 const ipZaehler = new Map(); // ip -> Zeitstempel[]
-const idempotenz = new Map(); // key -> { zeit, antwort }
+const idempotenz = new Map(); // key -> { zeit, ergebnis, warteschlange, loesen, wachhund }
 
 function aufraeumen(map, maxAlter) {
   const jetzt = Date.now();
@@ -87,17 +101,103 @@ function rateLimited(ip, submissionId) {
   return false;
 }
 
-/** Liefert eine gespeicherte Antwort zu diesem Schlüssel, oder null. */
-function idempotenzTreffer(key) {
-  if (!key) return null;
-  aufraeumen(idempotenz, IDEMPOTENZ_MS);
-  const e = idempotenz.get(key);
-  return e ? e.antwort : null;
+/* ============================================ Idempotenz / Doppelklick
+ *
+ * ⚠️⚠️ DER SCHLÜSSEL WIRD SOFORT RESERVIERT, NICHT ERST BEIM SPEICHERN DER
+ * ANTWORT — und das ist der eigentliche Punkt dieses Abschnitts. Vorher stand
+ * hier ein reines "gibt es schon eine Antwort?": zwei Klicks im Abstand von
+ * Millisekunden fanden beide nichts, arbeiteten beide vollständig durch und
+ * erzeugten zwei Kontakte, zwei Notizen und zwei Bestätigungsmails. Die Sperre
+ * griff erst, wenn die erste Anfrage bereits FERTIG war — also genau dann
+ * nicht, wenn ein Doppelklick passiert.
+ *
+ * Jetzt gilt: ein Schlüssel wird genau einmal ausgeführt. Wer als Zweiter
+ * kommt, wartet auf das Ergebnis des Ersten und bekommt dieselbe Antwort.
+ *
+ * ⚠️ NUR ERFOLGE WERDEN AUFBEWAHRT, Ablehnungen nicht — und das ist kein
+ * Detail. Der Schlüssel entsteht EINMAL JE AUFGEBAUTEM FORMULAR
+ * (js/lead-form.js), nicht je Klick. Würde eine Ablehnung zwischengespeichert,
+ * könnte derselbe Besucher dasselbe Formular nie mehr abschicken: die zu früh
+ * abgesendete Anfrage, das vergessene Pflichtfeld, das abgelaufene
+ * Turnstile-Token wären alle endgültig. Eine Ablehnung gibt die Reservierung
+ * deshalb wieder frei. Der gleichzeitig wartende Doppelklick sieht sie
+ * trotzdem — er hängt am selben Versprechen — nur wird sie nicht konserviert.
+ */
+
+function warten(eintrag) {
+  return Promise.race([
+    eintrag.warteschlange,
+    new Promise((r) => {
+      const t = setTimeout(() => r(null), WARTEN_MAX_MS);
+      if (t.unref) t.unref();
+    }),
+  ]);
 }
 
-function idempotenzSpeichern(key, antwort) {
+/**
+ * Beansprucht den Schlüssel. Liefert eines von drei Ergebnissen:
+ *   { art: "fertig", ergebnis }   — es gibt schon eine gespeicherte Antwort
+ *   { art: "laeuft", warten }     — eine andere Anfrage arbeitet gerade daran
+ *   { art: "frei", abschliessen } — reserviert, der Aufrufer ist zuständig
+ *
+ * ⚠️ OHNE SCHLÜSSEL gibt es "frei" mit einem abschliessen(), das nichts tut.
+ * Ein Besucher ohne JavaScript liefert keinen Schlüssel, und der darf deswegen
+ * nicht abgewiesen werden.
+ */
+function idempotenzBeanspruchen(key) {
+  if (!key) return { art: "frei", abschliessen: () => {} };
+  aufraeumen(idempotenz, IDEMPOTENZ_MS);
+
+  const da = idempotenz.get(key);
+  if (da && da.ergebnis) return { art: "fertig", ergebnis: da.ergebnis };
+  // Das abschliessen() ist ein Nichtstun und trotzdem wichtig: gibt die erste
+  // Anfrage kein Ergebnis zurueck, arbeitet der Wartende selbst weiter und
+  // ruft es auf seinen Ausgangspfaden auf. Ohne diesen Platzhalter wuerde er
+  // dabei ueber eine fehlende Funktion stolpern.
+  if (da && da.warteschlange)
+    return { art: "laeuft", warten: () => warten(da), abschliessen: () => {} };
+
+  let loesen;
+  const eintrag = {
+    zeit: Date.now(),
+    ergebnis: null,
+    warteschlange: new Promise((r) => {
+      loesen = r;
+    }),
+  };
+  eintrag.loesen = loesen;
+  // Der Wachhund gibt eine hängengebliebene Reservierung von selbst frei.
+  // unref(), damit ein offener Timer weder den Prozess noch einen Testlauf am
+  // Leben hält.
+  eintrag.wachhund = setTimeout(() => {
+    const e = idempotenz.get(key);
+    if (e && !e.ergebnis) {
+      if (e.loesen) e.loesen(null);
+      idempotenz.delete(key);
+    }
+  }, RESERVIERUNG_MS);
+  if (eintrag.wachhund.unref) eintrag.wachhund.unref();
+  idempotenz.set(key, eintrag);
+
+  return {
+    art: "frei",
+    abschliessen: (ergebnis, aufbewahren) => idempotenzAbschliessen(key, ergebnis, aufbewahren),
+  };
+}
+
+/**
+ * Schließt die Reservierung ab. Das Ergebnis ist { status, nutzlast } — der
+ * Status muss mit, weil ein wartender Doppelklick auch eine Ablehnung
+ * originalgetreu spiegeln soll und die Nutzlast allein den Code nicht kennt.
+ */
+function idempotenzAbschliessen(key, ergebnis, aufbewahren) {
   if (!key) return;
-  idempotenz.set(key, { zeit: Date.now(), antwort });
+  const e = idempotenz.get(key);
+  if (!e) return; // Der Wachhund war schneller.
+  clearTimeout(e.wachhund);
+  if (e.loesen) e.loesen(ergebnis || null);
+  if (aufbewahren && ergebnis) idempotenz.set(key, { zeit: Date.now(), ergebnis });
+  else idempotenz.delete(key);
 }
 
 /**
@@ -122,14 +222,17 @@ function zuSchnell(renderedAt) {
 /** Nur für Tests: leert den Zustand zwischen den Fällen. */
 function _reset() {
   ipZaehler.clear();
+  for (const e of idempotenz.values()) {
+    if (e.wachhund) clearTimeout(e.wachhund);
+    if (e.loesen) e.loesen(null); // sonst wartet ein Test ewig
+  }
   idempotenz.clear();
 }
 
 module.exports = {
   clientIp,
   rateLimited,
-  idempotenzTreffer,
-  idempotenzSpeichern,
+  idempotenzBeanspruchen,
   zuSchnell,
   _reset,
   FENSTER_MS,

@@ -856,7 +856,7 @@ homepage, no inventes otros:
 > | Antes | Ahora |
 > |---|---|
 > | un campo `name` | `first_name` y `last_name` separados (HubSpot y Brevo llevan campos separados) |
-> | Telefon **obligatorio** | Telefon **opcional**, en las 44 |
+> | Telefon **obligatorio** | Telefon **obligatorio otra vez**, en las 44 — ver abajo |
 > | `action="#"`, no enviaba a ningún lado | `action="/api/forms/submit/"`, con vuelta a HubSpot y Brevo |
 > | sin protección antispam | Turnstile + honeypot evaluado + tiempo mínimo |
 > | sin campo de servicio | `<select name="service">`, **preseleccionado** en 27 páginas vía el parámetro `service` |
@@ -868,6 +868,28 @@ homepage, no inventes otros:
 > instrucción posterior gana. Su `<h2>` sigue asociada al formulario mediante un
 > `<section aria-labelledby>` alrededor del include — el partial no puede
 > llevarlo porque no conoce el `id`.
+>
+> ⚠️⚠️ **TELEFON VOLVIÓ A SER OBLIGATORIO EL MISMO 2026-08-26** (cliente: "kannst
+> du telefon trotzdem überall pflicht machen"), o sea la fila de arriba se
+> revirtió en el mismo día. **Es una decisión del cliente CONTRA mi
+> recomendación** — un campo obligatorio más baja la tasa de envío, y quien no
+> quiere dar su número abandona en vez de mandar una consulta por correo. Está
+> anotado en los dos sitios que lo implementan.
+> **Y son DOS sitios, no uno:** el `required` de `partials/lead-form.html` es
+> comodidad (el navegador avisa al instante) y `FORM_TYPES.customer_inquiry.pflicht`
+> de `api/_lib/validate.js` es la verdadera — un script que postea directo al
+> endpoint nunca ve el markup. Cada uno remite al otro en un comentario.
+>
+> ⚠️ **EL GRID DEL FORMULARIO NECESITA `minmax(0, 1fr)` Y `min-width: 0` EN
+> TODOS SUS HIJOS**, y esto lo pagó un defecto real: con `1fr` pelado la pista
+> medía **300px dentro de un formulario de 223px a 320 de viewport**, o sea 36px de
+> scroll horizontal **en las 40 páginas con formulario**. Es la trampa que este
+> proyecto ya documenta varias veces: la mínima automática de un ítem de grid es
+> content-based, y un `<input>` trae su propio ancho deseado. Yo se lo había dado
+> sólo a los dos campos `--half`; **un solo campo sin `min-width: 0` estira la
+> pista entera**. Está en `css/lead-form.css` como una regla para todos los hijos,
+> no por clase. Sólo se veía por debajo de 400px, o sea por debajo del ancho mínimo
+> en el que este proyecto mide normalmente.
 >
 > ⚠️ **`/jobs/` TAMPOCO TIENE EL SUYO, pero por la razón opuesta:** ahora lleva
 > el **formulario incrustado de HubSpot** (`partials/hubspot-jobs-form.html`),
@@ -898,10 +920,12 @@ No lo copies a una página nueva:
 `build.js` sustituye valores y nada más — **no tiene condicionales y no va a
 tenerlos**. Si una página necesita otros campos, no es este partial.
 
-**Dos páginas NO lo usan, y está bien:** `/kontakt/` tiene otros campos
-obligatorios (Firma y Telefon opcionales, Nachricht requerido) y `/jobs/` es otro
-formulario (select de Qualifikation, subida de CV, sin Firma). Meterlos acá
-pediría condicionales, y son dos casos únicos, no el que se repite 44 veces.
+⚠️ **OBSOLETO desde 2026-08-26, se deja porque explica el razonamiento del
+partial:** decía que `/kontakt/` y `/jobs/` no lo usan. `/kontakt/` SÍ lo usa
+desde esa fecha (ver el recuadro al principio de §6). `/jobs/` sigue siendo otro
+formulario, pero ahora es el embed de HubSpot, no markup propio. El argumento que
+sigue valiendo es el de fondo: si una página necesita otros campos, no es este
+partial — `build.js` sustituye valores y no tiene condicionales.
 
 **El honeypot es parte del partial.** La copia a mano del homepage no lo tenía;
 la extracción cerró ese hueco solo. Es el argumento entero a favor de compartir:

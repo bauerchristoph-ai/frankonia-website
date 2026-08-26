@@ -25,11 +25,20 @@
                Ein einzelnes Namensfeld müsste serverseitig geraten geteilt
                werden, und bei "Anna Maria von der Heide" ist jede Regel falsch.
 
-               ⚠️ TELEFON IST FREIWILLIG. Es war vorher Pflicht — auf einer
-               B2B-Anfrage ist eine Telefonnummer eine Hürde, und die E-Mail
-               genügt für die Rückmeldung. /kontakt/ hatte sie ebenfalls als
-               Pflicht; auch dort fällt sie weg. Das ist eine bewusste Änderung
-               am Formular, nicht am Text.
+               ⚠️⚠️ TELEFON IST PFLICHT, und das ist eine Kundenentscheidung
+               vom 26.08.2026 gegen meinen Vorschlag. Beim Umbau am selben Tag
+               hatte ich es freiwillig gestellt, mit der Begründung, eine
+               Telefonnummer sei auf einer B2B-Anfrage eine Hürde und die E-Mail
+               genüge für die Rückmeldung. Der Kunde will sie zurück als Pflicht;
+               seine Entscheidung gewinnt.
+               Sie steht damit in ALLEN 44 Formularen — auch auf /angebot/, der
+               Ads-Landingpage, die vorher die geringsten Hürden hatte. Das ist
+               der Preis eines gemeinsamen Formulars: eine Entscheidung gilt
+               überall, nicht seitenweise.
+               ⚠️ WENN DIE CONVERSION-RATE EINBRICHT, ist genau das die erste
+               Stelle zum Nachmessen — und die Änderung ist hier eine Zeile plus
+               die Pflichtliste in api/_lib/validate.js. Beide müssen zusammen
+               geändert werden, siehe dort.
 
                Begründung der Feldreihenfolge und der geteilten Zeile:
                docs/page-conventions.md §6. -->
@@ -65,8 +74,8 @@
             </div>
 
             <div class="form-field">
-              <label class="form-field__label" for="{{prefix}}-phone">Telefon</label>
-              <input class="form-field__input" type="tel" id="{{prefix}}-phone" name="phone" autocomplete="tel">
+              <label class="form-field__label" for="{{prefix}}-phone">Telefon *</label>
+              <input class="form-field__input" type="tel" id="{{prefix}}-phone" name="phone" autocomplete="tel" required>
             </div>
 
             <div class="form-field">

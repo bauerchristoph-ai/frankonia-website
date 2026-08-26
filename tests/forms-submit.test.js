@@ -107,6 +107,7 @@ const GUELTIG = {
   first_name: "Erika",
   last_name: "Mustermann",
   email: "erika.mustermann@example.org",
+  phone: "+49 951 123456",
   company: "Muster GmbH",
   message: "Wir brauchen einen Objektschutz für unser Werk in Bamberg.",
   privacy_accepted: true,
@@ -169,6 +170,13 @@ const UMGEBUNG = {
 test.beforeEach(() => {
   globalThis.fetch = echtesFetch;
   Object.assign(process.env, UMGEBUNG);
+  // ⚠️ Die beiden Marketing-IDs werden ABGERAEUMT, nicht gesetzt. Sie sind in
+  // der Grundeinstellung absichtlich nicht konfiguriert — so prueft die
+  // Mehrheit der Tests den Zustand, in dem der Kunde die IDs noch nicht
+  // eingetragen hat, und die drei Marketing-Tests setzen sie selbst. Ohne das
+  // Abraeumen wuerde ein Test den naechsten beeinflussen.
+  delete process.env.HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE;
+  delete process.env.BREVO_MARKETING_LIST_ID;
   guard._reset();
   stumm();
 });
@@ -189,7 +197,7 @@ test("Validierung: gültige Eingabe wird angenommen und normalisiert", () => {
 });
 
 test("Validierung: jedes Pflichtfeld wird einzeln gemeldet", () => {
-  for (const feld of ["first_name", "last_name", "email", "company", "message"]) {
+  for (const feld of ["first_name", "last_name", "email", "phone", "company", "message"]) {
     const eingabe = { ...GUELTIG };
     delete eingabe[feld];
     const r = validate(eingabe);
@@ -203,6 +211,21 @@ test("Validierung: Antwort enthält nur Feldnamen, keine Feldwerte", () => {
   assert.equal(r.ok, false);
   const alsText = JSON.stringify(r.fehler);
   assert.ok(!alsText.includes("kaputt"), "Fehlerliste gibt einen Feldwert zurueck");
+});
+
+test("Validierung: Telefon ist Pflicht (Kundenentscheidung 26.08.)", () => {
+  // ⚠️ Dieser Test ist der Grund, warum die Entscheidung nicht still
+  // zurueckkippen kann: das `required` im Markup allein wuerde von einem
+  // direkten Aufruf des Endpoints umgangen. Wenn Telefon je wieder freiwillig
+  // werden soll, muss dieser Test bewusst geaendert werden.
+  const ohne = { ...GUELTIG };
+  delete ohne.phone;
+  const r = validate(ohne);
+  assert.equal(r.ok, false);
+  assert.ok(r.fehler.includes("phone"));
+  // Leerstring und Leerzeichen zaehlen nicht als Angabe.
+  assert.equal(validate({ ...GUELTIG, phone: "" }).ok, false);
+  assert.equal(validate({ ...GUELTIG, phone: "   " }).ok, false);
 });
 
 test("Validierung: fehlende Datenschutz-Einwilligung wird abgelehnt", () => {
@@ -369,6 +392,137 @@ test("Idempotenz: derselbe Schlüssel liefert dieselbe Antwort und ruft nichts e
   assert.equal(r2._status, 200);
   assert.equal(r2._json.submission_id, r1._json.submission_id, "zweiter Klick hat neu verarbeitet");
   assert.equal(protokoll.length, anzahl1, "zweiter Klick hat Fremd-APIs erneut aufgerufen");
+});
+
+test("Doppelklick: zwei GLEICHZEITIGE Anfragen erzeugen nur einen Kontakt", async () => {
+  // ⚠️ DAS IST DER FALL, DEN DER TEST DARÜBER NICHT ABDECKT. Dort ist die
+  // erste Anfrage längst fertig, wenn die zweite kommt. Ein echter
+  // Doppelklick trifft den Server aber im Abstand von Millisekunden — die
+  // erste läuft dann noch, es gibt noch keine gespeicherte Antwort, und
+  // vorher arbeiteten beide vollständig durch: zwei Kontakte, zwei Notizen,
+  // zwei Bestätigungsmails.
+  const protokoll = [];
+  let ersterKontaktLoesen;
+  const ersterKontaktHaengt = new Promise((r) => {
+    ersterKontaktLoesen = r;
+  });
+  let kontaktAufrufe = 0;
+
+  globalThis.fetch = async (url, optionen) => {
+    const u = String(url);
+    protokoll.push({ url: u, optionen });
+    const j = (status, body) => ({ ok: status < 400, status, text: async () => JSON.stringify(body) });
+    if (u.includes("challenges.cloudflare.com")) return j(200, { success: true });
+    if (u.includes("contacts/search") || u.includes("companies/search")) return j(200, { results: [] });
+    if (u.endsWith("/crm/v3/objects/contacts")) {
+      kontaktAufrufe++;
+      // Der erste Schreibvorgang bleibt hängen, bis der Test ihn freigibt.
+      // So ist garantiert, dass die zweite Anfrage WÄHREND der ersten
+      // ankommt — ohne diese Klammer wäre der Test ein Zufallsspiel.
+      if (kontaktAufrufe === 1) await ersterKontaktHaengt;
+      return j(201, { id: "hs-123" });
+    }
+    if (u.includes("objects/companies")) return j(201, { id: "co-9" });
+    if (u.includes("objects/notes")) return j(201, { id: "note-1" });
+    return j(204, {});
+  };
+
+  const eingabe = { ...GUELTIG, idempotency_key: "gleichzeitig-1" };
+  const r1 = res();
+  const r2 = res();
+  const lauf1 = handler(req(eingabe), r1);
+  // Ein Tick, damit die erste Anfrage bis zum hängenden Aufruf kommt.
+  await new Promise((r) => setImmediate(r));
+  const lauf2 = handler(req(eingabe), r2);
+  await new Promise((r) => setImmediate(r));
+  ersterKontaktLoesen();
+  await Promise.all([lauf1, lauf2]);
+
+  assert.equal(r1._status, 200);
+  assert.equal(r2._status, 200);
+  assert.equal(kontaktAufrufe, 1, "der Doppelklick hat einen zweiten Kontakt erzeugt");
+  assert.equal(
+    r2._json.submission_id,
+    r1._json.submission_id,
+    "die zweite Anfrage hat eine eigene Vorgangsnummer bekommen"
+  );
+  assert.equal(
+    protokoll.filter((p) => p.url.includes("smtp/email")).length,
+    2,
+    "es wurden mehr oder weniger Mails als die zwei erwarteten verschickt"
+  );
+});
+
+test("Doppelklick: eine Ablehnung wird NICHT aufbewahrt", async () => {
+  // ⚠️ Der Schlüssel entsteht einmal je AUFGEBAUTEM FORMULAR, nicht je Klick.
+  // Würde eine Ablehnung zwischengespeichert, könnte derselbe Besucher nach
+  // einem vergessenen Pflichtfeld nie mehr absenden.
+  globalThis.fetch = alleOk();
+  const key = "wiederholung-nach-fehler";
+
+  const r1 = res();
+  await handler(req({ ...GUELTIG, idempotency_key: key, email: "keine-email" }), r1);
+  assert.equal(r1._status, 400);
+  assert.equal(r1._json.fehler, "validierung");
+
+  // Gleicher Schlüssel, korrigierte Angaben.
+  const r2 = res();
+  await handler(req({ ...GUELTIG, idempotency_key: key }), r2);
+  assert.equal(r2._status, 200, "die Ablehnung wurde konserviert und blockiert den Besucher");
+  assert.equal(r2._json.ok, true);
+});
+
+test("Doppelklick: der Wartende sieht dieselbe Ablehnung wie der Erste", async () => {
+  // Zwei gleichzeitige Anfragen mit fehlerhaften Daten: beide sollen den
+  // Validierungsfehler zeigen, nicht eine davon hängen oder still 200 geben.
+  let turnstileLoesen;
+  const haengt = new Promise((r) => {
+    turnstileLoesen = r;
+  });
+  let ts = 0;
+  globalThis.fetch = async (url) => {
+    const u = String(url);
+    if (u.includes("challenges.cloudflare.com")) {
+      ts++;
+      if (ts === 1) await haengt;
+      return { ok: true, status: 200, text: async () => JSON.stringify({ success: true }) };
+    }
+    return { ok: true, status: 200, text: async () => "{}" };
+  };
+
+  const eingabe = { ...GUELTIG, idempotency_key: "gleichzeitig-fehler", email: "" };
+  const r1 = res();
+  const r2 = res();
+  const l1 = handler(req(eingabe), r1);
+  await new Promise((r) => setImmediate(r));
+  const l2 = handler(req(eingabe), r2);
+  await new Promise((r) => setImmediate(r));
+  turnstileLoesen();
+  await Promise.all([l1, l2]);
+
+  assert.equal(r1._status, 400);
+  assert.equal(r2._status, 400, "der Wartende bekam eine andere Antwort als der Erste");
+  assert.equal(r2._json.fehler, "validierung");
+  assert.deepEqual(r2._json.felder, r1._json.felder);
+  assert.equal(ts, 1, "Turnstile wurde zweimal befragt, obwohl ein Token einmalig ist");
+});
+
+test("Doppelklick: ohne JavaScript wird die gespiegelte Antwort zur Weiterleitung", async () => {
+  // ⚠️ Gespeichert wird nur die JSON-Nutzlast. Die FORM der Antwort richtet
+  // sich nach der wiederholenden Anfrage — sonst bekäme ein Browser ohne
+  // JavaScript rohes JSON angezeigt.
+  globalThis.fetch = alleOk();
+  const eingabe = { ...GUELTIG, idempotency_key: "ohne-js-wiederholung" };
+
+  const r1 = res();
+  await handler(req(eingabe), r1);
+  assert.equal(r1._status, 200);
+
+  const r2 = res();
+  await handler(reqOhneJs(eingabe), r2);
+  assert.equal(r2._status, 303, "die Wiederholung ohne JavaScript endete nicht auf /danke/");
+  assert.equal(r2._header.Location, "/danke/");
+  assert.equal(r2._json, null);
 });
 
 test("Idempotenz: ohne Schlüssel wird nicht zusammengefasst", async () => {
@@ -546,16 +700,163 @@ test("Lifecycle: ein bestehender Kunde wird nicht auf Lead zurückgestuft", () =
 
 test("Lifecycle: hs_lead_status nur bei neuen Kontakten", () => {
   const d = validate(GUELTIG).daten;
-  const neu = hubspot.kontaktProperties(d, "s1", "2026-08-26T10:00:00.000Z", null);
+  const neu = hubspot.kontaktProperties(d, "s1", "2026-08-26T10:00:00.000Z", null).standard;
   assert.equal(neu.hs_lead_status, "NEW");
   assert.equal(neu.lifecyclestage, "lead");
 
   const bestehend = hubspot.kontaktProperties(d, "s1", "2026-08-26T10:00:00.000Z", {
     id: "1",
     properties: { lifecyclestage: "customer", hs_lead_status: "OPEN" },
-  });
+  }).standard;
   assert.equal(bestehend.hs_lead_status, undefined, "hs_lead_status wurde auf NEW zurueckgesetzt");
   assert.equal(bestehend.lifecyclestage, undefined, "lifecyclestage wurde zurueckgestuft");
+});
+
+/* ================================= 15 — HubSpot-Eigenschaftsfelder */
+
+test("HubSpot: die Zuordnung benutzt interne Namen, keine Beschriftungen", () => {
+  const d = validate(GUELTIG).daten;
+  const { standard, eigen } = hubspot.kontaktProperties(d, "s1", "2026-08-26T10:00:00.000Z", null);
+  // Standardfelder von HubSpot: klein, ohne Unterstrich zwischen den Woertern.
+  assert.equal(standard.firstname, "Erika");
+  assert.equal(standard.lastname, "Mustermann");
+  assert.equal(standard.email, "erika.mustermann@example.org");
+  assert.equal(standard.phone, "+49 951 123456");
+  assert.equal(standard.company, "Muster GmbH");
+  // ⚠️ Die haeufigsten Falschschreibungen duerfen NICHT auftauchen — sie
+  // fuehren zu 400 "Property does not exist" und damit zum Verlust des Leads.
+  for (const falsch of ["first_name", "firstName", "Vorname", "last_name", "lastName", "Nachname", "telefon", "Telefon"]) {
+    assert.equal(standard[falsch], undefined, "falscher HubSpot-Name im Aufruf: " + falsch);
+  }
+  // Eigene Felder: alle mit website_ praefixiert.
+  for (const k of Object.keys(eigen)) {
+    assert.ok(k.startsWith("website_"), "eigenes Feld ohne website_-Praefix: " + k);
+  }
+});
+
+test("HubSpot: Standard und Eigen sind getrennt, damit der zweite Versuch moeglich ist", () => {
+  const d = validate(GUELTIG).daten;
+  const { standard, eigen } = hubspot.kontaktProperties(d, "s1", "2026-08-26T10:00:00.000Z", null);
+  // Kein eigenes Feld in den Standardfeldern und umgekehrt: sonst wuerde der
+  // zweite Versuch dieselbe unbekannte Eigenschaft erneut senden.
+  for (const k of Object.keys(standard)) assert.ok(!k.startsWith("website_"), k);
+  for (const k of Object.keys(eigen)) assert.ok(k.startsWith("website_"), k);
+  // Und die zehn eigenen, die das Setup-Skript anlegt, deckt die Tabelle ab.
+  const anzulegen = Object.keys(hubspot.eigeneEigenschaften());
+  assert.equal(anzulegen.length, 10);
+  for (const k of Object.keys(eigen)) assert.ok(anzulegen.includes(k), "wird geschrieben, aber nie angelegt: " + k);
+});
+
+test("HubSpot: bei 400 wird ein zweiter Versuch NUR mit Standardfeldern gemacht", async () => {
+  const protokoll = [];
+  let ersterVersuch = true;
+  globalThis.fetch = async (url, optionen) => {
+    const u = String(url);
+    protokoll.push({ url: u, optionen });
+    if (u.includes("challenges.cloudflare.com"))
+      return { ok: true, status: 200, text: async () => JSON.stringify({ success: true }) };
+    if (u.includes("contacts/search"))
+      return { ok: true, status: 200, text: async () => JSON.stringify({ results: [] }) };
+    if (u.endsWith("/crm/v3/objects/contacts")) {
+      // Der ERSTE Schreibversuch scheitert wie bei einer fehlenden Eigenschaft.
+      if (ersterVersuch) {
+        ersterVersuch = false;
+        return {
+          ok: false,
+          status: 400,
+          text: async () => JSON.stringify({ message: 'Property "website_service" does not exist' }),
+        };
+      }
+      return { ok: true, status: 201, text: async () => JSON.stringify({ id: "hs-9" }) };
+    }
+    return { ok: true, status: 200, text: async () => "{}" };
+  };
+
+  const r = res();
+  await handler(req(GUELTIG), r);
+  // Der Lead ist NICHT verloren.
+  assert.equal(r._status, 200);
+  assert.equal(r._json.ok, true);
+
+  const schreibversuche = protokoll.filter((p) => p.url.endsWith("/crm/v3/objects/contacts"));
+  assert.equal(schreibversuche.length, 2, "es gab keinen zweiten Versuch");
+  const zweiter = JSON.parse(schreibversuche[1].optionen.body).properties;
+  // Im zweiten Versuch darf kein einziges eigenes Feld mehr stehen.
+  for (const k of Object.keys(zweiter)) assert.ok(!k.startsWith("website_"), "zweiter Versuch sendet " + k);
+  assert.equal(zweiter.firstname, "Erika", "der zweite Versuch hat die Standardfelder verloren");
+});
+
+/* ============================ 16 — Marketing-Einwilligung */
+
+test("Marketing: ohne Haken wird KEINE Einwilligung gesetzt und KEINE Liste vergeben", async () => {
+  process.env.HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE = "42";
+  process.env.BREVO_MARKETING_LIST_ID = "7";
+  const protokoll = [];
+  globalThis.fetch = alleOk(protokoll);
+  await handler(req(GUELTIG), res());
+
+  assert.equal(
+    protokoll.filter((p) => p.url.includes("communication-preferences")).length,
+    0,
+    "Einwilligung ohne Haken gesetzt"
+  );
+  const kontakt = protokoll.find((p) => p.url.endsWith("api.brevo.com/v3/contacts"));
+  const body = JSON.parse(kontakt.optionen.body);
+  assert.equal(body.listIds, undefined, "Listenzuordnung ohne Haken");
+  assert.equal(body.attributes.OPT_IN, false);
+  const hsBody = JSON.parse(
+    protokoll.find((p) => p.url.endsWith("/crm/v3/objects/contacts")).optionen.body
+  ).properties;
+  assert.equal(hsBody.hs_marketable_status, undefined, "Marketingkontakt ohne Haken");
+});
+
+test("Marketing: mit Haken wird die Einwilligung mit Rechtsgrundlage gespeichert", async () => {
+  process.env.HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE = "42";
+  process.env.BREVO_MARKETING_LIST_ID = "7";
+  const protokoll = [];
+  globalThis.fetch = alleOk(protokoll);
+  await handler(req({ ...GUELTIG, marketing_opt_in: "on" }), res());
+
+  const sub = protokoll.find((p) => p.url.includes("communication-preferences/v3/subscribe"));
+  assert.ok(sub, "keine Einwilligung gesetzt");
+  const b = JSON.parse(sub.optionen.body);
+  assert.equal(b.subscriptionId, "42");
+  assert.equal(b.emailAddress, "erika.mustermann@example.org");
+  // Ohne Rechtsgrundlage ist der Eintrag kein Nachweis.
+  assert.equal(b.legalBasis, "CONSENT_WITH_NOTICE");
+  assert.match(b.legalBasisExplanation, /Checkbox/);
+
+  const hsBody = JSON.parse(
+    protokoll.find((p) => p.url.endsWith("/crm/v3/objects/contacts")).optionen.body
+  ).properties;
+  assert.equal(hsBody.hs_marketable_status, "true");
+
+  const kontakt = protokoll.find((p) => p.url.endsWith("api.brevo.com/v3/contacts"));
+  const bb = JSON.parse(kontakt.optionen.body);
+  assert.deepEqual(bb.listIds, [7]);
+  assert.equal(bb.attributes.OPT_IN, true);
+});
+
+test("Marketing: ohne konfigurierte IDs wird nichts geraten", async () => {
+  delete process.env.HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE;
+  delete process.env.BREVO_MARKETING_LIST_ID;
+  const protokoll = [];
+  globalThis.fetch = alleOk(protokoll);
+  const r = res();
+  await handler(req({ ...GUELTIG, marketing_opt_in: "on" }), r);
+
+  // Die Anfrage geht trotzdem durch — eine fehlende Konfiguration darf keinen
+  // Lead kosten.
+  assert.equal(r._status, 200);
+  assert.equal(
+    protokoll.filter((p) => p.url.includes("communication-preferences")).length,
+    0,
+    "es wurde eine erfundene Subscription-ID benutzt"
+  );
+  const bb = JSON.parse(protokoll.find((p) => p.url.endsWith("api.brevo.com/v3/contacts")).optionen.body);
+  assert.equal(bb.listIds, undefined, "es wurde eine erfundene Listen-ID benutzt");
+  // Die Einwilligung selbst ist trotzdem vermerkt, damit sie nicht verloren ist.
+  assert.equal(bb.attributes.OPT_IN, true);
 });
 
 /* ============================================== 11 — Logs ohne Klartext */

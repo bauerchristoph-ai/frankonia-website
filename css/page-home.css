@@ -3317,7 +3317,11 @@ main h2 {
    vertical cards regardless of quote length. */
 @media (min-width: 768px) {
   .references__testimonials {
-    grid-template-columns: repeat(3, 1fr);
+    /* ⚠️ minmax(0, 1fr), NICHT 1fr — sonst kann die Spur nicht unter die
+       min-content-Breite der Karte schrumpfen und die Zeile schiebt die
+       Seite auf. Bei 768px waren das gemessene 62px waagerechter Überlauf.
+       Der zweite Teil des Gegenmittels steht in css/testimonials.css. */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

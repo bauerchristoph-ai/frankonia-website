@@ -10,6 +10,14 @@
  * Ebenso: die Marketing-Einwilligung heißt OPT_IN und existiert bereits;
  * MARKETING_OPT_IN wäre ein zweites Feld für dieselbe Aussage.
  *
+ * ⚠️ ZWEI ARTEN VON MAIL, UND SIE HABEN VERSCHIEDENE VORAUSSETZUNGEN:
+ *   TRANSAKTIONAL — die Eingangsbestätigung an den Absender und die interne
+ *     Meldung. Beide über /smtp/email. Sie brauchen KEINE Einwilligung: sie
+ *     sind die Antwort auf eine Handlung des Empfängers.
+ *   MARKETING — setzt den Haken voraus. In Brevo trägt die LISTE die
+ *     Einwilligung: wer in keiner Liste ist, bekommt keine Kampagne. Deshalb
+ *     wird bei erteiltem Haken BREVO_MARKETING_LIST_ID gesetzt, und nur dann.
+ *
  * ⚠️ DIE BESTÄTIGUNGSMAIL GEHT DIREKT ÜBER DEN TRANSAKTIONS-ENDPOINT, nicht
  * über eine Brevo-Automation. Sie ist geschäftskritisch: über
  * /v3/smtp/email steht in der Antwort, ob sie angenommen wurde, und das
@@ -74,17 +82,49 @@ function kontaktAttribute(d, submissionId, hubspotId, zeitstempel) {
 }
 
 async function kontaktUpsert(d, submissionId, hubspotId, zeitstempel) {
+  const nutzlast = {
+    email: d.email,
+    attributes: kontaktAttribute(d, submissionId, hubspotId, zeitstempel),
+    updateEnabled: true,
+  };
+
+  /* ⚠️⚠️ LISTEN-ZUORDNUNG NUR MIT HAKEN, und das ist eine Änderung vom
+     26.08.2026 (Kundenentscheidung: "brevo transaction mails hinterlegen sowie
+     grundlegende marketing mails"). Vorher stand hier ausdrücklich "KEINE
+     Listen-Zuordnung", weil eine Angebotsanfrage keine Newsletter-Anmeldung
+     ist. Das gilt weiter — für den Fall OHNE Haken.
+
+     Der Unterschied zwischen den beiden Wegen ist wichtig und nicht kosmetisch:
+       · TRANSAKTIONSMAIL (Eingangsbestätigung, interne Meldung) geht über
+         /smtp/email und braucht KEINE Einwilligung — sie ist die Antwort auf
+         eine Handlung des Empfängers.
+       · MARKETINGMAIL setzt die Einwilligung voraus, und die trägt in Brevo die
+         Liste: wer in keiner Liste ist, kann keine Kampagne bekommen.
+
+     ⚠️ OHNE BREVO_MARKETING_LIST_ID wird NICHT geraten. Der Kontakt wird dann
+     mit OPT_IN=true angelegt, aber ohne Liste, und das Log sagt es. Eine
+     falsche Listen-ID würde jemanden in einen fremden Verteiler legen — das
+     ist schlimmer als eine fehlende Zuordnung, die man nachholen kann.
+     "node scripts/setup-brevo.mjs" gibt die vorhandenen Listen mit ihren IDs
+     aus. */
+  if (d.marketing_opt_in) {
+    const listId = Number(process.env.BREVO_MARKETING_LIST_ID);
+    if (Number.isFinite(listId) && listId > 0) {
+      nutzlast.listIds = [listId];
+    } else {
+      log.warn(
+        submissionId,
+        "brevo: BREVO_MARKETING_LIST_ID fehlt — Einwilligung ist vermerkt (OPT_IN), " +
+          "aber der Kontakt ist in KEINER Marketingliste. IDs auslesen mit: " +
+          "node scripts/setup-brevo.mjs"
+      );
+    }
+  }
+
   const res = await anfrage("brevo.kontakt", submissionId, BASIS + "/contacts", {
     method: "POST",
     headers: kopf(),
-    body: JSON.stringify({
-      email: d.email,
-      attributes: kontaktAttribute(d, submissionId, hubspotId, zeitstempel),
-      updateEnabled: true,
-      // ⚠️ KEINE Listen-Zuordnung. Listen sind für Marketing; eine
-      // Angebotsanfrage ist keine Anmeldung. Wer hier eine listIds ergänzt,
-      // macht aus jedem Interessenten einen Newsletter-Empfänger.
-    }),
+    body: JSON.stringify(nutzlast),
   });
   // 201 (neu) und 204 (aktualisiert) sind beides Erfolg.
   return { ok: res.ok, status: res.status };

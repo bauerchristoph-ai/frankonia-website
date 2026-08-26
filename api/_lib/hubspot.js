@@ -11,19 +11,100 @@
  * vorbehalten und wird nicht mit unqualifizierten Formularanfragen gefüllt.
  * Entscheidung des Kunden vom 24.08.2026.
  *
- * ⚠️ AUSDRÜCKLICH NICHT: keine Marketing-Einwilligung. Eine Angebotsanfrage
- * ist keine Newsletter-Anmeldung. Das Feld `marketing_opt_in` wird nach Brevo
- * geschrieben (Attribut OPT_IN) und hier nur als Custom Property vermerkt,
- * damit der Vertrieb es sieht — es wird KEIN HubSpot-Subscription-Type
- * gesetzt. Dafür bräuchte es die IDs aus
- * GET /communication-preferences/v3/definitions; die liest
- * scripts/setup-hubspot.mjs aus und gibt sie aus, statt einen anzulegen.
+ * ⚠️ MARKETING-EINWILLIGUNG: NUR MIT HAKEN, und dann richtig.
+ * Aktualisiert 26.08.2026 (Kundenentscheidung: "marketingkontakt mit
+ * einwilligung von one to one communication in hubspot aktivieren"). Vorher
+ * stand hier ausdrücklich "keine Marketing-Einwilligung", weil die
+ * Subscription-Type-IDs fehlten.
+ * Jetzt passiert bei erteilter Einwilligung ZWEIERLEI:
+ *   · `hs_marketable_status` wird gesetzt, damit der Kontakt als
+ *     Marketingkontakt zählt;
+ *   · die Einwilligung wird über die Communication-Preferences-API für den
+ *     Typ "One to One" festgehalten, MIT Rechtsgrundlage und Begründung.
+ * Ohne Haken passiert nichts davon — kein Aufruf, kein Feld. Eine
+ * Angebotsanfrage ist keine Newsletter-Anmeldung, und die getrennte,
+ * nicht vorausgewählte Checkbox im Formular ist genau dafür da.
+ * ⚠️ Die Subscription-ID ist portalspezifisch und kommt aus
+ * HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE. `node scripts/setup-hubspot.mjs` liest
+ * die vorhandenen Typen aus und gibt die fertige Zeile aus. Ohne die Variable
+ * wird der Schritt übersprungen und protokolliert — nie geraten.
  */
 
 const { anfrage } = require("./http");
 const { log } = require("./log");
 
 const BASIS = "https://api.hubapi.com";
+
+/* ==========================================================================
+   DIE ZUORDNUNG WEBSITE-FELD -> HUBSPOT-EIGENSCHAFT
+   ==========================================================================
+   ⚠️⚠️ DAS IST DIE EINZIGE STELLE, AN DER DIESE ZUORDNUNG STEHT. Sie wird von
+   zwei Seiten gelesen:
+     · von kontaktProperties() unten, beim Schreiben jeder Anfrage;
+     · von scripts/setup-hubspot.mjs, das mit --verify jede hier genannte
+       Eigenschaft gegen die echte API prüft.
+   Damit können Code und CRM nicht auseinanderlaufen, ohne dass ein Lauf des
+   Skripts es meldet. Eine von Hand gepflegte zweite Liste wäre genau die
+   Stelle, an der es passiert.
+
+   ⚠️ INTERNE NAMEN, NICHT BESCHRIFTUNGEN. HubSpot spricht über den internen
+   Namen (`firstname`), nicht über das Label ("Vorname"). Ein Label ist
+   übersetzbar und änderbar, der interne Name nicht — wer hier ein Label
+   einträgt, bekommt 400 "Property does not exist".
+
+   ⚠️ STANDARD GEGEN EIGEN, und der Unterschied ist der Ausfallmodus:
+     STANDARD existiert in jedem Portal. Fehlt eines davon, ist das Portal
+       kaputt und nicht diese Datei.
+     EIGEN muss von scripts/setup-hubspot.mjs angelegt worden sein. Fehlt eines,
+       lehnt HubSpot den GESAMTEN Aufruf mit 400 ab — auch Name und E-Mail.
+       Deshalb hat kontaktUpsert() einen zweiten Versuch NUR mit den
+       Standardfeldern: ein vergessener Skriptlauf kostet dann die Zusatzfelder,
+       aber nicht den Lead.
+   ========================================================================== */
+
+// Standardeigenschaften. Website-Feld -> interner HubSpot-Name.
+const STANDARD_MAP = {
+  first_name: "firstname",
+  last_name: "lastname",
+  email: "email",
+  phone: "phone",
+  company: "company",
+};
+
+// Eigene Eigenschaften, alle in der Gruppe website_integration.
+// Website-Feld -> interner Name. `null` heißt: der Wert kommt nicht aus einem
+// Formularfeld, sondern wird serverseitig gesetzt.
+const EIGEN_MAP = {
+  form_type: "website_form_type",
+  service: "website_service",
+  page_url: "website_page_url",
+  utm_source: "website_utm_source",
+  utm_medium: "website_utm_medium",
+  utm_campaign: "website_utm_campaign",
+  utm_content: "website_utm_content",
+  utm_term: "website_utm_term",
+};
+
+// Serverseitig gesetzte eigene Eigenschaften, mit ihrem Typ — der Typ steht
+// hier, weil setup-hubspot.mjs ihn zum Anlegen und zum Prüfen braucht.
+const EIGEN_SERVER = {
+  website_submission_id: "string",
+  website_last_submission: "datetime",
+};
+
+// Standardeigenschaften, die dieser Code nur unter Bedingungen setzt.
+const STANDARD_BEDINGT = {
+  lifecyclestage: "nur wenn der Kontakt neu ist oder in einer früheren Phase steht",
+  hs_lead_status: "nur bei neuen Kontakten",
+  hs_marketable_status: "nur bei erteilter Marketing-Einwilligung",
+};
+
+/** Alle eigenen Eigenschaften mit Typ — für das Setup-Skript. */
+function eigeneEigenschaften() {
+  const out = {};
+  for (const name of Object.values(EIGEN_MAP)) out[name] = "string";
+  return { ...out, ...EIGEN_SERVER };
+}
 
 /*
  * ⚠️ DIE LIFECYCLE-REIHENFOLGE IST LOAD-BEARING. `lifecyclestage` darf nur
@@ -82,58 +163,161 @@ async function kontaktSuchen(email, submissionId) {
 }
 
 /**
- * Baut die Eigenschaften für den Kontakt.
- * `vorhanden` ist der gefundene Kontakt oder null.
+ * Baut die Eigenschaften für den Kontakt — getrennt nach Standard und Eigen,
+ * damit kontaktUpsert() im Fehlerfall die Eigenen weglassen kann.
+ * Gibt { standard, eigen } zurück.
  */
 function kontaktProperties(d, submissionId, zeitstempel, vorhanden) {
-  const p = {
-    firstname: d.first_name,
-    lastname: d.last_name,
-    email: d.email,
-    website_form_type: d.form_type,
-    website_submission_id: submissionId,
-    website_page_url: d.page_url || "",
-    // ⚠️ HubSpot erwartet bei einem datetime-Feld Millisekunden seit Epoch
-    // ODER einen ISO-8601-Zeitstempel. ISO ist lesbarer und wird akzeptiert.
-    website_last_submission: zeitstempel,
-  };
-  if (d.phone) p.phone = d.phone;
-  if (d.company) p.company = d.company;
-  if (d.service) p.website_service = d.service;
-
-  for (const k of ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"]) {
-    if (d[k]) p["website_" + k] = d[k];
+  const standard = {};
+  for (const [feld, name] of Object.entries(STANDARD_MAP)) {
+    if (d[feld]) standard[name] = d[feld];
   }
 
-  // Nur bei neuen Kontakten oder aus einer früheren Phase heraus.
+  // ⚠️ Nur bei neuen Kontakten oder aus einer FRÜHEREN Phase heraus — siehe
+  // LIFECYCLE_REIHENFOLGE oben.
   const aktuell = vorhanden && vorhanden.properties && vorhanden.properties.lifecyclestage;
-  if (!vorhanden || darfAufLeadSetzen(aktuell)) p.lifecyclestage = "lead";
-  // hs_lead_status nur bei neuen Kontakten: ein Kontakt, den der Vertrieb
-  // schon auf "In Bearbeitung" gesetzt hat, darf nicht auf "Neu" zurückfallen.
-  if (!vorhanden) p.hs_lead_status = "NEW";
+  if (!vorhanden || darfAufLeadSetzen(aktuell)) standard.lifecyclestage = "lead";
+  // Nur bei neuen Kontakten: ein Kontakt, den der Vertrieb schon auf "In
+  // Bearbeitung" gesetzt hat, darf nicht auf "Neu" zurückfallen.
+  if (!vorhanden) standard.hs_lead_status = "NEW";
 
-  return p;
+  // ⚠️ MARKETINGKONTAKT NUR MIT EINWILLIGUNG (Kundenentscheidung 26.08.2026:
+  // "marketingkontakt mit einwilligung von one to one communication").
+  // `hs_marketable_status` gibt es nur in Portalen mit aktivierter
+  // Marketing-Contacts-Funktion; ist sie aus, lehnt HubSpot die Eigenschaft ab.
+  // Sie steht deshalb bei den STANDARD-Feldern, aber der Ausfall ist über den
+  // zweiten Versuch in kontaktUpsert() abgesichert — und die eigentliche
+  // Einwilligung wird ohnehin über die Communication-Preferences-API
+  // festgehalten (marketingEinwilligung() weiter unten), die der belastbare
+  // Nachweis ist.
+  if (d.marketing_opt_in) standard.hs_marketable_status = "true";
+
+  const eigen = {
+    website_submission_id: submissionId,
+    // ⚠️ HubSpot nimmt bei einem datetime-Feld Millisekunden seit Epoch ODER
+    // einen ISO-8601-Zeitstempel. ISO ist lesbar und wird akzeptiert.
+    website_last_submission: zeitstempel,
+  };
+  for (const [feld, name] of Object.entries(EIGEN_MAP)) {
+    if (d[feld]) eigen[name] = d[feld];
+  }
+  // page_url ist Pflicht in der Validierung, wird hier aber leer zugelassen:
+  // eine fehlende Herkunft darf keinen Schreibvorgang verhindern.
+  if (!eigen.website_page_url) eigen.website_page_url = d.page_url || "";
+
+  return { standard, eigen };
 }
 
-async function kontaktUpsert(d, submissionId, zeitstempel) {
-  const gefunden = await kontaktSuchen(d.email, submissionId);
-  const vorhanden = gefunden.kontakt;
-  const properties = kontaktProperties(d, submissionId, zeitstempel, vorhanden);
-
-  const res = vorhanden
-    ? await anfrage("hubspot.kontakt.aktualisieren", submissionId, BASIS + "/crm/v3/objects/contacts/" + vorhanden.id, {
+function schreiben(name, submissionId, vorhanden, properties) {
+  return vorhanden
+    ? anfrage(name, submissionId, BASIS + "/crm/v3/objects/contacts/" + vorhanden.id, {
         method: "PATCH",
         headers: kopf(),
         body: JSON.stringify({ properties }),
       })
-    : await anfrage("hubspot.kontakt.anlegen", submissionId, BASIS + "/crm/v3/objects/contacts", {
+    : anfrage(name, submissionId, BASIS + "/crm/v3/objects/contacts", {
         method: "POST",
         headers: kopf(),
         body: JSON.stringify({ properties }),
       });
+}
+
+/**
+ * ⚠️⚠️ ZWEI VERSUCHE, UND DER ZWEITE IST DER WICHTIGE. HubSpot lehnt einen
+ * Aufruf KOMPLETT mit 400 ab, wenn darin EINE unbekannte Eigenschaft steht —
+ * auch Name, E-Mail und Telefon gehen dann nicht durch. Zwei reale Fälle
+ * führen dazu:
+ *   · scripts/setup-hubspot.mjs wurde nie ausgeführt, also fehlen die zehn
+ *     eigenen Felder;
+ *   · `hs_marketable_status` existiert nicht, weil im Portal keine
+ *     Marketing-Contacts-Funktion aktiv ist.
+ * Ohne den zweiten Versuch würde eine vergessene Einrichtung JEDEN Lead
+ * kosten, und zwar still — die interne Mail käme mit "HubSpot: NICHT
+ * gespeichert", und niemand würde den Zusammenhang zur Feldliste sehen.
+ * Mit ihm kostet sie die Zusatzfelder. Das Log sagt beim zweiten Versuch
+ * ausdrücklich, was zu tun ist.
+ */
+async function kontaktUpsert(d, submissionId, zeitstempel) {
+  const gefunden = await kontaktSuchen(d.email, submissionId);
+  const vorhanden = gefunden.kontakt;
+  const { standard, eigen } = kontaktProperties(d, submissionId, zeitstempel, vorhanden);
+
+  const name = vorhanden ? "hubspot.kontakt.aktualisieren" : "hubspot.kontakt.anlegen";
+  let res = await schreiben(name, submissionId, vorhanden, { ...standard, ...eigen });
+
+  if (!res.ok && res.status === 400) {
+    log.alarm(
+      submissionId,
+      "hubspot: 400 beim Schreiben — vermutlich fehlt eine Eigenschaft. " +
+        "Zweiter Versuch nur mit Standardfeldern. Pruefen mit: " +
+        "node scripts/setup-hubspot.mjs --verify"
+    );
+    res = await schreiben(name + ".nurStandard", submissionId, vorhanden, standard);
+    if (res.ok) {
+      log.alarm(
+        submissionId,
+        "hubspot: Kontakt OHNE die eigenen Felder gespeichert (Leistung, Seite, UTM, Submission-ID fehlen im CRM)"
+      );
+    }
+  }
 
   if (!res.ok) return { ok: false, id: vorhanden ? vorhanden.id : null, neu: !vorhanden };
   return { ok: true, id: (res.body && res.body.id) || (vorhanden && vorhanden.id), neu: !vorhanden };
+}
+
+/* --------------------------------------------- Marketing-Einwilligung */
+
+/**
+ * Hält die Einwilligung für einen Subscription Type fest.
+ * Kundenentscheidung 26.08.2026: "One to One Communication".
+ *
+ * ⚠️ WARUM ÜBER DIESE API UND NICHT ÜBER EIN FELD: die
+ * Communication-Preferences-API ist der Ort, an dem HubSpot eine Einwilligung
+ * MIT Rechtsgrundlage und Begründung speichert. Ein selbst gesetztes Häkchen in
+ * einem eigenen Feld wäre eine Notiz, kein Nachweis — und im Streitfall ist
+ * genau der Nachweis das, was zählt.
+ *
+ * ⚠️ DIE SUBSCRIPTION-ID IST PORTALSPEZIFISCH und kann hier nicht fest stehen.
+ * Sie kommt aus HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE;
+ * `node scripts/setup-hubspot.mjs` liest die vorhandenen Typen aus und gibt die
+ * fertige Zeile für .env.local aus. Fehlt die Variable, wird der Schritt
+ * ÜBERSPRUNGEN und protokolliert — nicht geraten. Eine falsche ID würde die
+ * Einwilligung dem falschen Kanal zuschreiben, und das ist schlimmer als keine.
+ *
+ * ⚠️ NUR BEI ERTEILTER EINWILLIGUNG. Ohne Haken wird hier NICHTS aufgerufen:
+ * ein "subscribe" ohne Einwilligung wäre genau der Fehler, den die getrennte
+ * Checkbox im Formular verhindern soll.
+ */
+async function marketingEinwilligung(d, submissionId) {
+  if (!d.marketing_opt_in) return { ok: true, uebersprungen: "keine Einwilligung" };
+  const id = process.env.HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE;
+  if (!id) {
+    log.warn(
+      submissionId,
+      "hubspot: HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE fehlt — Einwilligung NICHT in HubSpot vermerkt. " +
+        "IDs auslesen mit: node scripts/setup-hubspot.mjs"
+    );
+    return { ok: false, uebersprungen: "keine ID konfiguriert" };
+  }
+
+  const res = await anfrage("hubspot.einwilligung", submissionId, BASIS + "/communication-preferences/v3/subscribe", {
+    method: "POST",
+    headers: kopf(),
+    body: JSON.stringify({
+      emailAddress: d.email,
+      subscriptionId: String(id),
+      // CONSENT_WITH_NOTICE: der Betroffene hat aktiv zugestimmt und wurde
+      // dabei über den Zweck informiert — das trifft auf eine eigene,
+      // unmarkierte Checkbox mit erklärendem Text und Link auf die
+      // Datenschutzerklärung zu.
+      legalBasis: "CONSENT_WITH_NOTICE",
+      legalBasisExplanation:
+        "Einwilligung über das Anfrageformular auf frankonia-sicherheit.de, " +
+        "separate Checkbox, nicht vorausgewählt. Submission-ID: " + submissionId,
+    }),
+  });
+  if (!res.ok) log.warn(submissionId, "hubspot: Einwilligung nicht gespeichert");
+  return { ok: res.ok };
 }
 
 /* -------------------------------------------------------------- Unternehmen */
@@ -256,6 +440,11 @@ async function verarbeiten(d, submissionId, zeitstempel) {
     }
   }
 
+  // Einwilligung VOR der Notiz, weil sie die rechtlich relevante Aussage ist
+  // und die Notiz nur Komfort für den Vertrieb.
+  const einwilligung = await marketingEinwilligung(d, submissionId);
+  schritte.einwilligung = d.marketing_opt_in ? einwilligung.ok : "nicht erteilt";
+
   const notiz = await notizAnlegen(d, kontakt.id, submissionId, zeitstempel);
   schritte.notiz = notiz.ok;
   if (!notiz.ok) {
@@ -269,6 +458,12 @@ async function verarbeiten(d, submissionId, zeitstempel) {
 
 module.exports = {
   verarbeiten,
+  marketingEinwilligung,
+  eigeneEigenschaften,
+  STANDARD_MAP,
+  EIGEN_MAP,
+  EIGEN_SERVER,
+  STANDARD_BEDINGT,
   kontaktUpsert,
   unternehmenUpsert,
   assoziieren,

@@ -16,7 +16,13 @@
 // jemand mit einem erfundenen Typ die Pflichtfeldprüfung umgehen.
 const FORM_TYPES = {
   customer_inquiry: {
-    pflicht: ["first_name", "last_name", "email", "company", "message"],
+    // ⚠️ `phone` IST PFLICHT SEIT 26.08.2026 (Kundenentscheidung). Diese Liste
+    // und das `required` in partials/lead-form.html sind EINE Entscheidung an
+    // zwei Stellen: das Attribut führt den Besucher, diese Liste ist die
+    // Prüfung. Wer nur eine von beiden ändert, baut entweder ein Feld, das der
+    // Server ohne Not ablehnt, oder eine Pflicht, die jeder direkte Aufruf
+    // umgeht.
+    pflicht: ["first_name", "last_name", "email", "phone", "company", "message"],
   },
 };
 
@@ -24,7 +30,11 @@ const FORM_TYPES = {
 // verworfen — eine Positivliste, damit ein Angreifer keine unerwarteten
 // Felder in HubSpot oder Brevo schreiben kann.
 const OPTIONAL = [
-  "phone",
+  // ⚠️ `phone` steht hier NICHT MEHR — es ist seit 26.08.2026 Pflichtfeld und
+  // wird über FORM_TYPES.pflicht verarbeitet. Stünde es in beiden Listen,
+  // würde die Optional-Schleife den bereits geprüften Wert erneut setzen; das
+  // wäre heute harmlos und beim ersten Feld mit abweichender Behandlung ein
+  // stiller Fehler.
   "service",
   "marketing_opt_in",
   "page_url",
