@@ -188,6 +188,7 @@
   <script src="/js/pixel-transition.js" defer></script>
 </head>
 <body>
+  <!-- include: gtm-noscript -->
   <!-- include: icon-sprite -->
   <!-- include: header-de -->
 
@@ -331,10 +332,55 @@
                  nötigen CSP-Hosts stehen in docs/datenschutz-drittanbieter.md.
                  Der letzte Absatz hier ist bewusst so formuliert, dass er dann
                  ersetzt und nicht bloß ergänzt wird. -->
+            <!-- ⚠️⚠️ 2026-08-26, ZWEITE ÜBERARBEITUNG DIESES ABSCHNITTS AM
+                 SELBEN TAG, und der Grund ist eine Änderung, die ich selbst
+                 verursacht habe: heute sind ein Einwilligungswerkzeug
+                 (Cookiebot) und der Google Tag Manager in alle Seiten
+                 eingebaut worden. Damit war der Satz "Diese Webseite setzt
+                 derzeit keine Cookies" — den ich am Morgen desselben Tages
+                 geschrieben habe, weil er damals nachgemessen zutraf — falsch.
+                 Cookiebot speichert die Entscheidung des Besuchers, und das
+                 ist ein Cookie.
+                 Ein wissentlich falscher Satz in einer Datenschutzerklärung
+                 ist schlimmer als eine Textänderung, deshalb ist er
+                 korrigiert und nicht bloß im Bericht notiert. Es ist mein
+                 eigener Satz, kein Text des Kunden oder seines Anwalts.
+                 ⚠️ WAS HIER BEWUSST NOCH FEHLT: das eingebettete
+                 HubSpot-Bewerberformular auf /jobs/ ist ebenfalls eine
+                 Übermittlung an einen Dritten und braucht einen eigenen
+                 Abschnitt. Der ist NICHT ergänzt — dafür gibt es eine
+                 ausdrückliche Anweisung, ihn dem Kunden zur rechtlichen
+                 Prüfung vorzulegen statt ihn selbst zu schreiben. Abschnitt
+                 3.2 (Kartendarstellung) ist die Vorlage, an der er sich
+                 orientieren kann.
+                 ⚠️ SOBALD GA4 UND reCAPTCHA LAUFEN, wird dieser Abschnitt
+                 wieder länger. Der vorbereitete Wortlaut und die dann nötigen
+                 CSP-Hosts stehen in docs/datenschutz-drittanbieter.md. -->
             <h3>4. Cookies und ähnliche Techniken</h3>
-            <p>Diese Webseite setzt derzeit keine Cookies. Es werden auch keine vergleichbaren Techniken zur Speicherung von Informationen auf Ihrem Endgerät eingesetzt, insbesondere kein „Local Storage" und kein „Session Storage", und es ist kein Werkzeug zur Reichweitenmessung oder Webanalyse eingebunden. Ein Einwilligungsbanner ist daher nicht erforderlich, und es findet keine Auswertung Ihres Verhaltens auf dieser Webseite statt.</p>
-            <p>Unabhängig davon fallen die in Abschnitt 2.1 beschriebenen Zugriffsdaten in den Protokolldateien des Servers an. Diese entstehen technisch bei jedem Abruf einer Webseite und beruhen nicht auf Cookies.</p>
-            <p>Sollten künftig Cookies oder vergleichbare Techniken eingesetzt werden, die nicht für den Betrieb der Seite unbedingt erforderlich sind — etwa zur Reichweitenmessung oder für Werbezwecke —, geschieht das erst nach Ihrer ausdrücklichen Einwilligung nach § 25 Abs. 1 TDDDG, und diese Datenschutzerklärung wird vorher entsprechend ergänzt.</p>
+            <p>Diese Webseite verwendet ein Einwilligungswerkzeug (Consent-Management-Plattform), das beim ersten Aufruf einen Hinweis einblendet. Es speichert Ihre Entscheidung auf Ihrem Endgerät, damit Sie nicht bei jedem Besuch erneut gefragt werden. Dieses Speichern ist für den Betrieb der Seite unbedingt erforderlich und daher nach § 25 Abs. 2 Nr. 2 TDDDG einwilligungsfrei; ohne es könnte Ihre Ablehnung nicht wirksam umgesetzt werden.</p>
+            <p>Darüber hinaus setzt diese Webseite derzeit keine Cookies zu Analyse-, Reichweiten- oder Werbezwecken. Es ist gegenwärtig kein Webanalyse-Werkzeug aktiv, und es findet keine Auswertung Ihres Verhaltens statt. Eingebunden ist ein Tag-Management-System, über das solche Werkzeuge künftig gesteuert werden können; es lädt seinerseits keine Analyse- oder Werbetechnik, solange keine entsprechende Einwilligung vorliegt.</p>
+            <p>Zum Schutz der Formulare gegen automatisierte Einsendungen wird ein Prüfmechanismus des Anbieters Cloudflare (Cloudflare, Inc., USA) eingesetzt. Er wertet technische Merkmale der Anfrage aus, um Menschen von Skripten zu unterscheiden, <strong>setzt dafür keine Cookies</strong> und erstellt kein Nutzungsprofil. Rechtsgrundlage ist Art. 6 Abs. 1 Satz 1 Buchst. f) DSGVO; das berechtigte Interesse liegt in der Abwehr von Spam und missbräuchlichen Einsendungen. Weil kein Zugriff auf Informationen in Ihrem Endgerät stattfindet, ist dieser Schutz einwilligungsfrei und daher bereits vor Ihrer Entscheidung über das Einwilligungsbanner aktiv.</p>
+            <p>Unabhängig von Cookies fallen die in Abschnitt 2.1 beschriebenen Zugriffsdaten in den Protokolldateien des Servers an. Diese entstehen technisch bei jedem Abruf einer Webseite.</p>
+            <p>Sollten künftig Cookies oder vergleichbare Techniken eingesetzt werden, die nicht für den Betrieb der Seite unbedingt erforderlich sind — etwa zur Reichweitenmessung oder für Werbezwecke —, geschieht das erst nach Ihrer ausdrücklichen Einwilligung nach § 25 Abs. 1 TDDDG. Ihre Einwilligung können Sie jederzeit über das Einwilligungsbanner ändern oder widerrufen.</p>
+
+            <!-- Platz für die automatisch erzeugte Cookie-Erklärung.
+                 ⚠️ DER INHALT ENTSTEHT ERST, WENN COOKIEBOT DIE LIVE-DOMAIN
+                 GESCANNT HAT. Vorher bleibt die Stelle leer — das ist kein
+                 Fehler, sondern der Zustand vor dem ersten Scan. Der Scan
+                 läuft gegen die echte Domain, auf dem Vorschau-Deploy also
+                 nicht.
+                 ⚠️ Die Domain-Gruppen-ID steckt im Pfad und kommt aus
+                 COOKIEBOT_CBID (PUBLIC_ENV in build.js) — sonst müsste sie
+                 hier UND im Kopf-Partial gepflegt werden, also zweimal.
+                 ⚠️ Der Host steht in der CSP (script-src
+                 consent.cookiebot.com). Ohne ihn bliebe die Tabelle leer,
+                 ohne Fehlermeldung — genau der Fall, den der Kommentar
+                 weiter oben in dieser Datei schon einmal vorhergesagt hat. -->
+            <h3>4a. Übersicht der eingesetzten Cookies</h3>
+            <script id="CookieDeclaration"
+                    src="https://consent.cookiebot.com/{{env.cookiebotCbid}}/cd.js"
+                    type="text/javascript"
+                    async></script>
             <h3>5. Ihre Rechte als betroffene Person</h3>
             <p>Soweit Ihre personenbezogenen Daten anlässlich des Besuchs unserer Webseite verarbeitet werden, stehen Ihnen als „betroffene Person“ im Sinne der DSGVO folgende Rechte zu:</p>
             <h4>5.1 Auskunft</h4>

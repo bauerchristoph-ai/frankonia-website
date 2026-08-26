@@ -2,3 +2,10 @@
 .vercel
 *.log
 dist/
+
+# Umgebungsvariablen — echte Werte gehören nie ins Repository.
+# .env.example ist die eingecheckte Dokumentation und deshalb
+# ausdrücklich ausgenommen.
+.env
+.env.*
+!.env.example

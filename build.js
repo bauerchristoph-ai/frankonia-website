@@ -96,6 +96,69 @@ function loadValues() {
 }
 
 // ---------------------------------------------------------------------------
+// Public environment values (2026-08-26)
+// ---------------------------------------------------------------------------
+// THREE values, and only three: they are PUBLIC by design — they end up in the
+// delivered HTML of every page and are meant to. They are variables anyway so a
+// test environment can substitute its own (Cloudflare's always-pass test key,
+// a separate Cookiebot domain group) without editing markup.
+//
+// ⚠️ NOTHING SECRET MAY EVER BE ADDED HERE. Everything this build writes lands
+// in dist/ and is served to anyone. The API token, the Brevo key and the
+// Turnstile SECRET are read by api/forms/submit.js at request time, on the
+// server, and are never seen by this file. "env.example" states which category
+// each variable belongs to; that split is the whole safety mechanism, so a new
+// entry here needs the same test: would I paste this value into a public
+// pastebin? If not, it does not belong here.
+//
+// A missing variable falls back to the documented production value and says so
+// in the build log. Deliberately not an error: the values are public and the
+// fallback is correct for production, so a build without an .env file must still
+// produce a working site — otherwise every checkout would need secrets it does
+// not need.
+const PUBLIC_ENV = [
+  [
+    "turnstileSiteKey",
+    "TURNSTILE_SITE_KEY",
+    "0x4AAAAAAEbw3lHJ1rhwrG7i",
+    "Cloudflare Turnstile Site Key",
+  ],
+  [
+    "cookiebotCbid",
+    "COOKIEBOT_CBID",
+    "2335e423-3956-4d6d-823a-9d471a462ca7",
+    "Cookiebot Domain-Gruppen-ID",
+  ],
+  [
+    // The endpoint the shared form posts to. Not from the environment — it is a
+    // property of this repository, not of the deployment — but it belongs in the
+    // same namespace because the form template reads it the same way.
+    // ⚠️ WITH the trailing slash, on purpose: vercel.json sets
+    // trailingSlash: true, so posting to the slashless path would take a 308
+    // hop first. See the rewrite rule in vercel.json.
+    "formEndpoint",
+    null,
+    "/api/forms/submit/",
+    "Formular-Endpoint",
+  ],
+];
+
+function loadPublicEnv() {
+  const out = {};
+  for (const [key, envName, fallback, label] of PUBLIC_ENV) {
+    const raw = envName ? process.env[envName] : undefined;
+    const value = raw && raw.trim() ? raw.trim() : fallback;
+    if (envName && !(raw && raw.trim())) {
+      console.log(
+        `build: ${envName} nicht gesetzt — ${label} nutzt den dokumentierten Produktionswert`
+      );
+    }
+    out[key] = value;
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
 // Coverage locations (content/coverage.json)
 // ---------------------------------------------------------------------------
 // ONE list of Einsatzgebiete, rendered into every surface that shows them
@@ -471,6 +534,7 @@ function buildPages() {
   }
 
   const values = loadValues();
+values.env = loadPublicEnv();
   const coverage = loadCoverage();
   const vacancies = loadVacancies();
 

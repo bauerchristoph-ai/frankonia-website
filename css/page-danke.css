@@ -1,0 +1,183 @@
+/* ==========================================================================
+   /danke/ — Erfolgszustand des Kundenformulars (2026-08-26)
+   ==========================================================================
+   Eine zentrierte Spalte, bewusst schmal und ruhig. Wer hier landet, hat die
+   Handlung abgeschlossen: die Seite muss bestätigen und den nächsten Schritt
+   nennen, nicht noch einmal verkaufen. Deshalb kein Hero-Foto, kein zweiter
+   CTA auf das Formular, keine Trust-Leiste.
+
+   Das Chassis liefert page-service.css (--content-inset, .section--light,
+   .service-link, .pixel-seam). Hier stehen nur die vier eigenen Bausteine.
+
+   ⚠️ KEIN data-reveal in diesem Markup, und das ist Absicht: eine Bestätigung,
+   die erst eingeblendet wird, lässt einen Moment offen, in dem der Besucher
+   nicht weiß, ob das Absenden geklappt hat. Die Seite ist ab dem ersten Frame
+   vollständig da.
+   ========================================================================== */
+
+.danke__inner {
+  /* 44rem ist die Textmaß-Konstante dieses Projekts (Artikel, Rechtstexte).
+     Zentriert, weil die Seite keine zweite Spalte hat und ein linksbündiger
+     Block auf einer sonst leeren Seite verloren wirkt. */
+  max-width: 44rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* ---- Bestätigungs-Chip ---------------------------------------------------
+   Die Form der Bestätigung, nicht nur ihre Farbe: Häkchen plus Wort. Ein
+   grüner Punkt allein wäre für farbfehlsichtige Besucher kein Signal
+   (WCAG 1.4.1), und diese Seite hat genau eine Botschaft. */
+.danke__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-5);
+  padding: 0.5rem 1rem;
+  border: 1px solid rgb(61 154 211 / 0.35);
+  border-radius: 999px;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+.danke__badge .icon {
+  /* ⚠️ fill/stroke müssen hier stehen: die Angaben des Sprites leben auf
+     <g id="icon-defs"> und überleben ein <use> NICHT. Dieses Projekt hat
+     denselben Fehler schon mehrfach als schwarzen Klecks ausgeliefert. */
+  width: 1.125rem;
+  height: 1.125rem;
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2.25;
+}
+
+/* ---- Titel und Lede ----------------------------------------------------- */
+.danke__title {
+  margin: 0;
+  /* NICHT die Seitentitel-Skala aus docs/page-conventions.md 2, und das ist
+     eine erklärte Ausnahme: 60px über einer Bestätigung liest sich wie eine
+     Kampagnenseite. Dieselbe Begründung wie beim Namen auf den
+     Personenkarten. */
+  font-size: clamp(2rem, 1.6rem + 1.8vw, 3rem);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.danke__lede {
+  margin: var(--space-4) auto 0;
+  max-width: 34rem;
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-base);
+  color: rgb(255 255 255 / 0.82);
+  /* Zentrierter Text hat schon zwei unruhige Ränder — ein mitten im Wort
+     getrenntes deutsches Kompositum liest sich dann wie ein Renderfehler.
+     base.css setzt hyphens: auto auf jedem <p>. */
+  hyphens: none;
+}
+
+.danke__lede strong { color: var(--color-text); font-weight: 500; }
+
+/* ---- Die drei Schritte -------------------------------------------------- */
+.danke__steps {
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-4);
+  text-align: start;
+}
+
+.danke__step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-3);
+  align-items: start;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.danke__step:first-child { border-top: 0; padding-top: 0; }
+
+.danke__step-num {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background-color: var(--color-blue-light);
+  /* ⚠️ Bekannter, dokumentierter Kontrast-Vorbehalt der Marke: Weiß auf
+     #3D9AD3 liegt bei 3,11:1. Das trägt hier keine Information — die Ziffer
+     ist aria-hidden und wiederholt nur, was die <ol> selbst schon zählt. */
+  color: var(--color-white);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.danke__step-text {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--color-text-muted);
+}
+
+.danke__step-text strong { color: var(--color-text); font-weight: 500; }
+
+/* ---- Der dringende Fall ------------------------------------------------- */
+.danke__urgent {
+  margin-top: var(--space-8);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: rgb(255 255 255 / 0.03);
+}
+
+.danke__urgent-label {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.danke__urgent-text {
+  margin: var(--space-2) 0 var(--space-4);
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+  hyphens: none;
+}
+
+/* ---- Weiterführung ------------------------------------------------------ */
+.danke__next { margin-top: var(--space-8); }
+
+.danke__next-title {
+  /* Bewusst klein: das ist die Überschrift eines Nachsatzes, nicht eines
+     Kapitels. Die Seite hat genau eine große Aussage, und die steht oben. */
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  letter-spacing: normal;
+  color: var(--color-text);
+}
+
+.danke__next-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-3);
+  justify-items: center;
+}
+
+/* ---- Telefon ------------------------------------------------------------ */
+@media (max-width: 639.98px) {
+  /* Sitewide-Regel: eine CTA-Zeile geht nur unter 640px auf die volle Breite
+     (docs/page-conventions.md 3). Hier steht der Knopf allein in einer Box,
+     deshalb greift nur der Umbruch, nicht die Breite. */
+  .danke__urgent .btn { white-space: normal; }
+}

@@ -1,3 +1,93 @@
+<!-- ==========================================================================
+     CONSENT UND TAG MANAGER — 2026-08-26
+     ==========================================================================
+     ⚠️⚠️ DIE REIHENFOLGE DIESER DREI BLÖCKE IST NICHT VERHANDELBAR:
+       1. Cookiebot (CMP)
+       2. Google Consent Mode v2, Standardzustand "denied"
+       3. Google Tag Manager
+     Lädt der Tag Manager vor der CMP, feuern Tags VOR der Einwilligung. Das ist
+     der häufigste Fehler bei dieser Kombination und rechtlich der teuerste.
+
+     ⚠️ SIE STEHEN GANZ OBEN IN DIESEM PARTIAL, und das ist der Grund: dieses
+     Partial wird auf allen 69 Seiten im <head> eingebunden, und geprüft ist,
+     dass KEINE Seite davor ein ausfuehrbares Script-Tag hat (die Zeilen davor
+     sind meta,
+     canonical, Open Graph und JSON-LD — kein ausführbares Script). Damit sind
+     diese drei die ersten Skripte jeder Seite. Nichts oberhalb einfügen.
+
+     ⚠️ DIE CSP MUSSTE DAFÜR GEÖFFNET WERDEN, inklusive 'unsafe-inline' in
+     script-src — vorher stand hier `script-src 'self'`. Warum das mit GTM
+     unvermeidbar ist und was es kostet, steht vollständig in
+     docs/design-sources/csp-build.js. Wer hier einen Drittanbieter ergänzt,
+     muss dort seinen Host eintragen und das Skript neu laufen lassen: ein
+     blockiertes Script erzeugt KEINEN sichtbaren Fehler.
+     ========================================================================== -->
+
+<!-- 1 — Cookiebot. data-blockingmode="auto" blockiert erkannte
+     Drittanbieter-Skripte selbständig bis zur Einwilligung; deshalb ist hier
+     nichts von Hand auf type="text/plain" umgestellt.
+     ⚠️ Die eine Ausnahme davon ist Turnstile: der Spamschutz darf NICHT auf
+     eine Einwilligung warten, sonst schützt er die Besucher nicht, die den
+     Banner ignorieren. Das Opt-out steckt in js/lead-form.js
+     (data-cookieconsent="ignore"), weil das Script von dort geladen wird.
+     ⚠️ Die CBID ist öffentlich und steht ohnehin im ausgelieferten HTML. Sie
+     kommt trotzdem aus COOKIEBOT_CBID, damit eine Testumgebung eine eigene
+     Domain-Gruppe einsetzen kann — siehe PUBLIC_ENV in build.js. -->
+<script id="Cookiebot"
+        src="https://consent.cookiebot.com/uc.js"
+        data-cbid="{{env.cookiebotCbid}}"
+        data-blockingmode="auto"
+        type="text/javascript"></script>
+
+<!-- 2 — Google Consent Mode v2, alles auf "denied", bevor irgendein Tag lädt.
+     security_storage bleibt "granted": das ist die Kategorie für
+     Sicherheitszwecke (Betrugserkennung) und nicht einwilligungspflichtig.
+     wait_for_update gibt der CMP 500 ms, ihren gespeicherten Zustand zu
+     melden, bevor Tags mit dem Standard weiterarbeiten — ohne das entstehen
+     bei wiederkehrenden Besuchern verlorene Messungen, obwohl die
+     Einwilligung längst vorliegt.
+     ads_data_redaction schneidet Werbe-Identifikatoren ab, solange
+     ad_storage verweigert ist; url_passthrough hängt die nötigen Parameter
+     an interne Links, damit eine Google-Ads-Zuordnung ohne Cookies nicht
+     komplett verloren geht.
+     ⚠️ DIESER BLOCK GRANTED NICHTS. Das Hochsetzen macht Cookiebot, und zwar
+     nur, wenn im Cookiebot-Konto die Consent-Mode-Integration aktiviert ist.
+     Ist sie aus, bleibt alles dauerhaft "denied" und keine Messung läuft je —
+     ohne Fehlermeldung. Das ist der eine Punkt hier, der stillschweigend
+     fehlschlägt; er steht deshalb im Bericht. -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag("consent", "default", {
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+    analytics_storage: "denied",
+    functionality_storage: "denied",
+    personalization_storage: "denied",
+    security_storage: "granted",
+    wait_for_update: 500
+  });
+  gtag("set", "ads_data_redaction", true);
+  gtag("set", "url_passthrough", true);
+</script>
+
+<!-- 3 — Google Tag Manager, Container GTM-NWLGMFJN.
+     ⚠️ DAS IST NICHT DAS STANDARD-SNIPPET VON GOOGLE. Der Container lädt über
+     den eigenen Tagging-Server d.frankonia-sicherheit.de (stape), damit
+     Adblocker und Browser-Tracking-Schutz seltener greifen. Der kodierte Wert
+     hinter 28l= ist die stape-Konfiguration: nichts umformatieren, nichts
+     kürzen, keinen Parameter anfassen.
+     ⚠️ ABHÄNGIGKEIT: antwortet d.frankonia-sicherheit.de nicht, lädt GTM
+     sitewide gar nicht — und zwar ohne sichtbaren Fehler. Nach jedem Deploy im
+     Netzwerk-Tab prüfen, dass der Loader mit HTTP 200 kommt.
+     Die Container-ID steckt bereits im Snippet, deshalb liest dieser Loader
+     GTM_CONTAINER_ID nicht aus; die Variable steht in .env.example nur als
+     Dokumentation. -->
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;j.src="https://d.frankonia-sicherheit.de/7ll8fjctyrvc.js?"+i;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','28l=ChJPPiAuRyg0OjU0MikkQBVLQFdFRQ4IXhAAGBoIBQgKF18KHQACAxEeFxAATQ4D');</script>
+<!-- End Google Tag Manager -->
+
 <!-- No font preload here — typography is now a system stack (Helvetica
      Neue / Arial, see tokens.css --font-family-base), nothing to
      self-host or preload. These two lines used to preload Open Sans;
