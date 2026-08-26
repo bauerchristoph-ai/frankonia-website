@@ -361,3 +361,143 @@
   }
   .conversion__form-alt a { font-size: 1rem; }
 }
+
+/* ==========================================================================
+   Umbau 2026-08-26: geteilte Namenszeile, Auswahlfeld, Marketing-Haken,
+   Turnstile, Statusmeldung
+   ==========================================================================
+   Das Formular hat jetzt Vorname und Nachname getrennt, ein Auswahlfeld für die
+   Leistung, eine zweite Checkbox und einen Spamschutz. Alles hier ist an
+   `.lead-form` bzw. `.conversion__form` gebunden — die gemeinsamen Bauteile
+   .form-field / .form-checkbox in components.css bleiben unangetastet, wie
+   schon beim ersten Umbau dieses Blocks.
+   ========================================================================== */
+
+/* ---- Vorname und Nachname ----------------------------------------------
+   ⚠️ SIE BRAUCHEN KEINE EIGENE REGEL FÜR DIE ZWEI SPALTEN. Das Formular ist ab
+   640px ein zweispaltiges Grid, und die beiden Felder stehen im Markup direkt
+   hintereinander — sie füllen die erste Zeile also von selbst. Die Klasse ist
+   trotzdem da, weil sie die Absicht benennt: wer eines der beiden Felder
+   verschiebt, sieht am Namen, dass die Nebeneinanderstellung gewollt war.
+   Unter 640px liegen sie untereinander, was bei zwei kurzen Feldern auf einem
+   Telefon richtig ist. */
+.lead-form__half {
+  min-width: 0;
+}
+
+/* ---- Auswahlfeld "Leistung" --------------------------------------------
+   Dieselbe Unterstrich-Optik wie die Textfelder. Ein `select` bringt von sich
+   aus einen Rahmen, eine Füllung und ein Pfeilsymbol mit, deshalb hier mehr
+   Zurücksetzen als bei einem `input`. */
+.conversion__form .form-field__select {
+  width: 100%;
+  padding: var(--space-2) 0;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid rgb(59 73 86 / 0.25);
+  border-radius: 0;
+  color: var(--color-gray);
+  font-family: inherit;
+  font-size: var(--font-size-base);
+  /* ⚠️ `color-scheme: light` IST LOAD-BEARING, nicht Kosmetik. tokens.css
+     setzt `color-scheme: dark` auf :root; ein Auswahlfeld erbt das und
+     zeichnet dann seine AUFGEKLAPPTE Liste dunkel — dunkler Text auf dunklem
+     Grund, mitten in einer weißen Karte. Die Liste rendert das
+     Betriebssystem, kein CSS von uns kommt dort hinein. Dieselbe Falle hat
+     das Bewerberformular auf /jobs/ 2026-08-03 schon einmal gekostet. */
+  color-scheme: light;
+  /* Das native Pfeilsymbol bleibt. Es zu ersetzen bedeutet ein
+     fest verdrahtetes Chevron als data-URI, das `currentColor` nicht folgen
+     kann — für einen selten benutzten Zierrat ein schlechter Tausch. */
+}
+
+.conversion__form .form-field__select:hover {
+  border-bottom-color: rgb(59 73 86 / 0.45);
+}
+
+.conversion__form .form-field__select:focus-visible {
+  outline: none;
+  border-bottom-color: var(--color-accent-strong);
+  border-bottom-width: 2px;
+}
+
+/* ---- Ungültige Felder ---------------------------------------------------
+   ⚠️ NICHT NUR FARBE. `aria-invalid` setzt js/lead-form.js; die Markierung ist
+   ein DICKERER Unterstrich plus die Textmeldung darunter, damit sie auch ohne
+   Farbwahrnehmung erkennbar ist (WCAG 1.4.1). Rot allein wäre für einen Teil
+   der Besucher kein Signal.
+   Der Rotton ist der einzige im Projekt und steht nur hier: eine Fehlerfarbe
+   gehört nicht in die Markenpalette, und sie taucht auch nur in diesem einen
+   Zustand auf. */
+.conversion__form [aria-invalid="true"] {
+  border-bottom-color: #B3261E;
+  border-bottom-width: 2px;
+}
+
+/* ---- Marketing-Haken ---------------------------------------------------
+   Optisch leiser als die Datenschutz-Checkbox: die eine ist Voraussetzung der
+   Verarbeitung, die andere ein Angebot. Gleich stark gesetzt lesen sie sich
+   als zwei Pflichten. */
+.conversion__form .form-checkbox--optional .form-checkbox__label {
+  font-size: var(--font-size-sm);
+  color: rgb(59 73 86 / 0.7);
+}
+
+/* ---- Turnstile ---------------------------------------------------------
+   ⚠️ MINDESTHÖHE RESERVIERT. Das Widget wird nachgeladen und kommt in einer
+   eigenen Größe; ohne reservierte Höhe springt beim Erscheinen alles darunter
+   nach unten (CLS) — und darunter steht der Absende-Knopf, also genau das
+   Element, auf das der Besucher gerade zielt.
+   65px ist die Höhe des kompakten Widgets samt seinem eigenen Rand.
+   ⚠️ Lädt Turnstile nicht (Netzfehler oder Blockade), bleibt der Platz leer.
+   Das ist der akzeptierte Preis dafür, dass ein Ausfall das Formular nicht
+   blockiert. */
+.lead-form__turnstile {
+  grid-column: 1 / -1;
+  min-height: 65px;
+}
+
+.lead-form__turnstile:empty {
+  /* Ist nichts gerendert worden, soll auch kein Loch bleiben. `:empty` trifft
+     genau den Zustand "Widget nie eingesetzt" — sobald Turnstile sein iframe
+     einhängt, greift die Regel nicht mehr. */
+  min-height: 0;
+}
+
+/* ---- Statusmeldung ----------------------------------------------------- */
+.lead-form__status {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+  color: rgb(59 73 86 / 0.75);
+}
+
+.lead-form__status:empty {
+  /* Eine leere Live-Region ist der Normalzustand und darf keinen Abstand
+     erzeugen. */
+  display: none;
+}
+
+.lead-form__status[data-state="fehler"] {
+  color: #B3261E;
+  font-weight: 500;
+}
+
+/* ---- Absende-Knopf während des Sendens -------------------------------- */
+.conversion__submit[data-busy] {
+  /* Kein Spinner: eine Animation wäre ein weiteres bewegtes Element auf einer
+     Seite, die schon genug bewegt, und der Text sagt es genauer. Der Knopf ist
+     währenddessen `disabled`, also ist die Abblendung der ehrliche Zustand. */
+  opacity: 0.6;
+  cursor: progress;
+}
+
+@media (max-width: 639.98px) {
+  /* Auf einem Telefon ist das Formular einspaltig; die halbe Breite der
+     Namensfelder ist dort ohnehin ohne Wirkung. Nur der Spamschutz braucht
+     etwas mehr Luft nach oben, weil er direkt über dem Knopf sitzt. */
+  .lead-form__turnstile {
+    margin-top: calc(-1 * var(--space-2));
+  }
+}

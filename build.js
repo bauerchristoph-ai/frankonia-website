@@ -467,6 +467,50 @@ function resolveVars(content, scopes, sourceLabel) {
   });
 }
 
+// ---------------------------------------------------------------------------
+// GTM-Ansatzpunkte an Kontaktlinks (2026-08-26)
+// ---------------------------------------------------------------------------
+// Setzt `data-cta` an jeden Telefon-, WhatsApp- und Mail-Link. Der Tag Manager
+// braucht stabile Angriffspunkte für seine Klick-Trigger; ohne sie müsste jeder
+// Trigger auf einen CSS-Selektor zeigen, und dann bricht das Tracking beim
+// nächsten Umbenennen einer Klasse — still, weil ein Trigger, der nicht
+// auslöst, keinen Fehler erzeugt.
+//
+// ⚠️ IM BUILD UND NICHT ZUR LAUFZEIT. Ein Attribut, das erst JavaScript
+// anhängt, ist im ausgelieferten HTML nicht da: es fehlt für jeden Klick, der
+// vor dem eigenen Skript passiert, und es ist beim Prüfen im Quelltext nicht
+// sichtbar. Diese Attribute gehören in die Datei, die der Browser bekommt.
+//
+// ⚠️ ES SIND DREI KATEGORIEN UND KEIN FREIBRIEF. Die Ersetzung greift nur an
+// <a>-Tags mit tel:, mailto: oder wa.me, und nur wenn dort noch kein
+// `data-cta` steht — ein von Hand gesetzter Wert gewinnt immer. Alles andere
+// bleibt unberührt: dieser Build formt kein Markup um, er ergänzt ein Attribut.
+//
+// ⚠️ DIE PRIMÄREN CTA-BUTTONS BEKOMMEN IHR `data-cta="primary"` NICHT HIER.
+// "Primär" ist eine Aussage über die Rolle eines Knopfes auf seiner Seite, und
+// die kann eine Textersetzung nicht treffen — .btn--primary steht auch am
+// Formular-Absender (der `form-submit` heißt) und in Bausteinen, die keine
+// Seiten-CTA sind. Wo es gebraucht wird, steht es im Markup.
+const CTA_MUSTER = [
+  [/(<a\b(?![^>]*\bdata-cta=)[^>]*\bhref="tel:)/g, "phone"],
+  [/(<a\b(?![^>]*\bdata-cta=)[^>]*\bhref="mailto:)/g, "email"],
+  [/(<a\b(?![^>]*\bdata-cta=)[^>]*\bhref="https:\/\/wa\.me\/)/g, "whatsapp"],
+];
+
+function markCtaLinks(html) {
+  let out = html;
+  let anzahl = 0;
+  for (const [re, wert] of CTA_MUSTER) {
+    out = out.replace(re, (treffer) => {
+      anzahl++;
+      // Das Attribut kommt direkt hinter das <a, vor alle bestehenden — so
+      // bleibt der Rest des Tags unverändert und die Reihenfolge ist stabil.
+      return treffer.replace(/^<a\b/, '<a data-cta="' + wert + '"');
+    });
+  }
+  return { html: out, anzahl };
+}
+
 function walkHtml(dir) {
   let results = [];
   if (!fs.existsSync(dir)) return results;
@@ -534,7 +578,8 @@ function buildPages() {
   }
 
   const values = loadValues();
-values.env = loadPublicEnv();
+  values.env = loadPublicEnv();
+  let ctaGesamt = 0;
   const coverage = loadCoverage();
   const vacancies = loadVacancies();
 
@@ -551,6 +596,16 @@ values.env = loadPublicEnv();
     // Then the page's own placeholders (the ones outside any include).
     content = resolveVars(content, [values], sourceLabel);
 
+    // ⚠️ NACH dem Auflösen der Includes und VOR dem Entfernen der Kommentare.
+    // Nach den Includes, weil die meisten Kontaktlinks aus dem Footer und dem
+    // Header kommen — vorher stünde in der Seite nur der Marker. Vor dem
+    // Kommentar-Entfernen, weil die Ersetzung ein <a> in einem Kommentar sonst
+    // nicht mehr sehen kann; sie soll es auch nicht anfassen, aber ein Attribut
+    // in einem Kommentar wäre nur unnötiges Rauschen.
+    const cta = markCtaLinks(content);
+    content = cta.html;
+    ctaGesamt += cta.anzahl;
+
     content = stripHtmlComments(content);
 
     const notice =
@@ -566,6 +621,7 @@ values.env = loadPublicEnv();
     console.log(`build: ${sourceLabel} -> ${path.relative(ROOT, outFile)}`);
   }
 
+  console.log("build: " + ctaGesamt + " Kontaktlinks mit data-cta versehen (Telefon, Mail, WhatsApp)");
   return pageFiles.length;
 }
 

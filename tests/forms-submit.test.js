@@ -53,19 +53,51 @@ function res() {
   const r = {
     _status: null,
     _json: null,
+    _html: null,
+    _beendet: false,
     _header: {},
     setHeader(k, v) { this._header[k] = v; return this; },
     status(s) { this._status = s; return this; },
     json(o) { this._json = o; return this; },
+    // Für den Weg ohne JavaScript: der Handler antwortet dort mit HTML oder
+    // mit einer Weiterleitung statt mit JSON.
+    send(h) { this._html = h; return this; },
+    end() { this._beendet = true; return this; },
   };
   return r;
 }
 
+/**
+ * Anfrage wie sie js/lead-form.js sendet: mit `Accept: application/json`.
+ * ⚠️ Der Kopf entscheidet über das Antwortformat. Ohne ihn nimmt der Handler
+ * den Weg ohne JavaScript (Weiterleitung statt JSON) — das hat beim Einbau
+ * dieses Weges acht Tests auf einmal umgeworfen, weil die Attrappe hier den
+ * Kopf nicht setzte. Wer einen Test schreibt, der JSON erwartet, braucht
+ * diesen Helfer; für den anderen Weg gibt es reqOhneJs().
+ */
 function req(body, kopf = {}) {
   return {
     method: "POST",
-    headers: { "x-forwarded-for": "203.0.113.7", ...kopf },
+    headers: {
+      "x-forwarded-for": "203.0.113.7",
+      accept: "application/json",
+      ...kopf,
+    },
     socket: { remoteAddress: "203.0.113.7" },
+    body,
+  };
+}
+
+/** Anfrage wie ein Browser ohne JavaScript sie sendet. */
+function reqOhneJs(body) {
+  return {
+    method: "POST",
+    headers: {
+      "x-forwarded-for": "203.0.113.9",
+      accept: "text/html,application/xhtml+xml",
+      "content-type": "application/x-www-form-urlencoded",
+    },
+    socket: { remoteAddress: "203.0.113.9" },
     body,
   };
 }
@@ -613,4 +645,73 @@ test("Fehlt der HubSpot-Schlüssel, läuft Brevo trotzdem und die Anfrage gilt",
   assert.equal(r._status, 200);
   assert.equal(protokoll.filter((p) => p.url.includes("api.hubapi.com")).length, 0);
   assert.ok(protokoll.some((p) => p.url.includes("api.brevo.com")));
+});
+
+/* ============================================ 14 — Weg ohne JavaScript */
+
+test("Ohne JavaScript: Erfolg endet in einer 303-Weiterleitung auf /danke/", async () => {
+  globalThis.fetch = alleOk();
+  const r = res();
+  await handler(reqOhneJs(GUELTIG), r);
+  // ⚠️ 303, nicht 302: nach einem POST muss die Methode auf GET wechseln,
+  // sonst postet der Browser auf /danke/ und bekommt 405.
+  assert.equal(r._status, 303);
+  assert.equal(r._header.Location, "/danke/");
+  assert.equal(r._beendet, true);
+  assert.equal(r._json, null, "es wurde JSON an einen Browser geschickt");
+});
+
+test("Ohne JavaScript: ein Formular-Body als Text wird gelesen", async () => {
+  globalThis.fetch = alleOk();
+  const alsFormular = new URLSearchParams({
+    ...GUELTIG,
+    privacy_accepted: "on",
+  }).toString();
+  const r = res();
+  await handler(reqOhneJs(alsFormular), r);
+  assert.equal(r._status, 303, "urlencoded-Body wurde nicht verstanden");
+});
+
+test("Ohne JavaScript: fehlende Pflichtfelder geben eine lesbare Seite, kein JSON", async () => {
+  globalThis.fetch = alleOk();
+  const eingabe = { ...GUELTIG };
+  delete eingabe.company;
+  const r = res();
+  await handler(reqOhneJs(eingabe), r);
+  assert.equal(r._status, 400);
+  assert.match(r._header["Content-Type"], /text\/html/);
+  assert.match(r._html, /<!DOCTYPE html>/);
+  // Die Seite muss den Ausweg nennen.
+  assert.match(r._html, /964352/);
+  assert.match(r._html, /noindex/);
+  // Und keine Feldnamen verraten.
+  assert.ok(!r._html.includes("company"), "die Fehlerseite nennt Feldnamen");
+});
+
+test("Ohne JavaScript: eine fehlgeschlagene Zustellung nennt die Vorgangsnummer", async () => {
+  globalThis.fetch = fetchAttrappe([
+    ["challenges.cloudflare.com", { status: 200, body: { success: true } }],
+    ["api.hubapi.com", { status: 500, body: {} }],
+    ["api.brevo.com", { status: 500, body: {} }],
+  ]);
+  const r = res();
+  await handler(reqOhneJs(GUELTIG), r);
+  assert.equal(r._status, 502);
+  assert.match(r._html, /Vorgangsnummer/);
+  assert.match(r._html, /964352/);
+});
+
+test("Ohne JavaScript: ein fehlendes Turnstile-Token blockiert die Anfrage NICHT", async () => {
+  // Ohne Skript gibt es kein Token. Eine echte Anfrage darf nicht an einem
+  // fehlenden Skript scheitern — der Server behandelt "kein Token" bei
+  // erreichbarem Cloudflare aber als Ablehnung, also muss dieser Fall die
+  // lesbare Seite bekommen und nicht rohes JSON.
+  globalThis.fetch = alleOk();
+  const eingabe = { ...GUELTIG };
+  delete eingabe["cf-turnstile-response"];
+  const r = res();
+  await handler(reqOhneJs(eingabe), r);
+  assert.equal(r._status, 400);
+  assert.match(r._header["Content-Type"], /text\/html/);
+  assert.match(r._html, /Spamschutz/);
 });

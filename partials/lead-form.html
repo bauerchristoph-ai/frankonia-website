@@ -1,17 +1,62 @@
-          <!-- SHARED lead form. Include it, never copy it:
-                 include: lead-form prefix="xx" messageLabel="..."
-               prefix must be unique per page (it prefixes every id/for);
-               messageLabel is the only per-page label. Rationale, and why
-               /kontakt/ and /jobs/ keep their own form: page-conventions.md 6. -->
-<form class="conversion__form" action="#" method="post">
-            <div class="form-field">
-              <label class="form-field__label" for="{{prefix}}-name">Name *</label>
-              <input class="form-field__input" type="text" id="{{prefix}}-name" name="name" autocomplete="name" {{nameRequired}}>
+          <!-- GEMEINSAMES KUNDENFORMULAR. Einbinden, nie kopieren:
+                 include: lead-form prefix="xx" messageLabel="…" service="…"
+               · prefix        muss je Seite eindeutig sein (er steht vor jeder
+                               id und jedem for)
+               · messageLabel  die einzige seitenspezifische Beschriftung
+               · service       vorbelegte Leistung, optional. Auf einer
+                               Leistungsseite die eigene Leistung; ohne Angabe
+                               bleibt die Auswahl offen.
+
+               ⚠️⚠️ 2026-08-26 KOMPLETT UMGEBAUT. Vorher: ein Feld "Name",
+               Telefon als PFLICHT, kein Spamschutz, kein Absendeziel
+               (action="#"). Jetzt: Vorname und Nachname getrennt, Telefon
+               freiwillig, Turnstile, und ein echter Endpoint.
+
+               ⚠️ ALLE 43 EINBINDENDEN SEITEN ZEIGEN JETZT DENSELBEN FELDSATZ.
+               Das ist der ausdrückliche Auftrag ("Nach dem Umbau muss jede
+               einbindende Seite denselben Feldsatz zeigen") und es kostet eine
+               Ausnahme: /angebot/ hat bisher `nameRequired=""` übergeben und
+               den Namen freiwillig gestellt. Diese Ausnahme fällt weg. Die
+               Parameter `nameRequired` und `companyRequired` gibt es nicht
+               mehr; wer sie noch übergibt, ändert damit nichts.
+
+               ⚠️ VORNAME UND NACHNAME GETRENNT, weil HubSpot und Brevo beide
+               getrennte Felder führen (firstname/lastname, VORNAME/NACHNAME).
+               Ein einzelnes Namensfeld müsste serverseitig geraten geteilt
+               werden, und bei "Anna Maria von der Heide" ist jede Regel falsch.
+
+               ⚠️ TELEFON IST FREIWILLIG. Es war vorher Pflicht — auf einer
+               B2B-Anfrage ist eine Telefonnummer eine Hürde, und die E-Mail
+               genügt für die Rückmeldung. /kontakt/ hatte sie ebenfalls als
+               Pflicht; auch dort fällt sie weg. Das ist eine bewusste Änderung
+               am Formular, nicht am Text.
+
+               Begründung der Feldreihenfolge und der geteilten Zeile:
+               docs/page-conventions.md §6. -->
+<form class="conversion__form lead-form"
+      action="{{env.formEndpoint}}"
+      method="post"
+      novalidate
+      data-lead-form
+      data-form="kontakt">
+
+            <!-- ⚠️ `novalidate` ist gesetzt, und das ist kein Verzicht auf
+                 Validierung: js/lead-form.js prüft mit derselben
+                 Browser-API (checkValidity) und zeigt die Meldungen an den
+                 Feldern statt in einer Sprechblase, die bei einem langen
+                 Formular am falschen Ende der Seite auftaucht. Läuft kein
+                 JavaScript, entfernt das Skript `novalidate` nicht — dann
+                 greift ein anderer Weg, siehe den Hinweis am Ende dieses
+                 Formulars. -->
+
+            <div class="form-field lead-form__half">
+              <label class="form-field__label" for="{{prefix}}-first-name">Vorname *</label>
+              <input class="form-field__input" type="text" id="{{prefix}}-first-name" name="first_name" autocomplete="given-name" required>
             </div>
 
-            <div class="form-field">
-              <label class="form-field__label" for="{{prefix}}-company">Unternehmen *</label>
-              <input class="form-field__input" type="text" id="{{prefix}}-company" name="company" autocomplete="organization" {{companyRequired}}>
+            <div class="form-field lead-form__half">
+              <label class="form-field__label" for="{{prefix}}-last-name">Nachname *</label>
+              <input class="form-field__input" type="text" id="{{prefix}}-last-name" name="last_name" autocomplete="family-name" required>
             </div>
 
             <div class="form-field">
@@ -20,37 +65,134 @@
             </div>
 
             <div class="form-field">
-              <label class="form-field__label" for="{{prefix}}-phone">Telefon *</label>
-              <input class="form-field__input" type="tel" id="{{prefix}}-phone" name="phone" autocomplete="tel" required>
+              <label class="form-field__label" for="{{prefix}}-phone">Telefon</label>
+              <input class="form-field__input" type="tel" id="{{prefix}}-phone" name="phone" autocomplete="tel">
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="{{prefix}}-company">Unternehmen *</label>
+              <input class="form-field__input" type="text" id="{{prefix}}-company" name="company" autocomplete="organization" required>
+            </div>
+
+            <!-- ⚠️ DIE LEISTUNG IST EIN AUSWAHLFELD UND AUF EINER
+                 LEISTUNGSSEITE VORBELEGT. Auf /objektschutz/ steht dort
+                 "Objektschutz", ohne dass der Besucher etwas tun muss; auf der
+                 Startseite ist die Auswahl offen. Der Wert landet als
+                 `website_service` in HubSpot und als SERVICE in Brevo und
+                 entscheidet dort, ob die Bestätigungsmail die Zeile zur
+                 Leistung einblendet.
+                 ⚠️ DIE LISTE IST DIE DES NAVIGATIONSMENÜS, in derselben
+                 Reihenfolge. Kommt eine Leistung dazu, gehört sie hier UND in
+                 partials/header-de.html — beim nächsten Mal ist das der
+                 Anlass, die Liste wie die Einsatzgebiete in eine
+                 content/-Datei zu heben. Zwei Stellen sind vertretbar, drei
+                 nicht. -->
+            <div class="form-field">
+              <label class="form-field__label" for="{{prefix}}-service">Leistung</label>
+              <select class="form-field__select" id="{{prefix}}-service" name="service" data-preselect="{{service}}">
+                <option value="">Bitte auswählen (optional)</option>
+                <option value="Werkschutz">Werkschutz</option>
+                <option value="Objektschutz">Objektschutz</option>
+                <option value="Baustellenbewachung">Baustellenbewachung</option>
+                <option value="Brandwache">Brandwache</option>
+                <option value="Revier- &amp; Schließdienst">Revier- &amp; Schließdienst</option>
+                <option value="Empfangsdienst">Empfangsdienst</option>
+                <option value="Veranstaltungsschutz">Veranstaltungsschutz</option>
+                <option value="Kaufhausdetektei">Kaufhausdetektei</option>
+                <option value="Sicherheitstechnik">Sicherheitstechnik</option>
+                <option value="Interventionsdienst">Interventionsdienst</option>
+                <option value="Sicherheitskonzept">Sicherheitskonzept</option>
+                <option value="Etwas anderes">Etwas anderes</option>
+              </select>
             </div>
 
             <div class="form-field conversion__form-field--full">
-              <label class="form-field__label" for="{{prefix}}-message">{{messageLabel}}</label>
-              <!-- rows="2" is load-bearing: a CSS min-height can only grow a
-                   textarea's box, never shrink it from the default 2-3 rows.
-                   See docs/page-conventions.md §6. -->
-              <textarea class="form-field__textarea" id="{{prefix}}-message" name="message" rows="2"></textarea>
+              <label class="form-field__label" for="{{prefix}}-message">{{messageLabel}} *</label>
+              <!-- rows="2" ist load-bearing: eine min-height im CSS kann die
+                   Box einer textarea nur wachsen lassen, nie unter die
+                   Standardhöhe von 2-3 Zeilen schrumpfen.
+                   Siehe docs/page-conventions.md §6. -->
+              <textarea class="form-field__textarea" id="{{prefix}}-message" name="message" rows="2" required></textarea>
             </div>
 
-            <!-- Honeypot (docs/page-conventions.md §6): out of the layout but
-                 NOT display:none (bots skip hidden fields), out of the tab order
-                 and out of the accessibility tree. Nothing reads it yet — the
-                 form has no backend — but it ships with the markup so it is
-                 already there when one exists. -->
+            <!-- Honeypot (docs/page-conventions.md §6): aus dem Layout heraus,
+                 aber NICHT display:none (Bots überspringen versteckte Felder),
+                 aus der Tabulatorfolge und aus dem Accessibility-Baum.
+                 ⚠️ SEIT 2026-08-26 WIRD ES AUSGEWERTET: api/forms/submit.js
+                 antwortet bei gefülltem Feld mit 200 und verwirft still. -->
             <div class="conversion__hp" aria-hidden="true">
               <label for="{{prefix}}-website">Website</label>
               <input type="text" id="{{prefix}}-website" name="website" tabindex="-1" autocomplete="off">
             </div>
 
             <div class="form-checkbox">
-              <input class="form-checkbox__input" type="checkbox" id="{{prefix}}-privacy" name="privacy" required>
+              <input class="form-checkbox__input" type="checkbox" id="{{prefix}}-privacy" name="privacy_accepted" required>
               <label class="form-checkbox__label" for="{{prefix}}-privacy">
                 Ich habe die <a href="/datenschutz/">Datenschutzerklärung</a> gelesen und stimme zu. *
               </label>
             </div>
 
-            <button class="btn btn--primary conversion__submit" type="submit">
+            <!-- ⚠️ GETRENNT VON DER DATENSCHUTZ-CHECKBOX UND NICHT
+                 VORAUSGEWÄHLT. Zwei Einwilligungen in einem Haken zu bündeln
+                 macht beide unwirksam, und ein vorausgewählter Haken ist keine
+                 Einwilligung. Ohne Haken kein Marketing: der Server setzt
+                 OPT_IN dann ausdrücklich auf false statt es offen zu lassen. -->
+            <div class="form-checkbox form-checkbox--optional">
+              <input class="form-checkbox__input" type="checkbox" id="{{prefix}}-marketing" name="marketing_opt_in" value="true">
+              <label class="form-checkbox__label" for="{{prefix}}-marketing">
+                Ich möchte gelegentlich Informationen zu Sicherheitsthemen und Leistungen von FRANKONIA erhalten. Jederzeit widerrufbar.
+              </label>
+            </div>
+
+            <!-- ⚠️ TURNSTILE: der Container ist leer und wird von
+                 js/lead-form.js gefüllt. Das Skript von Cloudflare wird
+                 ebenfalls dort geladen, mit `data-cookieconsent="ignore"` —
+                 sonst blockiert Cookiebots Auto-Blocking den Spamschutz bis
+                 zur Einwilligung, und dann schützt er genau die Besucher
+                 nicht, die den Banner ignorieren.
+                 ⚠️ FÄLLT TURNSTILE AUS, DARF DAS FORMULAR NICHT BLOCKIEREN.
+                 Dann greifen Honeypot und Mindestzeit, und der Server lässt
+                 eine Anfrage ohne Prüfergebnis durch, wenn Cloudflare selbst
+                 nicht erreichbar war. Siehe api/_lib/turnstile.js. -->
+            <div class="lead-form__turnstile" data-turnstile data-sitekey="{{env.turnstileSiteKey}}"></div>
+
+            <!-- Von js/lead-form.js gefüllt: Zeitstempel des Formularaufbaus
+                 (Mindestzeit), ein Schlüssel gegen Doppelklicks, die Seite und
+                 die Kampagnenparameter aus dem sessionStorage.
+                 ⚠️ Ohne JavaScript bleiben sie leer, und das ist in Ordnung:
+                 der Server behandelt einen fehlenden Zeitstempel als "kein
+                 Urteil" und die Kampagnenparameter als optional. -->
+            <input type="hidden" name="form_type" value="customer_inquiry">
+            <input type="hidden" name="rendered_at" value="" data-rendered-at>
+            <input type="hidden" name="idempotency_key" value="" data-idempotency-key>
+            <input type="hidden" name="page_url" value="" data-page-url>
+            <input type="hidden" name="referrer" value="" data-referrer>
+            <input type="hidden" name="utm_source" value="" data-utm="utm_source">
+            <input type="hidden" name="utm_medium" value="" data-utm="utm_medium">
+            <input type="hidden" name="utm_campaign" value="" data-utm="utm_campaign">
+            <input type="hidden" name="utm_content" value="" data-utm="utm_content">
+            <input type="hidden" name="utm_term" value="" data-utm="utm_term">
+
+            <!-- Fehler- und Statusmeldung. `aria-live="polite"` und
+                 `role="status"`, damit ein Screenreader die Meldung mitbekommt,
+                 ohne dass der Fokus springt. Leer im Markup — eine leere
+                 Live-Region ist der Normalzustand. -->
+            <p class="lead-form__status" role="status" aria-live="polite" data-form-status></p>
+
+            <button class="btn btn--primary conversion__submit" type="submit" data-cta="form-submit">
               Jetzt unverbindliches Angebot einholen
               <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
             </button>
+
+            <!-- ⚠️ DER RÜCKFALL OHNE JAVASCRIPT, und er ist der Grund, warum
+                 dieses Formular ein echtes `action` und `method="post"` hat:
+                 ohne JavaScript sendet der Browser ganz normal an
+                 /api/forms/submit/. Der Endpoint versteht dann kein JSON,
+                 sondern ein Formular — deshalb liest api/forms/submit.js beide
+                 Formate. Was fehlt, ist die Weiterleitung auf /danke/ und das
+                 Turnstile-Token; der Server behandelt ein fehlendes Token als
+                 "keine Prüfung möglich" und lässt die Anfrage durch, weil eine
+                 echte Anfrage nicht an einem fehlenden Skript scheitern darf.
+                 Die Telefonnummer steht direkt darunter — der Weg, der immer
+                 funktioniert. -->
           </form>

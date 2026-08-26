@@ -123,6 +123,8 @@
   </script>
 
   <!-- include: head-common ogimage="/assets/images/og/kontakt.jpg" ogimagealt="Glasfassade des FRANKONIA-Büros mit Logo und Schriftzug im Fenster" -->
+  <link rel="stylesheet" href="/css/lead-form.css">
+  <script src="/js/lead-form.js" defer></script>
   <link rel="stylesheet" href="/css/page-contact.css">
 
   <!-- ---- Motion stack (client 2026-07-31: this page must get the same
@@ -259,85 +261,19 @@
           <h2 class="contact-form-card__title" id="kontakt-form-title" data-no-title-reveal>Schreiben Sie uns, wir melden uns innerhalb eines Werktages</h2>
           <p class="contact-form-card__lede">Beschreiben Sie kurz Ihr Anliegen: Objekt, Zeitraum, Standort. Alles Weitere klären unsere Sicherheitsexperten mit Ihnen persönlich, kostenfrei und unverbindlich.</p>
 
-          <form class="contact-form" action="#" method="post" aria-labelledby="kontakt-form-title">
-            <div class="form-field">
-              <label class="form-field__label" for="kf-name">Name *</label>
-              <input class="form-field__input" type="text" id="kf-name" name="name" autocomplete="name" required>
-            </div>
-
-            <div class="form-field">
-              <label class="form-field__label" for="kf-company">Firma</label>
-              <input class="form-field__input" type="text" id="kf-company" name="company" autocomplete="organization">
-            </div>
-
-            <div class="form-field">
-              <label class="form-field__label" for="kf-email">E-Mail *</label>
-              <input class="form-field__input" type="email" id="kf-email" name="email" autocomplete="email" required>
-            </div>
-
-            <div class="form-field">
-              <!-- ⚠️ REQUIRED since 2026-08-14 (client, Kontakt 4: "the phone
-                   field must be required (as specified in Webtext 25) — currently
-                   it is optional"), and it is the second time they have asked.
-                   The label carries the same " *" every other required field on
-                   this site uses, because `required` alone is only announced to a
-                   screen reader — a sighted visitor learns about it when the form
-                   refuses to submit, which is the worst moment to find out.
-                   ⚠️ This form now asks for e-mail AND phone. That is the draft's
-                   own spec; if the extra required field ever shows up as a drop in
-                   submissions, it is a client decision to reverse, not a bug. -->
-              <label class="form-field__label" for="kf-phone">Telefon *</label>
-              <input class="form-field__input" type="tel" id="kf-phone" name="phone" autocomplete="tel" required>
-            </div>
-
-            <div class="form-field contact-form__field--full">
-              <label class="form-field__label" for="kf-message">Nachricht *</label>
-              <!-- rows="2", not 5: the field starts just a little taller than a
-                   single-line input and grows as the visitor types (see
-                   field-sizing in page-contact.css). `rows` is what sets the
-                   height in browsers without that support, so it has to be
-                   small here too — a CSS min-height alone can only make a
-                   5-row box taller, never shorter. -->
-              <!-- The hint that used to sit here ("Objekt, Zeitraum, Standort —
-                   der Rest lässt sich im Gespräch klären.") was written for this
-                   build, not supplied, and it duplicated the doc's own lede now
-                   restored above the form — which says the same three words and
-                   then some. Removed rather than reworded, so the card states it
-                   once. Its id was dead wiring anyway: nothing on the page
-                   carried an aria-describedby pointing at it, so it was never
-                   announced. -->
-              <textarea class="form-field__textarea" id="kf-message" name="message" rows="2" required></textarea>
-            </div>
-
-            <!-- Honeypot (draft requirement). A real input that a human
-                 never sees or tabs to, and that a naive bot fills in:
-                 taken out of the layout and the a11y tree entirely by
-                 .contact-form__hp (page-contact.css), plus tabindex="-1"
-                 and autocomplete="off". Nothing checks it yet — that
-                 belongs to whatever backend eventually receives this
-                 form; the field just has to be present and named for
-                 that check to be possible. -->
-            <div class="contact-form__hp" aria-hidden="true">
-              <label for="kf-website">Bitte dieses Feld leer lassen</label>
-              <input type="text" id="kf-website" name="website" tabindex="-1" autocomplete="off">
-            </div>
-
-            <div class="form-checkbox contact-form__field--full">
-              <input class="form-checkbox__input" type="checkbox" id="kf-privacy" name="privacy" required>
-              <label class="form-checkbox__label" for="kf-privacy">
-                <!-- Shortened 2026-07-31 (client: this has to fit on one
-                     line) to the exact sentence the homepage's lead form
-                     already uses — same consent, same privacy-policy link,
-                     and now one wording across the site instead of two. -->
-                Ich habe die <a href="/datenschutz/">Datenschutzerklärung</a> gelesen und stimme zu. *
-              </label>
-            </div>
-
-            <button class="btn btn--primary contact-form__submit" type="submit">
-              Nachricht senden
-              <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
-            </button>
-          </form>
+          <!-- ⚠️ SEIT 2026-08-26 DAS GEMEINSAME FORMULAR. Vorher hatte diese
+               Seite ihr eigenes (.contact-form), mit einem Feld "Name" und
+               Telefon als Pflicht — beides weicht jetzt vom Rest der Seite ab
+               und ist deshalb weg. docs/page-conventions.md §6 hielt das eigene
+               Formular ausdrücklich fest; der Auftrag vom 24.08.2026 verlangt
+               die Zusammenführung, und die Konvention ist nachgeführt.
+               ⚠️ Der <section>-Wrapper trägt das `aria-labelledby` auf die H2
+               der Karte. Das alte <form> hatte es selbst; der gemeinsame
+               Include kennt die id nicht, und ihn dafür zu parametrisieren
+               wäre ein Parameter, den 43 andere Seiten nie brauchen. -->
+          <section aria-labelledby="kontakt-form-title">
+            <!-- include: lead-form prefix="kf" messageLabel="Nachricht" -->
+          </section>
         </div>
 
         <!-- The alternative ways to reach FRANKONIA, and since 2026-08-04

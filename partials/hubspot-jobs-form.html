@@ -1,0 +1,39 @@
+          <!-- BEWERBERFORMULAR — eingebettetes HubSpot-Formular, 2026-08-26.
+               Einbinden, nie kopieren:
+                 include: hubspot-jobs-form
+
+               ⚠️ WARUM NICHT DER EIGENE ENDPOINT: Bewerber brauchen einen
+               anderen Text und einen anderen Prozess als Kunden. Sie landen
+               dadurch in HubSpot, aber NICHT in Brevo, und sie bekommen die
+               Eingangsbestätigung von HubSpot statt aus dem eigenen Template.
+               Bewusst so entschieden und für Version 1 in Ordnung.
+
+               ⚠️⚠️ ZWEI PUNKTE, DIE IM BERICHT STEHEN UND NOCH OFFEN SIND:
+                 1. Das Einbetten eines HubSpot-Formulars ist eine
+                    Datenübermittlung an einen Dritten und GEHÖRT IN DIE
+                    DATENSCHUTZERKLÄRUNG. Dort steht sie noch nicht — der
+                    Rechtstext wird nicht eigenmächtig ergänzt. Abschnitt 3.2
+                    (Kartendarstellung) ist die Vorlage dafür.
+                 2. Der Erfolgszustand ist HubSpots eigener. /danke/ ist
+                    ausschließlich für KUNDENANFRAGEN; eine getrennte Seite
+                    /danke-bewerbung/ kommt später. Die beiden dürfen nie
+                    zusammengeführt werden: zählen Bewerbungen als
+                    Lead-Conversion, optimiert Google Ads mit der Zeit auf
+                    Bewerber statt auf Kunden.
+
+               ⚠️ DAS SKRIPT LÄDT VON js-eu1.hsforms.net, also aus HubSpots
+               EU-Rechenzentrum — passend zum Portal 27143941 mit
+               EU-Datenhosting. Der Host steht in der CSP
+               (docs/design-sources/csp-build.js) bei script-src, frame-src,
+               connect-src, style-src, img-src und font-src. Fehlt einer davon,
+               bleibt die Stelle LEER, ohne Fehlermeldung.
+
+               ⚠️ MINDESTHÖHE RESERVIERT, siehe .hs-form-frame in
+               css/page-jobs.css: das Formular wird nachgeladen, und ohne
+               reservierte Höhe springt beim Erscheinen alles darunter nach
+               unten. -->
+<script src="https://js-eu1.hsforms.net/forms/embed/27143941.js" defer></script>
+          <div class="hs-form-frame"
+               data-region="eu1"
+               data-form-id="116be751-eda4-409e-b3f2-be0301183dfe"
+               data-portal-id="27143941"></div>

@@ -239,7 +239,6 @@
   <!-- Echoes the chosen CV's file name next to the upload button: the control's own
        file-name text is hidden by CSS (client's ask), and this is what keeps the
        field from giving no feedback at all. Enhancement only — see the file. -->
-  <script src="/js/jobs-file-name.js" defer></script>
 </head>
 <!-- page-jobs: the hook for this page's own mobile rhythm (the pixel seams and
      section padding are shared rules in page-service.css, so tightening them for
@@ -718,85 +717,7 @@
         </div>
 
         <div class="conversion__form-wrap">
-          <form class="conversion__form jobs-form" action="#" method="post" enctype="multipart/form-data">
-            <div class="form-field">
-              <label class="form-field__label" for="jb-name">Name *</label>
-              <input class="form-field__input" type="text" id="jb-name" name="name" autocomplete="name" required>
-            </div>
-
-            <div class="form-field">
-              <label class="form-field__label" for="jb-phone">Telefon *</label>
-              <input class="form-field__input" type="tel" id="jb-phone" name="phone" autocomplete="tel" required>
-            </div>
-
-            <div class="form-field">
-              <label class="form-field__label" for="jb-email">E-Mail *</label>
-              <input class="form-field__input" type="email" id="jb-email" name="email" autocomplete="email" required>
-            </div>
-
-            <div class="form-field">
-              <label class="form-field__label" for="jb-qualification">Qualifikation</label>
-              <!-- The draft's five options, in the same order and wording as the
-                   five rungs above. The empty first option is the resting state:
-                   without it the browser preselects "Quereinsteiger" and a
-                   qualified applicant who skips the field looks like a career
-                   changer. Not `required` — the draft does not mark it so. -->
-              <select class="form-field__select jobs-form__select" id="jb-qualification" name="qualification">
-                <option value="">Bitte auswählen</option>
-                <option value="quereinsteiger">Quereinsteiger</option>
-                <option value="unterrichtung">IHK-Unterrichtung (§ 34a)</option>
-                <option value="sachkunde">Sachkundeprüfung (§ 34a)</option>
-                <option value="gssk">Geprüfte Schutz- und Sicherheitskraft (GSSK)</option>
-                <option value="fachkraft-meister">Fachkraft / Meister für Schutz und Sicherheit</option>
-              </select>
-            </div>
-
-            <div class="form-field conversion__form-field--full">
-              <label class="form-field__label" for="jb-message">Nachricht</label>
-              <!-- rows="2" is load-bearing: a CSS min-height can only grow a
-                   textarea's box, never shrink it. docs/page-conventions.md §6. -->
-              <textarea class="form-field__textarea" id="jb-message" name="message" rows="2"></textarea>
-            </div>
-
-            <div class="form-field conversion__form-field--full">
-              <label class="form-field__label" for="jb-cv">Lebenslauf (optional)</label>
-              <input class="form-field__input jobs-form__file" type="file" id="jb-cv" name="cv" accept=".pdf,.doc,.docx" aria-describedby="jb-cv-hint" data-file-name-target="#jb-cv-name">
-              <!-- The control's own "No file chosen" / file-name text is hidden
-                   (client 2026-08-05: only the button). The browser paints it, so
-                   CSS can only do it with `color: transparent` on the input — which
-                   takes the chosen name with it. js/jobs-file-name.js writes it back
-                   in here, so attaching a CV still visibly changes something.
-                   Empty in the markup and aria-hidden: the input's own value already
-                   announces the file to a screen reader, and with no JS this element
-                   simply stays empty. -->
-              <p class="jobs-form__file-name" id="jb-cv-name" aria-hidden="true"></p>
-              <!-- Written for this build, not the draft: the draft says
-                   "Lebenslauf-Upload (optional)" and nothing about formats. The
-                   accept list and this hint are UI furniture — and the hint is
-                   what makes `accept` discoverable rather than a silent filter. -->
-              <p class="form-field__hint jobs-form__hint" id="jb-cv-hint">PDF oder Word. Kein Muss für das erste Gespräch.</p>
-            </div>
-
-            <!-- Honeypot (docs/page-conventions.md §6): out of the layout but NOT
-                 display:none, out of the tab order and out of the accessibility
-                 tree. -->
-            <div class="conversion__hp" aria-hidden="true">
-              <label for="jb-website">Website</label>
-              <input type="text" id="jb-website" name="website" tabindex="-1" autocomplete="off">
-            </div>
-
-            <div class="form-checkbox">
-              <input class="form-checkbox__input" type="checkbox" id="jb-privacy" name="privacy" required>
-              <label class="form-checkbox__label" for="jb-privacy">
-                Ich habe die <a href="/datenschutz/">Datenschutzerklärung</a> gelesen und stimme zu. *
-              </label>
-            </div>
-
-            <button class="btn btn--primary conversion__submit" type="submit">
-              Jetzt unverbindlich bewerben
-              <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
-            </button>
-          </form>
+          <!-- include: hubspot-jobs-form -->
         </div>
       </div>
     </section>

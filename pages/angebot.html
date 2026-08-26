@@ -15,9 +15,18 @@
      redirects are NOT configured yet; they belong with the WordPress redirect
      list that is still outstanding.
 
-     The form is partials/lead-form.html with nameRequired="" — this is the one
-     page where Name is optional and Firma required, per the draft's own field
-     list, because lowering friction is the whole point of an Ads landing page. -->
+     ⚠️ 2026-08-26: DIESE SEITE HAT IHRE FELDAUSNAHME VERLOREN. Sie übergab
+     nameRequired="" und stellte den Namen damit freiwillig — nach dem
+     Entwurf, weil geringere Hürden der Sinn einer Ads-Landingpage sind. Der
+     Auftrag zur Formular-Integration verlangt ausdrücklich, dass alle 43
+     einbindenden Seiten denselben Feldsatz zeigen; die Parameter
+     nameRequired und companyRequired existieren nicht mehr.
+     Was das kostet: zwei Pflichtfelder statt einem freiwilligen Namensfeld.
+     Was es einbringt: Telefon ist jetzt überall FREIWILLIG und war hier
+     vorher Pflicht — unter dem Strich also eine Hürde weniger, nicht mehr.
+     Bricht die Conversion-Rate dieser Seite dennoch ein, ist die Stelle zum
+     Nachjustieren das gemeinsame Formular plus eine bewusste Ausnahme, nicht
+     ein stiller Sonderweg. -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -74,6 +83,7 @@
 
   <!-- include: head-common -->
   <link rel="stylesheet" href="/css/lead-form.css">
+  <script src="/js/lead-form.js" defer></script>
   <link rel="stylesheet" href="/css/page-service.css">
   <link rel="stylesheet" href="/css/page-angebot.css">
 
@@ -143,7 +153,7 @@
         </div>
 
         <div class="ag-hero__form conversion__form-wrap">
-          <!-- include: lead-form prefix="ag" messageLabel="Nachricht (Objekt, Zeitraum, Standort)" nameRequired="" -->
+          <!-- include: lead-form prefix="ag" messageLabel="Nachricht (Objekt, Zeitraum, Standort)" -->
           <p class="ag-hero__alt">Lieber direkt sprechen? <a href="{{phone.href}}">{{phone.display}}</a> — 24/7 erreichbar</p>
         </div>
       </div>

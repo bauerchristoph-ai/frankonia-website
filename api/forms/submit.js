@@ -80,8 +80,67 @@ function bodyLesen(req) {
   try {
     return JSON.parse(roh);
   } catch {
-    return {};
+    // ⚠️ Kein JSON: das ist der Weg OHNE JavaScript. Ein Browser sendet ein
+    // Formular als application/x-www-form-urlencoded. Vercel parst das
+    // normalerweise selbst, aber darauf verlassen sich hier zwei verschiedene
+    // Absendewege — und der eine, der ohne Skript funktionieren MUSS, ist
+    // genau der, den man nicht im Alltag testet.
+    try {
+      const p = new URLSearchParams(roh);
+      const out = {};
+      for (const [k, v] of p) out[k] = v;
+      return out;
+    } catch {
+      return {};
+    }
   }
+}
+
+/**
+ * ⚠️ ZWEI ANTWORTFORMATE AUS EINEM ENDPOINT, und der Unterschied ist der
+ * `Accept`-Kopf. js/lead-form.js schickt `Accept: application/json` und will
+ * JSON. Ein Browser ohne JavaScript sendet das Formular normal, erwartet HTML
+ * und würde bei einer JSON-Antwort rohen Text auf einer weißen Seite anzeigen —
+ * für ein Projekt, dessen erklärte Eigenschaft "funktioniert ohne JavaScript"
+ * ist, wäre das der peinlichste mögliche Fehler.
+ * Deshalb: JSON für das Skript, POST-Redirect-GET für den Browser.
+ */
+function willJson(req) {
+  const a = String(req.headers.accept || "");
+  return a.includes("application/json");
+}
+
+/**
+ * Der Weg ohne JavaScript. Erfolg -> 303 auf /danke/; Fehler -> eine kleine
+ * HTML-Seite mit der Telefonnummer.
+ *
+ * ⚠️ 303 UND NICHT 302: nach einem POST muss die Weiterleitung die Methode auf
+ * GET ändern, sonst postet der Browser auf /danke/ und bekommt einen 405. Das
+ * ist der klassische POST-Redirect-GET, und 303 ist der Statuscode, der ihn
+ * ausdrücklich meint.
+ *
+ * ⚠️ DIE FEHLERSEITE IST BEWUSST MINIMAL UND OHNE STYLESHEET. Sie erscheint nur,
+ * wenn kein JavaScript läuft UND die Übermittlung scheitert — ein Pfad, den
+ * niemand pflegen wird. Eine Seite, die von /css/app.css abhängt, wäre eine
+ * weitere Sache, die dann auch noch kaputt sein kann. Was sie leisten muss:
+ * sagen, was passiert ist, und die Telefonnummer nennen.
+ */
+function htmlAntwort(res, status, titel, text) {
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Cache-Control", "no-store");
+  res.status(status).send(
+    "<!DOCTYPE html><html lang=\"de\"><head><meta charset=\"utf-8\">" +
+      "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">" +
+      "<meta name=\"robots\" content=\"noindex\">" +
+      "<title>" + titel + " | FRANKONIA Sicherheit</title>" +
+      "<style>body{font-family:Arial,Helvetica,sans-serif;background:#010101;color:#fff;" +
+      "margin:0;padding:4rem 1.5rem;line-height:1.6}main{max-width:34rem;margin:0 auto}" +
+      "h1{font-size:1.75rem;line-height:1.2}a{color:#3D9AD3}</style></head><body><main>" +
+      "<h1>" + titel + "</h1><p>" + text + "</p>" +
+      "<p><a href=\"tel:+499519643520\">+49 951 964352-0</a> &middot; " +
+      "<a href=\"/kontakt/\">Zur Kontaktseite</a></p>" +
+      "</main></body></html>"
+  );
 }
 
 function antwort(res, status, nutzlast) {
@@ -157,6 +216,15 @@ module.exports = async function handler(req, res) {
   const tokenFeld = roh["cf-turnstile-response"] || roh.turnstile_token;
   const ts = await turnstile.verify(tokenFeld, ip, submissionId);
   if (!ts.ok) {
+    if (!willJson(req)) {
+      return htmlAntwort(
+        res,
+        400,
+        "Spamschutz",
+        "Der Spamschutz konnte die Anfrage nicht bestätigen. Bitte versuchen Sie es noch einmal " +
+          "oder rufen Sie uns an."
+      );
+    }
     return antwort(res, 400, { ok: false, fehler: "spamschutz", grund: ts.grund });
   }
 
@@ -165,6 +233,15 @@ module.exports = async function handler(req, res) {
   if (!geprueft.ok) {
     // Feldnamen, keine Werte — die Antwort geht an den Client zurück.
     log.info(submissionId, "validierung: abgelehnt", { felder: geprueft.fehler });
+    if (!willJson(req)) {
+      return htmlAntwort(
+        res,
+        400,
+        "Angaben unvollständig",
+        "Bitte gehen Sie zurück und füllen Sie die Pflichtfelder aus. Wenn es schnell gehen soll, " +
+          "rufen Sie uns einfach an."
+      );
+    }
     return antwort(res, 400, { ok: false, fehler: "validierung", felder: geprueft.fehler });
   }
   const d = geprueft.daten;
@@ -190,6 +267,15 @@ module.exports = async function handler(req, res) {
       brevo: bv.schritte,
       form_type: d.form_type,
     });
+    if (!willJson(req)) {
+      return htmlAntwort(
+        res,
+        502,
+        "Übermittlung fehlgeschlagen",
+        "Ihre Anfrage konnte technisch nicht übermittelt werden. Bitte rufen Sie uns an — " +
+          "wir nehmen sie sofort telefonisch auf. Vorgangsnummer: " + submissionId + "."
+      );
+    }
     return antwort(res, 502, {
       ok: false,
       fehler: "zustellung",
@@ -216,6 +302,15 @@ module.exports = async function handler(req, res) {
     log.warn(submissionId, "teilerfolg", { hubspot: hs.schritte, brevo: bv.schritte });
   } else {
     log.info(submissionId, "abgeschlossen");
+  }
+
+  // Ohne JavaScript: Weiterleitung auf /danke/, damit derselbe Erfolgszustand
+  // sichtbar wird wie im Skript-Weg — inklusive des URL-Triggers im Tag
+  // Manager.
+  if (!willJson(req)) {
+    res.setHeader("Location", "/danke/");
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(303).end();
   }
 
   return antwort(res, 200, nutzlast);

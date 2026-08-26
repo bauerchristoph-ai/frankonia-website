@@ -1301,3 +1301,59 @@
     min-height: 44px;
   }
 }
+
+/* ==========================================================================
+   Bewerberformular: HubSpot-Embed (2026-08-26)
+   ==========================================================================
+   ⚠️ DAS EIGENE FORMULAR IST WEG. Vorher stand hier ein selbst gebautes
+   Bewerberformular mit Auswahlfeld und Lebenslauf-Upload; Abschnitt 5b des
+   Auftrags stellt es auf das bestehende HubSpot-Formular um, weil Bewerber
+   einen anderen Text und einen anderen Prozess brauchen als Kunden.
+   Die Regeln für .jobs-form* darunter haben damit keinen Abnehmer mehr. Sie
+   sind ABSICHTLICH STEHEN GEBLIEBEN und nicht gelöscht: das eigene Formular
+   ist die Rückfallebene, wenn das Embed sich als zu unflexibel erweist, und
+   die drei Fallen, die es gekostet hat (color-scheme beim Auswahlfeld, die
+   Spezifität gegen lead-form.css, der ausgeblendete Dateiname), stehen dort
+   dokumentiert. Wird die Entscheidung bestätigt, kommen sie in einem eigenen
+   Durchgang raus.
+
+   ⚠️ MINDESTHÖHE IST DER GANZE ZWECK DIESES BLOCKS. Das Formular wird
+   nachgeladen; ohne reservierte Höhe springt beim Erscheinen alles darunter
+   nach unten (CLS) — und darunter steht der Fußbereich.
+   700px ist die gemessene Höhe des ausgelieferten HubSpot-Formulars bei
+   Desktop-Breite. Bei einem Formular mit anderen Feldern muss der Wert
+   nachgemessen werden; zu klein ist ein Sprung, zu groß ein Loch.
+   ========================================================================== */
+
+.hs-form-frame {
+  min-height: 700px;
+}
+
+@media (max-width: 639.98px) {
+  /* Auf einem Telefon steht jedes Feld in einer eigenen Zeile, das Formular
+     wird also höher. Gemessen, nicht geschätzt. */
+  .hs-form-frame {
+    min-height: 900px;
+  }
+}
+
+/* ⚠️ NUR SO WEIT ANGEPASST, DASS ES KEIN FREMDKÖRPER IST — kein vollständiger
+   Nachbau. Das Formular bringt sein eigenes Styling mit, und dagegen
+   anzuschreiben heißt, bei jeder Änderung im HubSpot-Editor hier nachzuziehen.
+   Was hier steht, sind zwei Dinge, die ohne Anpassung falsch AUSSEHEN, nicht
+   nur anders: die Schriftfamilie und die Textfarbe auf der weißen Karte. */
+.hs-form-frame,
+.hs-form-frame input,
+.hs-form-frame select,
+.hs-form-frame textarea,
+.hs-form-frame button {
+  font-family: var(--font-family-base);
+}
+
+.hs-form-frame {
+  /* Die Karte ist weiß (.conversion__form-wrap), die Seite dunkel. Ohne diese
+     Zeile erbt das Formular die helle Textfarbe der Seite und wird auf der
+     Karte unlesbar — dieselbe Falle, die dieses Projekt bei .ag-hero__alt
+     schon einmal live hatte. */
+  color: var(--color-gray);
+}

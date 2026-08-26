@@ -164,7 +164,6 @@
     "portrait og:image gets centre-cropped into a landscape card by every",
     "platform). Re-run it after replacing a hero photo."
   ],
-  "nameRequired": "required",
-  "companyRequired": "required",
-  "_formComment": "nameRequired/companyRequired: banderas del partial lead-form. Por defecto ambos obligatorios; una página las sobrescribe en su include, p.ej. nameRequired=\"\" para bajar la fricción en una landing de Ads. Van al nivel superior porque un parámetro de include es una clave plana y no puede sobrescribir una anidada."
+  "_formComment": "nameRequired/companyRequired: banderas del partial lead-form. Por defecto ambos obligatorios; una página las sobrescribe en su include, p.ej. nameRequired=\"\" para bajar la fricción en una landing de Ads. Van al nivel superior porque un parámetro de include es una clave plana y no puede sobrescribir una anidada.",
+  "service": ""
 }
