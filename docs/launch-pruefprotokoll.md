@@ -1017,7 +1017,7 @@ Stellen.
 ## 17 — Formular-Integration: die Formulare senden jetzt wirklich
 
 Commits `e9a7ec1` (Consent, Tag Manager, CSP, `/danke/`), `19e4cbc` (Endpoint und
-Tests), `c9fc7ba` (gemeinsames Formular auf 44 Seiten), `PLATZHALTER`
+Tests), `c9fc7ba` (gemeinsames Formular auf 44 Seiten), `82d424a`
 (Ratgeber-Titelbilder und Doku)
 
 **Damit ist der wichtigste offene Punkt dieses Protokolls erledigt.** Bis heute
