@@ -291,6 +291,39 @@ async function subscriptionTypes() {
   console.log("     HubSpot — er raet keine ID. In Brevo wird sie trotzdem gesetzt (OPT_IN).");
 }
 
+/* ================================ Lifecycle-Stufen (nur lesen)
+ *
+ * ⚠️ WARUM DAS HIER STEHT: der interne Name einer Stufe und ihr LABEL sind in
+ * HubSpot zwei verschiedene Dinge, und das Label ist pro Portal frei
+ * umbenennbar. In diesem Portal heisst der Standardname "lead" nicht "Lead",
+ * sondern "Termin vereinbart" — der Endpoint hätte das beim Live-Test am
+ * 26.08.2026 so geschrieben, also mehrere Stufen zu weit für einen
+ * Formulareingang. Deshalb wird die Stufe nicht mehr geraten, sondern kommt aus
+ * HUBSPOT_LIFECYCLE_STAGE — und diese Liste ist die Auswahl dazu. */
+async function lifecycleStufen() {
+  console.log("\nLifecycle-Stufen dieses Portals (nur lesen)");
+  const res = await api("/crm/v3/properties/contacts/lifecyclestage");
+  if (!res.ok) {
+    console.log("  konnten nicht gelesen werden: " + res.status);
+    return;
+  }
+  const gesetzt = process.env.HUBSPOT_LIFECYCLE_STAGE;
+  for (const o of (res.body && res.body.options) || []) {
+    const treffer = gesetzt && String(o.value) === String(gesetzt);
+    console.log("  " + (treffer ? "\u2713" : " ") + "  " + String(o.value).padEnd(14) + o.label);
+  }
+  if (gesetzt) {
+    console.log("\n  HUBSPOT_LIFECYCLE_STAGE=" + gesetzt + " ist gesetzt.");
+    return;
+  }
+  console.log("");
+  console.log("  \u26a0\ufe0f HUBSPOT_LIFECYCLE_STAGE ist NICHT gesetzt. Dann schreibt der Endpoint");
+  console.log("     die Phase gar nicht und HubSpot nimmt seine eigene Voreinstellung.");
+  console.log("     Das ist bewusst der Rueckfall: welche Stufe fuer eine Website-Anfrage");
+  console.log("     fachlich richtig ist, weiss nur der Kunde. Einen der internen Namen");
+  console.log("     oben eintragen, wenn eine bestimmte gewuenscht ist.");
+}
+
 /* ------------------------------------------------------------------- Ablauf */
 
 console.log("HubSpot" + (VERIFY ? " — Pruefung, es wird nichts geschrieben" : DRY ? " — Trockenlauf" : " — Einrichtung"));
@@ -298,6 +331,7 @@ console.log("Portal: " + (process.env.HUBSPOT_PORTAL_ID || "(HUBSPOT_PORTAL_ID n
 
 if (VERIFY) {
   const fehler = await verify();
+  await lifecycleStufen();
   console.log("\nSubscription Types (nur lesen)");
   await subscriptionTypes();
   process.exit(fehler === 0 ? 0 : 2);
@@ -312,6 +346,8 @@ if (gruppeOk) {
 } else {
   console.log("\n2 — uebersprungen, weil die Gruppe fehlt");
 }
+
+await lifecycleStufen();
 
 console.log("\n3 — Vorhandene Subscription Types (nur lesen)");
 await subscriptionTypes();

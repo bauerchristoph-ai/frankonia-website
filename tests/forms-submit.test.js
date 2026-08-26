@@ -176,6 +176,7 @@ test.beforeEach(() => {
   // eingetragen hat, und die drei Marketing-Tests setzen sie selbst. Ohne das
   // Abraeumen wuerde ein Test den naechsten beeinflussen.
   delete process.env.HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE;
+  delete process.env.HUBSPOT_SUBSCRIPTION_ID_MARKETING;
   delete process.env.BREVO_MARKETING_LIST_ID;
   guard._reset();
   stumm();
@@ -684,21 +685,52 @@ test("Kein Deal in HubSpot", async () => {
 
 /* ============================================ 10 — Lifecycle nicht zurück */
 
-test("Lifecycle: ein bestehender Kunde wird nicht auf Lead zurückgestuft", () => {
-  assert.equal(hubspot.darfAufLeadSetzen("customer"), false);
-  assert.equal(hubspot.darfAufLeadSetzen("opportunity"), false);
-  assert.equal(hubspot.darfAufLeadSetzen("salesqualifiedlead"), false);
-  assert.equal(hubspot.darfAufLeadSetzen("lead"), false);
-  // Früher als Lead: darf hoch.
-  assert.equal(hubspot.darfAufLeadSetzen("subscriber"), true);
+test("Lifecycle: ein bestehender Kunde wird nicht zurückgestuft", () => {
+  const ziel = "lead";
+  assert.equal(hubspot.darfPhaseSetzen("customer", ziel), false);
+  assert.equal(hubspot.darfPhaseSetzen("opportunity", ziel), false);
+  assert.equal(hubspot.darfPhaseSetzen("salesqualifiedlead", ziel), false);
+  assert.equal(hubspot.darfPhaseSetzen("lead", ziel), false);
+  // Früher als die Zielphase: darf hoch.
+  assert.equal(hubspot.darfPhaseSetzen("subscriber", ziel), true);
   // Neu oder leer: darf gesetzt werden.
-  assert.equal(hubspot.darfAufLeadSetzen(""), true);
-  assert.equal(hubspot.darfAufLeadSetzen(null), true);
-  // Unbekannt: nicht anfassen.
-  assert.equal(hubspot.darfAufLeadSetzen("irgendwas"), false);
+  assert.equal(hubspot.darfPhaseSetzen("", ziel), true);
+  assert.equal(hubspot.darfPhaseSetzen(null, ziel), true);
+  // Unbekannte aktuelle Phase: nicht anfassen.
+  assert.equal(hubspot.darfPhaseSetzen("irgendwas", ziel), false);
+  // ⚠️ PORTALEIGENE Zielphase (numerische ID): keine Reihenfolge bestimmbar,
+  // also nur bei neuen Kontakten setzen. Genau dieser Fall liegt im Portal
+  // des Kunden vor.
+  assert.equal(hubspot.darfPhaseSetzen(null, "4000505062"), true);
+  assert.equal(hubspot.darfPhaseSetzen("subscriber", "4000505062"), false);
+  // Ohne Zielphase wird nie gesetzt.
+  assert.equal(hubspot.darfPhaseSetzen(null, null), false);
+  assert.equal(hubspot.darfPhaseSetzen("subscriber", null), false);
+});
+
+test("Lifecycle: ohne HUBSPOT_LIFECYCLE_STAGE wird die Phase NICHT geschrieben", () => {
+  // ⚠️ Gefunden beim Live-Test am 26.08.2026: der Code schrieb fest "lead",
+  // und in diesem Portal heisst "lead" nicht "Lead", sondern "Termin
+  // vereinbart" — mehrere Stufen zu weit fuer einen Formulareingang. Welche
+  // Stufe richtig ist, weiss nur der Kunde, deshalb ist Nichtschreiben der
+  // einzige Wert, der in keinem Portal falsch sein kann.
+  delete process.env.HUBSPOT_LIFECYCLE_STAGE;
+  const d = validate(GUELTIG).daten;
+  const ohne = hubspot.kontaktProperties(d, "s1", "2026-08-26T10:00:00.000Z", null).standard;
+  assert.equal(ohne.lifecyclestage, undefined, "es wurde eine Phase geraten");
+  // hs_lead_status haengt NICHT davon ab: es ist ein eigenes Feld.
+  assert.equal(ohne.hs_lead_status, "NEW");
+
+  process.env.HUBSPOT_LIFECYCLE_STAGE = "4000505062";
+  const mit = hubspot.kontaktProperties(d, "s1", "2026-08-26T10:00:00.000Z", null).standard;
+  assert.equal(mit.lifecyclestage, "4000505062");
+  delete process.env.HUBSPOT_LIFECYCLE_STAGE;
 });
 
 test("Lifecycle: hs_lead_status nur bei neuen Kontakten", () => {
+  // Die Zielphase muss hier gesetzt sein, sonst wird lifecyclestage gar nicht
+  // geschrieben und die Aussage dieses Tests waere leer.
+  process.env.HUBSPOT_LIFECYCLE_STAGE = "lead";
   const d = validate(GUELTIG).daten;
   const neu = hubspot.kontaktProperties(d, "s1", "2026-08-26T10:00:00.000Z", null).standard;
   assert.equal(neu.hs_lead_status, "NEW");
@@ -710,6 +742,7 @@ test("Lifecycle: hs_lead_status nur bei neuen Kontakten", () => {
   }).standard;
   assert.equal(bestehend.hs_lead_status, undefined, "hs_lead_status wurde auf NEW zurueckgesetzt");
   assert.equal(bestehend.lifecyclestage, undefined, "lifecyclestage wurde zurueckgestuft");
+  delete process.env.HUBSPOT_LIFECYCLE_STAGE;
 });
 
 /* ================================= 15 — HubSpot-Eigenschaftsfelder */
@@ -790,6 +823,7 @@ test("HubSpot: bei 400 wird ein zweiter Versuch NUR mit Standardfeldern gemacht"
 
 test("Marketing: ohne Haken wird KEINE Einwilligung gesetzt und KEINE Liste vergeben", async () => {
   process.env.HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE = "42";
+  process.env.HUBSPOT_SUBSCRIPTION_ID_MARKETING = "43";
   process.env.BREVO_MARKETING_LIST_ID = "7";
   const protokoll = [];
   globalThis.fetch = alleOk(protokoll);
@@ -812,19 +846,28 @@ test("Marketing: ohne Haken wird KEINE Einwilligung gesetzt und KEINE Liste verg
 
 test("Marketing: mit Haken wird die Einwilligung mit Rechtsgrundlage gespeichert", async () => {
   process.env.HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE = "42";
+  process.env.HUBSPOT_SUBSCRIPTION_ID_MARKETING = "43";
   process.env.BREVO_MARKETING_LIST_ID = "7";
   const protokoll = [];
   globalThis.fetch = alleOk(protokoll);
   await handler(req({ ...GUELTIG, marketing_opt_in: "on" }), res());
 
-  const sub = protokoll.find((p) => p.url.includes("communication-preferences/v3/subscribe"));
-  assert.ok(sub, "keine Einwilligung gesetzt");
-  const b = JSON.parse(sub.optionen.body);
-  assert.equal(b.subscriptionId, "42");
-  assert.equal(b.emailAddress, "erika.mustermann@example.org");
-  // Ohne Rechtsgrundlage ist der Eintrag kein Nachweis.
-  assert.equal(b.legalBasis, "CONSENT_WITH_NOTICE");
-  assert.match(b.legalBasisExplanation, /Checkbox/);
+  // ⚠️ BEIDE Subscription-Typen, Kundenentscheidung vom 26.08.2026. Ein Test,
+  // der nur einen prueft, wuerde einen stillen Ausfall des zweiten nicht sehen.
+  const subs = protokoll.filter((p) => p.url.includes("communication-preferences/v3/subscribe"));
+  assert.equal(subs.length, 2, "es wurden nicht beide Subscription-Typen gesetzt");
+  const koerper = subs.map((p) => JSON.parse(p.optionen.body));
+  assert.deepEqual(koerper.map((k) => k.subscriptionId).sort(), ["42", "43"]);
+  for (const b of koerper) {
+    assert.equal(b.emailAddress, "erika.mustermann@example.org");
+    // Ohne Rechtsgrundlage ist der Eintrag kein Nachweis.
+    assert.equal(b.legalBasis, "CONSENT_WITH_NOTICE");
+    assert.match(b.legalBasisExplanation, /Checkbox/);
+  }
+  // Die Begruendung muss den Typ nennen, sonst ist im CRM nicht erkennbar,
+  // woraus welche Einwilligung stammt.
+  assert.match(koerper.map((k) => k.legalBasisExplanation).join(" "), /One to One/);
+  assert.match(koerper.map((k) => k.legalBasisExplanation).join(" "), /Marketing Information/);
 
   const hsBody = JSON.parse(
     protokoll.find((p) => p.url.endsWith("/crm/v3/objects/contacts")).optionen.body
@@ -837,8 +880,90 @@ test("Marketing: mit Haken wird die Einwilligung mit Rechtsgrundlage gespeichert
   assert.equal(bb.attributes.OPT_IN, true);
 });
 
+test("Marketing: schon eingetragene Einwilligung gilt als Erfolg, nicht als Fehler", async () => {
+  // ⚠️ HubSpot antwortet mit 400, wenn der Kontakt bei diesem Typ bereits
+  // eingetragen ist. Der gewuenschte Zustand ist damit erreicht — als Fehler
+  // behandelt wuerde jeder wiederkehrende Interessent eine Warnung erzeugen
+  // und im Log saehe es aus, als fehle die Einwilligung. Gefunden beim
+  // Live-Test am 26.08.2026.
+  process.env.HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE = "42";
+  const protokoll = [];
+  globalThis.fetch = async (url, optionen) => {
+    const u = String(url);
+    protokoll.push({ url: u, optionen });
+    const j = (status, body) => ({ ok: status < 400, status, text: async () => JSON.stringify(body) });
+    if (u.includes("challenges.cloudflare.com")) return j(200, { success: true });
+    if (u.includes("contacts/search") || u.includes("companies/search")) return j(200, { results: [] });
+    if (u.includes("communication-preferences/v3/subscribe"))
+      return j(400, { status: "error", message: "a@b.de is already subscribed to subscription 42" });
+    if (u.includes("communication-preferences/v3/status/email/"))
+      return j(200, {
+        recipient: "a@b.de",
+        subscriptionStatuses: [{ id: "42", name: "One to One", status: "SUBSCRIBED" }],
+      });
+    if (u.endsWith("/crm/v3/objects/contacts")) return j(201, { id: "hs-1" });
+    return j(204, {});
+  };
+
+  const r = res();
+  await handler(req({ ...GUELTIG, marketing_opt_in: "on" }), r);
+  assert.equal(r._status, 200);
+
+  // Der Status-Endpoint MUSS gefragt worden sein: die englische Meldung ist
+  // nur der Anlass, der Beweis ist der bestaetigte Status.
+  assert.equal(
+    protokoll.filter((p) => p.url.includes("status/email/")).length,
+    1,
+    "der Status wurde nicht gegengepruefft"
+  );
+});
+
+test("Marketing: passt die Meldung nicht, bleibt es bei der Warnung", async () => {
+  // Gegenprobe: ein 400 aus einem ANDEREN Grund darf NICHT als Erfolg gelten,
+  // und es darf auch kein Status abgefragt werden.
+  process.env.HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE = "42";
+  const protokoll = [];
+  globalThis.fetch = async (url, optionen) => {
+    const u = String(url);
+    protokoll.push({ url: u, optionen });
+    const j = (status, body) => ({ ok: status < 400, status, text: async () => JSON.stringify(body) });
+    if (u.includes("challenges.cloudflare.com")) return j(200, { success: true });
+    if (u.includes("contacts/search") || u.includes("companies/search")) return j(200, { results: [] });
+    if (u.includes("communication-preferences/v3/subscribe"))
+      return j(400, { status: "error", message: "Invalid subscription id" });
+    if (u.endsWith("/crm/v3/objects/contacts")) return j(201, { id: "hs-1" });
+    return j(204, {});
+  };
+
+  const r = res();
+  await handler(req({ ...GUELTIG, marketing_opt_in: "on" }), r);
+  // Die Anfrage selbst gilt trotzdem — eine fehlende Einwilligung darf keinen
+  // Lead kosten.
+  assert.equal(r._status, 200);
+  assert.equal(
+    protokoll.filter((p) => p.url.includes("status/email/")).length,
+    0,
+    "bei einem fremden 400 wurde unnoetig der Status abgefragt"
+  );
+});
+
+test("Marketing: ist nur eine Subscription-ID gesetzt, wird die andere nicht geraten", async () => {
+  process.env.HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE = "42";
+  // HUBSPOT_SUBSCRIPTION_ID_MARKETING bleibt absichtlich leer.
+  const protokoll = [];
+  globalThis.fetch = alleOk(protokoll);
+  const r = res();
+  await handler(req({ ...GUELTIG, marketing_opt_in: "on" }), r);
+
+  assert.equal(r._status, 200);
+  const subs = protokoll.filter((p) => p.url.includes("communication-preferences/v3/subscribe"));
+  assert.equal(subs.length, 1, "die fehlende ID wurde erfunden oder die vorhandene uebersprungen");
+  assert.equal(JSON.parse(subs[0].optionen.body).subscriptionId, "42");
+});
+
 test("Marketing: ohne konfigurierte IDs wird nichts geraten", async () => {
   delete process.env.HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE;
+  delete process.env.HUBSPOT_SUBSCRIPTION_ID_MARKETING;
   delete process.env.BREVO_MARKETING_LIST_ID;
   const protokoll = [];
   globalThis.fetch = alleOk(protokoll);

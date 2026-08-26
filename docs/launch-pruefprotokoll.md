@@ -1469,9 +1469,140 @@ Pixeln und darüber ist die Startseite auf allen gemessenen Breiten überlauffre
 | ☐ | **Werte eintragen — das ist der Pflichtschritt** | Vercel → Settings → Environment Variables |
 | — | `.env.local` im Projektverzeichnis | **optional**, nur für lokale Tests mit `vercel dev`. **Nichts in diesem Projekt liest die Datei** (null Abhängigkeiten, also kein dotenv) — siehe die Korrektur unten |
 | ☐ | Consent Mode **aktivieren** | Cookiebot-Konto |
-| ☐ | Beide Skripte einmal laufen lassen und die zwei IDs eintragen | `setup-hubspot.mjs --verify`, `setup-brevo.mjs` |
-| ☐ | Brevo-Transaktionsvorlage prüfen: aktiv, Platzhalter drin | Brevo-Konto, meldet auch das Skript |
+| ✅ | ~~Beide Skripte laufen lassen und die IDs eintragen~~ | **erledigt am 26.08.**, siehe Abschnitt 19 |
+| ✅ | ~~Brevo-Transaktionsvorlage prüfen~~ | **geprüft am 26.08.**: Vorlage 5, aktiv, beide Platzhalter vorhanden |
 | — | ~~AV-Verträge herunterladen und ablegen~~ | **vom Kunden gestrichen** (26.08.: „kann ich ja immer runterladen, brauch ich jetzt nicht“). Sie sind Teil der akzeptierten Bedingungen, es ist nichts zu unterschreiben — nur bei einer Behördenanfrage aus dem Konto zu ziehen |
+
+## 19 — Der erste echte Durchlauf: was funktioniert, und die vier Fehler, die er gefunden hat
+
+Am 26.08.2026 lief das Formular erstmals gegen die **echten** APIs von HubSpot und
+Brevo, nicht gegen Attrappen. Drei Läufe, ein Testkontakt.
+
+⚠️ **Turnstile lief dabei mit Cloudflares offiziellem TESTSCHLÜSSEL**
+(`1x0000000000000000000000000000000AA`, besteht immer), weil der echte Secret nur im
+Cloudflare-Dashboard liegt. Das ist das einzige Glied der Kette, das noch nicht echt
+geprüft ist. Der Testschlüssel steht **nicht** in `.env.local` — dort wäre er ein
+abgeschalteter Spamschutz.
+
+### Was nachweislich funktioniert
+
+| Schritt | Beweis |
+|---|---|
+| HubSpot-Kontakt | id 244207392966, alle 15 Felder gesetzt |
+| Die zehn eigenen Felder | `website_form_type`, `website_service`, `website_page_url`, vier UTM-Felder, `website_submission_id`, `website_last_submission` — alle gefüllt |
+| Firma | „FRANKONIA Testeintrag", id 445068333287, angelegt und verknüpft |
+| Notiz am Kontakt | mit Nachricht, Leistung, Seite und Kampagne |
+| Brevo-Kontakt | id 2, alle 11 Attribute, `OPT_IN=true`, Liste `[7]` |
+| **Eingangsbestätigung** | **zugestellt** an den Absender, sogar geöffnet |
+| **Interne Benachrichtigung** | **zugestellt** an `info@frankonia-sicherheit.de` |
+| Lauf ohne Marketing-Haken | `opt_in: false`, keine Einwilligung, keine Liste, keine Warnung |
+
+**Die Kette ist damit von Ende zu Ende belegt**, nicht mehr nur durch Tests mit
+gestellter `fetch`.
+
+### Vier Fehler, die nur ein echter Lauf zeigen konnte
+
+**1. `lifecyclestage: "lead"` hätte jede Anfrage falsch einsortiert.** Der Code
+schrieb den internen Namen `lead` — und in HubSpot sind interner Name und **Label**
+zwei verschiedene Dinge, wobei das Label pro Portal frei umbenennbar ist. In diesem
+Portal:
+
+| intern | Label in deinem Portal |
+|---|---|
+| `subscriber` | Kontakt |
+| `4000505062` | Kaltakquise |
+| `lead` | **Termin vereinbart** ← das hätte der Code geschrieben |
+| `customer` | Kunde |
+
+Ein Formulareingang wäre also als „Termin vereinbart" im CRM gelandet, mehrere Stufen
+zu weit. Das fällt nicht am Tag der Anfrage auf, sondern Wochen später im Reporting.
+**Jetzt kommt die Stufe aus `HUBSPOT_LIFECYCLE_STAGE`, und ohne diese Variable wird
+die Phase gar nicht geschrieben** — HubSpot nimmt dann seine eigene Voreinstellung.
+Das ist der einzige Wert, der in keinem Portal falsch sein kann.
+⚠️ **Welche Stufe fachlich richtig ist, kann nur du entscheiden**, und deine Liste
+enthält keine offensichtliche „Eingang über Website"-Stufe. `setup-hubspot.mjs
+--verify` gibt die Auswahl jetzt aus. Bis du eine einträgst, bleibt die Phase leer —
+funktional harmlos, aber die Anfragen sind dann im Reporting nicht als solche
+erkennbar.
+
+**2. „already subscribed" wurde als Fehler behandelt.** HubSpot antwortet mit
+**400**, wenn der Kontakt bei einem Subscription-Typ schon eingetragen ist — der
+gewünschte Zustand ist damit aber erreicht. Vorher hätte jeder wiederkehrende
+Interessent, der den Haken setzt, eine Warnung erzeugt, und im Log hätte es
+ausgesehen, als sei die Einwilligung nicht vermerkt. Jetzt gilt der Fall als Erfolg,
+**aber nur nach Gegenprüfung**: die englische Meldung ist der Anlass, der Beweis ist
+der Status-Endpoint. Ändert HubSpot den Text, bleibt es bei der Warnung — der
+Fehlerfall ist die sichere Seite.
+
+**3. Die eigene Log-Maskierung machte die Diagnose unmöglich.** `message` steht auf
+der Tilgungsliste, weil es das Nachrichtenfeld des Formulars ist — es ist aber auch
+der Standardschlüssel, unter dem HubSpot und Brevo ihren Fehlersatz zurückgeben. Im
+Log stand:
+
+    hubspot.einwilligung: 400 endgueltig {"message":"<entfernt>"}
+
+Der eigentliche Grund war „is already subscribed", also gar kein Fehler. Für
+**Fremdantworten** wird `message` jetzt maskiert statt getilgt; für unsere eigenen
+Daten bleibt es beim Tilgen, denn bei der Nachricht eines Interessenten ist der
+Inhalt selbst das personenbezogene Datum.
+
+**4. Das Telefonmuster zerschnitt Kennungen.** Eine HubSpot-correlationId
+`01a03e48-4ab9-…` wurde zu `4ab<tel>b36` — unbrauchbar, und genau die braucht man,
+um mit dem Support über einen Fehler zu reden. Das Muster hat jetzt Wortgrenzen: eine
+Telefonnummer steht nie direkt an einem Buchstaben, eine Kennung schon.
+
+### Was in dieser Runde eingerichtet wurde
+
+- **Die zehn eigenen HubSpot-Eigenschaften angelegt**, in der Gruppe
+  `website_integration`. `--verify` bestätigt danach: Existenz und Typ stimmen bei
+  allen, dazu die fünf Standardfelder, `company.name` und die beiden Notizfelder.
+- **Brevo-Liste „Website – Marketing-Einwilligung" angelegt** (id 7) und in den
+  Ordner `marketing_automation` verschoben — angelegt wurde sie zunächst in
+  „Conversations-Kontakte", dem Chat-Ordner, wo eine Marketingliste nicht hingehört.
+- **Vorlage 5 geprüft statt angenommen:** „Website – Eingangsbestätigung
+  Kundenanfrage", aktiv, Absender `c.bauer@frankonia-sicherheit.de`, Antwort-an
+  `info@frankonia-sicherheit.de`, und sie enthält beide Platzhalter, die der Code
+  sendet (`params.VORNAME`, `params.SERVICE`).
+- **Beide Subscription-Typen** statt einem, nach deiner Entscheidung („einfach beides
+  setzen"): One to One (187291992, Typ Sales) **und** Marketing Information
+  (176003184, Typ Marketing). Der Haken im Formular verspricht Marketing-Inhalte,
+  deckt aber auch die 1:1-Kommunikation ab.
+- **Fünf Werte in `.env.local` ergänzt**, alle selbst ausgelesen: die zwei
+  Subscription-IDs, die Vorlagen-ID, die Listen-ID und die interne
+  Benachrichtigungsadresse.
+- **62 Tests grün** (waren 59). Neu: beide Subscription-Typen, der 400-Fall in beiden
+  Richtungen, und die konfigurierbare Lifecycle-Phase.
+
+### Was noch fehlt — und es ist genau eine Sache
+
+| ☐ | Was | Woher |
+|---|---|---|
+| ☐ | **`TURNSTILE_SECRET_KEY`** | Cloudflare-Dashboard → Turnstile → dein Widget → „Secret Key" |
+| ☐ | Alle Werte auch in **Vercel** eintragen | Settings → Environment Variables |
+| ☐ | optional: `HUBSPOT_LIFECYCLE_STAGE` wählen | Auswahl zeigt `setup-hubspot.mjs --verify` |
+
+⚠️ **Ohne den Turnstile-Secret lehnt der Endpoint jede Anfrage ab** — bewusst so,
+damit eine fehlende Konfiguration keinen offenen Endpoint erzeugt. Das ist der
+einzige verbleibende Blocker.
+
+⚠️ **Zwei Dinge zum Aufräumen in deinen Konten**, wenn du magst: der Testkontakt
+(HubSpot id 244207392966, Brevo id 2) mit drei Notizen und die Testfirma (id
+445068333287). Ich habe sie stehen gelassen — Produktivdaten löscht man nicht
+nebenbei, und sie sind durch „Test Formularpruefung" eindeutig erkennbar. In Brevo
+steht der Kontakt in der Marketingliste 7; für einen sauberen Start dort entfernen.
+
+⚠️ **Zwei Beobachtungen zur Kenntnis, kein Handlungsbedarf:**
+- **Brevo läuft auf dem kostenlosen Tarif: 300 Mails pro Tag.** Jede Anfrage
+  verbraucht zwei (Bestätigung + interne Meldung), also reicht es für rund 150
+  Anfragen täglich. Für den erwarteten Betrieb reichlich, aber der Wert ist gut zu
+  kennen.
+- **Der Testkontakt war bei beiden Subscription-Typen schon eingetragen**, mit der
+  Rechtsgrundlage `LEGITIMATE_INTEREST_PQL` („Vertriebsinteresse") aus einem früheren
+  Prozess. Eine frische Einwilligung wäre die stärkere Grundlage, aber der
+  subscribe-Endpoint kann sie bei einem bereits eingetragenen Kontakt nicht ändern.
+  Einen fremden Eintrag über die v4-API stillschweigend zu überschreiben habe ich
+  nicht eingebaut — das wäre eine Entscheidung über deine CRM-Historie, nicht über
+  Code.
 
 ---
 

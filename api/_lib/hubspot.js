@@ -94,7 +94,8 @@ const EIGEN_SERVER = {
 
 // Standardeigenschaften, die dieser Code nur unter Bedingungen setzt.
 const STANDARD_BEDINGT = {
-  lifecyclestage: "nur wenn der Kontakt neu ist oder in einer früheren Phase steht",
+  lifecyclestage:
+    "nur wenn HUBSPOT_LIFECYCLE_STAGE gesetzt ist UND der Kontakt neu ist oder in einer früheren Phase steht",
   hs_lead_status: "nur bei neuen Kontakten",
   hs_marketable_status: "nur bei erteilter Marketing-Einwilligung",
 };
@@ -113,6 +114,25 @@ function eigeneEigenschaften() {
  * "Lead" zurückzustufen, wäre eine stille Datenverschlechterung im CRM: er
  * fällt aus Kundenlisten heraus und taucht in Lead-Reports auf. Das merkt
  * niemand am Tag der Anfrage, sondern Wochen später im Reporting.
+ *
+ * ⚠️⚠️ WELCHE PHASE GESETZT WIRD, IST KONFIGURATION UND KEINE ANNAHME — und
+ * das hat der Live-Test am 26.08.2026 erzwungen. Vorher stand hier fest "lead".
+ * In HubSpot ist das der interne Name; das LABEL dahinter kann pro Portal frei
+ * umbenannt sein, und in diesem Portal ist es genau so:
+ *     subscriber  -> "Kontakt"
+ *     4000505062  -> "Kaltakquise"
+ *     lead        -> "Termin vereinbart"      <-- das schrieb der Code
+ *     customer    -> "Kunde"
+ * Ein Formulareingang wäre damit als "Termin vereinbart" im CRM gelandet, also
+ * mehrere Stufen zu weit. Das fällt nicht am Tag der Anfrage auf, sondern im
+ * Reporting — dieselbe Klasse von stiller Datenverschlechterung, gegen die der
+ * Absatz darüber schützt, nur aus der anderen Richtung.
+ *
+ * Deshalb: HUBSPOT_LIFECYCLE_STAGE. **Ist die Variable nicht gesetzt, wird die
+ * Phase überhaupt nicht geschrieben** und HubSpot nimmt seine eigene
+ * Voreinstellung. Das ist der einzige Wert, der in keinem Portal falsch sein
+ * kann. Welche Stufe fachlich richtig ist, weiß nur der Kunde — die Auswahl
+ * seines Portals gibt "node scripts/setup-hubspot.mjs --verify" aus.
  */
 const LIFECYCLE_REIHENFOLGE = [
   "subscriber",
@@ -125,13 +145,28 @@ const LIFECYCLE_REIHENFOLGE = [
   "other",
 ];
 
-function darfAufLeadSetzen(aktuell) {
+/** Die konfigurierte Zielphase, oder null wenn keine gesetzt ist. */
+function zielphase() {
+  const v = process.env.HUBSPOT_LIFECYCLE_STAGE;
+  return v && String(v).trim() ? String(v).trim() : null;
+}
+
+/**
+ * Darf die Zielphase gesetzt werden?
+ * ⚠️ Bei einer PORTALEIGENEN Zielphase (numerische ID) lässt sich keine
+ * Reihenfolge bestimmen — die Liste unten kennt nur HubSpots Standardnamen.
+ * Dann wird nur bei NEUEN Kontakten gesetzt. Das ist die sichere Seite: ein
+ * bestehender Kontakt behält seine Phase, statt vielleicht zurückgestuft zu
+ * werden.
+ */
+function darfPhaseSetzen(aktuell, ziel) {
+  if (!ziel) return false;
   if (!aktuell) return true;
   const i = LIFECYCLE_REIHENFOLGE.indexOf(String(aktuell).toLowerCase());
-  const lead = LIFECYCLE_REIHENFOLGE.indexOf("lead");
-  // Unbekannte Phase: nicht anfassen. Lieber nichts tun als falsch setzen.
-  if (i < 0) return false;
-  return i < lead;
+  const z = LIFECYCLE_REIHENFOLGE.indexOf(String(ziel).toLowerCase());
+  // Unbekannte Phase auf einer der beiden Seiten: nicht anfassen.
+  if (i < 0 || z < 0) return false;
+  return i < z;
 }
 
 function kopf() {
@@ -176,7 +211,8 @@ function kontaktProperties(d, submissionId, zeitstempel, vorhanden) {
   // ⚠️ Nur bei neuen Kontakten oder aus einer FRÜHEREN Phase heraus — siehe
   // LIFECYCLE_REIHENFOLGE oben.
   const aktuell = vorhanden && vorhanden.properties && vorhanden.properties.lifecyclestage;
-  if (!vorhanden || darfAufLeadSetzen(aktuell)) standard.lifecyclestage = "lead";
+  const ziel = zielphase();
+  if (ziel && (!vorhanden || darfPhaseSetzen(aktuell, ziel))) standard.lifecyclestage = ziel;
   // Nur bei neuen Kontakten: ein Kontakt, den der Vertrieb schon auf "In
   // Bearbeitung" gesetzt hat, darf nicht auf "Neu" zurückfallen.
   if (!vorhanden) standard.hs_lead_status = "NEW";
@@ -288,24 +324,67 @@ async function kontaktUpsert(d, submissionId, zeitstempel) {
  * ein "subscribe" ohne Einwilligung wäre genau der Fehler, den die getrennte
  * Checkbox im Formular verhindern soll.
  */
+/* ⚠️⚠️ ZWEI SUBSCRIPTION-TYPEN, NICHT EINER, und das ist eine Entscheidung des
+   Kunden vom 26.08.2026 („einfach beides setzen"). Der Hintergrund gehört
+   dazu, weil er erklärt, warum überhaupt zwei in Frage kommen:
+     · ONE TO ONE ist im Portal als Typ **Sales** angelegt — 1:1-Mails. Eine
+       Angebotsanfrage IST 1:1-Kommunikation, deshalb hat der Kunde diesen Typ
+       zuerst genannt.
+     · MARKETING INFORMATION ist Typ **Marketing** — Kampagnen. Und das ist,
+       was der Haken im Formular wörtlich verspricht („Informationen zu
+       Sicherheitsthemen und Leistungen"). Für einen Newsletter wäre One to
+       One die falsche Grundlage.
+   Beide zu setzen deckt beide Fälle ab; die Einwilligung stammt aus derselben,
+   nicht vorausgewählten Checkbox, und die Begründung nennt sie.
+
+   ⚠️ GESETZT WIRD NUR MIT HAKEN — auch One to One. Eine denkbare Variante wäre,
+   One to One bei JEDER Anfrage zu setzen (mit legalBasis
+   PERFORMANCE_OF_CONTRACT statt Einwilligung), weil eine Angebotsanfrage die
+   1:1-Antwort ohnehin rechtfertigt. Das ist NICHT eingebaut: es wäre ein
+   Eintrag über jemanden, der nichts angekreuzt hat, und der Kunde hat
+   ausdrücklich die einfache Variante gewählt. Wer es später will, ändert die
+   Abbruchbedingung unten und die legalBasis für diesen einen Typ.
+
+   ⚠️ Fehlt eine der beiden Variablen, wird die andere trotzdem gesetzt und die
+   fehlende protokolliert. Es wird nie eine ID geraten. */
+const SUBSCRIPTION_VARIABLEN = [
+  ["HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE", "One to One"],
+  ["HUBSPOT_SUBSCRIPTION_ID_MARKETING", "Marketing Information"],
+];
+
 async function marketingEinwilligung(d, submissionId) {
   if (!d.marketing_opt_in) return { ok: true, uebersprungen: "keine Einwilligung" };
-  const id = process.env.HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE;
-  if (!id) {
-    log.warn(
-      submissionId,
-      "hubspot: HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE fehlt — Einwilligung NICHT in HubSpot vermerkt. " +
-        "IDs auslesen mit: node scripts/setup-hubspot.mjs"
-    );
-    return { ok: false, uebersprungen: "keine ID konfiguriert" };
-  }
 
+  const ziele = [];
+  for (const [variable, bezeichnung] of SUBSCRIPTION_VARIABLEN) {
+    const id = process.env[variable];
+    if (id && String(id).trim()) ziele.push({ id: String(id).trim(), bezeichnung });
+    else
+      log.warn(
+        submissionId,
+        "hubspot: " + variable + " fehlt — Einwilligung fuer \"" + bezeichnung +
+          "\" NICHT vermerkt. IDs auslesen mit: node scripts/setup-hubspot.mjs --verify"
+      );
+  }
+  if (!ziele.length) return { ok: false, uebersprungen: "keine ID konfiguriert" };
+
+  // ⚠️ Nacheinander, nicht parallel: HubSpot antwortet auf denselben Kontakt
+  // mit zwei gleichzeitigen Änderungen an den Kommunikationseinstellungen
+  // gelegentlich mit einem Konflikt. Zwei Aufrufe sind billig.
+  const ergebnisse = [];
+  for (const ziel of ziele) {
+    ergebnisse.push(await einwilligungSetzen(d, submissionId, ziel));
+  }
+  return { ok: ergebnisse.every((r) => r.ok), typen: ergebnisse };
+}
+
+async function einwilligungSetzen(d, submissionId, ziel) {
   const res = await anfrage("hubspot.einwilligung", submissionId, BASIS + "/communication-preferences/v3/subscribe", {
     method: "POST",
     headers: kopf(),
     body: JSON.stringify({
       emailAddress: d.email,
-      subscriptionId: String(id),
+      subscriptionId: ziel.id,
       // CONSENT_WITH_NOTICE: der Betroffene hat aktiv zugestimmt und wurde
       // dabei über den Zweck informiert — das trifft auf eine eigene,
       // unmarkierte Checkbox mit erklärendem Text und Link auf die
@@ -313,11 +392,61 @@ async function marketingEinwilligung(d, submissionId) {
       legalBasis: "CONSENT_WITH_NOTICE",
       legalBasisExplanation:
         "Einwilligung über das Anfrageformular auf frankonia-sicherheit.de, " +
-        "separate Checkbox, nicht vorausgewählt. Submission-ID: " + submissionId,
+        "separate Checkbox, nicht vorausgewählt (" + ziel.bezeichnung + "). " +
+        "Submission-ID: " + submissionId,
     }),
   });
-  if (!res.ok) log.warn(submissionId, "hubspot: Einwilligung nicht gespeichert");
-  return { ok: res.ok };
+  if (res.ok) return { ok: true, bezeichnung: ziel.bezeichnung };
+
+  /* ⚠️⚠️ "ALREADY SUBSCRIBED" IST KEIN FEHLER, und das hat der Live-Test am
+     26.08.2026 gezeigt: HubSpot antwortet mit **400**, wenn der Kontakt bei
+     diesem Typ schon eingetragen ist. Der gewünschte Zustand ist damit aber
+     erreicht. Als Fehler behandelt hieße das: jeder wiederkehrende
+     Interessent, der den Haken setzt, erzeugt eine Warnung — und im Log sähe
+     es aus, als wäre die Einwilligung nicht vermerkt, obwohl sie es ist.
+
+     ⚠️ Die englische Meldung ist nur der ANLASS, nicht der Beweis. Ein Text
+     eines Fremdanbieters kann sich ändern, deshalb wird danach der
+     Status-Endpoint gefragt: nur wenn der SUBSCRIBED bestätigt, gilt es als
+     Erfolg. Passt die Meldung nicht mehr, bleibt es bei der Warnung — der
+     Fehlerfall ist also die alte, sichere Seite.
+
+     ⚠️ NICHT eingebaut: eine bestehende Rechtsgrundlage überschreiben. Beim
+     Test stand dort LEGITIMATE_INTEREST_PQL ("Vertriebsinteresse") aus einem
+     früheren Prozess des Kunden. Eine frische Einwilligung wäre die stärkere
+     Grundlage, aber der subscribe-Endpoint kann sie bei einem bereits
+     eingetragenen Kontakt nicht ändern, und einen fremden Eintrag über die
+     v4-API stillschweigend zu überschreiben ist keine Entscheidung, die hier
+     nebenbei getroffen wird. Im Bericht vermerkt. */
+  const meldung = String((res.body && res.body.message) || "");
+  if (res.status === 400 && /already subscribed/i.test(meldung)) {
+    if (await schonEingetragen(d.email, ziel.id, submissionId)) {
+      log.info(
+        submissionId,
+        'hubspot: Einwilligung fuer "' + ziel.bezeichnung + '" war bereits eingetragen'
+      );
+      return { ok: true, bezeichnung: ziel.bezeichnung, bereits: true };
+    }
+  }
+  log.warn(submissionId, "hubspot: Einwilligung fuer \"" + ziel.bezeichnung + "\" nicht gespeichert");
+  return { ok: false, bezeichnung: ziel.bezeichnung };
+}
+
+/**
+ * Fragt den Status-Endpoint, ob dieser Kontakt bei diesem Typ eingetragen ist.
+ * ⚠️ Die E-Mail steht in der URL. api/_lib/http.js protokolliert URLs nicht,
+ * nur den Schrittnamen und den Status — sonst stünde hier eine Adresse im Log.
+ */
+async function schonEingetragen(email, id, submissionId) {
+  const res = await anfrage(
+    "hubspot.einwilligung.status",
+    submissionId,
+    BASIS + "/communication-preferences/v3/status/email/" + encodeURIComponent(email),
+    { headers: kopf() }
+  );
+  if (!res.ok) return false;
+  const liste = (res.body && res.body.subscriptionStatuses) || [];
+  return liste.some((e) => String(e.id) === String(id) && e.status === "SUBSCRIBED");
 }
 
 /* -------------------------------------------------------------- Unternehmen */
@@ -469,8 +598,9 @@ module.exports = {
   assoziieren,
   notizAnlegen,
   kontaktProperties,
-  darfAufLeadSetzen,
   konfiguriert,
   LIFECYCLE_REIHENFOLGE,
+  darfPhaseSetzen,
+  zielphase,
   BASIS,
 };

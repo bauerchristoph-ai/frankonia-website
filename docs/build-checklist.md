@@ -107,6 +107,81 @@ SERVÍA SIN FOOTER DESDE EL BLOQUE J.** Toca `pages/datenschutz.html` y
   sonda que reporta que todo está roto casi siempre está rota ella.** Pasada a
   archivo con el Write tool — tercera vez hoy con la misma causa.
 
+**2026-08-26, TERCERA RONDA — EL PRIMER DURCHLAUF CONTRA LAS APIs REALES. Funciona de
+punta a punta, y encontró CUATRO defectos que ninguna prueba con `fetch` simulado
+podía encontrar.** Toca `api/_lib/{hubspot,log,http}.js`, los dos scripts de setup,
+`.env.example` y los tests. **62 tests verdes** (eran 59).
+
+- ⚠️⚠️ **EL PEOR: `lifecyclestage: "lead"` HABRÍA CLASIFICADO MAL CADA CONSULTA.** En
+  HubSpot el nombre interno y la ETIQUETA son dos cosas distintas, y la etiqueta se
+  renombra por portal. En este portal `lead` **no** se llama "Lead" sino **"Termin
+  vereinbart"** — o sea varias etapas más adelante en el embudo. Un formulario habría
+  entrado como "cita agendada". No se ve el día de la consulta, se ve semanas después
+  en el reporting: la misma clase de degradación silenciosa contra la que ya protegía
+  el guard de "no bajar de etapa", sólo desde el otro lado.
+  - Ahora la etapa sale de **`HUBSPOT_LIFECYCLE_STAGE`**, y **sin la variable NO se
+    escribe la etapa** — HubSpot pone su propio default. Es el único valor que no
+    puede estar mal en ningún portal.
+  - `darfAufLeadSetzen()` → `darfPhaseSetzen(aktuell, ziel)`. ⚠️ **Con una etapa
+    PROPIA del portal (ID numérica) no hay orden determinable**, así que sólo se
+    escribe en contactos NUEVOS. Ése es exactamente el caso de este portal.
+  - `setup-hubspot.mjs --verify` imprime ahora la lista de etapas del portal con su
+    nombre interno. La decisión es del cliente; el dato para tomarla estaba oculto.
+
+- ⚠️ **"ALREADY SUBSCRIBED" ERA TRATADO COMO FALLO.** HubSpot responde **400** cuando
+  el contacto ya está inscripto en el tipo de suscripción — pero el estado deseado ya
+  está. Como fallo, cada interesado que vuelve y marca la casilla generaba un warning,
+  y en el log parecía que la einwilligung no se había registrado.
+  - Ahora cuenta como éxito, **pero sólo tras verificar**: el texto inglés es el
+    DISPARADOR, la prueba es el endpoint de estado. Si HubSpot cambia el texto, vuelve
+    a ser warning — el modo de fallo es el lado seguro.
+  - ⚠️ **NO se sobreescribe una legalBasis existente.** El contacto de prueba tenía
+    `LEGITIMATE_INTEREST_PQL` de un proceso anterior del cliente; una einwilligung
+    fresca sería base más fuerte, pero el endpoint subscribe no puede cambiarla y
+    pisar un registro ajeno vía la API v4 no es una decisión que se tome de paso.
+
+- ⚠️⚠️ **LA PROPIA MÁSCARA DE LOGS HIZO IMPOSIBLE EL DIAGNÓSTICO, y eso costó la mitad
+  de la ronda.** `message` está en la lista de borrado porque es el campo de mensaje
+  del formulario — **y es también la clave estándar con la que HubSpot y Brevo
+  devuelven su frase de error.** El log decía literalmente:
+      hubspot.einwilligung: 400 endgueltig {"message":"<entfernt>"}
+  El motivo real era "is already subscribed", o sea ni un error. Ahora hay un segundo
+  juego (`FREITEXT_FREMD`) que **enmascara** en vez de borrar, y `log.warn` acepta un
+  cuarto parámetro `fremd` que sólo pone `api/_lib/http.js`. Para datos propios se
+  sigue borrando: en el mensaje de un interesado el CONTENIDO es el dato personal.
+
+- ⚠️ **EL PATRÓN DE TELÉFONO CORTABA IDENTIFICADORES.** Un correlationId
+  `01a03e48-4ab9-…` salía como `4ab<tel>b36` — inservible, y es justo lo que se
+  necesita para hablar con el soporte. Ahora lleva límites de palabra: un teléfono
+  nunca está pegado a una letra, un identificador sí.
+
+- **LO QUE QUEDÓ CONFIGURADO** (todo leído de las cuentas, nada supuesto): las **diez
+  propiedades propias creadas** en el grupo `website_integration` y verificadas por
+  tipo; la lista de Brevo **"Website – Marketing-Einwilligung" (id 7)** creada y
+  movida al folder `marketing_automation` (⚠️ se crea por defecto en
+  "Conversations-Kontakte", el folder del chat, donde una lista de marketing no va);
+  la plantilla **5** comprobada — activa, remitente correcto, reply-to
+  `info@frankonia-sicherheit.de`, y contiene los dos placeholders que el código envía;
+  y **los dos** tipos de suscripción, decisión del cliente ("einfach beides setzen").
+
+- ✅ **MEDIDO CONTRA LAS CUENTAS REALES, tres corridas:** contacto con **15 campos**
+  poblados, empresa creada y asociada, nota con mensaje/servicio/página/campaña,
+  contacto de Brevo con **11 atributos** + `OPT_IN` + lista 7, y **las dos mailes
+  ENTREGADAS** (confirmación al remitente — incluso abierta — y aviso interno a
+  `info@`). La corrida sin el tic no dispara ninguna einwilligung ni lista y no emite
+  un solo warning.
+  ⚠️ **Turnstile corrió con la clave de PRUEBA oficial de Cloudflare**
+  (`1x0000000000000000000000000000000AA`): el secret real sólo existe en el dashboard
+  del cliente. Es el único eslabón sin probar de verdad, y la clave **no** se escribió
+  en `.env.local` — ahí sería un antispam desactivado.
+
+- ⚠️ **Trampa de entorno: `.env.local` NO la lee nada de este proyecto** (cero
+  dependencias, o sea no hay dotenv; `build.js` lee `process.env`). Para correr algo
+  con esos valores hace falta un cargador propio — hay uno de ~40 líneas en el
+  scratchpad de esta sesión que además **nunca imprime un valor**, sólo nombre y
+  longitud. Lo único que hace funcionar el sitio en vivo son las Environment
+  Variables de Vercel.
+
 **2026-08-26, MISMA SESIÓN — SIETE PUNTOS DEL CLIENTE SOBRE LA INTEGRACIÓN: TELEFON
 OBLIGATORIO, LAS PROPIEDADES DE HUBSPOT VERIFICABLES, LA EINWILLIGUNG DE MARKETING, Y
 LA SEMÁFORO DE DOBLE CLIC. Más dos overflows, uno de ellos MÍO.** Toca `api/_lib/`

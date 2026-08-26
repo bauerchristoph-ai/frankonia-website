@@ -81,7 +81,8 @@ async function anfrage(name, submissionId, url, optionen) {
     }
     if (!wiederholbar(letzte.status)) {
       // Endgültig. Der Body kann Feldwerte zurückspiegeln, deshalb maskiert.
-      log.warn(submissionId, name + ": " + letzte.status + " endgueltig", letzte.body || letzte.error);
+      // fremd = true: der Fehlersatz unter `message` bleibt lesbar, siehe log.js.
+      log.warn(submissionId, name + ": " + letzte.status + " endgueltig", letzte.body || letzte.error, true);
       return letzte;
     }
     if (versuch < VERSUCHE) {
@@ -92,7 +93,7 @@ async function anfrage(name, submissionId, url, optionen) {
       await schlafen(wartezeit);
     }
   }
-  log.warn(submissionId, name + ": nach " + VERSUCHE + " Versuchen aufgegeben", letzte.body || letzte.error);
+  log.warn(submissionId, name + ": nach " + VERSUCHE + " Versuchen aufgegeben", letzte.body || letzte.error, true);
   return letzte;
 }
 
