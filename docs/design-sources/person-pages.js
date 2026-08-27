@@ -60,6 +60,15 @@ const fs = require("fs");
 const path = require("path");
 
 const ROOT = path.join(__dirname, "..", "..");
+/* ⚠️ DIE „-2" IN ZWEI SLUGS IST AM 27.08.2026 ENTFALLEN (Kundenwunsch: „überall wo
+   bei der url -2 bei den personen dahinter ist, die -2 in der url wegmachen und die
+   alten 2er urls auf die neuen ohne zwei umleiten"). Sie kam aus WordPress, das an
+   einen belegten Slug eine Zahl hängt — auf der Website war sie ohne Bedeutung.
+   Aus /christoph-bauer-sicherheitsdienst-2/ wurde /christoph-bauer-sicherheitsdienst/
+   und aus /morelo-werkschutz-team-2/ wurde /morelo-werkschutz-team/; die alten
+   Adressen leiten dauerhaft (301) auf die neuen, weil sie auf gedruckten Karten und
+   QR-Codes stehen. Die vCard-Dateinamen sind mitgewandert, damit Dateiname und Slug
+   weiter übereinstimmen. */
 const OUT = path.join(ROOT, "pages");
 const ORIGIN = "https://frankonia-sicherheit.de";
 
@@ -119,6 +128,7 @@ function head({ slug, title, description, extraClass }) {
   <link rel="stylesheet" href="/css/page-person.css">
 </head>
 <body>
+  <!-- include: gtm-noscript -->
   <!-- include: icon-sprite -->
   <!-- include: header-de -->
 
@@ -266,7 +276,7 @@ const PEOPLE = [
     more: true,
   },
   {
-    slug: "christoph-bauer-sicherheitsdienst-2",
+    slug: "christoph-bauer-sicherheitsdienst",
     title: "Christoph Bauer Sicherheitsdienst | FRANKONIA Sicherheit",
     description:
       "Christoph Bauer, Marketing- und Projektmanager bei FRANKONIA Sicherheitsdienst in Bamberg — Kontaktdaten direkt speichern.",
@@ -277,7 +287,7 @@ const PEOPLE = [
     tel: "+49 951 964352-30",
     mobile: "+49 151 70131270",
     mail: "c.bauer@frankonia-sicherheit.de",
-    vcard: "christoph-bauer-sicherheitsdienst-2.vcf",
+    vcard: "christoph-bauer-sicherheitsdienst.vcf",
     lede: LEDE_SD,
     links: LINKS_SD,
     more: true,
@@ -298,36 +308,24 @@ const PEOPLE = [
     links: LINKS_SD,
     more: true,
   },
-  {
-    /* ⚠️ DIE ZWEITE VAN-WEY-KARTE, und sie ist nicht die Werkschutz-Karte oben
-       mit anderem Text: ihre Mailadresse liegt auf frankonia-security.de, einer
-       DRITTEN Marke neben -sicherheit.de und -werkschutz.de, und ihre vCard
-       nennt als Firma "FRANKONIA Security GmbH & Co. KG". Beides steht so auf
-       der Livekarte und ist deshalb unverändert übernommen — es ist aber die
-       einzige Stelle im ganzen Projekt, an der diese Firmierung auftaucht, und
-       im Impressum kommt sie nicht vor. Für den Kunden notiert, nicht
-       eigenmächtig auf -werkschutz.de umgeschrieben.
+  /* ⚠️⚠️ HIER STAND EINE ZWEITE VAN-WEY-KARTE, /bryan-van-wey-security/, und sie
+     ist am 27.08.2026 auf Kundenwunsch ENTFALLEN: "van wey security als seite
+     löschen bzw auf werkschutz umleiten". Die alte Adresse leitet dauerhaft auf
+     /bryan-van-wey-werkschutz/ (vercel.json), damit gedruckte QR-Codes weiter
+     ankommen.
 
-       ⚠️ PORTRÄT: bewusst das NEUERE Foto (person-bryan-van-wey, aus
-       uploads/2025/12), nicht das der Livekarte (uploads/2023/12). Es ist
-       dieselbe Person, und zwei Aufnahmen aus zwei Jahren auf zwei Seiten
-       derselben Website sind ein Fehler, keine Werktreue. Gemessen: mittlere
-       Abweichung 65,9 von 255, also klar zwei verschiedene Fotos. */
-    slug: "bryan-van-wey-security",
-    title: "Bryan Van Wey Security | FRANKONIA Sicherheit",
-    description:
-      "Bryan Van Wey, Einsatzleiter bei FRANKONIA Security in Bamberg — Kontaktdaten direkt speichern.",
-    name: "Bryan Van Wey",
-    role: "Einsatzleiter",
-    portrait: "person-bryan-van-wey",
-    tel: "+49 951 964352-60",
-    mobile: "+49 151 20704942",
-    mail: "b.vanwey@frankonia-security.de",
-    vcard: "bryan-van-wey-security.vcf",
-    lede: LEDE_SD,
-    links: LINKS_SD,
-    more: true,
-  },
+     ⚠️ SIE WAR NICHT NUR EINE KOPIE DER WERKSCHUTZ-KARTE, und das ist der Teil,
+     den man wissen muss: ihre Mailadresse lag auf frankonia-security.de, einer
+     DRITTEN Marke neben -sicherheit.de und -werkschutz.de, und ihre vCard nannte
+     als Firma "FRANKONIA Security GmbH & Co. KG" — die einzige Stelle im ganzen
+     Projekt mit dieser Firmierung, im Impressum kommt sie nicht vor. Mit der
+     Seite sind also diese Adresse und diese Firmierung von der Website
+     verschwunden; wer den alten QR-Code scannt, bekommt jetzt
+     b.vanwey@frankonia-werkschutz.de. Das ist die Folge der Entscheidung, nicht
+     ein Versehen — die Datei assets/documents/bryan-van-wey-security.vcf ist
+     ebenfalls gelöscht, sonst wäre sie weiter öffentlich abrufbar.
+
+     Der vollständige Eintrag steht im Git-Verlauf, falls die Karte zurückkommt. */
   {
     /* ⚠️ KEINE PERSON, SONDERN EIN POSTEN: die Pforte, die FRANKONIA beim Kunden
        MORELO besetzt. Daher drei Abweichungen von den acht anderen Karten, und
@@ -338,7 +336,7 @@ const PEOPLE = [
          rutscht nach oben und es bleibt keine Lücke.
        · KEINE FESTNETZNUMMER — nur die Mobilnummer der Pforte.
        · KEIN ZUSATZ zur Berufsbezeichnung. */
-    slug: "morelo-werkschutz-team-2",
+    slug: "morelo-werkschutz-team",
     title: "Morelo Werkschutz Team | FRANKONIA Sicherheit",
     description:
       "Morelo Werkschutz Team, Pforte bei FRANKONIA Werkschutz in Bamberg — Kontaktdaten direkt speichern.",
@@ -346,7 +344,7 @@ const PEOPLE = [
     role: "Pforte",
     mobile: "+49 1517 5010444",
     mail: "werkschutz.frankonia@morelo.eu",
-    vcard: "morelo-werkschutz-team-2.vcf",
+    vcard: "morelo-werkschutz-team.vcf",
     lede: LEDE_WS,
     links: LINKS_WS,
     more: true,
@@ -412,7 +410,9 @@ ${more}        </div>
 ${links}
       </div>
     </section>
-` +
+
+
+    <!-- include: person-trust -->` +
     FOOT
   );
 }
@@ -498,7 +498,7 @@ const LINKTREE = [
   ["Unternehmen", [
     ["Referenzen", "/referenzen/"],
     ["Über uns", "/ueber-uns/"],
-    ["Karriere", "/jobs/"],
+    ["Jobs", "/jobs/"],
     ["Kontakt", "/kontakt/"],
   ]],
 ];
@@ -509,7 +509,7 @@ function linktreePage() {
       slug: "linktree",
       title: "linktree | FRANKONIA Sicherheit",
       description:
-        "Alle wichtigen Seiten von FRANKONIA Sicherheit auf einen Blick: Leistungen, Referenzen, Karriere und Kontakt.",
+        "Alle wichtigen Seiten von FRANKONIA Sicherheit auf einen Blick: Leistungen, Referenzen, Jobs und Kontakt.",
     }) +
     crumbs("Linktree") +
     `

@@ -265,6 +265,51 @@
       "permanent": true
     },
     {
+      "source": "/bryan-van-wey-security",
+      "destination": "/bryan-van-wey-werkschutz/",
+      "permanent": true
+    },
+    {
+      "source": "/bryan-van-wey-security/",
+      "destination": "/bryan-van-wey-werkschutz/",
+      "permanent": true
+    },
+    {
+      "source": "/assets/documents/bryan-van-wey-security.vcf",
+      "destination": "/assets/documents/bryan-van-wey-werkschutz.vcf",
+      "permanent": true
+    },
+    {
+      "source": "/christoph-bauer-sicherheitsdienst-2",
+      "destination": "/christoph-bauer-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/christoph-bauer-sicherheitsdienst-2/",
+      "destination": "/christoph-bauer-sicherheitsdienst/",
+      "permanent": true
+    },
+    {
+      "source": "/assets/documents/christoph-bauer-sicherheitsdienst-2.vcf",
+      "destination": "/assets/documents/christoph-bauer-sicherheitsdienst.vcf",
+      "permanent": true
+    },
+    {
+      "source": "/morelo-werkschutz-team-2",
+      "destination": "/morelo-werkschutz-team/",
+      "permanent": true
+    },
+    {
+      "source": "/morelo-werkschutz-team-2/",
+      "destination": "/morelo-werkschutz-team/",
+      "permanent": true
+    },
+    {
+      "source": "/assets/documents/morelo-werkschutz-team-2.vcf",
+      "destination": "/assets/documents/morelo-werkschutz-team.vcf",
+      "permanent": true
+    },
+    {
       "source": "/hallo-welt",
       "destination": "/",
       "permanent": true
