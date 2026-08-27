@@ -1,5 +1,10 @@
 /*
- * HubSpot: Kontakt, Unternehmen, Assoziation, Notiz. 2026-08-26.
+ * HubSpot: Kontakt, Notiz — und auf Wunsch Unternehmen samt Assoziation.
+ * 2026-08-26.
+ *
+ * ⚠️ DAS UNTERNEHMENSOBJEKT IST STANDARDMÄSSIG AUS (Kundenentscheidung
+ * 26.08.2026); der Firmenname steht am Kontakt und in der Notiz. Einschalten
+ * über HUBSPOT_FIRMA_ANLEGEN=1, Begründung bei verarbeiten() weiter unten.
  *
  * Portal 27143941, Datenhosting EU.
  * ⚠️ API-BASIS IST api.hubapi.com, NICHT eine EU-App-Domain. Das Datenhosting
@@ -106,6 +111,73 @@ function eigeneEigenschaften() {
   for (const name of Object.values(EIGEN_MAP)) out[name] = "string";
   return { ...out, ...EIGEN_SERVER };
 }
+
+/* ==========================================================================
+   „Bewerber oder Kunde?" — EINE EIGENSCHAFT DES PORTALS, DIE WIR SCHREIBEN
+   ABER NIE ANLEGEN
+   ==========================================================================
+   Kundenmeldung 26.08.2026, nach Sicht des Testkontakts: *„Du hast das
+   Eigenschaftsfeld Bewerber oder Kunde ausgewählt. Da ist grad Bewerber
+   Schrägstrich Mitarbeiter ausgewählt. Das muss bei allen Feldern außer den
+   Karriere- oder Jobformularen potenzieller Kunde sein."*
+
+   ⚠️ ZUR EINORDNUNG, WEIL DIE MELDUNG EINE URSACHE UNTERSTELLT, DIE NICHT
+   STIMMT: dieser Code hat die Eigenschaft vorher NIE geschrieben — sie stand
+   nicht in STANDARD_MAP und nicht in EIGEN_MAP. Der Wert „Bewerber /
+   Mitarbeiter" am Testkontakt kam also nicht aus dem Formular. Der Kontakt
+   existierte bereits (Aufgabe von Dezember 2025, E-Mails vom 10. August 2026),
+   das Formular hat ihn nur aktualisiert. Was fehlte, war nicht die Korrektur
+   eines falschen Werts, sondern das Setzen überhaupt — und das passiert ab
+   jetzt.
+
+   ⚠️⚠️ DIE INTERNEN WERTE SIND NICHT DIE BESCHRIFTUNGEN, und hier besonders
+   nicht. Am 26.08.2026 aus dem Portal gelesen
+   (crm/v3/properties/contacts/bewerber_oder_kunde_), nicht geraten:
+
+     interner Wert                  Beschriftung im Portal
+     ---------------------------------------------------------------
+     "(Potenzieller) Kunde"         "(Potenzieller) Kunde"
+     "Bewerber Sicherheitsdienst"   "Bewerber / Mitarbeiter"
+
+   Ein „potenzieller Kunde" ohne Klammern und mit kleinem p wäre also von
+   HubSpot mit 400 abgelehnt worden — und zwar für den GESAMTEN Aufruf.
+
+   ⚠️ SIE WIRD BEI DEN EIGENEN EIGENSCHAFTEN GESCHRIEBEN, NICHT BEI DEN
+   STANDARDS, und das ist Absicht: wird die Option im Portal umbenannt, fällt
+   der erste Versuch mit 400 aus und der zweite Versuch von kontaktUpsert()
+   schreibt nur die Standardfelder. Dann fehlt die Rolle — aber der Lead ist da.
+   Stünde sie bei den Standards, wäre eine Umbenennung im Portal ein
+   Totalausfall des Formulars.
+
+   ⚠️ SIE WIRD ABER NIE ANGELEGT. Das ist eine Eigenschaft, die der Kunde selbst
+   in seinem Portal gebaut hat, samt Optionen und samt Bedeutung für seinen
+   Vertrieb. `scripts/setup-hubspot.mjs` legt nur die Felder der Gruppe
+   `website_integration` an; diese hier PRÜFT es (Existenz und der Wert, den wir
+   schreiben, muss eine echte Option sein) und rührt sie sonst nicht an.
+   Deshalb steht sie in einer eigenen Tabelle und nicht in EIGEN_MAP — dort
+   würde das Skript versuchen, sie zu erzeugen.
+
+   ⚠️ JE FORMULARTYP, nicht global. Heute gibt es genau einen Typ, der diesen
+   Endpoint erreicht (`customer_inquiry`), und das Bewerberformular auf /jobs/
+   ist ein EINGEBETTETES HUBSPOT-FORMULAR — es läuft gar nicht durch diesen
+   Code (siehe partials/hubspot-jobs-form.html). Die Trennung, die der Kunde
+   verlangt, ist damit heute strukturell gegeben und nicht nur konfiguriert.
+   Kommt später ein eigener Typ `application` dazu, gehört hier
+   "Bewerber Sicherheitsdienst" hin — eine Zeile, und der Rest bleibt.
+
+   ⚠️ DER WERT WIRD ÜBERSCHRIEBEN, auch wenn schon einer steht. Bei einem
+   Einzel-Auswahlfeld geht das nicht anders: irgendeine Seite verliert. Das
+   Formular ist der jüngste Beleg dafür, was diese Person will, deshalb gewinnt
+   es. **Der Grenzfall, den man kennen muss:** wer sich erst bewirbt und später
+   ein Angebot anfragt, wird damit zum Kunden umgeschrieben, und ein etwaiger
+   `bewerber_status` steht dann ohne passende Rolle daneben. Soll das nicht
+   passieren, ist die Bedingung „nur setzen, wenn leer" — dann bleibt aber der
+   Fall stehen, den der Kunde gerade gemeldet hat.
+   ========================================================================== */
+const ROLLE_PROPERTY = "bewerber_oder_kunde_";
+const ROLLE_JE_FORMULARTYP = {
+  customer_inquiry: "(Potenzieller) Kunde",
+};
 
 /*
  * ⚠️ DIE LIFECYCLE-REIHENFOLGE IST LOAD-BEARING. `lifecyclestage` darf nur
@@ -270,6 +342,10 @@ function kontaktProperties(d, submissionId, zeitstempel, vorhanden) {
   // page_url ist Pflicht in der Validierung, wird hier aber leer zugelassen:
   // eine fehlende Herkunft darf keinen Schreibvorgang verhindern.
   if (!eigen.website_page_url) eigen.website_page_url = d.page_url || "";
+
+  // Rolle je Formulartyp — die lange Begruendung steht bei der Tabelle oben.
+  const rolle = ROLLE_JE_FORMULARTYP[d.form_type];
+  if (rolle) eigen[ROLLE_PROPERTY] = rolle;
 
   return { standard, eigen };
 }
@@ -590,13 +666,37 @@ async function verarbeiten(d, submissionId, zeitstempel) {
   }
   log.info(submissionId, "hubspot: Kontakt " + (kontakt.neu ? "angelegt" : "aktualisiert"));
 
-  if (d.company) {
+  /* ⚠️ FIRMENOBJEKT: STANDARDMÄSSIG AUS. Kundenentscheidung 26.08.2026, nach
+     Sicht des Testlaufs: *„Außerdem hast Du auch automatisch eine Testfirma
+     angelegt. Firma anlegen würde ich vielleicht gar nicht mal machen."*
+
+     Der Grund ist gute CRM-Hygiene: „Firma" ist ein freies Textfeld, und jede
+     Anfrage würde daraus ein Unternehmensobjekt bauen. Aus „Frankonia",
+     „FRANKONIA GmbH" und „frankonia sicherheit" werden drei Objekte, die
+     jemand später von Hand zusammenführen muss. Das fällt nicht bei der ersten
+     Anfrage auf, sondern beim fünfzigsten Datensatz.
+
+     ⚠️ ES GEHT DABEI KEINE ANGABE VERLOREN, und das ist die Voraussetzung
+     dafür, dass man es überhaupt abschalten darf: der eingegebene Firmenname
+     steht als Standardeigenschaft `company` AM KONTAKT (siehe STANDARD_MAP) und
+     zusätzlich im Text der Notiz. Der Vertrieb sieht ihn also, er ist nur kein
+     eigenes Objekt.
+
+     ⚠️ WIEDEREINSCHALTEN IST EINE UMGEBUNGSVARIABLE, kein Codeeingriff:
+     HUBSPOT_FIRMA_ANLEGEN=1. Der Weg samt Assoziation bleibt vollständig
+     erhalten und getestet — er läuft nur nicht von selbst. Als Variable und
+     nicht als Konstante, weil es dieselbe Art Entscheidung ist wie
+     HUBSPOT_LIFECYCLE_STAGE: der Kunde trifft sie, nicht der Code. */
+  const firmaAnlegen = process.env.HUBSPOT_FIRMA_ANLEGEN === "1";
+  if (d.company && firmaAnlegen) {
     const firma = await unternehmenUpsert(d.company, submissionId);
     schritte.firma = firma.ok;
     if (firma.ok && firma.id) {
       const assoz = await assoziieren(kontakt.id, firma.id, submissionId);
       schritte.assoziation = assoz.ok;
     }
+  } else if (d.company) {
+    schritte.firma = "abgeschaltet";
   }
 
   // Einwilligung VOR der Notiz, weil sie die rechtlich relevante Aussage ist
@@ -623,6 +723,8 @@ module.exports = {
   EIGEN_MAP,
   EIGEN_SERVER,
   STANDARD_BEDINGT,
+  ROLLE_PROPERTY,
+  ROLLE_JE_FORMULARTYP,
   kontaktUpsert,
   unternehmenUpsert,
   assoziieren,

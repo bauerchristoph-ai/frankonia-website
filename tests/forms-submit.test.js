@@ -799,10 +799,24 @@ test("HubSpot: die Zuordnung benutzt interne Namen, keine Beschriftungen", () =>
   for (const falsch of ["first_name", "firstName", "Vorname", "last_name", "lastName", "Nachname", "telefon", "Telefon"]) {
     assert.equal(standard[falsch], undefined, "falscher HubSpot-Name im Aufruf: " + falsch);
   }
-  // Eigene Felder: alle mit website_ praefixiert.
+  /* ⚠️ Eigene Felder: alle mit website_ praefixiert — MIT EINER ERKLAERTEN
+     AUSNAHME. `bewerber_oder_kunde_` ist eine Eigenschaft, die im Portal des
+     Kunden schon existiert; wir schreiben sie, legen sie aber nie an. Sie ist
+     hier namentlich freigestellt und nicht per Muster, damit ein VERSEHEN
+     weiterhin auffaellt: ein zweites portalfremdes Feld laesst diesen Test
+     scheitern, solange es nicht ebenso erklaert wird. */
+  const PORTAL_EIGEN = [hubspot.ROLLE_PROPERTY];
   for (const k of Object.keys(eigen)) {
-    assert.ok(k.startsWith("website_"), "eigenes Feld ohne website_-Praefix: " + k);
+    assert.ok(
+      k.startsWith("website_") || PORTAL_EIGEN.includes(k),
+      "eigenes Feld ohne website_-Praefix und ohne Erklaerung: " + k
+    );
   }
+  /* Die Rolle liegt bei den EIGENEN und nicht bei den Standardfeldern: wird die
+     Option im Portal umbenannt, faellt der erste Versuch mit 400 aus und der
+     zweite schreibt die Standardfelder ohne sie. Der Lead bleibt damit da. */
+  assert.equal(eigen[hubspot.ROLLE_PROPERTY], "(Potenzieller) Kunde");
+  assert.equal(standard[hubspot.ROLLE_PROPERTY], undefined);
 });
 
 test("HubSpot: Standard und Eigen sind getrennt, damit der zweite Versuch moeglich ist", () => {
@@ -811,11 +825,38 @@ test("HubSpot: Standard und Eigen sind getrennt, damit der zweite Versuch moegli
   // Kein eigenes Feld in den Standardfeldern und umgekehrt: sonst wuerde der
   // zweite Versuch dieselbe unbekannte Eigenschaft erneut senden.
   for (const k of Object.keys(standard)) assert.ok(!k.startsWith("website_"), k);
-  for (const k of Object.keys(eigen)) assert.ok(k.startsWith("website_"), k);
   // Und die zehn eigenen, die das Setup-Skript anlegt, deckt die Tabelle ab.
   const anzulegen = Object.keys(hubspot.eigeneEigenschaften());
   assert.equal(anzulegen.length, 10);
-  for (const k of Object.keys(eigen)) assert.ok(anzulegen.includes(k), "wird geschrieben, aber nie angelegt: " + k);
+  /* ⚠️ DIESE ZUSICHERUNG IST DIE BREMSE GEGEN "wird geschrieben, aber nie
+     angelegt" — der Fall, in dem HubSpot den GESAMTEN Aufruf mit 400 ablehnt.
+     `bewerber_oder_kunde_` ist die eine erklaerte Ausnahme: sie existiert im
+     Portal des Kunden, wird von scripts/setup-hubspot.mjs nur GEPRUEFT und
+     absichtlich nicht erzeugt. Namentlich freigestellt, nicht per Muster. */
+  const PORTAL_EIGEN = [hubspot.ROLLE_PROPERTY];
+  for (const k of Object.keys(eigen)) {
+    assert.ok(
+      anzulegen.includes(k) || PORTAL_EIGEN.includes(k),
+      "wird geschrieben, aber nie angelegt: " + k
+    );
+  }
+});
+
+test("HubSpot: die Rolle wird nur fuer die eingetragenen Formulartypen gesetzt", () => {
+  /* ⚠️ Der Wert ist der INTERNE Wert der Option, nicht ihre Beschriftung — im
+     Portal heisst die andere Option "Bewerber / Mitarbeiter", intern aber
+     "Bewerber Sicherheitsdienst". Ein "potenzieller Kunde" ohne Klammern waere
+     ein 400 fuer den gesamten Aufruf. */
+  assert.equal(hubspot.ROLLE_JE_FORMULARTYP.customer_inquiry, "(Potenzieller) Kunde");
+
+  /* Ein Typ, der nicht in der Tabelle steht, bekommt KEINE Rolle. Das ist der
+     sichere Ausfall: lieber kein Wert als der falsche. Heute erreicht nur
+     `customer_inquiry` diesen Endpoint — das Bewerberformular auf /jobs/ ist
+     ein eingebettetes HubSpot-Formular und laeuft gar nicht durch diesen Code. */
+  const d = validate(GUELTIG).daten;
+  const fremd = { ...d, form_type: "irgendwas" };
+  const { eigen } = hubspot.kontaktProperties(fremd, "s1", "2026-08-26T10:00:00.000Z", null);
+  assert.equal(eigen[hubspot.ROLLE_PROPERTY], undefined);
 });
 
 test("HubSpot: bei 400 wird ein zweiter Versuch NUR mit Standardfeldern gemacht", async () => {

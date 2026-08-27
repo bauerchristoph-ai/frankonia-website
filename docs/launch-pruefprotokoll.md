@@ -1957,6 +1957,199 @@ misst dann den Ruhezustand und meldet ihn als Defekt.
 
 ---
 
+## 23 — „Bewerber oder Kunde?", kein Firmenobjekt, ein Hinweis im Nachrichtenfeld, und Karriere heißt wieder Jobs
+
+Vier Punkte aus der Sicht des Testkontakts am 26.08., alle live nachgewiesen.
+
+### 23.1 Die Rolle wird jetzt gesetzt — „(Potenzieller) Kunde"
+
+Kunde: *„Du hast das Eigenschaftsfeld Bewerber oder Kunde ausgewählt. Da ist grad
+Bewerber Schrägstrich Mitarbeiter ausgewählt. Das muss bei allen Feldern außer den
+Karriere- oder Jobformularen potenzieller Kunde sein."*
+
+⚠️ **ZUR EINORDNUNG, WEIL DIE MELDUNG EINE URSACHE UNTERSTELLT, DIE NICHT STIMMT:
+das Formular hat diese Eigenschaft vorher NIE geschrieben.** Sie stand in keiner der
+beiden Zuordnungstabellen. Der Wert „Bewerber / Mitarbeiter" kam also nicht aus der
+Website. Nachgewiesen am Kontakt selbst: sein `createdate` ist der **31.03.2025**,
+er trug eine Aufgabe von Dezember 2025 und E-Mails vom 10.08.2026 — das Formular hat
+einen vorhandenen Kontakt aktualisiert, nicht angelegt. Was fehlte, war nicht die
+Korrektur eines falschen Werts, sondern das Setzen überhaupt.
+
+⚠️⚠️ **DIE INTERNEN WERTE SIND NICHT DIE BESCHRIFTUNGEN, und hier besonders nicht.**
+Am 26.08. aus dem Portal gelesen, nicht geraten:
+
+| interner Wert | Beschriftung im Portal |
+|---|---|
+| `(Potenzieller) Kunde` | „(Potenzieller) Kunde" |
+| `Bewerber Sicherheitsdienst` | „Bewerber / Mitarbeiter" |
+
+Ein „potenzieller Kunde" — klein geschrieben, ohne Klammern — wäre von HubSpot mit
+**400 für den gesamten Aufruf** abgelehnt worden, also samt Name und E-Mail.
+
+⚠️ **DIE TRENNUNG „ALLES AUSSER KARRIERE" IST HEUTE STRUKTURELL, NICHT NUR
+KONFIGURIERT:** das Bewerberformular auf `/jobs/` ist ein **eingebettetes
+HubSpot-Formular** und läuft gar nicht durch diesen Endpoint (siehe
+`partials/hubspot-jobs-form.html`). Gemessen: **44 Formulare** auf der Website, alle
+mit `form_type=customer_inquiry`, und `/jobs/` hat überhaupt kein eigenes `<form>`.
+Die Zuordnung steht trotzdem **je Formulartyp** in einer Tabelle — kommt später ein
+Typ `application` dazu, ist „Bewerber Sicherheitsdienst" eine Zeile.
+
+⚠️ **Die Eigenschaft wird bei den EIGENEN Feldern geschrieben, nicht bei den
+Standards**, und das ist der Ausfallmodus: wird die Option im Portal umbenannt,
+scheitert der erste Versuch mit 400 und der zweite schreibt nur die Standardfelder.
+Dann fehlt die Rolle — **aber der Lead ist da.** Bei den Standardfeldern wäre eine
+Umbenennung im Portal ein Totalausfall des Formulars.
+
+⚠️ **Angelegt wird sie nie.** Das ist eine Eigenschaft, die du selbst gebaut hast.
+`scripts/setup-hubspot.mjs` legt nur die Felder der Gruppe `website_integration` an;
+diese hier **prüft** es, und zwar eine Stufe tiefer als alle anderen: nicht nur, ob
+sie existiert, sondern ob der Wert, den wir schreiben, eine echte Option ist.
+
+⚠️ **Der Wert wird überschrieben, auch wenn schon einer steht.** Bei einem
+Einzel-Auswahlfeld geht es nicht anders — irgendeine Seite verliert, und das Formular
+ist der jüngste Beleg dafür, was diese Person will. **Der Grenzfall:** wer sich erst
+bewirbt und später ein Angebot anfragt, wird zum Kunden umgeschrieben. Am Testkontakt
+war `bewerber_status` leer, es ging also nichts verloren; bei einem echten Bewerber
+mit gepflegtem Status stünde der danach ohne passende Rolle daneben. Sag Bescheid,
+wenn es „nur setzen, wenn leer" sein soll — dann bleibt aber genau der Fall stehen,
+den du gemeldet hast.
+
+### 23.2 Kein Unternehmensobjekt mehr
+
+Kunde: *„Außerdem hast Du auch automatisch eine Testfirma angelegt. Firma anlegen
+würde ich vielleicht gar nicht mal machen."*
+
+Abgeschaltet, standardmäßig. Der Grund ist CRM-Hygiene: „Firma" ist ein freies
+Textfeld, und aus „Frankonia", „FRANKONIA GmbH" und „frankonia sicherheit" würden
+drei Objekte, die später jemand von Hand zusammenführt.
+
+✅ **Es geht dabei keine Angabe verloren, und das ist die Voraussetzung dafür, dass
+man es abschalten darf:** der eingegebene Firmenname steht als Standardeigenschaft
+`company` **am Kontakt** und zusätzlich im Text der Notiz. Nachgemessen am
+Testkontakt: `company = FRANKONIA Testeintrag`.
+
+⚠️ **Wiedereinschalten ist eine Umgebungsvariable, kein Codeeingriff:**
+`HUBSPOT_FIRMA_ANLEGEN=1`. Der Weg samt Assoziation bleibt vollständig erhalten.
+
+### 23.3 Hinweis im Nachrichtenfeld, auf allen 44 Formularen
+
+Kunde: *„wir sollten im nachrichtenfeld klarmachen dass angegeben werden soll wann,
+wo, wie viele sicherheitskräfte und welche aufgabengebiete"*.
+
+Neue Zeile unter der Beschriftung: **„Für ein Angebot ohne Rückfragen: wann, wo, wie
+viele Sicherheitskräfte und welche Aufgaben."**
+
+⚠️ **Sie steht im gemeinsamen Baustein und NICHT im `messageLabel`.** Das Label ist je
+Seite anders — gemessen **22 Varianten**, etwa „Baustelle, Bauphase und Zeitraum kurz
+beschreiben" — und freigegebenes Copy. Der Hinweis soll auf allen 44 Formularen
+identisch sein; als Include-Parameter wären es 44 Gelegenheiten, dass einer abweicht.
+
+⚠️ **Als eigene Zeile und nicht als `placeholder`:** ein Platzhalter verschwindet beim
+ersten Tastendruck. Genau dann braucht man eine Liste mit vier Punkten noch.
+
+⚠️ **`aria-describedby` ist nicht Zierde:** ohne die Verbindung liest ein Screenreader
+beim Sprung ins Feld nur die Beschriftung vor.
+
+⚠️⚠️ **EIN KONTRASTWERT, DEN ICH HINGESCHRIEBEN STATT GERECHNET HABE — und er war
+falsch.** Die erste Fassung stand auf `rgb(59 73 86 / 0.72)` mit dem Kommentar „misst
+5,4:1". Nachgerechnet sind es **4,25:1**, also **unter** dem Minimum von 4,5:1 für
+Text dieser Größe (13px sind normaler Text; die Ausnahme für großen Text beginnt erst
+bei 18,66px fett oder 24px). Jetzt 0,8 = **5,25:1**, gemessen auf der echten Fläche
+in vier Seiten. **Lektion: ein Kontrastwert, den man nicht rechnet, ist geraten.**
+
+⚠️ Damit ist der Hinweis einen Hauch dunkler als die Beschriftung darüber (0,75 =
+4,60:1). Absicht: unter 0,75 gibt es auf Weiß keinen Platz mehr, ohne durchzufallen.
+Die Rangfolge trägt hier die Typografie — Großbuchstaben mit Sperrung gegen
+Gemischtschrift.
+
+**Gemessen an 320 / 390 / 768 / 1440:** Hinweis vorhanden, `aria-describedby` löst auf
+ein existierendes Ziel auf, 13px, kein waagerechter Überlauf, die Textarea behält ihre
+Mindesthöhe (88px im Telefonblock, 72px darüber), 1 Zeile ab 768, 2 bei 390, 3 bei
+320. Bild geprüft.
+
+### 23.4 Die Leistungsauswahl bleibt — meine Empfehlung, und warum
+
+Kunde: *„Ich weiß nicht, ob das so nutzerfreundlich ist, dass er da mit irgendwelchen
+Fachbegriffen um sich schmeißen muss. […] Oder was sagst du?"*
+
+**Behalten.** Drei gemessene Gründe:
+
+1. **Sie ist schon freiwillig.** Der erste Eintrag heißt „Bitte auswählen (optional)",
+   und der Server verlangt das Feld nicht. Niemand muss einen Begriff kennen.
+2. **Es ist Wiedererkennen, kein Erinnern.** Die 12 Einträge sind die Namen deiner
+   eigenen Leistungen, also die Titel der Seiten, auf denen das Formular steht — auf
+   `/objektschutz/` ist „Objektschutz" vorbelegt. Dazu ein Ausweg: „Etwas anderes".
+3. **Der Wert arbeitet an drei Stellen:** `website_service` in HubSpot (Segmentierung),
+   `SERVICE` in Brevo, und **die Betreffzeile der internen Meldung** („… — Objektschutz"),
+   also das, was vor dem Öffnen sagt, worum es geht.
+
+⚠️ Ein Wegfall wäre technisch harmlos — die Bestätigungsmail zeigt die Leistung nur,
+wenn `SERVICE` gefüllt ist, ein leeres Feld ist also ein bereits behandelter Fall.
+Es kostet nur Struktur.
+
+**Wenn dir „Fachbegriffe" trotzdem zu hart ist, ist die kleinste Änderung eine
+Beschriftung, nicht das Feld:** „Etwas anderes" → „Weiß ich noch nicht". Das ist Copy,
+deshalb frage ich statt es zu tun.
+
+### 23.5 Karriere heißt wieder Jobs
+
+Kunde: *„kannst du die seite die aktuell karriere heißt wieder wie in der aktuellen
+homepage auf jobs umbenennen und auch die url zu jobs abändern?"*
+
+✅ **Die URL war schon `/jobs/`** — samt Sitemap-Eintrag, samt Seitentitel („Security
+Jobs Bamberg & Umland"), samt H1 („Dein Job bei FRANKONIA"). Es war ausschließlich die
+Beschriftung. Geändert an fünf Stellen: Navigation, Fußbereich, Linktree-Eintrag,
+sichtbare Brotkrume und der `BreadcrumbList` im JSON-LD — die beiden letzten gehören
+zusammen, sonst zeigt Google einen anderen Pfad als die Seite. Dazu die zwei
+Meta-Beschreibungen von `/linktree/`, die die Ziele aufzählen.
+**Gemessen über die 70 gebauten Seiten: „Karriere" kommt als Beschriftung nicht mehr
+vor.**
+
+⚠️ **Zwei Stellen bleiben bewusst stehen: „Karriereformular" und „Karriereseite" in der
+Datenschutzerklärung.** Das ist Rechtstext, der nicht eigenmächtig geändert wird — und
+beides ist beschreibend, nicht der Name der Seite. Für die nächste Fassung deiner
+Datenschutzerklärung vormerken.
+
+### 23.6 Brevo-Mails in HubSpot protokollieren — von dir erledigt
+
+Kunde: *„die emails von brevo die an die sich eintragende person verschickt wurden
+wurden nicht in hubspot protokolliert. das wurde geändert."* Auf deiner Seite gelöst,
+im Code war dafür nichts zu tun — die Bestätigungsmail geht über Brevo, und ob HubSpot
+sie mitschreibt, entscheidet die BCC-Protokolladresse im Brevo-Konto. Beim nächsten
+Testeintrag lässt sich das an der Aktivitätenliste des Kontakts sehen.
+
+### 23.7 Der Nachweis, live
+
+Ein klar erkennbarer Testeintrag über den lokalen Server gegen die **echten** Systeme,
+Vorgangsnummer `a8f9e7e4-da3a-4805-8413-3295d822e956`:
+
+| geprüft | Ergebnis |
+|---|---|
+| `bewerber_oder_kunde_` | **„(Potenzieller) Kunde"** — vorher „Bewerber Sicherheitsdienst" |
+| `lifecyclestage` | `5522034896` = Angebot erstellt |
+| `company` am Kontakt | „FRANKONIA Testeintrag" — die Angabe ist da |
+| Unternehmen in den letzten 20 Minuten angelegt | **0** |
+| Protokoll des Endpoints | „abgeschlossen", nicht „teilerfolg" — also **alle** Schritte inklusive beider Mails und Brevo |
+| `bewerber_status` | leer, es ging kein Bewerberstand verloren |
+
+Und `node scripts/setup-hubspot.mjs --verify` (nur lesen) meldet alle 15 Felder, die
+Rolle mit ihrer Option, alle 10 Lifecycle-Phasen und **0 Probleme**.
+
+**64/64 Tests grün.** Zwei bestehende Zusicherungen mussten dafür erweitert werden, und
+das ist der interessante Teil: sie verlangten, dass **jedes** geschriebene Zusatzfeld
+mit `website_` beginnt und von `setup-hubspot.mjs` angelegt wird. Die Rolle ist der
+erste Fall, der beides nicht tut. Sie ist deshalb **namentlich** freigestellt und nicht
+per Muster — ein zweites portalfremdes Feld lässt die Tests weiter scheitern, solange
+es nicht ebenso erklärt wird. Dazu ein neuer Test: ein unbekannter Formulartyp bekommt
+**keine** Rolle (lieber kein Wert als der falsche).
+
+⚠️ **Aufzuräumen (Produktivdaten, die lösche ich nicht selbst):** Kontakt
+`244207392966` heißt jetzt „Test Rollenpruefung" und trägt mehrere Testnotizen; Firma
+`445068333287` („FRANKONIA Testeintrag", angelegt 26.08.) ist noch mit ihm verknüpft;
+Brevo-Kontakt id 2 steht in Liste 7.
+
+---
+
 # Abschlussbericht
 
 Die fünf Listen, die du am Ende sehen wolltest. Sie fassen zusammen, was in den
@@ -2113,6 +2306,12 @@ werden jetzt überschrieben. **Damit ist von den beiden Fragen, die ich offen
 gelassen hatte, nur noch eine offen:** ob der Karten-Strip bei Tablet-Breite den
 gestapelten Desktop-Look bekommen soll (22.4 — er läuft dort mechanisch, meine
 erste Gegenbehauptung war ein Messfehler).
+
+⚠️ **Nachtrag 26.08., dritte Runde:** Abschnitt 23 — die Rolle „(Potenzieller)
+Kunde", kein Firmenobjekt mehr, der Hinweis im Nachrichtenfeld und Karriere heißt
+wieder Jobs. **Zwei Entscheidungen liegen daraus bei dir:** ob die Leistungsauswahl
+bleibt (23.4 — meine Empfehlung: ja, sie ist schon freiwillig) und ob die Rolle einen
+Bewerber mit gepflegtem Status überschreiben darf (23.1).
 
 Erledigt seit der ersten Fassung dieses Berichts: der Tippfehler in den zwei vCards
 (Abschnitt 13), die Google-Profil-URL fürs Badge (Abschnitt 13), die zehn Seiten ohne

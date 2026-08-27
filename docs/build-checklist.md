@@ -32,6 +32,92 @@ anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
 
+**2026-08-26/27, SEXTA RONDA — LA ROLE „(Potenzieller) Kunde" SE ESCRIBE, EL OBJETO
+EMPRESA SE APAGA, EL CAMPO DE MENSAJE PIDE LAS CUATRO COSAS QUE HACEN FALTA PARA
+COTIZAR, Y „Karriere" VUELVE A LLAMARSE „Jobs"** (cliente, cuatro instrucciones tras
+mirar el contacto de prueba). Toca `api/_lib/hubspot.js`, `scripts/setup-hubspot.mjs`,
+`partials/lead-form.html`, `css/lead-form.css`, los dos partials de chrome,
+`pages/jobs.html`, `pages/linktree.html` y los tests.
+
+- ⚠️⚠️ **`bewerber_oder_kunde_` = „(Potenzieller) Kunde", Y LA CAUSA QUE EL CLIENTE
+  SUPONÍA NO ERA LA REAL.** Este código **nunca** había escrito esa propiedad. El
+  valor „Bewerber / Mitarbeiter" no venía del formulario: el contacto **ya existía**
+  (`createdate` 31.03.2025, una tarea de diciembre 2025, correos del 10.08.2026) y el
+  formulario sólo lo actualizó. Lo que faltaba no era corregir un valor, era
+  escribirlo.
+  - ⚠️⚠️ **LOS VALORES INTERNOS NO SON LAS ETIQUETAS, y acá menos que nunca** — leídos
+    del portal el 26.08, no adivinados: `(Potenzieller) Kunde` y
+    **`Bewerber Sicherheitsdienst`** (cuya etiqueta es „Bewerber / Mitarbeiter"). Un
+    „potenzieller Kunde" en minúscula y sin paréntesis habría sido **400 para TODA la
+    llamada**, nombre y e-mail incluidos.
+  - ⚠️ **Va en las propiedades PROPIAS, no en las estándar**, y ése es el modo de
+    fallo: si la opción se renombra en el portal, el primer intento cae con 400 y el
+    segundo escribe sólo los campos estándar — falta la rol, **pero el lead está**. En
+    las estándar, un renombrado en el portal sería un fallo total del formulario.
+  - ⚠️ **Tabla propia, NO `EIGEN_MAP`**: es una propiedad que el cliente construyó, y
+    `setup-hubspot.mjs` CREA todo lo que está en `EIGEN_MAP`. Ésta sólo se **verifica**,
+    y un paso más profundo que las demás: no basta que exista, el valor que escribimos
+    tiene que ser una opción real.
+  - ⚠️ **Por tipo de formulario, no global.** Hoy sólo `customer_inquiry` llega a este
+    endpoint: medido, **44 formularios** en el sitio, todos con ese tipo, y `/jobs/`
+    **no tiene ningún `<form>`** — su formulario de postulación es un **embed de
+    HubSpot** (`partials/hubspot-jobs-form.html`). O sea la separación que pidió el
+    cliente hoy es estructural, no configurada.
+  - ⚠️ **Sobreescribe un valor existente.** En un select simple alguien pierde, y el
+    formulario es la evidencia más reciente. **El caso límite:** quien primero se
+    postula y después pide un presupuesto pasa a cliente, y un `bewerber_status`
+    quedaría sin rol acorde. En el contacto de prueba estaba vacío.
+
+- ✅ **EL OBJETO EMPRESA QUEDA APAGADO** (`HUBSPOT_FIRMA_ANLEGEN=1` lo reactiva).
+  Cliente: *„Firma anlegen würde ich vielleicht gar nicht mal machen"*. Razón: „Firma"
+  es texto libre, y de „Frankonia" / „FRANKONIA GmbH" / „frankonia sicherheit" salen
+  tres objetos que alguien fusiona a mano después.
+  ⚠️ **No se pierde ningún dato, y eso es lo que permite apagarlo:** el nombre queda en
+  la propiedad estándar `company` **del contacto** y en el texto de la nota. Medido:
+  `company = FRANKONIA Testeintrag`, y **0 empresas creadas** en la corrida de prueba.
+
+- **Hint en el campo de mensaje, en los 44 formularios:** „Für ein Angebot ohne
+  Rückfragen: wann, wo, wie viele Sicherheitskräfte und welche Aufgaben."
+  - ⚠️ **En el partial compartido y NO en `messageLabel`**: ese label es distinto por
+    página (medido, **22 variantes**) y es copy aprobado. Como parámetro de include
+    serían 44 oportunidades de que uno divergiera.
+  - ⚠️ **Línea propia, no `placeholder`**: un placeholder desaparece al primer tecleo,
+    que es justo cuando una lista de cuatro puntos sigue haciendo falta. Con
+    `aria-describedby`, o para un lector de pantalla no existiría.
+  - ⚠️⚠️ **UN VALOR DE CONTRASTE QUE ESCRIBÍ EN VEZ DE CALCULAR, Y ESTABA MAL.** Salió
+    con `0.72` y el comentario „misst 5,4:1"; calculado son **4,25:1**, o sea **por
+    debajo** del 4,5:1 que aplica a 13px (el umbral de texto grande empieza en 18,66px
+    bold). Ahora 0,8 = **5,25:1**, medido contra la superficie real en cuatro páginas.
+    **Regla: un ratio que no se calcula está adivinado.**
+  - Medido a 320 / 390 / 768 / 1440: sin scroll horizontal, la textarea conserva su
+    `min-height` (88/72px), 1 línea desde 768, 2 a 390, 3 a 320. Captura revisada.
+
+- ✅ **„Karriere" → „Jobs", y LA URL YA ERA `/jobs/`** — sitemap, `<title>` („Security
+  Jobs Bamberg & Umland") y H1 („Dein Job bei FRANKONIA") también. Era sólo la
+  etiqueta: nav, footer, linktree, breadcrumb visible **y el `BreadcrumbList` del
+  JSON-LD** (los dos últimos van juntos, si no Google muestra otro camino que la
+  página). Medido sobre las 70 páginas: „Karriere" ya no aparece como etiqueta.
+  ⚠️ **Quedan „Karriereformular" y „Karriereseite" en `/datenschutz/`**, a propósito:
+  es texto legal, y ahí la palabra es descriptiva, no el nombre de la página.
+
+- **La selección de servicio SE QUEDA** (el cliente preguntó, no ordenó). Tres razones
+  medidas: ya es **opcional** („Bitte auswählen (optional)", y el servidor no la
+  exige); son los nombres de sus propias leistungen, o sea reconocer y no recordar, con
+  „Etwas anderes" como salida; y el valor trabaja en **tres** lugares —
+  `website_service`, `SERVICE` en Brevo y **el asunto del aviso interno**. Quitarla
+  sería técnicamente inofensivo (la plantilla ya maneja `SERVICE` vacío), sólo cuesta
+  estructura.
+
+- **64/64 tests.** Dos aserciones existentes hubo que ampliarlas, y ése es el detalle
+  que importa: exigían que **todo** campo propio empiece con `website_` y sea creado
+  por el script. La rol es el primer caso que no cumple ninguna de las dos. Está
+  exenta **por nombre y no por patrón**, así que un segundo campo ajeno al portal sigue
+  rompiendo los tests. Más un test nuevo: un `form_type` desconocido **no** recibe rol.
+
+- ✅ **Nachweis en vivo** (`a8f9e7e4-…`): rol correcta, fase 5522034896, `company` en el
+  contacto, **0 empresas nuevas**, y el endpoint registró „abgeschlossen" y no
+  „teilerfolg" — o sea también los dos mails y Brevo. `--verify` da 0 problemas.
+
 **2026-08-26, QUINTA RONDA — EL RATGEBER BAJA AL FINAL DEL DRAWER, LAS 9 PÁGINAS DE
 PERSONA GANAN UNA BANDA DE CONFIANZA, Y „Sonstiges" / „Kein Interesse" AHORA SE
 SOBREESCRIBEN** (cliente, tres instrucciones). Toca `partials/header-de.html`, un

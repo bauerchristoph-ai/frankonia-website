@@ -117,11 +117,33 @@
 
             <div class="form-field conversion__form-field--full">
               <label class="form-field__label" for="{{prefix}}-message">{{messageLabel}} *</label>
+              <!-- ⚠️ DIESER HINWEIS IST DER AUFTRAG VOM 26.08.2026, WÖRTLICH:
+                   *„wir sollten im nachrichtenfeld klarmachen dass angegeben
+                   werden soll wann, wo, wie viele sicherheitskräfte und welche
+                   aufgabengebiete"*. Vier Angaben, aus denen der Vertrieb ein
+                   Angebot rechnen kann, ohne zurückfragen zu müssen.
+
+                   ⚠️ ER STEHT HIER UND NICHT IM `messageLabel`, und das ist der
+                   Punkt: das Label ist je Seite anders (22 Varianten, etwa
+                   „Baustelle, Bauphase und Zeitraum kurz beschreiben") und
+                   freigegebenes Copy. Der Hinweis dagegen soll auf allen 44
+                   Formularen identisch sein — als Include-Parameter wären es 44
+                   Gelegenheiten, dass einer abweicht.
+
+                   ⚠️ ALS EIGENE ZEILE UND NICHT ALS `placeholder`: ein
+                   Platzhalter verschwindet beim ersten Tastendruck. Genau dann
+                   braucht man eine Liste mit vier Punkten noch.
+
+                   ⚠️ `aria-describedby` ist nicht Zierde — ohne die Verbindung
+                   liest ein Screenreader beim Sprung ins Feld nur das Label
+                   vor, und der Hinweis wäre für diese Besucher nicht
+                   vorhanden. -->
+              <p class="form-field__hint conversion__form-hint" id="{{prefix}}-message-hint">Für ein Angebot ohne Rückfragen: wann, wo, wie viele Sicherheitskräfte und welche Aufgaben.</p>
               <!-- rows="2" ist load-bearing: eine min-height im CSS kann die
                    Box einer textarea nur wachsen lassen, nie unter die
                    Standardhöhe von 2-3 Zeilen schrumpfen.
                    Siehe docs/page-conventions.md §6. -->
-              <textarea class="form-field__textarea" id="{{prefix}}-message" name="message" rows="2" required></textarea>
+              <textarea class="form-field__textarea" id="{{prefix}}-message" name="message" rows="2" required aria-describedby="{{prefix}}-message-hint"></textarea>
             </div>
 
             <!-- Honeypot (docs/page-conventions.md §6): aus dem Layout heraus,

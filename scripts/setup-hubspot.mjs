@@ -155,11 +155,49 @@ async function verify() {
     zeile("✓", feld, name, p.type + gruppe);
   }
 
+  /* ⚠️ EIGENSCHAFT DES PORTALS, DIE WIR SCHREIBEN ABER NIE ANLEGEN. Sie gehört
+     dem Kunden, samt Optionen und samt Bedeutung für seinen Vertrieb — dieses
+     Skript prüft sie nur. Und die Prüfung geht eine Stufe tiefer als bei allen
+     anderen: es reicht nicht, dass die Eigenschaft existiert, der WERT muss
+     eine echte Option sein. Ein umbenanntes „(Potenzieller) Kunde" lehnt
+     HubSpot mit 400 ab, und zwar den gesamten Aufruf — der zweite Versuch in
+     kontaktUpsert() rettet dann den Lead, aber ohne die Zusatzfelder.
+     Das ist genau die Art Ausfall, die niemand bemerkt. */
+  console.log("\n  ROLLE JE FORMULARTYP (Eigenschaft des Portals, wird nur geprueft)");
+  const rolleProp = vorhanden.get(hubspot.ROLLE_PROPERTY);
+  if (!rolleProp) {
+    zeile("✗", "(Rolle)", hubspot.ROLLE_PROPERTY, "FEHLT im Portal — der Wert wird dann verworfen");
+    fehler++;
+  } else {
+    const optionen = (rolleProp.options || []).map((o) => String(o.value));
+    zeile("✓", "(Rolle)", hubspot.ROLLE_PROPERTY, '"' + rolleProp.label + '", ' + optionen.length + " Optionen");
+    for (const [typ, wert] of Object.entries(hubspot.ROLLE_JE_FORMULARTYP)) {
+      const passt = optionen.includes(wert);
+      const beschriftung = passt
+        ? '"' + (rolleProp.options.find((o) => String(o.value) === wert).label || "") + '"'
+        : "KEINE OPTION — HubSpot lehnt den Aufruf mit 400 ab. Vorhanden: " + optionen.join(" | ");
+      zeile(passt ? "✓" : "✗", typ, wert, beschriftung);
+      if (!passt) fehler++;
+    }
+  }
+
   console.log("\n  WEITERE OBJEKTE");
+  /* ⚠️ Das Firmenobjekt wird standardmäßig NICHT angelegt (Kundenentscheidung
+     26.08.2026; HUBSPOT_FIRMA_ANLEGEN=1 schaltet es ein). Die Prüfung bleibt
+     stehen, aber ein fehlendes company.name ist dann kein Fehler dieses
+     Projekts — nur ein Hinweis für den Tag, an dem der Schalter umgelegt wird. */
+  const firmaAn = process.env.HUBSPOT_FIRMA_ANLEGEN === "1";
   const firma = await api("/crm/v3/properties/companies");
   const hatName = firma.ok && (firma.body.results || []).some((p) => p.name === "name");
-  console.log("  " + (hatName ? "✓" : "✗") + "  company.name" + (hatName ? "" : "  FEHLT"));
-  if (!hatName) fehler++;
+  console.log(
+    "  " +
+      (hatName ? "✓" : firmaAn ? "✗" : "•") +
+      "  company.name" +
+      (hatName
+        ? firmaAn ? "  (Firmenobjekt AN)" : "  (Firmenobjekt aus, wird derzeit nicht benutzt)"
+        : "  FEHLT")
+  );
+  if (!hatName && firmaAn) fehler++;
   const notiz = await api("/crm/v3/properties/notes");
   for (const n of ["hs_note_body", "hs_timestamp"]) {
     const da = notiz.ok && (notiz.body.results || []).some((p) => p.name === n);

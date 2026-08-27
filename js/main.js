@@ -116,7 +116,7 @@ function setNavScrollLock(locked) {
  * Below the desktop breakpoint the submenu renders as a permanently-expanded
  * nested list. That was a deliberate call (no extra tap-to-open step on touch),
  * but on a phone it costs more than it saves: the ten service links push
- * Referenzen / Unser System / Karriere / Kontakt — and the header's
+ * Referenzen / Unser System / Jobs / Kontakt — and the header's
  * Sicherheitsanalyse CTA, the site's primary conversion action — off the bottom
  * of the open menu, so the top-level nav no longer fits on one screen.
  *

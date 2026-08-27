@@ -226,6 +226,40 @@
   color: rgb(59 73 86 / 0.75);
 }
 
+/* Hinweiszeile unter einer Feldbeschriftung — heute nur beim Nachrichtenfeld,
+   siehe partials/lead-form.html.
+
+   ⚠️ DIE FARBE MUSS HIER STEHEN. `.form-field__hint` in components.css nimmt
+   `--color-text-muted`, und das ist Weiß mit 0,65 Alpha — auf dieser weißen
+   Karte also unsichtbar. Derselbe Fehlermodus, den dieses Projekt schon dreimal
+   bezahlt hat (`.ag-hero__alt`, die Tics der Preiskarte, `.city-callout__lede`):
+   ein Bauteil, das seine eigene Fläche mitbringt, muss auch seine eigene
+   Textfarbe mitbringen.
+
+   ⚠️⚠️ 0,8 IST GEMESSEN, NICHT GEWÄHLT — und der erste Wert war falsch. Er
+   stand auf 0,72 mit dem Kommentar „misst 5,4:1"; nachgerechnet sind es
+   **4,25:1**, also unter dem Minimum von 4,5:1 für Text dieser Größe. 13px sind
+   normaler Text; die Ausnahme für großen Text beginnt erst bei 18,66px fett
+   oder 24px. 0,8 misst **5,25:1** auf Weiß.
+   **Lektion: ein Kontrastwert, den man hinschreibt statt ihn zu rechnen, ist
+   geraten.**
+
+   ⚠️ DAMIT IST DER HINWEIS EINEN HAUCH DUNKLER ALS DIE BESCHRIFTUNG DARÜBER
+   (0,75 = 4,60:1), und das ist kein Versehen: unter 0,75 gibt es auf Weiß
+   keinen Platz mehr, ohne durchzufallen. Die Rangfolge trägt hier die
+   TYPOGRAFIE — die Beschriftung ist Großbuchstaben mit Sperrung, der Hinweis
+   gemischtschriftlich. Wer den Hinweis leiser haben will, muss ihn kleiner
+   machen, und dann fällt er durch. */
+.conversion__form .form-field__hint {
+  margin: 0 0 var(--space-2);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: rgb(59 73 86 / 0.8);
+  /* Eine Aufzählung von vier Punkten soll nicht mitten in einem deutschen
+     Kompositum brechen — „Sicherheits-kräfte" liest sich wie ein Fehler. */
+  hyphens: none;
+}
+
 .conversion__form .form-field__input,
 .conversion__form .form-field__textarea {
   padding: var(--space-2) 0;
