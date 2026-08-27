@@ -153,10 +153,14 @@ async function kontaktUpsert(d, submissionId, hubspotId, zeitstempel) {
  * Über BCC landet die ECHTE Mail in der Aktivitätenliste, mit dem Layout, das
  * der Empfänger gesehen hat. Und es ist eine Zeile statt eines Moduls.
  *
- * ⚠️ WARUM NICHT ABLEITBAR: die Adresse ist portalspezifisch (etwas wie
- * „…@bcc.hubspot.com") und steht in den HubSpot-Einstellungen. Sie wird hier
- * NICHT geraten — dieselbe Regel wie bei den Subscription-IDs. Ohne die
- * Variable wird der Schritt übersprungen und protokolliert.
+ * ⚠️⚠️ WARUM NICHT ABLEITBAR — UND DAS IST BELEGT, NICHT VORSICHTSHALBER: die
+ * Adresse dieses Portals lautet `27143941@bcc.eu1.hubspot.com`. Der Host trägt
+ * die REGION. Die naheliegende Ableitung `<PortalId>@bcc.hubspot.com` hätte jede
+ * Bestätigungsmail an einen falschen Host geschickt — Rückläufer bei jeder
+ * Anfrage, und an der Website wäre nichts aufgefallen. Deshalb wird die Adresse
+ * NICHT geraten, sondern konfiguriert; dieselbe Regel wie bei den
+ * Subscription-IDs. Ohne die Variable wird der Schritt übersprungen und
+ * protokolliert.
  */
 function bccAdresse(submissionId) {
   const rohwert = process.env.HUBSPOT_BCC_ADDRESS;

@@ -2339,11 +2339,23 @@ protokolliert."*
   und maskiert sie in der Ausgabe (`27***@bcc.hubspot.com`). Beide Zweige laufend
   geprüft. ⚠️ Mehr kann das Skript nicht: **ob HubSpot die Mail wirklich protokolliert,
   ist über die API nicht prüfbar** — das hängt am Portal, nicht an diesem Code.
-- ⚠️ **Live noch nicht nachgewiesen, und zwar aus einem guten Grund:** dafür bräuchte
-  ich die echte BCC-Adresse. Ein Test mit einer erfundenen hätte eine Mail an eine
-  nicht existierende Adresse geschickt — genau der Bounce, den 25.3 vermeidet. Der
-  Nachweis ist der nächste echte Eintrag, nachdem du die Variable eingetragen hast:
-  in der Aktivitätenliste des Kontakts steht dann unter „E-Mails" die Bestätigungsmail.
+- ✅ **LIVE NACHGEWIESEN am 27.08.2026, 19:59.** Der Kunde hat die Adresse geliefert
+  (`27143941@bcc.eu1.hubspot.com`), sie steht in `.env.local`, und ein Testeintrag
+  (`45e34960-…`) hat gezeigt: **drei Sekunden nach dem Absenden hängt am Kontakt eine
+  E-Mail-Aktivität** — „Vielen Dank für Ihre Anfrage bei FRANKONIA Sicherheitsdienst",
+  Richtung `EMAIL`, Zeitstempel `19:59:26` gegen `19:59:23` für den Eingang. HubSpots
+  BCC-Zuordnung ist asynchron, hier war sie sofort da.
+- ✅ **UND DIE GEGENPROBE, die wichtiger ist als der Nachweis selbst:** in den 30 Minuten
+  um den Test herum gibt es im **ganzen Portal genau EINE** neue E-Mail-Aktivität — die
+  Bestätigungsmail. Die interne Meldung hat **nichts** erzeugt, und für
+  `info@frankonia-sicherheit.de` **existiert nicht einmal ein Kontakt**. Die Entscheidung
+  aus 25.3 hält also nicht nur in der Theorie.
+- ⚠️⚠️ **DIE ADRESSE HÄTTE MAN NICHT ERRATEN KÖNNEN, und das ist der beste Beleg für die
+  Regel:** der Host ist **`bcc.eu1.hubspot.com`**, nicht `bcc.hubspot.com`. Die
+  naheliegende Ableitung `<PortalId>@bcc.hubspot.com` hätte **jede** Bestätigungsmail an
+  einen falschen Host geschickt — Rückläufer bei jeder Anfrage, und niemand hätte es an
+  der Website gemerkt. Bei einem Portal mit EU-Datenhosting gehört die Region in den
+  Hostnamen.
 
 ### 25.5 Was dabei am Rand aufgefallen ist, an den vCards
 
