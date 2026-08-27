@@ -54,6 +54,16 @@ const ERWARTET = {
   "/marco-bayer-werkschutz-2/": "/alexander-jaeger-werkschutz/",
   "/thomas-windisch-sicherheitsdienst/": "/alexander-jaeger-sicherheitsdienst/",
   "/thomas-windisch-werkschutz/": "/alexander-jaeger-werkschutz/",
+  /* ⚠️ Am 27.08.2026 dazugekommen: diese drei Adressen hatten bis dahin eine
+     eigene Seite und sind jetzt Weiterleitungen. Sie stehen hier, weil genau
+     diese drei nach dem Deploy geprüft werden müssen — sie sind auf gedruckten
+     Karten und in QR-Codes, und ein stiller 404 fällt niemandem auf, bis
+     jemand vor einem Kunden sein Handy an eine Visitenkarte hält.
+     Die vCard-Pfade (/assets/documents/…-2.vcf) leiten ebenfalls, stehen hier
+     aber nicht: dieses Skript prüft Seiten-URLs. */
+  "/bryan-van-wey-security/": "/bryan-van-wey-werkschutz/",
+  "/christoph-bauer-sicherheitsdienst-2/": "/christoph-bauer-sicherheitsdienst/",
+  "/morelo-werkschutz-team-2/": "/morelo-werkschutz-team/",
   // G3
   "/bewerbung-im-sicherheitsdienst-die-3-haeufigsten-fehler/": "/ratgeber/bewerbung-sicherheitsdienst/",
   "/tariflohn-2026-im-sicherheitsdienst/": "/ratgeber/tariflohn-sicherheitsdienst/",
@@ -133,10 +143,15 @@ const ALTE_SEITE = [
      (/wp-json/wp/v2/pages), die ALLE veröffentlichten Seiten listet — 34 statt der
      23 aus der Sitemap. Eine Sitemap ist eine Empfehlung an Suchmaschinen, kein
      Verzeichnis; für eine Migration ist sie die falsche Quelle.
-     ✅ 2026-08-26 vom Kunden entschieden, und alle zehn landen jetzt irgendwo:
-     · SECHS bleiben als echte Seite unter ihrer alten URL (Walde x2, Bauer,
-       Wettengel, Van Wey Security, MORELO-Pforte) — siehe person-pages.js;
-     · ZWEI gehen weiter auf Alexander Jäger (Thomas Windisch, beide Varianten);
+     ✅ 2026-08-26 vom Kunden entschieden, und alle zehn landen jetzt irgendwo.
+     ⚠️ Am 27.08.2026 hat sich die Aufteilung geändert — die Zahlen davor waren
+     SECHS/ZWEI/ZWEI, jetzt sind es DREI/FÜNF/ZWEI:
+     · DREI bleiben als echte Seite unter ihrer alten URL (Walde x2, Wettengel)
+       — siehe person-pages.js;
+     · FÜNF sind Weiterleitungen: Thomas Windisch (beide Varianten) auf
+       Alexander Jäger, und neu Van Wey Security auf die Werkschutz-Karte sowie
+       Bauer und die MORELO-Pforte auf ihre Adresse ohne "-2" (Kundenwunsch,
+       die "-2" kam aus WordPress und war ohne Bedeutung);
      · ZWEI bleiben absichtlich 404 (/testformular/, /homepage-2/) und stehen
        deshalb oben in NICHT_UMLEITEN, wo eine Regel, die sie doch fängt, auffällt.
      Sie bleiben hier stehen, weil diese Liste die alte Seite beschreibt und nicht

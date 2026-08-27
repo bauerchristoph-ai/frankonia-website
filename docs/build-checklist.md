@@ -32,6 +32,72 @@ anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
 
+**2026-08-27, SÉPTIMA RONDA — LA TARJETA VAN WEY SECURITY SE ELIMINA, LA „-2" SALE DE
+DOS URLS DE PERSONA, NUEVE REDIRECTS. Y EL GENERADOR ESTABA MÁS DESACTUALIZADO QUE LAS
+PÁGINAS** (cliente, sobre la lista de personas del protocolo). Toca
+`docs/design-sources/person-pages.js`, `docs/design-sources/redirect-test.js`,
+`vercel.json`, tres páginas y tres vCards.
+
+- **Lo que cambia:** `/bryan-van-wey-security/` se elimina y redirige a
+  `/bryan-van-wey-werkschutz/`; `/christoph-bauer-sicherheitsdienst-2/` →
+  `/christoph-bauer-sicherheitsdienst/`; `/morelo-werkschutz-team-2/` →
+  `/morelo-werkschutz-team/`. **Nueve redirects 301**: dos por dirección (con y sin
+  barra final, porque `trailingSlash` se aplica DESPUÉS de evaluar los redirects) y uno
+  por cada ruta de vCard — el botón „Kontakt speichern" entrega esa URL, así que puede
+  estar en un historial o en un mensaje reenviado.
+  ⚠️ La „-2" venía de WordPress, que agrega un número a un slug ocupado; en la web no
+  significaba nada. Pero está en tarjetas impresas, de ahí el redirect y no el apagado.
+
+- ⚠️⚠️ **LA TARJETA VAN WEY SECURITY NO ERA UNA COPIA, y eso es lo que hay que saber:**
+  su e-mail estaba en **`frankonia-security.de`**, una TERCERA marca junto a
+  `-sicherheit.de` y `-werkschutz.de`, y su vCard decía **„FRANKONIA Security GmbH & Co.
+  KG"** — la única aparición de esa razón social en todo el proyecto; en el Impressum no
+  figura. Ya estaba anotado en el generador desde el 26.08.
+  **Consecuencia, dicha explícitamente:** quien escanee el QR viejo recibe ahora la
+  tarjeta de Werkschutz con `b.vanwey@frankonia-werkschutz.de`.
+  ⚠️ **La vCard se borró también**: `build.js` copia `assets/` completo, así que una
+  vCard huérfana seguiría siendo descargable — con la razón social que debía
+  desaparecer. Su ruta vieja redirige a la de Werkschutz.
+
+- ⚠️⚠️ **EL GENERADOR HABRÍA BORRADO TRABAJO EN SILENCIO.** Las páginas de persona salen
+  de `person-pages.js`, y el generador NO tenía tres cosas que las páginas sí:
+  `gtm-noscript`, `person-trust` (la banda de ayer) y el „Jobs" del linktree (de esta
+  mañana). **Un solo `node person-pages.js` habría quitado la banda de confianza y el
+  noscript de GTM de once páginas, sin un mensaje de error.**
+  Por eso: primero sincronizar, después cambiar, después diffear.
+  ✅ **Verificado corriendo el generador a un directorio temporal:** las ocho páginas de
+  persona existentes más `/linktree/` y `/sicherheitscheck-walde/` salen **byte a byte
+  idénticas**; los dos slugs nuevos son la única diferencia. Antes eran 3 líneas de
+  divergencia por página.
+  ⚠️ **Una línea en blanco costó una iteración, y no es un detalle:** el primer intento
+  producía un salto extra antes de `</main>` porque `FOOT` empieza con un `\n` y la línea
+  del include terminaba con otro. La identidad byte a byte es el único criterio con el que
+  se puede comparar un generador contra su salida — con „se ve igual" la divergencia pasa
+  y el próximo diff ya no vale nada.
+  ⚠️ **La entrada eliminada queda como NOTA en el generador**, no sólo en git: lo que se
+  pierde con esa tarjeta (tercera marca, razón social, vCard) no es obvio, y el próximo
+  no debería tener que reconstruirlo de un diff.
+
+- ✅ **`node docs/design-sources/redirect-test.js`: 0 problemas.** Las tres direcciones
+  entraron en la tabla de valores esperados: cada una toca exactamente una regla, su
+  destino existe en el build, y **ningún destino es a su vez origen** (comprobación de
+  cadenas). De las 41 direcciones del sitio viejo, **ninguna queda huérfana**.
+  ⚠️ La nota del inventario decía „SEIS siguen como página real" y quedó falsa — corregida
+  a TRES/CINCO/DOS. Un número en un comentario que nadie actualiza es la fuente del
+  próximo error.
+
+- **Medido:** **69 páginas** en lugar de 70, los tres directorios viejos fuera, los dos
+  nuevos dentro, **0 referencias** a las rutas viejas en las 69 páginas, las dos vCards
+  renombradas presentes, la banda de confianza en **8** páginas de persona (antes nueve,
+  una se fue), **64/64 tests**. Captura de una de las renombradas revisada.
+  ⚠️ **Los redirects están comprobados estáticamente, no en vivo:** `npm run dev` no lee
+  `vercel.json`. En local las tres direcciones viejas dan 404 — **es lo esperado**. Tras
+  el deploy, `node docs/design-sources/redirect-test.js https://…`.
+
+- ⚠️ **Sitemap sin tocar:** las páginas de persona no están ahí y no deben estarlo — son
+  `noindex,follow` porque son delgadas y personales, e indexadas competirían con las
+  páginas de servicio reales.
+
 **2026-08-26/27, SEXTA RONDA — LA ROLE „(Potenzieller) Kunde" SE ESCRIBE, EL OBJETO
 EMPRESA SE APAGA, EL CAMPO DE MENSAJE PIDE LAS CUATRO COSAS QUE HACEN FALTA PARA
 COTIZAR, Y „Karriere" VUELVE A LLAMARSE „Jobs"** (cliente, cuatro instrucciones tras

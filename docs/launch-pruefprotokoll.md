@@ -831,10 +831,10 @@ vollständig abgearbeitet — deine Entscheidung Zeile für Zeile umgesetzt.
 | ☐ | Deine Entscheidung | Ergebnis |
 |---|---|---|
 | ☐ | Walde behalten | `/steffen-walde-sicherheitsdienst/` und `/steffen-walde-werkschutz/` sind echte Seiten unter ihrer alten URL |
-| ☐ | Bauer behalten | `/christoph-bauer-sicherheitsdienst-2/` |
+| ☐ | Bauer behalten | `/christoph-bauer-sicherheitsdienst-2/` — ⚠️ heißt seit 27.08. `/christoph-bauer-sicherheitsdienst/`, Abschnitt 24 |
 | ☐ | Wettengel behalten | `/daniel-wettengel-sicherheitsdienst/` |
-| ☐ | Van Wey behalten | `/bryan-van-wey-security/` — die zweite Karte neben der bestehenden Werkschutz-Karte |
-| ☐ | Morelo Werkschutz Team behalten | `/morelo-werkschutz-team-2/` |
+| ☐ | Van Wey behalten | `/bryan-van-wey-security/` — die zweite Karte neben der bestehenden Werkschutz-Karte. ⚠️ **Am 27.08. zurückgenommen:** die Karte ist entfallen und leitet auf die Werkschutz-Karte, Abschnitt 24 |
+| ☐ | Morelo Werkschutz Team behalten | `/morelo-werkschutz-team-2/` — ⚠️ heißt seit 27.08. `/morelo-werkschutz-team/`, Abschnitt 24 |
 | ☐ | Windisch auf Jäger weiterleiten | beide Varianten, variantentreu: Sicherheitsdienst auf Sicherheitsdienst, Werkschutz auf Werkschutz |
 | ☐ | Testformular auf 404 | keine Regel, und der Redirect-Test führt sie jetzt als **gewollten** 404, nicht mehr als Fehler |
 | ☐ | Homepage 2 auf 404 | dito |
@@ -1842,19 +1842,23 @@ Gewicht getragen als „Leistungen".
 Kunde: *„kannst Du unten drunter noch ein paar Trustelemente und -Elemente machen.
 So was wie das sagen unsere Kunden, Google Bewertung."*
 
-Neues `partials/person-trust.html`, eingebunden auf den neun Karten:
+Neues `partials/person-trust.html`, eingebunden auf den Karten:
 
-| Seite | Pfad |
-|---|---|
-| Steffen Walde — Sicherheitsdienst | `/steffen-walde-sicherheitsdienst/` |
-| Steffen Walde — Werkschutz | `/steffen-walde-werkschutz/` |
-| Alexander Jäger — Sicherheitsdienst | `/alexander-jaeger-sicherheitsdienst/` |
-| Alexander Jäger — Werkschutz | `/alexander-jaeger-werkschutz/` |
-| Christoph Bauer | `/christoph-bauer-sicherheitsdienst-2/` |
-| Daniel Wettengel | `/daniel-wettengel-sicherheitsdienst/` |
-| Bryan Van Wey — Security | `/bryan-van-wey-security/` |
-| Bryan Van Wey — Werkschutz | `/bryan-van-wey-werkschutz/` |
-| Morelo Werkschutz Team | `/morelo-werkschutz-team-2/` |
+⚠️ **Am 27.08.2026 sind es ACHT statt neun, und zwei Adressen haben sich geändert —
+siehe Abschnitt 24.** Die Spalte „damals" steht daneben, weil dieser Abschnitt den
+Stand vom 26.08. beschreibt und die Weiterleitungen genau von dort kommen.
+
+| Seite | Pfad heute | am 26.08. |
+|---|---|---|
+| Steffen Walde — Sicherheitsdienst | `/steffen-walde-sicherheitsdienst/` | unverändert |
+| Steffen Walde — Werkschutz | `/steffen-walde-werkschutz/` | unverändert |
+| Alexander Jäger — Sicherheitsdienst | `/alexander-jaeger-sicherheitsdienst/` | unverändert |
+| Alexander Jäger — Werkschutz | `/alexander-jaeger-werkschutz/` | unverändert |
+| Christoph Bauer | `/christoph-bauer-sicherheitsdienst/` | `…-sicherheitsdienst-2/` |
+| Daniel Wettengel | `/daniel-wettengel-sicherheitsdienst/` | unverändert |
+| Bryan Van Wey — Werkschutz | `/bryan-van-wey-werkschutz/` | unverändert |
+| Morelo Werkschutz Team | `/morelo-werkschutz-team/` | `…-team-2/` |
+| ~~Bryan Van Wey — Security~~ | **entfallen** | `/bryan-van-wey-security/` |
 
 Inhalt: die freigegebene Aussage „Über 300 Unternehmen und Einrichtungen vertrauen
 FRANKONIA" (verbatim aus dem Hero von `/referenzen/`), die Google-Bewertung als
@@ -2150,6 +2154,118 @@ Brevo-Kontakt id 2 steht in Liste 7.
 
 ---
 
+## 24 — Van Wey Security entfällt, die „-2" verschwindet aus zwei Adressen
+
+Drei Wünsche aus dem Blick auf die Liste der Personenseiten, plus eine Aufräumarbeit
+am Generator, die dabei unvermeidlich war.
+
+### 24.1 Was jetzt gilt
+
+| alte Adresse | neu |
+|---|---|
+| `/bryan-van-wey-security/` | **entfällt**, leitet dauerhaft auf `/bryan-van-wey-werkschutz/` |
+| `/christoph-bauer-sicherheitsdienst-2/` | `/christoph-bauer-sicherheitsdienst/` |
+| `/morelo-werkschutz-team-2/` | `/morelo-werkschutz-team/` |
+
+Dazu **neun Weiterleitungen**, alle dauerhaft (301): je zwei pro Adresse — mit und
+ohne Schluss-Schrägstrich — und je eine für den vCard-Pfad.
+
+⚠️ **Warum je zwei:** `trailingSlash: true` ergänzt den Schrägstrich erst, **nachdem**
+die Weiterleitungen geprüft wurden. Ein einzelner Eintrag ohne Schrägstrich greift bei
+einer gedruckten Adresse mit Schrägstrich nicht. Das ist die bestehende Machart der
+Datei, hier fortgeführt.
+
+⚠️ **Warum auch die vCard-Pfade:** der Knopf „Kontakt speichern" gibt genau diese
+Adresse heraus. Sie kann in einer Chronik oder in einer weitergeschickten Nachricht
+stehen, und ein 404 auf eine Kontaktdatei sieht aus wie ein kaputter Kontakt.
+
+⚠️ **Die „-2" kam aus WordPress**, das an einen belegten Slug eine Zahl hängt — auf
+der Website hatte sie keine Bedeutung. Sie stand aber auf gedruckten Karten, deshalb
+Weiterleitung und nicht Abschaltung.
+
+### 24.2 Die Van-Wey-Security-Karte war KEINE Kopie — was mit ihr verschwindet
+
+⚠️⚠️ **Das ist der Punkt dieser Runde, den man wissen muss.** Die beiden Van-Wey-Karten
+unterschieden sich in mehr als der Überschrift:
+
+| | Security-Karte (entfällt) | Werkschutz-Karte (bleibt) |
+|---|---|---|
+| E-Mail | `b.vanwey@frankonia-security.de` | `b.vanwey@frankonia-werkschutz.de` |
+| Firma in der vCard | **FRANKONIA Security GmbH & Co. KG** | FRANKONIA Werkschutz GmbH & Co. KG |
+| URL in der vCard | `frankonia-security.de` | `frankonia-werkschutz.de` |
+| Lede | Event/Objekt | Kapital, Know-How, Mitarbeitende |
+
+`frankonia-security.de` war eine **dritte Marke** neben `-sicherheit.de` und
+`-werkschutz.de`, und diese Karte war **die einzige Stelle im ganzen Projekt**, an der
+sie und die Firmierung „FRANKONIA Security GmbH & Co. KG" auftauchten — im Impressum
+kommen sie nicht vor. Das stand schon seit dem 26.08. als Notiz im Generator.
+
+**Folge, ausdrücklich:** wer den alten QR-Code scannt, bekommt jetzt die Werkschutz-Karte
+mit `b.vanwey@frankonia-werkschutz.de`. Wenn Bryan gedruckte Karten mit der
+Security-Adresse im Umlauf hat, verweist die Website nicht mehr darauf.
+
+⚠️ **Die Datei `assets/documents/bryan-van-wey-security.vcf` ist mitgelöscht.** `build.js`
+kopiert `assets/` vollständig, eine verwaiste vCard wäre also weiter öffentlich
+abrufbar — mit der Firmierung, die von der Website verschwinden sollte. Der alte Pfad
+leitet auf die Werkschutz-vCard.
+
+### 24.3 Der Generator war veralteter als die Seiten — und ein Lauf hätte still Schaden angerichtet
+
+⚠️⚠️ **Die Personenseiten werden von `docs/design-sources/person-pages.js` erzeugt, und
+der Generator war an drei Stellen nicht mehr auf dem Stand der Seiten:**
+
+1. `<!-- include: gtm-noscript -->` fehlte (später auf allen Seiten ergänzt),
+2. `<!-- include: person-trust -->` fehlte (das Vertrauensband von gestern),
+3. im Linktree stand noch „Karriere" statt „Jobs" (von heute Vormittag).
+
+**Ein Lauf des Generators hätte damit das Vertrauensband und das GTM-noscript aus elf
+Seiten wieder entfernt — ohne Fehlermeldung.** Genau deshalb wurde er erst
+synchronisiert, dann geändert.
+
+✅ **Nachgewiesen, nicht behauptet:** der Generator lief in ein Testverzeichnis, und die
+Ausgabe wurde gegen `pages/` gediffed. **Alle acht bestehenden Personenseiten plus
+`/linktree/` und `/sicherheitscheck-walde/` sind byteidentisch**; die zwei neuen Slugs
+sind der einzige Unterschied. Vorher waren es drei Abweichungen je Seite.
+
+⚠️ **Eine Leerzeile hat dabei Arbeit gemacht, und das ist kein Detail:** der erste
+Versuch erzeugte eine zusätzliche Leerzeile vor `</main>`, weil `FOOT` mit einem
+Zeilenumbruch beginnt und die Include-Zeile mit einem endete. Byteidentität ist der
+einzige Maßstab, an dem man einen Generator gegen seine Ausgabe prüfen kann — mit
+„sieht gleich aus" wäre die Abweichung durchgegangen und der nächste Diff wertlos
+geworden.
+
+⚠️ **Der entfernte Karteneintrag steht als Notiz im Generator**, nicht bloß im
+Git-Verlauf: was mit der Karte verschwindet (dritte Marke, Firmierung, vCard) ist
+nicht offensichtlich, und der nächste Bearbeiter soll es nicht aus einem Diff
+rekonstruieren müssen.
+
+### 24.4 Geprüft
+
+- **`node docs/design-sources/redirect-test.js`: 0 Probleme.** Die drei neuen Adressen
+  sind in die Sollwert-Tabelle aufgenommen, treffen genau eine Regel, ihr Ziel existiert
+  im Build, und **kein Ziel ist selbst wieder Quelle** (Kettenprüfung). Von den 41
+  Adressen der alten Seite ist **keine verwaist**.
+  ⚠️ Die Notiz an der Inventarliste stimmte danach nicht mehr — sie sagte „SECHS bleiben
+  als echte Seite" — und ist auf DREI/FÜNF/ZWEI korrigiert. Eine Zahl in einem
+  Kommentar, die niemand nachzieht, ist beim nächsten Mal die Quelle des Irrtums.
+- **69 Seiten** im Build statt 70, die drei alten Verzeichnisse sind weg, die zwei neuen
+  da, **0 Verweise** auf die alten Pfade in den 69 Seiten, und die zwei umbenannten
+  vCards liegen unter ihrem neuen Namen.
+- **Das Vertrauensband steht auf 8 Personenseiten** — vorher neun, eine ist entfallen.
+- **64/64 Tests.** Bild einer der umbenannten Seiten geprüft.
+- ⚠️ **Die Weiterleitungen selbst sind statisch geprüft, nicht live:** `npm run dev`
+  liest `vercel.json` nicht, Weiterleitungen sind Hosting-Konfiguration. Lokal geben die
+  drei alten Adressen deshalb 404 — **das ist erwartet und kein Defekt**. Nach dem Deploy
+  einmal `node docs/design-sources/redirect-test.js https://frankonia-sicherheit.de`,
+  dann stehen dort echte Statuscodes.
+
+⚠️ **Nicht angefasst: die Sitemap.** Personenseiten stehen dort nicht und sollen es
+nicht — sie sind `noindex,follow`, weil sie dünn und personenbezogen sind und indexiert
+mit den echten Leistungsseiten konkurrieren würden. Erreichbar bleiben sie über QR-Code
+und gedruckte Karte, was der ganze Grund ihrer Existenz ist.
+
+---
+
 # Abschlussbericht
 
 Die fünf Listen, die du am Ende sehen wolltest. Sie fassen zusammen, was in den
@@ -2193,6 +2309,10 @@ ist** (das ist die Kettenprüfung). Nach dem Deploy einmal
 | ☐ | `/marco-bayer-werkschutz-2/` | 301 | `/alexander-jaeger-werkschutz/` | 1 |
 | ☐ | `/thomas-windisch-sicherheitsdienst/` | 301 | `/alexander-jaeger-sicherheitsdienst/` | 1 |
 | ☐ | `/thomas-windisch-werkschutz/` | 301 | `/alexander-jaeger-werkschutz/` | 1 |
+| ☐ | `/bryan-van-wey-security/` | 301 | `/bryan-van-wey-werkschutz/` | 1 |
+| ☐ | `/christoph-bauer-sicherheitsdienst-2/` | 301 | `/christoph-bauer-sicherheitsdienst/` | 1 |
+| ☐ | `/morelo-werkschutz-team-2/` | 301 | `/morelo-werkschutz-team/` | 1 |
+| ☐ | die drei zugehörigen `/assets/documents/….vcf` | 301 | neuer vCard-Pfad | 1 |
 | ☐ | `/wp-admin/`, `/wp-login.php` | **404** | — | 0 |
 | ☐ | `/wp-content/…` | **404** | — | 0 |
 | ☐ | `/testformular/` | **404** | — | 0 |
