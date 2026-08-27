@@ -340,6 +340,39 @@ async function subscriptionTypes() {
  * HUBSPOT_LIFECYCLE_STAGE — und diese Liste ist die Auswahl dazu. */
 let abweichung = false;
 
+/* ------------------------------------------- BCC-Protokollierung (nur lesen) */
+
+/* ⚠️ NICHT ÜBER DIE API PRÜFBAR, und deshalb steht hier nur, ob die Variable
+   gesetzt ist. Die BCC-Adresse ist portalspezifisch und wird bewusst NICHT
+   geraten — auch nicht als "<PortalId>@bcc.hubspot.com", obwohl das bei vielen
+   Portalen stimmt: bei einer falschen Adresse geht die Mail an ein
+   Nirgendwo, das Bounces produziert, und Bounces kosten Absender-Reputation.
+   Dieselbe Regel wie bei den Subscription-IDs. */
+function bccPruefen() {
+  const wert = (process.env.HUBSPOT_BCC_ADDRESS || "").trim();
+  console.log("\nBCC-Protokollierung der Bestaetigungsmail");
+  if (!wert) {
+    console.log("  •  HUBSPOT_BCC_ADDRESS ist NICHT gesetzt.");
+    console.log("     Dann steht in der Aktivitaetenliste des Kontakts nur die Notiz,");
+    console.log("     nicht die Mail, die der Interessent bekommen hat.");
+    console.log("     Die Adresse steht in den HubSpot-Einstellungen (dort nach \"BCC\"");
+    console.log("     suchen) und gehoert in .env.local UND in Vercel.");
+    return;
+  }
+  const plausibel = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(wert);
+  const sichtbar = wert.replace(/^(.{2}).*(@.*)$/, "$1***$2");
+  if (!plausibel) {
+    console.log("  ✗  HUBSPOT_BCC_ADDRESS ist gesetzt, sieht aber nicht wie eine Adresse aus:");
+    console.log("     " + sichtbar + " — der Endpoint verwirft den Wert und setzt kein BCC.");
+    abweichung = true;
+    return;
+  }
+  console.log("  ✓  HUBSPOT_BCC_ADDRESS = " + sichtbar);
+  console.log("     Die Bestaetigungsmail geht zusaetzlich an diese Adresse. Ob HubSpot sie");
+  console.log("     wirklich protokolliert, zeigt erst der naechste echte Eintrag — das");
+  console.log("     haengt am Portal und nicht an diesem Code.");
+}
+
 async function lifecycleStufen() {
   console.log("\nLifecycle-Stufen dieses Portals (nur lesen)");
   const res = await api("/crm/v3/properties/contacts/lifecyclestage");
@@ -403,6 +436,7 @@ if (VERIFY) {
   await lifecycleStufen();
   console.log("\nSubscription Types (nur lesen)");
   await subscriptionTypes();
+  bccPruefen();
   process.exit(fehler === 0 && !abweichung ? 0 : 2);
 }
 
@@ -420,5 +454,7 @@ await lifecycleStufen();
 
 console.log("\n3 — Vorhandene Subscription Types (nur lesen)");
 await subscriptionTypes();
+
+bccPruefen();
 
 console.log("\nFertig. Zum Gegenpruefen: node scripts/setup-hubspot.mjs --verify");

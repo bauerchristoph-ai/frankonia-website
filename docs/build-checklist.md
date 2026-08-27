@@ -32,6 +32,72 @@ anonimizadas. Ya están construidas, así que el `[ERGÄNZEN]` que Referenzen
 arrastraba desde el 2026-08-03 **está cerrado**.
 
 
+**2026-08-27, OCTAVA RONDA — LA MAIL DE CONFIRMACIÓN SE REGISTRA EN HUBSPOT VÍA BCC, Y
+LA RAZÓN POR LA QUE EL CAMBIO EN LA CUENTA DE BREVO NO PODÍA FUNCIONAR** (cliente: „das
+wäre schon irgendwo cool, wenn diese Bestätigungsmail auch protokolliert wird […]
+Überleg's dir gerne selbst, wie Du es machen möchtest"). Toca `api/_lib/brevo.js`,
+`scripts/setup-hubspot.mjs` y los tests.
+
+- ⚠️⚠️ **POR QUÉ NO FUNCIONABA HASTA AHORA, y el cliente había cambiado algo en Brevo:**
+  un envío transaccional por la API de Brevo **trae su lista de destinatarios en la
+  llamada misma**. Un ajuste de cuenta no lo alcanza — actúa sobre campañas, no sobre un
+  `POST /smtp/email`. El BCC tiene que estar donde se construye la llamada, o sea en este
+  código. Su cambio era por eso inofensivo y sin efecto, sin mensaje de error.
+
+- **La decisión: BCC, no la API de Engagements de HubSpot.** El argumento decisivo no es
+  el esfuerzo:
+  · la API registraría **una reconstrucción, no la mail**. Brevo renderiza la plantilla
+    de su lado; para producir el mismo texto habría que traer la plantilla y sustituir
+    los placeholders acá — **dos renderers para un texto**, que se separan en el momento
+    en que alguien edita la plantilla en Brevo. En la lista de actividades quedaría algo
+    que el interesado nunca vio, y nadie lo notaría. Por BCC llega la mail **real**, con
+    el layout que recibió.
+  · sería un módulo con permisos, errores y reintentos propios; el BCC es un campo en
+    una llamada que ya ocurre.
+
+- ⚠️⚠️ **SÓLO EN LA MAIL DE CONFIRMACIÓN, NO EN EL AVISO INTERNO, y ésta es la decisión
+  que importa: HubSpot registra una mail recibida por BCC en el DESTINATARIO.** El aviso
+  interno va a FRANKONIA misma, así que quedaría colgado de un contacto
+  „info@frankonia-sicherheit.de" — o lo crearía. El contacto del interesado tendría
+  entonces **dos entradas de e-mail por consulta, una de las cuales nunca le llegó**. No
+  es un fallo visible, es ruido que aparece semanas después. Por eso el BCC NO está en
+  una función compartida sino en una sola mail, con la razón escrita al lado para que
+  nadie lo "ordene".
+
+- ⚠️ **La dirección no se deriva.** Es específica del portal. En muchos portales es
+  `<PortalId>@bcc.hubspot.com` y la portal-id ya está en una variable — aun así no se
+  deduce: con una dirección equivocada **cada** mail de confirmación va además a la nada,
+  eso produce **bounces**, y los bounces cuestan reputación de remitente. Misma regla que
+  con los subscription-IDs. Variable nueva: **`HUBSPOT_BCC_ADDRESS`**.
+
+- **67/67 tests**, tres nuevos:
+  · el BCC está en la confirmación **y el aviso interno no lo lleva** — el "no" es el
+    núcleo del test;
+  · sin la variable **no se envía un campo `bcc` vacío**. ⚠️ No es cosmética: un `bcc`
+    vacío lo rechaza Brevo con 400, y eso costaría la mail de confirmación, o sea el
+    único comprobante que recibe el interesado;
+  · un valor inservible se descarta — probado con los tres errores de configuración
+    realistas (una URL pegada, un placeholder olvidado, un campo de espacios) y con
+    espacios alrededor, como al copiar.
+
+- **`setup-hubspot.mjs --verify` informa si la dirección está puesta**, enmascarada
+  (`27***@bcc.hubspot.com`). Ambas ramas probadas corriendo. ⚠️ Más no puede: **si
+  HubSpot realmente registra la mail no es verificable por API** — depende del portal.
+
+- ⚠️ **NO probado en vivo, y a propósito:** haría falta la dirección real. Un test con
+  una inventada habría mandado una mail a una dirección inexistente, o sea exactamente
+  el bounce que la decisión de arriba evita.
+
+- **Hallazgo al margen, en las vCards** (surgió al responder otra pregunta): las ocho
+  están completas en `assets/documents/`, seis con retrato embebido — no hace falta traer
+  nada de WordPress. Tres cosas vienen de los originales y **no** se tocaron:
+  **(1)** Alexander Jäger **no tiene foto en una de sus dos vCards** (la de Werkschutz),
+  aunque **ambas páginas muestran el mismo retrato** y las dos de Steffen Walde llevan la
+  foto byte-idéntica; **(2)** las ocho tienen un **espacio delante del nombre** en `FN:`,
+  así que el contacto se guarda con un espacio inicial; **(3)** el base64 va en una línea
+  de hasta 7.800 caracteres, que el estándar quiere plegada — Apple, Google y Outlook lo
+  leen igual. Las dos primeras esperan un sí del cliente: son datos de contacto.
+
 **2026-08-27, SÉPTIMA RONDA — LA TARJETA VAN WEY SECURITY SE ELIMINA, LA „-2" SALE DE
 DOS URLS DE PERSONA, NUEVE REDIRECTS. Y EL GENERADOR ESTABA MÁS DESACTUALIZADO QUE LAS
 PÁGINAS** (cliente, sobre la lista de personas del protocolo). Toca

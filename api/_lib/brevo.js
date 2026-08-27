@@ -1,4 +1,7 @@
 /*
+ * ⚠️ SEIT 27.08.2026 trägt die Bestätigungsmail ein BCC an HubSpot, damit sie in
+ * der Aktivitätenliste des Kontakts auftaucht. Details bei bccAdresse().
+ *
  * Brevo: Kontakt, Bestätigungsmail, Event, interne Benachrichtigung.
  * 2026-08-26.
  *
@@ -130,6 +133,46 @@ async function kontaktUpsert(d, submissionId, hubspotId, zeitstempel) {
   return { ok: res.ok, status: res.status };
 }
 
+/* ------------------------------------- BCC-Protokollierung in HubSpot */
+
+/**
+ * Die BCC-Adresse, mit der HubSpot eine Mail in die Aktivitätenliste des
+ * Kontakts schreibt — oder null, wenn keine konfiguriert ist.
+ *
+ * ⚠️ WARUM ÜBERHAUPT: die Bestätigungsmail geht über Brevo, und HubSpot weiß
+ * davon nichts. In der Aktivitätenliste stand deshalb nur die Notiz („Anfrage
+ * eingegangen"), nicht die Mail, die der Interessent tatsächlich bekommen hat.
+ * Kundenwunsch 27.08.2026: „das wäre schon irgendwo cool, wenn diese
+ * Bestätigungsmail auch protokolliert wird".
+ *
+ * ⚠️ WARUM BCC UND NICHT DIE HUBSPOT-API: der Weg über die Engagements-API
+ * würde einen NACHBAU der Mail protokollieren, nicht die Mail. Brevo rendert
+ * das Template auf seiner Seite; um denselben Text zu erzeugen, müsste dieser
+ * Code das Template holen und die Platzhalter selbst ersetzen — zwei Renderer
+ * für einen Text, die auseinanderlaufen, sobald jemand das Template ändert.
+ * Über BCC landet die ECHTE Mail in der Aktivitätenliste, mit dem Layout, das
+ * der Empfänger gesehen hat. Und es ist eine Zeile statt eines Moduls.
+ *
+ * ⚠️ WARUM NICHT ABLEITBAR: die Adresse ist portalspezifisch (etwas wie
+ * „…@bcc.hubspot.com") und steht in den HubSpot-Einstellungen. Sie wird hier
+ * NICHT geraten — dieselbe Regel wie bei den Subscription-IDs. Ohne die
+ * Variable wird der Schritt übersprungen und protokolliert.
+ */
+function bccAdresse(submissionId) {
+  const rohwert = process.env.HUBSPOT_BCC_ADDRESS;
+  const wert = rohwert ? String(rohwert).trim() : "";
+  if (!wert) return null;
+  /* Absichtlich nur eine Plausibilitätsprüfung und keine Adress-Grammatik: die
+     Alternative wäre, eine gültige Adresse wegen einer strengen Regex zu
+     verwerfen. Was hier auffallen MUSS, ist ein Konfigurationsfehler wie eine
+     hineinkopierte URL oder ein leerer Platzhalter. */
+  if (!/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(wert)) {
+    log.warn(submissionId, "brevo: HUBSPOT_BCC_ADDRESS sieht nicht wie eine Adresse aus — kein BCC gesetzt");
+    return null;
+  }
+  return wert;
+}
+
 /* --------------------------------------------------- Bestätigung an den Kunden */
 
 async function bestaetigungsmail(d, submissionId) {
@@ -138,12 +181,29 @@ async function bestaetigungsmail(d, submissionId) {
     log.alarm(submissionId, "brevo: BREVO_CONFIRMATION_TEMPLATE_ID fehlt oder ist keine Zahl");
     return { ok: false };
   }
+  /* ⚠️ NUR AUF DIESER MAIL, NICHT AUF DER INTERNEN BENACHRICHTIGUNG — und das
+     ist der Grund, warum das BCC hier steht und nicht in kopf() oder in einer
+     gemeinsamen Hilfsfunktion: **HubSpot protokolliert eine per BCC erhaltene
+     Mail beim EMPFÄNGER.** Die interne Meldung geht an FRANKONIA selbst, sie
+     würde also an einem Kontakt „info@frankonia-sicherheit.de" hängen — oder
+     einen anlegen. Das wäre Rauschen im CRM und keine Korrespondenz mit dem
+     Interessenten.
+     ⚠️ Zweiter Grund, dieselbe Stelle: bei jeder Anfrage würde die interne
+     Meldung zusätzlich als E-Mail-Aktivität auftauchen, und die Liste des
+     Kontakts hätte pro Anfrage zwei Einträge, von denen einer den Kunden nie
+     erreicht hat. */
+  const bcc = bccAdresse(submissionId);
+  if (!bcc) log.info(submissionId, "brevo: HUBSPOT_BCC_ADDRESS nicht gesetzt — Mail wird in HubSpot nicht protokolliert");
+
   const res = await anfrage("brevo.bestaetigung", submissionId, BASIS + "/smtp/email", {
     method: "POST",
     headers: kopf(),
     body: JSON.stringify({
       templateId,
       to: [{ email: d.email, name: (d.first_name + " " + d.last_name).trim() }],
+      /* Nur setzen, wenn es eine Adresse gibt: ein leeres bcc-Feld lehnt Brevo
+         mit 400 ab, und das würde die Bestätigungsmail kosten. */
+      ...(bcc ? { bcc: [{ email: bcc }] } : {}),
       // Das Template nutzt {{ params.VORNAME }} und blendet die Zeile zur
       // Leistung nur ein, wenn SERVICE gefüllt ist. Deshalb wird SERVICE
       // immer mitgegeben — als leerer String, wenn nichts angefragt wurde,
@@ -278,6 +338,7 @@ async function verarbeiten(d, submissionId, hubspotId, hubspotOk, zeitstempel) {
 }
 
 module.exports = {
+  bccAdresse,
   verarbeiten,
   kontaktUpsert,
   kontaktAttribute,

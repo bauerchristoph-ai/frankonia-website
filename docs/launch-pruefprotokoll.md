@@ -2266,6 +2266,103 @@ und gedruckte Karte, was der ganze Grund ihrer Existenz ist.
 
 ---
 
+## 25 — Die Bestätigungsmail landet in der Aktivitätenliste des Kontakts
+
+Kunde, 27.08.2026: *„aktuell wird die Formulareintragung nur als Notiz protokolliert.
+Das passt auch, allerdings werden ja an den Nutzer eine Bestätigungsmail über Brevo
+versendet. Das wäre schon irgendwo cool, wenn diese Bestätigungsmail auch protokolliert
+wird. […] Überleg's dir gerne selbst, wie Du es machen möchtest."*
+
+### 25.1 Der Weg: BCC an HubSpot, gesetzt beim Senden
+
+Die Bestätigungsmail trägt jetzt ein **BCC an die Protokolladresse des Portals**. HubSpot
+erkennt die Mail und hängt sie an den Kontakt — sichtbar in der Aktivitätenliste unter
+„E-Mails", neben der Notiz.
+
+⚠️⚠️ **WARUM ES BISHER NICHT FUNKTIONIERT HAT, obwohl du im Brevo-Konto etwas geändert
+hattest:** eine Transaktionsmail über die Brevo-API bringt **ihre Empfängerliste im
+Aufruf selbst mit**. Eine Kontoeinstellung greift dort nicht — sie wirkt auf Kampagnen,
+nicht auf einen `POST /smtp/email`. Das BCC muss also an der Stelle stehen, an der der
+Aufruf gebaut wird, und das ist dieser Code. Deshalb war die Änderung im Konto
+wirkungslos, ohne Fehlermeldung.
+
+### 25.2 Warum BCC und nicht die HubSpot-API
+
+Der andere denkbare Weg wäre, die Mail über HubSpots Engagements-API als E-Mail-Aktivität
+anzulegen. **Dagegen sprechen zwei Dinge, und das erste ist das ausschlaggebende:**
+
+- **Es würde einen NACHBAU protokollieren, nicht die Mail.** Brevo rendert das Template
+  auf seiner Seite. Um denselben Text zu erzeugen, müsste dieser Code das Template holen
+  und die Platzhalter selbst ersetzen — **zwei Renderer für einen Text**, die
+  auseinanderlaufen, sobald jemand das Template in Brevo ändert. In der Aktivitätenliste
+  stünde dann etwas, das der Interessent nie gesehen hat, und niemand würde es merken.
+  Über BCC landet die **echte** Mail dort, mit dem Layout des Empfängers.
+- Es wäre ein Modul mit eigenen API-Rechten, eigenen Fehlerfällen und eigener
+  Wiederholungslogik. Das BCC ist ein Feld im Aufruf, der ohnehin stattfindet.
+
+### 25.3 Zwei Entscheidungen, die man kennen muss
+
+⚠️⚠️ **NUR AUF DER BESTÄTIGUNGSMAIL, NICHT AUF DER INTERNEN MELDUNG — und das ist die
+wichtigere der beiden.** HubSpot protokolliert eine per BCC erhaltene Mail **beim
+EMPFÄNGER**. Die interne Meldung geht an FRANKONIA selbst; sie würde also an einem
+Kontakt „info@frankonia-sicherheit.de" hängen oder einen anlegen. Der Kontakt des
+Interessenten hätte dann pro Anfrage **zwei E-Mail-Einträge, von denen einer ihn nie
+erreicht hat**. Das ist kein sichtbarer Fehler, sondern Rauschen, das erst Wochen später
+auffällt. Deshalb steht das BCC bewusst nicht in einer gemeinsamen Hilfsfunktion, sondern
+an genau einer Mail — mit dieser Begründung im Code, damit es niemand „aufräumt".
+
+⚠️ **Die Adresse wird NICHT geraten.** Sie ist portalspezifisch und steht in den
+HubSpot-Einstellungen. Bei vielen Portalen ist es `<PortalId>@bcc.hubspot.com`, und die
+Portal-ID steht sogar schon in einer Variablen — trotzdem wird nicht abgeleitet: bei
+einer falschen Adresse geht jede Bestätigungsmail zusätzlich ins Nirgendwo, das
+**Bounces** produziert, und Bounces kosten Absender-Reputation. Dieselbe Regel wie bei
+den Subscription-IDs.
+
+**Neue Variable: `HUBSPOT_BCC_ADDRESS`.** In HubSpot in der Einstellungssuche nach „BCC"
+suchen, Adresse kopieren, in `.env.local` **und** in Vercel eintragen.
+Ohne die Variable passiert genau das, was vorher passiert ist — nur mit einer Zeile im
+Protokoll: *„HUBSPOT_BCC_ADDRESS nicht gesetzt — Mail wird in HubSpot nicht
+protokolliert."*
+
+### 25.4 Geprüft
+
+- **67/67 Tests**, drei davon neu:
+  · das BCC steht auf der Bestätigungsmail **und die interne Meldung trägt keines** —
+    das „nicht" ist der Kern des Tests;
+  · ohne die Variable wird **kein leeres `bcc`-Feld** gesendet. ⚠️ Das ist nicht
+    Kosmetik: ein leeres `bcc` lehnt Brevo mit 400 ab, und das würde die
+    Bestätigungsmail kosten — also den einen Beleg, den der Interessent bekommt;
+  · ein unbrauchbarer Wert wird verworfen. Geprüft mit den drei realistischen
+    Konfigurationsfehlern: eine hineinkopierte URL, ein stehengebliebener Platzhalter,
+    ein Feld aus Leerzeichen. Und mit Leerzeichen drumherum, wie beim Kopieren.
+- **`node scripts/setup-hubspot.mjs --verify` sagt jetzt, ob die Adresse gesetzt ist**,
+  und maskiert sie in der Ausgabe (`27***@bcc.hubspot.com`). Beide Zweige laufend
+  geprüft. ⚠️ Mehr kann das Skript nicht: **ob HubSpot die Mail wirklich protokolliert,
+  ist über die API nicht prüfbar** — das hängt am Portal, nicht an diesem Code.
+- ⚠️ **Live noch nicht nachgewiesen, und zwar aus einem guten Grund:** dafür bräuchte
+  ich die echte BCC-Adresse. Ein Test mit einer erfundenen hätte eine Mail an eine
+  nicht existierende Adresse geschickt — genau der Bounce, den 25.3 vermeidet. Der
+  Nachweis ist der nächste echte Eintrag, nachdem du die Variable eingetragen hast:
+  in der Aktivitätenliste des Kontakts steht dann unter „E-Mails" die Bestätigungsmail.
+
+### 25.5 Was dabei am Rand aufgefallen ist, an den vCards
+
+Beim Nachsehen wegen einer anderen Frage: die acht vCards liegen vollständig im Projekt
+(`assets/documents/`), sechs davon mit eingebettetem Porträt — es muss nichts aus
+WordPress nachgereicht werden. Drei Punkte stammen aus den Originalen und sind **nicht**
+geändert:
+
+| | Fund |
+|---|---|
+| ⚠️ | **Alexander Jäger hat auf einer seiner zwei Karten kein Foto.** Die Sicherheitsdienst-vCard trägt das Porträt, die Werkschutz-vCard nicht — obwohl **beide Seiten dasselbe Porträtbild zeigen** und bei Steffen Walde beide Karten das byteidentische Foto tragen. Wer Jägers Werkschutz-Kontakt speichert, bekommt ihn ohne Bild. |
+| ⚠️ | **Alle acht haben ein Leerzeichen vor dem Namen** (`FN:` → ` Alexander Jäger`). Im Adressbuch heißt der Kontakt dann mit führendem Leerzeichen, was in manchen Apps auch die Sortierung verschiebt. |
+| • | Das Base64-Foto steht in einer Zeile von bis zu 7.800 Zeichen; der Standard will es gefaltet. Apple, Google und Outlook lesen es trotzdem — nur zur Kenntnis. |
+
+Die ersten zwei sind kleine, rückholbare Änderungen; sie warten auf ein Ja, weil es
+Kontaktdaten sind.
+
+---
+
 # Abschlussbericht
 
 Die fünf Listen, die du am Ende sehen wolltest. Sie fassen zusammen, was in den
@@ -2395,6 +2492,7 @@ Was Variablen brauchen wird, sobald die jeweilige Entscheidung fällt:
 | ✅ | Spamschutz | Cloudflare Turnstile statt reCAPTCHA | **erledigt.** Turnstile setzt für die Prüfung keine Cookies und ist deshalb einwilligungsfrei — ein Spamschutz, der erst nach Cookie-Zustimmung lädt, schützt die Hälfte der Besucher nicht |
 | ✅ | Cookiebot | Domain-Gruppen-ID | **eingebaut.** ⚠️ Die Consent-Mode-Integration muss im Cookiebot-Konto noch **aktiviert** werden, sonst bleibt alles dauerhaft auf „verweigert" |
 | ✅ | Tag Manager | Container GTM-NWLGMFJN über `d.frankonia-sicherheit.de` | **Loader eingebaut.** Die Tags konfiguriert Christoph nach dem Launch; die CSP muss dann erweitert werden |
+| ☐ | Bestätigungsmail in HubSpot protokollieren | `HUBSPOT_BCC_ADDRESS` | **eingebaut am 27.08.** (Abschnitt 25). Die Adresse steht in den HubSpot-Einstellungen (dort nach „BCC" suchen) und wird bewusst nicht abgeleitet. Ohne sie steht in der Aktivitätenliste nur die Notiz |
 | ✅ | Marketing-Einwilligung | `HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE`, `BREVO_MARKETING_LIST_ID` | **eingebaut am 26.08.** (Abschnitt 18). Die beiden IDs liest du mit den zwei Setup-Skripten aus; ohne sie wird nichts geraten |
 | ☐ | Google-Bewertung live statt gepflegt | Places-API-Schlüssel | fehlt, bewusst — braucht Abrechnung und Consent |
 

@@ -178,6 +178,9 @@ test.beforeEach(() => {
   delete process.env.HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE;
   delete process.env.HUBSPOT_SUBSCRIPTION_ID_MARKETING;
   delete process.env.BREVO_MARKETING_LIST_ID;
+  // ⚠️ Auch abraeumen: sonst traegt die Bestaetigungsmail in jedem Test ein BCC,
+  // und der Test, der die Abwesenheit prueft, haengt am Vorgaenger.
+  delete process.env.HUBSPOT_BCC_ADDRESS;
   guard._reset();
   stumm();
 });
@@ -1219,4 +1222,66 @@ test("Ohne JavaScript: ein fehlendes Turnstile-Token blockiert die Anfrage NICHT
   assert.equal(r._status, 400);
   assert.match(r._header["Content-Type"], /text\/html/);
   assert.match(r._html, /Spamschutz/);
+});
+
+test("BCC: die Bestaetigungsmail wird in HubSpot protokolliert, die interne Meldung NICHT", async () => {
+  /* ⚠️ DER KERN DIESES TESTS IST DAS "NICHT". HubSpot protokolliert eine per BCC
+     erhaltene Mail beim EMPFAENGER — die interne Meldung geht an FRANKONIA
+     selbst, sie wuerde also an einem Kontakt "info@frankonia-sicherheit.de"
+     haengen oder einen anlegen. Ein BCC an der falschen der beiden Mails ist
+     kein sichtbarer Fehler, sondern zusaetzliches Rauschen im CRM, das erst
+     Wochen spaeter auffaellt. */
+  process.env.HUBSPOT_BCC_ADDRESS = "27143941@bcc.hubspot.com";
+  const protokoll = [];
+  globalThis.fetch = alleOk(protokoll);
+  const r = res();
+  await handler(req(GUELTIG), r);
+  assert.equal(r._status, 200);
+
+  const mails = protokoll.filter((p) => p.url.includes("smtp/email"));
+  assert.equal(mails.length, 2, "es wurden nicht genau die zwei erwarteten Mails verschickt");
+
+  const nutzlasten = mails.map((m) => JSON.parse(m.optionen.body));
+  const bestaetigung = nutzlasten.find((n) => n.templateId);
+  const intern = nutzlasten.find((n) => !n.templateId);
+  assert.ok(bestaetigung, "die Bestaetigungsmail (mit Template) fehlt");
+  assert.ok(intern, "die interne Meldung (ohne Template) fehlt");
+
+  assert.deepEqual(bestaetigung.bcc, [{ email: "27143941@bcc.hubspot.com" }]);
+  assert.equal(intern.bcc, undefined, "die interne Meldung traegt ein BCC an HubSpot");
+});
+
+test("BCC: ohne die Variable wird KEIN leeres Feld gesendet", async () => {
+  /* ⚠️ Ein leeres bcc-Feld lehnt Brevo mit 400 ab, und das wuerde die
+     Bestaetigungsmail kosten — also den einen Beleg, den der Interessent
+     bekommt. Deshalb muss das Feld ganz fehlen und nicht leer sein. */
+  delete process.env.HUBSPOT_BCC_ADDRESS;
+  const protokoll = [];
+  globalThis.fetch = alleOk(protokoll);
+  const r = res();
+  await handler(req(GUELTIG), r);
+  assert.equal(r._status, 200);
+
+  const mails = protokoll.filter((p) => p.url.includes("smtp/email"));
+  for (const m of mails) {
+    const n = JSON.parse(m.optionen.body);
+    assert.ok(!("bcc" in n), "es wurde ein bcc-Feld ohne Adresse gesendet");
+  }
+});
+
+test("BCC: ein unbrauchbarer Wert wird verworfen und nicht mitgesendet", () => {
+  /* ⚠️ Der realistische Konfigurationsfehler ist keine kaputte Adressgrammatik,
+     sondern eine hineinkopierte URL oder ein stehengebliebener Platzhalter.
+     Beides muss zu KEINEM BCC fuehren statt zu einer 400 von Brevo. */
+  const brevo = require("../api/_lib/brevo.js");
+  process.env.HUBSPOT_BCC_ADDRESS = "https://app-eu1.hubspot.com/settings";
+  assert.equal(brevo.bccAdresse("s1"), null);
+  process.env.HUBSPOT_BCC_ADDRESS = "   ";
+  assert.equal(brevo.bccAdresse("s1"), null);
+  process.env.HUBSPOT_BCC_ADDRESS = "BCC-ADRESSE-HIER-EINTRAGEN";
+  assert.equal(brevo.bccAdresse("s1"), null);
+  /* Und der gute Fall, mit Leerzeichen drumherum wie beim Kopieren. */
+  process.env.HUBSPOT_BCC_ADDRESS = "  27143941@bcc.hubspot.com  ";
+  assert.equal(brevo.bccAdresse("s1"), "27143941@bcc.hubspot.com");
+  delete process.env.HUBSPOT_BCC_ADDRESS;
 });
