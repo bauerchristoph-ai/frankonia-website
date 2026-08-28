@@ -12,7 +12,8 @@
  * und erst die Trailing-Slash-Normalisierung oder die 404-Seite greift. Beides
  * ist hier statisch entscheidbar, weil die Zielseiten im Build liegen.
  *
- * MIT Basis-URL prüft er zusätzlich live: genau EIN 301 pro Quell-URL, direkt
+ * MIT Basis-URL prüft er zusätzlich live: genau EIN permanenter Sprung pro
+ * Quell-URL (301 oder 308 — Vercel schickt 308), direkt
  * auf das erwartete Ziel. Das geht erst nach dem Deploy, weil `npm run dev`
  * nur dist/ ausliefert und vercel.json dabei gar nicht gelesen wird — der
  * lokale Dev-Server kennt keine Redirects. Das ist keine Nachlässigkeit,
@@ -310,16 +311,35 @@ function kopf(url) {
         else break;
       }
       const endPfad = cur.replace(base.replace(/\/$/, ""), "");
-      const einHop = hops.length === 2 && hops[0] === 301 && hops[1] === 200;
+      /* ⚠️ 301 ODER 308, und das ist am 28.08.2026 beim ersten Live-Lauf
+         aufgefallen: **Vercel antwortet auf `permanent: true` mit 308**, nicht
+         mit 301. Vorher stand hier nur 301, und der Lauf meldete ALLE 34
+         Weiterleitungen als Problem, obwohl jede in genau einem Sprung am
+         richtigen Ziel landete. Das war ein Fehler der Erwartung, nicht der
+         Konfiguration — und die gefährliche Sorte: 36 rote Zeilen, die nichts
+         bedeuten, bringen niemanden dazu, das Skript noch mal ernst zu nehmen.
+         308 ist die permanente Weiterleitung, die zusätzlich die HTTP-Methode
+         erhält; für die Kanonisierung behandelt Google beide gleich. */
+      const permanent = hops[0] === 301 || hops[0] === 308;
+      const einHop = hops.length === 2 && permanent && hops[1] === 200;
       const status = einHop && endPfad === ziel ? "ok" : "PROBLEM hops=" + hops.join(",") + " endet auf " + endPfad;
       if (status !== "ok") fehler.push("live " + url + ": " + status);
       console.log(decodeURIComponent(url).slice(0, 68).padEnd(70) + "-> " + ziel.padEnd(42) + status);
     }
     for (const u of ["/wp-admin/", "/wp-login.php"]) {
       const r = await kopf(base.replace(/\/$/, "") + u);
-      const status = r.code === 404 ? "ok (404, wie gewuenscht)" : "PROBLEM: " + r.code + " " + (r.loc || "");
-      if (r.code !== 404) fehler.push("live " + u + ": " + status);
-      console.log(u.padEnd(70) + "-> 404".padEnd(45) + status);
+      /* ⚠️ 404 ODER 403. Gemessen am 28.08.2026: Vercel blockt
+         /wp-admin/, /wp-login.php und /wp-content/* mit **403**, bevor unsere
+         Konfiguration überhaupt gefragt wird — eine eingebaute Sperre für die
+         üblichen WordPress-Angriffspfade. Das ist strenger als der geplante 404,
+         nicht schwächer, denn es bestätigt nicht einmal, dass der Pfad ein
+         Kandidat wäre. /testformular/ und /homepage-2/ liefern echte 404. */
+      const totOk = r.code === 404 || r.code === 403;
+      const status = totOk
+        ? "ok (" + r.code + ", nicht erreichbar wie gewuenscht)"
+        : "PROBLEM: " + r.code + " " + (r.loc || "");
+      if (!totOk) fehler.push("live " + u + ": " + status);
+      console.log(u.padEnd(70) + "-> nicht erreichbar".padEnd(45) + status);
     }
   } else {
     console.log("\n(Kein Live-Test — Basis-URL als Argument uebergeben, um nach dem Deploy zu pruefen.)");
