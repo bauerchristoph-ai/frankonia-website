@@ -47,6 +47,16 @@ function konfiguriert() {
   return Boolean(process.env.BREVO_API_KEY);
 }
 
+/**
+ * Absender beider Mails.
+ * ⚠️ Die Adresse gehört einem POSTFACH und nicht einer Person (Entscheidung vom
+ * 28.08.2026, info@ statt c.bauer@). Grund: bestaetigungsmail() setzt bewusst
+ * kein replyTo, Antworten des Interessenten gehen also an genau diese Adresse.
+ * Eine Personenadresse hieße: die Rückfrage eines Kunden liegt im Postfach
+ * eines Einzelnen, auch wenn der drei Wochen weg ist.
+ * ⚠️ Der Wert muss in Brevo als Absender freigegeben und aktiv sein, sonst 400.
+ * "node scripts/setup-brevo.mjs" prüft das.
+ */
 function absender() {
   return {
     email: process.env.BREVO_SENDER_EMAIL || "",

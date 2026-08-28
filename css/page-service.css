@@ -5391,13 +5391,33 @@ main h2 {
    `.uu-lead__photo` and `.service-contact__portrait`: these photos are dark
    documentary frames on a dark section, and a light placeholder would flash
    light-then-dark as the lazy image lands. `aspect-ratio` is the frame's only
-   real job — it reserves the space, so there is no CLS. */
+   real job — it reserves the space, so there is no CLS.
+
+   ⚠️⚠️ KEIN RADIUS, UND DAS WAR ER BIS 28.08.2026 TROTZDEM. Der Kommentar
+   darüber sagte seit dem 16.08. "No radius", drei Zeilen tiefer stand
+   `border-radius: var(--radius-lg)` — übernommen von einer Vorlage und nie
+   zusammengeführt. Der Kunde hat es gesehen: "die Bilder passen nicht, die Ecken
+   sind schwarz."
+   Er hatte recht, und die Ursache ist NICHT die Datei. Gemessen: alle neun
+   Rahmen haben genau das Seitenverhältnis ihrer Datei (0,6683 bis 0,6738, auf
+   vier Stellen identisch), es gibt also keinen Letterbox-Streifen, und die
+   Rundung wurde korrekt geschnitten. Sichtbar wurde sie, WEIL der Bildinhalt an
+   den Ecken hell ist — bei /objektschutz/ eine Betonwand oben links und nasser
+   Asphalt unten links. Ein Viertelkreis Seitenschwarz in einer hellen Fläche
+   liest sich wie angeklebt.
+   ⚠️ Das ist genau die umgekehrte Lage wie beim Hero von /jobs/: dort ist der
+   Hintergrund des Fotos selbst schwarz, ein Radius würde also "nichts als
+   Schwarz runden" und ist deshalb ebenfalls keiner. Beide Male gilt: ein
+   dokumentarisches Foto auf schwarzer Fläche bekommt keine Ecken.
+
+   ⚠️ `overflow: hidden` BLEIBT, obwohl es ohne Radius nichts mehr abrundet: es
+   ist die Bremse dafür, dass ein künftiges Kind (das `<picture>` ist ein
+   Inline-Element) aus dem reservierten Kasten läuft. */
 .service-hero--split .service-hero__media {
   margin: 0;
   width: 100%;
   max-width: 24rem;
   margin-inline: auto;
-  border-radius: var(--radius-lg);
   overflow: hidden;
   background-color: var(--color-bg);
 }
