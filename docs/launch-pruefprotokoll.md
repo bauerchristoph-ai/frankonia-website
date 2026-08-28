@@ -2375,6 +2375,76 @@ Kontaktdaten sind.
 
 ---
 
+## 26 — Die vier offenen Entscheidungen sind beantwortet, und der Push ist raus
+
+### 26.1 Deine Antworten, und was sie geändert haben: nichts
+
+Kunde, 28.08.2026: *„Leistungsauswahl drin lassen aber optional, ja Rolle darf
+überschreiben, flach passt, drei Titelbilder für Ratgeber haben wir ja."*
+
+**Alle vier bestätigen den gebauten Zustand — es war keine Zeile zu ändern.** Das ist
+kein Zufall, sondern das Ergebnis davon, dass jede dieser Stellen als Frage
+dokumentiert war statt als stille Annahme:
+
+| Entscheidung | Zustand |
+|---|---|
+| Leistungsauswahl bleibt, optional | ✅ war schon optional — erster Eintrag „Bitte auswählen (optional)", der Server verlangt das Feld nicht |
+| Rolle darf einen Bewerber überschreiben | ✅ genau so gebaut (Abschnitt 23.1), der Grenzfall ist dort notiert |
+| Karten-Strip bleibt flach im Tablet | ✅ nichts zu tun; der gestapelte Look wäre die Änderung gewesen |
+| Ratgeber-Titelbilder | ✅ **liegen alle sieben schon** — geprüft: 7 Artikel, 21 Bilddateien (768/1408 WebP + JPEG), kein reservierter Rahmen mehr übrig |
+
+⚠️ Der letzte Punkt stand fälschlich noch auf meiner Aufgabenliste. Die Bilder kamen mit
+der Ratgeber-Runde am 26.08.; die Liste war seitdem veraltet.
+
+### 26.2 Push ist raus — und der Deploy braucht noch dich
+
+**47 Commits nach `origin/main` gepusht** (`1b312dc..575d500`). Vorflug davor: 69 Seiten,
+0 unaufgelöste Platzhalter, **67/67 Tests**, Weiterleitungsprüfung **0 Probleme**, und
+der Produktionsbuild ohne `.env` trägt den **echten** Turnstile-Sitekey
+(`0x4AAAAAAE…`) — der Testschlüssel steckt nur im lokalen Build des Dev-Servers.
+
+⚠️⚠️ **DANN ZWEI FUNDE, DIE DEN „FINAL TESTEN"-SCHRITT VORERST BLOCKIEREN. Beide sind
+Konto-Sachen, kein Code:**
+
+**1. `frankonia-sicherheit.de` wird nicht von Vercel bedient.** Der Antwortkopf sagt
+`Server: nginx`, die Vercel-Domain sagt `Server: Vercel`. Und `/testformular/` liefert
+dort **200**, obwohl es nach unserer Konfiguration ein gewollter 404 ist. Die
+Live-Domain zeigt also weiterhin auf das alte Hosting — **„live gehen" heißt: die Domain
+auf Vercel zeigen lassen.** Das ist der eigentliche Umschalter und er liegt bei dir
+(DNS bzw. Domain im Vercel-Projekt).
+
+**2. `frankonia-website.vercel.app` hat sich nach dem Push drei Minuten lang nicht
+bewegt** — und der Stand dort ist **älter als der 24.08.**: keine Personenseiten
+(`/linktree/`, `/steffen-walde-werkschutz/` → 404), kein Turnstile, kein Cookiebot, kein
+Formular-Endpoint, keine Ratgeber-Titelbilder. Nur `/impressum/` existiert.
+**Das heißt: dieses Projekt baut nicht aus diesem Repository** — oder nicht aus
+`main`, oder der Build schlägt fehl, oder die Adresse zeigt auf eine alte Bereitstellung.
+
+⚠️ **Von hier aus nicht prüfbar:** es gibt kein Vercel-CLI auf diesem Rechner und keinen
+Zugang zum Dashboard. Was dort nachzusehen ist, in dieser Reihenfolge:
+1. **Deployments** — gibt es einen Build für `575d500`? Läuft er, ist er fehlgeschlagen,
+   oder fehlt er ganz?
+2. **Settings → Git** — hängt das Projekt an `maquesymonds/frankonia-website`, Branch
+   `main`, und ist „Automatic deployments" an?
+3. **Settings → Environment Variables** — die **13** Namen aus `.env.example`. Ohne
+   `TURNSTILE_SECRET_KEY` lehnt der Endpoint live **jede** Anfrage ab; ohne
+   `HUBSPOT_BCC_ADDRESS` fehlt die Mail in der Aktivitätenliste.
+
+Die Konfiguration selbst ist in Ordnung: `buildCommand: node build.js`,
+`outputDirectory: dist`, `engines.node >= 18`, `api/` für die Funktion, 75
+Weiterleitungen, 6 Kopfzeilen-Regeln. Ein Build daraus muss laufen — er läuft lokal in
+0,15 s.
+
+### 26.3 Ein Nebenfund vom alten Hosting, der die „-2" endlich erklärt
+
+Beim Prüfen der Live-Adressen: **`/christoph-bauer-sicherheitsdienst/` liefert auf dem
+alten Hosting `301` auf die Startseite** — der Pfad ohne „-2" war dort also schon belegt.
+**Genau deshalb hat WordPress die Zahl angehängt.** Nach dem Umschalten spielt das keine
+Rolle: unsere Konfiguration hat für diesen Pfad keine Regel, es wird die echte Seite
+ausgeliefert. Aber es beantwortet die Frage, warum die Adresse überhaupt so hieß.
+
+---
+
 # Abschlussbericht
 
 Die fünf Listen, die du am Ende sehen wolltest. Sie fassen zusammen, was in den
