@@ -370,7 +370,7 @@
   padding-bottom: var(--space-8);
   background-color: var(--color-white);
   border: 1px solid rgb(1 1 1 / 0.07);
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   box-shadow: 0 18px 48px rgb(1 1 1 / 0.07), 0 2px 6px rgb(1 1 1 / 0.04);
   text-decoration: none;
   color: inherit;

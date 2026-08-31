@@ -228,6 +228,13 @@
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 16px;
+  /* ⚠️ 1.5rem = 24px WAR NEUNMAL EIN LITERAL, in sechs Dateien — Aufgabe 18,
+     31.08.2026. Die Projektregel dazu steht seit dem 05.08. in CLAUDE.md: "If a
+     second card ever wants it, promote it to a token rather than repeating the
+     literal." Beim neunten Verbraucher ist das lange fällig.
+     Der Wert liegt bewusst neben der Viererskala oben: die Briefings für die
+     Karten nannten 20-24px und kein Token traf das. Jetzt trifft eines. */
+  --radius-xl: 1.5rem;
   --radius-pill: 999px;
 
   /* ---- Motion ---- */

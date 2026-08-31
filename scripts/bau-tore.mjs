@@ -28,6 +28,11 @@ import { fileURLToPath } from "node:url";
 const WURZEL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DIST = path.join(WURZEL, "dist");
 
+/* ⚠️ Backslash als Zeichencode, nicht als Literal: Heredocs auf dieser Maschine
+   fressen eine Escape-Ebene, und dieses Skript wird ueber Patches geschrieben.
+   Regexe werden deshalb mit new RegExp(...) und B zusammengesetzt. */
+const B = String.fromCharCode(92);
+
 /* ------------------------------------------------------------- Werkzeug */
 
 function seiten() {
@@ -509,7 +514,116 @@ function torSchwereBilder() {
   return befunde;
 }
 
+/* ══════════════════════════════════════════════════ Aufgabe 18 · Radien
+   Gemessen am 31.08.2026: KEIN Bild dieses Projekts hat einen eingebackenen
+   Radius (alle Eckpixel deckend, geprueft durch Auslesen der Bilddaten), und
+   KEIN img-Selektor setzt border-radius — ausser dem runden Testimonial-Avatar,
+   wo 50 % die Bedeutung ist und kein Token es besser sagt. Die Prämisse der
+   Aufgabe hielt also nicht; der Radius sitzt bereits am Behaelter.
+
+   Was wirklich offen war: 1.5rem stand NEUNMAL als Literal in sechs Dateien, und
+   999px zweimal, obwohl --radius-pill existierte. Beides ist jetzt ein Token.
+
+   Dieses Tor haelt den Zustand:
+     a) border-radius gehoert nicht auf einen img-Selektor, sondern an den
+        Behaelter — sonst schneidet das Bild sich selbst und der Rahmen bleibt
+        eckig.
+     b) kein Literal, fuer das es ein Token gibt.
+   ⚠️ 50 % ist erlaubt: ein Kreis ist keine Skalenstufe. */
+const RADIUS_TOKENS = { "4px": "--radius-sm", "8px": "--radius-md", "16px": "--radius-lg",
+  "1rem": "--radius-lg", "1.5rem": "--radius-xl", "24px": "--radius-xl",
+  "999px": "--radius-pill", "9999px": "--radius-pill" };
+
+function torRadien() {
+  const befunde = [];
+  const cssDir = path.join(WURZEL, "css");
+  for (const f of fs.readdirSync(cssDir)) {
+    if (!f.endsWith(".css") || f === "tokens.css") continue;
+    const roh = fs.readFileSync(path.join(cssDir, f), "utf8");
+    /* Kommentare ausblenden, Zeilennummern erhalten. */
+    const ohne = roh.replace(new RegExp(B + "/" + B + "*[" + B + "s" + B + "S]*?" + B + "*" + B + "/", "g"),
+      (m) => m.replace(new RegExp("[^" + B + "n]", "g"), " "));
+    const zeilen = ohne.split(new RegExp(B + "r?" + B + "n"));
+
+    let selektor = "";
+    zeilen.forEach((l, i) => {
+      if (l.indexOf("{") >= 0) selektor = l.slice(0, l.indexOf("{")).trim();
+      if (l.indexOf("border-radius") < 0) return;
+      const wert = (l.split(":")[1] || "").replace(";", "").trim();
+
+      /* a) Radius auf einem img-Selektor. */
+      const s2 = selektor.toLowerCase();
+      const istBild = /(^|[s,>])img([s.:,{]|$)/.test(s2) || s2.indexOf(" img") >= 0;
+      if (istBild && wert !== "50%" && wert !== "0" && wert !== "0px") {
+        befunde.push(f + ":" + (i + 1) + " setzt border-radius auf einen img-Selektor (" +
+          selektor.slice(0, 44) + ") — der Radius gehoert an den Behaelter, sonst " +
+          "bleibt sein Rahmen eckig");
+      }
+
+      /* b) Literal, fuer das ein Token existiert. */
+      if (wert.indexOf("var(--radius") >= 0) return;
+      const tok = RADIUS_TOKENS[wert];
+      if (tok) {
+        befunde.push(f + ":" + (i + 1) + " schreibt " + wert + ", dafuer gibt es " +
+          tok + " — Literal ersetzen");
+      }
+    });
+  }
+  return befunde;
+}
+
+/* ═════════════════════════════════════════════════ Aufgabe 19 · CTA-Varianten
+   Gemessen am 31.08.2026 auf der Startseite: VIER Signaturen, nicht sieben. Und
+   sie loesen sich in zwei Rollen auf —
+     btn--primary            5x   der eine blaue Knopf
+     btn--secondary          2x   Umriss, gleiche Groesse
+     btn--primary btn--lg    2x   derselbe Knopf, groesseres Polster
+     coverage__pill--all     1x   der Alle-Schalter der Karte
+   --lg ist ein GROESSEN-Modifikator derselben Rolle, keine eigene Variante:
+   Farbe, Radius, Schrift und Rolle sind identisch, nur das Polster ist groesser.
+
+   ⚠️ .coverage__pill--all IST KEIN CTA und wird bewusst nicht angeglichen. Es ist
+   ein Filter-Schalter auf der Karte; ihn wie den Angebots-Knopf aussehen zu
+   lassen wuerde eine Handlungsaufforderung behaupten, die er nicht ist. Seine
+   Farbe steht ausserdem ausdruecklich unter Christophs Entscheidung vom
+   31.08.2026 und bleibt.
+
+   ⚠️ FARBE UND TYPOGRAFIE DES PRIMAERKNOPFS DUERFEN SICH NICHT AENDERN — auch
+   das ist eine Entscheidung, nicht ein Versaeumnis. Deshalb konsolidiert dieses
+   Tor nichts, es DECKELT: die Anzahl der Knopf-Klassen darf nicht wachsen. Genau
+   das war die Sorge der Aufgabe. */
+const BTN_KLASSEN_MAX = 6;
+
+function torCtaVarianten() {
+  const befunde = [];
+  const cssDir = path.join(WURZEL, "css");
+  const klassen = new Set();
+  for (const f of fs.readdirSync(cssDir)) {
+    if (!f.endsWith(".css")) continue;
+    const roh = fs.readFileSync(path.join(cssDir, f), "utf8");
+    const ohne = roh.replace(new RegExp(B + "/" + B + "*[" + B + "s" + B + "S]*?" + B + "*" + B + "/", "g"), " ");
+    /* Jede .btn--<name> Klasse, die irgendwo definiert wird. */
+    let i = 0;
+    for (;;) {
+      const a = ohne.indexOf(".btn--", i);
+      if (a < 0) break;
+      i = a + 6;
+      let e = i;
+      while (e < ohne.length && /[a-z0-9-]/i.test(ohne[e])) e++;
+      klassen.add("btn--" + ohne.slice(i, e));
+    }
+  }
+  if (klassen.size > BTN_KLASSEN_MAX) {
+    befunde.push(klassen.size + " .btn--Varianten, dokumentiert sind " + BTN_KLASSEN_MAX +
+      " — eine neue Variante in tokens.css begruenden oder eine bestehende nutzen: " +
+      [...klassen].sort().join(", "));
+  }
+  return befunde;
+}
+
 const TORE = [
+  ["Radien am Behaelter und aus Token (Aufgabe 18)", torRadien],
+  ["CTA-Varianten unter der Obergrenze (Aufgabe 19)", torCtaVarianten],
   ["Sticky-Header deckt nach dem Hero (Aufgabe 20)", torHeaderDeckend],
   ["Schwere Rasterbilder ohne leichtere Fassung (Aufgabe 27g)", torSchwereBilder],
   ["Breakpoints und reduced-motion unter der Obergrenze (21+22)", torObergrenzen],

@@ -475,7 +475,7 @@
   /* 24px. The site has exactly one radius outside the token scale and this is
      it — the price card and the Anwendungsfälle panels already use this literal
      (CLAUDE.md 2026-08-05/08). Do not introduce a second off-scale value. */
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   color: inherit;
   text-decoration: none;
   transition: translate var(--duration-base) var(--easing-standard),

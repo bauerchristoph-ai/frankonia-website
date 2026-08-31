@@ -1924,7 +1924,7 @@ main h2 {
     background-size: 0 100%;
     padding-inline: 0.22em;
     margin-inline: -0.22em;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
     transition:
@@ -2402,7 +2402,7 @@ main h2 {
   /* 1.5rem = 24px. Deliberately the SAME literal the price card already uses rather than a
      second off-scale radius: the brief asks for 24–32px and no token sits in that range,
      so the site keeps exactly one value outside the scale instead of two. */
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   border: 1px solid rgb(1 1 1 / 0.07);
   background-color: var(--color-white);
   /* ⚠️ The transform is COMPOSED from custom properties, never set directly by the script.
@@ -3046,7 +3046,7 @@ main h2 {
      for 22–28px on this one card, which is what makes it read as a tall soft-cornered
      object rather than a box. The only radius on the site outside the token scale —
      if a second card ever wants it, promote it to a token. */
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   background-color: var(--color-logo-black);
   background-image: linear-gradient(
     155deg,
@@ -3754,7 +3754,7 @@ main h2 {
      surface's inner edge (or spills past its rounded corner). */
   --related-pad: var(--space-5);
   padding: var(--related-pad);
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   background-color: var(--color-bg-subtle);
 }
 
@@ -5870,7 +5870,7 @@ main h2 {
   padding: var(--space-6);
   /* 1.5rem = 24px, the ONE off-scale radius this project allows itself, already
      shared by the cases card, the price card and the city card. Not a fourth value. */
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   border: 1px solid rgb(1 1 1 / 0.07);
   background-color: var(--color-white);
   /* Two layers, NOT --shadow-lg: on a white section the border and this shadow are

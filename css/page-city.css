@@ -523,7 +523,7 @@
      price card already use rather than a third off-scale radius. No token sits in
      the 24–32px range the client's card brief asks for, so the site keeps exactly
      one value outside the scale. */
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   border: 1px solid rgb(1 1 1 / 0.07);
   background-color: var(--color-white);
   /* Two layers, NOT --shadow-lg: that token is a single 0.14 blob calibrated for
@@ -709,7 +709,7 @@
   height: 100%;
   min-width: 0;
   padding: var(--space-6);
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   text-decoration: none;
   color: var(--color-text);
   /* ⚠️ A FILL DIFFERENCE IS DOING THE WORK HERE, NOT A SHADOW. On a dark surface a
