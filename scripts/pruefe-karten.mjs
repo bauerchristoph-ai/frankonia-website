@@ -28,6 +28,7 @@
  * herunterfahren lassen vermeidet das.
  */
 import crypto from "node:crypto";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
@@ -36,8 +37,46 @@ const require = createRequire(import.meta.url);
 const WURZEL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 require("./env-local.js").envLokalLaden(WURZEL);
 
-/* Ein Ausschnitt über Franken, also genau die Gegend, die beide Karten zeigen. */
-const KACHEL = "https://a.basemaps.cartocdn.com/dark_all/6/34/21.png";
+/* ⚠️⚠️ DER STIL WIRD AUS js/coverage-map.js GELESEN, NICHT HARTKODIERT — und das
+   ist die Korrektur eines Fehlalarms, der diese Prüfung wertlos gemacht hat.
+   Hier stand "dark_all" fest, während die Website seit Aufgabe 2 "dark_nolabels"
+   lädt. Gemessen am 31.08.2026:
+
+     dark_all/6/34/21      mit Schlüssel 11303 B  ohne 11303 B   IDENTISCH
+     dark_nolabels/8/135/86 mit Schlüssel 11026 B  ohne 10828 B   verschieden
+
+   Also: der Schlüssel wirkt, aber nicht bei dem Stil und der Zoomstufe, die hier
+   geprüft wurden. Das Skript meldete deshalb "der Schlüssel wirkt nicht", obwohl
+   die Live-Karte einwandfrei war — nachgewiesen mit 28 von 28 geladenen Kacheln
+   und einer angesehenen, wasserzeichenfreien Kachel.
+
+   Ein Prüfskript, das grundlos Alarm schlägt, wird nach zwei Wochen abgeschaltet.
+   Deshalb liest es den Stil jetzt aus derselben Quelle, aus der der Browser ihn
+   nimmt — driftet der Stil, driftet die Prüfung mit.
+
+   ⚠️ ZOOM 8, nicht 6: bei Zoom 6 liefert CARTO dieselbe Kachel mit und ohne
+   Schlüssel. Ob das eine Freigrenze oder ein Cache ist, ist von aussen nicht zu
+   sehen — prüfbar ist nur, was die Website tatsächlich anfordert, und das ist
+   Zoom 8 über Franken. */
+function stilAusQuelle() {
+  const q = fs.readFileSync(path.join(WURZEL, "js", "coverage-map.js"), "utf8");
+  /* Ohne Regex, weil escape-behaftete Muster in diesem Projekt schon mehrfach
+     kaputt in Dateien gelandet sind. indexOf kann nicht falsch entkommen. */
+  const marke = "basemaps.cartocdn.com/";
+  const a = q.indexOf(marke);
+  const b = a < 0 ? -1 : q.indexOf("/", a + marke.length);
+  if (a < 0 || b < 0) {
+    throw new Error(
+      "Kachel-Stil in js/coverage-map.js nicht gefunden — die URL dort hat sich " +
+        "geaendert. Diese Pruefung muss dem folgen, sonst prueft sie etwas anderes " +
+        "als die Website laedt."
+    );
+  }
+  return q.slice(a + marke.length, b);
+}
+
+const KACHEL =
+  "https://a.basemaps.cartocdn.com/" + stilAusQuelle() + "/8/135/86.png";
 
 async function hol(url) {
   const r = await fetch(url, { redirect: "follow" });
@@ -53,6 +92,26 @@ async function main() {
      gehört an EINE Stelle, und das ist der Bau. */
   if (!key) {
     console.log("pruefe-karten: CARTO_BASEMAP_KEY nicht gesetzt — build.js meldet das, hier nichts zu tun.");
+    return 0;
+  }
+
+  /* ⚠️ EIN PLATZHALTER IST KEIN DEFEKTER SCHLUESSEL, und die Unterscheidung ist
+     nötig: in .env.local steht bei einer Entwicklungsumgebung ohne CARTO-Konto
+     ein Platzhaltertext, und der lässt jeden lokalen "npm run build"
+     fehlschlagen. Genau das war am 31.08.2026 der Fall.
+
+     ⚠️ Und es ist bewusst KEINE Abschaltung der Prüfung: erkannt wird nur ein
+     Wert, der sich selbst als Platzhalter bezeichnet. Ein echter, aber
+     abgelaufener Schlüssel fällt weiter durch. Auf Vercel steht der echte Wert,
+     dort greift die Prüfung unverändert. */
+  const platzhalter = ["PLATZHALTER", "BITTE_ERSETZEN", "BITTE-ERSETZEN", "DEIN_", "YOUR_", "XXX"];
+  const alsGross = key.toUpperCase();
+  if (platzhalter.some((p) => alsGross.includes(p))) {
+    console.log(
+      "pruefe-karten: CARTO_BASEMAP_KEY ist ein Platzhalter (" + key.length + " Zeichen)"
+    );
+    console.log("  Die Karte zeigt hier ein Wasserzeichen. Das ist erwartet und kein Fehler:");
+    console.log("  auf Vercel steht der echte Wert, und dort prueft dieses Skript im Bau mit.");
     return 0;
   }
 

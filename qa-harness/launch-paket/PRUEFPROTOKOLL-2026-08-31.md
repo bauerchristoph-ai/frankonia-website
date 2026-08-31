@@ -380,6 +380,61 @@ Prüfmechanismus, der still nichts mehr prüft.
 
 ---
 
+## ⚠️ Zwei Funde aus der Abschlussprüfung — bitte zuerst lesen
+
+**A · Die URL, gegen die geprüft wurde, gehört nicht zu diesem Projekt.**
+
+`frankonia-website.vercel.app` — die URL aus dem QA-Auftrag und aus meinen
+eigenen Messungen — ist **keine Domain dieses Vercel-Projekts**. Abgefragt über die
+Vercel-API, die Domains sind:
+
+* `frankonia-sicherheit-2.vercel.app`  ← **hier läuft der aktuelle Stand**
+* `frankonia-website-bauer-christoph.vercel.app`
+* `frankonia-website-git-main-bauer-christoph.vercel.app`
+
+Und `ssoProtection` steht auf `all_except_custom_domains`, also liegen die
+letzten beiden hinter dem Vercel-Login (Titel „Login – Vercel").
+
+**Gemessen:**
+
+| URL | Marker vorhanden |
+|---|---|
+| `frankonia-sicherheit-2.vercel.app` | **3 von 3** |
+| `frankonia-website.vercel.app` | 1 von 3 |
+| `frankonia-sicherheit.de` | 0 von 3 (noch das alte Hosting) |
+
+**Alle 29 Aufgaben sind live — auf `frankonia-sicherheit-2.vercel.app`.** Dort:
+28 von 28 Kartenkacheln geladen, Kachel angesehen und wasserzeichenfrei.
+
+⚠️ **Das ist der Grund, Screenshots künftig gegen die richtige URL zu machen.** Der
+QA-Auftrag hat gegen `frankonia-website.vercel.app` gemessen, und das ist ein
+älterer, fremder Stand. Ein Teil der 29 Befunde kann daraus entstanden sein.
+Beim Umstellen der Domain ist ohnehin `frankonia-sicherheit.de` das Ziel.
+
+**B · Meine eigene Kartenprüfung hat blind Alarm geschlagen.**
+
+`scripts/pruefe-karten.mjs` prüfte den Stil `dark_all` fest verdrahtet,
+während die Website seit Aufgabe 2 `dark_nolabels` lädt — und bei Zoom 6
+liefert CARTO dieselbe Kachel mit und ohne Schlüssel. Gemessen:
+
+| Kachel | mit Schlüssel | ohne | |
+|---|---|---|---|
+| `dark_all/6/34/21` | 11303 B | 11303 B | identisch |
+| `dark_nolabels/8/135/86` | 11026 B | 10828 B | **verschieden** |
+
+Das Skript meldete also „der Schlüssel wirkt nicht", **während die Live-Karte
+einwandfrei war**. Ein Prüfskript, das grundlos Alarm schlägt, wird nach zwei
+Wochen abgeschaltet — dieselbe Lehre wie bei den 87 Fehlalarmen des
+Fremd-Host-Tors (Aufgabe 3) und den 36 roten Zeilen der Weiterleitungsprüfung.
+
+Behoben: der Stil wird jetzt **aus `js/coverage-map.js` gelesen**, driftet also
+mit. Und ein Platzhalter in `.env.local` wird als solcher erkannt, damit ein
+lokaler Bau ohne CARTO-Konto nicht abbricht — **eng gefasst:** erkannt wird nur ein
+Wert, der sich selbst als Platzhalter bezeichnet. Gegenprobe mit einem echt
+aussehenden, aber falschen Schlüssel: **fällt weiter durch.**
+
+---
+
 ## Offene Punkte
 
 Nichts davon liegt im Code dieses Repositories.
