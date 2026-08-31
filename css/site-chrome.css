@@ -87,7 +87,47 @@
    asset. */
 /* The frosted blur + wash now live on .site-header::before (see above);
    toggling --dark just fades that layer in. The child colour overrides below
-   (logo, nav links, hamburger) are unchanged. */
+   (logo, nav links, hamburger) are unchanged. *//* ═══ Deckender Zustand nach dem Hero ═══════════════════════════════════════
+   Aufgabe 20, 31.08.2026. Ausgelöst von js/main.js, sobald der Header den Hero
+   verlassen hat.
+
+   ⚠️ ÜBER DEM HERO BLEIBT ER DURCHSICHTIG. Das ist die Entscheidung des Kunden
+   vom 17.07.2026 ("das Foto muss bis nach oben gehen") und wird hier nicht
+   angetastet — der Zustand greift erst danach.
+
+   ⚠️ ZWEI FLÄCHEN, ZWEI WERTE. Der Header steht je nach Scrollposition über
+   schwarzem oder über weissem Grund, und eine Deckkraft, die auf einer Seite
+   trägt, ist auf der anderen zu viel oder zu wenig. .site-header--dark markiert
+   (etwas verwirrend benannt) die HELLEN Sektionen — dort braucht es eine helle
+   Fläche.
+
+   ⚠️ DER WEICHZEICHNER IST DER RÜCKFALL, nicht der Träger. Wer backdrop-filter
+   nicht kann, bekommt trotzdem eine Fläche mit 0.72 bzw. 0.82 Deckkraft, und die
+   allein macht Text darunter unlesbar. Umgekehrt wäre es falsch: ein
+   Weichzeichner ohne Fläche lässt Text erkennbar (genau der gemessene Zustand
+   vorher, 0.08).
+
+   ⚠️ 150ms, nicht --duration-slower: der Wechsel soll dem Scrollen folgen, nicht
+   nachhängen. Beim Einblenden des DUNKEL-Zustands war langsam richtig, weil dort
+   eine Farbe kippt; hier verdeckt eine Fläche Text, und das darf nicht schleppen. */
+.site-header--solid::before {
+  opacity: 1;
+  /* ⚠️ 0.9 UND NICHT 0.72: das Bau-Tor wertet jede Deckkraft unter 0.9 als
+     Fehler, und zwar zu Recht — 28 % Durchlaesslichkeit laesst Grossbuchstaben
+     erkennbar. Der Weichzeichner bleibt und traegt weiter die vom Kunden am
+     24.07.2026 gewuenschte "blurry" Anmutung; er wirkt auf die restlichen 10 %. */
+  background-color: rgb(1 1 1 / 0.9);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: opacity 150ms var(--easing-standard), background-color 150ms var(--easing-standard);
+}
+
+/* Über einer hellen Sektion die helle Fläche. */
+.site-header--solid.site-header--dark::before {
+  background-color: rgb(255 255 255 / 0.92);
+}
+
+
 .site-header--dark::before {
   opacity: 1;
 }

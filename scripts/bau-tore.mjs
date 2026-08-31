@@ -356,7 +356,90 @@ function torSitemap() {
   return befunde;
 }
 
+
+/* ═══════════════════════════════════ Aufgaben 21 + 22 · Obergrenzen
+   Zwei Zählungen, die nicht wachsen dürfen. Beide sind bewusst Obergrenzen und
+   keine Sollwerte: der Bestand ist gemessen und dokumentiert (tokens.css für die
+   Breakpoints, motion.css für die reduced-motion-Blöcke), und was zählt ist,
+   dass niemand still einen weiteren hinzufügt.
+
+   ⚠️ WARUM OBERGRENZE UND NICHT KONSOLIDIERUNG: 285 Media Queries in 30 Dateien
+   auf fünf Werte zu verschieben heisst, das responsive Verhalten aller 70 Seiten
+   neu zu prüfen, kurz vor dem Launch — und die meisten Werte sind GEMESSEN
+   entstanden, nicht gewählt. Die Begründung je Wert steht in tokens.css.
+
+   ⚠️ KOMMENTARE WERDEN AUSGEBLENDET, sonst zählt die Dokumentation sich selbst
+   mit. Genau dieser Fehler hat im Auftrag aus 10 reduced-motion-Blöcken 44
+   gemacht und aus 52 Farbwerten 167. */
+const BREAKPOINT_MAX = 16;
+const REDUCED_MOTION_MAX = 10;
+
+function torObergrenzen() {
+  const befunde = [];
+  const cssDir = path.join(WURZEL, "css");
+  const BP = new RegExp("\\((?:min|max)-width:\\s*([0-9.]+)px\\)", "g");
+  const RM = new RegExp("@media[^{]*prefers-reduced-motion[^{]*", "g");
+  const bp = new Set();
+  let rm = 0;
+  for (const f of fs.readdirSync(cssDir)) {
+    if (!f.endsWith(".css")) continue;
+    const roh = fs.readFileSync(path.join(cssDir, f), "utf8");
+    const s2 = roh.replace(/\/\*[\s\S]*?\*\//g, " ");
+    for (const m of s2.matchAll(BP)) bp.add(Math.ceil(parseFloat(m[1])));
+    for (const m of s2.matchAll(RM)) if (m[0].indexOf("no-preference") < 0) rm++;
+  }
+  if (bp.size > BREAKPOINT_MAX) {
+    befunde.push(
+      bp.size + " verschiedene Breakpoints, dokumentiert sind " + BREAKPOINT_MAX +
+        " — neuen Wert in tokens.css begründen: " + [...bp].sort((a, b) => a - b).join(", ")
+    );
+  }
+  if (rm > REDUCED_MOTION_MAX) {
+    befunde.push(
+      rm + " reduced-motion-Blöcke, dokumentiert sind " + REDUCED_MOTION_MAX +
+        " — der globale Block in motion.css sollte reichen; wenn nicht, dort begründen"
+    );
+  }
+  return befunde;
+}
+
+/* ═════════════════════════════════════════ Aufgabe 20 · Sticky-Header
+   Reine Statik: die Regel fuer .site-header--solid muss existieren, ihre Flaeche
+   muss mindestens 0.9 Deckkraft haben, und js/main.js muss die Klasse setzen.
+   ⚠️ WARUM NICHT GEOMETRISCH GEPRUEFT wie im Auftrag vorgeschlagen: ein
+   Textknoten schneidet das Header-Rechteck beim Scrollen IMMER — das ist der
+   Sinn eines Sticky-Headers. Die Frage ist nicht OB, sondern ob die Flaeche
+   darueber deckt. Das ist an der Regel pruefbar und braucht keinen Browser;
+   gemessen wurde es einmal mit einem (drei Seiten, fuenf Scrollpositionen).
+   ⚠️ Und es prueft das AUSGELIEFERTE CSS-Bundle, nicht die Quelldatei: genau
+   dort war die Leaflet-Regel einmal nur auf einer Seite aktiv.  */
+function torHeaderDeckend() {
+  const befunde = [];
+  const bundle = path.join(DIST, "css", "app.css");
+  if (!fs.existsSync(bundle)) return ["css/app.css fehlt in dist/"];
+  const css = fs.readFileSync(bundle, "utf8");
+  const i = css.indexOf(".site-header--solid::before");
+  if (i < 0) return ["die Regel .site-header--solid::before fehlt im ausgelieferten CSS"];
+  const block = css.slice(i, css.indexOf("}", i));
+  /* Ohne Regex-Literal: Backslashes zerbrechen auf diesem Rechner beim Erzeugen. */
+  const zu = block.indexOf("/", block.indexOf("rgb("));
+  const klammer = block.indexOf(")", zu);
+  const alpha = zu > 0 && klammer > zu ? [null, block.slice(zu + 1, klammer).trim()] : null;
+  if (!alpha) befunde.push(".site-header--solid::before hat keine Flaeche mit Deckkraft");
+  else if (parseFloat(alpha[1]) < 0.9) {
+    befunde.push(".site-header--solid::before deckt nur " + alpha[1] + " — unter 0.9 bleibt Text erkennbar");
+  }
+  const js = path.join(DIST, "js", "main.js");
+  if (fs.existsSync(js)) {
+    const src = fs.readFileSync(js, "utf8");
+    if (src.indexOf("site-header--solid") < 0) befunde.push("js/main.js setzt site-header--solid nicht");
+  }
+  return befunde;
+}
+
 const TORE = [
+  ["Sticky-Header deckt nach dem Hero (Aufgabe 20)", torHeaderDeckend],
+  ["Breakpoints und reduced-motion unter der Obergrenze (21+22)", torObergrenzen],
   ["Sitemap deckt sich mit dem Seitenbestand (Aufgabe 26)", torSitemap],
   ["Keine rohen Farbwerte ausserhalb tokens.css (Aufgabe 15)", torRoheFarben],
   ["Kommentare unter 200 Zeichen (Aufgabe 5)", torKommentare],

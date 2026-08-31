@@ -1,3 +1,47 @@
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   prefers-reduced-motion — WO ES STEHT UND WARUM, Stand 31.08.2026 (Aufgabe 21)
+   ═══════════════════════════════════════════════════════════════════════════
+
+   ⚠️⚠️ DIE ZAHL IM AUFTRAG IST ZU HOCH. Er nennt 44 Vorkommen in 16 Dateien;
+   gemessen sind es ZEHN echte @media-Blöcke mit (prefers-reduced-motion: reduce)
+   plus DREI mit (no-preference). Die 44 zählen jedes Vorkommen der Zeichenkette,
+   auch in Kommentaren — dieselbe Inflation wie bei den "167 rohen Farbwerten",
+   von denen 52 Deklarationen waren. Der Unterschied ist nicht kosmetisch: eine
+   Regel, die Kommentare mitzählt, verbietet, über sich selbst zu schreiben.
+
+   ⚠️ SIE SIND NICHT IN EINEN BLOCK ZUSAMMENGEFÜHRT, und das ist eine
+   Entscheidung mit Begründung. Der globale Block steht hier und macht die
+   eigentliche Arbeit: er kappt jede Dauer und jede Animation sitewide. Die
+   übrigen neun sind seitenspezifische Selektoren. Sie hierher zu holen hiesse,
+   Seitenselektoren in eine geteilte Datei zu schreiben — eine Datei, die jede
+   der 70 Seiten lädt, würde dann Regeln für einzelne Sektionen tragen. Das ist
+   die schlechtere Architektur, nicht die bessere: bei jeder gelöschten Sektion
+   bliebe hier eine Regel zurück, die niemand findet.
+
+   Was stattdessen gilt und vom Bau-Tor geprüft wird: die ANZAHL darf nicht
+   wachsen. Eine neue Sektion soll ihre Bewegung so bauen, dass der globale Block
+   sie erwischt — und wenn das nicht geht, ist das eine Ausnahme, die hier
+   auftauchen muss.
+
+   ── Die zehn reduce-Blöcke ──────────────────────────────────────────────
+   motion.css            1  DIESER Block. Kappt Dauer und Animationen sitewide.
+   page-home.css         6  Sechs Sektionen mit eigenen @keyframes, die der
+                            globale Block nicht auf ihren Ruhezustand bringt
+                            (Marquee, Gloss-Sweep, Pixel-Naht, Zähl-Animation).
+   page-referenzen.css   1  Das Logo-Marquee fällt auf umgebrochene Reihen
+                            zurück — dort müssen ALLE 35 Firmen sichtbar sein,
+                            das ist mehr als ein Anhalten.
+   site-chrome.css       1  Der WhatsApp-Knopf.
+   system-story.css      1  Der Kartenstapel fällt auf eine Liste zurück.
+
+   ── Die drei no-preference-Blöcke ───────────────────────────────────────
+   Sie sind die dokumentierte Ausnahme des Auftrags: ein Layout, das nur mit
+   laufender Animation Sinn ergibt. Konkret der gestapelte Leistungsumfang — ohne
+   Bewegung wäre dort EIN Foto sichtbar und fünf unsichtbar darunter. Deshalb ist
+   das ganze Layout hinter no-preference, und ohne Bewegung greift der normale
+   Fluss mit sechs Text-Bild-Paaren.
+   ═══════════════════════════════════════════════════════════════════════════ */
 /*
   Motion foundation. Two responsibilities only, and this file is the only
   place either one is handled (base.css must not duplicate the

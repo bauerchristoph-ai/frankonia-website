@@ -389,6 +389,73 @@
      Änderung ohne Auftrag. */
   --surface-outfits: #fafafa;
 
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     BREAKPOINTS — dokumentiert 31.08.2026 (Aufgabe 22)
+     ═══════════════════════════════════════════════════════════════════════
+
+     ⚠️⚠️ SIE STEHEN HIER ALS DOKUMENTATION, NICHT ALS BENUTZBARE TOKEN. Eine
+     Custom Property kann in einer Media Query nicht ausgewertet werden — das ist
+     eine Einschränkung von CSS selbst, nicht eine Nachlässigkeit. Die Werte
+     stehen in den Stylesheets als Zahl und müssen es. Diese Liste ist der Ort,
+     an dem man nachliest, WELCHE Werte es gibt und WARUM.
+
+     Gemessen am 31.08.2026: 16 verschiedene Werte in 283 Media Queries. Vorher
+     waren null davon dokumentiert; die Projekthistorie nannte fünf, und das ist
+     die Falle, die der QA-Lauf zu Recht anspricht — wer fünf liest und sechzehn
+     vorfindet, kann responsives Verhalten nicht mehr ableiten, ohne alle
+     Stylesheets zu lesen.
+
+     ⚠️ SIE SIND NICHT AUF FÜNF KONSOLIDIERT, und das ist eine Entscheidung:
+     285 Media Queries in 30 Dateien zu verschieben heisst, das responsive
+     Verhalten jeder der 70 Seiten neu zu prüfen, kurz vor dem Launch. Und die
+     meisten Werte sind GEMESSEN entstanden, nicht gewählt — sie zu
+     vereinheitlichen würde diese Messungen verwerfen. Die Begründung steht je
+     Wert unten und, ausführlich, an der jeweiligen Regel.
+
+     ── Telefon ────────────────────────────────────────────────────────────
+     360px    3x   Untergrenze, ab der ein H1 mit "Baustellenbewachung"
+                   (19 Zeichen) nicht mehr geklammert werden muss. Gemessen:
+                   das Wort braucht 344px.
+     390px    1x   iPhone-Referenzbreite dieses Projekts. Nur dort, wo eine
+                   Messung genau diese Breite betraf.
+     400px    1x   Untergrenze des Outfit-Wählers.
+     420px    1x   Untergrenze der Google-Bewertungspille im Hero.
+     600px    6x   Ab hier trägt eine zweispaltige Liste zwei Zeilen Text.
+     640px   48x   ⚠️ NICHT DOKUMENTIERT UND STARK GENUTZT — der wichtigste
+                   nachzutragende Wert. Hier stapeln CTA-Reihen NICHT mehr auf
+                   volle Breite: gemessen braucht das Paar 558px, bei 640
+                   stehen 598 zur Verfügung. Sitewide-Regel vom 19.08.2026.
+     700px    6x   Ab hier drei Spalten in den Zertifikatsreihen.
+
+     ── Tablet ─────────────────────────────────────────────────────────────
+     768px   75x   Der klassische Tablet-Schnitt. Häufigster Wert.
+     900px   35x   ⚠️ NICHT DOKUMENTIERT UND STARK GENUTZT. Ab hier zwei
+                   Spalten in Kosten und Ansprechpartner; unter 900 stapeln
+                   sie. Der Wert existiert, damit Pitch und Formular auf
+                   /angebot/ in die erste Bildschirmhöhe passen.
+
+     ── Desktop ────────────────────────────────────────────────────────────
+     1024px  58x   Ab hier die zweispaltigen Heroes und die Konzept-Diagramme
+                   mit Anmerkungen ausserhalb des viewBox.
+     1100px  17x   ⚠️ NICHT DOKUMENTIERT UND GENUTZT. Vier Karten in einer
+                   Reihe. Gemessen: bei 1024 wäre eine Karte 290px breit und
+                   eine isometrische Szene darin unlesbar.
+     1152px   3x   Untergrenze des gestapelten Leistungsumfangs. Gemessen:
+                   bei 1024 gehen die sechs Pflichten auf drei Zeilen und
+                   passen nicht mehr in eine Bildschirmhöhe.
+     1200px  13x   Drei Spalten in der Philosophie-Sektion. Gemessen: bei 1024
+                   wären es ~300px je Spalte und 20 Zeilen je Absatz.
+     1280px   7x   Zweispaltiger Jobs-Hero. Gemessen: der H1 braucht 594px.
+     1400px   8x   Der Nav-Schnitt. Über die Zeit von 1024 auf 1400 gewandert,
+                   weil Logo + fünf Nav-Punkte + CTA nicht mehr in eine Reihe
+                   passten.
+     1440px   1x   Referenzbreite der Messungen dieses Projekts.
+
+     ⚠️ EIN NEUER WERT GEHÖRT HIERHER, BEVOR er in ein Stylesheet kommt — das
+     Bau-Tor bricht sonst ab. Genau das war der Zustand vorher: fünf
+     dokumentiert, sechzehn benutzt. */
+
   /* ---- Z-index scale ---- */
   --z-sticky: 100;
   --z-overlay: 200;

@@ -658,6 +658,31 @@ function initHeaderScrollTheme() {
     return;
   }
 
+  /* ══ Deckender Zustand nach dem Hero (Aufgabe 20, 31.08.2026) ══════════════
+     ⚠️ VOR dem Rücksprung unten: dieser Teil muss auch auf Seiten laufen, die
+     KEINE hellen Sektionen haben. Vorher stieg die Funktion bei
+     !lightSections.length aus — auf einer durchgehend dunklen Seite lief also
+     weisser Fliesstext hinter weissem Logo durch, und niemand hat es gemeldet,
+     weil "der Header ist absichtlich transparent" wie eine Erklärung klingt.
+
+     Der Auslöser ist die UNTERKANTE DES HERO, nicht ein fester Pixelwert: die
+     Heroes dieses Projekts sind zwischen 630 und 1378 px hoch. Gibt es keinen
+     Hero (Rechtsseiten, Danke-Seiten), wird die Höhe des Headers selbst genommen
+     — dort soll die Fläche sofort da sein, weil direkt Text folgt. */
+  const hero = document.querySelector(
+    ".hero, .service-hero, .jobs-hero, .ref-hero, .rg-hero, .ag-hero, .city-hero, .uu-hero, .eg-hero, .cs-hero"
+  );
+
+  function solidPruefen() {
+    const kopfHoehe = header.getBoundingClientRect().height;
+    const grenze = hero ? hero.getBoundingClientRect().bottom : kopfHoehe;
+    header.classList.toggle("site-header--solid", grenze <= kopfHoehe);
+  }
+
+  solidPruefen();
+  window.addEventListener("scroll", solidPruefen, { passive: true });
+  window.addEventListener("resize", solidPruefen, { passive: true });
+
   const lightSections = document.querySelectorAll('[data-nav-theme="light"]');
   if (!lightSections.length) return;
 
