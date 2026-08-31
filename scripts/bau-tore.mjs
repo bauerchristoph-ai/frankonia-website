@@ -75,7 +75,47 @@ function torKommentare() {
 
 /* ------------------------------------------------------------- Ausführen */
 
-const TORE = [["Kommentare unter 200 Zeichen (Aufgabe 5)", torKommentare]];
+
+/* Aufgabe 2. Jede ausgelieferte Seite muss alle fünf Icon-Verweise tragen, und
+   die sechs Dateien müssen im Web-Root liegen.
+   ⚠️ Beide Hälften sind nötig: die Verweise ohne Dateien wären 404 in jedem Tab,
+   die Dateien ohne Verweise wären toter Ballast — und genau letzteres war der
+   Zustand bis zum 31.08.2026, nur ohne Dateien: 58 von 58 geprüften Seiten
+   trugen keinen einzigen Verweis. */
+const ICON_VERWEISE = [
+  ['rel="icon" href="/favicon.ico"', "favicon.ico"],
+  ['rel="icon" href="/icon-192.png"', "icon-192.png"],
+  ['rel="apple-touch-icon" href="/apple-touch-icon.png"', "apple-touch-icon.png"],
+  ['rel="manifest" href="/site.webmanifest"', "site.webmanifest"],
+  ['name="theme-color"', null],
+];
+const ICON_DATEIEN = [
+  "favicon.ico",
+  "icon-192.png",
+  "icon-512.png",
+  "icon-512-maskable.png",
+  "apple-touch-icon.png",
+  "site.webmanifest",
+];
+
+function torIcons() {
+  const befunde = [];
+  for (const d of ICON_DATEIEN) {
+    const p = path.join(DIST, d);
+    if (!fs.existsSync(p)) befunde.push("Datei fehlt im Web-Root: /" + d);
+    else if (fs.statSync(p).size === 0) befunde.push("Datei ist leer: /" + d);
+  }
+  for (const s of alleSeiten()) {
+    const fehlend = ICON_VERWEISE.filter(([muster]) => !s.html.includes(muster)).map(([m]) => m);
+    if (fehlend.length) befunde.push(s.url + ": " + fehlend.length + " von 5 Verweisen fehlen");
+  }
+  return befunde;
+}
+
+const TORE = [
+  ["Kommentare unter 200 Zeichen (Aufgabe 5)", torKommentare],
+  ["Icon-Paket vollständig (Aufgabe 2)", torIcons],
+];
 
 if (!fs.existsSync(DIST)) {
   console.error("bau-tore: dist/ fehlt — zuerst bauen.");

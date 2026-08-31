@@ -41,7 +41,10 @@
      Kopie, weil beide Skripte eigenstaendige <script defer> ohne Modulsystem
      sind; ein dritter Verbraucher gehoert in eine gemeinsame Datei. */
   function kachelUrl() {
-    var basis = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+    /* dark_NOLABELS: eine deutschsprachige Kachelvariante gibt es bei CARTO
+     nicht (gemessen, siehe js/coverage-map.js). Also kein Fremdtext statt
+     falscher Sprache. */
+  var basis = "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png";
     var key = el && el.getAttribute("data-carto-key");
     return key ? basis + "?key=" + encodeURIComponent(key) : basis;
   }

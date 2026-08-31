@@ -122,7 +122,22 @@ function initCoverageMap(coverageLocations) {
    * kauft Zeit, er loest nichts dauerhaft.
    */
   function kachelUrl() {
-    var basis = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+    /* ⚠️⚠️ dark_NOLABELS, nicht dark_all — Entscheidung vom 31.08.2026.
+     Der QA-Lauf meldete englische Ortsnamen auf der Karte einer
+     deutschsprachigen Seite ("Nuremberg", "BAVARIA", "HESSE"). Eine
+     deutschsprachige Kachelvariante GIBT ES BEI CARTO NICHT: dieselbe Kachel
+     mit ?language=de, ?lang=de und ?locale=de kam vier Mal BYTE-IDENTISCH
+     zurueck (11303 Bytes, gleicher md5). CARTO dokumentiert Sprachwahl nur
+     fuer die Vektor-Basemaps.
+     Also wird das Fremdsprachige entfernt statt uebersetzt: nolabels liefert
+     Kacheln OHNE jede Beschriftung. Was auf der Karte steht, sind danach
+     ausschliesslich UNSERE eigenen deutschen Stadtmarkierungen — die Karte
+     hat keinen englischen Text mehr, und der Kartengrund tritt hinter die
+     eingezeichneten Einsatzgebiete zurueck, was er ohnehin soll.
+     ⚠️ Preis der Entscheidung: keine Nachbarorte zur Orientierung. Wer sie
+     zurueck will, aendert nolabels -> all und hat die englischen Namen
+     wieder; ein Mittelweg existiert bei diesem Anbieter nicht. */
+  var basis = "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png";
     var key = mapEl && mapEl.getAttribute("data-carto-key");
     return key ? basis + "?key=" + encodeURIComponent(key) : basis;
   }

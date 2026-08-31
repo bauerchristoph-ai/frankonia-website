@@ -33,6 +33,19 @@
      ⚠️ Die CBID ist öffentlich und steht ohnehin im ausgelieferten HTML. Sie
      kommt trotzdem aus COOKIEBOT_CBID, damit eine Testumgebung eine eigene
      Domain-Gruppe einsetzen kann — siehe PUBLIC_ENV in build.js. -->
+<!-- App-Icons. Vor dem 31.08.2026 trug KEINE der Seiten einen einzigen
+     Icon-Verweis: leeres Blatt in jedem Tab und jedem Lesezeichen, und
+     "Zum Home-Bildschirm" auf iOS zeigte einen Bildschirmausschnitt.
+     Erzeugt aus dem Logo-SVG, siehe docs/design-sources/icons-erzeugen.mjs.
+     ⚠️ Nur die BILDMARKE, ohne den Schwung: die vollstaendige Marke ist
+     1,692:1, im Quadrat bliebe die Lampe bei 16px etwa 4 Pixel breit.
+     Gemessen und im Vergleichsbild belegt. -->
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#010101">
+
 <script id="Cookiebot"
         src="https://consent.cookiebot.com/uc.js"
         data-cbid="{{env.cookiebotCbid}}"

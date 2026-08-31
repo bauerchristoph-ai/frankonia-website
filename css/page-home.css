@@ -4062,15 +4062,27 @@ main h2 {
   overflow: hidden;
 }
 
-.coverage__map {
+/* ⚠️⚠️ ZWEI SELEKTOREN, und beide sind noetig — dieselbe Falle, die
+   page-contact.css fuer die Kontaktkarte schon dokumentiert: leaflet.css wird
+   zur LAUFZEIT von js/coverage-map.js in den <head> eingehaengt, laedt also
+   NACH dieser Datei, und ihr `.leaflet-container { background: #ddd }` gewinnt
+   bei gleicher Spezifitaet gegen ein einfaches `.coverage__map`.
+   Gemessen am 31.08.2026 auf der Live-Seite: `mapBg: rgb(221, 221, 221)` —
+   Leaflets eigenes helles Grau. Auf einer schwarzen Seite blitzt die Karte
+   beim Laden also hellgrau auf, und genau das hat ein Screenshot erwischt (es
+   sah wie ein Schachbrett aus fehlenden Kacheln aus; nachgemessen waren alle
+   28 Kacheln geladen, es war der Untergrund).
+   Der zusammengesetzte Selektor (0,2,0) gewinnt ohne !important, kann aber
+   erst greifen, wenn Leaflet seine Klasse gesetzt hat — deshalb muss der
+   einfache fuer den Zustand VOR dem Mounten bleiben. */
+.coverage__map,
+.coverage__map.leaflet-container {
   width: 100%;
   height: 100%;
-  /* Placeholder shown in the gaps until Leaflet's tiles land. It has to match
-     the BASEMAP, not the section: the tiles are CARTO dark_all, so the mid-grey
-     --color-bg-elevated it used to carry now flashes lighter-than-final inside a
-     white section before settling — the same "wrong placeholder tone" problem
-     the Jobs cards hit when their photos went dark. */
-  background-color: var(--color-bg);
+  /* Untergrund in den Luecken, bis Leaflets Kacheln da sind. Er muss zur
+     BASISKARTE passen, nicht zur Sektion: die Kacheln sind CARTO
+     dark_nolabels, also fast schwarz. */
+  background-color: var(--color-logo-black);
 }
 
 /* Subtle loading cue (brief: "show a subtle loading state... do not

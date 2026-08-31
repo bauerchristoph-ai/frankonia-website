@@ -42,6 +42,19 @@ const PASSTHROUGH = [
   { from: "assets", to: "assets" },
   { from: "robots.txt", to: "robots.txt" },
   { from: "sitemap.xml", to: "sitemap.xml" },
+  /* Das Icon-Paket muss im WEB-ROOT liegen, nicht unter /assets/:
+     - /favicon.ico holen Browser von sich aus genau von dort, ohne dass es im
+       HTML steht (deshalb ist der Pfad nicht frei waehlbar);
+     - /site.webmanifest verweist mit absoluten Pfaden auf die Icons, und ein
+       Manifest, dessen scope "/" ist, gehoert an dieselbe Stelle.
+     Erzeugt wird das Paket einmalig von docs/design-sources/icons-erzeugen.mjs
+     aus dem Logo-SVG; hier wird nur kopiert. */
+  { from: "assets/icons/app/favicon.ico", to: "favicon.ico" },
+  { from: "assets/icons/app/icon-192.png", to: "icon-192.png" },
+  { from: "assets/icons/app/icon-512.png", to: "icon-512.png" },
+  { from: "assets/icons/app/icon-512-maskable.png", to: "icon-512-maskable.png" },
+  { from: "assets/icons/app/apple-touch-icon.png", to: "apple-touch-icon.png" },
+  { from: "assets/icons/app/site.webmanifest", to: "site.webmanifest" },
 ];
 
 // The 7 site-wide stylesheets (head-common.html cascade order) are concatenated
