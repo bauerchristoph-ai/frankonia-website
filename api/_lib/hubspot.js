@@ -454,18 +454,45 @@ async function kontaktUpsert(d, submissionId, zeitstempel) {
    ⚠️ Fehlt eine der beiden Variablen, wird die andere trotzdem gesetzt und die
    fehlende protokolliert. Es wird nie eine ID geraten. */
 const SUBSCRIPTION_VARIABLEN = [
-  ["HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE", "One to One"],
-  ["HUBSPOT_SUBSCRIPTION_ID_MARKETING", "Marketing Information"],
+  {
+    variable: "HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE",
+    bezeichnung: "One to One",
+    /* ⚠️ IMMER, auch ohne Marketing-Häkchen. Wer ein Angebot anfordert, will
+       eine Antwort — das ist Vertragsanbahnung, nicht Werbung. */
+    nurMitEinwilligung: false,
+    legalBasis: "PERFORMANCE_OF_CONTRACT",
+    erklaerung:
+      "Individuelle Antwort auf eine über das Anfrageformular auf " +
+      "frankonia-sicherheit.de eingegangene Anfrage (Vertragsanbahnung, " +
+      "Art. 6 Abs. 1 Satz 1 Buchst. b DSGVO).",
+  },
+  {
+    variable: "HUBSPOT_SUBSCRIPTION_ID_MARKETING",
+    bezeichnung: "Marketing Information",
+    /* Nur mit Häkchen — und das Häkchen ist unmarkiert und freiwillig. */
+    nurMitEinwilligung: true,
+    legalBasis: "CONSENT_WITH_NOTICE",
+    erklaerung: null, /* die bestehende, ausführliche Erklärung unten */
+  },
 ];
 
+/* ⚠️⚠️ HEISST NOCH "marketingEinwilligung", TUT ABER MEHR — umbenennen würde
+   nur den Aufrufer und die Protokollschlüssel bewegen, ohne etwas zu klären.
+   Ab dem 31.08.2026 wird "One to One" IMMER gesetzt und nur "Marketing
+   Information" hängt am Häkchen. Grund (QA-Aufgabe 13.3): ohne jeden
+   Abonnement-Aufruf überträgt niemand eine Rechtsgrundlage, und HubSpot füllt
+   seinen Portal-Standard ein — am Testkontakt stand "Berechtigtes Interesse –
+   Sonstige". Bei jemandem, der aktiv ein Angebot anfordert, ist das die falsche
+   Grundlage. */
 async function marketingEinwilligung(d, submissionId) {
-  if (!d.marketing_opt_in) return { ok: true, uebersprungen: "keine Einwilligung" };
-
   const ziele = [];
-  for (const [variable, bezeichnung] of SUBSCRIPTION_VARIABLEN) {
+  for (const eintrag of SUBSCRIPTION_VARIABLEN) {
+    const { variable, bezeichnung, nurMitEinwilligung, legalBasis, erklaerung } = eintrag;
+    if (nurMitEinwilligung && !d.marketing_opt_in) continue;
     const id = process.env[variable];
-    if (id && String(id).trim()) ziele.push({ id: String(id).trim(), bezeichnung });
-    else
+    if (id && String(id).trim()) {
+      ziele.push({ id: String(id).trim(), bezeichnung, legalBasis, erklaerung });
+    } else
       log.warn(
         submissionId,
         "hubspot: " + variable + " fehlt — Einwilligung fuer \"" + bezeichnung +
@@ -491,15 +518,24 @@ async function einwilligungSetzen(d, submissionId, ziel) {
     body: JSON.stringify({
       emailAddress: d.email,
       subscriptionId: ziel.id,
-      // CONSENT_WITH_NOTICE: der Betroffene hat aktiv zugestimmt und wurde
-      // dabei über den Zweck informiert — das trifft auf eine eigene,
-      // unmarkierte Checkbox mit erklärendem Text und Link auf die
-      // Datenschutzerklärung zu.
-      legalBasis: "CONSENT_WITH_NOTICE",
+      /* ⚠️⚠️ DIE RECHTSGRUNDLAGE KOMMT VOM ABONNEMENTTYP, nicht fest aus
+         diesem Aufruf — seit dem 31.08.2026 (QA-Aufgabe 13.3).
+         Vorher stand hier fest CONSENT_WITH_NOTICE, und die Funktion lief nur
+         mit gesetztem Häkchen. Jetzt läuft sie auch ohne, für "One to One", und
+         dort wäre CONSENT_WITH_NOTICE eine FALSCHE BEHAUPTUNG in genau dem
+         Feld, das den Nachweis führen soll: es hat niemand zugestimmt.
+         · One to One            -> PERFORMANCE_OF_CONTRACT (Vertragsanbahnung)
+         · Marketing Information -> CONSENT_WITH_NOTICE (freiwilliges Häkchen)
+         Geprüfter HubSpot-Enum: CONSENT_WITH_NOTICE, LEGITIMATE_INTEREST_CLIENT,
+         LEGITIMATE_INTEREST_OTHER, LEGITIMATE_INTEREST_PQL, NON_GDPR,
+         PERFORMANCE_OF_CONTRACT, PROCESS_AND_STORE. Ein Wert außerhalb davon
+         lässt HubSpot den Aufruf mit 400 ablehnen. */
+      legalBasis: ziel.legalBasis || "CONSENT_WITH_NOTICE",
       legalBasisExplanation:
+        ziel.erklaerung ||
         "Einwilligung über das Anfrageformular auf frankonia-sicherheit.de, " +
-        "separate Checkbox, nicht vorausgewählt (" + ziel.bezeichnung + "). " +
-        "Submission-ID: " + submissionId,
+          "separate Checkbox, nicht vorausgewählt (" + ziel.bezeichnung + "). " +
+          "Submission-ID: " + submissionId,
     }),
   });
   if (res.ok) return { ok: true, bezeichnung: ziel.bezeichnung };
@@ -702,7 +738,14 @@ async function verarbeiten(d, submissionId, zeitstempel) {
   // Einwilligung VOR der Notiz, weil sie die rechtlich relevante Aussage ist
   // und die Notiz nur Komfort für den Vertrieb.
   const einwilligung = await marketingEinwilligung(d, submissionId);
-  schritte.einwilligung = d.marketing_opt_in ? einwilligung.ok : "nicht erteilt";
+  /* ⚠️ Nicht mehr "nicht erteilt": ohne Häkchen wird "Marketing Information"
+     übersprungen, "One to One" aber gesetzt — es passiert also in jedem Fall
+     etwas, und ein Protokoll, das "nicht erteilt" sagt, würde das verdecken. */
+  schritte.einwilligung = einwilligung.ok
+    ? d.marketing_opt_in
+      ? "One to One + Marketing"
+      : "nur One to One"
+    : einwilligung.uebersprungen || false;
 
   const notiz = await notizAnlegen(d, kontakt.id, submissionId, zeitstempel);
   schritte.notiz = notiz.ok;

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- /danke/ — angelegt 2026-08-26 als Erfolgszustand des Kundenformulars.
+
+     ⚠️ WARUM EINE EIGENE SEITE UND NICHT EIN INLINE-ZUSTAND: das
+     Conversion-Tracking läuft über URL-basierte Trigger im Tag Manager. Die sind
+     eindeutig, überstehen Layout-Änderungen und funktionieren mit
+     Google-Ads-Conversions ohne Zusatzarbeit. Für die Nutzerführung wäre ein
+     Inline-Zustand gleichwertig, für die Messung deutlich fragiler.
+     Das DOM-Event `frankonia:form_success` wird VOR der Weiterleitung trotzdem
+     gefeuert — zweiter, unabhängiger Messpfad (siehe js/lead-form.js).
+
+     ⚠️⚠️ DIESE SEITE IST AUSSCHLIESSLICH FÜR KUNDENANFRAGEN. Bewerbungen laufen
+     über das eingebettete HubSpot-Formular auf /jobs/ und bekommen später eine
+     eigene Seite /danke-bewerbung/. Die beiden dürfen NIE zusammengeführt
+     werden: zählen Bewerbungen als Lead-Conversion, optimiert Google Ads mit der
+     Zeit auf Bewerber statt auf Kunden — und das fällt erst auf, wenn Monate an
+     Budget in die falsche Zielgruppe gelaufen sind.
+
+     ⚠️ noindex, follow — und NICHT in sitemap.xml. Eine Danke-Seite hat keinen
+     Suchwert und würde als Einstiegsseite ohne Kontext ranken. `follow`, damit
+     die weiterführenden Links unten Linkkraft weitergeben.
+
+     ⚠️ KEIN neues Versprechen: "Rückmeldung innerhalb eines Werktages" ist
+     wortgleich die Zusage, die /angebot/, die Startseite und die Preisbox schon
+     machen. Eine Danke-Seite ist der falsche Ort, eine Frist zu erfinden.
+
+     ⚠️ Kein Animations-JavaScript. Wer hier landet, hat gerade abgeschickt und
+     will eine Bestätigung sehen — nicht warten, bis sie eingeblendet wird. Aus
+     demselben Grund tragen die Bausteine hier kein data-reveal. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bewerbung erhalten | FRANKONIA Sicherheit</title>
+  <meta name="description" content="Ihre Bewerbung ist bei FRANKONIA angekommen. Wir sehen sie uns an und melden uns innerhalb weniger Tage bei dir.">
+  <link rel="canonical" href="https://frankonia-sicherheit.de/danke-bewerbung/">
+  <link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/danke-bewerbung/">
+  <link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/danke-bewerbung/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Bewerbung erhalten | FRANKONIA Sicherheit">
+  <meta property="og:description" content="Ihre Bewerbung ist bei FRANKONIA angekommen.">
+  <meta property="og:url" content="https://frankonia-sicherheit.de/danke-bewerbung/">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="FRANKONIA Sicherheitsdienst">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <meta name="robots" content="noindex,follow">
+
+  <!-- include: head-common -->
+  <!-- page-service.css ist das CHASSIS dieses Projekts, nicht die
+       Werkschutz-Seite (docs/page-conventions.md 9.1): daraus kommen hier
+       --content-inset, .section--light, .service-link und der ganze
+       .pixel-seam-Block. page-danke.css ergaenzt nur, was diese Seite
+       eigen hat. -->
+  <link rel="stylesheet" href="/css/page-service.css">
+  <link rel="stylesheet" href="/css/page-danke.css">
+</head>
+<body>
+  <!-- include: gtm-noscript -->
+  <!-- include: icon-sprite -->
+  <!-- include: header-de -->
+
+  <main id="main">
+
+    <!-- Kein Breadcrumb. Diese Seite ist kein Ort in der Seitenstruktur, sondern
+         der Zustand nach einer Handlung — ein Pfad "Startseite > Danke" würde
+         eine Hierarchie behaupten, die es nicht gibt. Der Weg zurück steht
+         unten als echte Weiterführung. -->
+
+    <section class="section danke">
+      <div class="container danke__inner">
+
+        <p class="danke__badge">
+          <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+          Bewerbung eingegangen
+        </p>
+
+        <h1 class="danke__title">Deine Bewerbung ist angekommen.</h1>
+        <p class="danke__lede">Du bekommst eine Eingangsbestätigung per E-Mail. Wir sehen uns deine Unterlagen an und melden uns <strong>innerhalb weniger Tage</strong> bei dir — persönlich, nicht automatisiert.</p>
+
+        <!-- Die drei Schritte sind wortgleich die von /angebot/, Abschnitt "Was
+             nach dem Absenden passiert", nur gekürzt. Absichtlich keine neue
+             Formulierung: wer hier landet, hat die Zusage eine Seite vorher
+             gelesen, und zwei Fassungen derselben Zusage wecken Zweifel an
+             beiden. -->
+        <ol class="danke__steps">
+          <li class="danke__step">
+            <span class="danke__step-num" aria-hidden="true">1</span>
+            <span class="danke__step-text"><strong>Wir sehen uns deine Bewerbung an.</strong> Ohne Standardabsage und ohne Wochen Funkstille.</span>
+          </li>
+          <li class="danke__step">
+            <span class="danke__step-num" aria-hidden="true">2</span>
+            <span class="danke__step-text"><strong>Kennenlernen, wenn es passt.</strong> Persönlich oder telefonisch, mit deinem künftigen Ansprechpartner.</span>
+          </li>
+          <li class="danke__step">
+            <span class="danke__step-num" aria-hidden="true">3</span>
+            <span class="danke__step-text"><strong>Klare Zusage, klarer Start.</strong> Objekt, Dienstplan und Einarbeitung besprechen wir vorher, nicht am ersten Tag.</span>
+          </li>
+        </ol>
+
+        <!-- Der dringende Fall. Eine Danke-Seite, die nur dankt, lässt genau die
+             Person allein, deren Anliegen keinen Werktag warten kann — und
+             Brandwache und Interventionsdienst sind genau solche Anliegen. -->
+        <div class="danke__urgent">
+          <p class="danke__urgent-label">Noch eine Frage?</p>
+          <p class="danke__urgent-text">Ruf einfach an — du sprichst direkt mit jemandem, der die Stellen kennt.</p>
+          <a class="btn btn--secondary" href="{{phone.href}}" data-cta="phone">
+            <svg class="icon btn__icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+            {{phone.display}}
+          </a>
+        </div>
+
+        <!-- Zwei Weiterführungen, nicht mehr. Beide sind Seiten, die eine
+             Kaufentscheidung stützen, während die Anfrage bearbeitet wird:
+             wie ein Konzept entsteht, und wer FRANKONIA sonst beauftragt. -->
+        <div class="danke__next">
+          <h2 class="danke__next-title">Solange du wartest</h2>
+          <ul class="danke__next-list">
+            <li>
+              <a class="service-link" href="/ueber-uns/">
+                Wer FRANKONIA ist
+                <svg class="service-link__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+            <li>
+              <a class="service-link" href="/ratgeber/paragraph-34a-erklaert/">
+                § 34a GewO: was die Prüfung verlangt
+                <svg class="service-link__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+  </main>
+
+  <!-- include: footer-de -->
+  <!-- include: whatsapp-button -->
+</body>
+</html>

@@ -27,7 +27,7 @@ import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const WURZEL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
-const QUELLE = path.join(WURZEL, "source-images", "logos", "Frankonia_Logo_High_white-font_RGB.svg");
+const QUELLE = path.join(WURZEL, "source-images", "Logos", "Frankonia_Logo_High_white-font_RGB.svg");
 const ZIEL = process.env.ICONS_ZIEL || path.join(WURZEL, "assets", "icons", "app");
 
 const LOGOBLAU = "#43a5db";

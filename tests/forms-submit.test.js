@@ -903,7 +903,17 @@ test("HubSpot: bei 400 wird ein zweiter Versuch NUR mit Standardfeldern gemacht"
 
 /* ============================ 16 — Marketing-Einwilligung */
 
-test("Marketing: ohne Haken wird KEINE Einwilligung gesetzt und KEINE Liste vergeben", async () => {
+test("Marketing: ohne Haken NUR One to One, mit Vertragsanbahnung als Grundlage", async () => {
+  /* ⚠️⚠️ GEAENDERT AM 31.08.2026 (QA-Aufgabe 13.2/13.3). Vorher forderte dieser
+     Test NULL Abonnement-Aufrufe ohne Haken. Das war der Zustand, der den Fehler
+     erzeugt hat: ohne jeden Aufruf uebertraegt niemand eine Rechtsgrundlage, und
+     HubSpot fuellt seinen Portal-Standard ein — am Testkontakt stand
+     "Berechtigtes Interesse - Sonstige". Bei jemandem, der aktiv ein Angebot
+     anfordert, ist das die falsche Grundlage.
+     Jetzt gilt: "One to One" IMMER (Vertragsanbahnung), "Marketing Information"
+     nur mit Haken. Der Test prueft deshalb nicht mehr die ANZAHL, sondern WELCHER
+     Typ mit WELCHER Grundlage — sonst wuerde eine Verwechslung der beiden
+     unbemerkt durchgehen. */
   process.env.HUBSPOT_SUBSCRIPTION_ID_ONE_TO_ONE = "42";
   process.env.HUBSPOT_SUBSCRIPTION_ID_MARKETING = "43";
   process.env.BREVO_MARKETING_LIST_ID = "7";
@@ -911,11 +921,16 @@ test("Marketing: ohne Haken wird KEINE Einwilligung gesetzt und KEINE Liste verg
   globalThis.fetch = alleOk(protokoll);
   await handler(req(GUELTIG), res());
 
+  const subs = protokoll.filter((p) => p.url.includes("communication-preferences/v3/subscribe"));
+  assert.equal(subs.length, 1, "ohne Haken darf es genau EIN Abonnement geben");
+  const b = JSON.parse(subs[0].optionen.body);
+  assert.equal(b.subscriptionId, "42", "ohne Haken wurde der Marketing-Typ gesetzt");
   assert.equal(
-    protokoll.filter((p) => p.url.includes("communication-preferences")).length,
-    0,
-    "Einwilligung ohne Haken gesetzt"
+    b.legalBasis,
+    "PERFORMANCE_OF_CONTRACT",
+    "ohne Einwilligung darf die Grundlage nicht CONSENT lauten — das waere eine falsche Behauptung"
   );
+  assert.match(b.legalBasisExplanation, /Vertragsanbahnung/);
   const kontakt = protokoll.find((p) => p.url.endsWith("api.brevo.com/v3/contacts"));
   const body = JSON.parse(kontakt.optionen.body);
   assert.equal(body.listIds, undefined, "Listenzuordnung ohne Haken");
@@ -940,16 +955,24 @@ test("Marketing: mit Haken wird die Einwilligung mit Rechtsgrundlage gespeichert
   assert.equal(subs.length, 2, "es wurden nicht beide Subscription-Typen gesetzt");
   const koerper = subs.map((p) => JSON.parse(p.optionen.body));
   assert.deepEqual(koerper.map((k) => k.subscriptionId).sort(), ["42", "43"]);
+  /* ⚠️⚠️ JE TYP SEINE EIGENE GRUNDLAGE, geaendert am 31.08.2026. Vorher forderte
+     dieser Test CONSENT_WITH_NOTICE fuer BEIDE Aufrufe. Das war falsch, sobald
+     "One to One" auch ohne Haken laeuft: dort hat niemand zugestimmt, und
+     CONSENT_WITH_NOTICE waere eine falsche Behauptung in genau dem Feld, das den
+     Nachweis fuehren soll. Der Test prueft die Zuordnung jetzt einzeln — eine
+     Vertauschung der beiden Grundlagen faellt damit auf. */
+  const einsZuEins = koerper.find((k) => k.subscriptionId === "42");
+  const werbung = koerper.find((k) => k.subscriptionId === "43");
+  assert.ok(einsZuEins && werbung, "beide Typen muessen vorkommen");
+  assert.equal(einsZuEins.legalBasis, "PERFORMANCE_OF_CONTRACT");
+  assert.equal(werbung.legalBasis, "CONSENT_WITH_NOTICE");
+  assert.match(werbung.legalBasisExplanation, /Checkbox/);
+  assert.match(werbung.legalBasisExplanation, /Marketing Information/);
+  assert.match(einsZuEins.legalBasisExplanation, /Vertragsanbahnung/);
   for (const b of koerper) {
     assert.equal(b.emailAddress, "erika.mustermann@example.org");
-    // Ohne Rechtsgrundlage ist der Eintrag kein Nachweis.
-    assert.equal(b.legalBasis, "CONSENT_WITH_NOTICE");
-    assert.match(b.legalBasisExplanation, /Checkbox/);
+    assert.ok(b.legalBasisExplanation && b.legalBasisExplanation.length > 20, "Grundlage ohne Erklaerung ist kein Nachweis");
   }
-  // Die Begruendung muss den Typ nennen, sonst ist im CRM nicht erkennbar,
-  // woraus welche Einwilligung stammt.
-  assert.match(koerper.map((k) => k.legalBasisExplanation).join(" "), /One to One/);
-  assert.match(koerper.map((k) => k.legalBasisExplanation).join(" "), /Marketing Information/);
 
   const hsBody = JSON.parse(
     protokoll.find((p) => p.url.endsWith("/crm/v3/objects/contacts")).optionen.body

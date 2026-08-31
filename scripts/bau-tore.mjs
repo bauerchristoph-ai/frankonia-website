@@ -112,9 +112,182 @@ function torIcons() {
   return befunde;
 }
 
+
+/* ══════════════════════════════════════════════════ Aufgabe 3 · Fremd-Hosts
+   Jeder Host, der aus dem ausgelieferten Ergebnis heraus angefragt wird, muss im
+   SICHTBAREN Text von /datenschutz/ namentlich vorkommen.
+
+   ⚠️⚠️ DAS TOR PRUEFT DEN ANBIETERNAMEN, NICHT DEN HOSTNAMEN — und deshalb
+   braucht es diese Tabelle. Ein Rechtstext nennt "CARTO" und "Google", nicht
+   "basemaps.cartocdn.com". Ein Tor, das nach Hostnamen sucht, waere entweder
+   immer gruen (weil Hostnamen nie im Text stehen) oder wuerde verlangen, dass
+   technische Adressen in den Rechtstext wandern.
+
+   ⚠️ EIN UNBEKANNTER HOST BRICHT DEN BAU. Das ist der eigentliche Zweck: wer
+   einen neuen Dienst einbaut, muss hier eine Zeile ergaenzen — und damit
+   entscheiden, welcher Anbietername in der Erklaerung stehen muss. Genau dieser
+   Schritt fehlte beim eingebetteten HubSpot-Formular, das monatelang eine
+   Datenuebermittlung war, die in der Erklaerung nicht vorkam. */
+const FREMD_HOSTS = [
+  ["basemaps.cartocdn.com", "CARTO"],
+  ["cartocdn.com", "CARTO"],
+  ["openstreetmap.org", "OpenStreetMap"],
+  ["carto.com", "CARTO"],
+  ["consent.cookiebot.com", "Cookiebot"],
+  ["cookiebot.com", "Cookiebot"],
+  ["js-eu1.hsforms.net", "HubSpot"],
+  ["hsforms.net", "HubSpot"],
+  ["meetings-eu1.hubspot.com", "HubSpot"],
+  ["hubspot.com", "HubSpot"],
+  ["d.frankonia-sicherheit.de", "Tag Manager"],
+  /* Reine Verweise ohne Datenabfluss beim Laden. Sie stehen hier, damit das Tor
+     sie nicht als unbekannt meldet — ihre Nennung verlangt Abschnitt 3.8. */
+  ["wa.me", "WhatsApp"],
+  ["whatsapp.com", "WhatsApp"],
+  ["instagram.com", "Instagram"],
+  ["linkedin.com", "LinkedIn"],
+  ["facebook.com", "Facebook"],
+  ["google.com", "Google"],
+  ["google.de", "Google"],
+  ["g.page", "Google"],
+  ["challenges.cloudflare.com", "Cloudflare"],
+  ["bdsw.de", null], /* Fachverband, blosser Quellenverweis */
+  ["gesetze-im-internet.de", null],
+  ["dekra.de", null],
+  ["wirtschaftsclub-bamberg.de", null],
+  ["mittelstandsbund.de", null],
+  ["handelsregister.de", null],
+  ["schema.org", null], /* nur Bezeichner im JSON-LD, kein Abruf */
+  /* ⚠️ www.w3.org ist NIE ein Abruf: es ist der SVG-Namensraum. Der Filter
+     oben entfernt die xmlns-Attribute aus dem Markup (82 von 87 Treffern),
+     die restlichen fuenf stehen als Konstante in JS-Dateien
+     (createElementNS, getAttributeNS). Ein Bezeichner, den niemand anfragt. */
+  ["w3.org", null],
+  ["share.google", "Google"], /* der Bewertungs-Kurzlink, 50 Seiten */
+  ["bewacherregister.de", null], /* Behoerdenregister, blosser Quellenverweis */
+  ["bauerchristoph.de", null], /* Agenturnennung im Partnerbereich, blosser Link */
+];
+
+function sichtbarerText(html) {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&[a-z]+;/gi, " ")
+    .replace(/\s+/g, " ");
+}
+
+function torFremdHosts() {
+  const befunde = [];
+  const ds = alleSeiten().find((s) => s.url === "/datenschutz/");
+  if (!ds) return ["/datenschutz/ nicht gefunden — ohne sie ist die Pruefung sinnlos"];
+  const text = sichtbarerText(ds.html);
+
+  /* Hosts aus HTML UND aus den ausgelieferten JS-Dateien: die Kachel-URL und
+     der Formular-Endpoint stehen im Skript, nicht im Markup. */
+  const quellen = alleSeiten().map((s) => s.html);
+  const jsDir = path.join(DIST, "js");
+  if (fs.existsSync(jsDir)) {
+    for (const f of fs.readdirSync(jsDir)) {
+      if (f.endsWith(".js")) quellen.push(fs.readFileSync(path.join(jsDir, f), "utf8"));
+    }
+  }
+
+  const gefunden = new Map();
+  for (const roh of quellen) {
+    /* ⚠️⚠️ XML-NAMENSRAEUME SIND KEINE ABRUFE. www.w3.org tauchte beim ersten
+       Lauf 87x auf, ausschliesslich aus xmlns/xmlns:xlink an Inline-SVG. Das ist
+       ein Bezeichner, den niemand anfragt. Ein Tor mit 87 Fehlalarmen wird nach
+       zwei Wochen abgeschaltet — deshalb wird die Ursache entfernt und nicht die
+       Zeile in die Ausnahmetabelle geschrieben. */
+    const q = roh.replace(/\sxmlns(:[a-z]+)?="[^"]*"/gi, " ");
+    for (const m of q.matchAll(/https?:\/\/([a-z0-9.-]+\.[a-z]{2,})/gi)) {
+      const host = m[1].toLowerCase();
+      if (host.endsWith("frankonia-sicherheit.de") && host !== "d.frankonia-sicherheit.de") continue;
+      if (host.includes("{s}")) continue;
+      gefunden.set(host, (gefunden.get(host) || 0) + 1);
+    }
+  }
+
+  for (const host of [...gefunden.keys()].sort()) {
+    const eintrag = FREMD_HOSTS.find(([h]) => host === h || host.endsWith("." + h));
+    if (!eintrag) {
+      befunde.push(
+        "unbekannter Fremd-Host: " + host + " (" + gefunden.get(host) + "x) — " +
+          "in FREMD_HOSTS eintragen UND pruefen, ob /datenschutz/ den Anbieter nennt"
+      );
+      continue;
+    }
+    const name = eintrag[1];
+    if (name && !text.includes(name)) {
+      befunde.push(host + ' wird geladen, aber "' + name + '" kommt im sichtbaren Text von /datenschutz/ nicht vor');
+    }
+  }
+  return befunde;
+}
+
+/* ═══════════════════════════════════════════ Aufgabe 11 · Kombiseiten-Verweise
+   Existiert eine Kombiseite (Leistung x Stadt), muss sie aus BEIDEN Richtungen
+   verlinkt sein — von der Leistungsseite und von der Stadtseite.
+   Gemessen vorher: 6 von 16. Die Kombiseiten tragen die spezifischste
+   kommerzielle Suchintention der ganzen Website. */
+function torKombiVerweise() {
+  const befunde = [];
+  const seiten = new Map(alleSeiten().map((s) => [s.url, s.html]));
+  for (const [url] of seiten) {
+    const m = url.match(/^\/([a-z]+)-([a-z]+)\/$/);
+    if (!m) continue;
+    const [, leistung, stadt] = m;
+    /* Nur echte Kombis: beide Elternseiten muessen existieren. */
+    const leistungsSeite = "/" + leistung + "/";
+    const stadtSeite = "/sicherheitsdienst-" + stadt + "/";
+    if (!seiten.has(leistungsSeite) || !seiten.has(stadtSeite)) continue;
+    if (!seiten.get(leistungsSeite).includes('href="' + url + '"')) {
+      befunde.push(leistungsSeite + " verlinkt " + url + " nicht");
+    }
+    if (!seiten.get(stadtSeite).includes('href="' + url + '"')) {
+      befunde.push(stadtSeite + " verlinkt " + url + " nicht");
+    }
+  }
+  return befunde;
+}
+
+/* ══════════════════════════════════════════ Aufgabe 12 · Erfolgsseiten
+   Jedes Formular braucht ein Erfolgsziel, das zu seinem Typ passt — und die
+   Erfolgsseiten duerfen weder indexierbar noch im Sitemap sein.
+   Grund: sobald Google Ads eine Kundenkampagne auf "erreichte /danke/"
+   optimiert, zaehlt jede Bewerbung als Conversion, und der Algorithmus lernt,
+   Bewerber zu finden. */
+function torErfolgsseiten() {
+  const befunde = [];
+  const sitemap = fs.existsSync(path.join(DIST, "sitemap.xml"))
+    ? fs.readFileSync(path.join(DIST, "sitemap.xml"), "utf8")
+    : "";
+  for (const url of ["/danke/", "/danke-bewerbung/"]) {
+    const seite = alleSeiten().find((s) => s.url === url);
+    if (!seite) {
+      befunde.push("Erfolgsseite fehlt: " + url);
+      continue;
+    }
+    if (!/name="robots"[^>]*noindex/.test(seite.html)) befunde.push(url + " ist nicht noindex");
+    if (sitemap.includes(url + "<")) befunde.push(url + " steht im Sitemap");
+  }
+  /* Die zwei duerfen sich nicht gegenseitig verlinken — sonst laufen die
+     Conversion-Ziele wieder zusammen. */
+  for (const [a, b] of [["/danke/", "/danke-bewerbung/"], ["/danke-bewerbung/", "/danke/"]]) {
+    const seite = alleSeiten().find((s) => s.url === a);
+    if (seite && seite.html.includes('href="' + b + '"')) befunde.push(a + " verlinkt " + b);
+  }
+  return befunde;
+}
+
 const TORE = [
   ["Kommentare unter 200 Zeichen (Aufgabe 5)", torKommentare],
   ["Icon-Paket vollständig (Aufgabe 2)", torIcons],
+  ["Fremd-Hosts in /datenschutz/ genannt (Aufgabe 3)", torFremdHosts],
+  ["Kombiseiten aus beiden Richtungen verlinkt (Aufgabe 11)", torKombiVerweise],
+  ["Erfolgsseiten je Formulartyp (Aufgabe 12)", torErfolgsseiten],
 ];
 
 if (!fs.existsSync(DIST)) {
