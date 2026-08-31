@@ -437,8 +437,81 @@ function torHeaderDeckend() {
   return befunde;
 }
 
+/* ═══════════════════════════════════════════ Aufgabe 27g · schwere Rasterbilder
+   Gemessen am 31.08.2026 ueber 89 ausgelieferte Bilder auf zehn Seiten, gewichtet
+   nach Byte je angezeigtem Pixel. Genau EIN echter Ausreisser:
+   partner-wirtschaftsclub-bamberg.png mit 87 KB fuer eine Anzeige von 67x44 px,
+   also 30 Byte je Pixel — der Zweitplatzierte lag bei 20, der Rest bei 11 und
+   darunter.
+
+   ⚠️ DER UEBERGROESSEN-FAKTOR ALLEIN IST DER FALSCHE MASSSTAB, und das war die
+   eigentliche Erkenntnis: die DEKRA-Siegel liegen bei 13,6-facher Uebergroesse
+   und sind trotzdem harmlos, weil es flache Grafiken mit 18 KB sind. Ein Logo mit
+   4-facher Uebergroesse und 5 KB ist kein Befund. Was zaehlt, ist das Gewicht.
+
+   ⚠️ DIESES TOR KANN DIE ANZEIGEGROESSE NICHT MESSEN — dafuer braeuchte es einen
+   Browser, und ein Bau-Tor hat keinen. Es prueft deshalb, was statisch bekannt
+   ist: ein schweres Rasterbild ohne leichteres Geschwister. Genau das war der
+   Zustand des Ausreissers. Bilder mit <picture> und WebP-Quelle sind ausgenommen,
+   weil dort der Browser waehlen kann.
+
+   ⚠️ SVG IST AUSGENOMMEN. Eine Vektorgrafik hat keine Auflösung, die zu gross
+   sein koennte — die drei uebrigen Partner-Logos sind SVG und genau deshalb
+   richtig. */
+const RASTER_KB_MAX = 40;
+
+function torSchwereBilder() {
+  const befunde = [];
+  const liste = alleSeiten();
+  const gemeldet = new Set();
+
+  for (const { url, html } of liste) {
+    const ohneKommentare = html.replace(new RegExp("<!--[\s\S]*?-->", "g"), " ");
+    /* Jedes <img> einzeln ansehen, samt seiner Umgebung: liegt es in einem
+       <picture> mit srcset, waehlt der Browser und das Tor schweigt. */
+    let i = 0;
+    for (;;) {
+      const a = ohneKommentare.indexOf("<img", i);
+      if (a < 0) break;
+      const e = ohneKommentare.indexOf(">", a);
+      if (e < 0) break;
+      const tag = ohneKommentare.slice(a, e);
+      i = e + 1;
+
+      const mSrc = tag.match(/src="([^"]+)"/);
+      if (!mSrc) continue;
+      const src = mSrc[1];
+      const kl = src.toLowerCase();
+      if (!(kl.endsWith(".png") || kl.endsWith(".jpg") ||
+            kl.endsWith(".jpeg") || kl.endsWith(".webp"))) continue;
+      if (tag.indexOf("srcset") >= 0) continue;
+
+      /* Steht direkt davor ein <source srcset>? Dann ist es ein <picture>. */
+      const davor = ohneKommentare.slice(Math.max(0, a - 400), a);
+      if (davor.lastIndexOf("<picture") > davor.lastIndexOf("</picture>") &&
+          davor.indexOf("srcset") >= 0) continue;
+
+      const datei = path.join(DIST, src.slice(1));
+      if (!fs.existsSync(datei)) continue;
+      const kb = Math.round(fs.statSync(datei).size / 1024);
+      if (kb <= RASTER_KB_MAX) continue;
+
+      const schluessel = src;
+      if (gemeldet.has(schluessel)) continue;
+      gemeldet.add(schluessel);
+      befunde.push(
+        src.split("/").pop() + " ist " + kb + " KB und wird ohne srcset und ohne " +
+          "<picture> ausgeliefert (zuerst gesehen in " + url + ") — entweder eine " +
+          "kleinere Fassung erzeugen oder eine WebP-Quelle daneben stellen"
+      );
+    }
+  }
+  return befunde;
+}
+
 const TORE = [
   ["Sticky-Header deckt nach dem Hero (Aufgabe 20)", torHeaderDeckend],
+  ["Schwere Rasterbilder ohne leichtere Fassung (Aufgabe 27g)", torSchwereBilder],
   ["Breakpoints und reduced-motion unter der Obergrenze (21+22)", torObergrenzen],
   ["Sitemap deckt sich mit dem Seitenbestand (Aufgabe 26)", torSitemap],
   ["Keine rohen Farbwerte ausserhalb tokens.css (Aufgabe 15)", torRoheFarben],

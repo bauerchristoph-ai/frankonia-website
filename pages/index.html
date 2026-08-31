@@ -1951,21 +1951,30 @@
         <div class="social__grid" data-social-carousel data-swipe-carousel data-swipe-tablet data-swipe-label="Videos aus dem Einsatz, horizontal scrollbar" data-reveal>
           <div class="social__item">
             <div class="social__placeholder">
-              <img class="social__cover" src="/assets/images/social-werkschutz.jpg" width="480" height="850" alt="FRANKONIA Werkschutz: Leitstelle mit Kameraüberwachung" loading="lazy">
+              <picture>
+                  <source type="image/webp" srcset="/assets/images/social-werkschutz.webp">
+                  <img class="social__cover" src="/assets/images/social-werkschutz.jpg" width="480" height="850" alt="FRANKONIA Werkschutz: Leitstelle mit Kameraüberwachung" loading="lazy">
+                </picture>
               <span class="social__play" aria-hidden="true"></span>
             </div>
             <p class="social__caption">Werkschutz</p>
           </div>
           <div class="social__item social__item--featured">
             <div class="social__placeholder">
-              <img class="social__cover" src="/assets/images/social-interview.jpg" width="480" height="850" alt="FRANKONIA Team-Interview in Bamberg" loading="lazy">
+              <picture>
+                  <source type="image/webp" srcset="/assets/images/social-interview.webp">
+                  <img class="social__cover" src="/assets/images/social-interview.jpg" width="480" height="850" alt="FRANKONIA Team-Interview in Bamberg" loading="lazy">
+                </picture>
               <span class="social__play" aria-hidden="true"></span>
             </div>
             <p class="social__caption">Interview</p>
           </div>
           <div class="social__item">
             <div class="social__placeholder">
-              <img class="social__cover" src="/assets/images/social-veranstaltungsschutz.jpg" width="480" height="850" alt="FRANKONIA Veranstaltungsschutz-Team im Einsatz" loading="lazy">
+              <picture>
+                  <source type="image/webp" srcset="/assets/images/social-veranstaltungsschutz.webp">
+                  <img class="social__cover" src="/assets/images/social-veranstaltungsschutz.jpg" width="480" height="850" alt="FRANKONIA Veranstaltungsschutz-Team im Einsatz" loading="lazy">
+                </picture>
               <span class="social__play" aria-hidden="true"></span>
             </div>
             <p class="social__caption">Veranstaltungsschutz</p>
@@ -2518,7 +2527,19 @@
           </li>
           <li>
             <a class="partners__link" href="https://wirtschaftsclub-bamberg.de/" target="_blank" rel="noopener">
-              <img class="partners__logo" src="/assets/images/partner/partner-wirtschaftsclub-bamberg.png" alt="Wirtschaftsclub Bamberg" width="900" height="593" loading="lazy" decoding="async">
+              <!-- ⚠️ 300x198 SEIT AUFGABE 27g (31.08.2026), vorher 900x593 und 87 KB.
+                 Gemessen war das der einzige echte Ausreisser unter 89 Bildern:
+                 30 Byte je angezeigtem Pixel, Zweitplatzierter 20, Rest unter 11.
+                 Angezeigt wird es mit 67x44 px.
+                 ⚠️ NICHT die Fassung aus client-logos/ nehmen, obwohl sie schon
+                 bei 8 KB liegt — die ist WEISSE Grafik fuer dunklen Grund
+                 (Helligkeit 255, 76 % transparent) und diese Sektion steht auf
+                 Weiss. Neu erzeugen mit
+                 docs/design-sources/partner-logo-verkleinern.mjs. -->
+              <picture>
+                <source type="image/webp" srcset="/assets/images/partner/partner-wirtschaftsclub-bamberg.webp">
+                <img class="partners__logo" src="/assets/images/partner/partner-wirtschaftsclub-bamberg.png" alt="Wirtschaftsclub Bamberg" width="300" height="198" loading="lazy" decoding="async">
+              </picture>
               <span class="visually-hidden"> (öffnet in einem neuen Tab)</span>
             </a>
           </li>
