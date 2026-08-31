@@ -35,13 +35,92 @@ const PAGES_DIR = path.join(ROOT, "pages");
 const PARTIALS_DIR = path.join(ROOT, "partials");
 const DIST_DIR = path.join(ROOT, "dist");
 
+
+// ---------------------------------------------------------------------------
+// sitemap.xml
+// ---------------------------------------------------------------------------
+/* ⚠️⚠️ ERZEUGT SEIT DEM 31.08.2026, vorher handgepflegt (Aufgabe 26). Die Datei
+   sagte über sich selbst "Manually maintained — update whenever a page ships",
+   und der Stand WAR korrekt: 58 Einträge, alle mit HTTP 200. Riskant war der
+   Prozess, nicht das Ergebnis — zwei dokumentierte Vorfälle: einmal 53 Einträge
+   bei 54 Seiten, einmal zehn Seiten ohne Eintrag.
+
+   ⚠️ AUSGESCHLOSSEN WIRD ANHAND DES AUSGELIEFERTEN MARKUPS, nicht anhand einer
+   Liste: jede Seite, deren robots-Meta "noindex" enthält, fällt heraus. Damit
+   kann eine neue noindex-Seite nicht versehentlich indexiert angemeldet werden,
+   und niemand muss zwei Listen synchron halten. Gemessen: 70 Seiten, 12 davon
+   noindex (9 Visitenkarten, 2 Danke-Seiten, linktree) -> 58 Einträge, exakt der
+   bisherige Stand.
+
+   ⚠️ DIE PRIORITÄTEN SIND ÜBERNOMMEN, NICHT NEU ERFUNDEN. Sie tragen eine
+   Aussage: die zwei Nav-Hubs stehen über den Leistungsseiten, die Rechtsseiten
+   fast bei null. Reihenfolge der Regeln = Vorrang, die erste passende gewinnt. */
+const SITEMAP_PRIO = [
+  [/^\/$/, "1.0", "weekly"],
+  [/^\/(leistungen|einsatzgebiete)\/$/, "0.9", "monthly"],
+  [/^\/sicherheitsdienst-bamberg\/$/, "0.9", "monthly"],
+  [/^\/(referenzen|jobs|ueber-uns)\/$/, "0.7", "monthly"],
+  [/^\/ratgeber\//, "0.6", "monthly"],
+  [/^\/referenzen\/case-study-/, "0.5", "yearly"],
+  [/^\/(impressum|datenschutz)\/$/, "0.1", "yearly"],
+  [/./, "0.8", "monthly"],
+];
+
+/* Sammelt die ausgelieferten Seiten aus dist/. ⚠️ Aus dist/ und nicht aus
+   pages/, damit die noindex-Erkennung das MARKUP liest, das ein Crawler
+   bekommt — inklusive allem, was Includes und Token beigetragen haben. */
+function ausgelieferteSeiten() {
+  const raus = [];
+  (function walk(d) {
+    for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+      const p = path.join(d, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (e.name === "index.html") {
+        const rel = path.relative(DIST_DIR, path.dirname(p)).split(path.sep).join("/");
+        raus.push({ url: "/" + (rel ? rel + "/" : ""), html: fs.readFileSync(p, "utf8") });
+      }
+    }
+  })(DIST_DIR);
+  return raus;
+}
+
+function buildSitemap(seiten) {
+  const eintraege = [];
+  for (const { url, html } of seiten) {
+    if (/name="robots"[^>]*noindex/i.test(html)) continue;
+    const treffer = SITEMAP_PRIO.find(([re]) => re.test(url));
+    eintraege.push({ url, prio: treffer[1], freq: treffer[2] });
+  }
+  /* Stabile Reihenfolge: Startseite zuerst, dann alphabetisch. Ein Diff soll
+     lesbar bleiben. */
+  eintraege.sort((a, b) => (a.url === "/" ? -1 : b.url === "/" ? 1 : a.url.localeCompare(b.url)));
+  const heute = new Date().toISOString().slice(0, 10);
+  const zeilen = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    "<!-- ERZEUGT von build.js — nicht von Hand bearbeiten. Aufgabe 26, 31.08.2026. -->",
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+  ];
+  for (const e of eintraege) {
+    zeilen.push(
+      "  <url>",
+      "    <loc>https://frankonia-sicherheit.de" + e.url + "</loc>",
+      "    <lastmod>" + heute + "</lastmod>",
+      "    <changefreq>" + e.freq + "</changefreq>",
+      "    <priority>" + e.prio + "</priority>",
+      "  </url>"
+    );
+  }
+  zeilen.push("</urlset>", "");
+  return { xml: zeilen.join("\n"), anzahl: eintraege.length, uebersprungen: seiten.length - eintraege.length };
+}
+
 // Copied into dist/ verbatim, no processing. (css/ is handled by buildCss()
 // below — minified + bundled — so it's not a plain passthrough.)
 const PASSTHROUGH = [
   { from: "js", to: "js" },
   { from: "assets", to: "assets" },
   { from: "robots.txt", to: "robots.txt" },
-  { from: "sitemap.xml", to: "sitemap.xml" },
+  /* sitemap.xml NICHT kopieren — buildSitemap() erzeugt sie (Aufgabe 26). */
   /* Das Icon-Paket muss im WEB-ROOT liegen, nicht unter /assets/:
      - /favicon.ico holen Browser von sich aus genau von dort, ohne dass es im
        HTML steht (deshalb ist der Pfad nicht frei waehlbar);
@@ -933,6 +1012,19 @@ function build() {
   buildPassthrough();
   buildCoverageData();
   buildCss();
+
+  /* ⚠️ NACH buildPages(): die Sitemap liest das ausgelieferte Markup. */
+  const seiten = ausgelieferteSeiten();
+  const sm = buildSitemap(seiten);
+  fs.writeFileSync(path.join(DIST_DIR, "sitemap.xml"), sm.xml, "utf8");
+  /* Auch im Repository ablegen, damit ein Diff sichtbar ist, wenn eine Seite
+     dazukommt oder wegfällt — die Datei ist erzeugt, aber ihr Inhalt ist eine
+     Aussage über den Seitenbestand und gehört in die Versionsgeschichte. */
+  fs.writeFileSync(path.join(ROOT, "sitemap.xml"), sm.xml, "utf8");
+  console.log(
+    "build: sitemap.xml erzeugt — " + sm.anzahl + " Eintraege, " + sm.uebersprungen + " noindex-Seiten uebersprungen"
+  );
+
   console.log(`build: done — ${count} page(s) compiled, assets copied to dist/.`);
 }
 

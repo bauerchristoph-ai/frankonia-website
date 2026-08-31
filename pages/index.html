@@ -401,7 +401,7 @@
       <div class="hero__bg" aria-hidden="true">
         <picture>
           <source type="image/webp" srcset="/assets/images/herofinal-768.webp 768w, /assets/images/herofinal-1280.webp 1280w, /assets/images/herofinal-1347.webp 1347w" sizes="100vw">
-          <img src="/assets/images/herofinal-1347.jpg" srcset="/assets/images/herofinal-768.jpg 768w, /assets/images/herofinal-1280.jpg 1280w, /assets/images/herofinal-1347.jpg 1347w" sizes="100vw" width="1347" height="853" alt="" loading="eager" fetchpriority="high">
+          <img src="/assets/images/herofinal-1347.jpg" srcset="/assets/images/herofinal-768.jpg 768w, /assets/images/herofinal-1280.jpg 1280w, /assets/images/herofinal-1347.jpg 1347w" sizes="100vw" width="1347" height="853" alt="Zwei Sicherheitskräfte von FRANKONIA im Einsatz vor einem Firmengelände in der Abenddämmerung" loading="eager" fetchpriority="high">
         </picture>
       </div>
 
@@ -832,7 +832,12 @@
            ANCHOR is deliberately left alone — Chris confirmed the id can stay, and
            it is referenced by the CTA in all three header partials and on every
            page, plus any live Ads URL. -->
-      <div class="konzept-seq" data-konzept-seq aria-label="Ihr Sicherheitskonzept in drei Schritten">
+      <!-- ⚠️ role="group" IST NICHT OPTIONAL: ein <div> ohne Rolle kann keinen
+           zugänglichen Namen tragen, das aria-label wäre wirkungslos (Aufgabe 25,
+           31.08.2026). Mit einer Rolle wird der Name vorgelesen. "group" statt
+           "region", weil dieser Block innerhalb einer Sektion liegt, die ihre
+           eigene Überschrift hat. -->
+      <div class="konzept-seq" data-konzept-seq role="group" aria-label="Ihr Sicherheitskonzept in drei Schritten">
         <!-- include: konzept-base -->
         <div class="konzept-seq__stage">
           <div class="konzept-seq__layers">

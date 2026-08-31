@@ -59,7 +59,21 @@
     if (!el || el.querySelector(".kz-char")) return;
     var text = el.textContent;
     if (!text.trim()) return;
-    el.setAttribute("aria-label", text.trim());
+    /* ⚠️⚠️ NICHT aria-label — GEÄNDERT 31.08.2026 (Aufgabe 25).
+       Diese Funktion zerlegt einen Titel in einzelne Zeichen-Spans, damit sie
+       animiert werden können. Der Originaltext wurde dabei als aria-label an das
+       Element gehängt, damit Hilfstechnik den ganzen Titel hört statt einzelner
+       Buchstaben — die Absicht war richtig, das Mittel nicht: das Element ist ein
+       <span> ohne Rolle, und ein Element mit generischer Rolle kann keinen
+       zugänglichen Namen tragen. Screenreader ignorieren das Attribut, die
+       Beschriftung kam also gar nicht an.
+
+       Stattdessen: der Originaltext bleibt als ECHTER Text im Dokument, nur
+       optisch verborgen, und die Zeichen-Spans werden für Hilfstechnik
+       ausgeblendet. Das funktioniert unabhängig von jeder ARIA-Rolle. */
+    var vorlese = document.createElement("span");
+    vorlese.className = "visually-hidden";
+    vorlese.textContent = text.trim();
     var frag = document.createDocumentFragment();
     var i = 0;
     text.split(/(\s+)/).forEach(function (part) {
@@ -79,6 +93,10 @@
       frag.appendChild(word);
     });
     el.textContent = "";
+    el.appendChild(vorlese);
+    /* ⚠️ KEINE zusaetzliche aria-hidden-Huelle noetig: jede Wort-Huelle oben traegt
+       schon aria-hidden="true". Eine weitere waere ein Inline-Element mehr im
+       Umbruch, ohne Gewinn. */
     el.appendChild(frag);
   }
 

@@ -1,417 +1,352 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Manually maintained per CLAUDE.md / guidelines §2.6 — update whenever a
-  page ships, don't generate entries for pages that don't exist yet.
-  THE SITE IS GERMAN-ONLY (client 2026-08-13, Q8). The /en/ entry and every
-  `hreflang="en"` alternate were removed in that pass, together with the page
-  itself — a sitemap that still advertised /en/ is exactly how a deleted page
-  gets crawled and indexed anyway.
--->
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<!-- ERZEUGT von build.js — nicht von Hand bearbeiten. Aufgabe 26, 31.08.2026. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://frankonia-sicherheit.de/</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://frankonia-sicherheit.de/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://frankonia-sicherheit.de/"/>
-    <lastmod>2026-08-14</lastmod>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-  <!--
-    Hub pages (Webtexte 23/24), built 2026-08-09. Priority 0.9, above the
-    service and city pages they index: both sit in the site chrome of every
-    page (/leistungen/ in the nav and the services submenu, /einsatzgebiete/ in
-    the footer) and both were live 404s until now. The third hub, /ratgeber/,
-    follows (docs/build-checklist.md Bloque 7).
-  -->
   <url>
-    <loc>https://frankonia-sicherheit.de/leistungen/</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/einsatzgebiete/</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/werkschutz/</loc>
-    <lastmod>2026-07-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <!-- The other nine Leistungsseiten, built 2026-08-16 from Webtexte 02/04/05/
-       06/07/09/10/11/12. Same 0.8 as Werkschutz: they are the pages the service
-       keywords land on, one rung below the two nav-level hubs at 0.9. -->
-  <url>
-    <loc>https://frankonia-sicherheit.de/objektschutz/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/sicherheitstechnik/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/brandwache/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/kaufhausdetektei/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/veranstaltungsschutz/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/baustellenbewachung/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/revier-schliessdienst/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/empfangsdienst/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/interventionsdienst/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/referenzen/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <!--
-    City pages — ALL TEN, complete since 2026-08-16 (Bloque 4 + Bloque 5).
-    Priority 0.8, the same as a service page: these carry the heaviest local
-    intent on the site (720/mo on "sicherheitsdienst nürnberg" alone) and are the
-    pages Ads and the Local Pack land on.
-    ⚠️ Bamberg is 0.9, not 0.8, and it is the only city that differs: it is the
-    only location with a real address, its Schema carries the full NAP with geo,
-    and it is the page defending the Local-Pack position for the Heimmarkt. Its
-    own draft calls for the "stärkste Local-Signale aller Seiten".
-    Order is the footer's: Bamberg first, then by region.
-  -->
-  <url>
-    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-bamberg/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-nuernberg/</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-wuerzburg/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-erlangen/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-fuerth/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-schweinfurt/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-bayreuth/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-coburg/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-ansbach/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-forchheim/</loc>
-    <lastmod>2026-08-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <!--
-    Combo pages (service × city) — ALL SIXTEEN, grouped by city so the geo
-    hierarchy is legible in the file itself. Priority 0.8, like the city and
-    service pages: they carry the most specific commercial intent on the site and
-    several double as Google-Ads landing pages (Webtext 34 marks Brandwache
-    Nürnberg K2/K5, Webtext 37 notes a CPC up to 17,69 € for Baustellenbewachung
-    Nürnberg). docs/build-checklist.md Bloque 6 is closed with these.
-  -->
-  <url>
-    <loc>https://frankonia-sicherheit.de/brandwache-nuernberg/</loc>
-    <lastmod>2026-08-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/objektschutz-nuernberg/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/werkschutz-nuernberg/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/baustellenbewachung-nuernberg/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/brandwache-wuerzburg/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/objektschutz-wuerzburg/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/werkschutz-wuerzburg/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/baustellenbewachung-wuerzburg/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/brandwache-erlangen/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/objektschutz-erlangen/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/werkschutz-erlangen/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <loc>https://frankonia-sicherheit.de/angebot/</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://frankonia-sicherheit.de/baustellenbewachung-erlangen/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/brandwache-fuerth/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/objektschutz-fuerth/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/werkschutz-fuerth/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://frankonia-sicherheit.de/baustellenbewachung-fuerth/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/baustellenbewachung-nuernberg/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/baustellenbewachung-wuerzburg/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/baustellenbewachung/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/brandwache-erlangen/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/brandwache-fuerth/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/brandwache-nuernberg/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/brandwache-wuerzburg/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/brandwache/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/datenschutz/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.1</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/einsatzgebiete/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/empfangsdienst/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/impressum/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.1</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/interventionsdienst/</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://frankonia-sicherheit.de/jobs/</loc>
-    <lastmod>2026-08-03</lastmod>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-  <!-- Built 2026-08-10, the last non-replica page of the 52-text set. Priority
-       with the service pages: six pages link it and it is the page the whole
-       "concept before contract" argument rests on. -->
   <url>
-    <loc>https://frankonia-sicherheit.de/sicherheitskonzept/</loc>
-    <lastmod>2026-08-10</lastmod>
+    <loc>https://frankonia-sicherheit.de/kaufhausdetektei/</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  <!-- Ratgeber, built 2026-08-10. The hub sits with the other hubs; the three
-       articles are dated editorial pieces, so yearly like the case studies. -->
+  <url>
+    <loc>https://frankonia-sicherheit.de/kontakt/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/leistungen/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/objektschutz-erlangen/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/objektschutz-fuerth/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/objektschutz-nuernberg/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/objektschutz-wuerzburg/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/objektschutz/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
   <url>
     <loc>https://frankonia-sicherheit.de/ratgeber/</loc>
-    <lastmod>2026-08-10</lastmod>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/ratgeber/paragraph-34a-erklaert/</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/ratgeber/kosten-sicherheitsdienst/</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/ratgeber/brandwache-wann-vorgeschrieben/</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <!-- Block F, 2026-08-23: die vier aus dem alten Blog portierten Artikel.
-       Gleiche Priorität und changefreq wie die drei bestehenden Ratgeber-Artikel —
-       datierte redaktionelle Stücke, die nicht laufend umgeschrieben werden. -->
-  <url>
-    <loc>https://frankonia-sicherheit.de/ratgeber/qualifikationen-sicherheitsdienst/</loc>
-    <lastmod>2026-08-23</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/ratgeber/voraussetzungen-sicherheitsdienst/</loc>
-    <lastmod>2026-08-23</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://frankonia-sicherheit.de/ratgeber/tariflohn-sicherheitsdienst/</loc>
-    <lastmod>2026-08-23</lastmod>
-    <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://frankonia-sicherheit.de/ratgeber/bewerbung-sicherheitsdienst/</loc>
-    <lastmod>2026-08-23</lastmod>
-    <changefreq>yearly</changefreq>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
-  <!-- Conversion landing page, built 2026-08-10. Priority with the service
-       pages: it is the destination of the free-analysis CTA, not a leaf. -->
   <url>
-    <loc>https://frankonia-sicherheit.de/angebot/</loc>
-    <lastmod>2026-08-10</lastmod>
+    <loc>https://frankonia-sicherheit.de/ratgeber/brandwache-wann-vorgeschrieben/</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.6</priority>
   </url>
-  <!-- Built 2026-08-10. Below the service pages, above Kontakt: it converts
-       nobody on its own, but it is the entity page Organization schema hangs
-       off and it is now in the main nav. -->
   <url>
-    <loc>https://frankonia-sicherheit.de/ueber-uns/</loc>
-    <lastmod>2026-08-10</lastmod>
-    <changefreq>yearly</changefreq>
+    <loc>https://frankonia-sicherheit.de/ratgeber/kosten-sicherheitsdienst/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/ratgeber/paragraph-34a-erklaert/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/ratgeber/qualifikationen-sicherheitsdienst/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/ratgeber/tariflohn-sicherheitsdienst/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/ratgeber/voraussetzungen-sicherheitsdienst/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/referenzen/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://frankonia-sicherheit.de/kontakt/</loc>
-    <lastmod>2026-07-25</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <!-- Case studies (Webtexte 50-52), built 2026-08-05. Lower priority and
-       yearly changefreq than the service/landing pages: they are dated editorial
-       pieces, not pages that get reworked. -->
-  <url>
-    <loc>https://frankonia-sicherheit.de/referenzen/case-study-sicherheitstechnik/</loc>
-    <lastmod>2026-08-05</lastmod>
+    <loc>https://frankonia-sicherheit.de/referenzen/case-study-schichtsystem/</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://frankonia-sicherheit.de/referenzen/case-study-sicherheitskonzept/</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://frankonia-sicherheit.de/referenzen/case-study-schichtsystem/</loc>
-    <lastmod>2026-08-05</lastmod>
+    <loc>https://frankonia-sicherheit.de/referenzen/case-study-sicherheitstechnik/</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
-  <!--
-    Legal pages, built 2026-08-14 (client review 2026-08-13, Q1). Priority 0.1:
-    both were live 404s
-    linked from every page's footer, so they need to exist and be crawlable, but
-    neither should ever compete with a service page for attention.
-    ✅ /datenschutz/ IST SEIT DEM 23.08.2026 GELISTET (Block J). Der Grund für die
-    frühere Auslassung ist entfallen: die Seite trägt kein `noindex` mehr, weil sie
-    keinen Platzhalter mehr enthält, sondern die Übergangsfassung des echten
-    Datenschutztextes von der alten Live-Seite.
-  -->
   <url>
-    <loc>https://frankonia-sicherheit.de/impressum/</loc>
-    <lastmod>2026-08-14</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.1</priority>
+    <loc>https://frankonia-sicherheit.de/revier-schliessdienst/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://frankonia-sicherheit.de/datenschutz/</loc>
-    <lastmod>2026-08-23</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.1</priority>
+    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-ansbach/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-bamberg/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-bayreuth/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-coburg/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-erlangen/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-forchheim/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-fuerth/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-nuernberg/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-schweinfurt/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/sicherheitsdienst-wuerzburg/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/sicherheitskonzept/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/sicherheitstechnik/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/ueber-uns/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/veranstaltungsschutz/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/werkschutz-erlangen/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/werkschutz-fuerth/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/werkschutz-nuernberg/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/werkschutz-wuerzburg/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://frankonia-sicherheit.de/werkschutz/</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>

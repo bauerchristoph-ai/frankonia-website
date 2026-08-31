@@ -323,7 +323,41 @@ function torRoheFarben() {
   return befunde;
 }
 
+
+/* ═══════════════════════════════════════════════ Aufgabe 26 · Sitemap
+   Der Bau schlaegt fehl, wenn Seitenzahl und Eintragszahl auseinanderfallen.
+   ⚠️ "Auseinanderfallen" heisst nicht "gleich": indexierbare Seiten muessen
+   drin sein, noindex-Seiten duerfen NICHT drin sein. Beide Richtungen werden
+   geprueft, denn beide Vorfaelle sind dokumentiert vorgekommen — einmal 53
+   Eintraege bei 54 Seiten, einmal zehn Seiten ohne Eintrag. */
+function torSitemap() {
+  const befunde = [];
+  const p = path.join(DIST, "sitemap.xml");
+  if (!fs.existsSync(p)) return ["sitemap.xml fehlt in dist/"];
+  const xml = fs.readFileSync(p, "utf8");
+  /* ⚠️ Ohne Regex extrahiert: ein Muster mit Schrägstrichen in einer
+     Zeichenkette ist auf diesem Rechner mehrfach an der Backslash-Behandlung des
+     Shell-Heredocs zerbrochen. Zeichenkettensuche ist hier ohnehin klarer. */
+  const drin = new Set();
+  const AUF = "<loc>https://frankonia-sicherheit.de";
+  let i = xml.indexOf(AUF);
+  while (i >= 0) {
+    const ende = xml.indexOf("<", i + AUF.length);
+    drin.add(xml.slice(i + AUF.length, ende));
+    i = xml.indexOf(AUF, ende);
+  }
+  for (const s2 of alleSeiten()) {
+    const noindex = /name="robots"[^>]*noindex/i.test(s2.html);
+    if (noindex && drin.has(s2.url)) befunde.push(s2.url + " ist noindex, steht aber im Sitemap");
+    if (!noindex && !drin.has(s2.url)) befunde.push(s2.url + " ist indexierbar, fehlt aber im Sitemap");
+  }
+  const seitenUrls = new Set(alleSeiten().map((x) => x.url));
+  for (const u of drin) if (!seitenUrls.has(u)) befunde.push(u + " steht im Sitemap, existiert aber nicht");
+  return befunde;
+}
+
 const TORE = [
+  ["Sitemap deckt sich mit dem Seitenbestand (Aufgabe 26)", torSitemap],
   ["Keine rohen Farbwerte ausserhalb tokens.css (Aufgabe 15)", torRoheFarben],
   ["Kommentare unter 200 Zeichen (Aufgabe 5)", torKommentare],
   ["Icon-Paket vollständig (Aufgabe 2)", torIcons],

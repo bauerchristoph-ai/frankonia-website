@@ -146,7 +146,16 @@
 }
   </script>
 
-  <!-- include: head-common -->
+  <!-- ⚠️⚠️ KEINE MOTION-BIBLIOTHEKEN AUF DIESER SEITE — 31.08.2026, Aufgabe 23.
+     Entfernt: GSAP (71 KB), ScrollTrigger (43 KB), Lenis (17 KB),
+     smooth-scroll.js, hero-reveal.js, pixel-transition.js. Zusammen 131 KB
+     für einen Hero-Reveal und eine Pixel-Naht auf einem RECHTSTEXT.
+     Dieselbe Begründung, mit der diese Seite schon text-reveal und
+     title-reveal nicht lädt: zu einem Impressum kommt man, um einen Wert mit
+     Strg+F zu suchen oder es zu drucken, und beides findet keinen
+     versteckten Text.
+     ⚠️ Wer hier ein Motion-Skript ergänzt, bringt die 131 KB mit zurück. -->
+<!-- include: head-common -->
   <link rel="stylesheet" href="/css/page-service.css">
   <link rel="stylesheet" href="/css/page-legal.css">
 
@@ -165,13 +174,7 @@
        attribute: nothing to hide means nothing that can stay hidden.
        hero-reveal stays (the H1 is above the fold, plays once, and every page's
        hero does it), as do smooth-scroll and the seam builder. -->
-  <script src="/assets/js/vendor/gsap.min.js" defer></script>
-  <script src="/assets/js/vendor/ScrollTrigger.min.js" defer></script>
   <link rel="stylesheet" href="/css/vendor/lenis.css">
-  <script src="/assets/js/vendor/lenis.min.js" defer></script>
-  <script src="/js/smooth-scroll.js" defer></script>
-  <script src="/js/hero-reveal.js" defer></script>
-  <script src="/js/pixel-transition.js" defer></script>
 </head>
 <body>
   <!-- include: gtm-noscript -->
@@ -195,7 +198,7 @@
          page exists to be read once when someone is looking for who is behind the
          site; selling anything on it would be the wrong instinct, and the § 5 DDG
          details are three lines below anyway. -->
-    <section class="service-hero legal-hero" data-hero-reveal>
+    <section class="service-hero legal-hero">
       <div class="container service-hero__grid">
         <div class="service-hero__content hero__content">
           <h1>Impressum</h1>
@@ -210,7 +213,6 @@
       </div>
     </section>
 
-    <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
 
     <!-- ============ 2. ANBIETERANGABEN + HAFTUNGSAUSSCHLUSS ============ -->
     <!-- One white section for the whole document. White because this is several
