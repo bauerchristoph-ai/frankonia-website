@@ -685,29 +685,81 @@ function buildPages() {
 // document's worth of real markup the day a script contains one.
 // Conditional comments (<!--[if …]>) are preserved — they are instructions to a
 // browser, not documentation.
+// ⚠️⚠️ EINZELDURCHLAUF UND KOMMENTAR-BEWUSST, seit dem 31.08.2026 — und der
+// Grund ist ein echter Fehler, der monatelang unbemerkt lief.
+//
+// Die alte Fassung suchte die Schutzbereiche (script/style/pre/textarea) mit
+// einem eigenen Regex über das ganze Dokument. Der findet ein Tag AUCH DANN,
+// wenn es innerhalb eines Kommentars steht — und /datenschutz/ hatte einen
+// Kommentar, der ein Script-Tag im Prosatext erwähnt. Folge: der Schutzbereich
+// begann mitten im Kommentar und reichte bis zum nächsten echten Schluss-Tag,
+// der ganze Bereich galt als schützenswert, und der Kommentar blieb stehen.
+// **Ein Kommentar, der über Script-Tags schreibt, machte sich selbst immun
+// gegen den Kommentar-Entferner.** Gemessen: 8.026 Zeichen interner
+// Arbeitsanweisungen wurden auf /datenschutz/ ausgeliefert, mit "Quelltext
+// anzeigen" für jeden lesbar — inklusive einer inzwischen FALSCHEN Aussage
+// ("es gibt kein Analytics, kein Tag Manager").
+//
+// Diese Fassung läuft EINMAL von links nach rechts. Ein Rohtext-Element kann
+// nur betreten werden, wenn man nicht in einem Kommentar ist — damit ist der
+// Fehler strukturell ausgeschlossen und nicht nur für diesen einen Fall
+// geflickt. Bedingte Kommentare (<!--[if) bleiben wie bisher erhalten.
 function stripHtmlComments(html) {
-  const PROTECTED = /<(script|style|pre|textarea)\b[^>]*>[\s\S]*?<\/\1>/gi;
-  const parts = [];
-  let last = 0;
-  let m;
-  while ((m = PROTECTED.exec(html)) !== null) {
-    parts.push({ text: html.slice(last, m.index), strip: true });
-    parts.push({ text: m[0], strip: false });
-    last = m.index + m[0].length;
-  }
-  parts.push({ text: html.slice(last), strip: true });
+  const ROHTEXT = /^<(script|style|pre|textarea)\b/i;
+  const out = [];
+  let i = 0;
 
-  return parts
-    .map((p) => {
-      if (!p.strip) return p.text;
-      return (
-        p.text
-          .replace(/<!--(?!\[if)[\s\S]*?-->/g, "")
-          // A comment usually occupied its own lines; collapse what it left
-          // behind so the output does not become a field of blank lines.
-          .replace(/\n[ \t]*\n+/g, "\n")
-      );
-    })
+  while (i < html.length) {
+    const auf = html.indexOf("<", i);
+    if (auf < 0) {
+      out.push({ text: html.slice(i), strip: true });
+      break;
+    }
+    if (auf > i) out.push({ text: html.slice(i, auf), strip: true });
+
+    if (html.startsWith("<!--", auf)) {
+      const zu = html.indexOf("-->", auf + 4);
+      const bis = zu < 0 ? html.length : zu + 3;
+      /* Bedingter Kommentar bleibt; jeder andere verschwindet. */
+      if (html.startsWith("<!--[if", auf)) {
+        out.push({ text: html.slice(auf, bis), strip: false });
+      }
+      i = bis;
+      continue;
+    }
+
+    const m = html.slice(auf).match(ROHTEXT);
+    if (m) {
+      const tag = m[1].toLowerCase();
+      const zu = html.toLowerCase().indexOf("</" + tag, auf);
+      let bis;
+      if (zu < 0) {
+        bis = html.length;
+      } else {
+        const spitz = html.indexOf(">", zu);
+        bis = spitz < 0 ? html.length : spitz + 1;
+      }
+      out.push({ text: html.slice(auf, bis), strip: false });
+      i = bis;
+      continue;
+    }
+
+    /* Gewöhnliches Tag: bis zum Tag-Ende mitnehmen, damit ein < in einem
+       Attributwert nicht als neues Tag gelesen wird. */
+    const spitz = html.indexOf(">", auf);
+    const bis = spitz < 0 ? html.length : spitz + 1;
+    out.push({ text: html.slice(auf, bis), strip: true });
+    i = bis;
+  }
+
+  return out
+    .map((p) =>
+      p.strip
+        ? /* Ein Kommentar stand meist auf eigenen Zeilen; einsammeln, was er
+             hinterlässt, damit die Ausgabe kein Feld aus Leerzeilen wird. */
+          p.text.replace(/\n[ \t]*\n+/g, "\n")
+        : p.text
+    )
     .join("");
 }
 

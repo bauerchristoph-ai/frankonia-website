@@ -1,128 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
-<!-- /datenschutz/ — ÜBERGANGSFASSUNG, Block J, 2026-08-23. Der Rechtstext ist
-     der der alten Live-Seite (https://frankonia-sicherheit.de/datenschutz/,
-     abgerufen am 23.08.2026), Wort für Wort — Auftrag: "Übernimm den aktuellen
-     Datenschutztext als Übergangsfassung, damit die Seite ab Tag eins rechtlich
-     befüllt ist". Kein Satz ist umformuliert; er ist maschinell aus der
-     Live-Seite extrahiert, nicht abgeschrieben, weil bei einem Rechtstext ein
-     Tippfehler eine inhaltliche Änderung ist.
 
-     ZWEI STRUKTURELLE ANPASSUNGEN, beide ohne Textänderung:
-       - Überschriftenebenen h4/h5 -> h3/h4, weil diese Seite schon h1 und h2 hat
-         und eine übersprungene Ebene gegen die Projektregeln geht (dieselbe
-         Abweichung, die /impressum/ gegenüber der Live-Seite macht).
-       - E-Mail-Adressen und die Telefonnummer sind verlinkt.
-
-     ⚠️⚠️ WAS BEWUSST NICHT ÜBERNOMMEN WURDE: die beiden letzten Abschnitte der
-     alten Erklärung, "Hinweise zur Datenverarbeitung im Zusammenhang mit Google
-     Analytics" und "reCAPTCHA". Diese Seite setzt beides NICHT ein — es gibt kein
-     Analytics, kein Tag Manager, kein reCAPTCHA, und die CSP in vercel.json
-     erlaubt `script-src 'self'` ohne jeden Drittanbieter. Beide Abschnitte hier
-     zu veröffentlichen würde eine Verarbeitung erklären, die nicht stattfindet;
-     das ist keine Formulierungsfrage, sondern eine falsche Aussage in einem
-     rechtlich verbindlichen Dokument. Sie kommen zurück, sobald die Dienste
-     wirklich laufen — dann zusammen mit dem Consent-Banner und der
-     Cookiebot-Deklaration.
-     ⚠️ DER KUNDE HAT AM 24.08.2026 BESTÄTIGT, dass beide Dienste voraussichtlich
-     noch kommen. Der Wortlaut der alten Seite ist deshalb aufbewahrt in
-     docs/datenschutz-drittanbieter.md — mit der Reihenfolge (Consent-Werkzeug
-     zuerst, dann die Dienste, dann der Text), den nötigen CSP-Ergänzungen, und
-     dem Hinweis, dass der alte Analytics-Abschnitt Universal Analytics
-     beschreibt und für GA4 an drei Stellen falsch ist. Nicht ungeprüft
-     zurückkopieren.
-
-     ⚠️ NOINDEX IST ENTFERNT (Auftrag: "Danach noindex entfernen und die URL in
-     die Sitemap aufnehmen"). Die Seite steht jetzt in sitemap.xml. Der Grund ist
-     derselbe, der die Seite überhaupt erzwungen hat: sie ist aus dem Footer jeder
-     Seite UND aus der Einwilligungs-Checkbox des Formulars verlinkt.
-
-     ⚠️⚠️ 2026-08-26 — DER TEXT IST AUF AUSDRÜCKLICHE ANWEISUNG DES KUNDEN
-     ÜBERARBEITET ("Datenschutz — optimiere es einfach selbst so dass es am
-     sinnvollsten ist und am besten passt"). Damit ist für DIESE EINE SEITE die
-     Projektregel "bestehende Webtexte nicht inhaltlich ändern" aufgehoben, und
-     zwar nur hier: bei einer Datenschutzerklärung ist eine falsche Aussage kein
-     Redaktionsgeschmack, sondern eine falsche Pflichtinformation nach Art. 13
-     DSGVO. Was geändert wurde, in zwei Gruppen:
-
-     BEHOBEN, weil nachweislich falsch:
-       1. Abschnitt 5.1 nannte "die Verschwiegenheitspflicht gem. § 83 StBerG" —
-          das Steuerberatungsgesetz, ein Baustein aus einer Steuerberater-Vorlage.
-          Er SCHRÄNKTE das Auskunftsrecht der Besucher unter Berufung auf eine Norm
-          ein, die für einen Sicherheitsdienstleister nicht gilt. Der Satz ist
-          gekürzt, nicht gestrichen: der zweite Grund darin (überwiegendes
-          berechtigtes Interesse eines Dritten) ist einschlägig und bleibt.
-       2. Die zweite Unterüberschrift in Abschnitt 2 hieß "2.1 Aufruf der Webseite",
-          obwohl darunter das Kontaktformular steht -> "2.2 Kontaktformular".
-       3. Abschnitt 6 nannte als Stand den 18.05.2018 -> 26.08.2026.
-       4. Abschnitt 2.1 nannte die Domain als "www.frankonia-sicherheit.de". Die
-          Seite läuft auf der nackten Domain, www wird darauf umgeleitet.
-       5. ⚠️⚠️ ABSCHNITT 4 BESCHRIEB COOKIES, DIE ES NICHT GIBT — Session-Cookies,
-          temporäre Cookies und Cookies "zu statistischen Zwecken". Gemessen: im
-          gesamten eigenen JavaScript kein einziges "document.cookie", kein
-          localStorage, kein sessionStorage, und es ist kein Analysewerkzeug
-          eingebunden. Der Abschnitt erklärte also eine Verarbeitung, die gar nicht
-          stattfindet — und beschrieb dabei ausgerechnet Analyse-Cookies, die
-          einwilligungspflichtig wären. Er sagt jetzt, was zutrifft.
-
-     ERGÄNZT, weil die Verarbeitung stattfindet und nicht genannt war:
-       6. 2.3 Bewerbungen über das Karriereformular, inklusive Lebenslauf-Upload
-          (/jobs/ nimmt name, email, phone, qualification, message und cv als
-          .pdf/.doc/.docx).
-       7. 3.1 Hosting — Art. 13 Abs. 1 Buchst. e) verlangt die Empfänger, und der
-          Logfile-Abschnitt sprach nur von "dem Server dieser Webseite".
-       8. 3.2 Kartendarstellung — die Kacheln kommen von CARTO (aus
-          OpenStreetMap-Daten) und übertragen die IP der Besucher an einen Dritten.
-          Betroffen sind /, /einsatzgebiete/ und /kontakt/.
-       9. 3.3 Verlinkte Dienste — WhatsApp, die Social-Profile, die
-          HubSpot-Terminbuchung, die Google-Route und das Google-Bewertungsprofil.
-          Alle sind reine LINKS: vor dem Klick verlässt kein Datum die Seite.
-
-     ⚠️ ZWEI PUNKTE, DIE NUR DER KUNDE ODER SEIN ANWALT BEANTWORTEN KANN und die
-     deshalb als Frage im Text stehen, nicht als Behauptung: ob mit dem Hoster ein
-     Auftragsverarbeitungsvertrag nach Art. 28 DSGVO besteht, und wie lange
-     Bewerbungsunterlagen aufbewahrt werden. Beides ist im Markup an der Stelle
-     markiert. Eine erfundene Vertragsaussage wäre schlimmer als eine Lücke.
-
-     Der Verantwortlichen-Block oben stand schon vorher hier und ist um die
-     Angaben aus Abschnitt 1 der alten Erklärung ergänzt — insbesondere um den
-     Datenschutzbeauftragten, den die Shell überhaupt nicht nannte, obwohl
-     Art. 13 Abs. 1 Buchst. b) DSGVO ihn verlangt, sobald einer benannt ist.
-
-     Die ursprüngliche Shell-Begründung (Kunde, Feedback
-     2026-08-13, Q1: "Datenschutz: we will integrate an automatic privacy-policy
-     scanner that keeps the text up to date — details follow later. Plan the
-     /datenschutz/ page as a shell for now").
-
-     ⚠️ WHY THIS PAGE EXISTS AT ALL RATHER THAN WAITING FOR THE SCANNER: /datenschutz/
-     was already linked from the footer of all 19 pages AND from the consent
-     checkbox of the shared lead form ("Ich habe die Datenschutzerklärung gelesen
-     und stimme zu"). A consent checkbox whose privacy link 404s is not a cosmetic
-     gap — it is the one broken link on this site with a legal consequence, since
-     the visitor is being asked to confirm they read a document that cannot be
-     opened. The shell closes that.
-
-     ⚠️ NOTHING IN <main> IS INVENTED LEGAL TEXT, and that is still true after the
-     interim version landed: every sentence of it is the client's own, from the old
-     live page. What this build wrote itself is exactly one paragraph, the marked
-     note at the end about the revised version and the supervisory authority — and
-     it makes no statement about legal bases, retention or transfers.
-
-     ⚠️⚠️ TWO THINGS THE NEXT PERSON HAS TO DO WHEN THE SCANNER ARRIVES:
-
-     1. THE CSP WILL BLOCK IT. vercel.json ships `script-src 'self'` with no
-        third-party hosts, so a scanner delivered as an external <script> (which is
-        how eRecht24, Usercentrics and the rest all work) is silently blocked and
-        the page just stays empty. Its host has to be added to `script-src`, and
-        to `connect-src` if it fetches its text at runtime. Expect to debug this if
-        nobody reads this comment.
-
-     2. REMOVE THE `noindex`. It is set below ON PURPOSE while the text is a
-        placeholder — a thin, incomplete privacy page is not something to put in
-        an index — but the finished policy should be indexable like the Impressum.
-
-     The scanner's output goes inside #datenschutz-inhalt, replacing the interim
-     notice. Everything above and below that div is page chrome and stays. -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -316,7 +194,77 @@
             <p>Auf der Startseite, auf der Seite „Einsatzgebiete" und auf der Kontaktseite wird eine interaktive Karte angezeigt. Das Kartenbild besteht aus Kacheln, die von den Servern des Anbieters CARTO (CARTO Inc., USA) geladen werden und auf Daten des OpenStreetMap-Projekts beruhen. Beim Laden dieser Kacheln übermittelt der Browser des Besuchers technisch notwendige Daten an den Anbieter, insbesondere die IP-Adresse, den verwendeten Browser und die angeforderten Kartenausschnitte. Rechtsgrundlage ist Art. 6 Abs. 1 Satz 1 Buchst. f) DSGVO; das berechtigte Interesse liegt in der verständlichen Darstellung der Einsatzgebiete und des Standorts.</p>
             <p>Die Karte wird erst geladen, wenn sie beim Scrollen in den sichtbaren Bereich gelangt. Wer die betreffende Stelle der Seite nicht erreicht, baut auch keine Verbindung zu dem Anbieter auf. Sämtliche Inhalte dieser Seiten sind ohne die Karte vollständig lesbar; die Anschrift und die Liste der Einsatzorte stehen jeweils als Text daneben.</p>
 
-            <h4>3.3 Verlinkte Dienste Dritter</h4>
+            <h4>3.3 Einwilligungsverwaltung</h4>
+            <p>
+              Beim Aufruf dieser Website wird ein Einwilligungsbanner des Anbieters Cookiebot
+              (Usercentrics A/S, Kopenhagen, Dänemark) geladen. Es dient dazu, Ihre Entscheidung über den
+              Einsatz nicht notwendiger Techniken einzuholen, zu dokumentieren und bei jedem weiteren
+              Aufruf zu berücksichtigen. Dafür wird ein Cookie mit der Kennung Ihrer Entscheidung
+              gespeichert. Solange Sie nicht zugestimmt haben, werden die nachfolgend beschriebenen
+              Dienste <strong>nicht geladen</strong>. Rechtsgrundlage für den Betrieb des Banners ist
+              Art. 6 Abs. 1 Satz 1 Buchst. c) DSGVO in Verbindung mit § 25 Abs. 2 Nr. 2 TDDDG; die
+              Einholung der Einwilligung ist gesetzlich vorgeschrieben.
+            </p>
+
+            <h4>3.4 Google Tag Manager</h4>
+            <p>
+              Nach Ihrer Einwilligung wird der Google Tag Manager geladen, ein Werkzeug der Google Ireland
+              Limited, Gordon House, Barrow Street, Dublin 4, Irland. Der Tag Manager erhebt selbst keine
+              personenbezogenen Daten; er steuert lediglich, welche der nachfolgend genannten Dienste
+              ausgeführt werden. Die Auslieferung erfolgt über unsere eigene Subdomain
+              d.frankonia-sicherheit.de, sodass die Anfragen zunächst an einen von uns betriebenen Server
+              gehen und erst von dort an die jeweiligen Anbieter weitergeleitet werden. Rechtsgrundlage ist
+              Ihre Einwilligung nach Art. 6 Abs. 1 Satz 1 Buchst. a) DSGVO in Verbindung mit
+              § 25 Abs. 1 TDDDG. Sie können Ihre Einwilligung jederzeit über den Einwilligungsdialog mit
+              Wirkung für die Zukunft widerrufen.
+            </p>
+
+            <h4>3.5 Reichweitenmessung und Werbung</h4>
+            <p>
+              Über den Tag Manager werden nach Ihrer Einwilligung folgende Dienste ausgeführt:
+            </p>
+            <ul>
+              <li>
+                <strong>Google Analytics 4</strong> (Google Ireland Limited) zur Messung der Nutzung
+                dieser Website — welche Seiten aufgerufen und welche Formulare abgesendet werden. Die
+                Auswertung erfolgt in zusammengefasster Form; wir verwenden sie, um Inhalte und Aufbau
+                der Website zu verbessern.
+              </li>
+              <li>
+                <strong>Google Ads</strong> (Google Ireland Limited) zur Messung des Erfolgs unserer
+                Anzeigen. Dabei wird erfasst, ob Sie nach dem Klick auf eine Anzeige eine Anfrage
+                abgesendet haben.
+              </li>
+              <li>
+                <strong>Meta-Pixel und Conversions API</strong> (Meta Platforms Ireland Limited, Dublin,
+                Irland) zur Messung und Ausspielung von Anzeigen auf Facebook und Instagram. Die
+                Conversions API übermittelt die Ereignisse von unserem Server aus.
+              </li>
+            </ul>
+            <p>
+              Bei diesen Diensten können personenbezogene Daten in die Vereinigten Staaten übermittelt
+              werden. Google und Meta sind nach dem EU-US Data Privacy Framework zertifiziert; Grundlage
+              der Übermittlung ist der Angemessenheitsbeschluss der Europäischen Kommission vom
+              10. Juli 2023, ergänzt um Standardvertragsklauseln. Rechtsgrundlage für die Verarbeitung ist
+              Ihre Einwilligung nach Art. 6 Abs. 1 Satz 1 Buchst. a) DSGVO in Verbindung mit
+              § 25 Abs. 1 TDDDG, die Sie jederzeit widerrufen können.
+            </p>
+            <p>
+              <strong>Ohne Ihre Einwilligung findet keine dieser Verarbeitungen statt.</strong> Die
+              genannten Dienste werden dann weder geladen noch ausgeführt.
+            </p>
+
+            <h4>3.6 Versand von Bestätigungs-E-Mails</h4>
+            <p>
+              Für den Versand der Eingangsbestätigung nach dem Absenden eines Formulars setzen wir Brevo
+              (Sendinblue GmbH, Köpenicker Straße 126, 10179 Berlin) als Auftragsverarbeiter ein. An Brevo
+              werden die für den Versand erforderlichen Daten übermittelt, insbesondere Ihre
+              E-Mail-Adresse und Ihr Name. Ein Vertrag zur Auftragsverarbeitung nach Art. 28 DSGVO liegt
+              vor. Rechtsgrundlage ist Art. 6 Abs. 1 Satz 1 Buchst. b) DSGVO, da die Bestätigung Teil der
+              Bearbeitung Ihrer Anfrage ist.
+            </p>
+
+            <h4>3.7 Verlinkte Dienste Dritter</h4>
             <p>Diese Webseite verweist an mehreren Stellen auf Angebote Dritter: auf WhatsApp (Kontaktschaltfläche), auf die Profile bei Instagram, LinkedIn und Facebook, auf ein Google-Unternehmensprofil mit Bewertungen, auf die Routenplanung von Google Maps und auf eine Terminbuchung bei HubSpot. Es handelt sich in allen Fällen um gewöhnliche Verweise, nicht um eingebettete Inhalte: solange ein Verweis nicht angeklickt wird, werden keine Daten an den jeweiligen Anbieter übertragen. Erst mit dem Klick verlassen Sie diese Webseite; ab diesem Zeitpunkt gilt die Datenschutzerklärung des jeweiligen Anbieters, auf dessen Verarbeitung wir keinen Einfluss haben.</p>
             <!-- ⚠️⚠️ ABSCHNITT 4 IST NEU GESCHRIEBEN, 2026-08-26, und das ist die
                  einzige inhaltlich ERSETZTE Passage der Seite. Der alte Text
@@ -428,6 +376,7 @@
             <p>Sie haben das Recht, eine erteilte Einwilligung jederzeit mit Wirkung für die Zukunft zu widerrufen. Der Widerruf der Einwilligung kann telefonisch, per E-Mail oder an unsere Postadresse formlos mitgeteilt werden. Durch den Widerruf wird die Rechtmäßigkeit der Datenverarbeitung, die aufgrund der Einwilligung bis zum Eingang des Widerrufs erfolgt ist, nicht berührt. Nach Eingang des Widerrufs wird die Datenverarbeitung, die ausschließlich auf Ihrer Einwilligung beruhte, eingestellt.</p>
             <h4>5.8 Beschwerde</h4>
             <p>Wenn Sie der Ansicht sind, dass die Verarbeitung der Sie betreffenden personenbezogenen Daten rechtswidrig ist, können Sie Beschwerde bei einer Aufsichtsbehörde für den Datenschutz einlegen, die für den Ort Ihres Aufenthaltes oder Arbeitsplatzes oder für den Ort des mutmaßlichen Verstoßes zuständig ist.</p>
+            <p>Für uns zuständig ist das Bayerische Landesamt für Datenschutzaufsicht (BayLDA), Promenade 27, 91522 Ansbach.</p>
             <h3>6. Stand und Aktualisierung dieser Datenschutzerklärung</h3>
             <p>Diese Datenschutzerklärung hat den Stand vom 26.08.2026. Wir behalten uns vor, die Datenschutzerklärung zu gegebener Zeit zu aktualisieren, um den Datenschutz zu verbessern und/oder an geänderte Behördenpraxis oder Rechtsprechung anzupassen.</p>
 
@@ -442,15 +391,6 @@
                  Der Hinweis stand in dieser Form schon auf der Platzhalterseite.
                  ⚠️ Beim Einbau des endgültigen Textes ersetzt dessen eigene
                  Fassung diesen Block — nicht beide stehen lassen. -->
-            <div class="legal-notice" role="note">
-              <p class="legal-notice__label">
-                <svg class="icon" aria-hidden="true"><use href="#icon-clock"></use></svg>
-                Hinweis: überarbeitete Fassung in Vorbereitung
-              </p>
-              <p>Diese Erklärung wird derzeit überarbeitet und anschließend automatisiert gepflegt, damit sie dauerhaft aktuell bleibt. Bis dahin gilt der vorstehende Text.</p>
-              <p>Zuständige Aufsichtsbehörde für eine Beschwerde nach Abschnitt 5.8 ist für uns das Bayerische Landesamt für Datenschutzaufsicht (BayLDA), Promenade 27, 91522 Ansbach.</p>
-            </div>
-
           <!-- Querverweis auf die andere Rechtsseite, wörtlich der Block, den
                pages/impressum.html in der Gegenrichtung schon hat. Keine
                Kundentexte, sondern Navigation: wer über die
