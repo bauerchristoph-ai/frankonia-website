@@ -19,11 +19,11 @@
   /* Dark navy #00091F (client 2026-07-29 — the whole Konzept section uses it).
      Also the "cut-out" fill for camera/sensor bodies so they mask onto the same
      surface. Literal hex: a client-specified section surface, not a brand token. */
-  --kz-bg: #00091F;
-  --kz-accent: #dceffc;              /* pale blue-white — secondary overlay strokes */
+  --kz-bg: var(--surface-navy);
+  --kz-accent: var(--color-diagram-ice);              /* pale blue-white — secondary overlay strokes */
   --kz-accent-soft: rgb(255 255 255 / 0.55);
   --kz-route-color: var(--color-blue-light);  /* dotted route = FRANKONIA blue (client) */
-  --kz-risk: #ff5b52;                /* restrained red — risk diagnostics only */
+  --kz-risk: var(--color-diagram-alert);                /* restrained red — risk diagnostics only */
   --kz-frame: min(30rem, 82vw);      /* diagram size (base/static) */
 
   position: relative;
@@ -74,7 +74,7 @@
 
 /* ---- Editorial label ----------------------------------------------------- */
 .konzept-seq__label {
-  color: #fff;
+  color: var(--text-on-dark-primary);
   max-width: 30rem;
   text-align: center;
 }
@@ -348,7 +348,7 @@
    2026-07-30 — first pass had this the other way round). White label + white sub
    read as the annotation layer; the line is what ties them to the diagram, so
    the line is what takes the route's colour. See .kz-tip__link below. */
-.kz-tip__label { fill: #fff; font-family: var(--font-family-base); font-size: 40px; font-weight: 600; }
+.kz-tip__label { fill: var(--text-on-dark-primary); font-family: var(--font-family-base); font-size: 40px; font-weight: 600; }
 .kz-tip__sub { fill: rgb(255 255 255 / 0.85); font-family: var(--font-family-base); font-size: 28px; }
 /* Thin SOLID connector (client 2026-07-29 — no dashes). */
 /* Elbow leader line (client 2026-07-29): a rounded diagonal→horizontal path in
@@ -366,7 +366,7 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.kz-tip__dot { fill: #fff; }
+.kz-tip__dot { fill: var(--text-on-dark-primary); }
 
 /* Layer 2 tooltips reveal (client 2026-07-29): line draws first, then the text
    fades, staggered top→bottom (data-kz-seq), when Layer 2 is active. CSS-only,
@@ -417,7 +417,7 @@
 /* The reveal-mask stroke that "draws" the dotted route in as you scroll (JS
    animates its dashoffset). It lives inside a <mask>, so its colour only acts
    as mask alpha — white = revealed. */
-.kz-reveal { fill: none; stroke: #fff; stroke-linecap: round; }
+.kz-reveal { fill: none; stroke: var(--text-on-dark-primary); stroke-linecap: round; }
 
 /* -- Layer 2: risk — two item types (client 2026-07-29) -- */
 /* Type A: warning marker = red ⚠ icon on a stem + 3 floor rings + a radial glow. */
@@ -505,7 +505,7 @@
    would be a black shape on a black background. The white stroke below is what
    makes it visible at all — don't remove it. stroke-width resolves in the
    SYMBOL's 16x60 viewBox, so 1 here is ~1 diagram unit at the 15-wide size. */
-.sc-sensor__icon { stroke: #fff; stroke-width: 1; stroke-linejoin: round; }
+.sc-sensor__icon { stroke: var(--text-on-dark-primary); stroke-width: 1; stroke-linejoin: round; }
 .sc-sensor__wave { fill: none; stroke: var(--color-blue-light); stroke-width: 1.8; stroke-linecap: round; opacity: 0.75; }
 
 /* Fire alarm — client-supplied #konzept-firealarm, WHITE line art (client
@@ -520,7 +520,7 @@
    together or the icon renders as a solid blob / as nothing at all.) */
 .sc-firealarm {
   fill: none;
-  stroke: #fff;
+  stroke: var(--text-on-dark-primary);
   stroke-width: 0.8;
   stroke-linejoin: round;
   stroke-linecap: round;
@@ -542,7 +542,7 @@
    blue as a token here rather than a hex baked into the sprite. */
 .sc-alarm__icon {
   fill: none;
-  stroke: #fff;
+  stroke: var(--text-on-dark-primary);
   color: var(--color-blue-light);
   /* Resolves in the symbol's own 22-unit viewBox (was 32 before the client's
      2026-07-31 redraw), so this scaled with it to keep the same rendered
@@ -675,7 +675,7 @@
     border-inline-start: 1px solid rgb(255 255 255 / 0.2);
   }
   .konzept-seq__terms li:first-child { border-inline-start: 1px solid rgb(255 255 255 / 0.2); }
-  .konzept-seq__term-name { color: #fff; font-weight: 600; white-space: normal; }
+  .konzept-seq__term-name { color: var(--text-on-dark-primary); font-weight: 600; white-space: normal; }
   .konzept-seq__term-sub {
     display: block;
     color: rgb(255 255 255 / 0.62);

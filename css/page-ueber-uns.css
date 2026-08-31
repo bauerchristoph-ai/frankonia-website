@@ -828,7 +828,7 @@
    flat #00091F + blue 0.38, i.e. it is matched to this band's lit EDGE. Change the
    knee or the end freely; change the first stop and the seam below stops matching. */
 .uu-inno {
-  background-color: #00091F;
+  background-color: var(--surface-navy);
   background-image:
     linear-gradient(
       to bottom,

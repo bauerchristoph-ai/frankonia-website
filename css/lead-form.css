@@ -294,7 +294,10 @@
 }
 
 .conversion__form .form-checkbox__label {
-  color: rgb(59 73 86 / 0.75);
+  /* Dieselbe Familie wie das optionale Häkchen darunter. Gemessen 4,68:1 auf
+     Weiß, also nicht regelwidrig — mitgezogen, damit im Formular nicht zwei
+     Grauwerte für dieselbe Rolle stehen. */
+  color: var(--text-on-light-secondary);
 }
 
 /* The privacy-policy link inside the consent sentence. MEASURED 2026-08-05:
@@ -497,7 +500,7 @@
    gehört nicht in die Markenpalette, und sie taucht auch nur in diesem einen
    Zustand auf. */
 .conversion__form [aria-invalid="true"] {
-  border-bottom-color: #B3261E;
+  border-bottom-color: var(--color-form-error);
   border-bottom-width: 2px;
 }
 
@@ -505,9 +508,15 @@
    Optisch leiser als die Datenschutz-Checkbox: die eine ist Voraussetzung der
    Verarbeitung, die andere ein Angebot. Gleich stark gesetzt lesen sie sich
    als zwei Pflichten. */
+/* ⚠️⚠️ GEMESSEN 4,04:1 — der schwächste Textwert im Formular, und er stand
+   ausgerechnet an der EINWILLIGUNGSERKLÄRUNG. Direkt daneben steht das
+   Pflicht-Häkchen in normaler Textfarbe: die freiwillige, werbliche Zustimmung
+   war die blassere von beiden. Art. 12 DSGVO verlangt eine leicht zugängliche
+   Form; eine Einwilligung, die schlechter lesbar ist als der Pflichttext neben
+   ihr, ist das nicht. Der Token gibt 6,35:1 auf Weiß. */
 .conversion__form .form-checkbox--optional .form-checkbox__label {
   font-size: var(--font-size-sm);
-  color: rgb(59 73 86 / 0.7);
+  color: var(--text-on-light-secondary);
 }
 
 /* ---- Turnstile ---------------------------------------------------------
@@ -547,7 +556,7 @@
 }
 
 .lead-form__status[data-state="fehler"] {
-  color: #B3261E;
+  color: var(--color-form-error);
   font-weight: 500;
 }
 

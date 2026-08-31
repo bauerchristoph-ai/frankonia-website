@@ -29,19 +29,19 @@
      the visual richness; the section itself is bright/spacious). The intro
      title is BLACK on this. */
   --sys-bg:                    var(--color-white);
-  --sys-color-surface:         #f1f2f4;                   /* light-gray card (odd) — visible on white */
-  --sys-color-surface-2:       #eef0f2;                   /* visual placeholder shade (temporary — replaced by real images) */
+  --sys-color-surface:         var(--color-diagram-light-1);                   /* light-gray card (odd) — visible on white */
+  --sys-color-surface-2:       var(--color-diagram-light-2);                   /* visual placeholder shade (temporary — replaced by real images) */
   --sys-color-ink:             var(--color-logo-black);   /* dark type on card */
   --sys-color-ink-soft:        var(--color-gray);         /* secondary text   */
   --sys-color-ink-faint:       rgb(1 1 1 / 0.55);         /* on-white muted — matches .services__item-number */
   --sys-color-line:            rgb(1 1 1 / 0.12);         /* hairline on light */
   --sys-color-accent:          var(--color-blue-light);    /* CTA fill / bullets */
-  --sys-color-accent-ink:      #1e4e8c;                   /* darker blue for link text on white (no on-light blue token exists) */
+  --sys-color-accent-ink:      var(--color-diagram-blue);                   /* darker blue for link text on white (no on-light blue token exists) */
   --sys-color-on-dark:         var(--color-white);        /* intro title — white on the FRANKONIA-blue section */
   --sys-color-on-dark-soft:    rgb(255 255 255 / 0.82);   /* intro lede — soft white on the blue section */
 
   /* Even cards render on a light grey instead of white (like the demo). */
-  --sys-card-panel-bg-alt:     #e6e9ec;
+  --sys-card-panel-bg-alt:     var(--color-diagram-light-3);
 
   /* --- Radius (mapped) --------------------------------------------------- */
   --sys-radius-card:           var(--radius-lg);
@@ -274,7 +274,7 @@
   height: 100%;
   border-radius: 20px;
   overflow: hidden;
-  background: #0c0e11;   /* shows only until the image paints */
+  background: var(--surface-ink);   /* shows only until the image paints */
   transition: opacity 0.4s var(--easing-standard, ease), filter 0.4s var(--easing-standard, ease);
 }
 
@@ -405,7 +405,7 @@
   flex-direction: column;
   justify-content: space-between;
   padding: var(--sys-space-6) var(--sys-space-5);
-  color: #fff;
+  color: var(--text-on-dark-primary);
   pointer-events: none;
   background:
     /* Top: behind the number + title. */
@@ -465,7 +465,7 @@
   line-height: var(--sys-lh-tight);
   letter-spacing: -0.01em;
   font-weight: var(--sys-fw-medium);
-  color: #fff;
+  color: var(--text-on-dark-primary);
 }
 
 /* The card's body copy — since 2026-08-03 this is the client draft's own two
@@ -532,7 +532,7 @@
   font-size: var(--sys-fs-point);
   font-weight: var(--sys-fw-medium);
   line-height: 1;
-  color: #fff;
+  color: var(--text-on-dark-primary);
   background: var(--sys-color-accent);
   border-radius: var(--sys-radius-chip);
   text-decoration: none;

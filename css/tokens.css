@@ -256,6 +256,139 @@
   --shadow-md: 0 4px 12px rgb(1 1 1 / 0.10);
   --shadow-lg: 0 12px 32px rgb(1 1 1 / 0.14);
 
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     FARBSYSTEM — Flächen und Schriftfarben, eingeführt 31.08.2026
+     ═══════════════════════════════════════════════════════════════════════
+
+     ⚠️⚠️ WARUM DAS ÜBERHAUPT NÖTIG WAR, und es ist eine Messung, kein
+     Geschmacksurteil. Der QA-Lauf fand 23 Kontrastverstöße, und fast alle
+     hatten DIESELBE Ursache: eine Schriftfarbe, mehrere fast identische
+     Flächen. Gemessen über zehn Seiten bei 390 und 1440:
+
+         rgba(59,73,86,0.75) auf #fafafa  ->  4,49:1   knapp drunter
+         rgba(59,73,86,0.75) auf #f7f8f8  ->  4,43:1   knapp drunter
+         rgba(59,73,86,0.75) auf #f5f6f7  ->  4,39:1   knapp drunter  (47 Stellen)
+         rgba(59,73,86,0.75) auf #f1f5fb  ->  4,37:1   knapp drunter
+
+     Vier Hintergründe, ein Textwert, viermal knapp unter der Norm. Sieben der
+     zwanzig gefundenen Flächen waren Fast-Schwarz (#010101 bis #0e0e0e — für
+     das Auge identisch, 0,3 % Helligkeitsunterschied), sieben Fast-Weiß. Wer
+     das je Stelle repariert, repariert 23 Symptome; wer die Flächen zusammenlegt
+     und je Fläche EINE Schriftfarbe festlegt, beseitigt die Ursache.
+
+     ⚠️ JEDER WERT UNTEN IST DER SCHLECHTESTE FALL über alle Flächen seiner
+     Gruppe, nicht der beste. Das System hält also auch dort, wo eine Fläche
+     (noch) nicht zusammengelegt wurde:
+
+         --text-on-light-secondary auf #ffffff  6,35:1
+                                   auf #f5f6f7  6,04:1
+                                   auf #e6ecf4  5,67:1   <- schlechtester
+         --text-on-light-primary   auf #e6ecf4  9,92:1   <- schlechtester
+         --link-on-light           auf #e6ecf4  5,32:1   <- schlechtester
+         --text-on-dark-secondary  auf #010101 10,51:1
+         --text-on-dark-tertiary   auf #010101  6,91:1
+
+     ⚠️⚠️ AUF HELLEN FLÄCHEN GIBT ES NUR ZWEI STUFEN, und das ist Arithmetik:
+     zwischen #2d3944 und Weiß liegen 11,8 Kontraststufen. Eine dritte, blassere
+     Stufe erreicht rechnerisch nie 4,5:1 — Deckkraft 0,64 gibt 4,00 auf Weiß und
+     3,72 auf dem dunkelsten Hellton. Was heute tertiär auf hell wäre
+     (Formularbeschriftungen, Bildunterschriften, Rollenangaben), wird sekundär.
+
+     ⚠️ --surface-brand BLEIBT #3d9ad3 MIT WEISSER SCHRIFT, gemessen 3,11:1.
+     Das ist eine ausdrückliche Entscheidung von Christoph vom 31.08.2026 für
+     jeden CTA und für die Filterpille .coverage__pill--all — nicht ein
+     übersehener Verstoß. Die Ausnahmeliste des Prüftors nennt beide mit diesem
+     Datum. NICHT "verbessern". */
+
+  /* ---- Flächen ---- */
+  /* Fast-Schwarz. Ersetzt #090909 #0a0a0a #0b0b0b #0c0c0c #0c0e11 #0e0e0e —
+     alle sechs liegen unter 0,4 % Helligkeitsunterschied zu diesem Wert, können
+     also keine Abhebung leisten. Eine Karte, die sich lösen soll, braucht eine
+     Kante oder einen Schatten, keinen um 0,3 % abweichenden Hintergrund. */
+  --surface-ink: #010101;
+  /* Navy der Konzept- und Risiko-Bänder. Ersetzt #0d152a #0b1923. */
+  --surface-navy: #00091f;
+  /* Reines Weiß für Karten und helle Sektionen. Ersetzt #fafafa #f8f8f8. */
+  --surface-paper: #ffffff;
+  /* Der eine abgesetzte Hellton. Ersetzt #f7f8f8 #f1f5fb #e6ecf4. */
+  --surface-mist: #f5f6f7;
+  /* Markenblau. Unverändert, siehe Warnung oben. */
+  --surface-brand: #3d9ad3;
+
+  /* ---- Schrift auf dunklen Flächen (ink, navy) ---- */
+  --text-on-dark-primary: #ffffff;
+  --text-on-dark-secondary: rgb(255 255 255 / 0.72);
+  --text-on-dark-tertiary: rgb(255 255 255 / 0.58);
+  --link-on-dark: #5fb0e0;
+
+  /* ---- Schrift auf hellen Flächen (paper, mist) ---- */
+  --text-on-light-primary: #2d3944;
+  --text-on-light-secondary: rgb(45 57 68 / 0.8);
+  /* KEINE tertiäre Stufe auf hell — siehe die Rechnung oben. */
+  --link-on-light: #3a628f;
+
+  /* ---- Schrift auf der Markenfläche ---- */
+  --text-on-brand: #ffffff;
+
+  /* ---- Dokumentierte Ausnahmen ----------------------------------------
+     Werte, die absichtlich außerhalb des Systems stehen. Je Eintrag: Name,
+     Geltungsbereich, Datum, Begründung.
+
+     · --surface-brand mit --text-on-brand = 3,11:1
+       Geltung: .btn--primary (alle Varianten), .coverage__pill--all
+       Datum: 31.08.2026, Entscheidung Christoph
+       Grund: Markenfarbe des CTA. Klärt das Prüftor über seine Ausnahmeliste.
+
+     · Schriftgrößen 11–12 px für Nebeninformationen
+       Geltung: Bildunterschriften, Rollenangaben, Zähler
+       Datum: 31.08.2026, Entscheidung Christoph
+       Grund: bewusst gesetzt, damit sie bei einem späteren Refactoring nicht
+       als Versehen "korrigiert" werden.
+
+     · Sternfarbe der Bewertungen
+       Geltung: .testimonial__stars, .review-card__stars
+       Datum: 31.08.2026
+       Grund: das Gold ist ein GRAFIK-Element mit role="img" und einer
+       Textalternative — für Grafik gilt 3:1, nicht 4,5:1. Der sichtbare Wert
+       steht als Zahl daneben.
+
+     · Leaflet-Attribution
+       Geltung: .leaflet-control-attribution
+       Datum: 31.08.2026
+       Grund: Fremdkomponente. Ihr #0078a8 auf Leaflets eigenem #cccccc ergibt
+       3,08:1; die Steuerfläche wird deshalb auf Weiß gesetzt (4,94:1), die
+       Linkfarbe der Fremdkomponente bleibt unangetastet. */
+
+
+  /* ---- Einzelwerte mit eigener Bedeutung ------------------------------
+     Sie stehen hier, damit AUSSERHALB dieser Datei kein roher Hex-Wert mehr
+     nötig ist (Aufgabe 15). Jeder mit dem Grund, warum er nicht in die
+     Flächen- oder Schriftskala passt. */
+  /* Gold der Bewertungssterne. GRAFIK, nicht Text — siehe die Ausnahmetabelle. */
+  --color-star-gold: #f5b400;
+  /* Fehlerrot der Formularvalidierung. Dunkler als --color-error, weil es auf
+     der WEISSEN Formularkarte steht und dort 4,5:1 tragen muss. */
+  --color-form-error: #b3261e;
+  /* WhatsApp-Grün. Dokumentierte Ausnahme der Marken-Palette: Wiedererkennbarkeit
+     eines fremden Dienstes, siehe CLAUDE.md. Nur für diese eine Schaltfläche. */
+  --color-whatsapp: #00bc39;
+  /* Die drei Hellstufen des Karten-Diagramms auf der Startseite und die zwei
+     Akzente des Konzept-Diagramms. Sie bilden eine eigene kleine Skala INNERHALB
+     einer Illustration und sind keine Oberflächen der Seite. */
+  --color-diagram-light-1: #f1f2f4;
+  --color-diagram-light-2: #eef0f2;
+  --color-diagram-light-3: #e6e9ec;
+  --color-diagram-blue: #1e4e8c;
+  --color-diagram-ice: #dceffc;
+  --color-diagram-alert: #ff5b52;
+  /* Der eine bewusst abgesetzte Hellton der Outfits-Sektion. ⚠️ NICHT auf
+     --surface-paper zusammengelegt: diese Sektion bricht absichtlich mit dem
+     dunklen Thema der Seite, und #FAFAFA ist die vom Kunden abgenommene Fläche
+     (CLAUDE.md, Corporate Identity). Reines Weiß dort wäre eine sichtbare
+     Änderung ohne Auftrag. */
+  --surface-outfits: #fafafa;
+
   /* ---- Z-index scale ---- */
   --z-sticky: 100;
   --z-overlay: 200;

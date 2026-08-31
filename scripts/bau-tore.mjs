@@ -282,7 +282,49 @@ function torErfolgsseiten() {
   return befunde;
 }
 
+
+/* ══════════════════════════════════════════ Aufgabe 15 · rohe Farbwerte
+   Außerhalb von tokens.css darf kein roher Hex-Wert stehen — mit genau einer
+   Ausnahme, und die ist inhaltlich begründet:
+
+   ⚠️⚠️ #000 IN EINEM mask-image IST KEINE FARBE, SONDERN EIN ALPHAKANAL.
+   Bei einer CSS-Maske heißt deckendes Schwarz "behalten" und transparent
+   "ausblenden"; der Wert hat mit der Palette nichts zu tun. Ein Marken-Token
+   dort wäre schlicht falsch — er würde behaupten, das sei eine
+   Designentscheidung. Gemessen am 31.08.2026: alle 18 verbliebenen #000 stehen
+   in mask-image bzw. -webkit-mask-image.
+
+   ⚠️ UND DIE ZAHL IM AUFTRAG WAR DREIMAL ZU HOCH. Er nennt 167 rohe Werte;
+   gemessen OHNE Kommentare waren es 52 in 16 verschiedenen Werten. Die höhere
+   Zahl zählt Hex-Werte mit, die INNERHALB von Kommentaren stehen — dort
+   dokumentieren sie gemessene Kontrastwerte. Der Unterschied ist nicht
+   kosmetisch: eine Regel, die Kommentare mitzählt, verbietet am Ende, in einer
+   Begründung einen Messwert zu nennen. Dieses Tor blendet Kommentare aus. */
+function torRoheFarben() {
+  const befunde = [];
+  const cssDir = path.join(WURZEL, "css");
+  const HEX = new RegExp("#[0-9a-fA-F]{3,8}\\b", "g");
+  for (const f of fs.readdirSync(cssDir)) {
+    if (!f.endsWith(".css") || f === "tokens.css") continue;
+    const roh = fs.readFileSync(path.join(cssDir, f), "utf8");
+    /* Kommentare durch Leerzeichen ersetzen, Zeilenumbrüche erhalten, damit die
+       Zeilennummern stimmen. */
+    const ohne = roh.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, " "));
+    const zeilen = ohne.split("\n");
+    for (let i = 0; i < zeilen.length; i++) {
+      const z = zeilen[i];
+      const treffer = z.match(HEX);
+      if (!treffer) continue;
+      /* Die eine erlaubte Ausnahme: Masken. */
+      if (z.indexOf("mask-image") >= 0) continue;
+      befunde.push("css/" + f + ":" + (i + 1) + " roher Farbwert " + treffer.join(" ") + " — Token in tokens.css anlegen");
+    }
+  }
+  return befunde;
+}
+
 const TORE = [
+  ["Keine rohen Farbwerte ausserhalb tokens.css (Aufgabe 15)", torRoheFarben],
   ["Kommentare unter 200 Zeichen (Aufgabe 5)", torKommentare],
   ["Icon-Paket vollständig (Aufgabe 2)", torIcons],
   ["Fremd-Hosts in /datenschutz/ genannt (Aufgabe 3)", torFremdHosts],

@@ -187,13 +187,61 @@
     font-weight: 500;
     letter-spacing: 0.14em;
     font-variant-numeric: tabular-nums;
-    /* Derived from the section's own text colour, so one rule reads correctly on
-       a white section and on the black page. */
-    color: color-mix(in srgb, currentColor 55%, transparent);
+    /* ⚠️⚠️ GEMESSEN 2,35:1 und 2,82:1 — der schlechteste Textwert der ganzen
+       Website, und nur bei 390 px sichtbar, weil Wischelemente auf dem Desktop
+       nicht existieren. Die Ursache war die Ableitung: currentColor auf 55 %
+       ergibt auf einer weißen Sektion 2,35, auf der schwarzen Seite 2,82 — EINE
+       Regel, zwei Flächen, beide Male viel zu blass.
+       Das Argument ist nicht Ästhetik, sondern Funktion: "01 / 04" ist der
+       EINZIGE Hinweis darauf, dass vier Karten existieren. Auf /jobs/ hängen
+       drei von vier Stellenangeboten daran.
+       Jetzt volle Textfarbe für die aktuelle Zahl und die sekundäre Stufe für
+       den Rest — beide je Fläche definiert, statt aus currentColor gerechnet. */
+    /* ⚠️⚠️ DUNKEL IST DER STANDARD, hell die Ausnahme — und mein erster Versuch
+       hatte es umgekehrt und damit WEISS AUF WEISS erzeugt (gemessen 1,00:1).
+       Der Grund: ich hatte ".section:not(.section--light)" fuer dunkel benutzt.
+       Dieses Projekt kennzeichnet aber nur die HELLEN Sektionen, und eine weisse
+       Flaeche entsteht auch aus einer Karte INNERHALB einer nicht markierten
+       Sektion. Die verlaessliche Richtung ist deshalb: Standard = dunkle Stufen
+       (die Seite ist schwarz), und .section--light dreht sie um. Genau so macht
+       es der Rest des Projekts. */
+    color: var(--text-on-dark-secondary);
   }
   .swipe-counter__current {
-    color: currentColor;
+    color: var(--text-on-dark-primary);
   }
+  .section--light .swipe-counter,
+  .references .swipe-counter,
+  .system-story .swipe-counter {
+    color: var(--text-on-light-secondary);
+  }
+  .section--light .swipe-counter__current,
+  .references .swipe-counter__current,
+  .system-story .swipe-counter__current {
+    color: var(--text-on-light-primary);
+  }
+  /* ⚠️⚠️ WARUM .references EIGENS DASTEHT — und das ist ein Befund, keine
+     Ausnahme: .references ist im Markup "class=\"section references\"", malt
+     sich aber Weiss. Sie traegt .section--light NICHT. Damit bleiben in dieser
+     Sektion ALLE Token im Dunkelmodus, und jedes Element, das sich auf sie
+     verlaesst, ist dort weiss auf weiss. Genau das war der Zaehler: gemessen
+     1,00:1 auf der Startseite bei 390 und 1440.
+     ⚠️ Die Wurzel ist nicht hier zu beheben. .section--light zu ergaenzen waere
+     die richtige Loesung, bewegt aber ein Dutzend Farbwerte in einer Sektion, die
+     der Kunde abgenommen hat — das gehoert in eine eigene, sichtgepruefte Runde.
+     Im Bericht vom 31.08.2026 als offener Punkt vermerkt.
+
+     ⚠️ VOLLSTAENDIGE KARTIERUNG, gemessen am 31.08.2026 — es gibt genau DREI
+     Strips auf der ganzen Website, und die Liste oben deckt alle ab:
+       · .system-story (Startseite)   Karte weiss  -> helle Stufen
+       · .social in .section--subtle  Grund dunkel -> dunkle Stufen (Standard)
+       · .references (Startseite)     weiss        -> helle Stufen
+       · .jobs-why in .section--light weiss        -> helle Stufen
+     ⚠️⚠️ UND WARUM ES KEINE FLAECHENUNABHAENGIGE LOESUNG GIBT: gerechnet fuer
+     jeden Grauwert von 100 bis 140 — KEIN einziger schafft 4,5:1 gegen Weiss UND
+     gegen #010101. Das Beste ist 4,34:1 bei Grau 114. Ein "eine Farbe fuer
+     beides" ist bei dieser Schriftgroesse arithmetisch unmoeglich, deshalb die
+     Aufzaehlung und nicht ein Kompromisswert. */
 
   /* ---- Progress line below the strip (injected, decorative) --------------- */
   .swipe-progress {

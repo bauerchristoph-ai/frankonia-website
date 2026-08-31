@@ -119,7 +119,10 @@
 /* The on-white muted value, directly — see the note in this file's header about
    the token version this replaced. */
 .testimonial__role {
-  color: rgb(59 73 86 / 0.75);
+  /* ⚠️ GEMESSEN 4,43:1 auf #f7f8f8. Derselbe Wert lag auf #fafafa bei 4,49 und
+     auf #f5f6f7 bei 4,39 — eine Farbe, drei Fast-Weiß-Töne, dreimal knapp
+     drunter. Deshalb Token statt eines vierten Handwerts. */
+  color: var(--text-on-light-secondary);
   font-size: var(--font-size-sm);
 }
 
@@ -134,10 +137,18 @@
 
 /* #F5B400 is the documented "on white" gold exception .review-card already uses
    (components.css / CLAUDE.md), reused here rather than adding a second gold. */
+/* ⚠️⚠️ GEMESSEN 1,73:1 — der niedrigste Wert der ganzen Website. Er bleibt,
+   und das ist begründet, nicht übersehen: die Sterne sind ein GRAFIK-Element mit
+   role="img" und einer Textalternative im Markup, und für Grafik gilt 3:1 statt
+   4,5:1 — für eine reine Dekoration mit Textalternative gilt gar kein
+   Kontrastminimum. Der Wert selbst steht als Zahl daneben ("4,7"), die
+   Information hängt also nicht am Gold.
+   ⚠️ Wer die Sterne je zu reinem Text macht (role und aria-label entfernen),
+   muss die Farbe mitändern — #8a6400 gibt 5,06:1 auf #f7f8f8. */
 .testimonial__stars {
   display: block;
   margin-top: var(--space-4);
-  color: #F5B400;
+  color: var(--color-star-gold);
   font-size: var(--font-size-sm);
   letter-spacing: 0.1em;
 }

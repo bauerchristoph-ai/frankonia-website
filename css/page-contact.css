@@ -947,7 +947,8 @@
    lines instead of orphaning "zu. *" on its own, which is what read as broken.
    Ignored by browsers without support — they just get the old wrap. */
 .contact-form .form-checkbox__label {
-  color: rgb(59 73 86 / 0.75);
+  /* Gleiche Rolle wie im gemeinsamen Formular, gleicher Token. */
+  color: var(--text-on-light-secondary);
   text-wrap: balance;
 }
 

@@ -510,7 +510,7 @@ a.review-card:focus-visible {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  color: #F5B400;
+  color: var(--color-star-gold);
 }
 
 .review-card__score {
@@ -1067,7 +1067,12 @@ a.review-card:focus-visible {
 }
 
 .faq__list--cards .faq-item__answer {
-  color: rgb(59 73 86 / 0.75);
+  /* ⚠️ GEMESSEN 4,39:1 — knapp unter der Norm, an 47 Stellen der Website die
+     häufigste Fundstelle überhaupt. Ursache war nicht dieser Wert allein: dieselbe
+     Deckkraft ergab 4,49 auf #fafafa, 4,43 auf #f7f8f8, 4,39 auf #f5f6f7 und 4,37
+     auf #f1f5fb — eine Farbe, vier Fast-Weiß-Töne, viermal knapp drunter. Der
+     Token ist auf den SCHLECHTESTEN dieser Fälle gerechnet (5,67:1 auf #e6ecf4). */
+  color: var(--text-on-light-secondary);
 }
 
 /* "Show the first 5, reveal the rest" — MOBILE ONLY (client 2026-08-03: eleven
@@ -1172,4 +1177,27 @@ a.review-card:focus-visible {
 .faq__toggle:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 2px;
+}
+
+/* ═══ Leaflet-Attribution ═══════════════════════════════════════════════
+   ⚠️⚠️ GEMESSEN 3,08:1 — und die erste Fassung dieser Regel stand in
+   page-home.css, wo sie nur die HALBE Arbeit tat: /kontakt/ laedt diese
+   Datei nicht, und dort blieb der Verstoss stehen. Nachgemessen auf beiden
+   Seiten, dann hierher verschoben. Zwei Karten, eine Regel.
+
+   Leaflet setzt ihre Steuerflaeche auf #cccccc und ihre Linkfarbe auf
+   #0078a8; auf diesem Grau ergibt das 3,08:1 bei 12 px. Auf WEISS ergibt
+   derselbe Link 4,94:1. Geaendert wird deshalb die FLAECHE, nicht die Farbe
+   der Fremdkomponente — ein Eingriff in deren Linkfarbe waere bei jedem
+   Leaflet-Update wieder weg.
+   ⚠️ ZWEI SELEKTOREN: leaflet.css wird zur LAUFZEIT eingehaengt, laedt also
+   nach dieser Datei, und ihre Regel gewinnt bei gleicher Spezifitaet durch
+   die Reihenfolge. Der zusammengesetzte Selektor (0,2,0) gewinnt ohne
+   !important.
+   ⚠️ Die Namensnennung selbst bleibt unangetastet: sie ist die Bedingung
+   fuer die kostenlose Nutzung der Kacheln. */
+.leaflet-control-attribution,
+.leaflet-container .leaflet-control-attribution {
+  background: var(--surface-paper);
+  color: var(--text-on-light-secondary);
 }

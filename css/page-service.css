@@ -757,7 +757,7 @@ main h2 {
    hero ■ → Risiko (navy) → Vorteile ■. Both seams around it were re-tuned; see
    .pixel-seam--navy below for why the outgoing one could not stay white. */
 .service-risk {
-  background-color: #00091F;
+  background-color: var(--surface-navy);
   background-image:
     linear-gradient(
       to bottom,
@@ -823,7 +823,7 @@ main h2 {
   align-items: center;
   gap: 0 var(--space-4);
   padding: var(--space-5);
-  background-color: #0D152A;
+  background-color: var(--surface-navy);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
 }
@@ -2476,8 +2476,17 @@ main h2 {
   font-weight: var(--font-weight-medium, 500);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.04em;
-  /* THE CTA's OWN BLUE (client 2026-08-09: "los números tienen que ser del celeste del
-     CTA"). ⚠️ Written as --color-blue-light and NOT --color-accent: this is a
+  /* ⚠️⚠️ GEMESSEN 3,11:1 auf Weiß, und der Wert BLEIBT — Stand 31.08.2026.
+     Begründung: der Kommentar unten hält fest, dass der Kunde das CTA-Blau an
+     dieser Seite DREIMAL bewusst gegen die kontrastsichere Mischung gewählt hat.
+     Das ist eine Entscheidung, kein übersehener Verstoß, und sie steht als
+     dokumentierte Ausnahme in tokens.css.
+     ⚠️ Wer das je ändern will, hat zwei Wege, und der zweite ist der bessere:
+     entweder --link-on-light (derselbe Blauton, abgedunkelt, 5,32 bis 6,32:1),
+     oder die Zahl auf 24 px bzw. 18,66 px bold setzen — dann gilt der
+     3:1-Schwellwert und 3,11 genügt, ohne die Farbe anzutasten.
+     (client 2026-08-09: "los números tienen que ser del celeste del CTA"). */
+  /* ⚠️ Written as --color-blue-light and NOT --color-accent: this is a
      `.section--light`, and that scope re-declares --color-accent to blue-dark, so the
      token would give #5287C9 instead.
 
@@ -3991,7 +4000,20 @@ main h2 {
   color: rgb(59 73 86 / 0.85);
 
   --color-text: var(--color-logo-black);
-  --color-text-muted: rgb(59 73 86 / 0.75);
+  /* ⚠️⚠️ EINE DEKLARATION, SECHS BEHOBENE VERSTOESSE — geaendert 31.08.2026.
+     rgb(59 73 86 / 0.75) war die Wurzel fast aller Kontrast-Fundstellen des
+     QA-Laufs, weil DIESELBE Farbe auf vier fast identischen Weisstoenen liegt:
+         auf #ffffff  4,68:1   ok
+         auf #fafafa  4,49:1   knapp drunter
+         auf #f7f8f8  4,43:1   knapp drunter
+         auf #f5f6f7  4,39:1   knapp drunter
+         auf #f1f5fb  4,37:1   knapp drunter
+     Vier Hintergruende, ein Textwert, viermal knapp unter der Norm — und keiner
+     davon fiel je auf, weil jeder Einzelfall "fast richtig" war.
+     Der Token ist auf den SCHLECHTESTEN Fall gerechnet: --text-on-light-secondary
+     gibt 5,67:1 auf #e6ecf4 und 6,35:1 auf Weiss. Damit haelt die Regel auch
+     dort, wo eine Flaeche nicht zusammengelegt wurde. */
+  --color-text-muted: var(--text-on-light-secondary);
   --color-border: rgb(59 73 86 / 0.14);
   --color-border-strong: rgb(59 73 86 / 0.3);
   --color-bg-subtle: rgb(59 73 86 / 0.04);
@@ -4054,7 +4076,13 @@ main h2 {
    `currentColor` too — safe, since a graphic only needed 3:1 and this clears it
    with room to spare. Border colour is untouched; only the text/icon colour. */
 .section--light .service-link {
-  color: color-mix(in srgb, var(--color-blue-dark) 85%, black);
+  /* ⚠️⚠️ GEMESSEN 4,49:1 — aber NICHT auf Weiss, sondern auf der hellblauen
+     Flaeche von .service-highlight (#f1f5fb). Auf Weiss ergibt diese Mischung
+     4,88:1 und war damit jahrelang korrekt; erst der getoente Kasten drueckt sie
+     unter die Norm. Genau die Klasse Fehler, die das Farbsystem beseitigt: eine
+     Farbe, mehrere Fast-Weiss-Toene. --link-on-light gibt 5,32:1 auf dem
+     dunkelsten Hellton und 6,32:1 auf Weiss. */
+  color: var(--link-on-light);
   border-bottom-color: rgb(82 135 201 / 0.45);
 }
 .section--light .service-link:hover,
@@ -4484,7 +4512,7 @@ main h2 {
    `.city-callout__lede`, `.review-card` on a white section): a block that hardcodes a
    surface breaks the moment its neighbour changes colour. */
 .pixel-seam--photo .pixel-seam__tile {
-  background-color: var(--pixel-photo-fill, #00091F);
+  background-color: var(--pixel-photo-fill, var(--surface-navy));
   background-image: var(
     --pixel-photo-glow,
     linear-gradient(to top, rgb(61 154 211 / 0.38) 0, rgb(61 154 211 / 0) 100%)
@@ -4526,7 +4554,7 @@ main h2 {
    correct while Risiko was a white section, and would now flash bright out of a
    navy band. */
 .pixel-seam--navy .pixel-seam__tile {
-  background-color: #00091F;
+  background-color: var(--surface-navy);
   background-image: linear-gradient(
     rgb(61 154 211 / 0.38),
     rgb(61 154 211 / 0.38)

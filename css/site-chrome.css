@@ -1089,7 +1089,7 @@ a.site-nav__link {
   height: 3.5rem;
   border-radius: 50%;
   overflow: hidden;
-  background-color: #00BC39;
+  background-color: var(--color-whatsapp);
   box-shadow: var(--shadow-lg);
   transition: transform var(--duration-fast) var(--easing-standard),
     filter var(--duration-fast) var(--easing-standard);

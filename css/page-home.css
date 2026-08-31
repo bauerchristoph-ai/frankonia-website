@@ -2443,7 +2443,11 @@ main h2 {
   line-height: 1;
   border: none;
   border-radius: var(--radius-sm);
-  color: rgb(59 73 86 / 0.55);
+  /* ⚠️ GEMESSEN 2,78:1 bei 40 px / Gewicht 300 auf #fafafa — Sollwert 3:1,
+     weil 40 px als grosser Text gelten. Es fehlten 0,22, und diese beiden Pfeile
+     sind das einzige Bedienelement, mit dem man die Outfits durchblaettert.
+     --text-on-light-secondary gibt 6,18:1 auf dieser Flaeche. */
+  color: var(--text-on-light-secondary);
   background-color: transparent;
   cursor: pointer;
   transition: color var(--duration-fast) var(--easing-standard);
@@ -2611,7 +2615,7 @@ main h2 {
      fest weiß — also weiß auf weiß. Gemeldet 26.08.2026. */
   --color-link-hover: var(--color-logo-black);
   padding-top: calc(var(--space-9) + 200px);
-  background-color: #FAFAFA;
+  background-color: var(--surface-outfits);
   color: var(--color-gray);
 }
 
@@ -2622,7 +2626,12 @@ main h2 {
 }
 
 .outfits__intro > p {
-  color: rgb(59 73 86 / 0.75);
+  /* ⚠️ GEMESSEN 4,49:1 auf #fafafa — 0,01 unter der Norm, und ein Beispiel
+     dafuer, warum Einzelwerte diese Klasse Fehler erzeugen: dieselbe Farbe
+     lag auf vier Fast-Weiss-Toenen zwischen 4,37 und 4,49. Diese Sektion
+     bricht absichtlich mit dem dunklen Thema, traegt aber KEIN
+     .section--light und erbt den hellen Token daher nicht. */
+  color: var(--text-on-light-secondary);
 }
 
 /* ---- Outfit name picker ---- */
@@ -3439,7 +3448,7 @@ main h2 {
   /* Dark navy #00091F (client 2026-07-29 — was black) so the diagram "lights"
      read against a deep dark canvas. White text/ticks + the white CTA read fine
      on it. Literal hex: a client-specified section surface, not a brand token. */
-  background-color: #00091F;
+  background-color: var(--surface-navy);
   /* Lighter blue at the TOP only (client 2026-07-30: "el azul es muy azul oscuro
      entonces no se diferencia tanto con el negro... solo ahí arriba es un poco
      más celeste así contrasta con el negro").
@@ -4075,6 +4084,7 @@ main h2 {
    Der zusammengesetzte Selektor (0,2,0) gewinnt ohne !important, kann aber
    erst greifen, wenn Leaflet seine Klasse gesetzt hat — deshalb muss der
    einfache fuer den Zustand VOR dem Mounten bleiben. */
+
 .coverage__map,
 .coverage__map.leaflet-container {
   width: 100%;
@@ -4873,7 +4883,7 @@ main h2 {
    own background — same documented on-light exception as elsewhere. Use this
    ONLY where the adjacent light section is genuinely #FAFAFA (Uniforms). */
 .pixel-seam--light {
-  --pixel-tile-color: #FAFAFA;
+  --pixel-tile-color: var(--surface-outfits);
 }
 
 /* Seam that transitions FROM the "Our System" section, whose background is now
@@ -4926,7 +4936,7 @@ main h2 {
    this file, and it means the tile follows the token instead of duplicating a
    computed hex. Keep the 0.38 in step with .konzept's first gradient stop. */
 .pixel-seam--konzept .pixel-seam__tile {
-  background-color: #00091F;
+  background-color: var(--surface-navy);
   background-image: linear-gradient(
     rgb(61 154 211 / 0.38),
     rgb(61 154 211 / 0.38)
