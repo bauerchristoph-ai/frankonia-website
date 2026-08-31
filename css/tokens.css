@@ -456,6 +456,20 @@
      Bau-Tor bricht sonst ab. Genau das war der Zustand vorher: fünf
      dokumentiert, sechzehn benutzt. */
 
+
+  /* ═══ 27e · Schriftgrößen 11–12 px — ENTSCHIEDEN, BLEIBT ══════════════════
+     Mehrere Textelemente stehen durchgehend bei 11 bis 12 px, auf allen Seiten
+     und allen Breiten, auch bei 1920. Das ist ABSICHT — Entscheidung von
+     Christoph vom 31.08.2026.
+
+     Betroffen sind Nebeninformationen: Bildunterschriften, Rollenangaben,
+     Zähler und Ähnliches.
+
+     ⚠️ NICHTS ÄNDERN. Der Eintrag steht hier, damit die Werte bei einem späteren
+     Refactoring nicht als Versehen "korrigiert" werden — genau das wäre sonst
+     passiert, denn 11 px sieht ohne diesen Hinweis nach einem übersehenen
+     Restwert aus. */
+
   /* ---- Z-index scale ---- */
   --z-sticky: 100;
   --z-overlay: 200;

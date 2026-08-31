@@ -74,6 +74,16 @@
    has an intrinsic width, so in a content-sized box it would have driven the
    column wider the moment it loaded — a layout shift caused by the very element
    added to prevent one. */
+/* ⚠️⚠️ 27a, 31.08.2026: DER DECKEL SASS AM CONTAINER, NICHT AM TITEL — und das
+   war die Ursache dafuer, dass "Was kostet ein Sicherheitsdienst? Alle Preise,
+   Faktoren und Beispiele" von 360 bis 1920 px UEBER VIER ZEILEN stand.
+   Gemessen: Titelbreite konstant 587px bei 1440 UND bei 1920 — bei 1920 ist
+   das offensichtlich kein Platzproblem.
+   ⚠️ Die 44rem sind NICHT willkuerlich und bleiben unter 1440: sie halten die
+   linke Textkante des Titels auf derselben Linie wie den Artikeltext darunter
+   (siehe die Notiz weiter unten zu .rg-hero--hub). Deshalb wird der Deckel nur
+   auf grossen Breiten angehoben, wo genug Rand da ist, und text-wrap: balance
+   verteilt die Zeilen gleichmaessig statt ein Wort allein stehen zu lassen. */
 .rg-hero .service-hero__content {
   width: 100%;
   max-width: 44rem;
@@ -1048,5 +1058,21 @@
 @media (max-width: 767.98px) {
   .rg-weiter__card {
     padding: var(--space-4);
+  }
+}
+
+/* 27a: auf grossen Breiten darf der Titel-Container breiter werden. */
+@media (min-width: 1440px) {
+  .rg-hero:not(.rg-hero--hub) .service-hero__content {
+    max-width: 56rem;
+  }
+  .rg-hero:not(.rg-hero--hub) .service-hero__content h1 {
+    /* ⚠️ DER DECKEL SASS AN DREI STELLEN, und nur die dritte war die wirksame.
+       Erst am Container (44rem), dann am h1 des Chassis (38rem = 608px) — und
+       gemessen wurde eine Textbreite von 587px, also war das h1 die Grenze.
+       Wer hier eine Zeile weniger will, muss BEIDE anheben; der Container allein
+       aendert nichts. */
+    max-width: 52rem;
+    text-wrap: balance;
   }
 }

@@ -1360,9 +1360,18 @@
 
 .city-rates li {
   display: grid;
+  /* ⚠️ ZWEI ZEILEN SEIT AUFGABE 27f (31.08.2026), nicht mehr eine. Name und
+     Preis stehen oben nebeneinander, die Einordnung darunter über beide Spalten.
+
+     Warum nicht eine dritte Spalte: die Einordnungen sind 39 bis 62 Zeichen
+     lang, und der Container ist auf einer Stadtseite eine Spalte des
+     Kosten-Rasters. Als dritte Spalte bekäme jede Einordnung rund 200px und
+     damit drei bis vier Zeilen — die Zeilenhöhen wären dann ungleich und die
+     Preise stünden nicht mehr auf einer Linie. */
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
-  gap: var(--space-4);
+  column-gap: var(--space-4);
+  row-gap: var(--space-1);
   padding-block: var(--space-3);
   border-top: 1px solid var(--color-border);
   /* SOLID --color-gray, not --color-text-muted: on a light section that token is
@@ -1394,6 +1403,34 @@
 .city-rates__range {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+/* ═══ Einordnung je Leistung ════════════════════════════════════════════════
+   Aufgabe 27f, 31.08.2026. Vorher stand in jeder Zeile dieser Liste derselbe
+   Wert — bei vier Zeilen viermal dieselbe Zahl, ohne einen Hinweis darauf,
+   warum sie nicht dasselbe bedeutet.
+
+   ⚠️ DER TEXT IST NICHT NEU. Er ist die Spalte "Einordnung" aus
+   /ratgeber/kosten-sicherheitsdienst/, übernommen für die Leistungen, die eine
+   Stadtseite führt. Wer ihn ändert, muss ihn dort mitändern, sonst sagen die
+   beiden Seiten Verschiedenes über denselben Preis.
+
+   ⚠️ SIE IST KLEINER UND LEISER ALS DER NAME, mit Absicht: die Zeile wird an
+   Leistung und Preis gescannt, die Einordnung erst gelesen, wenn eine Zahl
+   Fragen aufwirft. Sie steht bei --font-size-sm und 0.8 Deckkraft auf
+   --color-gray — gemessen 6,63:1 auf Weiss, also über den 4,5:1 für normalen
+   Text. NICHT --color-text-muted nehmen: auf einer hellen Sektion sind das
+   4,56:1, und dieses Element ist kleiner als der Rest der Zeile. */
+.city-rates__einordnung {
+  grid-column: 1 / -1;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-snug);
+  color: rgb(59 73 86 / 0.8);
+  /* Zwei unruhige Ränder braucht diese Zeile nicht — sie ist links
+     ausgerichtet, aber deutsche Komposita wie "Baufortschritt" mitten im Wort
+     zu trennen liest sich in einer Nebenzeile wie ein Rendering-Fehler. Die
+     Regel oben in dieser Datei deckt bereits .city-rates li ab; hier steht sie
+     nicht erneut. */
 }
 
 /* The Kosten grid places its own children explicitly at ≥900px

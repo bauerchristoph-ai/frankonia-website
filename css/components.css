@@ -1220,3 +1220,28 @@ a.review-card:focus-visible {
 .pixel-seam.is-fern .pixel-seam__tile {
   transition: none;
 }
+
+/* ═══ 27b · Brotkrumen: kein hängendes Trennzeichen ═════════════════════════
+   Bei 390 px brach der Pfad so:
+       Startseite › Einsatzgebiete › Nürnberg ›
+       Werkschutz
+   Das Trennzeichen blieb als letztes Zeichen der ersten Zeile stehen — es sieht
+   aus wie ein Tippfehler, nicht wie eine Trennung.
+
+   ⚠️ DER TRENNER GEHÖRT AN DAS FOLGENDE ELEMENT, nicht an das vorherige. Genau
+   deshalb ist die Lösung nicht white-space: nowrap auf der ganzen Liste (das
+   erzwingt eine Zeile und damit waagerechten Überlauf), sondern: der Umbruch
+   darf VOR einem Trenner passieren, nie danach. Das Paar aus Trenner und
+   folgendem Link wird zur untrennbaren Einheit. */
+.breadcrumbs__sep {
+  white-space: nowrap;
+}
+.breadcrumbs__list > li {
+  /* Ein Listeneintrag darf umbrechen, aber nicht zwischen seinem Trenner und
+     dem Text, der dazugehört. */
+  white-space: nowrap;
+}
+.breadcrumbs__list {
+  /* Die LISTE bricht um, die Einträge nicht. */
+  flex-wrap: wrap;
+}
