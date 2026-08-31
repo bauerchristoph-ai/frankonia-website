@@ -25,8 +25,12 @@
 
 const fs = require("fs");
 const path = require("path");
+const { envLokalLaden } = require("./scripts/env-local.js");
 
 const ROOT = __dirname;
+
+/* Muss VOR jeder Auswertung von process.env laufen. */
+const envAnzahl = envLokalLaden(ROOT);
 const PAGES_DIR = path.join(ROOT, "pages");
 const PARTIALS_DIR = path.join(ROOT, "partials");
 const DIST_DIR = path.join(ROOT, "dist");
@@ -98,7 +102,7 @@ function loadValues() {
 // ---------------------------------------------------------------------------
 // Public environment values (2026-08-26)
 // ---------------------------------------------------------------------------
-// THREE values, and only three: they are PUBLIC by design — they end up in the
+// FOUR values: they are PUBLIC by design — they end up in the
 // delivered HTML of every page and are meant to. They are variables anyway so a
 // test environment can substitute its own (Cloudflare's always-pass test key,
 // a separate Cookiebot domain group) without editing markup.
@@ -116,6 +120,21 @@ function loadValues() {
 // fallback is correct for production, so a build without an .env file must still
 // produce a working site — otherwise every checkout would need secrets it does
 // not need.
+//
+// ⚠️⚠️ MIT EINER AUSNAHME, SEIT DEM 31.08.2026: ein Eintrag mit `pflicht: true`
+// hat KEINEN Rückfall und bricht den Bau ab. Der erste ist CARTO_BASEMAP_KEY.
+// Grund: CARTO hat den bis dahin schlüssellosen Rasterendpunkt hinter einen
+// API-Key gestellt, und die Kacheln kommen seitdem mit einem diagonalen
+// Wasserzeichen "API KEY REQUIRED" — bei **HTTP 200**. Es gibt also keinen
+// stillen, korrekten Rückfall: ohne Schlüssel liefert die Seite eine sichtbar
+// beschriftete Karte aus, und keine Statusprüfung schlägt an. Lieber ein
+// abgebrochener Bau mit klarer Meldung als eine Karte mit Fremdwerbung darauf.
+//
+// ⚠️ DER SCHLÜSSEL IST ÖFFENTLICH, nicht geheim — er steht im Kachel-Aufruf des
+// Browsers, genau wie der Turnstile SITE key. Er gehört deshalb hierher und
+// verletzt die Regel darüber nicht. Der Test bleibt derselbe: würde ich diesen
+// Wert in ein öffentliches Pastebin schreiben? Bei diesem: ja, er steht ohnehin
+// in jeder Netzwerkanfrage der Karte.
 const PUBLIC_ENV = [
   [
     "turnstileSiteKey",
@@ -128,6 +147,15 @@ const PUBLIC_ENV = [
     "COOKIEBOT_CBID",
     "2335e423-3956-4d6d-823a-9d471a462ca7",
     "Cookiebot Domain-Gruppen-ID",
+  ],
+  [
+    // ⚠️ PFLICHT — kein Rückfall, siehe die Begründung über PUBLIC_ENV.
+    // Ohne diesen Schlüssel liefert CARTO Wasserzeichen-Kacheln mit HTTP 200.
+    "cartoBasemapKey",
+    "CARTO_BASEMAP_KEY",
+    null,
+    "CARTO Basemap API-Key (öffentlich, steht im Kachel-Aufruf)",
+    true,
   ],
   [
     // The endpoint the shared form posts to. Not from the environment — it is a
@@ -145,9 +173,25 @@ const PUBLIC_ENV = [
 
 function loadPublicEnv() {
   const out = {};
-  for (const [key, envName, fallback, label] of PUBLIC_ENV) {
+  for (const [key, envName, fallback, label, pflicht] of PUBLIC_ENV) {
     const raw = envName ? process.env[envName] : undefined;
     const value = raw && raw.trim() ? raw.trim() : fallback;
+    if (pflicht && !value) {
+      throw new Error(
+        [
+          "",
+          "build: " + envName + " ist nicht gesetzt — Abbruch.",
+          "",
+          "  Ohne diesen Wert liefert CARTO Kacheln mit dem Wasserzeichen",
+          '  "API KEY REQUIRED", und zwar mit HTTP 200 — der Fehler wäre auf der',
+          "  fertigen Seite sichtbar, aber von keiner Statusprüfung zu finden.",
+          "",
+          "  Lokal:  " + envName + "=... in .env.local eintragen",
+          "  Vercel: Settings -> Environment Variables, fuer Production UND Preview",
+          "",
+        ].join(String.fromCharCode(10))
+      );
+    }
     if (envName && !(raw && raw.trim())) {
       console.log(
         `build: ${envName} nicht gesetzt — ${label} nutzt den dokumentierten Produktionswert`

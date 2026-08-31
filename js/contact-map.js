@@ -35,6 +35,17 @@
   var el = document.getElementById("contact-map");
   if (!el) return;
 
+  /* Kachel-URL mit API-Key. Die vollstaendige Begruendung (Wasserzeichen bei
+     HTTP 200, oeffentlicher Schluessel, keine deutsche Kachelvariante, CARTOs
+     Abkuendigung) steht in js/coverage-map.js an derselben Funktion. Zweite
+     Kopie, weil beide Skripte eigenstaendige <script defer> ohne Modulsystem
+     sind; ein dritter Verbraucher gehoert in eine gemeinsame Datei. */
+  function kachelUrl() {
+    var basis = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+    var key = el && el.getAttribute("data-carto-key");
+    return key ? basis + "?key=" + encodeURIComponent(key) : basis;
+  }
+
   var lat = parseFloat(el.getAttribute("data-lat"));
   var lng = parseFloat(el.getAttribute("data-lng"));
   var label = el.getAttribute("data-label") || "";
@@ -103,7 +114,7 @@
     // provider throughout, so the approval, the attribution and the @2x support
     // never changed — only the style path.
     // {r} resolves to "@2x" only on high-DPI screens, empty otherwise.
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+    L.tileLayer(kachelUrl(), {
       maxZoom: 19,
       subdomains: "abcd",
       detectRetina: true,

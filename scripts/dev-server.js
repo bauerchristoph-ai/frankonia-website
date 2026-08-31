@@ -40,31 +40,13 @@ const DIST = path.join(WURZEL, "dist");
 const PORT = Number(process.env.PORT || 3000);
 
 /* ------------------------------------------------------- .env.local laden */
-/* Das Projekt hat null Abhängigkeiten, also kein dotenv. Der Parser deckt, was
-   in einer .env-Datei üblich ist: KEY=WERT je Zeile, # als Kommentar, optionale
-   Anführungszeichen. Kein Mehrzeiler, keine Variablen-Expansion.
-   ⚠️ Eine bereits gesetzte Umgebungsvariable GEWINNT — dieselbe Rangfolge wie
-   dotenv. Sonst könnte man einen Wert für einen Lauf nicht überschreiben. */
-function envLaden() {
-  const datei = path.join(WURZEL, ".env.local");
-  if (!fs.existsSync(datei)) return 0;
-  let anzahl = 0;
-  for (const rohzeile of fs.readFileSync(datei, "utf8").split(/\r?\n/)) {
-    const zeile = rohzeile.trim();
-    if (!zeile || zeile.startsWith("#")) continue;
-    const i = zeile.indexOf("=");
-    if (i < 1) continue;
-    const name = zeile.slice(0, i).trim().replace(/^export\s+/, "");
-    let wert = zeile.slice(i + 1).trim();
-    if ((wert.startsWith('"') && wert.endsWith('"')) || (wert.startsWith("'") && wert.endsWith("'"))) {
-      wert = wert.slice(1, -1);
-    }
-    if (!wert) continue;
-    if (process.env[name] === undefined) process.env[name] = wert;
-    anzahl++;
-  }
-  return anzahl;
-}
+/* ⚠️ Der Parser lebt seit dem 31.08.2026 in scripts/env-local.js, weil build.js
+   ihn ebenfalls braucht — CARTO_BASEMAP_KEY ist der erste öffentliche Wert ohne
+   Rückfall, und ohne diese Datei wäre jeder lokale Bau daran gescheitert. Zwei
+   Kopien desselben Parsers wären zwei Orte, an denen die Rangfolge
+   (gesetzte Umgebungsvariable gewinnt) auseinanderlaufen kann. */
+const { envLokalLaden } = require("./env-local.js");
+const envLaden = () => envLokalLaden(WURZEL);
 
 const TURNSTILE_TEST_SECRET = "1x0000000000000000000000000000000AA";
 const TURNSTILE_TEST_SITEKEY = "1x00000000000000000000AA";

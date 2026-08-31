@@ -93,6 +93,40 @@ function initCoverageMap(coverageLocations) {
   const mapEl = document.getElementById("coverage-map");
   if (!mapEl) return;
 
+  /* Kachel-URL mit API-Key.
+   *
+   * ⚠️⚠️ SEIT DEM 31.08.2026 IST DER SCHLUESSEL PFLICHT, und der Ausfall ist
+   * heimtueckisch: CARTO hat den bis dahin schluessellosen Rasterendpunkt hinter
+   * einen API-Key gestellt und liefert ohne ihn Kacheln mit einem diagonalen
+   * Wasserzeichen "API KEY REQUIRED" — bei **HTTP 200**. Keine Statuspruefung
+   * schlaegt also an, und die Kacheln tragen Cache-Control: max-age=15552000
+   * (180 Tage), weshalb ein Browser, der sie vorher sauber geladen hat, noch
+   * monatelang eine korrekte Karte zeigt. Am Code hat sich nichts geaendert —
+   * der Anbieter hat sich geaendert.
+   *
+   * ⚠️ Der Schluessel ist OEFFENTLICH: er steht in jeder Kachelanfrage des
+   * Browsers, genau wie der Turnstile SITE key. Er kommt zur Bauzeit aus
+   * CARTO_BASEMAP_KEY (siehe PUBLIC_ENV in build.js) und steht deshalb als
+   * data-Attribut am Kartencontainer — dasselbe Muster wie data-sitekey am
+   * Formular. Fehlt er, bricht schon der Bau ab.
+   *
+   * ⚠️ EINE DEUTSCHSPRACHIGE KACHELVARIANTE GIBT ES NICHT, gemessen am
+   * 31.08.2026: dieselbe Kachel mit ?language=de, ?lang=de und ?locale=de kam
+   * vier Mal BYTE-IDENTISCH zurueck (11303 Bytes, gleicher md5). CARTO
+   * dokumentiert Sprachwahl nur fuer die VEKTOR-Basemaps. Die englischen
+   * Ortsnamen auf der Karte sind daher eine Anbieter-Eigenschaft, keine
+   * Einstellung, die hier fehlt.
+   *
+   * ⚠️ Und CARTO nennt die Raster-Kacheln in der eigenen Doku "being retired"
+   * samt der Absicht, die Datenaktualisierung einzustellen. Dieser Schluessel
+   * kauft Zeit, er loest nichts dauerhaft.
+   */
+  function kachelUrl() {
+    var basis = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+    var key = mapEl && mapEl.getAttribute("data-carto-key");
+    return key ? basis + "?key=" + encodeURIComponent(key) : basis;
+  }
+
   const overlayCityEl = document.querySelector("[data-coverage-overlay-city]");
   const buttons = Array.from(document.querySelectorAll("[data-coverage-city]"));
   if (!buttons.length) return;
@@ -164,7 +198,7 @@ function initCoverageMap(coverageLocations) {
   // which is why the attribution below credits both. {r} requests
   // retina/@2x tiles automatically on high-DPI screens; CARTO's own
   // basemap CDN supports that suffix (plain OSM tiles above didn't).
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+  L.tileLayer(kachelUrl(), {
     maxZoom: 18,
     subdomains: "abcd",
     // {r} only ever resolves to "@2x" (sharper tiles) when this is true

@@ -542,7 +542,7 @@
              clears it once Leaflet has actually loaded, so no JS, a failed
              request, or a crawler all get a readable address block here. -->
         <div class="contact-location__map-wrap" data-reveal>
-          <div id="contact-map" class="contact-location__map" data-lat="49.9019037" data-lng="10.9067377" data-label="FRANKONIA Sicherheitsdienst">
+          <div id="contact-map" class="contact-location__map" data-carto-key="{{env.cartoBasemapKey}}" data-lat="49.9019037" data-lng="10.9067377" data-label="FRANKONIA Sicherheitsdienst">
             <p class="contact-location__fallback">
               FRANKONIA Sicherheitsdienst GmbH &amp; Co. KG<br>
               Neuerbstraße 19, 96052 Bamberg<br>
