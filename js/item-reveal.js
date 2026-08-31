@@ -88,6 +88,16 @@
       scale: 1,
       filter: "blur(0px)",
       ease: strong ? "power3.out" : "power2.out",
+      /* ⚠️⚠️ ZUSÄTZLICH zum clearProps auf onLeave weiter unten, und das ist die
+         Lücke, die am 31.08.2026 auffiel: onLeave feuert am ENDE des Bereichs,
+         also nur für Elemente, die man wieder verlässt. Die meisten verlassen
+         ihn nie — sie bleiben stehen, wo man aufgehört hat zu scrollen, und
+         behalten ihre Kompositionsebene für den Rest des Besuchs.
+         onComplete feuert immer, sobald der Tween fertig ist. Siehe
+         js/filter-freigeben.js. */
+      onComplete: function () {
+        if (window.frankoniaFilterFreigeben) window.frankoniaFilterFreigeben(this.targets());
+      },
     };
 
     // ⚠️ DROP THE FILTER ONCE THE ITEM IS FULLY REVEALED. `filter: blur(0px)` is not

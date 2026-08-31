@@ -81,6 +81,34 @@
 */
 
 (function initPixelSeams() {
+  /* ══ Übergänge nur in der Nähe des Sichtfelds ══════════════════════════════
+     Aufgabe 16, 31.08.2026. Siehe die lange Begründung an .is-fern in
+     css/page-home.css. Kurz: über tausend gleichzeitig laufende
+     opacity-Übergänge sind der gemessene Ruckler im unteren Seitendrittel.
+
+     ⚠️ NUR EIN ZUSATZ, KEINE VORAUSSETZUNG. Ohne IntersectionObserver (oder
+     wenn dieser Block gar nicht läuft) bleibt alles wie vorher — .is-fern wird
+     dann nie gesetzt, und jede Naht behält ihren Übergang. Der Effekt kann also
+     nicht daran scheitern. */
+  function naehePruefen(seams) {
+    if (typeof IntersectionObserver === "undefined") return;
+    var beobachter = new IntersectionObserver(
+      function (eintraege) {
+        for (var i = 0; i < eintraege.length; i++) {
+          var e = eintraege[i];
+          e.target.classList.toggle("is-fern", !e.isIntersecting);
+        }
+      },
+      /* 400 px Vorlauf: die Naht darf nicht erst dann "nah" werden, wenn man sie
+         schon sieht — sonst springt die Auflösung beim Einblenden. */
+      { rootMargin: "400px 0px 400px 0px" }
+    );
+    for (var j = 0; j < seams.length; j++) {
+      seams[j].classList.add("is-fern");
+      beobachter.observe(seams[j]);
+    }
+  }
+
   if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -352,4 +380,5 @@
       },
     });
   });
+  naehePruefen(document.querySelectorAll("[data-pixel-seam]"));
 })();

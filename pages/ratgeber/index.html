@@ -89,6 +89,9 @@
   <script src="/js/smooth-scroll.js" defer></script>
   <script src="/js/hero-reveal.js" defer></script>
   <script src="/js/title-reveal.js" defer></script>
+  <!-- Gibt verbrauchte blur(0px)-Ebenen frei. MUSS vor den Reveal-Skripten
+       stehen, sie rufen window.frankoniaFilterFreigeben in onComplete. -->
+  <script src="/js/filter-freigeben.js" defer></script>
   <script src="/js/item-reveal.js" defer></script>
   <script src="/js/text-reveal.js" defer></script>
   <script src="/js/pixel-transition.js" defer></script>

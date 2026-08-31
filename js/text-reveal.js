@@ -78,6 +78,17 @@
       ease: "power2.out",
       stagger: 0.08,
       overwrite: "auto",
+      /* ⚠️⚠️ EBENE FREIGEBEN — dieses Skript hatte gar keinen Rückbau, und es ist
+         der grösste Einzelposten: gemessen am 31.08.2026 sassen 44 Elemente auf
+         der Startseite und 62 auf /werkschutz/ auf einem verbrauchten
+         blur(0px), also dauerhaft auf einer eigenen Kompositionsebene, die
+         nichts weichzeichnet und trotzdem bei jedem Frame neu gerastert wird.
+         Sicher hier, weil der Trigger `once: true` ist: onComplete läuft
+         genau einmal, am Ende, wenn der Text bei opacity 1 und blur 0 steht.
+         Siehe js/filter-freigeben.js. */
+      onComplete: function () {
+        if (window.frankoniaFilterFreigeben) window.frankoniaFilterFreigeben(this.targets());
+      },
     });
   }
 
@@ -91,6 +102,11 @@
   // fired, e.g. an element inside a transformed ancestor).
   window.setTimeout(function () {
     var stuck = els.filter(function (el) { return gsap.getProperty(el, "opacity") < 1; });
-    if (stuck.length) gsap.set(stuck, { opacity: 1, y: 0, filter: "blur(0px)" });
+    if (stuck.length) {
+      gsap.set(stuck, { opacity: 1, y: 0, filter: "blur(0px)" });
+      /* Auch hier die Ebene freigeben — sonst hinterlässt genau der Pfad, der
+         etwas retten soll, dauerhaft Rasterkosten. */
+      if (window.frankoniaFilterFreigeben) window.frankoniaFilterFreigeben(stuck);
+    }
   }, 4000);
 })();

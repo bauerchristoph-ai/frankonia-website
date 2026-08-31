@@ -146,6 +146,9 @@
   <!-- Per-character reveal for every <h2> in <main>. -->
   <script src="/js/title-reveal.js" defer></script>
   <!-- Staggered group reveal; opt-in per container via data-item-reveal. -->
+  <!-- Gibt verbrauchte blur(0px)-Ebenen frei. MUSS vor den Reveal-Skripten
+       stehen, sie rufen window.frankoniaFilterFreigeben in onComplete. -->
+  <script src="/js/filter-freigeben.js" defer></script>
   <script src="/js/item-reveal.js" defer></script>
   <!-- Gentle per-element reveal for the remaining body copy. Skips anything
        inside [data-reveal] / [data-item-reveal], so the two never double up. -->

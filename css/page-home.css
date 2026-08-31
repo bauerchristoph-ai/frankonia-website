@@ -4125,7 +4125,15 @@ main h2 {
   max-width: 12rem;
   padding: var(--space-3) var(--space-4);
   background-color: rgb(1 1 1 / 0.72);
-  backdrop-filter: blur(8px);
+  /* ⚠️⚠️ ENTFERNT AM 31.08.2026 (Aufgabe 16). backdrop-filter war der teuerste
+     Einzeleffekt im unteren Seitendrittel: gemessen bei y=20000 lagen 34 von 42
+     Frames über 32 ms, und dieses Overlay liegt bei y=19411 — auf einer LIVE
+     laufenden Leaflet-Karte, deren Kacheln sich beim Zoomen ändern. Jedes
+     Neuzeichnen dahinter erzwingt ein Neuberechnen des Weichzeichners.
+     Ersetzt durch eine reine halbtransparente Fläche. Der Unterschied ist
+     minimal, weil die Karte darunter ohnehin fast schwarz ist (dark_nolabels);
+     die Kosten sind es nicht. */
+  /* backdrop-filter: blur(8px);  <- siehe oben */
   -webkit-backdrop-filter: blur(8px);
   border-radius: var(--radius-sm);
   border: 1px solid rgb(255 255 255 / 0.12);
@@ -4877,6 +4885,11 @@ main h2 {
   opacity: 1;
   transition: opacity 0.5s var(--easing-standard);
 }
+
+/* Die Regel fuer .is-fern liegt in components.css — sie muss auf JEDER Seite
+   greifen, nicht nur auf der Startseite. Gemessen: ohne das blieben auf
+   /werkschutz/ alle 1980 Kacheln uebergangsfaehig, weil diese Datei dort nicht
+   geladen wird. */
 
 /* Seams that transition FROM a light section INTO a dark one need light
    tiles (they sit over the dark section below). #FAFAFA matches .outfits'

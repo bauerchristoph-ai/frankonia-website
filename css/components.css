@@ -1201,3 +1201,22 @@ a.review-card:focus-visible {
   background: var(--surface-paper);
   color: var(--text-on-light-secondary);
 }
+
+/* ⚠️⚠️ ÜBERGANG NUR IN DER NÄHE DES SICHTFELDS — 31.08.2026, Aufgabe 16.
+   Gemessen: die Website liefert 2160 Kacheln auf der Startseite, 1980 auf
+   /werkschutz/ und 900 auf /jobs/. Jede trägt einen opacity-Übergang. Im Leerlauf
+   kostet ein Übergang nichts, ABER: bei einem schnellen Scroll durch die Seite
+   ändern alle Kacheln aller Nähte gleichzeitig ihre Deckkraft, und dann laufen
+   über tausend Übergänge parallel. Das ist der gemessene Ruckler im unteren
+   Seitendrittel (bei y=20000 lagen 34 von 42 Frames über 32 ms).
+   js/pixel-transition.js setzt .is-fern, sobald eine Naht weiter als 400 px vom
+   Sichtfeld entfernt ist, und nimmt es vorher wieder weg.
+   ⚠️ DER VORLAUF VON 400 px IST NICHT WEGZULASSEN: ohne ihn beginnt die
+   Auflösung erst, wenn die Naht schon zu sehen ist, und der Effekt springt.
+   ⚠️ Und es wird nur der ÜBERGANG abgeschaltet, nicht die Deckkraft: eine Kachel
+   behält ihren Zustand, sie wechselt ihn nur ohne Animation. Wer in eine ferne
+   Naht springt (Anker-Link), sieht sie deshalb korrekt aufgelöst, nur ohne
+   Überblendung — und das ist unsichtbar, weil man den Sprung nicht sieht. */
+.pixel-seam.is-fern .pixel-seam__tile {
+  transition: none;
+}

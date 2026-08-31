@@ -79,12 +79,35 @@
 
   tl.to(
     numbers,
-    { opacity: 1, y: 0, filter: "blur(0px)", ease: "power2.out", duration: 0.6, stagger: 0.12 },
+    {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      ease: "power2.out",
+      duration: 0.6,
+      stagger: 0.12,
+      /* ⚠️ Ebene freigeben, sobald nichts mehr weichgezeichnet wird — siehe
+         js/filter-freigeben.js. Ohne das bleiben diese Elemente dauerhaft auf
+         einer eigenen Kompositionsebene. */
+      onComplete: function () {
+        if (window.frankoniaFilterFreigeben) window.frankoniaFilterFreigeben(this.targets());
+      },
+    },
     drawLines ? ">-0.1" : 0
   );
   tl.to(
     labels,
-    { opacity: 1, y: 0, filter: "blur(0px)", ease: "power2.out", duration: 0.5, stagger: 0.12 },
+    {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      ease: "power2.out",
+      duration: 0.5,
+      stagger: 0.12,
+      onComplete: function () {
+        if (window.frankoniaFilterFreigeben) window.frankoniaFilterFreigeben(this.targets());
+      },
+    },
     "<+0.15"
   );
 })();

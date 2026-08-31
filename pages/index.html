@@ -293,6 +293,9 @@
        Opt-in per container via data-item-reveal="<item-selector>". Same
        GSAP + ScrollTrigger + Lenis stack; skipped under
        prefers-reduced-motion; content stays visible with no JS. -->
+  <!-- Gibt verbrauchte blur(0px)-Ebenen frei. MUSS vor den Reveal-Skripten
+       stehen, sie rufen window.frankoniaFilterFreigeben in onComplete. -->
+  <script src="/js/filter-freigeben.js" defer></script>
   <script src="/js/item-reveal.js" defer></script>
   <!-- General body-text scroll reveal (client 2026-07-29): eases in the
        remaining paragraphs/sub-headings/list items that aren't already animated

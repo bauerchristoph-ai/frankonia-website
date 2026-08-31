@@ -154,6 +154,10 @@
             yPercent: 0,
             opacity: 1,
             filter: "blur(0px)",
+            /* ⚠️ Ebene freigeben — siehe js/filter-freigeben.js. */
+            onComplete: function () {
+              if (window.frankoniaFilterFreigeben) window.frankoniaFilterFreigeben(this.targets());
+            },
             duration: 1,
             /* power3.out under a SCRUB is deceptive: the ease maps scroll to
                progress, so the card covered ~75% of its travel in the first
