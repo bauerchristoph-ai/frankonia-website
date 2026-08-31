@@ -6,6 +6,20 @@ geändert wurde, wo man es sieht, und woran man erkennt, dass es stimmt.**
 Angelegt am 2026-08-23 auf Wunsch von Christoph, für den Durchgang vor dem
 Umstellen der Domain auf Vercel.
 
+> **31.08.2026 — der QA-Auftrag mit den 29 Aufgaben ist abgeschlossen.** Der
+> Bericht dazu steht nicht hier, sondern in
+> [qa-harness/launch-paket/PRUEFPROTOKOLL-2026-08-31.md](../qa-harness/launch-paket/PRUEFPROTOKOLL-2026-08-31.md)
+> — das ist der Pfad, den der Auftrag ausdrücklich verlangt. Daneben liegt die
+> Codebeurteilung (Aufgabe 28).
+>
+> Dort steht auch die Liste der **offenen Punkte**, und keiner davon liegt im
+> Code: der CARTO-Schlüssel nur unter Production, die HubSpot-Weiterleitung auf
+> /danke-bewerbung/, die anwaltliche Prüfung der Datenschutz-Abschnitte 3.3–3.7
+> und die Bereinigung der HubSpot-Testdaten.
+>
+> ⚠️ Eine Zahl aus früheren Notizen ist überholt: **die Formulare senden.**
+> Gemessen 44 Formulare mit action="/api/forms/submit/", Endpunkt vorhanden.
+
 **Regel:** dieses Dokument wird im selben Commit wie der Block aktualisiert, den
 es beschreibt — dieselbe Regel, die schon für
 [build-checklist.md](build-checklist.md) gilt.
