@@ -49,7 +49,15 @@ if (!alleFormen || alleFormen.length !== 6) {
   throw new Error("erwartet 6 Formen, gefunden " + (alleFormen ? alleFormen.length : 0));
 }
 
-const MIT_SCHWUNG = process.env.ICONS_MIT_SCHWUNG === "1";
+/* ⚠️⚠️ DIE VOLLSTAENDIGE MARKE, MIT SCHWUNG — umgestellt am 01.09.2026.
+   Kunde: "jetzt ist halt leider beim Logo ein Teil vom Logo abgeschnitten".
+   Er hat recht, und der Grund war eine Entscheidung, die im QUADRAT richtig war
+   und im KREIS nicht mehr: ohne Schwung ist die Marke 0,520:1, hoch und schmal,
+   und fuellt ein Quadrat gut aus — im Kreis wird daraus eine kleine Lampe mit
+   viel Weiss, und was fehlt, liest sich als abgeschnittenes Logo. Es WAR ein
+   Fragment der Marke.
+   ICONS_OHNE_SCHWUNG=1 erzeugt die alte Fassung. */
+const MIT_SCHWUNG = process.env.ICONS_OHNE_SCHWUNG !== "1";
 let marke = null; /* wird in main() nach der Messung gesetzt */
 
 /* ----------------------------------------------------------- CDP-Minimum */
@@ -233,23 +241,31 @@ async function main() {
          01.09.2026, nachdem die eckige weisse Flaeche im Browsertab als Kaestchen
          gelesen wurde.
 
-         ⚠️ rand 0.10 heisst: die Marke ist 80 % des Durchmessers hoch. Der Wert
-         ist durch VERGLEICH GERENDERTER FASSUNGEN entstanden, nicht gewaehlt —
-         0.13 / 0.10 / 0.07 nebeneinander bei 16, 32, 48 und 192 px angesehen:
-           0.13 (74 %)  Marke wirkt klein, viel Weiss
-           0.10 (80 %)  merkbar groesser, weisser Ring bleibt sichtbar
-           0.07 (86 %)  zu eng, Kuppel und Eichel stossen an den Rand
-         Die geometrische Grenze liegt bei 88,7 % (siehe iconSeite), 0.07 sitzt
-         also praktisch darauf.
+         ⚠️⚠️ rand 0.08 IST GERECHNET, NICHT GESCHAETZT, und die Rechnung aendert
+         sich mit dem Schwung. Die vollstaendige Marke ist 1,692:1 — also BREIT,
+         nicht hoch. Damit ihr Rahmen ganz in einen Kreis mit Durchmesser d
+         passt, gilt Breite <= d / sqrt(1 + 1/1,692²) … ausgerechnet:
+         Diagonale = h * sqrt(1 + 1,692²) = h * 1,965 <= d, also h <= 0,509 d und
+         Breite <= 0,861 d. Da rand die groessere Kante steuert, ist
+         rand >= (1 - 0,861) / 2 = 0,0695 die Grenze. 0.08 liegt mit einem Hauch
+         Reserve darunter (Breite 0,84 d) und ist damit der GROESSTE nachweislich
+         passende Wert.
+         ⚠️ 0.06 waere 0,88 d und damit ueber der Grenze — gerendert sah es noch
+         gut aus, weil die Ecken des Rahmens bei dieser Kurve leer sind. Auf
+         "sieht noch gut aus" wollte ich das nicht stellen.
+         ⚠️ Fuer die ALTE Fassung ohne Schwung (0,520:1) galt eine andere Grenze,
+         88,7 %, und dort war 0.10 der verglichene Wert. Wer ICONS_OHNE_SCHWUNG=1
+         benutzt, sollte rand wieder auf 0.10 stellen.
 
-         ⚠️ Bei 16 px sind alle drei nicht unterscheidbar — dort ist das Icon ein
-         weisser Punkt mit einem blauen Zeichen, und das ist der Preis eines
-         Kreises im Tab. Der Unterschied zeigt sich ab 32 px. */
-      { name: "icon-16.png", px: 16, rand: 0.1, hintergrund: "#ffffff", kreis: true },
-      { name: "icon-32.png", px: 32, rand: 0.1, hintergrund: "#ffffff", kreis: true },
-      { name: "icon-48.png", px: 48, rand: 0.1, hintergrund: "#ffffff", kreis: true },
-      { name: "icon-192.png", px: 192, rand: 0.1, hintergrund: "#ffffff", kreis: true },
-      { name: "icon-512.png", px: 512, rand: 0.1, hintergrund: "#ffffff", kreis: true },
+         ⚠️ Bei 16 px ist das Icon ein weisser Punkt mit einem blauen Zeichen,
+         egal welcher Rand — der Preis eines Kreises im Tab. Auf HiDPI-Schirmen
+         nimmt der Browser fuer den Tab ohnehin die 32er, und dort traegt die
+         Marke. Der 16er ist der Altfall. */
+      { name: "icon-16.png", px: 16, rand: 0.08, hintergrund: "#ffffff", kreis: true },
+      { name: "icon-32.png", px: 32, rand: 0.08, hintergrund: "#ffffff", kreis: true },
+      { name: "icon-48.png", px: 48, rand: 0.08, hintergrund: "#ffffff", kreis: true },
+      { name: "icon-192.png", px: 192, rand: 0.08, hintergrund: "#ffffff", kreis: true },
+      { name: "icon-512.png", px: 512, rand: 0.08, hintergrund: "#ffffff", kreis: true },
 
       /* ⚠️⚠️ DIESE ZWEI BLEIBEN QUADRATISCH, und das ist kein Vergessen:
          das Betriebssystem maskiert sie SELBST.
