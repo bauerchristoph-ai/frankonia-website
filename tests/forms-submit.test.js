@@ -1308,3 +1308,83 @@ test("BCC: ein unbrauchbarer Wert wird verworfen und nicht mitgesendet", () => {
   assert.equal(brevo.bccAdresse("s1"), "27143941@bcc.hubspot.com");
   delete process.env.HUBSPOT_BCC_ADDRESS;
 });
+
+test("Notiz: die HubSpot-Notiz traegt die GANZE Anfrage, nicht nur die Nachricht", () => {
+  /* ⚠️ Kunde am 01.09.2026: die Notiz kam ohne Name, Firma, E-Mail und Telefon
+     an — nur mit der Nachricht und der Leistung. Diese Felder standen zwar als
+     Kontakt-Eigenschaften im CRM, waren also nicht verloren, aber eine Notiz
+     haelt die Anfrage zum ZEITPUNKT fest: Eigenschaften werden von der naechsten
+     Anfrage derselben Person ueberschrieben, die Notiz bleibt.
+
+     ⚠️ DIESER TEST EXISTIERT, WEIL ES DEM KUNDEN AUFGEFALLEN IST UND NICHT MIR.
+     Der Textaufbau steckte in notizAnlegen(), und die ruft das Netz — der einzige
+     Weg zu sehen, was in der Notiz landet, war eine echte Einsendung. Deshalb ist
+     der Aufbau jetzt notizZeilen(), rein und pruefbar. */
+  const zeilen = hubspot.notizZeilen(
+    {
+      firstname: "Christoph", lastname: "Bauer", company: "Test GmbH",
+      email: "info@example.de", phone: "+499519643520",
+      service: "Objektschutz", message: "Bitte um Rueckruf.",
+      page_url: "https://frankonia-sicherheit.de/werkschutz/",
+    },
+    "sub-1"
+  );
+  const text = zeilen.join("\n");
+  for (const [was, muss] of [
+    ["Name", "Name: Christoph Bauer"],
+    ["Unternehmen", "Unternehmen: Test GmbH"],
+    ["E-Mail", "E-Mail: info@example.de"],
+    ["Telefon", "Telefon: +499519643520"],
+    ["Leistung", "Leistung: Objektschutz"],
+    ["Nachricht", "Bitte um Rueckruf."],
+    ["Submission-ID", "Submission-ID: sub-1"],
+  ]) {
+    assert.ok(text.includes(muss), was + " fehlt in der Notiz:\n" + text);
+  }
+
+  /* Leere Felder erzeugen keine leeren Zeilen — sonst steht im CRM
+     "Unternehmen:" ohne Wert, was schlechter aussieht als gar keine Zeile. */
+  const ohne = hubspot.notizZeilen(
+    { firstname: "Anna", message: "Kurz.", page_url: "https://x.de/" }, "sub-2"
+  ).join("\n");
+  assert.ok(ohne.includes("Name: Anna"), "der Vorname allein muss reichen");
+  assert.ok(!ohne.includes("Unternehmen:"), "leeres Firmenfeld erzeugt eine leere Zeile");
+  assert.ok(!ohne.includes("Telefon:"), "leeres Telefonfeld erzeugt eine leere Zeile");
+});
+
+test("Rechtsgrundlage am Kontakt: gesetzt wenn leer, NIE ueberschrieben", () => {
+  /* ⚠️ Kunde am 01.09.2026: "als rechtliche Grundlage wurde nichts ausgewaehlt."
+     Richtig — hs_legal_basis war leer. Die Rechtsgrundlage wurde bis dahin nur je
+     ABONNEMENT gesetzt, und das ist ein anderes Feld.
+
+     ⚠️⚠️ ZWEI FELDER, ZWEI WERTELISTEN. Die Abonnement-API nimmt Enum-SCHLUESSEL
+     (PERFORMANCE_OF_CONTRACT). Die Kontakt-Eigenschaft nimmt KLARTEXT
+     ("Performance of a contract") — am 01.09.2026 aus
+     /crm/v3/properties/contacts/hs_legal_basis abgefragt und mit einem echten
+     PATCH bestaetigt. Der Schluessel waere abgelehnt worden. Dieser Test haelt
+     die Klartext-Fassung fest, damit sie nicht zum Enum "korrigiert" wird. */
+  const daten = { email: "a@b.de", message: "x", page_url: "https://x.de/" };
+
+  const neu = hubspot.kontaktProperties(daten, "s1", "2026-09-01T12:00:00Z", null);
+  assert.equal(neu.standard.hs_legal_basis, "Performance of a contract");
+
+  /* Mit Haken kommt die Einwilligung DAZU — das Feld ist ein
+     Mehrfach-Auswahlfeld, und beide Grundlagen treffen zu. */
+  const mitHaken = hubspot.kontaktProperties(
+    { ...daten, marketing_opt_in: true }, "s2", "2026-09-01T12:00:00Z", null
+  );
+  assert.equal(
+    mitHaken.standard.hs_legal_basis,
+    "Performance of a contract;Freely given consent from contact"
+  );
+
+  /* ⚠️ Der wichtigste Fall: ein vorhandener Wert stammt aus einem anderen Prozess
+     des Kunden. Ihn zu ueberschreiben waere eine Aenderung an einem rechtlichen
+     Nachweis, die niemand angeordnet hat. */
+  const vorhanden = { properties: { hs_legal_basis: "Legitimate interest - other" } };
+  const zweitanfrage = hubspot.kontaktProperties(daten, "s3", "2026-09-01T12:00:00Z", vorhanden);
+  assert.ok(
+    !("hs_legal_basis" in zweitanfrage.standard),
+    "eine bestehende Rechtsgrundlage darf nicht ueberschrieben werden"
+  );
+});

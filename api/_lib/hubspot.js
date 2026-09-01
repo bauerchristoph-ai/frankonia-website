@@ -290,7 +290,9 @@ async function kontaktSuchen(email, submissionId) {
     headers: kopf(),
     body: JSON.stringify({
       filterGroups: [{ filters: [{ propertyName: "email", operator: "EQ", value: email }] }],
-      properties: ["email", "lifecyclestage", "hs_lead_status"],
+      /* hs_legal_basis wird mitgelesen, weil es nur gesetzt wird, wenn es LEER
+         ist — siehe RECHTSGRUNDLAGE_KONTAKT weiter unten. */
+      properties: ["email", "lifecyclestage", "hs_lead_status", "hs_legal_basis"],
       limit: 1,
     }),
   });
@@ -329,6 +331,40 @@ function kontaktProperties(d, submissionId, zeitstempel, vorhanden) {
   // festgehalten (marketingEinwilligung() weiter unten), die der belastbare
   // Nachweis ist.
   if (d.marketing_opt_in) standard.hs_marketable_status = "true";
+
+  /* ══ RECHTSGRUNDLAGE AM KONTAKT ════════════════════════════════════════════
+     Kunde am 01.09.2026: "als rechtliche Grundlage wurde nichts ausgewählt."
+     Richtig — hs_legal_basis war leer, gemessen am Testkontakt. Der Code setzte
+     die Rechtsgrundlage bis dahin NUR je Abonnement (marketingEinwilligung()).
+
+     ⚠️⚠️ ES SIND ZWEI FELDER MIT ZWEI VERSCHIEDENEN WERTELISTEN, und das ist die
+     Falle. Die Abonnement-API nimmt Enum-SCHLUESSEL
+     (PERFORMANCE_OF_CONTRACT, CONSENT_WITH_NOTICE …). Die Kontakt-Eigenschaft
+     hs_legal_basis nimmt KLARTEXT — abgefragt am 01.09.2026 ueber
+     /crm/v3/properties/contacts/hs_legal_basis:
+         "Legitimate interest – prospect/lead"    (Gedankenstrich, kein Bindestrich!)
+         "Legitimate interest – existing customer"
+         "Legitimate interest - other"            (hier ein Bindestrich)
+         "Performance of a contract"
+         "Freely given consent from contact"
+         "Not applicable"
+     Haette ich den Enum-Schluessel geschickt, haette HubSpot den Aufruf
+     abgelehnt. Nicht raten — die Liste kommt aus der API.
+
+     ⚠️ DAS FELD IST EIN MEHRFACH-AUSWAHLFELD (enumeration/checkbox), Werte mit
+     Semikolon getrennt. Deshalb werden bei gesetztem Marketing-Haken BEIDE
+     Grundlagen eingetragen: die Anfrage selbst ist Vertragsanbahnung, die
+     Werbeeinwilligung kommt zusaetzlich dazu. Eine davon zu unterdruecken waere
+     eine unvollstaendige Auskunft in genau dem Feld, das Auskunft geben soll.
+
+     ⚠️⚠️ NUR WENN DAS FELD LEER IST. Ein vorhandener Wert stammt aus einem
+     anderen Prozess des Kunden, und ihn zu ueberschreiben waere eine Aenderung
+     an einem rechtlichen Nachweis, die niemand angeordnet hat. Genau dieselbe
+     Zurueckhaltung gilt schon fuer die Rechtsgrundlage je Abonnement. */
+  const rechtsgrundlagen = ["Performance of a contract"];
+  if (d.marketing_opt_in) rechtsgrundlagen.push("Freely given consent from contact");
+  const bisher = vorhanden && vorhanden.properties && vorhanden.properties.hs_legal_basis;
+  if (!bisher) standard.hs_legal_basis = rechtsgrundlagen.join(";");
 
   const eigen = {
     website_submission_id: submissionId,
@@ -636,16 +672,36 @@ async function assoziieren(kontaktId, firmaId, submissionId) {
  * Notiz hat einen Zeitstempel und bleibt neben der ersten stehen. Beim
  * Vertrieb ist die Anfragehistorie genau das, was zählt.
  */
-async function notizAnlegen(d, kontaktId, submissionId, zeitstempel) {
-  const zeilen = [
-    "Formularanfrage über die Website",
-    "",
-    d.message,
-    "",
-    "— — —",
-    "Seite: " + (d.page_url || "unbekannt"),
-  ];
-  if (d.service) zeilen.splice(4, 0, "Angefragte Leistung: " + d.service);
+/* ⚠️ HERAUSGEZOGEN AM 01.09.2026, damit der Textaufbau PRUEFBAR ist. Vorher
+   steckte er in notizAnlegen(), und die ruft das Netz — also war der einzige Weg
+   zu sehen, was in der Notiz landet, eine echte Einsendung. Genau deshalb ist
+   erst dem Kunden aufgefallen, dass die Firma fehlte.
+   Die Funktion ist rein: Daten rein, Zeilen raus, kein fetch. */
+function notizZeilen(d, submissionId) {
+  /* ⚠️ DIE NOTIZ TRAEGT DIE GANZE ANFRAGE, nicht nur die Nachricht — Wunsch des
+     Kunden vom 01.09.2026 ("die gesamte Notiz soll rein importiert werden, z. B.
+     auch mit der Info welches Unternehmen").
+
+     ⚠️ DAS IST BEWUSST REDUNDANT. Name, Firma, E-Mail und Telefon stehen
+     ausserdem als Kontakt-Eigenschaften (siehe STANDARD_MAP) — sie waren also
+     nie verloren. Der Grund fuer die Wiederholung ist, dass eine Notiz die
+     Anfrage zum ZEITPUNKT festhaelt: Eigenschaften werden von der naechsten
+     Anfrage derselben Person ueberschrieben, die Notiz bleibt. Wer in einem Jahr
+     wissen will, welche Firma bei DIESER Anfrage angegeben wurde, findet es nur
+     hier.
+
+     ⚠️ Reihenfolge und Beschriftung folgen der Benachrichtigungs-E-Mail, damit
+     Vertrieb und CRM dasselbe Bild zeigen. Wer eine Zeile aendert, aendert sie
+     in api/_lib/brevo.js mit. */
+  const person = [d.firstname, d.lastname].filter(Boolean).join(" ").trim();
+  const zeilen = ["Formularanfrage über die Website", ""];
+  if (person) zeilen.push("Name: " + person);
+  if (d.company) zeilen.push("Unternehmen: " + d.company);
+  if (d.email) zeilen.push("E-Mail: " + d.email);
+  if (d.phone) zeilen.push("Telefon: " + d.phone);
+  if (d.service) zeilen.push("Leistung: " + d.service);
+  zeilen.push("", "Nachricht:", d.message, "", "— — —",
+    "Seite: " + (d.page_url || "unbekannt"));
   if (d.referrer) zeilen.push("Verweisende Seite: " + d.referrer);
   const utm = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"]
     .filter((k) => d[k])
@@ -653,6 +709,12 @@ async function notizAnlegen(d, kontaktId, submissionId, zeitstempel) {
   if (utm.length) zeilen.push("Kampagne: " + utm.join(" · "));
   zeilen.push("Submission-ID: " + submissionId);
   if (d.marketing_opt_in) zeilen.push("Einwilligung für Marketing-Kommunikation: ja");
+
+  return zeilen;
+}
+
+async function notizAnlegen(d, kontaktId, submissionId, zeitstempel) {
+  const zeilen = notizZeilen(d, submissionId);
 
   // hs_note_body ist HTML. Zeilenumbrüche müssen als <br> kommen, sonst
   // steht die Notiz als ein Block im CRM.
@@ -772,6 +834,7 @@ module.exports = {
   unternehmenUpsert,
   assoziieren,
   notizAnlegen,
+  notizZeilen,
   kontaktProperties,
   konfiguriert,
   LIFECYCLE_REIHENFOLGE,
