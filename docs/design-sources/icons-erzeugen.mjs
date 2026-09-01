@@ -57,8 +57,32 @@ if (!alleFormen || alleFormen.length !== 6) {
    viel Weiss, und was fehlt, liest sich als abgeschnittenes Logo. Es WAR ein
    Fragment der Marke.
    ICONS_OHNE_SCHWUNG=1 erzeugt die alte Fassung. */
-const MIT_SCHWUNG = process.env.ICONS_OHNE_SCHWUNG !== "1";
-let marke = null; /* wird in main() nach der Messung gesetzt */
+/* ⚠️⚠️ ZWEI FASSUNGEN, NACH GROESSE GETRENNT — umgestellt am 01.09.2026, nachdem
+   der Kunde die volle Marke im Kreis zum dritten Mal abgelehnt hat
+   ("favicon passt immernoch nicht").
+
+   ER HAT RECHT, UND DIE URSACHE IST GERECHNET, NICHT GERATEN: die volle Marke
+   ist 1,692:1 — sie ist BREIT. In einem Kreis vom Durchmesser d darf ihre
+   Breite hoechstens 0,861 d sein, dann ist ihre HOEHE 0,509 d. Die Laterne, das
+   einzige wiedererkennbare Element, nimmt nur die linken ~26 % der Breite ein,
+   ist also gut 0,22 d breit — bei einem 32er Tab sind das SIEBEN PIXEL, und der
+   Schwung daneben verjuengt sich auf eine Haarlinie. Gerendert und angesehen:
+   ein blaues Kringel, kein Zeichen.
+
+   Deshalb: 16 und 32 tragen die LATERNE (0,520:1, hoch — sie fuellt den Kreis
+   auf 0,79 d Hoehe, also mehr als das Dreifache), ab 48 die VOLLE Marke. Das
+   ist bei Favicons die Regel und nicht die Ausnahme: ein Tab-Icon ist ein
+   Signet, kein Logo.
+   ⚠️ Das ist AUCH die Antwort auf die vorige Meldung ("ein Teil vom Logo
+   abgeschnitten"): dort war die Laterne die EINZIGE Fassung, in allen Groessen.
+   Jetzt sieht man die vollstaendige Marke ueberall, wo genug Pixel dafuer da
+   sind — im Lesezeichen, in der Verlaufsliste, auf dem Startbildschirm.
+
+   ICONS_OHNE_SCHWUNG=1 nimmt fuer ALLE Groessen die Laterne (die Fassung vom
+   31.08.), ICONS_NUR_VOLL=1 fuer alle die volle Marke (die vom 01.09. frueh). */
+const NUR_LATERNE = process.env.ICONS_OHNE_SCHWUNG === "1";
+const NUR_VOLL = process.env.ICONS_NUR_VOLL === "1";
+let fassung = null; /* { voll: {marke, bbox}, laterne: {marke, bbox} }, in main() gesetzt */
 
 /* ----------------------------------------------------------- CDP-Minimum */
 
@@ -149,7 +173,7 @@ const messSeite = `<!doctype html><meta charset="utf-8">
    d / sqrt(1 + 0,52²) = 0,887 d sein — sonst stehen die Ecken des Rahmens aus
    dem Kreis heraus. Mit Luft zum Rand liegt der brauchbare Bereich bei 0,70 bis
    0,78; siehe die Werte in AUFTRAEGE. */
-function iconSeite({ px, bbox, rand, hintergrund, kreis }) {
+function iconSeite({ px, marke, bbox, rand, hintergrund, kreis }) {
   const seiteMitRand = Math.max(bbox.width, bbox.height) / (1 - 2 * rand);
   const x = bbox.x + bbox.width / 2 - seiteMitRand / 2;
   const y = bbox.y + bbox.height / 2 - seiteMitRand / 2;
@@ -216,21 +240,33 @@ async function main() {
       "Schwung erkannt: Form " + SCHWUNG + " reicht bis x=" + groesste.toFixed(0) +
         ", alle anderen bis x=" + zweit.toFixed(0)
     );
-    const formen = MIT_SCHWUNG ? alleFormen : alleFormen.filter((_, k) => k !== SCHWUNG);
-    marke = formen.join("\n");
-
-    /* Rahmen der VERWENDETEN Formen */
-    const genutzt = MIT_SCHWUNG ? alleBboxen : alleBboxen.filter((_, k) => k !== SCHWUNG);
-    const x0 = Math.min(...genutzt.map((b) => b.x));
-    const y0 = Math.min(...genutzt.map((b) => b.y));
-    const x1 = Math.max(...genutzt.map((b) => b.x + b.width));
-    const y1 = Math.max(...genutzt.map((b) => b.y + b.height));
-    const bbox = { x: x0, y: y0, width: x1 - x0, height: y1 - y0 };
-    console.log(
-      "Bildmarke im Vektor: x " + bbox.x.toFixed(1) + "  y " + bbox.y.toFixed(1) +
-        "  " + bbox.width.toFixed(1) + " x " + bbox.height.toFixed(1) +
-        "  (Verhaeltnis " + (bbox.width / bbox.height).toFixed(3) + ")"
-    );
+    /* ⚠️ String.fromCharCode(10) statt einer Escape-Folge: die Patch-Datei, die
+       diesen Block gesetzt hat, lief durch ein Heredoc, und das frisst auf diesem
+       Rechner eine Backslash-Ebene (in CLAUDE.md dokumentiert). */
+    const TRENNER = String.fromCharCode(10);
+    /* Der Rahmen einer Formmenge — im Browser gemessen, nie gerechnet. */
+    const rahmen = (bb) => {
+      const x0 = Math.min(...bb.map((b) => b.x));
+      const y0 = Math.min(...bb.map((b) => b.y));
+      const x1 = Math.max(...bb.map((b) => b.x + b.width));
+      const y1 = Math.max(...bb.map((b) => b.y + b.height));
+      return { x: x0, y: y0, width: x1 - x0, height: y1 - y0 };
+    };
+    const ohneSchwung = alleFormen.filter((_, k) => k !== SCHWUNG);
+    fassung = {
+      voll: { marke: alleFormen.join(TRENNER), bbox: rahmen(alleBboxen) },
+      laterne: {
+        marke: ohneSchwung.join(TRENNER),
+        bbox: rahmen(alleBboxen.filter((_, k) => k !== SCHWUNG)),
+      },
+    };
+    for (const [name, f] of Object.entries(fassung)) {
+      console.log(
+        "Fassung " + name.padEnd(8) + " " + f.bbox.width.toFixed(1) + " x " +
+          f.bbox.height.toFixed(1) + "  (Verhaeltnis " +
+          (f.bbox.width / f.bbox.height).toFixed(3) + ")"
+      );
+    }
 
     /* 2. Die Icons.
        Rand und Hintergrund folgen der Vorgabe des QA-Auftrags:
@@ -261,11 +297,32 @@ async function main() {
          egal welcher Rand — der Preis eines Kreises im Tab. Auf HiDPI-Schirmen
          nimmt der Browser fuer den Tab ohnehin die 32er, und dort traegt die
          Marke. Der 16er ist der Altfall. */
-      { name: "icon-16.png", px: 16, rand: 0.08, hintergrund: "#ffffff", kreis: true },
-      { name: "icon-32.png", px: 32, rand: 0.08, hintergrund: "#ffffff", kreis: true },
-      { name: "icon-48.png", px: 48, rand: 0.08, hintergrund: "#ffffff", kreis: true },
-      { name: "icon-192.png", px: 192, rand: 0.08, hintergrund: "#ffffff", kreis: true },
-      { name: "icon-512.png", px: 512, rand: 0.08, hintergrund: "#ffffff", kreis: true },
+      /* ⚠️⚠️ DIE .ico TRAEGT DIE LATERNE, DIE APP-ICONS DIE VOLLE MARKE. Der lange
+         Kommentar am Kopf dieser Datei erklaert, warum — kurz: die volle Marke
+         ist 1,692:1, im Kreis also flach, und die Laterne darin waere bei 32 px
+         sieben Pixel breit. Die Laterne allein ist 0,520:1 und fuellt den Kreis
+         auf 0,79 d Hoehe.
+
+         ⚠️ DIE GRENZE LIEGT BEI DER DATEIART, NICHT BEI EINER PIXELZAHL: 16, 32
+         und 48 sind die drei Bilder IN der favicon.ico, also das Zeichen in der
+         Browserleiste — die muessen untereinander dasselbe zeigen, sonst wechselt
+         das Icon beim Wechsel der Bildschirmdichte sein Motiv. 192 und 512 sind
+         App-Icons und werden gross gezeigt, dort tragt die volle Marke.
+         Nachgesehen und nicht nur gerechnet: bei 48 ist die Laterne der vollen
+         Marke neun Pixel breit, der Schwung nimmt zwei Drittel der Flaeche und die
+         Laterne haengt klein am Rand.
+
+         ⚠️ UND DER RAND UNTERSCHEIDET SICH DESHALB AUCH: er ist gerechnet, nicht
+         gewaehlt. Damit der Rahmen ganz in den Kreis passt, muss seine Diagonale
+         kleiner sein als der Durchmesser — bei 1,692:1 sind das hoechstens
+         0,861 d Breite (Grenze rand 0,070), bei 0,520:1 hoechstens 0,887 d Hoehe
+         (Grenze rand 0,057). rand steuert immer die GROESSERE Kante. 0.08 bzw.
+         0.10 liegen mit Reserve darunter. Wer die Zahlen anfasst, rechnet neu. */
+      { name: "icon-16.png", px: 16, form: "laterne", rand: 0.10, hintergrund: "#ffffff", kreis: true },
+      { name: "icon-32.png", px: 32, form: "laterne", rand: 0.10, hintergrund: "#ffffff", kreis: true },
+      { name: "icon-48.png", px: 48, form: "laterne", rand: 0.10, hintergrund: "#ffffff", kreis: true },
+      { name: "icon-192.png", px: 192, form: "voll", rand: 0.08, hintergrund: "#ffffff", kreis: true },
+      { name: "icon-512.png", px: 512, form: "voll", rand: 0.08, hintergrund: "#ffffff", kreis: true },
 
       /* ⚠️⚠️ DIESE ZWEI BLEIBEN QUADRATISCH, und das ist kein Vergessen:
          das Betriebssystem maskiert sie SELBST.
@@ -280,8 +337,8 @@ async function main() {
          (Kreis, Squircle, Tropfen). Eine Scheibe darin wuerde ein zweites Mal
          eingerueckt und schwaebte klein in der Mitte. Deshalb randlos weiss mit
          dem Motiv in der safe zone. */
-      { name: "icon-512-maskable.png", px: 512, rand: 0.22, hintergrund: "#ffffff" },
-      { name: "apple-touch-icon.png", px: 180, rand: 0.14, hintergrund: "#ffffff" },
+      { name: "icon-512-maskable.png", px: 512, form: "voll", rand: 0.22, hintergrund: "#ffffff" },
+      { name: "apple-touch-icon.png", px: 180, form: "voll", rand: 0.14, hintergrund: "#ffffff" },
     ];
 
     for (const a of AUFTRAEGE) {
@@ -301,7 +358,14 @@ async function main() {
       await s.send("Emulation.setDefaultBackgroundColorOverride", {
         color: deckend ? { r: 255, g: 255, b: 255, a: 1 } : { r: 0, g: 0, b: 0, a: 0 },
       });
-      await s.send("Page.navigate", { url: seite(iconSeite({ ...a, bbox })) });
+      /* NUR_LATERNE / NUR_VOLL sind die zwei Rueckwege auf eine einzige Fassung;
+         ohne sie entscheidet der Auftrag. */
+      const wahl = NUR_LATERNE ? "laterne" : NUR_VOLL ? "voll" : a.form;
+      const f = fassung[wahl];
+      if (!f) throw new Error(a.name + ": unbekannte Fassung " + wahl);
+      await s.send("Page.navigate", {
+        url: seite(iconSeite({ ...a, marke: f.marke, bbox: f.bbox })),
+      });
       await new Promise((r) => setTimeout(r, 500));
       const shot = await s.send("Page.captureScreenshot", { format: "png" });
       const daten = Buffer.from(shot.data, "base64");
@@ -310,7 +374,8 @@ async function main() {
       const h = daten.readUInt32BE(20);
       console.log(
         "  " + a.name.padEnd(26) + w + "x" + h + "  " + String(daten.length).padStart(6) + " Bytes  " +
-          (a.kreis ? "weisser Kreis" : a.hintergrund ? "deckend" : "transparent")
+          (a.kreis ? "weisser Kreis" : a.hintergrund ? "deckend" : "transparent") +
+          "  " + wahl
       );
       if (w !== a.px || h !== a.px) throw new Error(a.name + ": " + w + "x" + h + " statt " + a.px);
     }

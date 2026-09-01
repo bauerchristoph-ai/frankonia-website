@@ -2633,3 +2633,145 @@ Sitemap-Eintrag (Abschnitte 14 und 15) und die Überarbeitung der
 Datenschutzerklärung samt des Fehlers, der diese Seite ohne Fußbereich ausgeliefert
 hat (Abschnitt 16). Beim Datenschutz sind noch zwei Fragen offen, die nur du oder
 dein Anwalt beantworten kann — sie stehen dort in einer eigenen Tabelle.
+
+---
+
+# Nachtrag 01.09.2026 — die Runde nach der QA-Übergabe
+
+Alles hier steht **hinter** dem Abschlussbericht darüber. Es sind die Punkte, die
+nach dem 29-Aufgaben-Durchgang aus eigenen Meldungen entstanden sind, jeder mit
+einer Zeile, was gemessen wurde. Die abhakbare Fassung liegt als eigene Seite
+bereit — dort nach Seiten geordnet, mit den Adressen zum Anklicken.
+
+## N1 — Das Scrollen zum Formular ruckelte, und die Ursache war nicht das Formular
+
+**Behoben.** Längster Frame **535 → 99 ms**, gemessen an derselben Stelle mit
+demselben Aufnahmeverfahren. Der Boden ohne jede Kachel liegt bei 89 ms — der Rest
+ist also nicht mehr diese Sektion.
+
+⚠️⚠️ **Zwei eigene Vermutungen waren falsch und wurden durch Messung verworfen:**
+die Filter der Übergänge waren es nicht (ohne sie war es *schlechter*), und die
+Übergänge der Kacheln auch nicht. Es war **Layerize** — der Compositor baut seinen
+Ebenenbaum neu, und die Kosten wachsen mit der Zahl der Ebenenkandidaten. Es gab
+Kacheln für **alle** Nähte, ab dem ersten Bild, auf jeder Seite.
+
+Was geändert wurde: `js/pixel-transition.js` baut die Kacheln einer Naht erst,
+wenn sie sich dem Blickfeld nähert (`IntersectionObserver`, 300 px Vorlauf), und
+räumt sie beim Verlassen wieder ab. `css/components.css` bekam eine Zeile —
+`contain: paint` auf dem Nahtband — und die war der größte einzelne Gewinn.
+⚠️ `contain: strict` ist **schlechter**, nicht besser: die Größeneinschränkung
+schickt das Band durch einen anderen Layoutweg.
+
+## N2 — Die schwarzen Ecken an den Fotos der Serviceseiten
+
+**Behoben, und die Ursache war ein Radius.** Ein abgerundeter Beschnitt zeigt in
+den Ecken, was *hinter* dem Foto liegt — bei einem hellen Foto auf schwarzem Grund
+sind das vier schwarze Zwickel. Gemessen über alle Serviceseiten: **kein Foto trägt
+mehr einen Radius**, ein Bau-Tor hält das fest.
+
+Der letzte übersehene Fall war `.service-flow__frame` — die sechs Fotos im
+Leistungsumfang auf `/werkschutz/`.
+
+## N3 — Die Kanten der Hero-Fotos laufen aus, statt zu schneiden
+
+**Umgesetzt, auf neun Seiten.** Zwei Verläufe (senkrecht und waagerecht) auf einem
+Pseudo-Element, die **Mitte von 16 % bis 84 % vollständig frei** — das Motiv dieser
+Fotos ist jeweils eine Person in der Bildmitte, eine Vignette über das ganze Bild
+würde sie mitverdunkeln.
+
+⚠️ **`/objektschutz/` war nicht der Ausreißer**, entgegen meiner ersten Annahme:
+gemessen haben **neun von zehn** Hero-Fotos helle Ränder. Nur `werkschutz` ist eine
+Nachtaufnahme und verschmilzt von sich aus. Die Regel gilt deshalb für alle zehn —
+sonst wäre objektschutz nachher der einzige mit weicher Kante.
+
+## N4 — Das Portrait von Alexander Jäger endet in einem Verlauf
+
+**Umgesetzt, auf sechs Seiten.** Die untere Bildkante geht in den Hintergrund über
+statt abgeschnitten zu enden. Als **eine geteilte Regel** mit drei Selektoren, nicht
+als Kopie — die doppelte Fassung in `css/page-ueber-uns.css` wurde dabei gelöscht.
+
+## N5 — Die HubSpot-Notiz trägt die ganze Anfrage
+
+**Umgesetzt.** Vorher stand nur die Nachricht darin; jetzt Name, Unternehmen,
+E-Mail, Telefon und die gewählte Leistung. Leere Felder erzeugen **keine** leeren
+Zeilen. Zwei neue Tests halten das fest (69 gesamt).
+
+## N6 — Die Rechtsgrundlage am Kontakt war leer
+
+**Umgesetzt**, und der Fund dahinter ist der Grund, warum es zweimal falsch war:
+**HubSpot hat zwei verschiedene Felder mit zwei verschiedenen Wortschätzen.** Das
+Abonnement nimmt Schlüssel einer Aufzählung (`PERFORMANCE_OF_CONTRACT`), die
+Kontakteigenschaft `hs_legal_basis` nimmt Klartext (`Performance of a contract`)
+und ist eine Mehrfachauswahl (mit Semikolon getrennt). Gesetzt wird jetzt beides,
+mit dem Zusatz „Freely given consent from contact" bei gesetztem Marketing-Haken.
+
+⚠️ **Eine vorhandene Grundlage wird nie überschrieben** — das ist Absicht.
+
+⚠️⚠️ **OFFEN UND DEINE ENTSCHEIDUNG:** am Testkontakt zeigen die *Abonnements*
+weiter `LEGITIMATE_INTEREST_PQL`. HubSpots Abonnement-Endpunkt antwortet bei einem
+bereits eingetragenen Kontakt mit 400 und ändert die Grundlage nicht mehr. Eine
+fremde Rechtsgrundlage zu überschreiben ist eine rechtliche Entscheidung, keine
+technische — deshalb habe ich es nicht getan.
+
+## N7 — Der Datenschutz-Haken wird bei Fehlern mitmarkiert
+
+**Behoben, in allen 44 Formularen.** ⚠️⚠️ **Der Fehler lag nicht im JavaScript:**
+das setzte `aria-invalid` auf dem Haken korrekt, nachgemessen. Es fehlte allein die
+Darstellung — die Fehlerregel setzte einen `border-bottom`, und **eine native
+Checkbox rendert Rahmenangaben in Chrome gar nicht**. Die Meldung sprach also von
+markierten Feldern, und genau das eine Feld war unmarkiert.
+
+Jetzt ein `outline` samt Abstand: liegt außerhalb des Kastens, wird von der nativen
+Darstellung nicht geschluckt und verschiebt die Checkbox nicht im Layout. Nicht nur
+Farbe (WCAG 1.4.1) — der hinzugefügte Ring ist eine Form, die vorher nicht da war.
+**Durch drei echte Absendevorgänge geprüft**, nicht durch Lesen der Regeln.
+
+## N8 — Der E-Mail-Hinweis auf `/danke-bewerbung/`
+
+**Umgesetzt**, in zweiter Fassung: erst drei gestapelte zentrierte Absätze
+(zu Recht abgelehnt), jetzt ein Block mit Briefumschlag, linksbündig, in derselben
+Spaltengeometrie wie die Schritte darunter.
+
+⚠️ **Für dich im HubSpot-Portal:** dort steht „falls du die E-Mail nicht sofort
+*finden*" — richtig ist „findest". Auf unserer Seite ist es korrigiert; sonst sagen
+die zwei Stellen dasselbe unterschiedlich.
+
+## N9 — Das Favicon, dritte und letzte Fassung
+
+**Umgestellt: die `favicon.ico` trägt die Laterne, die App-Icons die volle Marke.**
+
+⚠️⚠️ **Die Ursache ist gerechnet, nicht geraten.** Die vollständige Bildmarke ist
+**1,692:1 — sie ist breit.** In einem Kreis vom Durchmesser d darf ihre Breite
+höchstens 0,861 d sein, dann ist ihre Höhe 0,509 d. Die Laterne, das einzige
+wiedererkennbare Element, nimmt nur die linken 26 % der Breite ein — bei einem
+32-px-Tab sind das **sieben Pixel**, und der Schwung daneben verjüngt sich auf eine
+Haarlinie. Gerendert und angesehen: ein blaues Kringel, kein Zeichen.
+
+Die Laterne allein ist 0,520:1 und füllt den Kreis auf **0,79 d Höhe** — mehr als
+das Dreifache.
+
+⚠️ **Die Grenze liegt bei der Dateiart, nicht bei einer Pixelzahl:** 16, 32 und 48
+sind die drei Bilder *in* der `favicon.ico`, also das Zeichen in der Browserleiste.
+Die müssen untereinander dasselbe zeigen, sonst wechselt das Icon beim Wechsel der
+Bildschirmdichte sein Motiv. 192 und 512 sind App-Icons und werden groß gezeigt —
+dort trägt die volle Marke, samt Schwung.
+
+⚠️ Damit ist auch die vorige Meldung beantwortet („ein Teil vom Logo
+abgeschnitten"): dort war die Laterne die **einzige** Fassung, in allen Größen.
+Jetzt sieht man die vollständige Marke überall, wo genug Pixel dafür da sind — im
+Lesezeichen, in der Verlaufsliste, auf dem Startbildschirm.
+
+⚠️⚠️ **BEIM PRÜFEN: Chrome hält Favicons hartnäckig im Zwischenspeicher.** Ein
+gewöhnliches Neuladen zeigt oft das alte Zeichen. Tab schließen und neu öffnen, oder
+`/favicon.ico` einmal direkt aufrufen.
+
+Zwei Rückwege stehen im Generator, falls das Bild doch anders sein soll:
+`ICONS_OHNE_SCHWUNG=1` nimmt für **alle** Größen die Laterne, `ICONS_NUR_VOLL=1` für
+alle die volle Marke.
+
+## N10 — Startfreigabe-Liste nach Seiten geordnet
+
+Die Prüfliste ist neu geordnet: statt zwölf thematischer Blöcke jetzt **dreizehn
+Seitenkarten**, jede mit ihrer echten Adresse als Link im Kopf und den Prüfpunkten
+darunter. Fünf davon sind Pflicht; das Schild oben zählt nur diese. Die gesetzten
+Häkchen bleiben beim Umbau erhalten.
