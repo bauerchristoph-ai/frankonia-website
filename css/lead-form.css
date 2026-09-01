@@ -499,9 +499,45 @@
    Der Rotton ist der einzige im Projekt und steht nur hier: eine Fehlerfarbe
    gehört nicht in die Markenpalette, und sie taucht auch nur in diesem einen
    Zustand auf. */
-.conversion__form [aria-invalid="true"] {
+/* ⚠️ :not() FUER CHECKBOXEN — siehe die Regel direkt darunter. Ein
+   border-bottom auf einer nativen Checkbox rendert Chrome nicht, die Regel
+   hier lief also fuer den Datenschutz-Haken ins Leere. */
+.conversion__form [aria-invalid="true"]:not([type="checkbox"]) {
   border-bottom-color: var(--color-form-error);
   border-bottom-width: 2px;
+}
+
+/* ═══ DER DATENSCHUTZ-HAKEN WIRD MITMARKIERT ════════════════════════════════
+   Kunde am 01.09.2026: "wenn ich Datenschutz nicht zustimme, dann kommt
+   Fehlermeldung 'überprüfen Sie die markierten Felder' — da ist aber nichts rot
+   markiert. Pflichtfelder markiert's rot, aber Datenschutz nicht."
+
+   ⚠️⚠️ DER FEHLER LAG NICHT IM JAVASCRIPT. ungueltigeFelder() in
+   js/lead-form.js erfasst den Haken korrekt — er ist ein input[name] und
+   checkValidity() schlaegt bei einer nicht angehakten required-Checkbox fehl,
+   also setzt fehlerAnzeigen() dort aria-invalid="true". Nachgemessen.
+   Es fehlte allein die DARSTELLUNG: die Regel darueber setzt einen
+   border-bottom, und das ist bei einem Textfeld der sichtbare Unterstrich —
+   bei einer NATIVEN Checkbox (dieses Projekt nutzt kein appearance: none, nur
+   accent-color) rendert Chrome Rahmenangaben gar nicht. Die Meldung sprach
+   also von markierten Feldern, und genau das eine Feld war unmarkiert.
+
+   ⚠️ EIN OUTLINE, KEIN BORDER, und das ist der Punkt: outline liegt ausserhalb
+   des Kastens, wird von der nativen Darstellung nicht geschluckt und
+   veraendert die Groesse der Checkbox nicht — ein border wuerde sie im Layout
+   verschieben, direkt neben einer Textzeile.
+
+   ⚠️ NICHT NUR FARBE (WCAG 1.4.1), dieselbe Regel wie bei den Textfeldern: dort
+   ist der zweite Hinweis die VERDOPPELTE Strichstaerke, hier ist es der
+   hinzugefuegte Ring samt Abstand — eine Form, die vorher nicht da war. Rot
+   allein waere fuer einen Teil der Besucher kein Signal.
+
+   ⚠️ Gilt fuer beide Haken, nicht nur den Pflicht-Haken: der Marketing-Haken
+   ist freiwillig und kann nie ungueltig werden, also kostet der gemeinsame
+   Selektor nichts und eine Sonderregel waere eine Unterscheidung ohne Fall. */
+.conversion__form input[type="checkbox"][aria-invalid="true"] {
+  outline: 2px solid var(--color-form-error);
+  outline-offset: 2px;
 }
 
 /* ---- Marketing-Haken ---------------------------------------------------
