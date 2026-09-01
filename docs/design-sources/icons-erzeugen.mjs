@@ -124,16 +124,36 @@ const messSeite = `<!doctype html><meta charset="utf-8">
   .join("\n")}</svg>
 </body>`;
 
-/* Ein Icon: quadratisches SVG, Marke zentriert, mit Rand. */
-function iconSeite({ px, bbox, rand, hintergrund }) {
+/* Ein Icon: quadratisches SVG, Marke zentriert, mit Rand.
+   Mit kreis: true steht die Marke in einem weissen Kreis statt auf einer
+   weissen Flaeche — Wunsch des Kunden vom 01.09.2026 fuer den Browsertab.
+
+   ⚠️⚠️ DER KREIS WIRD IM SVG GEZEICHNET, NICHT ALS CSS-HINTERGRUND. Ein
+   border-radius auf dem <body> gibt keine transparenten Ecken: Chrome
+   fotografiert die Seite, und was ausserhalb des gerundeten Hintergrunds liegt,
+   ist der Seitenhintergrund — also je nach Einstellung Weiss oder Schwarz, aber
+   nicht durchsichtig. Ein <circle> im SVG mit
+   setDefaultBackgroundColorOverride auf durchsichtig ergibt echte Ecken.
+
+   ⚠️⚠️ EIN KREIS BRAUCHT MEHR RAND ALS EIN QUADRAT, und das ist Geometrie, kein
+   Geschmack: die Bildmarke ist 0,520:1, also hoch und schmal. Damit ihr Rahmen
+   ganz in einen Kreis mit Durchmesser d passt, darf die Hoehe hoechstens
+   d / sqrt(1 + 0,52²) = 0,887 d sein — sonst stehen die Ecken des Rahmens aus
+   dem Kreis heraus. Mit Luft zum Rand liegt der brauchbare Bereich bei 0,70 bis
+   0,78; siehe die Werte in AUFTRAEGE. */
+function iconSeite({ px, bbox, rand, hintergrund, kreis }) {
   const seiteMitRand = Math.max(bbox.width, bbox.height) / (1 - 2 * rand);
   const x = bbox.x + bbox.width / 2 - seiteMitRand / 2;
   const y = bbox.y + bbox.height / 2 - seiteMitRand / 2;
-  const bg = hintergrund ? `background:${hintergrund};` : "";
+  /* Der Kreis fuellt das Quadrat des viewBox genau aus. */
+  const scheibe = kreis
+    ? `<circle cx="${x + seiteMitRand / 2}" cy="${y + seiteMitRand / 2}" r="${seiteMitRand / 2}" fill="${hintergrund || "#ffffff"}"/>`
+    : "";
+  const bg = hintergrund && !kreis ? `background:${hintergrund};` : "";
   return `<!doctype html><meta charset="utf-8">
 <body style="margin:0;width:${px}px;height:${px}px;${bg}display:flex;align-items:center;justify-content:center">
 <svg xmlns="http://www.w3.org/2000/svg" width="${px}" height="${px}"
-     viewBox="${x} ${y} ${seiteMitRand} ${seiteMitRand}">${marke}</svg>
+     viewBox="${x} ${y} ${seiteMitRand} ${seiteMitRand}">${scheibe}${marke}</svg>
 </body>`;
 }
 
@@ -209,15 +229,43 @@ async function main() {
        favicon auf Weiss, Android transparent, maskable mehr Rand und deckend,
        iOS deckend (iOS mag keine Transparenz und legt sonst Schwarz darunter). */
     const AUFTRAEGE = [
-      { name: "icon-16.png", px: 16, rand: 0.04, hintergrund: "#ffffff" },
-      { name: "icon-32.png", px: 32, rand: 0.04, hintergrund: "#ffffff" },
-      { name: "icon-48.png", px: 48, rand: 0.04, hintergrund: "#ffffff" },
-      { name: "icon-192.png", px: 192, rand: 0.08, hintergrund: null },
-      { name: "icon-512.png", px: 512, rand: 0.08, hintergrund: null },
-      /* Maskable: die aeussere 20% koennen beschnitten werden, das Motiv muss
-         also in der inneren "safe zone" liegen -> deutlich mehr Rand. */
+      /* Runder weisser Kreis mit der Marke darin — Wunsch des Kunden vom
+         01.09.2026, nachdem die eckige weisse Flaeche im Browsertab als Kaestchen
+         gelesen wurde.
+
+         ⚠️ rand 0.10 heisst: die Marke ist 80 % des Durchmessers hoch. Der Wert
+         ist durch VERGLEICH GERENDERTER FASSUNGEN entstanden, nicht gewaehlt —
+         0.13 / 0.10 / 0.07 nebeneinander bei 16, 32, 48 und 192 px angesehen:
+           0.13 (74 %)  Marke wirkt klein, viel Weiss
+           0.10 (80 %)  merkbar groesser, weisser Ring bleibt sichtbar
+           0.07 (86 %)  zu eng, Kuppel und Eichel stossen an den Rand
+         Die geometrische Grenze liegt bei 88,7 % (siehe iconSeite), 0.07 sitzt
+         also praktisch darauf.
+
+         ⚠️ Bei 16 px sind alle drei nicht unterscheidbar — dort ist das Icon ein
+         weisser Punkt mit einem blauen Zeichen, und das ist der Preis eines
+         Kreises im Tab. Der Unterschied zeigt sich ab 32 px. */
+      { name: "icon-16.png", px: 16, rand: 0.1, hintergrund: "#ffffff", kreis: true },
+      { name: "icon-32.png", px: 32, rand: 0.1, hintergrund: "#ffffff", kreis: true },
+      { name: "icon-48.png", px: 48, rand: 0.1, hintergrund: "#ffffff", kreis: true },
+      { name: "icon-192.png", px: 192, rand: 0.1, hintergrund: "#ffffff", kreis: true },
+      { name: "icon-512.png", px: 512, rand: 0.1, hintergrund: "#ffffff", kreis: true },
+
+      /* ⚠️⚠️ DIESE ZWEI BLEIBEN QUADRATISCH, und das ist kein Vergessen:
+         das Betriebssystem maskiert sie SELBST.
+
+         apple-touch-icon: iOS legt eine eigene abgerundete Maske darueber und
+         fuellt Transparenz mit SCHWARZ. Ein Kreis mit durchsichtigen Ecken gaebe
+         also schwarze Zwickel um eine weisse Scheibe. Als weisses Quadrat wird
+         daraus auf dem Home-Bildschirm von selbst ein weisses, gerundetes Feld
+         mit der Marke — genau das gewuenschte Bild, nur von iOS gerundet.
+
+         maskable: Android beschneidet die aeusseren 20 % nach eigener Form
+         (Kreis, Squircle, Tropfen). Eine Scheibe darin wuerde ein zweites Mal
+         eingerueckt und schwaebte klein in der Mitte. Deshalb randlos weiss mit
+         dem Motiv in der safe zone. */
       { name: "icon-512-maskable.png", px: 512, rand: 0.22, hintergrund: "#ffffff" },
-      { name: "apple-touch-icon.png", px: 180, rand: 0.1, hintergrund: "#ffffff" },
+      { name: "apple-touch-icon.png", px: 180, rand: 0.14, hintergrund: "#ffffff" },
     ];
 
     for (const a of AUFTRAEGE) {
@@ -227,10 +275,15 @@ async function main() {
         deviceScaleFactor: 1,
         mobile: false,
       });
-      /* Ohne Hintergrund: der Standard-Hintergrund von Chrome muss transparent
-         werden, sonst kommt Weiss mit. */
+      /* ⚠️ DER SEITENHINTERGRUND MUSS FUER KREIS-ICONS DURCHSICHTIG SEIN, obwohl
+         sie eine Hintergrundfarbe tragen — die Farbe steckt im <circle>, nicht in
+         der Seite. Waere hier Weiss, wuerden die Ecken weiss ausgefuellt und das
+         Icon waere wieder ein Quadrat mit einem unsichtbaren Kreis darin. Genau
+         dieser Fall ist der Grund, warum die Bedingung a.kreis mitpruefen muss
+         und nicht nur a.hintergrund. */
+      const deckend = a.hintergrund && !a.kreis;
       await s.send("Emulation.setDefaultBackgroundColorOverride", {
-        color: a.hintergrund ? { r: 255, g: 255, b: 255, a: 1 } : { r: 0, g: 0, b: 0, a: 0 },
+        color: deckend ? { r: 255, g: 255, b: 255, a: 1 } : { r: 0, g: 0, b: 0, a: 0 },
       });
       await s.send("Page.navigate", { url: seite(iconSeite({ ...a, bbox })) });
       await new Promise((r) => setTimeout(r, 500));
@@ -241,7 +294,7 @@ async function main() {
       const h = daten.readUInt32BE(20);
       console.log(
         "  " + a.name.padEnd(26) + w + "x" + h + "  " + String(daten.length).padStart(6) + " Bytes  " +
-          (a.hintergrund ? "deckend" : "transparent")
+          (a.kreis ? "weisser Kreis" : a.hintergrund ? "deckend" : "transparent")
       );
       if (w !== a.px || h !== a.px) throw new Error(a.name + ": " + w + "x" + h + " statt " + a.px);
     }
