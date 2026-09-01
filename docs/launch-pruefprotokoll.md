@@ -2775,3 +2775,64 @@ Die Prüfliste ist neu geordnet: statt zwölf thematischer Blöcke jetzt **dreiz
 Seitenkarten**, jede mit ihrer echten Adresse als Link im Kopf und den Prüfpunkten
 darunter. Fünf davon sind Pflicht; das Schild oben zählt nur diese. Die gesetzten
 Häkchen bleiben beim Umbau erhalten.
+
+## N11 — Die CSP lässt die Marketing-Tags durch, die GTM nachlädt
+
+**Umgesetzt** (Kunde, 01.09.: „die Tags sind auf jeden Fall gewollt", nach einem
+Netzwerk-Mitschnitt mit acht `blocked:csp`-Zeilen nach dem Cookie-Akzeptieren).
+
+⚠️⚠️ **WARUM „GTM IST EINGEBAUT" NICHT GENÜGT, und das ist die ganze Erklärung:**
+eine CSP fragt nicht, *wer* ein Skript laden will, sondern *woher* es kommt. Der Tag
+Manager läuft korrekt — er steht als `d.frankonia-sicherheit.de` in `script-src`.
+Aber GTM ist ein **Lader**: er holt zur Laufzeit weitere Skripte von *anderen* Hosts
+in die Seite, und die standen nicht in der Liste. Das ist kein Fehler, sondern der
+Sinn der Regel: wäre „GTM ist erlaubt" gleichbedeutend mit „alles, was GTM nachlädt,
+ist erlaubt", könnte man mit einem Tag Manager jede CSP aushebeln. **Jeder
+Vendor-Host muss einzeln eingetragen werden.**
+
+⚠️ **„Ist ja nur die Testdomain" trifft hier NICHT zu, und das war die eigentliche
+Korrektur.** Von den sechs Header-Blöcken in `vercel.json` hat genau **einer** eine
+Domain-Bedingung — der `X-Robots-Tag` mit `has: host = *.vercel.app`. Die CSP steht
+im Block **ohne** Bedingung (`source: /(.*)`) und gilt auf der Zieldomain identisch.
+
+**Die vier Vendoren sind nicht geraten, sondern aus dem Container gelesen:** der
+Web-Container `GTM-NWLGMFJN` ist öffentlich abrufbar (461 KB), und die Hosts stehen
+darin:
+
+| Blockiert war | Host | Ist |
+|---|---|---|
+| `fbevents.js` | `connect.facebook.net` | Meta-Pixel |
+| `clientParamBuilder.bundle.js` | `unpkg.com` | Meta-CAPI-Parameter-Builder |
+| `v1.js` | `stapecdn.com/udc/` | Stape User-Data-Collector |
+| `PUT_YOUR_VALUE_HERE/?random=…` | `googleads.g.doubleclick.net` | Google Ads Remarketing |
+
+**19 Hosts ergänzt**, auf vier Direktiven verteilt und **einzeln statt als
+Platzhalter** — die Liste ist die einzige Bremse, die bleibt, wenn ein Tag Manager
+beliebige Hosts nachladen kann. Die CSP wächst von 1017 auf 1534 Zeichen; die
+Patch-Datei prüft gegen, dass **keine Direktive und kein alter Host verloren** geht.
+
+⚠️ **Der Pixel ist ein 1x1-GIF und der Conversion-Ping ein Bild** — deshalb reicht
+`script-src` nicht: `www.facebook.com` und die Google-Hosts müssen auch in `img-src`
+und `connect-src`, und `td.doubleclick.net` in `frame-src` für den Cookie-Abgleich.
+`www.google.de` ist dabei, weil der Conversion-Ping auf die **Länderdomain** geht.
+
+⚠️⚠️ **UND EIN ECHTER KONFIGURATIONSFEHLER, DER NICHT AM CODE LIEGT:** die drei
+Zeilen `PUT_YOUR_VALUE_HERE/?random=…&fst=…` sind ein **Google-Ads-Remarketing-Tag
+ohne eingetragene Conversion-ID**. Das Muster
+`/pagead/viewthroughconversion/<ID>/?random=&fst=` gehört Google Ads, und wo die ID
+stehen müsste, steht der Platzhaltertext. Im Container kommt `viewthroughconversion`
+**einmal** vor, eine `AW-`-ID **null Mal**. **Das würde auch ohne CSP nicht
+funktionieren** — es feuert dreimal pro Seitenaufruf gegen eine Adresse, die es nicht
+gibt. Zu setzen im GTM-Konto, nicht hier.
+
+⚠️ **Zwei Dinge für den Datenschutz, gemessen:** Facebook ist in
+`/datenschutz/` genannt (4 Stellen), **Stape und unpkg sind es nicht** (0 Stellen).
+Solange die Skripte blockiert waren, war das folgenlos; ab jetzt laufen sie.
+⚠️ Und die unpkg-URL trägt **keine Versionsnummer**
+(`meta-capi-param-builder-clientjs/dist/…`), liefert also immer die neueste Fassung —
+das ist eine Fremdquelle im Skriptpfad der Website. Eine Pinnung wäre besser, sie
+steht aber in der Tag-Konfiguration von Stape, nicht bei uns.
+
+⚠️ **Das Bau-Tor für Fremd-Hosts kann das nicht auffangen:** es prüft die Hosts im
+**ausgelieferten Markup**, und diese vier stehen dort nicht — GTM fügt sie erst zur
+Laufzeit ein.
