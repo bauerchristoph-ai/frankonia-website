@@ -2836,3 +2836,39 @@ steht aber in der Tag-Konfiguration von Stape, nicht bei uns.
 ⚠️ **Das Bau-Tor für Fremd-Hosts kann das nicht auffangen:** es prüft die Hosts im
 **ausgelieferten Markup**, und diese vier stehen dort nicht — GTM fügt sie erst zur
 Laufzeit ein.
+
+### N11.1 Nachgemessen auf der Testdomain — **blockiert: 0**
+
+Mit echtem Chrome, frischem Profil, Cookiebot auf „Alle zulassen" geklickt
+(`consent: {statistics: true, marketing: true, method: "explicit"}`), dann neu
+geladen und gescrollt. Alle vier Vendoren antworten mit **200**:
+
+| Aufruf | Status |
+|---|---|
+| `connect.facebook.net/en_US/fbevents.js` | 200 |
+| `connect.facebook.net/signals/config/25932606063047409` | 200 — die Pixel-ID ist echt |
+| `stapecdn.com/udc/v1.js` | 200 |
+| `unpkg.com/meta-capi-param-builder-clientjs@1.3.1/…` | 200 |
+| `www.google.de/pagead/1p-conversion/PUT_YOUR_VALUE_HERE/` | 200 |
+| `www.google.de/pagead/1p-user-list/PUT_YOUR_VALUE_HERE/` | 200, zweimal |
+
+⚠️⚠️ **DER CONVERSION-PING GEHT AUF `www.google.de`, NICHT auf
+`googleads.g.doubleclick.net`** — also war der Eintrag der Länderdomain in
+`img-src` nicht Vorsicht, sondern die Bedingung dafür, dass es überhaupt
+durchkommt. Ohne ihn wäre Google Ads weiter blockiert gewesen.
+
+⚠️⚠️ **UND DIE GOOGLE-AUFRUFE ANTWORTEN MIT 200 TROTZ PLATZHALTER-ID.** Google
+nimmt den Aufruf an und verwirft ihn still. Das heißt: **in der Konsole ist jetzt
+alles grün, und es kommen trotzdem keine Daten an.** Der fehlende Wert ist damit
+schwerer zu bemerken als vorher, nicht leichter — vorher stand wenigstens
+`blocked:csp` daneben.
+
+⚠️ **Die Tags feuern erst beim NÄCHSTEN Seitenaufruf, nicht im Moment des
+Akzeptierens.** Ein erster Messlauf ohne Reload zeigte 0 Vendor-Aufrufe und 0
+Blockaden — was wie „funktioniert nicht" aussieht und nur „noch nicht gefeuert"
+heißt. Beim Prüfen von Hand also: akzeptieren, **dann neu laden**, dann in den
+Netzwerk-Tab.
+
+⚠️ Zur unpkg-URL: die Anfrage geht ohne Version raus und wird auf **@1.3.1**
+umgeleitet. Es gibt also eine feste Fassung — aber der Redirect zeigt immer auf die
+neueste, die Pinnung fehlt weiter in der Tag-Konfiguration.
