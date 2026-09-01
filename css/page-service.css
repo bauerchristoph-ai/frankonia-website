@@ -1603,9 +1603,20 @@ main h2 {
   display: none;
 }
 
+/* ⚠️⚠️ KEIN RADIUS — 01.09.2026, dritte Meldung des Kunden zum selben Thema
+   ("die schwarzen Ecken bestehen immer noch bei allen Dienstleistungsbildern").
+   Das hier war der LETZTE Ort, an dem ein Foto auf einer Serviceseite noch einen
+   Radius trug: gemessen ueber alle Serviceseiten hat sonst KEIN Bildbehaelter
+   einen (die Hero-Fotos stehen seit eb803fd vom 30.08. auf 0, und das haelt —
+   nachgemessen r=0px auf allen).
+   Die Entscheidung ist dieselbe wie damals und aus demselben Grund: ein
+   abgerundeter Beschnitt auf einem Foto zeigt in den Ecken, was dahinter liegt,
+   und das liest sich als angeklebte Ecke statt als Karte. Im gestuften Layout
+   liegen hier SECHS Rahmen uebereinander, also sechsmal dasselbe.
+   ⚠️ overflow: hidden BLEIBT — es klemmt das Foto auf die aspect-ratio-Box,
+   und das ist unabhaengig vom Radius. */
 .service-flow__frame {
   margin: 0;
-  border-radius: var(--radius-lg);
   overflow: hidden;
   background-color: var(--color-bg-subtle);
   aspect-ratio: 3 / 2;
@@ -2084,8 +2095,11 @@ main h2 {
     inset: clamp(1.25rem, 3vh, 2rem) clamp(2rem, 4.5vw, 4.5rem)
            clamp(1.25rem, 3vh, 2rem) clamp(1.25rem, 2.5vw, 2.5rem);
     aspect-ratio: auto;
-    /* border-radius is NOT reset to 0 any more — the base rule's --radius-lg is
-       what makes this read as a card. */
+    /* ⚠️ Hier stand bis zum 01.09.2026 "border-radius is NOT reset to 0 any
+       more — the base rule's --radius-lg is what makes this read as a card".
+       Die Basisregel hat seither keinen Radius mehr, also gibt es nichts zu
+       erben und nichts zurueckzusetzen. Wer ihn hier wieder einfuehrt, holt die
+       schwarzen Ecken zurueck, die der Kunde dreimal gemeldet hat. */
     max-width: none;
   }
 
