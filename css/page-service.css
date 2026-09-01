@@ -5510,6 +5510,75 @@ main h2 {
    ⚠️ `overflow: hidden` BLEIBT, obwohl es ohne Radius nichts mehr abrundet: es
    ist die Bremse dafür, dass ein künftiges Kind (das `<picture>` ist ein
    Inline-Element) aus dem reservierten Kasten läuft. */
+/* ═══ DIE KANTEN DES HERO-FOTOS LAUFEN AUS, STATT ZU SCHNEIDEN ═════════════
+   Kunde am 01.09.2026: "objektschutz hat noch kantige Ecken — das Bild genauso
+   wie die anderen Bilder machen."
+
+   ⚠️⚠️ DIE LOESUNG IST KEIN RADIUS. Genau der war die Ursache der schwarzen
+   Ecken, die derselbe Kunde dreimal gemeldet hat: ein abgerundeter Beschnitt
+   zeigt in den Ecken, was hinter dem Foto liegt. Radius weg UND Kante weich ist
+   die Kombination, die beide Meldungen erledigt.
+
+   ⚠️ UND OBJEKTSCHUTZ IST NICHT DER AUSREISSER — gemessen, entgegen meiner
+   ersten Annahme. Randhelligkeit der zehn Hero-Fotos (0 = schwarz, verschmilzt
+   mit dem Hero; Mittel der aeussersten Pixelreihe je Kante):
+       werkschutz             3 / 17 / 11 / 23   verschmilzt
+       objektschutz          73 / 48 /101 / 59
+       brandwache           115 / 68 /101 / 75
+       sicherheitstechnik   115 / 93 / 69 /121
+       baustellenbewachung  151 / 63 /107 /102
+       kaufhausdetektei     131 /132 /168 / 73
+       veranstaltungsschutz  21 / 28 / 25 / 29
+       empfangsdienst       185 /131 /151 /151
+       interventionsdienst   59 / 52 / 56 / 93
+       revier-schliessdienst171 /143 / 89 /159
+   NEUN von zehn haben helle Raender; nur werkschutz ist eine Nachtaufnahme und
+   verschmilzt von sich aus. Deshalb gilt die Regel fuer ALLE zehn und nicht nur
+   fuer die gemeldete Seite — sonst waere objektschutz nachher der einzige mit
+   weicher Kante.
+
+   ⚠️ AUF EINEM PSEUDO-ELEMENT, NIE AUF DEM <img>. Ein Filter oder eine Maske am
+   Bild selbst wuerde auch verblassen lassen, was dahinter liegt, und mit
+   object-fit streiten. Dieselbe Regel, der die Hero-Waschungen auf /jobs/ und
+   das Portrait in .service-contact__portrait folgen.
+
+   ⚠️ ZWEI VERLAEUFE, NICHT VIER, und die MITTE bleibt vollstaendig frei: von
+   16 % bis 84 % auf beiden Achsen ist nichts. Das Motiv dieser neun Fotos
+   (jeweils eine Person) sitzt in der Mitte — eine Vignette ueber das ganze Bild
+   wuerde es mitverdunkeln. Nur die Raender arbeiten.
+
+   ⚠️ NUR IM GESPLITTETEN LAYOUT, also ab 1024 px. Darunter IST das Foto der
+   Hintergrund des Hero und hat gar keine Kante — dort waschen es die
+   dokumentierten Gradienten des Bleed-Layouts. */
+.service-hero--split:not(.uu-hero) .service-hero__media {
+  position: relative;
+}
+
+.service-hero--split:not(.uu-hero) .service-hero__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(
+      to bottom,
+      var(--color-bg) 0%,
+      color-mix(in srgb, var(--color-bg) 55%, transparent) 8%,
+      color-mix(in srgb, var(--color-bg) 0%, transparent) 16%,
+      color-mix(in srgb, var(--color-bg) 0%, transparent) 84%,
+      color-mix(in srgb, var(--color-bg) 55%, transparent) 92%,
+      var(--color-bg) 100%
+    ),
+    linear-gradient(
+      to right,
+      var(--color-bg) 0%,
+      color-mix(in srgb, var(--color-bg) 55%, transparent) 8%,
+      color-mix(in srgb, var(--color-bg) 0%, transparent) 16%,
+      color-mix(in srgb, var(--color-bg) 0%, transparent) 84%,
+      color-mix(in srgb, var(--color-bg) 55%, transparent) 92%,
+      var(--color-bg) 100%
+    );
+}
 .service-hero--split .service-hero__media {
   margin: 0;
   width: 100%;
