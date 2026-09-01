@@ -380,6 +380,50 @@ Prüfmechanismus, der still nichts mehr prüft.
 
 ---
 
+## Startfreigabe — Stand 01.09.2026
+
+Christoph hat die vier offenen Punkte als erledigt bestätigt und
+`frankonia-sicherheit-2.vercel.app` als richtige Testdomain benannt. Der
+Startdurchgang gegen **diese** Domain — nicht gegen die fremde aus dem QA-Auftrag:
+
+    npm run pruefe:live -- https://frankonia-sicherheit-2.vercel.app
+
+| Prüfung | Ergebnis |
+|---|---|
+| Login-Wand | nein |
+| Sitemap-Adressen | **58 von 58** mit HTTP 200 |
+| Weiterleitungen | **65 von 65** am richtigen Ziel, 62 in einem Sprung |
+| Formular-Endpunkt | HTTP 405 — die Funktion antwortet (nichts abgeschickt) |
+| Kanonische Adressen | **60 von 60** auf `frankonia-sicherheit.de` |
+| og:url / og:image | 60 / 60 auf der Zieldomain |
+| Sitemap-Adressen im XML | 58 auf der Zieldomain |
+| Kartenkacheln | **28 von 28** geladen, Kachel angesehen: wasserzeichenfrei |
+| `X-Robots-Tag` | `noindex, nofollow` — korrekt, siehe unten |
+
+**Der `noindex`-Header wird beim Umzug von selbst inaktiv.** In
+`vercel.json` ist er an eine Bedingung gebunden:
+`has: [{ type: "host", value: ".*\.vercel\.app" }]`. Er trifft also jede
+Testadresse und **keine** eigene Domain. Nichts zu ändern, aber nach dem Umzug
+einmal nachsehen — es ist der Fehler, der eine ganze Website unsichtbar macht:
+
+    curl -sI https://frankonia-sicherheit.de/ | grep -i x-robots
+    (erwartet: keine Ausgabe)
+
+**Nach dem Umzug denselben Durchgang gegen die Zieldomain:**
+
+    npm run pruefe:live -- https://frankonia-sicherheit.de
+
+Das Skript kennt den Unterschied: auf einer Testadresse VERLANGT es den
+`noindex`-Header, auf der Zieldomain verbietet es ihn.
+
+⚠️ **Der Umzug selbst ist keine Code-Änderung** und steht nicht in diesem
+Repository: die Domain zeigt heute auf nginx/WordPress und muss beim
+DNS-Anbieter auf Vercel gestellt werden. Danach in Vercel prüfen, dass
+`frankonia-sicherheit.de` als Domain des Projekts eingetragen ist — sonst
+greift der SSO-Schutz weiter, denn er gilt für alles **außer** eigenen Domains.
+
+---
+
 ## ⚠️ Zwei Funde aus der Abschlussprüfung — bitte zuerst lesen
 
 **A · Die URL, gegen die geprüft wurde, gehört nicht zu diesem Projekt.**

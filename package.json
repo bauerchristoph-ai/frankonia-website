@@ -8,7 +8,8 @@
     "test": "node --test",
     "dev:api": "node scripts/dev-server.js",
     "pruefe:karten": "node scripts/pruefe-karten.mjs",
-    "pruefe:tore": "node scripts/bau-tore.mjs"
+    "pruefe:tore": "node scripts/bau-tore.mjs",
+    "pruefe:live": "node scripts/pruefe-live.mjs"
   },
   "engines": {
     "node": ">=18"
