@@ -1202,24 +1202,42 @@ a.review-card:focus-visible {
   color: var(--text-on-light-secondary);
 }
 
-/* ⚠️⚠️ ÜBERGANG NUR IN DER NÄHE DES SICHTFELDS — 31.08.2026, Aufgabe 16.
-   Gemessen: die Website liefert 2160 Kacheln auf der Startseite, 1980 auf
-   /werkschutz/ und 900 auf /jobs/. Jede trägt einen opacity-Übergang. Im Leerlauf
-   kostet ein Übergang nichts, ABER: bei einem schnellen Scroll durch die Seite
-   ändern alle Kacheln aller Nähte gleichzeitig ihre Deckkraft, und dann laufen
-   über tausend Übergänge parallel. Das ist der gemessene Ruckler im unteren
-   Seitendrittel (bei y=20000 lagen 34 von 42 Frames über 32 ms).
-   js/pixel-transition.js setzt .is-fern, sobald eine Naht weiter als 400 px vom
-   Sichtfeld entfernt ist, und nimmt es vorher wieder weg.
-   ⚠️ DER VORLAUF VON 400 px IST NICHT WEGZULASSEN: ohne ihn beginnt die
-   Auflösung erst, wenn die Naht schon zu sehen ist, und der Effekt springt.
-   ⚠️ Und es wird nur der ÜBERGANG abgeschaltet, nicht die Deckkraft: eine Kachel
-   behält ihren Zustand, sie wechselt ihn nur ohne Animation. Wer in eine ferne
-   Naht springt (Anker-Link), sieht sie deshalb korrekt aufgelöst, nur ohne
-   Überblendung — und das ist unsichtbar, weil man den Sprung nicht sieht. */
-.pixel-seam.is-fern .pixel-seam__tile {
-  transition: none;
+/* ═══ Das Band kapselt sich: contain: paint ═════════════════════════════════
+   01.09.2026, gemessen. Es ist EINE Zeile und der groesste Einzelgewinn gegen
+   den Scroll-Ruckler, den der Kunde am Formular gemeldet hat.
+
+   Trace ueber die Scrollbewegung zum Formular der Startseite, CPU 4x gebremst,
+   laengster Layerize-Frame — das ist der Ruckler:
+       ohne contain            237 ms
+       contain: paint          129 ms   <- gewaehlt
+       contain: strict         294 ms   schlechter
+       ohne jede Kachel         87 ms   die Untergrenze
+   contain: paint sagt dem Browser, dass nichts aus diesem Element herausmalt.
+   Damit muss der Compositor die 180 Kacheln darin beim Bau des Ebenenbaums nicht
+   einzeln gegen den Rest der Seite pruefen.
+
+   ⚠️ contain: strict IST SCHLECHTER, nicht besser — es enthaelt zusaetzlich
+   size-Containment, und ein Element, dessen Groesse nicht mehr vom Inhalt
+   abhaengt, laeuft in einen anderen Layoutpfad. Gemessen, nicht vermutet.
+
+   ⚠️ UNGEFAEHRLICH, WEIL DAS BAND SCHON overflow: hidden HAT: paint-Containment
+   klemmt genau das, was dort ohnehin geklemmt wird. Der einzige Nebeneffekt ist
+   ein eigener Stacking-Kontext, und das Band ist eine in sich geschlossene
+   Dekorationsflaeche ohne z-index-Spiel mit Nachbarn.
+
+   ⚠️ HIER, NICHT IN DEN DREI SEITENDATEIEN. .pixel-seam__band wird in
+   page-home.css, page-contact.css und page-service.css je eigen deklariert —
+   diese Datei laedt jede Seite, also gilt die Regel damit fuer alle 88 Naehte. */
+.pixel-seam__band {
+  contain: paint;
 }
+
+/* ⚠️ HIER STAND .pixel-seam.is-fern .pixel-seam__tile { transition: none },
+   vom 31.08.2026. Entfernt am 01.09.2026, weil die Klasse niemand mehr setzt:
+   ferne Nähte haben keine Kacheln mehr im DOM (js/pixel-transition.js, der
+   Beobachter je Naht). Eine Regel, die nichts mehr treffen kann, ist eine
+   Regel, deren Zweck der Nächste erraten muss. Die Messung, die dazu geführt
+   hat, steht im JS. */
 
 /* ═══ 27b · Brotkrumen: kein hängendes Trennzeichen ═════════════════════════
    Bei 390 px brach der Pfad so:

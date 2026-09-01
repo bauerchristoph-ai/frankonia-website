@@ -81,33 +81,12 @@
 */
 
 (function initPixelSeams() {
-  /* ══ Übergänge nur in der Nähe des Sichtfelds ══════════════════════════════
-     Aufgabe 16, 31.08.2026. Siehe die lange Begründung an .is-fern in
-     css/page-home.css. Kurz: über tausend gleichzeitig laufende
-     opacity-Übergänge sind der gemessene Ruckler im unteren Seitendrittel.
-
-     ⚠️ NUR EIN ZUSATZ, KEINE VORAUSSETZUNG. Ohne IntersectionObserver (oder
-     wenn dieser Block gar nicht läuft) bleibt alles wie vorher — .is-fern wird
-     dann nie gesetzt, und jede Naht behält ihren Übergang. Der Effekt kann also
-     nicht daran scheitern. */
-  function naehePruefen(seams) {
-    if (typeof IntersectionObserver === "undefined") return;
-    var beobachter = new IntersectionObserver(
-      function (eintraege) {
-        for (var i = 0; i < eintraege.length; i++) {
-          var e = eintraege[i];
-          e.target.classList.toggle("is-fern", !e.isIntersecting);
-        }
-      },
-      /* 400 px Vorlauf: die Naht darf nicht erst dann "nah" werden, wenn man sie
-         schon sieht — sonst springt die Auflösung beim Einblenden. */
-      { rootMargin: "400px 0px 400px 0px" }
-    );
-    for (var j = 0; j < seams.length; j++) {
-      seams[j].classList.add("is-fern");
-      beobachter.observe(seams[j]);
-    }
-  }
+  /* ⚠️ HIER STAND naehePruefen(), das .is-fern auf ferne Nähte gesetzt hat, um
+     deren Kachel-ÜBERGÄNGE abzuschalten (31.08.2026). Ersetzt am 01.09.2026:
+     ferne Nähte haben jetzt gar keine Kacheln mehr, also gibt es dort auch
+     keinen Übergang abzuschalten. Der Beobachter sitzt jetzt JE NAHT weiter
+     unten, weil nur er dort Zugriff auf buildTiles() dieser Naht hat.
+     Nicht wieder einführen — zwei Beobachter für dieselbe Frage. */
 
   if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -319,7 +298,39 @@
 
     }
 
-    buildTiles();
+    /* ══ AUFRAEUMEN: die Kacheln verlassen das DOM, wenn die Naht weit weg ist.
+       Aufgabe vom 01.09.2026 (Kunde: "Scrollen ruckelt immer noch, wenn man zum
+       Formular gelangt").
+
+       ⚠️⚠️ GEMESSEN, UND ES WAREN NICHT DIE FILTER. Trace ueber die
+       Scrollbewegung zum Formular der Startseite, CPU 4x gebremst, fuenf
+       Varianten:
+
+         unveraendert                Layerize  9936 ms, laengster Frame 535 ms
+         47 invert()-Filter aus                15912 ms  (schlechter!)
+         ALLE Filter aus                       11802 ms
+         Pixel-Kacheln entfernt                 3363 ms, laengster Frame  68 ms
+         Filter aus + Kacheln weg               3630 ms
+
+       Also: die 2160 Kacheln sind die Ursache, und Filter wegzunehmen bringt
+       nichts. Layerize ist der Schritt, in dem der Compositor den Ebenenbaum
+       neu baut — er laeuft bei JEDEM Commit alle Kandidaten ab, und 2160
+       absolut positionierte Elemente mit Deckkraft sind 2160 Kandidaten.
+
+       ⚠️ DIE KORREKTUR VOM 31.08. WAR ZU SCHWACH, nicht falsch: sie hat den
+       ÜBERGANG ferner Nähte abgeschaltet (.is-fern) und damit gleichzeitige
+       Deckkraftwechsel verhindert. Die Elemente blieben aber im DOM, und genau
+       das kostet Layerize. Ein Übergang weniger hilft nicht, wenn der Knoten
+       trotzdem abgelaufen wird. */
+    function leerenTiles() {
+      if (!tiles.length) return;
+      band.textContent = "";
+      tiles = [];
+    }
+
+    /* ⚠️ KEIN buildTiles() BEIM START. Vorher standen alle Kacheln aller Nähte
+       sofort im DOM — auf der Startseite 2160. Gebaut wird erst, wenn der
+       Beobachter unten die Naht in Reichweite meldet. */
 
     // Rebuild only when the width really changed. ScrollTrigger already fires
     // `refresh` on resize (and on its own recalculations), so this needs no
@@ -332,10 +343,17 @@
       const w = band.getBoundingClientRect().width;
       if (Math.abs(w - lastWidth) < 1) return;
       lastWidth = w;
+      /* ⚠️ Nur neu bauen, wenn gerade welche da sind — sonst wuerde ein Resize
+         die Kacheln jeder fernen Naht wieder ins DOM holen und den Gewinn
+         zunichte machen. Kommt die Naht spaeter in Reichweite, baut der
+         Beobachter sie mit der dann gueltigen Breite. */
+      if (!tiles.length) return;
       buildTiles();
+      zustandAnwenden(st ? st.progress : 0);
     });
 
-    ScrollTrigger.create({
+    var st = null;
+    st = ScrollTrigger.create({
       trigger: seam,
       // A modest range straddling the point where the seam crosses the
       // middle of the viewport — this is the "moment of transition",
@@ -352,7 +370,15 @@
       end: seam.getAttribute("data-seam-end") || "top 20%",
       scrub: 0.3,
       onUpdate(self) {
-        const progress = self.progress;
+        zustandAnwenden(self.progress);
+      },
+    });
+
+    /* Der Zustand je Fortschritt — herausgezogen, weil er an ZWEI Stellen
+       gebraucht wird: beim Scrollen und direkt nachdem der Beobachter die
+       Kacheln gebaut hat. Ohne den zweiten Aufruf erschiene eine Naht, die man
+       schnell erreicht, im Ausgangszustand statt im richtigen. */
+    function zustandAnwenden(progress) {
         if (mode === "pulse") {
           // Belt-and-suspenders on top of the margin baked into idealProgress:
           // once the scrub is pinned at either end (a page with little scroll
@@ -377,8 +403,44 @@
             tile.el.classList.toggle("is-revealed", shouldReveal);
           }
         });
-      },
-    });
+    }
+
+    /* ══ Der Beobachter baut und raeumt ═══════════════════════════════════════
+       ⚠️ 600px Vorlauf, nicht 400: bei 400 wurde eine Naht bei schnellem Scrollen
+       erst gebaut, als ihr ScrollTrigger-Bereich schon begonnen hatte. Der
+       Bereich beginnt bei "top 80%", also 20 % der Fensterhoehe vor dem
+       Sichtbarwerden — bei 900px Fenster rund 180px. 600px Vorlauf deckt das mit
+       Reserve.
+
+       ⚠️ NUR EIN ZUSATZ, KEINE VORAUSSETZUNG. Ohne IntersectionObserver werden
+       die Kacheln EINMAL gebaut und bleiben — also genau das Verhalten von
+       vorher. Der Effekt kann daran nicht scheitern, nur die Ersparnis. */
+    if (typeof IntersectionObserver === "undefined") {
+      buildTiles();
+    } else {
+      new IntersectionObserver(
+        function (eintraege) {
+          for (var i = 0; i < eintraege.length; i++) {
+            if (eintraege[i].isIntersecting) {
+              if (!tiles.length) {
+                buildTiles();
+                zustandAnwenden(st ? st.progress : 0);
+              }
+            } else {
+              leerenTiles();
+            }
+          }
+        },
+        /* ⚠️ 300px, NICHT 600: gemessen kostet jede zusaetzliche Naht mit
+           Kacheln Layerize-Zeit (360 Kacheln 237 ms laengster Frame, 180
+           Kacheln 139 ms). Bei 600px hatten am Formular ZWEI Naehte Kacheln,
+           bei 300 in der Regel eine.
+           ⚠️ Nicht weiter herunter: der ScrollTrigger-Bereich beginnt bei
+           "top 80%", und das Band reicht 200px ueber das Naht-Element hinaus.
+           300px deckt beides mit Reserve; darunter wird eine Naht gebaut, deren
+           Auflösung schon begonnen hat. */
+        { rootMargin: "300px 0px 300px 0px" }
+      ).observe(seam);
+    }
   });
-  naehePruefen(document.querySelectorAll("[data-pixel-seam]"));
 })();
