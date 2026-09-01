@@ -82,6 +82,55 @@
 
 .danke__lede strong { color: var(--color-text); font-weight: 500; }
 
+/* ---- Die E-Mail und der Spam-Ordner ------------------------------------- */
+/* Ergaenzt am 01.09.2026, nur auf /danke-bewerbung/ im Markup — die Regeln
+   stehen hier, weil beide Danke-Seiten dieselbe Datei laden und der Block auf
+   /danke/ genauso richtig waere, sobald dort eine Bestaetigungsmail dazukommt.
+
+   ⚠️ BEIDE ERBEN DIE MASSE DES LEDE (34rem, zentriert, hyphens: none), damit
+   drei Absaetze untereinander eine Spalte bilden und keine Treppe. Die 34rem
+   sind dort gemessen; ein eigener Wert waere ein zweiter, der auseinanderlaeuft. */
+.danke__mail,
+.danke__spam {
+  margin: var(--space-4) auto 0;
+  max-width: 34rem;
+  /* Zentrierter Text hat zwei unruhige Raender — ein mitten im Wort getrenntes
+     Kompositum liest sich dann wie ein Renderfehler. Dieselbe Begruendung wie
+     beim Lede darueber. */
+  hyphens: none;
+}
+
+/* Einen Schritt leiser als der Lede: es ist eine Zusatzangabe, keine Zusage. */
+.danke__mail {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: rgb(255 255 255 / 0.72);
+}
+.danke__mail strong { color: var(--color-text); font-weight: 500; }
+
+/* ⚠️ NOCH LEISER, UND MIT EIGENEM ETIKETT statt eines Kastens. Ein Kasten waere
+   der zweite auf dieser Seite (der Anruf-Block ist der erste und der wichtigere)
+   und wuerde mit ihm um Aufmerksamkeit konkurrieren. Das Etikett traegt die
+   Einordnung, der Text bleibt Fliesstext. */
+.danke__spam {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+  color: rgb(255 255 255 / 0.6);
+}
+.danke__spam strong { color: rgb(255 255 255 / 0.82); font-weight: 500; }
+
+/* ⚠️ Das Etikett ist --color-accent wie das des Anruf-Blocks — auf dieser
+   dunklen Flaeche ist das blue-light und misst 6,8:1, also weit ueber dem
+   Minimum. Auf einer HELLEN Sektion waere derselbe Token blue-dark und dieser
+   Text zu klein dafuer; diese Seite ist durchgehend dunkel. */
+.danke__spam-label {
+  margin-inline-end: var(--space-2);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
 /* ---- Die drei Schritte -------------------------------------------------- */
 .danke__steps {
   margin: var(--space-8) 0 0;
