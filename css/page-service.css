@@ -3403,6 +3403,61 @@ main h2 {
   margin: 0;
   aspect-ratio: 4 / 5;
   background-color: var(--color-bg);
+  /* Traegt den Verlauf unten, siehe .photo-fade-bottom weiter unten. */
+  position: relative;
+}
+
+/* ═══ UNTERE BILDKANTE: VERLAUF STATT SCHNITT ═══════════════════════════════
+   Regel des Kunden vom 01.09.2026, ausdruecklich allgemein ("generell immer!",
+   "das bei allen Alexander-Jaeger-Sektionen beachten"): wo ein Portrait unten
+   angeschnitten wird, endet es nicht mit einer Kante, sondern laeuft in die
+   Sektion aus.
+
+   ⚠️⚠️ DAS IST EINE GETEILTE REGEL UND KEINE ZWEITE KOPIE. Denselben Verlauf
+   hatte /ueber-uns/ bei Steffen Walde schon seit dem 10.08.2026, nach genau
+   derselben Rueckmeldung ("der untere Schnitt ist sehr trocken") — und Jaegers
+   Portrait in den fuenf Serviceseiten hatte ihn nicht. Beide Seiten laden diese
+   Datei, deshalb steht die Regel HIER und der Block in page-ueber-uns.css ist
+   geloescht. Wer die Rampe aendert, aendert beide Portraits; das ist der Zweck.
+
+   ⚠️ AUF EINEM PSEUDO-ELEMENT, NIE AUF DEM <img>. Ein Filter oder eine Maske am
+   Bild selbst wuerde auch verblassen lassen, was dahinter liegt, und mit
+   object-fit streiten. Dieselbe Regel, der die Hero-Waschungen auf /jobs/ und
+   /werkschutz/ schon folgen.
+
+   ⚠️ DIE RAMPE BLEIBT DIE OBEREN 58 % VOLLSTAENDIG DURCHSICHTIG, damit sie das
+   Motiv nicht beruehrt — cover schneidet diese Portraits auf Hoehe der
+   Oberschenkel, und nur das letzte Drittel arbeitet.
+
+   ⚠️ JEDER STOP FOLGT --color-bg, auch die mittleren. Vorher standen dort
+   rgb(1 1 1 / …)-Literale; auf den heutigen Flaechen ist das derselbe Wert
+   (--color-bg ist #010101, also ist color-mix(… 35%, transparent) genau
+   rgb(1 1 1 / 0.35) — nachgemessen, kein Pixel Unterschied). Der Unterschied
+   zaehlt beim naechsten Verbraucher: landet dieser Block je auf einer hellen
+   Sektion, loest die ganze Rampe auf die neue Flaeche auf statt auf Schwarz.
+   ⚠️ Das Portrait selbst folgt NICHT: sein eigener Hintergrund ist in die Datei
+   eingebrannt (docs/design-sources/portrait-key-backdrop.py) und muesste neu
+   exportiert werden. Der Verlauf kann das nicht retten.
+
+   Ein kuenftiges angeschnittenes Bild bekommt einfach .photo-fade-bottom. */
+.photo-fade-bottom {
+  position: relative;
+}
+
+.service-contact__portrait::after,
+.uu-lead__photo::after,
+.photo-fade-bottom::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-bg) 0%, transparent) 58%,
+    color-mix(in srgb, var(--color-bg) 35%, transparent) 78%,
+    color-mix(in srgb, var(--color-bg) 80%, transparent) 92%,
+    var(--color-bg) 100%
+  );
 }
 
 .service-contact__portrait img {

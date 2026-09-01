@@ -559,32 +559,13 @@
   object-fit: cover;
 }
 
-/* The bottom edge fades into the section instead of ending on a hard cut
-   (client 2026-08-10: "el corte inferior es muy seco"). `cover` crops the
-   portrait at mid-thigh, and a straight edge there reads as a photo that ran
-   out rather than as a figure standing on the page.
-
-   ⚠️ On a PSEUDO-ELEMENT, never on the <img> — the same rule the hero washes on
-   /jobs/ and /werkschutz/ follow. A filter or mask on the image itself would
-   also fade whatever sits behind it, and it would fight `object-fit`.
-
-   The ramp holds fully transparent through the top 58 % so it never touches the
-   subject, and only the last third does the work. It lands on --color-bg (not a
-   literal black) so it always matches the section it dissolves into — if this
-   block is ever moved onto a different surface, the fade follows it. */
-.uu-lead__photo::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: linear-gradient(
-    to bottom,
-    rgb(1 1 1 / 0) 58%,
-    rgb(1 1 1 / 0.35) 78%,
-    rgb(1 1 1 / 0.8) 92%,
-    var(--color-bg) 100%
-  );
-}
+/* ⚠️ DER VERLAUF AN DER UNTEREN KANTE STEHT JETZT IN page-service.css, als
+   geteilte Regel zusammen mit Alexander Jaegers Portrait in den fuenf
+   Serviceseiten (Kundenregel vom 01.09.2026: "generell immer"). Diese Seite
+   laedt jene Datei, der Selektor .uu-lead__photo::after steht dort mit drin.
+   Hier stand er zuerst, seit dem 10.08.2026 — und WEIL er nur hier stand, hatte
+   Jaegers Portrait drei Wochen lang eine harte Kante. Nicht wieder herkopieren:
+   zwei Rampen, die dasselbe tun sollen, laufen auseinander. */
 
 .uu-lead__text p {
   margin-top: var(--space-4);
