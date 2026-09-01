@@ -83,53 +83,107 @@
 .danke__lede strong { color: var(--color-text); font-weight: 500; }
 
 /* ---- Die E-Mail und der Spam-Ordner ------------------------------------- */
-/* Ergaenzt am 01.09.2026, nur auf /danke-bewerbung/ im Markup — die Regeln
-   stehen hier, weil beide Danke-Seiten dieselbe Datei laden und der Block auf
-   /danke/ genauso richtig waere, sobald dort eine Bestaetigungsmail dazukommt.
+/* Zweiter Entwurf, 01.09.2026. Der erste waren zwei zentrierte Absätze unter dem
+   Lede; der Kunde hat ihn zu Recht zurückgewiesen ("das sieht doch nicht schön
+   aus"). Die drei Fehler und was daraus folgte:
 
-   ⚠️ BEIDE ERBEN DIE MASSE DES LEDE (34rem, zentriert, hyphens: none), damit
-   drei Absaetze untereinander eine Spalte bilden und keine Treppe. Die 34rem
-   sind dort gemessen; ein eigener Wert waere ein zweiter, der auseinanderlaeuft. */
-.danke__mail,
-.danke__spam {
-  margin: var(--space-4) auto 0;
-  max-width: 34rem;
-  /* Zentrierter Text hat zwei unruhige Raender — ein mitten im Wort getrenntes
-     Kompositum liest sich dann wie ein Renderfehler. Dieselbe Begruendung wie
-     beim Lede darueber. */
-  hyphens: none;
+     zentrierter Fließtext bei 15 px  ->  text-align: start
+       Der Lede ist zentriert und darf das sein: 25 px, drei Zeilen, als Aussage
+       gesetzt. Ein 15-px-Absatz mit vier Zeilen darunter hat zwei zerrissene
+       Ränder und liest sich wie ausgelaufener Text.
+     --space-4 als Abstand            ->  --space-7
+       16 px sind unter einer Zeilenhöhe von 1,6 auf 25 px optisch nichts. 48 px
+       trennen die beiden Beats: oben die Zusage, hier das Praktische.
+     Etikett "Hinweis" inline         ->  ersatzlos weg
+       Ohne Doppelpunkt und ohne eigene Zeile las es sich als Tippfehler. Die
+       Unterordnung trägt jetzt Größe und Deckkraft, und der Satz steht für sich.
+
+   ⚠️ KEIN KASTEN, und das ist eine Entscheidung: .danke__urgent weiter unten ist
+   einer, und er ist der wichtigere ("ruf einfach an"). Zwei umrandete Flächen auf
+   einer Danke-Seite konkurrieren um dieselbe Aufmerksamkeit. Die Abgrenzung
+   trägt hier das Icon.
+
+   ⚠️ Die Regeln stehen in dieser gemeinsamen Datei, im Markup trägt sie nur
+   /danke-bewerbung/ — sobald /danke/ eine Bestätigungsmail bekommt, ist es ein
+   Absatz dort. */
+.danke__mailinfo {
+  margin: var(--space-7) auto 0;
+  /* Etwas breiter als der Lede (34rem): linksbündiger Text in zwei Zeilen
+     braucht weniger Höhe, wenn er die Breite nutzen darf — und die Spalte für
+     das Icon kommt hinzu. */
+  max-width: 38rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  /* ⚠️ DIESELBE SPALTENGEOMETRIE WIE .danke__step: 1.75rem Symbolspalte plus
+     --space-3 Abstand. Damit steht der Text dieses Blocks auf genau derselben
+     Linie wie der Text der drei Schritte darunter — gemessen 40 px von der
+     linken Kante, in beiden Blöcken.
+     Vorher waren es 22 px Icon plus --space-4, also 38 px, und die zwei Pixel
+     Versatz sieht man, wenn zwei Textspalten direkt übereinander stehen. Die
+     Werte sind von dort ÜBERNOMMEN, nicht neu gewählt: wer den Schritt ändert,
+     muss diese zwei Zeilen mitziehen. */
+  gap: var(--space-3);
+  align-items: start;
+  text-align: start;
 }
 
-/* Einen Schritt leiser als der Lede: es ist eine Zusatzangabe, keine Zusage. */
-.danke__mail {
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-base);
-  color: rgb(255 255 255 / 0.72);
-}
-.danke__mail strong { color: var(--color-text); font-weight: 500; }
-
-/* ⚠️ NOCH LEISER, UND MIT EIGENEM ETIKETT statt eines Kastens. Ein Kasten waere
-   der zweite auf dieser Seite (der Anruf-Block ist der erste und der wichtigere)
-   und wuerde mit ihm um Aufmerksamkeit konkurrieren. Das Etikett traegt die
-   Einordnung, der Text bleibt Fliesstext. */
-.danke__spam {
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-base);
-  color: rgb(255 255 255 / 0.6);
-}
-.danke__spam strong { color: rgb(255 255 255 / 0.82); font-weight: 500; }
-
-/* ⚠️ Das Etikett ist --color-accent wie das des Anruf-Blocks — auf dieser
-   dunklen Flaeche ist das blue-light und misst 6,8:1, also weit ueber dem
-   Minimum. Auf einer HELLEN Sektion waere derselbe Token blue-dark und dieser
-   Text zu klein dafuer; diese Seite ist durchgehend dunkel. */
-.danke__spam-label {
-  margin-inline-end: var(--space-2);
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+/* ⚠️ margin-top statt align-items: center — das Icon soll auf der ERSTEN Zeile
+   sitzen, nicht in der Mitte von zwei Absätzen. Der Wert ist die halbe
+   Differenz zwischen Zeilenhöhe und Icon-Höhe, damit die optischen Mitten
+   zusammenfallen. */
+.danke__mailinfo-icon {
+  /* 1.75rem wie die Ziffer der Schritte — siehe die Begründung oben. */
+  width: 1.75rem;
+  height: 1.75rem;
+  /* ⚠️ margin-top statt align-items: center — das Icon soll auf der ERSTEN
+     Zeile sitzen, nicht in der Mitte von zwei Absätzen. */
+  margin-top: 0.1rem;
   color: var(--color-accent);
+  /* ⚠️ Die Pinselangaben des Sprites überleben <use> nicht — hier restaten,
+     sonst rendert der Umschlag als schwarzer Fleck. Dieselbe Falle ist in
+     diesem Projekt mehrfach dokumentiert. */
+  fill: none;
+  stroke: currentColor;
+  /* stroke-width ist in Nutzereinheiten auf einem viewBox von 24: 1.4 ergibt
+     bei 28 px gerenderten 1,63 px und liegt damit beim Linienstärke-Niveau der
+     übrigen Symbole. */
+  stroke-width: 1.4;
 }
+
+.danke__mailinfo-text {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.danke__mailinfo p {
+  margin: 0;
+  /* Linksbündig, also darf getrennt werden — anders als beim zentrierten Lede,
+     wo ein mitten im Wort geteiltes Kompositum wie ein Renderfehler aussieht.
+     base.css setzt hyphens: auto, und hier ist das richtig. */
+  line-height: var(--line-height-base);
+}
+
+.danke__mailinfo-haupt {
+  font-size: var(--font-size-base);
+  color: rgb(255 255 255 / 0.74);
+}
+.danke__mailinfo-haupt strong { color: var(--color-text); font-weight: 500; }
+
+/* Eine Stufe leiser: derselbe Gegenstand, aber der Nebensatz dazu. */
+.danke__mailinfo-zusatz {
+  font-size: var(--font-size-sm);
+  color: rgb(255 255 255 / 0.56);
+}
+.danke__mailinfo-zusatz strong { color: rgb(255 255 255 / 0.8); font-weight: 500; }
+
+/* ⚠️ KEINE eigene Media Query fuer das Telefon, und das ist eine Korrektur:
+   ich hatte hier @media (max-width: 479.98px) mit einem kleineren Abstand — das
+   Bau-Tor hat es abgelehnt, weil damit ein 17. Breakpoint entstanden waere,
+   dokumentiert sind 16. Zu Recht: ein neuer Breakpoint fuer 4 px Abstand ist
+   genau das Abdriften, gegen das das Tor existiert. Die Reihe traegt auch bei
+   320 px — Icon 22 px plus Text in einer ~250-px-Spalte —, also braucht sie
+   nichts. */
 
 /* ---- Die drei Schritte -------------------------------------------------- */
 .danke__steps {
