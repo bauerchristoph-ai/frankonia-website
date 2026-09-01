@@ -363,7 +363,37 @@
        below the logo, plus a step of air. The logo and the X sit ON TOP of this
        panel via the z-index pair below — the panel's background runs edge to
        edge behind them, which is what makes it read as full-screen. */
-    padding: calc(4.75rem + var(--space-5)) var(--container-padding) var(--space-7);
+    /* ═══ DIE BOX IST DER SICHTBARE VIEWPORT, NICHT DER GROSSE — 01.09.2026 ══
+       Kunde: "das mobile Menü ist nicht scrollbar, ich kann nicht weiter nach
+       unten scrollen, um Kontakt zu sehen … auch wenn ich Leistungen aufklappe,
+       werde ich Kontakt nie klicken können."
+
+       ⚠️⚠️ DER GRUND IST `inset: 0` AUF iOS. Ein `bottom: 0` bezieht sich dort
+       auf den GROSSEN Viewport (Adressleiste eingefahren), nicht auf den
+       sichtbaren. Bei einem 844 px hohen Gerät ist das Panel also 844 px hoch,
+       während nur ~745 px zu sehen sind — die unteren ~100 px liegen dauerhaft
+       hinter der Browserleiste. Und der CTA sitzt 48 px über der Panel-
+       Unterkante, also genau in diesem Band. Er ist damit nicht nur unter dem
+       Rand, er ist UNERREICHBAR: der eigene Scroller des Panels hält sich für
+       vollständig sichtbar und hat nichts zu scrollen.
+
+       `height: 100dvh` bindet die Box an den DYNAMISCHEN Viewport, also an das,
+       was der Besucher wirklich sieht. `bottom: auto` ist dafür notwendig — mit
+       `inset: 0` würden Ober- UND Unterkante gesetzt und die Höhe ignoriert.
+
+       ⚠️ Gemessen war der Inhalt ausserdem 924 px hoch bei 844 px Box, also
+       80 px zu viel, SELBST mit eingeklappten Untermenüs. Die dokumentierte
+       Zusicherung vom 19.08. ("passt mit eingeklappten Untermenüs in eine
+       Schirmhöhe") ist mit "Einsatzgebiete" und "Ratgeber" im Menü verfallen —
+       acht Einträge statt sechs. Die Abstände unten holen 136 px zurück.
+
+       ⚠️ -webkit-overflow-scrolling gehört dazu, weil ein Panel mit
+       `position: fixed` auf älteren iOS-Fassungen sonst nicht per Finger
+       scrollt. Auf allem anderen ist die Zeile wirkungslos. */
+    bottom: auto;
+    height: 100dvh;
+    -webkit-overflow-scrolling: touch;
+    padding: calc(4.75rem + var(--space-5)) var(--container-padding) var(--space-5);
     /* "Leistungen" discloses ten service links, so an expanded submenu can run
        past the fold on a short phone. `contain` keeps that scroll inside the
        panel instead of chaining to the page behind it. */
@@ -448,14 +478,22 @@
      would leave it hugging the item below. Total space between labels goes 24px
      → 48px, which is the "bit more" without the list starting to scroll on a
      short phone (measured below). */
+  /* ⚠️ 24/24 -> 16/16, und das ist eine bewusste Teilrücknahme der Entscheidung
+     vom 19.08. ("ein bisschen mehr Abstand zwischen den Einträgen"). Der Grund
+     ist Rechnen, nicht Geschmack: mit acht Einträgen brauchte das Panel 924 px
+     bei 844 px Box, und der Kunde hat am 01.09. gemeldet, dass er Kontakt
+     deshalb nicht erreicht. Erreichbarkeit geht vor Luft. Die Aufteilung
+     bleibt GLEICH (gap = padding), denn nur gleiche Werte setzen die Linie
+     mittig zwischen zwei Labels — der Grund von damals gilt weiter.
+     Zusammen mit dem kleineren unteren Panel-Padding: 924 -> 788 px. */
   .site-nav__list {
-    gap: var(--space-5);
+    gap: var(--space-4);
     text-align: center;
   }
 
   .site-nav__list > li + li {
     border-top: 1px solid var(--color-border);
-    padding-top: var(--space-5);
+    padding-top: var(--space-4);
   }
 
   /* These two items (Leistungen, Einsatzgebiete) are `display: flex` in the

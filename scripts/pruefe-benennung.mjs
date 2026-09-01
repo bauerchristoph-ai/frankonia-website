@@ -43,7 +43,19 @@ function seiten(dir, pfad = "") {
   return raus;
 }
 
-const ohneTags = (s) => s.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+/* ⚠️ Weiche Trennstriche müssen VOR dem Vergleich raus, sonst findet die Prüfung
+   "Baustellenbewachung" nicht mehr in "Baustellen&shy;bewachung" — genau dieser
+   Fehlalarm ist am 01.09.2026 aufgetreten, als die Trennstellen gesetzt wurden.
+   Beide Schreibweisen entfernen: die Entity und das Zeichen U+00AD selbst. */
+const ohneTags = (s) =>
+  s
+    .replace(/<[^>]*>/g, " ")
+    .split("&shy;").join("")
+    .split(String.fromCharCode(173)).join("")
+    .replace(/&nbsp;/g, " ")
+    .split(String.fromCharCode(160)).join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
 const erstes = (html, re) => { const m = html.match(re); return m ? m[1] : null; };
 
 /* Welche Kennzeichen erwartet diese URL? */

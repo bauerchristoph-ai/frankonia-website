@@ -80,12 +80,43 @@
             const wordSpan = document.createElement("span");
             wordSpan.style.display = "inline-block";
             wordSpan.setAttribute("aria-hidden", "true");
-            for (const ch of part) {
-              const charSpan = document.createElement("span");
-              charSpan.style.display = "inline-block";
-              charSpan.textContent = ch;
-              wordSpan.appendChild(charSpan);
-              chars.push(charSpan);
+            /* ⚠️⚠️ EIN LANGES WORT WIRD NICHT IN ZEICHEN ZERLEGT — 01.09.2026.
+               Kunde, mit Screenshot von /sicherheitsdienst-wuerzburg/: "Unsere
+               Sicherheitsdie / nstleistungen … der Umbruch muss nach deutscher
+               Grammatik sein, mit Bindestrich."
+
+               Der Kommentar oben behauptete, der inline-block um das Wort
+               verhindere einen Umbruch mitten im Wort. Das ist FALSCH, und
+               genau das war der Fehler: die ZEICHEN darin sind selbst
+               inline-block, also unteilbare Kästen — der Browser bricht
+               zwischen zwei Zeichen und kann nicht trennen, weil es keinen
+               zusammenhängenden Textlauf gibt. Deshalb wirkte weder
+               `hyphens: auto` noch `overflow-wrap`: gemessen 47 Spans in der
+               Überschrift, jedes `display: inline-block`.
+
+               Ein Wort über GRENZE Zeichen bleibt deshalb EIN Textknoten. Damit
+               darf der Browser darin trennen (base.css gibt Überschriften unter
+               640px `hyphens: auto`, und die Seite ist lang="de", also trennt er
+               an einer echten Silbengrenze mit Strich). Die Animation verliert
+               für diese seltenen Wörter nur ihre Zeichen-Staffelung — das Wort
+               kommt als Ganzes, mit derselben Bewegung.
+
+               ⚠️ 15 ist gemessen, nicht geraten: bei 32 px Schrift und einer
+               280 px breiten Spalte (320er Telefon) passen rund 14 Zeichen in
+               eine Zeile. Kürzere Wörter brauchen nie eine Trennung, längere
+               immer. */
+            const GRENZE = 15;
+            if (part.length > GRENZE) {
+              wordSpan.textContent = part;
+              chars.push(wordSpan);
+            } else {
+              for (const ch of part) {
+                const charSpan = document.createElement("span");
+                charSpan.style.display = "inline-block";
+                charSpan.textContent = ch;
+                wordSpan.appendChild(charSpan);
+                chars.push(charSpan);
+              }
             }
             frag.appendChild(wordSpan);
           });

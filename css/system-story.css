@@ -814,10 +814,73 @@
      a 390px phone, roughly one third of what the old stack spent per card.
      max-height keeps a short-and-wide viewport from ever handing one card the
      whole screen. */
+  /* ═══ DIE KARTE WÄCHST MIT IHREM TEXT — 01.09.2026 ═══════════════════════
+     Kunde, mit Handy-Screenshot: "wenn man dorthin scrollt, sieht man den Text
+     nicht in der mobilen Version … der Text muss immer lesbar sein, sonst
+     macht es keinen Sinn."
+
+     ⚠️⚠️ DIE URSACHE WAR NICHT DIE HÖHE, SONDERN DASS DER TEXT NICHT
+     MITREDEN DURFTE. Vorher gab `aspect-ratio: 4/5` der Karte ihre Höhe, und
+     .system-story__body ist `position: absolute; inset: 0` — also konnte der
+     Text die Karte weder höher machen noch scrollen. Gemessen war der Vorrat
+     bei JEDER Bildschirmhöhe genau 24 px (390x932 / 844 / 780 / 667 / 568,
+     letzter Punkt endete immer 24 px über der Unterkante). Eine einzige
+     Zeile mehr Umbruch — andere Schrift auf iOS, längeres Wort, größere
+     Systemschrift — und der letzte Punkt ist ab. Genau das zeigt der
+     Screenshot.
+
+     ⚠️ DESHALB IST 4/5 JETZT EIN MINDESTMASS, KEINE VORGABE: min-height hält
+     die Form, wenn der Text kurz ist, und die Karte wächst, wenn er länger
+     ist. `min(68svh, 125vw)` — 125vw ist 4/5 bezogen auf die Kartenbreite von
+     86vw, und 68svh bleibt die Bremse für ein kurzes, breites Fenster.
+
+     ⚠️ UND DER TEXT MUSS IN DEN FLUSS, sonst nützt das Wachsen nichts: ein
+     absolut positioniertes Kind trägt nichts zur Höhe seines Elternteils bei.
+     Das Foto bleibt absolut (es soll den Hintergrund füllen), der Text wird
+     `position: relative` — damit stapelt er weiter über dem Foto, zählt aber
+     für die Höhe.
+
+     ⚠️ NUR UNTERHALB 1024px. Auf dem Desktop ist der Peek-Stack auf feste
+     Kartenhöhen gerechnet (--sys-stack-card-h und die Formel darüber), dort
+     wäre eine mitwachsende Karte ein anderer Fehler. */
   .system-story .system-story__card {
     height: auto;
-    aspect-ratio: 4 / 5;
-    max-height: 68svh;
+    aspect-ratio: auto;
+    min-height: min(68svh, 125vw);
+    max-height: none;
+    /* ⚠️ Die KARTE ist die Flex-Spalte, nicht das Innere: sie traegt die
+       min-height, also muss die Streckung von hier ausgehen. Ein
+       `min-height: 100%` im Inneren nuetzt nichts — ein Prozentwert gegen
+       einen Elternteil mit `height: auto` faellt auf auto zurueck. Gemessen
+       war genau das der Zwischenstand: Karte 488, Inneres 157, also 330 px
+       leere Flaeche unter dem Foto. */
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ⚠️ FLEX-SPALTE, und das ist der Teil, der die Verteilung retten muss.
+     Mit dem Text im Fluss bestimmt er die Höhe — dann sass er aber OBEN und
+     darunter lagen 330 px nur Foto (gemessen: Textblock 157 px in einer Karte
+     von 488). Vorher verteilte `justify-content: space-between` Titel und
+     Punkte über die ganze Karte, weil der Text `inset: 0` war.
+     Als Flex-Spalte gilt beides: der Textblock zählt für die Höhe der Karte
+     (sein Inhalt ist die Untergrenze) UND er streckt sich auf die tatsächliche
+     Kartenhöhe, wenn die min-height grösser ist — also greift space-between
+     wieder wie vorher. */
+  .system-story .system-story__card-inner {
+    height: auto;
+    min-height: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* In den Fluss, damit der Text die Höhe bestimmt. z-index und die
+     Lesbarkeits-Waschung auf ::before bleiben unverändert. */
+  .system-story .system-story__body {
+    position: relative;
+    inset: auto;
+    flex: 1 1 auto;
   }
   .system-story .system-story__card-inner {
     box-shadow: 0 12px 30px -20px rgb(1 1 1 / 0.55);

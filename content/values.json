@@ -85,7 +85,7 @@
     "max": "32",
     "surcharge": {
       "night": "23",
-      "nightWindow": "20–6 Uhr",
+      "nightWindow": "20–6 Uhr",
       "sunday": "26",
       "holiday": "100"
     },

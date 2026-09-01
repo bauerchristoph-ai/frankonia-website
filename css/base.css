@@ -68,6 +68,50 @@ h3 { font-size: var(--font-size-xl); }
 h4 { font-size: var(--font-size-lg); }
 h5, h6 { font-size: var(--font-size-md); }
 
+/* ═══ AUF DEM TELEFON DÜRFEN ÜBERSCHRIFTEN TRENNEN — 01.09.2026 ══════════════
+   Kunde, mit Screenshot von /sicherheitsdienst-wuerzburg/: "Unsere
+   Sicherheitsdie / nstleistungen — der Umbruch muss nach deutscher Grammatik
+   sein, mit Bindestrich. Das gibt's öfters, bei Nürnberg auch, das muss überall
+   korrigiert werden."
+
+   ⚠️⚠️ ES IST DIE KOMBINATION AUS ZWEI REGELN, DIE DAS ANRICHTET, und beide sind
+   einzeln richtig: `hyphens: none` oben (kein Trennstrich in einer großen
+   Überschrift) und `overflow-wrap: break-word` im Reset (nichts darf aus dem
+   Layout laufen). Zusammen heißen sie: bricht überall, aber ohne Strich. Bei
+   einem 27 Zeichen langen Kompositum in einer 350 px breiten Spalte bei 32 px
+   Schrift passiert das zwangsläufig — gemessen: die Zeile ist genau 350 px, das
+   Wort füllt sie vollständig und läuft in die nächste.
+
+   ⚠️⚠️ UND `hyphens: auto` WAR DIE FALSCHE ANTWORT — im Kontrolltest widerlegt:
+   dieser Chrome hat kein deutsches Trennwörterbuch. Gemessen bei 280 px Spalte
+   und 32 px Schrift — mit `auto`: EINE Zeile, 390 px breit, also gar keine
+   Trennung und dafür Überlauf. Mit `manual` und weichen Trennstrichen: drei
+   Zeilen, genau wie gewünscht.
+   Die Trennstellen stehen deshalb im TEXT — `&shy;` an echten Wortfugen, gesetzt
+   von scripts/pruefe-trennung.mjs — und nicht in der Hoffnung auf ein Wörterbuch.
+   `manual` ist das, was sie überhaupt wirksam macht: das `hyphens: none` oben
+   unterdrückt auch weiche Trennstriche.
+
+   ⚠️ NUR UNTER 640px, und das hält die Entscheidung von oben am Leben: auf
+   Tablet und Desktop bleibt `hyphens: none`, dort ist die Spalte breit genug und
+   ein Trennstrich in einer Display-Überschrift sähe weiter wie ein Tippfehler
+   aus. Der Konflikt entsteht nur in einer schmalen Spalte.
+
+   ⚠️ `overflow-wrap: break-word` bleibt als letztes Netz stehen: findet die
+   Silbentrennung keine Stelle (ein Eigenname, eine Zeichenfolge ohne Vokale),
+   ist ein Bruch ohne Strich immer noch besser als Text, der aus der Seite läuft.
+
+   ⚠️ Das ersetzt die einzelnen `hyphens: auto`-Regeln, die einige Seiten sich
+   selbst gegeben hatten (gemessen an H1 auf /baustellenbewachung/, /brandwache/,
+   /empfangsdienst/, /veranstaltungsschutz/). Die dürfen bleiben — sie sagen
+   jetzt dasselbe wie diese Regel und stören nicht. */
+@media (max-width: 639.98px) {
+  h1, h2, h3, h4, h5, h6 {
+    -webkit-hyphens: manual;
+    hyphens: manual;
+  }
+}
+
 p {
   text-wrap: pretty;
 }

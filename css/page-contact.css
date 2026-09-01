@@ -859,6 +859,38 @@
    client 2026-07-31. The card ends on the submit button. The phone is still
    one tap away in the contact card above and in the footer.) */
 
+/* ═══ DAS FORMULAR BRAUCHT LUFT NACH DEM LEDE — 01.09.2026 ══════════════════
+   Kunde, mit Screenshot: "zwischen Vorname und dem Text davor ist zu wenig
+   Platz, sowohl Desktop als auch mobil."
+
+   ⚠️⚠️ ES WAR KEIN FEHLENDER WERT, SONDERN EIN TOTER SELEKTOR. Der Abstand
+   stand die ganze Zeit hier drunter als `.contact-form { margin-top: 32px }` —
+   aber diese Seite gibt `.contact-form` nicht mehr aus. Sie bindet seit der
+   Umstellung das GETEILTE Formular ein (`<!-- include: lead-form -->`), und das
+   heisst `.conversion__form.lead-form`. Im gebauten Markup kommen von
+   `contact-form*` nur noch drei Klassen vor: `-card`, `-card__title` und
+   `-card__lede`.
+   Gemessen war der Abstand zwischen Lede und dem Label "Vorname" deshalb
+   GENAU 0 px — bei 390 px und bei 1440 px. Jede andere Seite mit diesem
+   Formular hat 77 bis 113 px, weil dort `.conversion__form-wrap` sein eigenes
+   Polster mitbringt; in dieser Karte gibt es diesen Wrapper nicht.
+
+   ⚠️ 32px und nicht mehr: der frühere Formulartitel dazwischen brachte ~106 px
+   mit, und der ist am 07.08. auf Kundenwunsch entfernt worden, weil die Karte
+   kürzer werden sollte. Die Luft wird also NICHT auf den alten Stand
+   zurückgedreht — nur so viel, dass Text und Feld nicht aneinanderkleben. */
+.contact-form-card .conversion__form {
+  margin-top: var(--space-6);
+}
+
+/* ⚠️⚠️ ALLES AB HIER MIT `.contact-form` (ohne `-card`) IST UNERREICHBAR und
+   wartet auf eine bewusste Löschung: die Klasse steht in keinem gebauten
+   Markup mehr (nachgezählt am 01.09.2026 über dist/kontakt/index.html). Die
+   Feldgestaltung, die hier einmal stand, kommt heute aus css/lead-form.css —
+   deshalb sieht die Seite trotzdem richtig aus, und deshalb ist der Fehler
+   oben so lange unentdeckt geblieben. Nicht einfach löschen, ohne die Seite
+   danach anzusehen: 30 Zeilen auf einmal zu entfernen ist eine eigene Runde
+   mit eigener Sichtprüfung wert. */
 .contact-form {
   display: grid;
   grid-template-columns: 1fr;

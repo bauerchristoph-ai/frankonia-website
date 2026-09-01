@@ -3,14 +3,17 @@
   "private": true,
   "description": "Static HTML/CSS/JS site for FRANKONIA Sicherheitsdienst. No runtime dependencies — build.js uses only Node core modules.",
   "scripts": {
-    "build": "node build.js && node scripts/bau-tore.mjs && node scripts/pruefe-benennung.mjs && node scripts/pruefe-karten.mjs",
+    "build": "node build.js && node scripts/bau-tore.mjs && node scripts/pruefe-benennung.mjs && node scripts/pruefe-faq-paritaet.mjs && node scripts/pruefe-umbruch.mjs && node scripts/pruefe-trennung.mjs && node scripts/pruefe-karten.mjs",
     "dev": "node build.js && npx --yes serve dist",
     "test": "node --test",
     "dev:api": "node scripts/dev-server.js",
     "pruefe:karten": "node scripts/pruefe-karten.mjs",
     "pruefe:tore": "node scripts/bau-tore.mjs",
     "pruefe:live": "node scripts/pruefe-live.mjs",
-    "pruefe:benennung": "node scripts/pruefe-benennung.mjs"
+    "pruefe:benennung": "node scripts/pruefe-benennung.mjs",
+    "pruefe:faq": "node scripts/pruefe-faq-paritaet.mjs",
+    "pruefe:umbruch": "node scripts/pruefe-umbruch.mjs",
+    "pruefe:trennung": "node scripts/pruefe-trennung.mjs"
   },
   "engines": {
     "node": ">=18"
