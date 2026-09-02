@@ -281,6 +281,7 @@
       measure();
 
       var letzterLinks = -1;
+      var nutzerZieht = false;
       var st = ScrollTrigger.create({
         trigger: track,
         start: "top top",
@@ -303,13 +304,79 @@
            ⚠ Kein Ersatz für eine Messung auf echtem Gerät — iOS bleibt hier
            nicht nachstellbar (siehe den Riegel oben). */
         onUpdate: function (self) {
-          if (maxScroll <= 0) return;
+          if (maxScroll <= 0 || nutzerZieht) return;
           var ziel = Math.round(self.progress * maxScroll);
           if (ziel === letzterLinks) return;
           letzterLinks = ziel;
           stack.scrollLeft = ziel;
         },
       });
+
+      /* ═══ BEIDE EINGABEN: SENKRECHT SCROLLEN **UND** WAAGERECHT WISCHEN ═══
+         Kunde 02.09.2026: "ich würde mir auch wünschen, dass es ebenso
+         horizontal scrollt, wenn man horizontal swipt. Also dass beides aktiv
+         ist."
+
+         ⚠️⚠️ DAS WAR VORHER BEWUSST AUS, und der Grund war richtig: der Scrub
+         schreibt scrollLeft in jedem Bild, ein Finger schreibt es auch — sie
+         überschreiben sich gegenseitig und das Ergebnis ist Zittern. Deshalb
+         stand hier overflow-x: hidden.
+
+         Die Lösung ist nicht "beide gleichzeitig", sondern "einer nach dem
+         anderen, ohne Bruch dazwischen":
+           1. Berührt der Finger den Streifen, hört der Scrub auf zu schreiben.
+           2. Der Finger bewegt den Streifen nativ, mit der Physik des Browsers.
+           3. Beim Loslassen wird die SEITENPOSITION auf den erreichten Stand
+              nachgezogen — sonst würde die nächste senkrechte Bewegung den
+              Streifen zurückreißen, weil der Scrub noch den alten Fortschritt
+              kennt. Das ist der Teil, der es nahtlos macht.
+
+         ⚠️ Die Nachführung geht über Lenis, wenn es da ist: eine direkte
+         Zuweisung an scrollTop würde gegen die laufende Interpolation von Lenis
+         arbeiten und einen Rücksprung erzeugen.
+         ⚠️ Ohne Zeiger-Ereignisse (alte Browser) bleibt alles wie bisher: der
+         Scrub schreibt, der Finger kommt wegen scroll-snap-type: none nicht in
+         Konflikt mit einer Rasterung. */
+      var zurueckTimer = null;
+
+      function seiteNachziehen() {
+        if (maxScroll <= 0) return;
+        var anteil = Math.min(1, Math.max(0, stack.scrollLeft / maxScroll));
+        var ziel = st.start + anteil * (st.end - st.start);
+        letzterLinks = Math.round(anteil * maxScroll);
+        if (window.__lenis && typeof window.__lenis.scrollTo === "function") {
+          window.__lenis.scrollTo(ziel, { immediate: true });
+        } else {
+          window.scrollTo(0, ziel);
+        }
+      }
+
+      function zugBeginnt() {
+        nutzerZieht = true;
+        if (zurueckTimer) { clearTimeout(zurueckTimer); zurueckTimer = null; }
+      }
+
+      function zugEndet() {
+        if (zurueckTimer) clearTimeout(zurueckTimer);
+        /* Kurz warten: der Browser lässt den Streifen nach dem Loslassen noch
+           ausrollen, und erst die Endposition ist die, auf die nachgezogen
+           werden muss. */
+        zurueckTimer = setTimeout(function () {
+          zurueckTimer = null;
+          seiteNachziehen();
+          nutzerZieht = false;
+        }, 220);
+      }
+
+      stack.addEventListener("pointerdown", zugBeginnt, { passive: true });
+      stack.addEventListener("pointerup", zugEndet, { passive: true });
+      stack.addEventListener("pointercancel", zugEndet, { passive: true });
+      /* Auf iOS kommt bei einer Wischgeste kein pointerup, wenn der Streifen
+         scrollt — touchend kommt verlässlich. */
+      stack.addEventListener("touchstart", zugBeginnt, { passive: true });
+      stack.addEventListener("touchend", zugEndet, { passive: true });
+      stack.addEventListener("touchcancel", zugEndet, { passive: true });
+
 
       /* Rotation / a resized viewport changes both the track height and the
          strip's scroll width. Debounced because measure() writes a height, which

@@ -171,7 +171,36 @@
     var breit = rahmen.getBoundingClientRect().width;
     if (!innen || !breit) { setTimeout(function () { turnstileBreitePruefen(behaelter, v + 1); }, 500); return; }
     if (breit <= innen + 2) return;          /* passt */
-    if (behaelter.getAttribute("data-groesse") === "compact") return;  /* schon das Kleinste */
+    if (behaelter.getAttribute("data-groesse") === "compact") {
+      /* ⚠️⚠️ DRITTE STUFE, DAMIT ES NICHT MEHR AN EINER ANNAHME HÄNGT.
+         "compact" ist 130 px breit und passt in jeden hier gemessenen Container
+         (222 px im schmalsten Fall). Wenn es TROTZDEM hinausragt, stimmt eine
+         meiner Annahmen über das fremde Widget nicht — und dann darf das nicht
+         der Besucher ausbaden. Also wird es maßstäblich verkleinert, bis es
+         passt: das ist die eine Maßnahme, die unabhängig davon greift, welche
+         Mindestbreite Cloudflare intern ansetzt.
+         Der Kunde hat die Überbreite dreimal gemeldet und dazu gesagt: "entweder
+         du schaffst es jetzt oder du lässt es". Das hier schafft es, ohne das
+         Bedienelement abzuschneiden.
+         ⚠️ transform-origin links, sonst wandert das Widget aus seinem Platz.
+         ⚠️ Die Höhe muss mitschrumpfen, sonst bleibt unter dem verkleinerten
+         Widget der alte Platz stehen — ein Transform ändert das Layout nicht. */
+      var faktor = innen / breit;
+      if (faktor < 0.999) {
+        var kind = behaelter.firstElementChild;
+        if (kind) {
+          kind.style.transformOrigin = "left center";
+          kind.style.transform = "scale(" + faktor.toFixed(4) + ")";
+          var hoch = kind.getBoundingClientRect().height;
+          behaelter.style.height = Math.ceil(hoch) + "px";
+          if (window.console) {
+            console.info("Turnstile: compact ragte noch " + Math.round(breit - innen) +
+              " px hinaus, auf " + Math.round(faktor * 100) + " % skaliert.");
+          }
+        }
+      }
+      return;
+    }
     var id = behaelter.getAttribute("data-widget-id");
     try {
       if (id) window.turnstile.remove(id);

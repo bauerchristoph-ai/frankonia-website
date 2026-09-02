@@ -956,12 +956,42 @@
     overflow: hidden;
   }
 
-  .system-story--pinned .system-story__stack {
-    /* The vertical gesture is the only input now: the finger and the scrub would
-       otherwise write scrollLeft on the same frames and fight. Still
-       programmatically scrollable — overflow:hidden only removes the USER's
-       direct scrolling, which is the point. */
-    overflow-x: hidden;
+  /* ⚠⚠ [data-swipe-carousel] IM SELEKTOR IST PFLICHT, NICHT ZIERDE — 02.09.2026.
+     Kunde: "da ist die horizontale Scrollanimation noch nicht ganz klar … auf
+     Tablet-Höhe gibt's keinen sauberen Scrollflow."
+
+     GEMESSEN, Zuwachs des Streifens je Schritt Seitenscroll:
+       390 px:  0 11 119 226 334 441 …   Verhältnis 1:1, flüssig
+       834 px:  0 0 0 742 742 742 742 1485 …   Sprünge, 13 Stillstände
+     Auf Tablet rastete der Streifen also von Karte zu Karte statt dem Scroll zu
+     folgen — genau das "mal springt es direkt zur nächsten Karte".
+
+     DIE URSACHE IST SPEZIFITÄT BEI GLEICHSTAND: die Tablet-Regel in
+     css/swipe-carousel.css ist [data-swipe-carousel][data-swipe-tablet], also
+     (0,2,0) — genau so viel wie .system-story--pinned .system-story__stack — und
+     diese Datei lädt VOR swipe-carousel.css. Bei Gleichstand gewinnt die
+     spätere. Unter 768 px ist die Wisch-Regel nur [data-swipe-carousel] (0,1,0),
+     deshalb war das Handy die ganze Zeit flüssig und nur das Tablet nicht.
+     Der Attributselektor hebt uns auf (0,3,0) und entscheidet damit in BEIDEN
+     Bändern, unabhängig von der Dateireihenfolge.
+     ⚠ Der Kommentar der Regel darunter behauptete, zwei Klassen würden
+     [data-swipe-carousel] "unabhängig von der Dateireihenfolge" schlagen. Das
+     galt nur gegen die Telefon-Regel. */
+  .system-story--pinned .system-story__stack[data-swipe-carousel] {
+    /* ⚠⚠ HIER STAND overflow-x: hidden, UND DAS IST JETZT AUF WUNSCH AUF.
+       Kunde 02.09.2026: "ich würde mir auch wünschen, dass es ebenso horizontal
+       scrollt, wenn man horizontal swipt — dass beides aktiv ist."
+
+       Das Argument für hidden war richtig: Finger und Scrub schreiben sonst
+       beide scrollLeft und zittern gegeneinander. Gelöst ist es nicht durch
+       "beide gleichzeitig", sondern durch ABWECHSELN — js/system-story.js
+       hält den Scrub an, solange der Finger den Streifen berührt, und zieht
+       danach die Seitenposition auf den erreichten Stand nach. Ohne diese
+       Nachführung würde die nächste senkrechte Bewegung den Streifen
+       zurückreißen.
+       ⚠ Ohne JS bleibt der Streifen damit ein gewöhnlicher Wisch-Streifen —
+       das ist die bessere Ausfallstellung als ein unscrollbarer Kasten. */
+    overflow-x: auto;
     /* Mandatory snap against a scrubbed scrollLeft oscillates: the scrub sets a
        position mid-card, snap drags it to the nearest edge, the next frame sets
        it back. The scroll position is driven, so it needs no snapping. */
