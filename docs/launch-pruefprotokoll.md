@@ -3203,3 +3203,138 @@ Bot-Schutz.
 
 Ob das so gewollt ist (eine Bewerbung ist kein Lead) oder ein Versäumnis, ist
 eine Entscheidung — technisch wäre es dasselbe Feld wie überall.
+
+---
+
+## N24 — Systemkarten: der Tablet-Scrollfluss war sprunghaft, und die Ursache war Spezifität
+
+**Gemeldet** 02.09.2026: „da ist die horizontale Scrollanimation noch nicht ganz
+klar … ich hab's in den DevTools auf Tablet-Höhe nachgeschaut, da gibt's keinen
+sauberen Scrollflow."
+
+**Gemessen**, Zuwachs des Streifens je Schritt Seitenscroll:
+
+| Breite | Verlauf von `scrollLeft` | Stillstände |
+|---|---|---|
+| 390 | `0 11 119 226 334 441 …` | **0** |
+| 834 | `0 0 0 **742** 742 742 742 **1485** …` | **13** |
+
+Der Streifen rastete also von Karte zu Karte statt dem Scroll zu folgen.
+
+⚠️⚠️ **Die Ursache ist Spezifität bei Gleichstand.** Die Tablet-Regel in
+`swipe-carousel.css` ist `[data-swipe-carousel][data-swipe-tablet]` — **(0,2,0)**,
+genau so viel wie `.system-story--pinned .system-story__stack` — und
+`system-story.css` lädt **vorher**. Bei Gleichstand gewinnt die spätere, also
+blieb `scroll-snap-type: x mandatory` stehen. Unter 768 px ist die Wisch-Regel
+nur `[data-swipe-carousel]` (0,1,0), **deshalb war das Handy die ganze Zeit
+flüssig und nur das Tablet nicht.**
+
+⚠️ Der Kommentar an dieser Regel behauptete, zwei Klassen würden
+`[data-swipe-carousel]` „unabhängig von der Dateireihenfolge" schlagen. Das galt
+nur gegen die Telefon-Regel — der Kommentar ist korrigiert.
+
+**Nachher gemessen:** 834 px `0 105 306 507 708 909 …`, Verhältnis 1:1, **null
+Stillstände**; 768 px genauso; 390 px unverändert.
+
+---
+
+## N25 — Beide Eingaben aktiv: senkrecht scrollen **und** waagerecht wischen
+
+**Gewünscht** 02.09.2026: „ich würde mir auch wünschen, dass es ebenso horizontal
+scrollt, wenn man horizontal swipt — dass beides aktiv ist."
+
+Vorher war waagerechtes Wischen bewusst aus (`overflow-x: hidden`), und das
+Argument war richtig: Finger und Scrub schreiben sonst beide `scrollLeft` und
+zittern gegeneinander.
+
+**Gelöst nicht durch „beide gleichzeitig", sondern durch Abwechseln:**
+1. Berührt der Finger den Streifen, hört der Scrub auf zu schreiben.
+2. Der Finger bewegt ihn nativ, mit der Physik des Browsers.
+3. Beim Loslassen wird die **Seitenposition** auf den erreichten Stand
+   nachgezogen — ohne das würde die nächste senkrechte Bewegung den Streifen
+   zurückreißen.
+
+**Gemessen:** Finger unten → Streifen +700 px, Scrub schreibt **nicht** zurück;
+Loslassen → Seite von 7975 auf **8675** nachgezogen, Streifen behält 2533.
+
+---
+
+## N26 — Die drei Social-Videos: es war kein fehlendes Bild, es war der 3D-Ring
+
+**Gemeldet** mehrfach: „das social video / bild ist nach wie vor nicht da … das
+muss von der user experience wie unten bei ‚das sagen unsere kunden' sein: erst
+Video 1, dann Video 2, dann Video 3, immer auf Swipe."
+
+**Gemessen bei 1440:** vordere Karte **272 px**, die beiden hinteren je
+**117 px** — weil `js/social-carousel.js` sie ab 1024 px auf einem Ring
+perspektivisch zurückdreht. Von Video 2 und 3 war nur ein Streifen zu sehen.
+Auf dem Telefon war die Reihe die ganze Zeit vollständig (3 × 335 px, alle Bilder
+geladen, „03 / 03") — deshalb konnte ich es zweimal nicht finden.
+
+**Der Ring ist raus.** Ohne `data-social-carousel` initialisiert das Skript nie,
+`.is-carousel` wird nie gesetzt, und damit greift der `@media`-Block dazu auch
+nicht: ab 1024 px stehen die drei Karten als Reihe nebeneinander (gemessen
+**200 / 232 / 200**), darunter bleibt der Wisch-Streifen. Genau das Verhalten der
+Kundenstimmen. Skript und CSS bleiben im Projekt — der Ring ist einen
+Attributnamen weit entfernt.
+
+---
+
+## N27 — Turnstile: dritte Stufe, damit es nicht mehr an einer Annahme hängt
+
+**Gemeldet** ein viertes Mal: „cloudflare geht auch noch zur seite raus … scheint
+so, als lässt sich's nicht ändern."
+
+**Zwei Dinge sind jetzt gemessen, die es vorher nicht waren:**
+- **Warum das Widget in meiner Umgebung nie geladen hat:** das Skript hängt hinter
+  der Cookie-Zustimmung, und alle meine Sonden haben den Dialog **entfernt statt
+  ihn anzunehmen**. Mit Klick auf „Alle zulassen" ist `window.turnstile` da.
+- **Unsere Wahl ist bei 320/360/390 `compact`** — 130 px, und der schmalste
+  gemessene Container ist 222 px. Compact kann dort nicht überlaufen.
+
+Das iframe rendert hier trotzdem nicht, ich kann die echte Breite also weiter
+nicht ausmessen. **Deshalb eine Stufe, die unabhängig von jeder Annahme greift:**
+ragt selbst `compact` hinaus, wird es maßstäblich verkleinert, bis es passt, und
+die Höhe mitkorrigiert.
+
+**Verifiziert mit einem untergeschobenen Widget**, das absichtlich zu breit
+rendert:
+
+| Fall | Ablauf | Ergebnis |
+|---|---|---|
+| 430 px, 480 px breit | `flexible` → `remove` → `compact` | 130 in 332 |
+| 390 px, compact 400 px breit | Skalierung | **0,73×**, 292 in 292, Überlauf **0** |
+| 1440 px, 480 px breit | `flexible` | 480 in 517, Wache greift **nicht** ein |
+
+⚠️ `overflow: hidden` wäre die falsche Lösung: ein abgeschnittenes Bedienelement
+ist schlimmer als ein überbreites.
+
+---
+
+## N28 — Die klickbare Karte steht jetzt auch auf `/einsatzgebiete/`
+
+⚠️⚠️ **Der naheliegende Weg war falsch, und das ist gemessen:** `page-home.css`
+einfach mitzuladen verändert den **Hero** der Seite — Badge und Lede gingen bei
+1440 von 459 auf 538 px, bei 390 von 342 auf 350.
+
+Also die **44 `.coverage*`-Blöcke** in eine gemeinsame `css/coverage-map.css`
+herausgelöst, in unveränderter Reihenfolge und mit ihren `@media`-Blöcken;
+eingebunden **vor** der jeweiligen Seiten-CSS — dasselbe Muster wie
+`lead-form.css` und `testimonials.css`.
+
+**Die Extraktion ist beweisbar folgenlos:** die Startseite A/B verglichen,
+**611 / 672 / 788 Elemente** bei 390 / 768 / 1440 px, 21 berechnete Eigenschaften
+je Element — **null Abweichungen**.
+
+Auf `/einsatzgebiete/` hat die Einfügung genau **eine** Auswirkung, und die ist
+richtig: `eg-cities` verliert seine Seam-Reservierung (`padding-top` 296 → 96),
+weil jetzt die Kartensektion hinter dem Seam steht und die Kachelbahn reserviert
+(gemessen 216 px bei 390, 296 bei 1440, H2 exakt an der Kante, weiter 4 Seams).
+Alle übrigen Sektionen unverändert.
+
+⚠️ **Zwei Karten auf einer Seite ist Absicht:** die Silhouette im Hero ist
+gezeichnet, animiert und `aria-hidden` — ein Plakat. Die Kachelkarte darunter ist
+das Werkzeug.
+
+⚠️ Überschrift und Lede sind **wörtlich** die der Startseite, nicht neu
+geschrieben.
