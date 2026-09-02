@@ -3071,3 +3071,135 @@ Korrektur an `objektschutz` war da, aber `/assets/` wird einen ganzen Tag gecach
 lässt sich nicht wiederherstellen — es wäre ein Beschnitt) oder alle zehn **rund**
 (dann genügt ein CSS-Radius, der die eingebackene Rundung sauber überdeckt, und
 `objektschutz` zieht mit). Zwei Zeilen Arbeit gegen zehn neue Bilddateien.
+
+---
+
+## N18 — Favicon: nicht mehr geraten, sondern das Original ausgemessen
+
+**Gemeldet** dreimal, zuletzt 02.09.2026 mit dem Favicon der Originalseite als
+Vorgabe: „der schwung / die fahne ist immernoch abgeschnitten — anbei wie es
+aktuell in der originalen webseite ist, bitte genau so umsetzen."
+
+**Statt weiter zu interpretieren, das Original heruntergeladen und gezählt**
+(`frankonia-sicherheit.de/wp-content/uploads/fbrfg/`):
+
+| | Original 96 px | jetzt bei uns |
+|---|---|---|
+| transparent | 83,5 % | 88 % |
+| Weiß | **0 %** | **0 %** |
+| Tinte | 88 × 54 | 87 × 52 |
+| Anteil der Breite | 91,7 % | 90,6 % |
+| Ränder l/r/o/u | 3/5/21/21 | 4/5/22/22 |
+
+⚠️⚠️ **Das kehrt zwei Entscheidungen um, und beide waren meine Auslegung deiner
+Worte, nicht deine Vorgabe:** der weiße **Kreis** („runder weißer kreis mit logo
+drin") und die Beschränkung auf die **Laterne**, mit der ich das Abschneiden
+umgehen wollte. Genau dieses Weglassen des Schwungs war der Fehler, den du
+dreimal gemeldet hast.
+
+⚠️ **Die App-Icons behalten ausdrücklich einen deckenden Grund.** Ein
+transparentes Symbol wird auf einem iOS-Startbildschirm zur schwarzen Kachel.
+Das Original macht diesen Fehler; wir übernehmen ihn nicht.
+
+---
+
+## N19 — Turnstile: warum ich es fälschlich als behoben gemeldet habe
+
+**Gemeldet** dreimal, zuletzt sehr deutlich: „cloudflare geht auch noch zur
+seite raus … zu behaupten, dass du es gelöst hast und dann ist es nicht gelöst
+geht nicht!!!! sowas musst du immer prüfen."
+
+**Berechtigt, und der Grund ist eine Grenze meiner Prüfumgebung:
+Turnstile lädt im Headless-Chrome nicht.** Live gemessen auf vier Seiten und
+drei Breiten: der Container ist da (262–364 px), aber **`iframe: 0`**. Ich
+konnte die tatsächliche Breite des Widgets also **nie** messen — jede Regel
+dazu war eine Rechnung ohne Kontrolle.
+
+**Deshalb jetzt keine weitere Vorab-Regel, sondern eine Nachkontrolle im
+Browser:** nach dem Rendern wird die Breite des von Cloudflare eingesetzten
+iframe gegen den Container gemessen; ragt es hinaus und ist es nicht schon
+`compact`, wird das Widget entfernt und als `compact` neu gerendert.
+
+**Verifiziert mit einem untergeschobenen, absichtlich zu breiten Widget:**
+
+| Breite | Ablauf | Ergebnis |
+|---|---|---|
+| 430 px | `render flexible` → `remove` → `render compact` | 130 in 332, kein Überhang |
+| 1440 px | `render flexible` | 480 in 517, **Wache greift nicht ein** |
+
+⚠️ Kein Neurendern, wenn schon ein Token da ist — das würde dich aus dem
+Formular werfen. Die Prüfkette ist endlich (rund 3 s).
+
+⚠️ **`overflow: hidden` wäre die falsche Lösung**: das Widget ist ein
+Bedienelement, und ein abgeschnittenes Bedienelement ist schlimmer als ein
+überbreites.
+
+---
+
+## N20 — `/#einsatzgebiete` führte auf den Seitenanfang
+
+Der Anker existierte nicht. Geprüft: die Startseite hat `pain-hook`,
+`our-system`, `uniforms` und `sicherheitsanalyse` — **kein
+`einsatzgebiete`**. Der Link aus der Prüfliste landete deshalb oben auf der
+Startseite. Die interaktive Kartensektion trägt jetzt
+`id="einsatzgebiete"`.
+
+---
+
+## N21 — Interventionsdienst trägt den Zusatz „(Raum Bamberg)"
+
+Auf `/leistungen/` in der Karte und im `ItemList`-Eintrag, genau wie der
+Revierdienst.
+
+**Geprüft, dass die Aussage nichts widerspricht** (statt sie zu bestätigen):
+auf den Stadtseiten außer Bamberg erscheinen **beide** Dienste ausschließlich
+im **Nav**, im **Footer** und in der **Auswahlliste des Formulars** — nirgends
+als dort angebotene Leistung.
+
+⚠️ **Ein Randfall bleibt und ist eine Entscheidung, keine Messung:** die
+Auswahlliste des Formulars bietet auf jeder Stadtseite auch
+„Interventionsdienst" und „Revier- & Schließdienst" an. Wer in Würzburg das
+Formular ausfüllt, kann sie also anfragen. Das Formular ist geteilt; eine
+seitenabhängige Liste wäre eine eigene Änderung.
+
+---
+
+## N22 — Zwei Meldungen, die nicht reproduzieren, mit dem Beweis
+
+**Überbreite auf `/einsatzgebiete/` bei 728 px.** Live gemessen bei 700, 728,
+768 und 834 px: **kein Seitenscroll**, `scrollWidth` exakt gleich der
+Fensterbreite. Bei genau 728 × 1191 gerendert liest der Lede vollständig
+(„…in ganz Franken, **mit** / festen Teams vor Ort bei jedem laufenden
+Auftrag."), die Karte liegt vollständig innen. Die einzigen hinausragenden
+Elemente sind das Honeypot-Feld bei `left: -9999` und die Seam-Kacheln, beide
+von ihrem Band geclippt und beide bereits dokumentiert.
+→ Das „‖" rechts im DevTools-Bild ist der **Ziehgriff des DevTools-Panels**;
+das Panel war schmaler als die emulierte Breite. Am Code wurde nichts geändert.
+
+**Die Gesamtkarte ist nur auf der Startseite.** Das ist richtig gemessen — und
+**der Fehler steckt in meiner Prüfliste**, die sie unter beiden Links
+aufführte. Der Bestand:
+
+| Seite | Karte |
+|---|---|
+| `/` | interaktive Leaflet-Karte + 16 Ortsschaltflächen |
+| `/einsatzgebiete/` | **gezeichnete Franken-Karte mit allen 15 Orten**, animiert, ohne Klick |
+| die 26 Stadt-/Kombiseiten | der Umriss der jeweiligen Stadt |
+| `/kontakt/` | Leaflet-Karte des Sitzes |
+
+Die Prüfliste ist korrigiert. **Offen als Wunsch, nicht als Fehler:** ob die
+interaktive Karte zusätzlich auf `/einsatzgebiete/` soll — dort liegt bereits
+eine vollständige Karte, zwei Karten derselben Sache auf einer Seite wären
+eine bewusste Entscheidung.
+
+---
+
+## N23 — Offen: `/jobs/` hat kein Turnstile
+
+Beim Messen der Widgets aufgefallen und **nicht eigenmächtig geändert**:
+`dist/jobs/index.html` enthält **0** Turnstile-Vorkommen, während alle 44
+anderen Formularseiten eines haben. Das Bewerbungsformular läuft also ohne
+Bot-Schutz.
+
+Ob das so gewollt ist (eine Bewerbung ist kein Lead) oder ein Versäumnis, ist
+eine Entscheidung — technisch wäre es dasselbe Feld wie überall.
