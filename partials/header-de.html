@@ -14,7 +14,29 @@
       <span class="visually-hidden">Menü öffnen</span>
     </button>
 
-    <nav id="primary-nav" class="site-nav" aria-label="Hauptnavigation">
+    <!-- ⚠⚠ data-lenis-prevent IST DER GRUND, WARUM SICH DIESE SCHUBLADE MIT DEM
+         FINGER SCROLLEN LÄSST. 02.09.2026, nachdem der Kunde zweimal gemeldet
+         hat, dass er im Handymenü nicht bis Kontakt scrollen kann.
+
+         Beim Öffnen ruft initNavToggle() lenis.stop(), damit die Seite hinter
+         dem Menü stillsteht. Im eingebundenen Lenis steht aber:
+           if (this.isStopped || this.isLocked) { preventDefault(); return }
+         Das trifft JEDE Wischgeste, die am Fenster ankommt — und ein
+         preventDefault auf touchmove bricht das native Scrollen der ganzen
+         Geste ab, auch das des inneren Elements mit overflow-y: auto.
+
+         Deshalb war die Schubladeeine Sackgasse: programmatisch scrollte sie
+         (gemessen: Inhalt 1474 px im 844-px-Kasten, 630 px Scrollweg), mit dem
+         Finger nicht. Genau die Signatur einer abgefangenen Geste — und der
+         Grund, warum meine Messung grün war und der Kunde recht hatte.
+
+         Lenis prüft dieses Attribut auf dem gesamten Ereignispfad und steigt
+         AUS, BEVOR es preventDefault ruft. Damit bleibt die Seite gestoppt und
+         das Menü scrollt nativ.
+         ⚠ NICHT ENTFERNEN, auch nicht beim Aufräumen — ohne dieses Attribut
+         ist das Menü auf jedem Touchgerät unbenutzbar, während es am Rechner
+         mit Maus und Tastatur einwandfrei aussieht. -->
+    <nav id="primary-nav" class="site-nav" aria-label="Hauptnavigation" data-lenis-prevent>
       <!-- The panel's OWN close control (client 2026-08-14: "there is no way to
            close the expanded tablet menu"). The hamburger does toggle, and it is
            painted over the panel on purpose — but it lives OUTSIDE this element,

@@ -1090,6 +1090,40 @@ function versioniereAssets() {
      stempeln, dann die Signaturen bilden: sonst haette coverage-lazy.js eine
      Signatur, die durch den eigenen Stempel sofort veraltet.
      (Kein Zirkel: coverage-map.js verweist nicht zurueck.) */
+
+  /* ⚠️⚠️ BILDER UND ICONS AUCH — nachgezogen am 02.09.2026, und das war der
+     Rest desselben Fehlers. /assets/ traegt max-age=86400, also EINEN GANZEN
+     TAG. Ein neu ausgegebenes Bild erreichte den Kunden deshalb bis zu 24
+     Stunden nicht — genau der Grund, warum er die schwarzen Ecken der
+     Dienstleistungsbilder "mehrfach korrigieren lassen" musste und sie immer
+     noch sah. Ein Bild ohne Version im Namen ist einen Tag lang unerreichbar.
+     ⚠️ /assets/js/vendor/ bleibt draussen: feste Bibliotheksversionen, deren
+     Adressen in Zeichenketten stehen und zur Laufzeit nachgeladen werden.
+     /assets/data/ ebenso — die Karte holt es selbst per fetch. */
+  const assets = [...sammle("assets/images"), ...sammle("assets/icons"), ...sammle("assets/fonts")];
+  const assetSig = new Map(assets.map((d) => [d.url, signatur(d.datei)]));
+
+  /* Ein Durchgang je Datei statt einer Ersetzung je Asset — bei mehreren
+     hundert Dateien der Unterschied zwischen Sekundenbruchteilen und Minuten.
+     Deckt Anfuehrungszeichen, srcset (Deskriptor und Komma) und url() im CSS. */
+  const ASSET_MUSTER = /\/assets\/(?:images|icons|fonts)\/[^"'\s,)]+/g;
+  const stempleAssets = (text) =>
+    text.replace(ASSET_MUSTER, (adr) => {
+      const sig = assetSig.get(adr);
+      return sig ? adr + "?v=" + sig : adr;
+    });
+
+  /* ⚠️ ZUERST die Assets in CSS und JS stempeln, DANN diese Dateien signieren:
+     der Stempel aendert ihren Inhalt, also waere eine vorher gebildete
+     Signatur sofort falsch. Schriften stehen in @font-face, Bilder in
+     background-image. */
+  let inCssJs = 0;
+  for (const d of dateien) {
+    const vorher = fs.readFileSync(d.datei, "utf8");
+    const nachher = stempleAssets(vorher);
+    if (nachher !== vorher) { fs.writeFileSync(d.datei, nachher, "utf8"); inCssJs++; }
+  }
+
   const vorlaeufig = new Map(dateien.map((d) => [d.url, signatur(d.datei)]));
   let inDateien = 0;
   for (const d of dateien) {
@@ -1127,11 +1161,15 @@ function versioniereAssets() {
         if (teile.length > 1) { neu = teile.join(anf + url + "?v=" + sig + '"'); inSeiten += teile.length - 1; }
       }
     }
+    /* Bilder, Icons und Schriften — in src, srcset, href und in den
+       Vorschaubild-Angaben gleichermassen. */
+    neu = stempleAssets(neu);
     if (neu !== alt) fs.writeFileSync(s, neu, "utf8");
   }
 
   console.log(
-    "build: " + inSeiten + " Asset-Adressen in " + seiten.length + " Seiten signiert, " +
-    inDateien + " in JS-Dateien (" + endgueltig.size + " Dateien)"
+    "build: signiert — " + endgueltig.size + " CSS/JS und " + assetSig.size +
+    " Assets; " + inSeiten + " CSS/JS-Adressen in " + seiten.length + " Seiten, " +
+    inDateien + " in JS-Dateien, " + inCssJs + " mit Asset-Stempeln"
   );
 }
