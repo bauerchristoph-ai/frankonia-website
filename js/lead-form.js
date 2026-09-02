@@ -144,8 +144,21 @@
     } catch (e) {
       breite = 0;
     }
-    if (!breite) breite = window.innerWidth || 0;
-    return breite < 300 ? "compact" : "flexible";
+    /* ⚠️⚠️ OHNE MESSWERT WIRD "compact" GEWAEHLT, NICHT GERATEN — gemeldet am
+       01.09.2026 mit einem Screenshot, auf dem das Widget rechts aus der weissen
+       Karte ragte. Hier stand vorher `breite = window.innerWidth`, und das ist
+       genau der falsche Rueckfall: die Fensterbreite ist fast immer >= 300, also
+       fiel die Entscheidung auf "flexible" — und "flexible" hat ein MINIMUM von
+       300 px. In einer Karte mit ~250 px Innenraum ragt es damit heraus.
+       Der Rueckfall muss die Groesse nehmen, die immer passt.
+
+       ⚠️ Und die Schwelle liegt bei 310, nicht bei 300: gemessen betraegt der
+       Innenraum je Seite 222 bis 364 px (320er bis 430er Telefon), und bei genau
+       300 px Container haette das 300 px breite Widget null Spielraum fuer seinen
+       eigenen Rahmen. Zehn Pixel Reserve kosten nichts — unterhalb ist compact
+       ohnehin die richtige Wahl. */
+    if (!breite) return "compact";
+    return breite < 310 ? "compact" : "flexible";
   }
 
   function turnstileRendern(form) {

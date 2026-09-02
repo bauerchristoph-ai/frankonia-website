@@ -294,7 +294,41 @@
          strip's scroll width. Debounced because measure() writes a height, which
          ScrollTrigger.refresh() then reads. */
       var resizeTimer = null;
+
+      /* ═══ EIN RESIZE, DER NUR DIE HOEHE AENDERT, WIRD IGNORIERT — 01.09.2026 ══
+         Kunde: "wenn ich ganz runterscrolle zu den FAQs im Mobil und dann
+         weiterscrollen moechte, springt's wieder ploetzlich nach oben. Das ist
+         total komisches Verhalten."
+
+         ⚠️⚠️ DIE URSACHE STEHT ZWEI ZEILEN WEITER OBEN: measure() setzt die
+         Track-Hoehe auf `window.innerHeight + maxScroll`. Auf iOS faehrt beim
+         Scrollen die Adressleiste ein, das feuert ein `resize` mit einer um
+         60-100 px groesseren innerHeight — und der Handler machte den Track
+         entsprechend hoeher. Der Track liegt WEIT OBERHALB der FAQs, also
+         verschiebt sich alles darunter um diesen Betrag, waehrend scrollY gleich
+         bleibt. Der Inhalt wandert unter dem Finger weg: genau der gemeldete
+         Sprung. Beim Wiederauftauchen der Leiste passiert es zurueck.
+
+         ⚠️ DIE BREITE IST DAS UNTERSCHEIDUNGSMERKMAL, und zwar ein genaues: eine
+         Drehung oder ein echtes Fenster-Resize aendert die Breite, das Ein- und
+         Ausfahren einer Browserleiste nie. Wird nur die Hoehe anders, ist nichts
+         neu zu messen — maxScroll haengt an der BREITE des Streifens, und die
+         Track-Hoehe soll bewusst die des ersten Aufbaus behalten.
+
+         ⚠️ Nur auf Zeigegeraeten mit grober Auflösung (Finger). Am Schreibtisch
+         zieht man das Fenster auch mal nur in der Hoehe, und dort gibt es keine
+         Leiste, die sich versteckt — da muss neu gemessen werden.
+         ⚠️ NICHT headless nachweisbar: ohne dynamische Browserleiste gibt es kein
+         reines Hoehen-Resize. Nachgewiesen ist die Ursache (die eine Zeile, die
+         innerHeight in eine Layout-Hoehe schreibt) und dass sie im Projekt genau
+         einmal vorkommt — geprueft ueber alle Dateien in js/. */
+      var nurFinger = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+      var letzteBreite = window.innerWidth;
+
       function onResize() {
+        var breite = window.innerWidth;
+        if (nurFinger && breite === letzteBreite) return;
+        letzteBreite = breite;
         if (resizeTimer) clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function () {
           measure();

@@ -99,7 +99,21 @@ main h2 {
    themselves on 2026-08-04 — if an eyebrow ever comes back to a centred section
    on this template, that rule has to come back with it or it will sit left of
    its own heading.) */
-.service-faq .section__intro {
+/* ⚠️ `.sk-faq` gehört dazu — gemeldet vom Kunden am 01.09.2026 mit einem
+   Screenshot von /sicherheitskonzept/: "die Headline ist nicht mittig sondern
+   links". Gemessen: der Titel stand 73 px links vom Eje, während die Kartenliste
+   unter ihm zentriert war.
+   ⚠️⚠️ ES IST DIESELBE URSACHE WIE BEIM KONTAKTFORMULAR VON HEUTE: eine geteilte
+   Regel zeigt auf eine Klasse, die die Seite nicht ausgibt. /sicherheitskonzept/
+   lädt dieses Chassis (vier Verweise), führt seinen FAQ-Abschnitt aber als
+   `.sk-faq`. Deshalb wird der Selektor ERWEITERT und nicht in
+   page-sicherheitskonzept.css kopiert — eine Entscheidung, an zwei Stellen
+   geschrieben, driftet auseinander.
+   Nachgemessen über alle 70 Seiten: das war der einzige FAQ-Abschnitt mit
+   zentrierter Liste und nicht zentriertem Titel. Die sieben Treffer in den
+   Ratgeber-Artikeln sind Kapitelüberschriften und stehen absichtlich links. */
+.service-faq .section__intro,
+.sk-faq .section__intro {
   text-align: center;
 }
 
