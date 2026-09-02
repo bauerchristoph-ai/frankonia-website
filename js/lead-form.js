@@ -171,36 +171,36 @@
     var breit = rahmen.getBoundingClientRect().width;
     if (!innen || !breit) { setTimeout(function () { turnstileBreitePruefen(behaelter, v + 1); }, 500); return; }
     if (breit <= innen + 2) return;          /* passt */
-    if (behaelter.getAttribute("data-groesse") === "compact") {
-      /* ⚠️⚠️ DRITTE STUFE, DAMIT ES NICHT MEHR AN EINER ANNAHME HÄNGT.
-         "compact" ist 130 px breit und passt in jeden hier gemessenen Container
-         (222 px im schmalsten Fall). Wenn es TROTZDEM hinausragt, stimmt eine
-         meiner Annahmen über das fremde Widget nicht — und dann darf das nicht
-         der Besucher ausbaden. Also wird es maßstäblich verkleinert, bis es
-         passt: das ist die eine Maßnahme, die unabhängig davon greift, welche
-         Mindestbreite Cloudflare intern ansetzt.
-         Der Kunde hat die Überbreite dreimal gemeldet und dazu gesagt: "entweder
-         du schaffst es jetzt oder du lässt es". Das hier schafft es, ohne das
-         Bedienelement abzuschneiden.
-         ⚠️ transform-origin links, sonst wandert das Widget aus seinem Platz.
-         ⚠️ Die Höhe muss mitschrumpfen, sonst bleibt unter dem verkleinerten
-         Widget der alte Platz stehen — ein Transform ändert das Layout nicht. */
-      var faktor = innen / breit;
-      if (faktor < 0.999) {
-        var kind = behaelter.firstElementChild;
-        if (kind) {
-          kind.style.transformOrigin = "left center";
-          kind.style.transform = "scale(" + faktor.toFixed(4) + ")";
-          var hoch = kind.getBoundingClientRect().height;
-          behaelter.style.height = Math.ceil(hoch) + "px";
-          if (window.console) {
-            console.info("Turnstile: compact ragte noch " + Math.round(breit - innen) +
-              " px hinaus, auf " + Math.round(faktor * 100) + " % skaliert.");
-          }
-        }
+    var faktor = innen / breit;
+
+    /* ⚠⚠ ERST SKALIEREN, DANN VERKLEINERN — die Reihenfolge ist der Kern der
+       Korrektur vom 02.09.2026. Vorher wurde bei jedem Überhang sofort auf
+       "compact" umgestellt, und weil "flexible" ein Minimum von 300 px hat,
+       ragte es in jeder Telefonkarte um ein paar Pixel heraus — also wurde
+       immer verkleinert. Der Kunde: "jetzt ist es immer so eng."
+       Ein Faktor ab 0,85 ist nicht zu sehen (292/300 = 0,97, 262/300 = 0,87),
+       also wird in diesem Bereich nur eingepasst und die breite Fassung
+       behalten. Erst darunter ist "compact" die bessere Wahl. */
+    function einpassen() {
+      if (faktor >= 0.999) return;
+      var kind = behaelter.firstElementChild;
+      if (!kind) return;
+      kind.style.transformOrigin = "left center";
+      kind.style.transform = "scale(" + faktor.toFixed(4) + ")";
+      behaelter.style.height = Math.ceil(kind.getBoundingClientRect().height) + "px";
+      if (window.console) {
+        console.info("Turnstile: " + Math.round(breit) + " px in " + Math.round(innen) +
+          " px — auf " + Math.round(faktor * 100) + " % eingepasst.");
       }
-      return;
     }
+
+    if (faktor >= 0.85) { einpassen(); return; }
+    /* Unter 0,85: "compact" ist die bessere Wahl als ein stark verkleinertes
+       breites Feld. Ragt danach immer noch etwas hinaus — dann stimmt eine
+       Annahme über das fremde Widget nicht —, wird eingepasst statt
+       abgeschnitten. Ein abgeschnittenes Bedienelement ist schlimmer als ein
+       kleines. */
+    if (behaelter.getAttribute("data-groesse") === "compact") { einpassen(); return; }
     var id = behaelter.getAttribute("data-widget-id");
     try {
       if (id) window.turnstile.remove(id);
@@ -244,8 +244,31 @@
        300 px Container haette das 300 px breite Widget null Spielraum fuer seinen
        eigenen Rahmen. Zehn Pixel Reserve kosten nichts — unterhalb ist compact
        ohnehin die richtige Wahl. */
+    /* ⚠️⚠️ SCHWELLE 240, NICHT 310 — korrigiert am 02.09.2026, nachdem der Kunde
+       das enge Feld fotografiert hat: "jetzt ist es immer so eng. Das darf nur,
+       wenn der Screen kleiner als 360 Pixel ist."
+
+       Er hat recht, und die alte Schwelle war der Fehler. Gemessene Innenbreite
+       des Containers je Bildschirmbreite:
+         320 px -> 222    360 px -> 262    390 px -> 292
+         430 px -> 332   1440 px -> 517
+       Mit 310 fiel die Entscheidung also bei 360 UND 390 auf "compact" — und
+       damit auf jedem gängigen Telefon. Genau das war zu sehen.
+
+       DIE 240 SIND AUS DER SKALIERUNG GERECHNET, nicht geraten. "flexible" hat
+       ein Minimum von 300 px, ragt in einem schmaleren Container also heraus und
+       wird von der Nachkontrolle unten maßstäblich eingepasst:
+         292 -> Faktor 0,97   262 -> 0,87   222 -> 0,74
+       Bis etwa 0,85 ist das nicht zu sehen, darunter wird die Schrift im Feld
+       merklich klein. 240/300 = 0,80 ist die Grenze, ab der "compact" die
+       bessere Wahl ist — und 240 Container entspricht rund 340 px Bildschirm,
+       also genau der Grenze, die der Kunde genannt hat.
+
+       ⚠️ Ohne Messwert bleibt es bei "compact": die Fensterbreite als Rückfall
+       war der Fehler vom 01.09. (fast immer >= 300, also immer "flexible", und
+       dann ragt es in einer schmalen Karte heraus). */
     if (!breite) return "compact";
-    return breite < 310 ? "compact" : "flexible";
+    return breite < 240 ? "compact" : "flexible";
   }
 
   function turnstileRendern(form) {

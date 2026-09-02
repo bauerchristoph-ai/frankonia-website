@@ -3338,3 +3338,92 @@ das Werkzeug.
 
 ⚠️ Überschrift und Lede sind **wörtlich** die der Startseite, nicht neu
 geschrieben.
+
+---
+
+## N29 — Turnstile: die Schwelle war der Fehler, nicht das Widget
+
+**Gemeldet** 02.09.2026 mit Foto des engen Felds: „jetzt ist es immer so eng.
+Das darf nur, wenn der Screen kleiner als 360 Pixel ist."
+
+**Berechtigt.** Meine Schwelle lag bei **310 px Containerbreite** — gemessen ist
+der Innenraum der Formularkarte aber:
+
+| Bildschirm | 320 | 360 | 390 | 430 | 1440 |
+|---|---|---|---|---|---|
+| Container | 222 | 262 | 292 | 332 | 517 |
+
+Bei 310 fiel die Entscheidung also bei **360 und 390** auf `compact` — auf jedem
+gängigen Telefon. Genau das war zu sehen.
+
+**Zwei Änderungen, beide gerechnet, nicht geraten:**
+1. **Schwelle 240 statt 310.** „flexible" hat 300 px Minimum und wird von der
+   Nachkontrolle eingepasst: 292 → Faktor 0,97, 262 → 0,87, 222 → 0,74. Bis etwa
+   0,85 ist das nicht zu sehen. 240/300 = 0,80 ist die Grenze, und 240 Container
+   entspricht rund **340 px Bildschirm** — genau die Grenze, die der Kunde
+   genannt hat.
+2. **Erst einpassen, dann verkleinern.** Vorher wurde bei jedem Überhang sofort
+   auf `compact` gewechselt; weil „flexible" immer ein paar Pixel übersteht, hieß
+   das: immer eng. Jetzt wird bis Faktor 0,85 nur eingepasst und die breite
+   Fassung behalten.
+
+**Gemessen mit untergeschobenem Widget** (flexible = 300 px, compact = 150 px, wie
+Cloudflare dokumentiert):
+
+| Bildschirm | Container | Kette | Skalierung | Überhang |
+|---|---|---|---|---|
+| 320 | 222 | `compact` | — | **0** |
+| 340 | 242 | `flexible` → `remove` → `compact` | — | **0** |
+| **360** | 262 | `flexible` | 0,87 | **0** |
+| **390** | 292 | `flexible` | 0,97 | **0** |
+| 430 | 332 | `flexible` | — | **0** |
+| 1440 | 517 | `flexible` | — | **0** |
+
+⚠️ Bei 768 px ist der Container nur **258 px** (schmaler als bei 430) — das ist
+die Kartenbreite in dieser Bandbreite von `/angebot/`, nicht ein Fehler der
+Kette; dort wird auf 0,86 eingepasst. Wenn dieser Wert je störend auffällt, ist
+die Karte die Stelle, nicht Turnstile.
+
+---
+
+## N30 — Die Karte steht jetzt UNTER der Städteliste
+
+Kundenwunsch: „die klickbare Karte bitte unter ‚Sicherheitsdienst in Ihrer Stadt
+in Franken' da drunter machen, nicht oben drüber." Reihenfolge jetzt: Hero →
+Seam → **Städteliste** → **Karte** → Seam → Warum.
+
+✅ **Dabei ein Folgefehler gefunden und behoben, der ohne Messung geblieben
+wäre:** `.coverage` trug die Reservierung der Kachelbahn **fest eingebaut**
+(`padding-top: calc(var(--space-9) + 200px)`, „keep in sync"). Auf der Startseite
+richtig, weil dort ein Seam davorsteht — an der neuen Stelle hinter einer hellen
+Sektion waren es **296 px Leerraum** zwischen Liste und Karte. Die Reservierung
+folgt jetzt dem Seam (`.pixel-seam + .coverage`), nicht der Sektion.
+Gemessen: Karte 96 px, `eg-cities` behält 216/296, weiter 4 Seams, kein
+Seitenscroll, ein `<h1>`. Startseite unverändert 216/296.
+
+---
+
+## N31 — Die Lehren stehen jetzt im Repository, nicht nur im Protokoll
+
+Auf Wunsch („die ganzen Learnings ins Repository pushen und dort das System
+optimieren, dass die Learnings eingebettet sind"):
+
+- **[CLAUDE.md](../CLAUDE.md) hat einen neuen Abschnitt ganz oben**, vor der
+  Chronologie: *„Lehren aus dem Abnahmedurchgang — zuerst lesen"*. Zehn Punkte,
+  jeder mit der Zahl, die ihn belegt: der Cache-Versatz, Spezifität bei
+  Gleichstand, `overflow-y` hebt `overflow-x`, Lenis im gestoppten Zustand,
+  Safaris SVG-Maße, `min-height` gegen `max-height`, der Entwicklungsserver mit
+  seiner Startseite, fremde Skripte hinter der Zustimmung, Selbstkorrektur statt
+  Annahme, und ein Effekt, der als fehlender Inhalt gelesen wird.
+- **Zwei neue Bautore**, damit zwei dieser Lehren nicht mehr von Aufmerksamkeit
+  abhängen: *SVG mit beiden Achsen auto tragen width und height* und
+  *Signaturen an allen eigenen Adressen*.
+
+⚠️⚠️ **Und eine Lehre über Prüfungen selbst, teuer und frisch:** die erste
+Fassung des Signaturen-Tors hat **nichts geprüft**. Ihr Muster verlangte, dass
+die Adresse auf `.css` endet — eine signierte endet auf `?v=…`. Das Tor war grün,
+ohne je etwas zu finden. Aufgefallen allein durch die **Gegenprobe**: eine
+Signatur von Hand kaputt machen und sehen, ob der Bau fällt. Er fiel nicht.
+Nach der Korrektur: `FEHLER … /css/app.css?X=… — Bau abgebrochen`, und ohne
+Manipulation wieder grün.
+**Jede neue Prüfung braucht diese Gegenprobe, sonst ist sie eine Behauptung.**

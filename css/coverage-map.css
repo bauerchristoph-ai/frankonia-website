@@ -47,14 +47,30 @@
   --color-link-hover: var(--color-logo-black);
   background-color: var(--color-white);
   color: var(--color-gray);
-  /* Matches .pixel-seam__band (200px / 120px mobile) — keep in sync. */
+  /* ⚠⚠ DIE BANDBREITE WIRD NUR RESERVIERT, WENN WIRKLICH EIN SEAM DAVORSTEHT.
+     Vorher stand hier fest `calc(var(--space-9) + 200px)` mit dem Hinweis
+     "Matches .pixel-seam__band — keep in sync". Auf der Startseite ist das
+     richtig, weil dort ein Seam vor der Sektion liegt. Auf /einsatzgebiete/
+     steht sie seit dem 02.09.2026 UNTER der Städteliste, also hinter einer
+     hellen Sektion ohne Seam — und dort waren es dann 296 px Leerraum zwischen
+     Liste und Karte (gemessen).
+     Deshalb der Nachbar-Selektor unten: die Reservierung folgt dem Seam, nicht
+     der Sektion. Das ist dasselbe Muster, das page-service.css mit
+     `.pixel-seam + .section` schon benutzt — die Startseite lädt diese Datei
+     aber nicht, deshalb braucht es die Regel hier. */
+  padding-top: var(--space-9);
+}
+
+/* Reserviert die Kachelbahn — 200px, wie .pixel-seam__band. Nur wenn ein Seam
+   unmittelbar davorsteht (siehe die Begründung im Block darüber). */
+.pixel-seam + .coverage {
   padding-top: calc(var(--space-9) + 200px);
 }
 
 
 @media (max-width: 767.98px) {
 
-  .coverage {
+  .pixel-seam + .coverage {
     padding-top: calc(var(--space-9) + 120px);
   }
 }

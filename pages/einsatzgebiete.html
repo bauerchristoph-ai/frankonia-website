@@ -315,60 +315,6 @@
 
     <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
 
-    <!-- ═══ DIE KLICKBARE KARTE, AUCH HIER — 02.09.2026 ══════════════════════
-         Kunde: "auf der Einsatzgebiete Seite gibt es keine klickbare Karte, nur
-         diese SVG-Animation." Richtig gemessen — sie stand nur auf der
-         Startseite, und die Prüfliste führte sie irrtümlich unter beiden Links.
-
-         ⚠️ ZWEI KARTEN AUF EINER SEITE, UND DAS IST ABSICHT: die Silhouette im
-         Hero ist gezeichnet, animiert und `aria-hidden` — ein Plakat. Diese hier
-         ist das Werkzeug: eine Stadt anklicken zoomt auf ihren Umriss. Sie sehen
-         verschieden genug aus (Strichzeichnung gegen dunkle Kachelkarte), dass
-         sie nicht als Wiederholung lesen.
-
-         ⚠️ KEIN eigener Seam davor oder danach. Davor liegt der bestehende Seam
-         hinter dem dunklen Hero, und dahinter folgt `eg-cities`, das ebenfalls
-         hell ist — zwei helle Sektionen bekommen keinen Seam (page-conventions
-         §9.2: weiße Kacheln auf Weiß sind nichts).
-
-         ⚠️ Überschrift und Lede sind WÖRTLICH die der Startseite, nicht neu
-         geschrieben: freigegebener Text schlägt erfundenen, auch wenn er dadurch
-         auf zwei Seiten steht.
-
-         ⚠️ id="karte", nicht "einsatzgebiete" — der Anker heißt auf der
-         Startseite so, und auf DIESER Seite wäre er tautologisch. -->
-    <section class="section coverage" id="karte" data-nav-theme="light">
-      <div class="container">
-        <div class="section__intro coverage__intro">
-          <h2>Von Bamberg aus in Franken und ganz Bayern im Einsatz</h2>
-          <p class="coverage__lede" data-reveal data-reveal-delay>Im Umkreis von rund 100 Kilometern um Bamberg für Sie im Einsatz, in Franken und ganz Bayern — überall mit demselben Standard, zertifizierten Prozessen und digitalen Nachweisen.</p>
-        </div>
-
-        <div class="coverage__map-wrap" data-reveal>
-          <div id="coverage-map" class="coverage__map" data-carto-key="{{env.cartoBasemapKey}}"></div>
-          <div class="coverage__overlay">
-            <p class="coverage__overlay-label">Einsatzgebiet</p>
-            <p class="coverage__overlay-city" data-coverage-overlay-city>Alle Städte</p>
-          </div>
-        </div>
-
-        <div class="coverage__rows" data-coverage-rows data-coverage-label="Einsatzgebiet" data-reveal>
-          <!-- include: coverage-chips -->
-          <ul class="coverage__list">
-            <!-- coverage: chips row="2" -->
-          </ul>
-
-          <!-- Die fünf ohne eigene Seite sind <button>, nicht <a> — sie fahren
-               die Karte auf ihren Umriss, verlinken aber nichts. Begründung und
-               Geschichte stehen an derselben Stelle in pages/index.html. -->
-          <p class="coverage__mentions" id="coverage-mentions-label">Außerdem im Einsatz in:</p>
-          <ul class="coverage__list" aria-labelledby="coverage-mentions-label">
-            <!-- coverage: mentions -->
-          </ul>
-        </div>
-      </div>
-    </section>
-
 
     <!-- ============ 2. STÄDTE-KARTEN (Kern des Hubs) ============ -->
     <!-- REBUILT 2026-08-10 (client): "el mapa se verá en la hero, y después
@@ -498,6 +444,66 @@
         </div>
 
         <p class="eg-note">Ihr Standort ist nicht dabei? Unser Einsatzgebiet umfasst ganz Franken und angrenzende Räume Bayerns, auch Hof, Kulmbach, Lichtenfels, Kronach, Kitzingen, Haßfurt, Schwabach oder Schwandorf. Rufen Sie an, wir sagen Ihnen ehrlich, ob wir Ihren Standort zuverlässig bedienen können: <a href="{{phone.href}}">{{phone.display}}</a></p>
+      </div>
+    </section>
+
+    <!-- ═══ DIE KLICKBARE KARTE, AUCH HIER — 02.09.2026 ══════════════════════
+         Kunde: "auf der Einsatzgebiete Seite gibt es keine klickbare Karte, nur
+         diese SVG-Animation." Richtig gemessen — sie stand nur auf der
+         Startseite, und die Prüfliste führte sie irrtümlich unter beiden Links.
+
+         ⚠️ ZWEI KARTEN AUF EINER SEITE, UND DAS IST ABSICHT: die Silhouette im
+         Hero ist gezeichnet, animiert und `aria-hidden` — ein Plakat. Diese hier
+         ist das Werkzeug: eine Stadt anklicken zoomt auf ihren Umriss. Sie sehen
+         verschieden genug aus (Strichzeichnung gegen dunkle Kachelkarte), dass
+         sie nicht als Wiederholung lesen.
+
+         ⚠️ POSITION: UNTER der Städteliste, nicht darüber — Kundenwunsch vom
+         02.09.2026 ("die klickbare Karte bitte unter ‚Sicherheitsdienst in Ihrer
+         Stadt in Franken' da drunter machen, nicht oben drüber"). Liest sich auch
+         besser: erst die Städte als Text und Link, dann dieselben Städte auf der
+         Karte.
+         ⚠️ KEIN eigener Seam davor oder danach. Davor liegt `eg-cities`, das
+         ebenfalls hell ist, dahinter der bestehende Seam vor dem dunklen
+         `eg-why` — zwei helle Sektionen bekommen keinen Seam (page-conventions
+         §9.2: weiße Kacheln auf Weiß sind nichts). Damit wandert die
+         Seam-Reservierung zurück an `eg-cities`, wo sie vorher war.
+
+         ⚠️ Überschrift und Lede sind WÖRTLICH die der Startseite, nicht neu
+         geschrieben: freigegebener Text schlägt erfundenen, auch wenn er dadurch
+         auf zwei Seiten steht.
+
+         ⚠️ id="karte", nicht "einsatzgebiete" — der Anker heißt auf der
+         Startseite so, und auf DIESER Seite wäre er tautologisch. -->
+    <section class="section coverage" id="karte" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro coverage__intro">
+          <h2>Von Bamberg aus in Franken und ganz Bayern im Einsatz</h2>
+          <p class="coverage__lede" data-reveal data-reveal-delay>Im Umkreis von rund 100 Kilometern um Bamberg für Sie im Einsatz, in Franken und ganz Bayern — überall mit demselben Standard, zertifizierten Prozessen und digitalen Nachweisen.</p>
+        </div>
+
+        <div class="coverage__map-wrap" data-reveal>
+          <div id="coverage-map" class="coverage__map" data-carto-key="{{env.cartoBasemapKey}}"></div>
+          <div class="coverage__overlay">
+            <p class="coverage__overlay-label">Einsatzgebiet</p>
+            <p class="coverage__overlay-city" data-coverage-overlay-city>Alle Städte</p>
+          </div>
+        </div>
+
+        <div class="coverage__rows" data-coverage-rows data-coverage-label="Einsatzgebiet" data-reveal>
+          <!-- include: coverage-chips -->
+          <ul class="coverage__list">
+            <!-- coverage: chips row="2" -->
+          </ul>
+
+          <!-- Die fünf ohne eigene Seite sind <button>, nicht <a> — sie fahren
+               die Karte auf ihren Umriss, verlinken aber nichts. Begründung und
+               Geschichte stehen an derselben Stelle in pages/index.html. -->
+          <p class="coverage__mentions" id="coverage-mentions-label">Außerdem im Einsatz in:</p>
+          <ul class="coverage__list" aria-labelledby="coverage-mentions-label">
+            <!-- coverage: mentions -->
+          </ul>
+        </div>
       </div>
     </section>
 

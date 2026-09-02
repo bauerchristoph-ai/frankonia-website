@@ -660,6 +660,64 @@ function torSvgMasse() {
   return befunde;
 }
 
+/* Jede eigene Adresse in den ausgelieferten Seiten muss eine Inhaltssignatur
+ * tragen.
+ *
+ * ⚠️⚠️ WARUM DIESES TOR EXISTIERT — es ist der teuerste Fehler des
+ * Abnahmedurchgangs, siehe Lehre 1 in CLAUDE.md. /css/ und /js/ laufen mit
+ * max-age=3600, /assets/ mit 86400. Ohne Version im Dateinamen erreichte eine
+ * Korrektur den Kunden bis zu einer Stunde (Bilder: bis zu einem Tag) nicht —
+ * er lud neu und sah dieselben Fehler, die hier gemessen behoben waren.
+ *
+ * Fällt build.js' Signaturschritt je aus (oder wird eine Adresse per Hand ohne
+ * ?v= eingetragen), kommt der Fehler in genau derselben Gestalt zurück und ist
+ * genauso schwer zu erkennen. Deshalb ein Tor und keine Notiz.
+ *
+ * ⚠️ /assets/js/vendor/ und /assets/data/ sind ausgenommen: feste
+ * Bibliotheksversionen, deren Adressen in Zeichenketten stehen und zur Laufzeit
+ * nachgeladen werden, und ein fetch-Ziel.
+ */
+function torSignaturen() {
+  const befunde = [];
+  /* ⚠️ KEIN Dateiendungs-Anker am Ende: eine signierte Adresse endet auf
+     "?v=abcd1234", nicht auf ".css". Die erste Fassung dieses Musters verlangte
+     genau das und hat deshalb NICHTS gefunden — das Tor war grün, ohne zu
+     prüfen. Aufgefallen allein durch die Gegenprobe: eine Signatur von Hand
+     kaputt machen und sehen, ob das Tor fällt. Jede neue Prüfung braucht diese
+     Probe, sonst ist sie eine Behauptung. */
+  const MUSTER = /(?:href|src)="((?:\/(?:css|js)|\/assets\/(?:images|icons|fonts))\/[^"]+)"/g;
+  const AUSNAHME = /^\/assets\/js\/vendor\//;
+  for (const f of seiten()) {
+    const html = fs.readFileSync(f.datei, "utf8");
+    const ohne = new Set();
+    for (const m of html.matchAll(MUSTER)) {
+      const url = m[1];
+      if (AUSNAHME.test(url)) continue;
+      if (url.indexOf("?v=") < 0) ohne.add(url);
+    }
+    if (ohne.size) {
+      befunde.push(f.url + ": " + ohne.size + " Adresse(n) ohne ?v= — " +
+        [...ohne].slice(0, 3).join(", ") + (ohne.size > 3 ? " …" : ""));
+    }
+  }
+  /* Und in srcset, wo die Adresse von einem Deskriptor gefolgt wird. */
+  const SRCSET = /srcset="([^"]+)"/g;
+  for (const f of seiten()) {
+    const html = fs.readFileSync(f.datei, "utf8");
+    let fehlt = 0;
+    for (const m of html.matchAll(SRCSET)) {
+      for (const teil of m[1].split(",")) {
+        const url = teil.trim().split(/\s+/)[0];
+        if (!url || url.indexOf("/assets/") !== 0) continue;
+        if (AUSNAHME.test(url)) continue;
+        if (url.indexOf("?v=") < 0) fehlt++;
+      }
+    }
+    if (fehlt) befunde.push(f.url + ": " + fehlt + " srcset-Adresse(n) ohne ?v=");
+  }
+  return befunde;
+}
+
 const TORE = [
   ["Radien am Behaelter und aus Token (Aufgabe 18)", torRadien],
   ["CTA-Varianten unter der Obergrenze (Aufgabe 19)", torCtaVarianten],
@@ -674,6 +732,7 @@ const TORE = [
   ["Kombiseiten aus beiden Richtungen verlinkt (Aufgabe 11)", torKombiVerweise],
   ["Erfolgsseiten je Formulartyp (Aufgabe 12)", torErfolgsseiten],
   ["SVG mit beiden Achsen auto tragen width und height", torSvgMasse],
+  ["Signaturen an allen eigenen Adressen", torSignaturen],
 ];
 
 if (!fs.existsSync(DIST)) {

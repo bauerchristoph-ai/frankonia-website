@@ -56,6 +56,96 @@ its-own-sake showcase either. Performance still matters (targets unchanged,
 see Performance below) — the rule is "use advanced interaction
 strategically and optimize it carefully," not "remove all animation."
 
+## Lehren aus dem Abnahmedurchgang — zuerst lesen
+
+Diese zehn Punkte haben im Durchgang vom 01./02.09.2026 jeweils **mindestens eine
+ganze Korrekturrunde gekostet**, und zwar immer auf dieselbe Weise: eine Messung
+war grün, der Kunde hat denselben Fehler weiter gesehen, und die Ursache lag
+nicht dort, wo gemessen wurde. Sie stehen hier oben, weil sie *vor* der
+Chronologie unten gelesen werden müssen.
+
+**1. Der ausgelieferte Zustand ist nicht der gebaute Zustand.** `/css/` und
+`/js/` liefen mit `max-age=3600`, `/assets/` mit `86400`, und die Dateinamen
+hatten keine Version. Neu geladen wurde die HTML, nicht das Aussehen — bei
+Bildern bis zu 24 Stunden lang. `build.js` hängt jetzt als letzten Bauschritt
+eine Inhaltssignatur an jede eigene Adresse; das Bautor **Signaturen** hält es
+fest. **Nie „behoben" melden, ohne es am gemeldeten Symptom im ausgelieferten
+Zustand geprüft zu haben** — mit frischem Profil messen heißt, eine Stunde in
+der Zukunft zu prüfen.
+
+**2. Bei gleicher Spezifität entscheidet die Dateireihenfolge, und die ist nicht
+die erwartete.** `.system-story--pinned .system-story__stack` (0,2,0) verlor
+gegen `[data-swipe-carousel][data-swipe-tablet]` (0,2,0), weil
+`swipe-carousel.css` später lädt — aber nur im Tablet-Band, weil die
+Telefon-Regel nur (0,1,0) ist. Ergebnis: das Handy war flüssig, das Tablet
+sprunghaft, und der Kommentar an der Regel behauptete das Gegenteil.
+**Vor jeder Regel, die eine andere schlagen soll: die Spezifität BEIDER zählen
+und die Ladereihenfolge in `head-common.html` und in der Seite selbst ansehen.**
+
+**3. `overflow-y: auto` hebt `overflow-x` von `visible` auf `auto`.** Das ist
+Spezifikation, nicht Browserlaune. Ein einziges Pixel Überbreite genügt dann,
+damit iOS die Achse gummiband-artig herausziehen lässt — so ließ sich das
+Handymenü seitlich aus dem Bild schieben. **Wer eine Achse scrollbar macht, muss
+die andere ausdrücklich schließen.**
+
+**4. Lenis verwirft im gestoppten Zustand JEDE Geste.** `if (this.isStopped ||
+this.isLocked) { preventDefault(); return }` — und ein `preventDefault` auf
+`touchmove` bricht das native Scrollen der ganzen Geste ab, auch das eines
+inneren Elements mit `overflow-y: auto`. Deshalb war das Menü programmatisch
+scrollbar und mit dem Finger nicht. **Jede scrollbare Fläche, die während
+`lenis.stop()` bedienbar sein muss, braucht `data-lenis-prevent`.**
+
+**5. Chrome leitet SVG-Maße aus dem `viewBox` ab, Safari nicht.** Ein inline-SVG
+mit `width: auto` UND `height: auto` fällt auf dem iPhone auf null zusammen —
+samt seinem Platz. In Chrome nicht nachstellbar, also kann es nur ein Tor am
+Markup verhindern: **SVG mit beiden Achsen auto tragen `width` und `height`**
+(Bautor gleichen Namens; die Liste der betroffenen Klassen steht dort).
+
+**6. `min-height` gewinnt gegen `max-height`.** Eine `min-height`, die größer
+ist als eine bestehende `max-height`, schaltet diese aus — so wurde eine Bremse
+unwirksam, die dafür sorgte, dass eine ganze Komposition in eine Bildschirmhöhe
+passt. **Eine Höhe, die einer Bühne gehört, gehört nicht dem Element:** der
+Container nimmt den Rest (`flex: 1 1 auto`), das Kind füllt ihn (`height: 100%`,
+`min-height: 0`). Dann kann per Konstruktion nichts abgeschnitten werden, ohne
+nachzupflegende Zahlenwerte.
+
+**7. Der Entwicklungsserver liefert für jeden unbekannten Pfad die Startseite.**
+`scripts/dev-server.js` gab für `/sicherheitsdienst-wuerzburg/` 175 KB und den
+Titel der Startseite statt 65 KB — zwei Messreihen waren dadurch ungültig, eine
+davon hat einen Fehler gemeldet, den es nicht gab. **`location.pathname` reicht
+als Prüfung NICHT** (er ist richtig, während der Inhalt falsch ist): **eine
+Sonde muss Titel oder H1 vergleichen.**
+
+**8. Fremde Skripte hängen hinter der Cookie-Zustimmung.** Alle Sonden hatten den
+Cookiebot-Dialog *entfernt* statt ihn *anzunehmen* — dadurch lud Turnstile nie
+(`window.turnstile` undefiniert, `iframe: 0`), und jede Aussage über seine Breite
+war eine Rechnung ohne Kontrolle. **Zum Messen `#CybotCookiebotDialogBody
+LevelButtonLevelOptinAllowAll` klicken, nicht den Dialog löschen.**
+
+**9. Was sich in dieser Umgebung nicht rendern lässt, braucht eine
+Selbstkorrektur statt einer Annahme.** Für Turnstile prüft der Browser nach dem
+Rendern selbst die Breite und passt ein oder wechselt die Größe. Das greift
+unabhängig davon, was hier messbar ist. **Wenn eine Aussage hier nicht prüfbar
+ist: das sagen, ein Tor setzen oder den Code sich selbst korrigieren lassen —
+nicht „behoben" melden.**
+
+**10. Ein Effekt kann als fehlender Inhalt gelesen werden.** Die drei
+Social-Videos standen ab 1024 px auf einem 3D-Ring; gemessen war die vordere
+Karte 272 px breit und die beiden hinteren je 117 — für den Kunden „das dritte
+Bild ist nicht da". Auf dem Telefon war die Reihe vollständig, deshalb war der
+Befund zweimal nicht zu finden. **Eine Meldung „X fehlt" auch an den Breiten
+prüfen, an denen ein anderer Mechanismus greift**, nicht nur dort, wo man selbst
+zuletzt gearbeitet hat.
+
+⚠️ **Umgebung, immer wieder:** ein Heredoc frisst eine Backslash-Ebene (Regexe
+in Sonden gehen still kaputt — Dateien mit Write/Edit schreiben oder Backslashes
+vermeiden); Git Bash verwandelt ein Argument wie `/angebot/` in einen
+Windows-Pfad (`MSYS_NO_PATHCONV=1`); `grep -P` gibt es hier nicht; und
+`python`/`ffmpeg`/`magick` fehlen — Chrome ist der Rasterisierer.
+
+Das vollständige Protokoll dieses Durchgangs samt Zahlen steht in
+[docs/launch-pruefprotokoll.md](docs/launch-pruefprotokoll.md).
+
 ## Current phase
 
 > **Los valores del sistema visual — paleta, escala tipográfica, espaciado,
