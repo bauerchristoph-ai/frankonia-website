@@ -1025,7 +1025,113 @@ function build() {
     "build: sitemap.xml erzeugt — " + sm.anzahl + " Eintraege, " + sm.uebersprungen + " noindex-Seiten uebersprungen"
   );
 
+  /* ⚠️ ALS LETZTES: signiert Adressen anhand des FERTIGEN Inhalts in dist/.
+     Vor buildCss()/buildJs() gebildet waere die Signatur falsch. */
+  versioniereAssets();
+
   console.log(`build: done — ${count} page(s) compiled, assets copied to dist/.`);
 }
 
 build();
+
+// ---------------------------------------------------------------------------
+// Inhaltssignatur an jeder CSS- und JS-Adresse
+// ---------------------------------------------------------------------------
+/* ⚠️⚠️ WARUM DAS HIER STEHT — DER TEUERSTE FEHLER DIESER GANZEN PRUEFRUNDE.
+ *
+ * vercel.json gibt /css/ und /js/ ein `max-age=3600` mit, aber die Dateinamen
+ * hatten keine Version. Die HTML wird bei jedem Aufruf neu geholt
+ * (`max-age=0, must-revalidate`), CSS und JavaScript aber EINE STUNDE lang
+ * nicht — der Browser fragt gar nicht nach. Ergebnis: neue Seite, altes
+ * Aussehen und altes Verhalten.
+ *
+ * Das hat am 01./02.09.2026 mehrere Korrekturrunden gekostet: der Kunde hat
+ * geladen und neu geladen und dieselben Fehler gesehen, die hier gemessen
+ * behoben waren — Menue-Hoehe, Kartenhoehe, FAQ-Sprung, alles CSS/JS. Ich habe
+ * jedes Mal mit frischem Browserprofil gemessen, also mit LEEREM Cache, und
+ * darum den Unterschied nicht gesehen. Eine Stunde Versatz zwischen "behoben"
+ * und "sichtbar" macht jede Rueckmeldung unbrauchbar.
+ *
+ * Die Signatur ist die Loesung, nicht das Abschalten des Caches: aendert sich
+ * der Inhalt, aendert sich die Adresse, also holt der Browser zwingend neu —
+ * und aendert sich nichts, bleibt die Datei im Cache. Beides zugleich.
+ *
+ * ⚠️ LAEUFT ALS LETZTES, nach buildCss() und buildJs(): die beiden minifizieren
+ * in dist/ und veraendern damit genau den Inhalt, ueber den die Signatur
+ * gebildet wird. Vorher gebildet waere sie falsch.
+ */
+function versioniereAssets() {
+  const crypto = require("crypto");
+  const signatur = (datei) =>
+    crypto.createHash("md5").update(fs.readFileSync(datei)).digest("hex").slice(0, 8);
+
+  const sammle = (unter) => {
+    const wurzel = path.join(DIST_DIR, unter);
+    if (!fs.existsSync(wurzel)) return [];
+    const raus = [];
+    (function lauf(d, praefix) {
+      for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+        const p = path.join(d, e.name);
+        if (e.isDirectory()) lauf(p, praefix + e.name + "/");
+        else raus.push({ datei: p, url: "/" + unter + "/" + praefix + e.name });
+      }
+    })(wurzel, "");
+    return raus;
+  };
+
+  /* Nur unsere eigenen Verzeichnisse. /assets/ bleibt aussen vor: dort liegen
+     Bilder und die fremden Bibliotheken mit fester Version, die sich nicht
+     aendern — und ein Bild traegt seinen Namen in vielen srcset-Attributen. */
+  const dateien = [...sammle("css"), ...sammle("js")].filter((d) => /\.(css|js)$/.test(d.datei));
+
+  /* ⚠️ ZWEI DURCHGAENGE, und die Reihenfolge ist zwingend. js/coverage-lazy.js
+     laedt /js/coverage-map.js zur Laufzeit selbst nach — diese Adresse steht in
+     einer JS-Datei, nicht in der HTML. Also erst die Verweise IN den Dateien
+     stempeln, dann die Signaturen bilden: sonst haette coverage-lazy.js eine
+     Signatur, die durch den eigenen Stempel sofort veraltet.
+     (Kein Zirkel: coverage-map.js verweist nicht zurueck.) */
+  const vorlaeufig = new Map(dateien.map((d) => [d.url, signatur(d.datei)]));
+  let inDateien = 0;
+  for (const d of dateien) {
+    if (!d.datei.endsWith(".js")) continue;
+    const alt = fs.readFileSync(d.datei, "utf8");
+    let neu = alt;
+    for (const [url, sig] of vorlaeufig) {
+      if (!url.endsWith(".js") || url === d.url) continue;
+      const teile = neu.split('"' + url + '"');
+      if (teile.length > 1) { neu = teile.join('"' + url + "?v=" + sig + '"'); inDateien += teile.length - 1; }
+    }
+    if (neu !== alt) fs.writeFileSync(d.datei, neu, "utf8");
+  }
+
+  const endgueltig = new Map(dateien.map((d) => [d.url, signatur(d.datei)]));
+
+  const seiten = [];
+  (function lauf(d) {
+    for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+      const p = path.join(d, e.name);
+      if (e.isDirectory()) lauf(p);
+      else if (e.name.endsWith(".html")) seiten.push(p);
+    }
+  })(DIST_DIR);
+
+  let inSeiten = 0;
+  for (const s of seiten) {
+    const alt = fs.readFileSync(s, "utf8");
+    let neu = alt;
+    for (const [url, sig] of endgueltig) {
+      /* Nur der volle Attributwert, damit /css/app.css nicht in
+         /css/app.css?v=… eines zweiten Durchlaufs hineingreift. */
+      for (const anf of ['href="', 'src="']) {
+        const teile = neu.split(anf + url + '"');
+        if (teile.length > 1) { neu = teile.join(anf + url + "?v=" + sig + '"'); inSeiten += teile.length - 1; }
+      }
+    }
+    if (neu !== alt) fs.writeFileSync(s, neu, "utf8");
+  }
+
+  console.log(
+    "build: " + inSeiten + " Asset-Adressen in " + seiten.length + " Seiten signiert, " +
+    inDateien + " in JS-Dateien (" + endgueltig.size + " Dateien)"
+  );
+}
