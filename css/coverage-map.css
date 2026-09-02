@@ -1,0 +1,580 @@
+/* Die Karten-Sektion der Einsatzgebiete — GETEILT zwischen der Startseite und
+ * /einsatzgebiete/.
+ *
+ * ⚠️⚠️ HERAUSGELOEST AUS page-home.css am 02.09.2026, weil der Kunde die
+ * klickbare Karte auch auf /einsatzgebiete/ haben wollte: "auf der
+ * Einsatzgebiete Seite gibt es keine klickbare Karte, nur diese SVG-Animation."
+ *
+ * ⚠️ DER NAHELIEGENDE WEG WAR FALSCH, und das ist gemessen: page-home.css
+ * einfach mitzuladen hat den Hero der Seite veraendert — Badge und Lede gingen
+ * bei 1440 von 459 auf 538 px, bei 390 von 342 auf 350. Diese Datei enthaelt
+ * deshalb NUR die .coverage*-Regeln, in unveraenderter Reihenfolge und mit ihren
+ * @media-Bloecken.
+ *
+ * ⚠️ Wird VOR der jeweiligen Seiten-CSS eingebunden, damit eine seitenspezifische
+ * Regel weiterhin gewinnen kann — dasselbe Muster wie lead-form.css und
+ * testimonials.css.
+ *
+ * ⚠️ Die Reihenfolge der Regeln ist die der Quelldatei. Wer hier etwas
+ * umsortiert, aendert bei Spezifitaets-Gleichstand das Ergebnis.
+ */
+
+
+
+/* ---- Coverage areas (client request, 2026-07-17) ----
+   Plain black --color-bg, no .section--subtle — same treatment as Pain
+   Hook/Trust Metrics, so it reads as one more section in the page's
+   existing rhythm, not a new visual style. Pills reuse the same
+   icon-pin + pill shape as the footer's .footer-pill (site-chrome.css),
+   but with blue-light for the icon/border instead of white — safe here
+   specifically because this section sits directly on --color-bg
+   (plain black), where blue-light clears contrast comfortably; the
+   footer uses white instead because it sits on --color-bg-elevated
+   (gray), where blue-light does not (see the caveat in tokens.css). Not
+   merged into one shared component: two different contexts, two
+   different safe colors, per that same caveat. */
+/* WHITE section since 2026-08-08 (client). Same two declarations .references and
+   .faq use for the homepage's other light sections — there is no .section--light
+   scope on this page (that lives in page-service.css, the interior-page chassis).
+   The padding-top reserves the incoming seam's band, exactly like those two.
+   Everything below that names a colour explicitly is here BECAUSE of that flip:
+   this block's values were all calculated against black. */
+.coverage {
+  /* ⚠️ Eigene Hover-Farbe für Links: diese Sektion malt ihr Weiß selbst und
+     ist keine .section--light, erbt deren Token also nicht. Ohne diese Zeile
+     setzt base.css `a:hover` auf --color-link-hover, und das ist in tokens.css
+     fest weiß — also weiß auf weiß. Gemeldet 26.08.2026. */
+  --color-link-hover: var(--color-logo-black);
+  background-color: var(--color-white);
+  color: var(--color-gray);
+  /* Matches .pixel-seam__band (200px / 120px mobile) — keep in sync. */
+  padding-top: calc(var(--space-9) + 200px);
+}
+
+
+@media (max-width: 767.98px) {
+
+  .coverage {
+    padding-top: calc(var(--space-9) + 120px);
+  }
+}
+
+
+
+/* 48rem, not 34 (client 2026-08-14: "allow more width so it breaks into 2 lines
+   instead of 3"). Measured, not guessed: at the `main h2` clamp's cap the two
+   halves of this headline render at 742px and 716px, so anything from ~46.4rem
+   up lets the greedy break land on two lines — 48rem keeps a little slack for
+   the fluid sizes in between. The lede restates the old 34rem below, so only
+   the heading got wider; balance keeps the two lines even at intermediate
+   widths, where a greedy break would otherwise run long-then-short. */
+.coverage__intro {
+  max-width: 48rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+
+
+.coverage__intro h2 {
+  text-wrap: balance;
+}
+
+
+
+/* main h2 sets its own colour from --color-text (white), which the section's
+   `color` cannot override — a declaration beats inheritance. */
+.coverage h2 {
+  color: var(--color-logo-black);
+}
+
+
+
+/* --color-text-muted is white at 0.65 alpha: it disappears on white. The on-light
+   equivalent this file already uses elsewhere (rgb(59 73 86 / …), i.e. --color-gray
+   with alpha) at 0.78 measures 6.4:1 — comfortably past the 4.5:1 for body text. */
+.coverage__lede {
+  color: rgb(59 73 86 / 0.78);
+  margin-top: var(--space-3);
+  /* The intro's own cap went 34rem -> 48rem for the heading only; this keeps the
+     lede's measure exactly where it was. */
+  max-width: 34rem;
+  margin-inline: auto;
+}
+
+
+
+/* ---- Interactive coverage map (client brief, 2026-07-21) ---- */
+/* Leaflet needs an explicit height on its container or it renders at
+   0px — the three heights below (mobile/tablet/desktop) are the brief's
+   own suggested ranges. overflow: hidden clips Leaflet's internal tile
+   panes to this element's own border-radius (Leaflet doesn't respect an
+   ancestor's radius on its own). */
+.coverage__map-wrap {
+  position: relative;
+  margin-top: var(--space-8);
+  height: 420px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+
+
+/* ⚠️⚠️ ZWEI SELEKTOREN, und beide sind noetig — dieselbe Falle, die
+   page-contact.css fuer die Kontaktkarte schon dokumentiert: leaflet.css wird
+   zur LAUFZEIT von js/coverage-map.js in den <head> eingehaengt, laedt also
+   NACH dieser Datei, und ihr `.leaflet-container { background: #ddd }` gewinnt
+   bei gleicher Spezifitaet gegen ein einfaches `.coverage__map`.
+   Gemessen am 31.08.2026 auf der Live-Seite: `mapBg: rgb(221, 221, 221)` —
+   Leaflets eigenes helles Grau. Auf einer schwarzen Seite blitzt die Karte
+   beim Laden also hellgrau auf, und genau das hat ein Screenshot erwischt (es
+   sah wie ein Schachbrett aus fehlenden Kacheln aus; nachgemessen waren alle
+   28 Kacheln geladen, es war der Untergrund).
+   Der zusammengesetzte Selektor (0,2,0) gewinnt ohne !important, kann aber
+   erst greifen, wenn Leaflet seine Klasse gesetzt hat — deshalb muss der
+   einfache fuer den Zustand VOR dem Mounten bleiben. */
+
+.coverage__map,
+.coverage__map.leaflet-container {
+  width: 100%;
+  height: 100%;
+  /* Untergrund in den Luecken, bis Leaflets Kacheln da sind. Er muss zur
+     BASISKARTE passen, nicht zur Sektion: die Kacheln sind CARTO
+     dark_nolabels, also fast schwarz. */
+  background-color: var(--color-logo-black);
+}
+
+
+
+/* Subtle loading cue (brief: "show a subtle loading state... do not
+   freeze the page... keep the previous map visible until the new
+   boundary is ready") — the map/markers/previous polygon all stay fully
+   visible and interactive throughout; this is a restrained opacity dip
+   on the map tiles themselves, nothing that blocks input. Transition
+   (not an @keyframes loop) so prefers-reduced-motion's blanket
+   animation-duration override doesn't need a separate rule here —
+   transition-duration is covered by that same override. */
+.coverage__map.is-loading .leaflet-tile-pane {
+  opacity: 0.6;
+  transition: opacity var(--duration-base) var(--easing-standard);
+}
+
+
+
+/* Compact overlay panel — content is now just a small label + city name
+   (sub-line removed 2026-07-21, client: "saca el texto de abajo," see
+   below). Moved top-left -> top-right same day (client: "el mas menos
+   lo tapa" — Leaflet's default top-left zoom control was sitting over
+   this panel). Still never sits over Leaflet's own attribution control,
+   which stays in its default bottom-right corner — top-right and
+   bottom-right don't overlap. z-index above Leaflet's own panes (max
+   ~650 for popups); 650 here is comfortably past the highest a piece of
+   static UI chrome like this needs to clear. */
+.coverage__overlay {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 650;
+  max-width: 12rem;
+  padding: var(--space-3) var(--space-4);
+  background-color: rgb(1 1 1 / 0.72);
+  /* ⚠️⚠️ ENTFERNT AM 31.08.2026 (Aufgabe 16). backdrop-filter war der teuerste
+     Einzeleffekt im unteren Seitendrittel: gemessen bei y=20000 lagen 34 von 42
+     Frames über 32 ms, und dieses Overlay liegt bei y=19411 — auf einer LIVE
+     laufenden Leaflet-Karte, deren Kacheln sich beim Zoomen ändern. Jedes
+     Neuzeichnen dahinter erzwingt ein Neuberechnen des Weichzeichners.
+     Ersetzt durch eine reine halbtransparente Fläche. Der Unterschied ist
+     minimal, weil die Karte darunter ohnehin fast schwarz ist (dark_nolabels);
+     die Kosten sind es nicht. */
+  /* backdrop-filter: blur(8px);  <- siehe oben */
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgb(255 255 255 / 0.12);
+}
+
+
+
+.coverage__overlay-label {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+
+
+.coverage__overlay-city {
+  margin-top: var(--space-1);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+}
+
+
+
+/* Custom circular marker (brief: "no default Leaflet pin, no bouncing")
+   — a divIcon wrapping a single styled <span>, not an image. The dot
+   itself carries the visual style; the wrapping .coverage-marker (the
+   divIcon's own element) stays unstyled/transparent, just Leaflet's
+   positioning hook. transform: scale for the active state rather than
+   changing width/height directly — scale doesn't require recalculating
+   Leaflet's iconAnchor positioning math, width/height would. */
+.coverage-marker__dot {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  border: 2px solid var(--color-white);
+  transition: transform var(--duration-base) var(--easing-standard);
+}
+
+
+
+.coverage-marker.is-active .coverage-marker__dot {
+  transform: scale(1.35);
+}
+
+
+
+@media (min-width: 768px) {
+
+  .coverage__map-wrap {
+    height: 500px;
+  }
+}
+
+
+
+@media (min-width: 1024px) {
+
+  .coverage__map-wrap {
+    height: 600px;
+  }
+}
+
+
+
+/* Two explicit rows (client request 2026-07-20, same pattern/reasoning
+   as .footer-pills-rows, site-chrome.css — see that rule's own comment).
+   Replaces margin-top: var(--space-7), which used to live on
+   .coverage__list itself back when there was only one of it. */
+.coverage__rows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-7);
+}
+
+
+
+/* Nennungen ohne Link (Webtext 01 Sektion 11 / Change Request 1.3): service-area
+   places that have no city page.
+   ⚠️ This rule now styles the LEAD-IN LINE ONLY ("Außerdem im Einsatz in:"). The
+   places themselves became pills 2026-08-14 on client instruction and use
+   .coverage__pill like every other chip — the sentence that used to name them
+   here is what is left. The old comment said "deliberately NOT pills — a pill
+   reads as tappable and these are plain text"; they are tappable now (each is a
+   <button> that drives the map, like the "Alle" toggle), which is what makes the
+   change safe rather than a reversal for its own sake. See the HTML.
+   One step quieter than the chips beside it so the hierarchy still says "also
+   here, no page yet", and centred to sit under the centred chip rows.
+   Was 0.75 WHITE (7.4:1 on the old black section); invisible once the section
+   went white 2026-08-08.
+   ⚠️ The alpha is at its FLOOR, not a look. This is 14px — normal text, so the
+   4.5:1 threshold applies, and the first attempt at 0.7 measured **4.02:1** and
+   failed. 0.78 is 4.98:1, the same on-light muted the lede uses. The "one step
+   quieter" the original had is carried by SIZE (14 vs 16px) and by sitting below
+   the chips, not by a lighter tone — on white there is no room left to go
+   lighter. Do not dim it further without re-measuring. */
+.coverage__mentions {
+  margin-top: var(--space-3);
+  max-width: 44rem;
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: rgb(59 73 86 / 0.78);
+  line-height: var(--line-height-base);
+}
+
+
+
+.coverage__list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+
+
+.coverage__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1.5px solid rgb(61 154 211 / 0.4);
+  border-radius: var(--radius-pill);
+  /* Was --color-text (white) — invisible since the section went white
+     2026-08-08. --color-gray is 9.2:1 here. */
+  color: var(--color-gray);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  transition:
+    border-color var(--duration-fast) var(--easing-standard),
+    background-color var(--duration-fast) var(--easing-standard),
+    color var(--duration-fast) var(--easing-standard);
+}
+
+
+
+/* Client-supplied pin icon (assets/icons/icon-location.svg, added
+   2026-07-17, replacing the shared sprite's icon-pin — client reported
+   that one as "feo"/ugly here). Fixed white fill (not currentColor),
+   same "client-supplied two-tone icon, sized directly as an <img>"
+   pattern as .pillar-card__icon img — not a sprite <use>, so no `color`
+   rule needed here, unlike the old icon-pin usage this replaced. Scoped
+   to .coverage__pill only; the footer's separate city-pill list
+   (.footer-pill, site-chrome.css) still uses the shared icon-pin sprite
+   symbol and wasn't part of this request. */
+.coverage__pill-icon {
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+  /* The file's fill is a fixed white, baked in — it is an <img>, so no CSS of
+     ours reaches inside it. On the white section (2026-08-08) that made the pin
+     vanish and left a gap where an icon should be. invert(1) is the same lever
+     the homepage's own pale logo band and the service template's client logos
+     already use for white artwork on a light surface — it turns pure white into
+     pure black, and this file is a flat single-colour silhouette, so nothing
+     else in it can shift. It inverts BACK inside an active/hover pill, whose
+     fill is blue with white text. */
+  filter: invert(1);
+}
+
+
+
+/* Inside a filled pill the label is white again, so the pin has to go back to
+   its own white. Two inversions cancel; this is cheaper and less brittle than
+   shipping a second copy of the file. */
+.coverage__pill:hover .coverage__pill-icon,
+.coverage__pill:focus-visible .coverage__pill-icon,
+.coverage__pill.is-active .coverage__pill-icon,
+.coverage__pill[aria-current="true"] .coverage__pill-icon,
+.coverage__pill[aria-pressed="true"] .coverage__pill-icon {
+  filter: none;
+}
+
+
+
+/* Hover was a 12%-blue wash with WHITE text — fine on black, unreadable on
+   white (1.6:1). On a light section the hover has to be the solid fill, which
+   is also what the active state uses, so hovering now previews selection. */
+.coverage__pill:hover,
+.coverage__pill:focus-visible {
+  border-color: var(--color-blue-light);
+  background-color: var(--color-blue-light);
+  color: var(--color-white);
+}
+
+
+
+/* Active state (client brief, 2026-07-21: "blue background with white
+   text... one restrained distinction, no exaggerated glow"), set by
+   js/coverage-map.js via aria-current="true" on the 10 real city <a>
+   links (aria-current is the spec-valid ARIA pattern for "the currently
+   selected item in a set of choices" on a link) — and, added same day
+   for the new "All" button, aria-pressed="true" on that one <button>
+   instead, since aria-current doesn't apply to buttons and aria-pressed
+   is exactly what a toggle button should use. .is-active is a plain
+   CSS-hook duplicate of the same state on both element types — the
+   script sets it alongside whichever ARIA attribute is correct for that
+   element, this rule only needs one selector to key off but listing all
+   three keeps the intent obvious from the CSS alone. */
+.coverage__pill.is-active,
+.coverage__pill[aria-current="true"],
+.coverage__pill[aria-pressed="true"] {
+  border-color: var(--color-blue-light);
+  background-color: var(--color-blue-light);
+  color: var(--color-white);
+}
+
+
+
+/* .coverage__pill--all: a real <button> now (added 2026-07-21, client
+   request — "deberia haber un boton con all"), not the old removed link
+   to /einsatzgebiete/ this same class name used to style (that one was
+   removed earlier the same day, see the HTML comment on .coverage__rows
+   for why — this is a fresh, unrelated use of the name, not a revival).
+   Reuses .coverage__pill's base look but stays visibly blue at rest
+   (rather than only on hover/active) so it reads as a distinct view
+   toggle, not one more city in the list. Active/hover states still key
+   off the same .is-active/[aria-pressed="true"] as every other pill —
+   see the comment on .coverage__pill.is-active below for why this one
+   uses aria-pressed instead of aria-current. */
+.coverage__pill--all {
+  border-color: var(--color-blue-light);
+  font-weight: var(--font-weight-bold);
+}
+
+
+
+/* ==========================================================================
+   MOBILE TOUCH TARGETS + MICRO-TYPE (2026-07-30)
+   --------------------------------------------------------------------------
+   Collected at the end of the file on purpose: these are cross-section
+   corrections from one audit pass, and each needs to win over the component
+   rule it adjusts, so they have to come after every one of them.
+
+   Measured on a real 390x844 viewport, everything a finger can hit that fell
+   under ~44px, plus every text run under 13px. Where a control is inline text
+   (a link in a sentence) the box is grown with padding rather than by changing
+   the type size, so the visual design is unchanged and only the hit area grows.
+   ========================================================================== */
+@media (max-width: 767.98px) {
+
+
+  /* 41px, so close it only failed on a technicality — but these are the primary
+     way a phone user picks a city on the map, and they invert to a filled state,
+     so the extra 3px is worth having. */
+  .coverage__pill {
+    min-height: 2.75rem;
+    padding-inline: var(--space-4);
+  }
+
+
+
+  /* Every pill the same type and the same box (client 2026-08-03: "los botones
+     tienen que estar iguales de tamaño, onda de tipografía y de height"). The
+     --all toggle is --font-weight-bold (800) against the cities' 400, which read
+     as a heavier, bigger button even though both measure exactly 44px. The
+     distinction it needs is carried by colour alone here — blue border at rest,
+     blue fill while it is the active view. Desktop keeps the bold. */
+  .coverage__pill--all {
+    font-weight: var(--font-weight-regular);
+  }
+
+
+
+  /* ---- City picker as a dropdown (client 2026-08-04) ---------------------
+     Eleven pills wrapped to four rows and took more height than the map above
+     them. One trigger showing the current area, and the eleven entries as a
+     LIST behind it.
+
+     Built by js/coverage-select.js: `.is-collapsed` is the only thing that ever
+     hides the entries and only that script adds it, so no JS / ≥768px still
+     renders the full pill rows (see that file's header for why this is a
+     disclosure over the existing links rather than a <select>). */
+  .coverage__rows.is-collapsed {
+    display: none;
+  }
+
+
+
+  .coverage__select {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    width: min(20rem, 100%);
+    min-height: 2.75rem;
+    margin: var(--space-7) auto 0;
+    padding: var(--space-2) var(--space-4);
+    font-family: inherit;
+    font-size: var(--font-size-sm);
+    /* Was --color-text (white): invisible since the section went white
+       2026-08-08. Matches .coverage__pill, which this control collapses. */
+    color: var(--color-gray);
+    background: none;
+    /* Same 1.5px blue hairline the pills use, so the control reads as the same
+       family — it IS the pill row, collapsed. */
+    border: 1.5px solid rgb(61 154 211 / 0.4);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--easing-standard);
+  }
+
+
+  .coverage__select[aria-expanded="true"],
+  .coverage__select:hover {
+    border-color: var(--color-blue-light);
+  }
+
+
+  .coverage__select:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+
+  .coverage__select-caret {
+    width: 0.7rem;
+    height: 0.7rem;
+    /* #icon-chevron is an open stroke path pointing LEFT; filled it renders as a
+       black wedge (same handling as .site-nav__caret). Rotated to point down,
+       then to point up while the list is open. */
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    color: var(--color-blue-light);
+    transform: rotate(-90deg);
+    transition: transform var(--duration-fast) var(--easing-standard);
+  }
+
+
+  .coverage__select[aria-expanded="true"] .coverage__select-caret {
+    transform: rotate(90deg);
+  }
+
+
+
+  /* Open: a list, not a wrapped pill grid — that is the point of the change.
+     The two <ul>s (the footer-matching 6 + 5 split) stack into one continuous
+     column of full-width rows with hairline separators. */
+  .coverage__rows {
+    gap: 0;
+    margin-top: var(--space-4);
+    align-items: stretch;
+  }
+
+
+  .coverage__list {
+    flex-direction: column;
+    gap: 0;
+  }
+
+
+  .coverage__pill {
+    /* Rows, not pills: no border ring, one shared bottom hairline, full width so
+       the whole row is the target. */
+    width: 100%;
+    justify-content: flex-start;
+    border: 0;
+    border-bottom: 1px solid rgb(61 154 211 / 0.22);
+    border-radius: 0;
+    padding-inline: var(--space-3);
+  }
+
+
+  /* The blue "Alle" ring would be the only bordered row in the list. */
+  .coverage__pill--all {
+    border-color: rgb(61 154 211 / 0.22);
+  }
+
+
+  /* The active row is marked by its fill (see .coverage__pill.is-active above),
+     which needs to reach the row's edges here. */
+  .coverage__rows .coverage__list:last-child .coverage__pill:last-child {
+    border-bottom: 0;
+  }
+
+
+
+  /* 11px uppercase with 0.08em tracking, on a translucent panel over map tiles —
+     the smallest text on the page in the least legible place. */
+  .coverage__overlay-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+  }
+}

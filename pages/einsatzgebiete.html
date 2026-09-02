@@ -118,6 +118,9 @@
   <!-- include: head-common -->
   <link rel="stylesheet" href="/css/lead-form.css">
   <script src="/js/lead-form.js" defer></script>
+  <!-- Die Karten-Sektion, geteilt mit der Startseite. VOR den Seiten-CSS,
+       damit eine seitenspezifische Regel weiterhin gewinnen kann. -->
+  <link rel="stylesheet" href="/css/coverage-map.css">
   <link rel="stylesheet" href="/css/page-service.css">
   <link rel="stylesheet" href="/css/page-leistungen.css">
   <link rel="stylesheet" href="/css/page-einsatzgebiete.css">
@@ -141,6 +144,11 @@
        here, so there is no map library and no third-party tile request on this
        page at all. -->
   <script src="/js/eg-hero-map.js" defer></script>
+  <!-- Die klickbare Karte: coverage-lazy.js holt Leaflet und coverage-map.js
+       erst, wenn die Sektion in Sichtweite kommt — sie liegt unter dem Hero,
+       also darf sie den ersten Bildaufbau nicht belasten. -->
+  <script src="/js/coverage-select.js" defer></script>
+  <script src="/js/coverage-lazy.js" defer></script>
   <!-- Traces section 3's horizontal rules as each row scrolls in. Generic
        opt-in via data-rule-draw; see that file's own header. -->
   <script src="/js/rule-draw.js" defer></script>
@@ -306,6 +314,61 @@
     </section>
 
     <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
+
+    <!-- ═══ DIE KLICKBARE KARTE, AUCH HIER — 02.09.2026 ══════════════════════
+         Kunde: "auf der Einsatzgebiete Seite gibt es keine klickbare Karte, nur
+         diese SVG-Animation." Richtig gemessen — sie stand nur auf der
+         Startseite, und die Prüfliste führte sie irrtümlich unter beiden Links.
+
+         ⚠️ ZWEI KARTEN AUF EINER SEITE, UND DAS IST ABSICHT: die Silhouette im
+         Hero ist gezeichnet, animiert und `aria-hidden` — ein Plakat. Diese hier
+         ist das Werkzeug: eine Stadt anklicken zoomt auf ihren Umriss. Sie sehen
+         verschieden genug aus (Strichzeichnung gegen dunkle Kachelkarte), dass
+         sie nicht als Wiederholung lesen.
+
+         ⚠️ KEIN eigener Seam davor oder danach. Davor liegt der bestehende Seam
+         hinter dem dunklen Hero, und dahinter folgt `eg-cities`, das ebenfalls
+         hell ist — zwei helle Sektionen bekommen keinen Seam (page-conventions
+         §9.2: weiße Kacheln auf Weiß sind nichts).
+
+         ⚠️ Überschrift und Lede sind WÖRTLICH die der Startseite, nicht neu
+         geschrieben: freigegebener Text schlägt erfundenen, auch wenn er dadurch
+         auf zwei Seiten steht.
+
+         ⚠️ id="karte", nicht "einsatzgebiete" — der Anker heißt auf der
+         Startseite so, und auf DIESER Seite wäre er tautologisch. -->
+    <section class="section coverage" id="karte" data-nav-theme="light">
+      <div class="container">
+        <div class="section__intro coverage__intro">
+          <h2>Von Bamberg aus in Franken und ganz Bayern im Einsatz</h2>
+          <p class="coverage__lede" data-reveal data-reveal-delay>Im Umkreis von rund 100 Kilometern um Bamberg für Sie im Einsatz, in Franken und ganz Bayern — überall mit demselben Standard, zertifizierten Prozessen und digitalen Nachweisen.</p>
+        </div>
+
+        <div class="coverage__map-wrap" data-reveal>
+          <div id="coverage-map" class="coverage__map" data-carto-key="{{env.cartoBasemapKey}}"></div>
+          <div class="coverage__overlay">
+            <p class="coverage__overlay-label">Einsatzgebiet</p>
+            <p class="coverage__overlay-city" data-coverage-overlay-city>Alle Städte</p>
+          </div>
+        </div>
+
+        <div class="coverage__rows" data-coverage-rows data-coverage-label="Einsatzgebiet" data-reveal>
+          <!-- include: coverage-chips -->
+          <ul class="coverage__list">
+            <!-- coverage: chips row="2" -->
+          </ul>
+
+          <!-- Die fünf ohne eigene Seite sind <button>, nicht <a> — sie fahren
+               die Karte auf ihren Umriss, verlinken aber nichts. Begründung und
+               Geschichte stehen an derselben Stelle in pages/index.html. -->
+          <p class="coverage__mentions" id="coverage-mentions-label">Außerdem im Einsatz in:</p>
+          <ul class="coverage__list" aria-labelledby="coverage-mentions-label">
+            <!-- coverage: mentions -->
+          </ul>
+        </div>
+      </div>
+    </section>
+
 
     <!-- ============ 2. STÄDTE-KARTEN (Kern des Hubs) ============ -->
     <!-- REBUILT 2026-08-10 (client): "el mapa se verá en la hero, y después

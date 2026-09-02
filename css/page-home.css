@@ -278,8 +278,7 @@ main h2 {
       ),
       /* keeps the transparent header's logo/nav legible over a bright top edge */
       linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) var(--hero-header-overlap));
-  }
-}
+  }}
 
 /* No longer sharing the row with a side image (that became the
    full-bleed .hero__bg instead), so this needs its own width cap —
@@ -338,8 +337,7 @@ main h2 {
      this pass is scoped to mobile. */
   .konzept__grid {
     padding-inline-start: calc(var(--container-padding) + var(--space-2));
-  }
-}
+  }}
 
 /* Used to match the section H2 treatment exactly (2.5rem–4rem, same
    fluid clamp as "main h2") — reduced 2026-07-17, client request: the
@@ -613,8 +611,7 @@ main h2 {
       flex-direction: column;
       align-items: flex-start;
       gap: var(--space-3);
-    }
-  }
+    }}
   /* Primary stays the strongest interactive element: full width, and the only
      filled surface in the column. 3rem is the accessible sweet spot for a
      primary action (44px is the floor, not the target) — deliberately NOT
@@ -624,8 +621,7 @@ main h2 {
       width: 100%;
       justify-content: center;
       min-height: 3rem;
-    }
-  }
+    }}
   /* ⚠️ THIS PILL USED TO BE DELIBERATELY COMPACT, and it is not any more —
      client rule G6, 2026-08-14, asked directly because it reverses their own
      earlier instruction ("no lo hagas otro botón grande a todo el ancho…
@@ -641,8 +637,7 @@ main h2 {
       width: 100%;
       justify-content: center;
       min-height: 3rem;
-    }
-  }
+    }}
   .hero__reassurance {
     /* One vertical list of three rows (client 2026-07-31). Was a 2-column grid
        with the third item spanning — which put two short items on one row and a
@@ -696,8 +691,7 @@ main h2 {
   /* The seals stay at 2rem: they were matched to the pill's height, and the mark
      that replaced it is shorter still, so this is now the taller of the two and
      what sets the row's height. */
-  .hero__badge { height: 2rem; }
-}
+  .hero__badge { height: 2rem; }}
 
 /* Very narrow phones (≤360px) — fixes a real horizontal overflow, not a polish
    tweak. `.btn` carries `white-space: nowrap` (components.css), so the primary
@@ -717,8 +711,7 @@ main h2 {
   .hero__actions .btn--primary {
     padding-inline: var(--space-3);
     font-size: var(--font-size-sm);
-  }
-}
+  }}
 
 /* The hero bouncing scroll-cue chevron (.hero__scroll-cue /
    .hero__scroll-cue-arrow + its hero-scroll-cue-bounce keyframes) was
@@ -904,8 +897,7 @@ main h2 {
   .trust-diagram__metrics .stat {
     background: none;
     padding-inline: var(--space-4);
-  }
-}
+  }}
 
 /* ---- Client-logo trust subsection (2026-07-20) ---- */
 /* Sits between the metrics and the value-pillar photo band. Centered,
@@ -1002,8 +994,7 @@ main h2 {
 @keyframes logo-marquee-scroll {
   to {
     transform: translateX(-50%);
-  }
-}
+  }}
 
 /* Reduced motion: no auto-scroll — a static, natively-scrollable strip so
    every logo stays reachable. Also drops the edge mask and overrides
@@ -1017,8 +1008,7 @@ main h2 {
   }
   .logo-marquee__track {
     animation: none;
-  }
-}
+  }}
 
 /* ===================================================================
    1.4 Trust intro — full-width black lead-in that sits BETWEEN the Hero
@@ -1129,8 +1119,7 @@ main h2 {
    below (and the 65s mobile override) still mean the same ~11-13 px/s they were
    tuned for. Changing N never requires retiming. */
 @keyframes story-logos-scroll {
-  to { transform: translateX(-25%); }
-}
+  to { transform: translateX(-25%); }}
 
 /* The mobile/tablet (<1024px) static block that used to sit here was REMOVED
    2026-07-31 (client: "the logos are not moving in the mobile"). It set
@@ -1156,8 +1145,7 @@ main h2 {
 @media (max-width: 1023.98px) {
   .story-logos__track {
     animation-duration: 65s;
-  }
-}
+  }}
 
 @media (prefers-reduced-motion: reduce) {
   .story-logos__row { -webkit-mask-image: none; mask-image: none; }
@@ -1165,8 +1153,7 @@ main h2 {
   /* n+2, not 2: there are FOUR groups since 2026-08-04, and the static grid must
      show the eight real logos once — not once plus three aria-hidden repeats. */
   .story-logos__group:nth-child(n+2) { display: none; }
-  .story-logos__group { flex-wrap: wrap; justify-content: center; padding-right: 0; row-gap: clamp(2rem, 4vw, 3rem); }
-}
+  .story-logos__group { flex-wrap: wrap; justify-content: center; padding-right: 0; row-gap: clamp(2rem, 4vw, 3rem); }}
 
 /* Same clipping bug as the deleted block above, still live on the ONE path that
    legitimately keeps a static grid. The rule right above wraps the TRACK, but
@@ -1180,8 +1167,7 @@ main h2 {
   .story-logos__group {
     flex-shrink: 1;
     min-width: 0;
-  }
-}
+  }}
 
 /* .trust-metrics__photo (a contained, capped-width <picture> below the
    cards) was tried first, 2026-07-17, then replaced same day by the
@@ -1371,8 +1357,7 @@ main h2 {
 @keyframes pain-hook-halo {
   0%   { opacity: 0;    transform: translate(-50%, -50%) scale(0.4); }
   35%  { opacity: 0.5; }
-  100% { opacity: 0;    transform: translate(-50%, -50%) scale(1.7); }
-}
+  100% { opacity: 0;    transform: translate(-50%, -50%) scale(1.7); }}
 
 .pain-hook__progress {
   position: absolute;
@@ -1638,8 +1623,7 @@ main h2 {
 
   .pain-hook__text {
     max-width: 22rem;
-  }
-}
+  }}
 
 /* ---- Value pillars (now inside #trust-metrics, "Security you can
    trust.") ----
@@ -1681,14 +1665,12 @@ main h2 {
 @media (min-width: 640px) {
   .trust-metrics__cards {
     grid-template-columns: repeat(2, 1fr);
-  }
-}
+  }}
 
 @media (min-width: 1024px) {
   .trust-metrics__cards {
     grid-template-columns: repeat(3, 1fr);
-  }
-}
+  }}
 
 /* All 6 cards on one row (client request 2026-07-21, reference: a
    "Designing a Better Experience" 6-step layout — tall vertical
@@ -1714,8 +1696,7 @@ main h2 {
        320px cap + centering (for the old wider multi-row grid) would
        otherwise leave gaps between narrow cards. */
     max-width: none;
-  }
-}
+  }}
 
 /* Order is set here, not by DOM position — the HTML keeps <h3> before
    <p> (heading precedes its own content, correct order for assistive
@@ -1924,8 +1905,7 @@ main h2 {
 @media (max-width: 767.98px) {
   .services {
     padding-top: calc(var(--space-9) + 120px);
-  }
-}
+  }}
 
 .services__index {
   display: grid;
@@ -2042,8 +2022,7 @@ main h2 {
     /* The rows invert to a white fill on tap/hover; a hairline keeps the
        thumbnail's edge defined against both states. */
     border: 1px solid rgb(255 255 255 / 0.12);
-  }
-}
+  }}
 
 /* ---- Services list on a phone (2026-07-30) -------------------------------
    The desktop row is a wide editorial line: 2xl name, 20px gaps, hover-only
@@ -2088,8 +2067,7 @@ main h2 {
     font-size: var(--font-size-base);
     transform: rotate(45deg);
     color: rgb(255 255 255 / 0.55);
-  }
-}
+  }}
 
 /* .is-active is a JS-added convenience (initServicePreview() in main.js)
    that mirrors :hover/:focus-visible so the currently-previewed item
@@ -2351,8 +2329,7 @@ main h2 {
   .services__item.is-active .services__item-more {
     opacity: 1;
     transform: none;
-  }
-}
+  }}
 
 /* The label is decoration on a link that is already fully labelled, so under
    reduced motion it simply appears rather than sliding. It is never the only
@@ -2361,14 +2338,12 @@ main h2 {
   .services__item-more {
     transition: none;
     transform: none;
-  }
-}
+  }}
 
 @media (prefers-reduced-motion: reduce) {
   .services__preview-media img {
     transition: none;
-  }
-}
+  }}
 
 /* ---- Uniforms / outfit viewer ---- */
 /* Added 2026-07-15, substantially refined 2026-07-17 (client brief: make
@@ -2672,8 +2647,7 @@ main h2 {
 @media (max-width: 767.98px) {
   .outfits {
     padding-top: calc(var(--space-9) + 120px);
-  }
-}
+  }}
 
 .outfits__intro > p {
   /* ⚠️ GEMESSEN 4,49:1 auf #fafafa — 0,01 unter der Norm, und ein Beispiel
@@ -3045,8 +3019,7 @@ main h2 {
     width: 3rem;
     height: 3rem;
     color: rgb(59 73 86 / 0.75);
-  }
-}
+  }}
 
 @media (min-width: 1024px) {
   .outfits__layout {
@@ -3058,14 +3031,12 @@ main h2 {
        columns anchors the heading just below the section padding
        instead. */
     align-items: start;
-  }
-}
+  }}
 
 @media (prefers-reduced-motion: reduce) {
   .outfits__image-frame img {
     transition: none;
-  }
-}
+  }}
 
 /* ---- Trust / certifications & numbers ----
    Removed entirely 2026-07-17, client request ("sacame la seccion de
@@ -3219,8 +3190,7 @@ main h2 {
 @media (min-width: 768px) and (max-width: 1199.98px) {
   .references__results .stat__value {
     font-size: clamp(2.25rem, 6.7vw - 0.9rem, 4.15rem);
-  }
-}
+  }}
 
 .references__results .stat__label {
   color: rgb(59 73 86 / 0.75);
@@ -3310,8 +3280,7 @@ main h2 {
 
   .references__results li:first-child {
     border-inline-start: none;
-  }
-}
+  }}
 
 /* Restyled 2026-07-20 (client-supplied reference image) from a
    horizontally scrollable, draggable strip of 9 to a 2-column CSS
@@ -3372,8 +3341,7 @@ main h2 {
      lose to its `align-items: start`. */
   .references .references__testimonials {
     align-items: stretch;
-  }
-}
+  }}
 
 /* Three equal columns, one testimonial each, side by side (client 2026-07-28,
    replacing the earlier asymmetric 2-column layout). Cards auto-place 1/2/3;
@@ -3386,8 +3354,7 @@ main h2 {
        Seite auf. Bei 768px waren das gemessene 62px waagerechter Überlauf.
        Der zweite Teil des Gegenmittels steht in css/testimonials.css. */
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
+  }}
 
 /* The card itself (.testimonial / __header / __person / __avatar / __name /
    __role / __google / __stars / __quote, and its mobile step-down) MOVED OUT
@@ -3428,8 +3395,7 @@ main h2 {
 @media (max-width: 767.98px) {
   .references {
     padding-top: calc(var(--space-9) + 120px);
-  }
-}
+  }}
 
 /* Black, not grey (client request 2026-07-21) — was inheriting
    .references' own color: var(--color-gray) above, same as this
@@ -3463,8 +3429,7 @@ main h2 {
 @media (max-width: 767.98px) {
   .social {
     padding-top: calc(var(--space-9) + 60px);
-  }
-}
+  }}
 
 .social__intro {
   text-align: center;
@@ -3558,8 +3523,7 @@ main h2 {
         rgb(61 154 211 / 0.16) 95px,
         rgb(61 154 211 / 0) 210px
       );
-  }
-}
+  }}
 .konzept__grid {
   display: grid;
   gap: var(--space-7);
@@ -3572,8 +3536,7 @@ main h2 {
     /* Right inset matching the left --content-inset, so the points list keeps
        a margin from the edge too (client 2026-07-28). */
     padding-inline-end: var(--content-inset);
-  }
-}
+  }}
 .konzept__lede {
   margin-top: var(--space-4);
   max-width: 40rem;
@@ -3676,8 +3639,7 @@ main h2 {
      two stack instead of sitting side by side as they do from 900px up. */
   .konzept__grid {
     gap: var(--space-6);
-  }
-}
+  }}
 
 /* Same root cause as the hero's own ≤360px rule: `.btn` carries
    `white-space: nowrap` (components.css), so this CTA's min-content width is its
@@ -3693,8 +3655,7 @@ main h2 {
   .konzept__actions .btn--primary {
     padding-inline: var(--space-3);
     font-size: var(--font-size-sm);
-  }
-}
+  }}
 
 /* Full-bleed tech diagram + a centred white down-arrow bridging into "unser
    System" below (client 2026-07-28). The <picture> is a direct child of the
@@ -3767,8 +3728,7 @@ main h2 {
   .social {
     --swipe-card: min(35vh, 62vw);
     --swipe-gap: 2vw;
-  }
-}
+  }}
 
 /* ⚠️ 1024, NOT 768 (fixed 2026-08-14 — the reel was reported broken on tablet).
    The ring is a DESKTOP composition: three 15rem cards on a 300px-radius ring
@@ -3849,9 +3809,7 @@ main h2 {
     .social__grid.is-carousel {
       --social-card-w: 17rem;
       --social-radius: 360;
-    }
-  }
-}
+    }}}
 
 /* Was a plain flat-color rectangle (no real social content existed yet)
    — now holds a real cover photo (.social__cover below), 2026-07-20.
@@ -3985,8 +3943,7 @@ main h2 {
     font-size: var(--font-size-xs);
   }
 
-  .social__cta { margin-top: var(--space-6); }
-}
+  .social__cta { margin-top: var(--space-6); }}
 
 /* The lede was hyphenating too ("unse-ren"), which on a two-line centred
    paragraph reads as a defect rather than justification. */
@@ -3994,8 +3951,7 @@ main h2 {
   .social__intro > p {
     -webkit-hyphens: none;
     hyphens: none;
-  }
-}
+  }}
 
 /* ---- References on a phone (2026-07-30) ----------------------------------
    base.css sets hyphens:auto on p/li/blockquote so long German compounds can't
@@ -4016,8 +3972,7 @@ main h2 {
   .references__intro > p {
     -webkit-hyphens: none;
     hyphens: none;
-  }
-}
+  }}
 
 /* ---- Free security analysis (primary conversion) ---- */
 /* MOVED 2026-08-03 to css/lead-form.css — /werkschutz/ became the second page
@@ -4034,354 +3989,7 @@ main h2 {
 @media (max-width: 767.98px) {
   .pixel-seam + .conversion {
     padding-top: 120px;
-  }
-}
-
-/* ---- Coverage areas (client request, 2026-07-17) ----
-   Plain black --color-bg, no .section--subtle — same treatment as Pain
-   Hook/Trust Metrics, so it reads as one more section in the page's
-   existing rhythm, not a new visual style. Pills reuse the same
-   icon-pin + pill shape as the footer's .footer-pill (site-chrome.css),
-   but with blue-light for the icon/border instead of white — safe here
-   specifically because this section sits directly on --color-bg
-   (plain black), where blue-light clears contrast comfortably; the
-   footer uses white instead because it sits on --color-bg-elevated
-   (gray), where blue-light does not (see the caveat in tokens.css). Not
-   merged into one shared component: two different contexts, two
-   different safe colors, per that same caveat. */
-/* WHITE section since 2026-08-08 (client). Same two declarations .references and
-   .faq use for the homepage's other light sections — there is no .section--light
-   scope on this page (that lives in page-service.css, the interior-page chassis).
-   The padding-top reserves the incoming seam's band, exactly like those two.
-   Everything below that names a colour explicitly is here BECAUSE of that flip:
-   this block's values were all calculated against black. */
-.coverage {
-  /* ⚠️ Eigene Hover-Farbe für Links: diese Sektion malt ihr Weiß selbst und
-     ist keine .section--light, erbt deren Token also nicht. Ohne diese Zeile
-     setzt base.css `a:hover` auf --color-link-hover, und das ist in tokens.css
-     fest weiß — also weiß auf weiß. Gemeldet 26.08.2026. */
-  --color-link-hover: var(--color-logo-black);
-  background-color: var(--color-white);
-  color: var(--color-gray);
-  /* Matches .pixel-seam__band (200px / 120px mobile) — keep in sync. */
-  padding-top: calc(var(--space-9) + 200px);
-}
-@media (max-width: 767.98px) {
-  .coverage {
-    padding-top: calc(var(--space-9) + 120px);
-  }
-}
-
-/* 48rem, not 34 (client 2026-08-14: "allow more width so it breaks into 2 lines
-   instead of 3"). Measured, not guessed: at the `main h2` clamp's cap the two
-   halves of this headline render at 742px and 716px, so anything from ~46.4rem
-   up lets the greedy break land on two lines — 48rem keeps a little slack for
-   the fluid sizes in between. The lede restates the old 34rem below, so only
-   the heading got wider; balance keeps the two lines even at intermediate
-   widths, where a greedy break would otherwise run long-then-short. */
-.coverage__intro {
-  max-width: 48rem;
-  margin-inline: auto;
-  text-align: center;
-}
-
-.coverage__intro h2 {
-  text-wrap: balance;
-}
-
-/* main h2 sets its own colour from --color-text (white), which the section's
-   `color` cannot override — a declaration beats inheritance. */
-.coverage h2 {
-  color: var(--color-logo-black);
-}
-
-/* --color-text-muted is white at 0.65 alpha: it disappears on white. The on-light
-   equivalent this file already uses elsewhere (rgb(59 73 86 / …), i.e. --color-gray
-   with alpha) at 0.78 measures 6.4:1 — comfortably past the 4.5:1 for body text. */
-.coverage__lede {
-  color: rgb(59 73 86 / 0.78);
-  margin-top: var(--space-3);
-  /* The intro's own cap went 34rem -> 48rem for the heading only; this keeps the
-     lede's measure exactly where it was. */
-  max-width: 34rem;
-  margin-inline: auto;
-}
-
-/* ---- Interactive coverage map (client brief, 2026-07-21) ---- */
-/* Leaflet needs an explicit height on its container or it renders at
-   0px — the three heights below (mobile/tablet/desktop) are the brief's
-   own suggested ranges. overflow: hidden clips Leaflet's internal tile
-   panes to this element's own border-radius (Leaflet doesn't respect an
-   ancestor's radius on its own). */
-.coverage__map-wrap {
-  position: relative;
-  margin-top: var(--space-8);
-  height: 420px;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-}
-
-/* ⚠️⚠️ ZWEI SELEKTOREN, und beide sind noetig — dieselbe Falle, die
-   page-contact.css fuer die Kontaktkarte schon dokumentiert: leaflet.css wird
-   zur LAUFZEIT von js/coverage-map.js in den <head> eingehaengt, laedt also
-   NACH dieser Datei, und ihr `.leaflet-container { background: #ddd }` gewinnt
-   bei gleicher Spezifitaet gegen ein einfaches `.coverage__map`.
-   Gemessen am 31.08.2026 auf der Live-Seite: `mapBg: rgb(221, 221, 221)` —
-   Leaflets eigenes helles Grau. Auf einer schwarzen Seite blitzt die Karte
-   beim Laden also hellgrau auf, und genau das hat ein Screenshot erwischt (es
-   sah wie ein Schachbrett aus fehlenden Kacheln aus; nachgemessen waren alle
-   28 Kacheln geladen, es war der Untergrund).
-   Der zusammengesetzte Selektor (0,2,0) gewinnt ohne !important, kann aber
-   erst greifen, wenn Leaflet seine Klasse gesetzt hat — deshalb muss der
-   einfache fuer den Zustand VOR dem Mounten bleiben. */
-
-.coverage__map,
-.coverage__map.leaflet-container {
-  width: 100%;
-  height: 100%;
-  /* Untergrund in den Luecken, bis Leaflets Kacheln da sind. Er muss zur
-     BASISKARTE passen, nicht zur Sektion: die Kacheln sind CARTO
-     dark_nolabels, also fast schwarz. */
-  background-color: var(--color-logo-black);
-}
-
-/* Subtle loading cue (brief: "show a subtle loading state... do not
-   freeze the page... keep the previous map visible until the new
-   boundary is ready") — the map/markers/previous polygon all stay fully
-   visible and interactive throughout; this is a restrained opacity dip
-   on the map tiles themselves, nothing that blocks input. Transition
-   (not an @keyframes loop) so prefers-reduced-motion's blanket
-   animation-duration override doesn't need a separate rule here —
-   transition-duration is covered by that same override. */
-.coverage__map.is-loading .leaflet-tile-pane {
-  opacity: 0.6;
-  transition: opacity var(--duration-base) var(--easing-standard);
-}
-
-/* Compact overlay panel — content is now just a small label + city name
-   (sub-line removed 2026-07-21, client: "saca el texto de abajo," see
-   below). Moved top-left -> top-right same day (client: "el mas menos
-   lo tapa" — Leaflet's default top-left zoom control was sitting over
-   this panel). Still never sits over Leaflet's own attribution control,
-   which stays in its default bottom-right corner — top-right and
-   bottom-right don't overlap. z-index above Leaflet's own panes (max
-   ~650 for popups); 650 here is comfortably past the highest a piece of
-   static UI chrome like this needs to clear. */
-.coverage__overlay {
-  position: absolute;
-  top: var(--space-4);
-  right: var(--space-4);
-  z-index: 650;
-  max-width: 12rem;
-  padding: var(--space-3) var(--space-4);
-  background-color: rgb(1 1 1 / 0.72);
-  /* ⚠️⚠️ ENTFERNT AM 31.08.2026 (Aufgabe 16). backdrop-filter war der teuerste
-     Einzeleffekt im unteren Seitendrittel: gemessen bei y=20000 lagen 34 von 42
-     Frames über 32 ms, und dieses Overlay liegt bei y=19411 — auf einer LIVE
-     laufenden Leaflet-Karte, deren Kacheln sich beim Zoomen ändern. Jedes
-     Neuzeichnen dahinter erzwingt ein Neuberechnen des Weichzeichners.
-     Ersetzt durch eine reine halbtransparente Fläche. Der Unterschied ist
-     minimal, weil die Karte darunter ohnehin fast schwarz ist (dark_nolabels);
-     die Kosten sind es nicht. */
-  /* backdrop-filter: blur(8px);  <- siehe oben */
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: var(--radius-sm);
-  border: 1px solid rgb(255 255 255 / 0.12);
-}
-
-.coverage__overlay-label {
-  font-size: 0.6875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-text-muted);
-}
-
-.coverage__overlay-city {
-  margin-top: var(--space-1);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-white);
-}
-
-/* Custom circular marker (brief: "no default Leaflet pin, no bouncing")
-   — a divIcon wrapping a single styled <span>, not an image. The dot
-   itself carries the visual style; the wrapping .coverage-marker (the
-   divIcon's own element) stays unstyled/transparent, just Leaflet's
-   positioning hook. transform: scale for the active state rather than
-   changing width/height directly — scale doesn't require recalculating
-   Leaflet's iconAnchor positioning math, width/height would. */
-.coverage-marker__dot {
-  display: block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: var(--color-accent);
-  border: 2px solid var(--color-white);
-  transition: transform var(--duration-base) var(--easing-standard);
-}
-
-.coverage-marker.is-active .coverage-marker__dot {
-  transform: scale(1.35);
-}
-
-@media (min-width: 768px) {
-  .coverage__map-wrap {
-    height: 500px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .coverage__map-wrap {
-    height: 600px;
-  }
-}
-
-/* Two explicit rows (client request 2026-07-20, same pattern/reasoning
-   as .footer-pills-rows, site-chrome.css — see that rule's own comment).
-   Replaces margin-top: var(--space-7), which used to live on
-   .coverage__list itself back when there was only one of it. */
-.coverage__rows {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
-  margin-top: var(--space-7);
-}
-
-/* Nennungen ohne Link (Webtext 01 Sektion 11 / Change Request 1.3): service-area
-   places that have no city page.
-   ⚠️ This rule now styles the LEAD-IN LINE ONLY ("Außerdem im Einsatz in:"). The
-   places themselves became pills 2026-08-14 on client instruction and use
-   .coverage__pill like every other chip — the sentence that used to name them
-   here is what is left. The old comment said "deliberately NOT pills — a pill
-   reads as tappable and these are plain text"; they are tappable now (each is a
-   <button> that drives the map, like the "Alle" toggle), which is what makes the
-   change safe rather than a reversal for its own sake. See the HTML.
-   One step quieter than the chips beside it so the hierarchy still says "also
-   here, no page yet", and centred to sit under the centred chip rows.
-   Was 0.75 WHITE (7.4:1 on the old black section); invisible once the section
-   went white 2026-08-08.
-   ⚠️ The alpha is at its FLOOR, not a look. This is 14px — normal text, so the
-   4.5:1 threshold applies, and the first attempt at 0.7 measured **4.02:1** and
-   failed. 0.78 is 4.98:1, the same on-light muted the lede uses. The "one step
-   quieter" the original had is carried by SIZE (14 vs 16px) and by sitting below
-   the chips, not by a lighter tone — on white there is no room left to go
-   lighter. Do not dim it further without re-measuring. */
-.coverage__mentions {
-  margin-top: var(--space-3);
-  max-width: 44rem;
-  text-align: center;
-  font-size: var(--font-size-sm);
-  color: rgb(59 73 86 / 0.78);
-  line-height: var(--line-height-base);
-}
-
-.coverage__list {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-3);
-}
-
-.coverage__pill {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  border: 1.5px solid rgb(61 154 211 / 0.4);
-  border-radius: var(--radius-pill);
-  /* Was --color-text (white) — invisible since the section went white
-     2026-08-08. --color-gray is 9.2:1 here. */
-  color: var(--color-gray);
-  text-decoration: none;
-  font-size: var(--font-size-sm);
-  transition:
-    border-color var(--duration-fast) var(--easing-standard),
-    background-color var(--duration-fast) var(--easing-standard),
-    color var(--duration-fast) var(--easing-standard);
-}
-
-/* Client-supplied pin icon (assets/icons/icon-location.svg, added
-   2026-07-17, replacing the shared sprite's icon-pin — client reported
-   that one as "feo"/ugly here). Fixed white fill (not currentColor),
-   same "client-supplied two-tone icon, sized directly as an <img>"
-   pattern as .pillar-card__icon img — not a sprite <use>, so no `color`
-   rule needed here, unlike the old icon-pin usage this replaced. Scoped
-   to .coverage__pill only; the footer's separate city-pill list
-   (.footer-pill, site-chrome.css) still uses the shared icon-pin sprite
-   symbol and wasn't part of this request. */
-.coverage__pill-icon {
-  width: 1.1em;
-  height: 1.1em;
-  flex-shrink: 0;
-  /* The file's fill is a fixed white, baked in — it is an <img>, so no CSS of
-     ours reaches inside it. On the white section (2026-08-08) that made the pin
-     vanish and left a gap where an icon should be. invert(1) is the same lever
-     the homepage's own pale logo band and the service template's client logos
-     already use for white artwork on a light surface — it turns pure white into
-     pure black, and this file is a flat single-colour silhouette, so nothing
-     else in it can shift. It inverts BACK inside an active/hover pill, whose
-     fill is blue with white text. */
-  filter: invert(1);
-}
-
-/* Inside a filled pill the label is white again, so the pin has to go back to
-   its own white. Two inversions cancel; this is cheaper and less brittle than
-   shipping a second copy of the file. */
-.coverage__pill:hover .coverage__pill-icon,
-.coverage__pill:focus-visible .coverage__pill-icon,
-.coverage__pill.is-active .coverage__pill-icon,
-.coverage__pill[aria-current="true"] .coverage__pill-icon,
-.coverage__pill[aria-pressed="true"] .coverage__pill-icon {
-  filter: none;
-}
-
-/* Hover was a 12%-blue wash with WHITE text — fine on black, unreadable on
-   white (1.6:1). On a light section the hover has to be the solid fill, which
-   is also what the active state uses, so hovering now previews selection. */
-.coverage__pill:hover,
-.coverage__pill:focus-visible {
-  border-color: var(--color-blue-light);
-  background-color: var(--color-blue-light);
-  color: var(--color-white);
-}
-
-/* Active state (client brief, 2026-07-21: "blue background with white
-   text... one restrained distinction, no exaggerated glow"), set by
-   js/coverage-map.js via aria-current="true" on the 10 real city <a>
-   links (aria-current is the spec-valid ARIA pattern for "the currently
-   selected item in a set of choices" on a link) — and, added same day
-   for the new "All" button, aria-pressed="true" on that one <button>
-   instead, since aria-current doesn't apply to buttons and aria-pressed
-   is exactly what a toggle button should use. .is-active is a plain
-   CSS-hook duplicate of the same state on both element types — the
-   script sets it alongside whichever ARIA attribute is correct for that
-   element, this rule only needs one selector to key off but listing all
-   three keeps the intent obvious from the CSS alone. */
-.coverage__pill.is-active,
-.coverage__pill[aria-current="true"],
-.coverage__pill[aria-pressed="true"] {
-  border-color: var(--color-blue-light);
-  background-color: var(--color-blue-light);
-  color: var(--color-white);
-}
-
-/* .coverage__pill--all: a real <button> now (added 2026-07-21, client
-   request — "deberia haber un boton con all"), not the old removed link
-   to /einsatzgebiete/ this same class name used to style (that one was
-   removed earlier the same day, see the HTML comment on .coverage__rows
-   for why — this is a fresh, unrelated use of the name, not a revival).
-   Reuses .coverage__pill's base look but stays visibly blue at rest
-   (rather than only on hover/active) so it reads as a distinct view
-   toggle, not one more city in the list. Active/hover states still key
-   off the same .is-active/[aria-pressed="true"] as every other pill —
-   see the comment on .coverage__pill.is-active below for why this one
-   uses aria-pressed instead of aria-current. */
-.coverage__pill--all {
-  border-color: var(--color-blue-light);
-  font-weight: var(--font-weight-bold);
-}
+  }}
 
 /* ---- FAQ ---- */
 /* Only the homepage-specific heading override lives here now — the
@@ -4594,8 +4202,7 @@ main h2 {
   .philosophy__grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-8);
-  }
-}
+  }}
 
 /* ⚠️ 768–1199.98 IS ONE STACKED COLUMN, NOT TWO (client 2026-08-14, Change
    Request 18). It was `repeat(2, …)`, and with THREE cards that always left the
@@ -4619,8 +4226,7 @@ main h2 {
     grid-template-columns: minmax(0, 1fr);
     max-width: 44rem;
     margin-inline: auto;
-  }
-}
+  }}
 
 .philosophy__item-title {
   /* A sub-heading inside a section, so it takes body-ish metrics rather than the
@@ -4755,8 +4361,7 @@ main h2 {
 @media (max-width: 767.98px) {
   .faq {
     padding-top: calc(var(--space-9) + 120px);
-  }
-}
+  }}
 
 /* Black, not grey (client request 2026-07-21) — was inheriting .faq's
    own color: var(--color-gray) above, same as this section's body copy.
@@ -4787,8 +4392,7 @@ main h2 {
   .faq__cta .btn {
     width: 100%;
     justify-content: center;
-  }
-}
+  }}
 
 .faq__toggle {
   border-color: rgb(59 73 86 / 0.35);
@@ -5022,8 +4626,7 @@ main h2 {
 @media (max-width: 767.98px) {
   .pixel-seam + .pain-hook {
     padding-top: calc(var(--space-9) + 120px);
-  }
-}
+  }}
 
 /* (The References/form -> Coverage seam was removed 2026-07-29 and RESTORED
    2026-08-08 when Coverage went white — .coverage reserves its own band-height
@@ -5038,8 +4641,7 @@ main h2 {
 @media (max-width: 767.98px) {
   .pixel-seam + .philosophy {
     padding-top: calc(var(--space-9) + 120px);
-  }
-}
+  }}
 
 .pixel-seam__tile.is-revealed {
   opacity: 0;
@@ -5048,8 +4650,7 @@ main h2 {
 @media (max-width: 767.98px) {
   .pixel-seam__band {
     height: 120px;
-  }
-}
+  }}
 
 /* ==========================================================================
    PREIS-LEISTUNG — the client's section "6b" (2026-08-17 pricing/positioning
@@ -5186,128 +4787,7 @@ main h2 {
     display: inline-flex;
     align-items: center;
     min-height: 2.75rem;
-  }
-
-  /* 41px, so close it only failed on a technicality — but these are the primary
-     way a phone user picks a city on the map, and they invert to a filled state,
-     so the extra 3px is worth having. */
-  .coverage__pill {
-    min-height: 2.75rem;
-    padding-inline: var(--space-4);
-  }
-
-  /* Every pill the same type and the same box (client 2026-08-03: "los botones
-     tienen que estar iguales de tamaño, onda de tipografía y de height"). The
-     --all toggle is --font-weight-bold (800) against the cities' 400, which read
-     as a heavier, bigger button even though both measure exactly 44px. The
-     distinction it needs is carried by colour alone here — blue border at rest,
-     blue fill while it is the active view. Desktop keeps the bold. */
-  .coverage__pill--all {
-    font-weight: var(--font-weight-regular);
-  }
-
-  /* ---- City picker as a dropdown (client 2026-08-04) ---------------------
-     Eleven pills wrapped to four rows and took more height than the map above
-     them. One trigger showing the current area, and the eleven entries as a
-     LIST behind it.
-
-     Built by js/coverage-select.js: `.is-collapsed` is the only thing that ever
-     hides the entries and only that script adds it, so no JS / ≥768px still
-     renders the full pill rows (see that file's header for why this is a
-     disclosure over the existing links rather than a <select>). */
-  .coverage__rows.is-collapsed {
-    display: none;
-  }
-
-  .coverage__select {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
-    width: min(20rem, 100%);
-    min-height: 2.75rem;
-    margin: var(--space-7) auto 0;
-    padding: var(--space-2) var(--space-4);
-    font-family: inherit;
-    font-size: var(--font-size-sm);
-    /* Was --color-text (white): invisible since the section went white
-       2026-08-08. Matches .coverage__pill, which this control collapses. */
-    color: var(--color-gray);
-    background: none;
-    /* Same 1.5px blue hairline the pills use, so the control reads as the same
-       family — it IS the pill row, collapsed. */
-    border: 1.5px solid rgb(61 154 211 / 0.4);
-    border-radius: var(--radius-pill);
-    cursor: pointer;
-    transition: border-color var(--duration-fast) var(--easing-standard);
-  }
-  .coverage__select[aria-expanded="true"],
-  .coverage__select:hover {
-    border-color: var(--color-blue-light);
-  }
-  .coverage__select:focus-visible {
-    outline: 2px solid var(--color-focus-ring);
-    outline-offset: 2px;
-  }
-  .coverage__select-caret {
-    width: 0.7rem;
-    height: 0.7rem;
-    /* #icon-chevron is an open stroke path pointing LEFT; filled it renders as a
-       black wedge (same handling as .site-nav__caret). Rotated to point down,
-       then to point up while the list is open. */
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2.5;
-    color: var(--color-blue-light);
-    transform: rotate(-90deg);
-    transition: transform var(--duration-fast) var(--easing-standard);
-  }
-  .coverage__select[aria-expanded="true"] .coverage__select-caret {
-    transform: rotate(90deg);
-  }
-
-  /* Open: a list, not a wrapped pill grid — that is the point of the change.
-     The two <ul>s (the footer-matching 6 + 5 split) stack into one continuous
-     column of full-width rows with hairline separators. */
-  .coverage__rows {
-    gap: 0;
-    margin-top: var(--space-4);
-    align-items: stretch;
-  }
-  .coverage__list {
-    flex-direction: column;
-    gap: 0;
-  }
-  .coverage__pill {
-    /* Rows, not pills: no border ring, one shared bottom hairline, full width so
-       the whole row is the target. */
-    width: 100%;
-    justify-content: flex-start;
-    border: 0;
-    border-bottom: 1px solid rgb(61 154 211 / 0.22);
-    border-radius: 0;
-    padding-inline: var(--space-3);
-  }
-  /* The blue "Alle" ring would be the only bordered row in the list. */
-  .coverage__pill--all {
-    border-color: rgb(61 154 211 / 0.22);
-  }
-  /* The active row is marked by its fill (see .coverage__pill.is-active above),
-     which needs to reach the row's edges here. */
-  .coverage__rows .coverage__list:last-child .coverage__pill:last-child {
-    border-bottom: 0;
-  }
-
-  /* 11px uppercase with 0.08em tracking, on a translucent panel over map tiles —
-     the smallest text on the page in the least legible place. */
-  .coverage__overlay-label {
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
-  }
-
-  /* The lead form's own two inline-link touch targets moved to
-     css/lead-form.css with the rest of that section (2026-08-03). */
-}
+  }}
 
 
 /* --------------------------------------------------------------------------
@@ -5407,5 +4887,4 @@ main h2 {
 
   .partners__logo--wide {
     max-width: 10.5rem;
-  }
-}
+  }}
