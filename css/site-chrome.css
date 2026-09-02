@@ -398,6 +398,27 @@
        past the fold on a short phone. `contain` keeps that scroll inside the
        panel instead of chaining to the page behind it. */
     overflow-y: auto;
+    /* ⚠⚠ overflow-x MUSS AUSDRÜCKLICH ZU — sonst kann man die Schublade
+       seitlich aus dem Bild ziehen. Gemeldet am 02.09.2026: "ich kann nach
+       links und rechts swipen und er wird dann aus dem Bildschirm
+       rausgeswiped."
+
+       ZWEI URSACHEN, die zusammen wirken:
+       1. Die CSS-Spezifikation: ist EINE Achse nicht visible, wird die andere
+          von visible auf AUTO gehoben. Ein bloßes overflow-y: auto macht die
+          Waagerechte also ebenfalls scrollbar — gemessen overflow-x: auto,
+          obwohl es nirgends gesetzt war.
+       2. Der Inhalt ist genau 1 px breiter als das Panel (361 gegen 360,
+          ebenso bei 390 und 430). Ein Pixel genügt: iOS lässt eine scrollbare
+          Achse gummiband-artig weit herausziehen.
+
+       ⚠ SICHTBAR WURDE ES ERST DURCH data-lenis-prevent am Nav (siehe dort):
+       vorher hat Lenis im gestoppten Zustand JEDE Geste verworfen, also auch
+       die waagerechte. Der Überhang war die ganze Zeit da, nur unerreichbar.
+       Nicht der Fix war falsch, er hat einen bestehenden Fehler freigelegt.
+       ⚠ hidden und nicht clip: clip würde auch die Senkrechte zum
+       Nicht-Scrollcontainer machen, wenn jemand später overflow-y anfasst. */
+    overflow-x: hidden;
     overscroll-behavior: contain;
   }
 
@@ -560,8 +581,22 @@
     cursor: pointer;
     /* Same optical pull as the hamburger's: flushing the 44px BOX to the
        container inset would leave the drawn 18px icon 13px further in than
-       everything else in the panel. Derived, not hardcoded. */
-    margin-inline-end: calc((1.125rem - 2.75rem) / 2);
+       everything else in the panel. Derived, not hardcoded.
+
+       ⚠⚠ AUF DAS POLSTER BEGRENZT — 02.09.2026. Der Zug ist (18–44)/2 =
+       −13 px, das Polster am Telefon aber nur 12 px. Damit lag die rechte
+       Kante des Knopfes 1 px NEBEN dem Panel (gemessen 391 in einem Panel von
+       390), und dieses eine Pixel machte die Schublade waagerecht scrollbar:
+       overflow-y: auto hebt laut Spezifikation auch overflow-x auf auto, und
+       iOS zieht eine scrollbare Achse gummiband-artig weit heraus. Der Kunde
+       hat genau das gemeldet.
+       max() zweier negativer Werte nimmt den kleineren Zug: wo das Polster
+       größer ist als 13 px, bleibt die optische Absicht erhalten; wo es
+       kleiner ist, kann der Knopf nicht mehr hinausragen. */
+    margin-inline-end: max(
+      calc((1.125rem - 2.75rem) / 2),
+      calc(-1 * var(--container-padding))
+    );
   }
 
   .nav-close__icon {

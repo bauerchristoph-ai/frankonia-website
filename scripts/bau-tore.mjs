@@ -621,6 +621,45 @@ function torCtaVarianten() {
   return befunde;
 }
 
+/* Jedes inline-SVG, dessen CSS BEIDE Achsen auf auto laesst, braucht width- UND
+ * height-Attribute — sonst fehlt es in Safari samt seinem Platz.
+ *
+ * ⚠️⚠️ WARUM DIESES TOR EXISTIERT. Der Ortsumriss der 26 Stadt- und Kombiseiten
+ * war auf dem iPhone unsichtbar, und der Kunde hat es am 02.09.2026 ZWEIMAL
+ * gemeldet, waehrend jede meiner Messungen ihn als vorhanden auswies. Der Grund:
+ * .city-map hat `width: auto; height: auto` und nur max-width/max-height. Chrome
+ * leitet die Groesse dann aus dem viewBox ab, Safari NICHT — dort faellt die Box
+ * auf null zusammen. In Chrome ist das nicht nachstellbar, also kann es nur ein
+ * Tor am Markup verhindern.
+ *
+ * Geprueft wird genau die riskante Kombination, nicht jedes SVG: von den 58
+ * inline-SVG ohne width/height hat nur .city-map beide Achsen auf auto — alle
+ * anderen pinnen eine (width: 100%, 2.75rem, var(--kz-frame) …), und mit EINER
+ * definiten Achse loest das Verhaeltnis in jeder Engine auf.
+ */
+function torSvgMasse() {
+  const befunde = [];
+  /* Klassen, deren CSS beide Achsen auf auto laesst. Wer hier eine ergaenzt,
+     muss auch die Attribute im Markup setzen. */
+  const BEIDE_AUTO = ["city-map"];
+  for (const f of seiten()) {
+    const html = fs.readFileSync(f.datei, "utf8");
+    for (const m of html.matchAll(/<svg\b[^>]*>/g)) {
+      const tag = m[0];
+      const kl = (tag.match(/class="([^"]*)"/) || [, ""])[1].split(" ")[0];
+      if (!BEIDE_AUTO.includes(kl)) continue;
+      const hatW = /\swidth="[0-9]/.test(tag);
+      const hatH = /\sheight="[0-9]/.test(tag);
+      if (!hatW || !hatH) {
+        befunde.push(f.url + ": <svg class=\"" + kl + "\"> ohne " +
+          (!hatW && !hatH ? "width und height" : !hatW ? "width" : "height") +
+          " — in Safari faellt die Box auf null zusammen");
+      }
+    }
+  }
+  return befunde;
+}
+
 const TORE = [
   ["Radien am Behaelter und aus Token (Aufgabe 18)", torRadien],
   ["CTA-Varianten unter der Obergrenze (Aufgabe 19)", torCtaVarianten],
@@ -634,6 +673,7 @@ const TORE = [
   ["Fremd-Hosts in /datenschutz/ genannt (Aufgabe 3)", torFremdHosts],
   ["Kombiseiten aus beiden Richtungen verlinkt (Aufgabe 11)", torKombiVerweise],
   ["Erfolgsseiten je Formulartyp (Aufgabe 12)", torErfolgsseiten],
+  ["SVG mit beiden Achsen auto tragen width und height", torSvgMasse],
 ];
 
 if (!fs.existsSync(DIST)) {

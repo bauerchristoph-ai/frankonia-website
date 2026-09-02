@@ -216,9 +216,18 @@ def r_hero(c, s):
              `stroke-dasharray: 1` is one exact lap at any size for any city. A
              path pasted in without it draws nothing at all.
              ⚠️ The guides are PERCENTAGES because every city's viewBox height
-             differs (683 for Coburg, 1494 for Kulmbach); this one is {view.split()[3]}. -->
+             differs (683 for Coburg, 1494 for Kulmbach); this one is {view.split()[3]}.
+             ⚠⚠ width UND height SIND PFLICHT, nicht Zierde. Das CSS laesst
+             beide Achsen auf auto (nur max-width/max-height); Chrome leitet die
+             Groesse dann aus dem viewBox ab, Safari auf dem iPhone NICHT — dort
+             fiel die Box auf null zusammen und der Umriss fehlte samt seinem
+             Platz. Gemeldet am 02.09.2026, zweimal, und in Chrome nicht
+             nachstellbar. Mit den Attributen hat das SVG eine intrinsische
+             Groesse und ein Verhaeltnis, also loesen beide auto-Achsen in jeder
+             Engine auf; max-* wirkt unveraendert weiter.
+             -->
         <div class="city-hero__map" aria-hidden="true">
-          <svg class="city-map" viewBox="{view}" fill="none" focusable="false">
+        <svg class="city-map" viewBox="{view}" width="{view.split()[2]}" height="{view.split()[3]}" fill="none" focusable="false">
             <line class="city-map__guide" x1="50%" y1="0" x2="50%" y2="100%"></line>
             <line class="city-map__guide" x1="0" y1="50%" x2="100%" y2="50%"></line>
             {path}
