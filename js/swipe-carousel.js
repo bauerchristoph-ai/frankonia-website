@@ -94,7 +94,7 @@
      scrollLeft, so mid-drag they are always consistent with each other. */
   Strip.prototype.paint = function () {
     var one = 1 / this.cards.length;
-    var max = this.scroller.scrollWidth - this.scroller.clientWidth;
+    var max = this.ui.max;
     var p = max > 0 ? Math.min(1, Math.max(0, this.scroller.scrollLeft / max)) : 0;
     this.ui.fill.style.width = (one + p * (1 - one)) * 100 + "%";
 
@@ -175,7 +175,11 @@
       ticking = true;
       requestAnimationFrame(function () { ticking = false; self.paint(); });
     }
-    function onResize() { self.ui.offsets = self.offsets(); self.paint(); }
+    function onResize() {
+      self.ui.offsets = self.offsets();
+      self.ui.max = self.scroller.scrollWidth - self.scroller.clientWidth;
+      self.paint();
+    }
     function onKey(e) {
       if (e.key === "ArrowRight") { e.preventDefault(); self.go(self.index + 1); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); self.go(self.index - 1); }
@@ -189,6 +193,13 @@
       bar: bar, progress: progress, current: current, fill: fill,
       prev: prev,
       offsets: this.offsets(),
+      /* ⚠ Mitgemessen wie die offsets, aus demselben Grund: paint() lief pro
+         Bild und las scrollWidth und clientWidth neu — zwei Layout-Werte,
+         während system-story.js im selben Bild scrollLeft schreibt. Ein
+         Schreiben, dann ein Lesen, das ist ein erzwungenes Neuberechnen pro
+         Bild. Beide ändern sich nur mit der Fensterbreite, also einmal messen
+         und bei resize erneut. 02.09.2026, gegen das gemeldete Ruckeln. */
+      max: this.scroller.scrollWidth - this.scroller.clientWidth,
       teardown: function () {
         scroller.removeEventListener("scroll", onScroll);
         scroller.removeEventListener("keydown", onKey);

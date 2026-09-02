@@ -846,8 +846,29 @@
   .system-story .system-story__card {
     height: auto;
     aspect-ratio: auto;
-    min-height: min(68svh, 125vw);
-    max-height: none;
+    /* ⚠️⚠️ HIER STAND min-height: min(68svh, 125vw) UND DAS WAR EIN
+       FEHLER — zurückgenommen am 02.09.2026, nachdem der Kunde die Sektion als
+       "katastrophal" gemeldet hat: Karte unten abgeschnitten, letzter Punkt
+       nicht lesbar, in der Querlage nur die obere Kartenkante zu sehen.
+
+       DER GRUND IST EINE CSS-REGEL, KEIN GESCHMACK: der Pinned-Block weiter
+       unten hat mit max-height: 52svh eine BREMSE, damit Überschrift, Zähler,
+       Karte und Fortschrittslinie zusammen in EINE Bildschirmhöhe passen — die
+       Bühne ist 100svh mit overflow: hidden. Bei gleichem Rang gewinnt in CSS
+       aber min-height gegen max-height. Meine min-height hat die Bremse also
+       ausgeschaltet: gemessen 488 px statt 439, und alles darunter wurde
+       abgeschnitten.
+
+       Die Höhe der Karte gehört nicht ihr selbst, sondern der Bühne: sie nimmt,
+       was übrig ist. Das steht jetzt im Pinned-Block. */
+    /* Für den NICHT gepinnten Fall braucht die Karte aber weiter eine Form:
+       reduced motion, kein JS, und seit 02.09.2026 auch flache Bildschirme
+       (Querlage) — siehe den 560px-Riegel in js/system-story.js. Ohne das wäre
+       die Karte nur so hoch wie ihr Text und vom Foto bliebe ein Streifen.
+       ⚠ Gefahrlos, obwohl genau dieser Wert oben der Fehler war: der
+       Pinned-Block setzt später height, min-height und max-height selbst und
+       gewinnt bei gleichem Rang durch die Reihenfolge. Gemessen geprüft. */
+    min-height: min(125vw, 60svh);
     /* ⚠️ Die KARTE ist die Flex-Spalte, nicht das Innere: sie traegt die
        min-height, also muss die Streckung von hier ausgehen. Ein
        `min-height: 100%` im Inneren nuetzt nichts — ein Prozentwert gegen
@@ -950,10 +971,57 @@
   /* The whole composition — title, counter, card, progress line — has to fit the
      100svh stage, so the card gives up some height here (68svh would leave the
      progress line off-screen on a 667px phone). */
+  /* ═══ DIE KARTE NIMMT, WAS DIE BÜHNE ÜBRIG LÄSST — 02.09.2026 ════════
+     Kunde, mit zwei Screenshots (Hoch- und Querlage): "die Sektion ist echt
+     aktuell noch katastrophal … die Headline muss zu sehen sein und nicht vom
+     Header verdeckt werden … macht doch lieber das Bild kleiner."
+
+     ⚠⚠ VORHER BEHAUPTETE DIE KARTE IHRE EIGENE HÖHE — erst per aspect-ratio,
+     dann (mein Fehler vom 01.09.) per min-height. Beides ist hier falsch: die
+     Bühne ist genau EINE Bildschirmhöhe mit overflow: hidden, und darin müssen
+     Kopfzeile, Überschrift, Zähler, Karte und Fortschrittslinie zusammen
+     unterkommen. Wer seine Höhe selbst setzt, schiebt den Rest hinaus.
+
+     Jetzt ist die Rechnung umgedreht: der Streifen nimmt den Rest der Bühne
+     (flex: 1 1 auto), und die Karte füllt ihn genau aus (height: 100%). Damit
+     kann per Konstruktion nichts mehr abgeschnitten werden — auf jeder
+     Bildschirmhöhe, ohne einen einzigen Zahlenwert, den man nachpflegen muss.
+     Das Foto liegt absolut hinter dem Text und wird dabei kleiner: genau das,
+     was der Kunde vorgeschlagen hat.
+
+     ⚠ min-height: 0 ist nicht Zierde: die Mindesthöhe eines Flex-Elements
+     richtet sich sonst nach seinem Inhalt, und dann wächst die Karte doch
+     wieder über die Bühne hinaus. */
+  /* ⚠⚠ DIESER GANZE PINNED-TEIL GREIFT NUR MIT DER KLASSE, DIE DAS SKRIPT
+     SETZT — und das tut es seit 02.09.2026 erst ab 560 px Bildschirmhöhe.
+     Gemessen in der Querlage (844x390): die Bühne lässt nach Kopfzeile,
+     Überschrift und Zähler nur 103 px für die Karte, der Text braucht 167. Das
+     ist keine Einstellungsfrage — das passt nicht. Darunter bleibt die Sektion
+     der native Wisch-Streifen, was der Kunde selbst als Rückfall vorgeschlagen
+     hat. Der Wert steht in js/system-story.js; beide müssen zusammenpassen,
+     sonst pinnt das Skript, während der Streifen nativ bleibt. */
+  .system-story--pinned .system-story__stack {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
   .system-story--pinned .system-story__card {
-    max-height: 52svh;
+    height: 100%;
+    min-height: 0;
+    max-height: none;
+  }
+
+  /* ⚠⚠ KOPFZEILE FREIHALTEN. Der Sticky-Header ist gemessen 76 px hoch und
+     liegt ÜBER der Bühne. Mit justify-content: center stand die Eyebrow
+     "UNSER SYSTEM" dahinter und die erste Zeile der Überschrift hatte 10 px
+     Luft (gemessen: Oberkante 86, Header-Unterkante 76) — eine Zeile mehr
+     Umbruch, eine größere Systemschrift, und sie verschwindet. Genau das zeigt
+     der Screenshot des Kunden.
+     Von oben stapeln statt mittig, und die Kopfzeile als Polster freihalten. */
+  .system-story--pinned .system-story__stage {
+    justify-content: flex-start;
+    padding-top: 4.75rem;
   }
   .system-story--pinned .system-story__intro {
-    padding-block: var(--sys-space-4) var(--sys-space-3);
+    padding-block: var(--sys-space-3) var(--sys-space-3);
   }
 }

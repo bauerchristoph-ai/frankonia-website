@@ -258,7 +258,7 @@
      scrubs only exists because .system-story__stack opts into the tablet band in
      css/swipe-carousel.css. Keep the three ranges in step. */
   mm.add(
-    "(max-width: 1023.98px) and (prefers-reduced-motion: no-preference)",
+    "(max-width: 1023.98px) and (min-height: 560px) and (prefers-reduced-motion: no-preference)",
     function () {
       var stack = story.querySelector("[data-system-stack]");
       var track = story.querySelector(".system-story__track");
@@ -280,13 +280,34 @@
 
       measure();
 
+      var letzterLinks = -1;
       var st = ScrollTrigger.create({
         trigger: track,
         start: "top top",
         end: "bottom bottom",
         invalidateOnRefresh: true,
+        /* ⚠⚠ GERUNDET UND NUR BEI ECHTER ÄNDERUNG — 02.09.2026, gegen das
+           Ruckeln, das der Kunde mehrfach gemeldet hat.
+
+           Jeder Schreibvorgang auf scrollLeft löst am Streifen ein
+           scroll-Ereignis aus, und daran hängt paint() aus swipe-carousel.js
+           (Zähler und Fortschrittslinie). Das war vorher bei JEDEM Update der
+           Fall, auch bei einer Änderung von einem hundertstel Pixel: ein
+           Schreiben, dann im nächsten Bild ein Lesen von scrollWidth — also ein
+           erzwungenes Neuberechnen des Layouts pro Bild, ohne dass sich
+           sichtbar etwas bewegt.
+
+           Ein Pixel ist die kleinste Einheit, die man sehen kann; darunter zu
+           schreiben kostet nur Rechenzeit. Auf ganze Pixel gerundet und den
+           Schreibvorgang übersprungen, wenn der Wert gleich bleibt.
+           ⚠ Kein Ersatz für eine Messung auf echtem Gerät — iOS bleibt hier
+           nicht nachstellbar (siehe den Riegel oben). */
         onUpdate: function (self) {
-          if (maxScroll > 0) stack.scrollLeft = self.progress * maxScroll;
+          if (maxScroll <= 0) return;
+          var ziel = Math.round(self.progress * maxScroll);
+          if (ziel === letzterLinks) return;
+          letzterLinks = ziel;
+          stack.scrollLeft = ziel;
         },
       });
 
@@ -346,6 +367,7 @@
         story.classList.remove("system-story--pinned");
         track.style.height = "";
         stack.scrollLeft = 0;
+        letzterLinks = -1;
       };
     }
   );
