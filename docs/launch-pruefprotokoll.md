@@ -2872,3 +2872,202 @@ Netzwerk-Tab.
 ⚠️ Zur unpkg-URL: die Anfrage geht ohne Version raus und wird auf **@1.3.1**
 umgeleitet. Es gibt also eine feste Fassung — aber der Redirect zeigt immer auf die
 neueste, die Pinnung fehlt weiter in der Tag-Konfiguration.
+
+---
+
+## N12 — Der Grund, warum mehrere Korrekturen bei dir nicht ankamen: eine Stunde Cache
+
+**Gemeldet** 02.09.2026 sinngemäß mehrfach: „das hatte ich jetzt mehrfach korrigieren
+lassen", „entweder hast du es nicht gepusht oder es hat nicht aktualisiert oder es
+fehlt alles".
+
+**Es war gepusht. Der Browser hat nur nicht gefragt.** `vercel.json` gibt mit:
+
+| | Cache |
+|---|---|
+| HTML | `max-age=0, must-revalidate` → bei jedem Aufruf neu |
+| `/css/*`, `/js/*` | `max-age=3600` → **eine Stunde** |
+| `/assets/*` | `max-age=86400` → **ein ganzer Tag** |
+
+Die Dateinamen hatten keine Version. Ein Neuladen holte also die neue Seite, aber das
+alte Aussehen und das alte Verhalten — und bei Bildern bis zu 24 Stunden lang. Genau
+deshalb hast du Menühöhe, Kartenhöhe, FAQ-Sprung und die schwarzen Bildecken
+weiterhin gesehen, obwohl sie behoben waren.
+
+⚠️⚠️ **Und deshalb waren meine Messungen grün:** ich messe mit frischem Browserprofil,
+also mit leerem Cache. Ich habe eine Stunde in der Zukunft geprüft.
+
+**Behoben:** `build.js` hängt als letzten Bauschritt eine achtstellige
+Inhaltssignatur an jede eigene Adresse — `/css/app.css?v=ba0a6e20`. Ändert sich der
+Inhalt, ändert sich die Adresse, also **muss** der Browser neu holen; ändert sich
+nichts, bleibt die Datei im Cache. Der Nutzen bleibt, der Versatz verschwindet.
+
+**Gemessen:** 60 CSS/JS-Dateien und 299 Bilder/Icons/Schriften signiert, 968 Adressen
+in 70 Seiten, auch in `srcset` (Deskriptor und Komma bleiben erhalten) und in `url()`
+im CSS. Keine unsignierte eigene Adresse mehr, keine Doppelsignatur.
+
+**Für dich heißt das:** ab jetzt siehst du eine Korrektur, sobald der Vercel-Bau durch
+ist. Kein Hard-Reload mehr nötig.
+
+---
+
+## N13 — Handymenü: nicht scrollbar, und die Ursache lag nicht im Menü
+
+**Gemeldet** 01. und 02.09.2026: „das mobile Menü ist nicht scrollbar … auch wenn ich
+Leistungen aufklappe, werde ich Kontakt nie klicken können".
+
+**Du hattest recht, und meine Messung war trotzdem grün — das ist der lehrreiche
+Teil.** Programmatisch scrollte die Schublade einwandfrei: Inhalt 1474 px in einem
+844-px-Kasten, 630 px Scrollweg, Kontakt und CTA danach im Bild. Mit dem Finger ging
+nichts. Das ist die Signatur einer **abgefangenen Geste**.
+
+**Ursache:** beim Öffnen wird `lenis.stop()` gerufen, damit die Seite hinter dem Menü
+stillsteht. Im eingebundenen Lenis steht aber:
+
+```js
+if (this.isStopped || this.isLocked) { preventDefault(); return }
+```
+
+Das trifft **jede** Wischgeste, die am Fenster ankommt — und ein `preventDefault` auf
+`touchmove` bricht das native Scrollen der ganzen Geste ab, auch das des inneren
+Elements mit `overflow-y: auto`.
+
+**Behoben** mit `data-lenis-prevent` am Navigationselement. Lenis prüft das Attribut
+auf dem gesamten Ereignispfad und steigt aus, **bevor** es `preventDefault` ruft: die
+Seite bleibt gestoppt, das Menü scrollt nativ.
+
+**Gemessen** mit echter Touchgeste, A/B: ohne Attribut `defaultPrevented = true`, mit
+Attribut `false`, Lenis in beiden Fällen gestoppt.
+
+---
+
+## N14 — Systemkarten auf dem Handy: mein Fehler vom Vortag, zurückgenommen
+
+**Gemeldet** 02.09.2026 mit zwei Screenshots: „die Sektion ist echt aktuell noch
+katastrophal … die Headline muss zu sehen sein und nicht vom Header verdeckt werden …
+macht doch lieber das Bild kleiner."
+
+**Vier Befunde, drei davon behoben und einer bewusst anders gelöst:**
+
+1. **Mein `min-height` vom 01.09. hat eine bestehende Bremse ausgeschaltet.** Der
+   Block hatte `max-height: 52svh`, damit Überschrift, Zähler, Karte und
+   Fortschrittslinie zusammen in **eine** Bildschirmhöhe passen — die Bühne ist
+   `100svh` mit `overflow: hidden`. Bei gleichem Rang gewinnt in CSS `min-height`
+   gegen `max-height`. Gemessen: Karte **488 px statt 439**, alles darunter
+   abgeschnitten. Zurückgenommen.
+
+2. **Die Höhe gehört jetzt der Bühne, nicht der Karte.** Der Streifen nimmt den Rest,
+   die Karte füllt ihn aus. Damit kann per Konstruktion nichts abgeschnitten werden —
+   auf jeder Bildschirmhöhe, ohne nachzupflegenden Zahlenwert.
+
+3. **Kopfzeile freigehalten.** Vorher stand die Eyebrow „UNSER SYSTEM" hinter dem
+   Header und die erste Zeile der Überschrift hatte **10 px** Luft (Oberkante 86,
+   Header-Unterkante 76). Eine Zeile mehr Umbruch und sie verschwindet — genau dein
+   Screenshot.
+
+4. **Unter 560 px Bildschirmhöhe wird nicht mehr geklebt.** In der Querlage
+   (844 × 390) bleiben für die Karte **103 px**, der Text braucht **167** — das passt
+   physisch nicht. Dort bleibt der native Wisch-Streifen, dein eigener
+   Rückfallvorschlag.
+
+**Gegen das Ruckeln:** der Scrub schrieb `scrollLeft` bei **jedem** Update, auch bei
+einem hundertstel Pixel. Jedes Schreiben löst am Streifen ein `scroll`-Ereignis aus,
+an dem der Zähler hängt, der `scrollWidth` neu liest — ein erzwungenes Neuberechnen
+des Layouts pro Bild, ohne sichtbare Bewegung. Jetzt auf ganze Pixel gerundet und
+übersprungen, wenn der Wert gleich bleibt; die beiden Layout-Werte werden gemerkt.
+
+**Gemessen** an zehn Bildschirmgrößen (320 × 568 bis 1024 × 768): Überschrift nie
+verdeckt, Karte immer in der Bühne, letzter Aufzählungspunkt immer sichtbar, kein
+horizontaler Seitenscroll. Durchgescrollt bei 390 × 844: **alle sechs Karten**
+erreichen die Mitte, Zähler 01 → 06.
+
+---
+
+## N15 — Hero-Foto auf dem Handy: Text teilweise nicht lesbar, auf genau einer Seite
+
+**Gemeldet** 02.09.2026 zum Prüfpunkt „Foto als Hintergrund des Hero, Text darauf gut
+lesbar": „teilweise ist der Text nicht optimal lesbar. aber nur teilweise — da müsste
+man den Verlauf vereinzelt dunkler machen an bestimmten Stellen."
+
+**Gemessen** auf allen zwölf Foto-Heroes bei 390 px: hellster Bildpunkt im Rechteck
+jedes Textelements, Text ausgeblendet, ein Frame gewartet, WhatsApp-Knopf und
+Cookie-Dialog mit entfernt. Ergebnis — **nur `/werkschutz/`, und nur teilweise:**
+
+| Element | schlechtester Punkt | Anteil zu heller Fläche |
+|---|---|---|
+| H1 | 1,10:1 | **6,8 %** |
+| Lede | 1,88:1 | **2,7 %** |
+| Badge | 1,11:1 | 1,0 % |
+| Tics, Brotkrume | 15–19:1 | 0 % |
+
+Die **elf anderen** Foto-Heroes: 0 % zu helle Fläche.
+
+**Ursache — eine Spezifitätsfalle, kein zu schwacher Wert.** Der Telefon-Verlauf gilt
+für `.service-hero__bg::after` (0,1,0). `/werkschutz/` ist ein Bleed-Hero, und
+`.service-hero--bleed .service-hero__bg::after` (0,2,0) gewinnt unabhängig von Media
+Query und Dateireihenfolge — hatte aber **keine Telefon-Fassung**. Auf dem Handy galt
+also der Desktop-Verlauf von **links nach rechts**, der bei 100 % Breite auf `0`
+ausläuft. Am Telefon spannt der Text über die ganze Breite: jedes **Zeilenende** lag
+auf ungewaschenem Foto, genau dort, wo die beleuchteten Fenster des Nachtfotos liegen,
+die der Aufheller `brightness(1.34)` auf fast Weiß zieht.
+
+**Behoben** mit einer senkrechten Telefon-Waschung für den Bleed-Hero, in denselben
+Werten wie die Regel darüber — eine Entscheidung in zwei Heroes statt zwei ähnlichen.
+
+**Gemessen nachher:** Badge 1,11 → **7,00:1**, H1 1,10 → **6,53:1**, Lede 1,88 →
+**7,32:1**, alle Flächenanteile 0 %. `/leistungen/` (der zweite Bleed-Hero) messt
+**unverändert** 7,27–12,41:1 — die Waschung kostet dort nichts. Über alle zwölf
+Foto-Heroes: **0 von 82 Messungen unter der Schwelle.**
+
+---
+
+## N16 — Zwei Meldungen ohne Defekt, und ein Messfehler von mir
+
+**Ortsumriss auf den Einsatzgebietsseiten.** Du hast zweimal gemeldet, er fehle auf
+dem Handy. Meine erste Antwort war falsch begründet — ich hatte eine **Kombiseite**
+geprüft, nicht eine Stadtseite. Nachgemessen **live und mit Prüfung der Seitenidentität**
+auf `/sicherheitsdienst-wuerzburg/`, `-nuernberg/`, `-bamberg/` und
+`/brandwache-wuerzburg/`: der Umriss **ist** da, `display: flex`, **350 × 160 px** bei
+390 px Breite, ein Pfad, bei y = 195.
+
+⚠️ **Aber er ist optisch schwach, und das ist messbar:** die Tinte einer hochformatigen
+Stadt wie Würzburg füllt nur **109 × 160 px** (die Höhenbremse bindet), der Strich
+rendert **0,98 px** gegen **3,5 px** auf dem Desktop, die Füllung liegt bei 24 %.
+Größer geht kaum: gemessen bleiben bei 390 px nur **35 px** Luft, bevor der CTA unter
+die Falz rutscht. Offen als Gestaltungsfrage, nicht als Fehler.
+
+**Drittes Social-Bild.** Vorhanden und geladen: `social-veranstaltungsschutz.webp`,
+480 × 850, Karte 335 × 527, der Streifen ist nativ bis zum Ende scrollbar
+(`overflow-x: auto`, `scroll-snap: x mandatory`, 694 px Scrollweg). Dein Screenshot
+war mitten in der Wischbewegung.
+
+⚠️⚠️ **Zwei meiner Messreihen waren ungültig, und die Ursache ist eine Falle für
+später:** `scripts/dev-server.js` liefert für **jeden** unbekannten Pfad die
+**Startseite** aus — gemessen 175 KB und der Titel der Startseite statt 65 KB für
+`/sicherheitsdienst-wuerzburg/`. Dadurch kamen „der Umriss fehlt" und „identische
+Kontrastwerte auf zwei Seiten" zustande. **`location.pathname` reicht als Prüfung
+nicht**: der ist richtig, während der Inhalt falsch ist. Eine Sonde muss **Titel oder
+H1** vergleichen. Beides ist jetzt eingebaut.
+
+---
+
+## N17 — Offen: die Ecken der Dienstleistungsbilder
+
+**Gemessen an den Dateien selbst** (Eckpixel gegen einen Referenzpunkt 26 px diagonal
+innen): **neun von zehn** Bildern in `assets/images/` tragen eine **eingebackene
+Rundung mit schwarzen Ecken** — 51 bis 62 px in einer 820 px breiten Datei, auf dem
+Schirm rund **30 px**. Weil der Seitengrund ebenfalls schwarz ist, liest sich das als
+„das Bild hat runde Ecken".
+
+`objektschutz` ist die **einzige Datei ohne** eingebackene Rundung. Der CSS-Radius ist
+**0 px** — die Ecken sollen also eckig sein.
+
+**Das ist der Grund, warum du das mehrfach korrigieren lassen musstest:** die
+Korrektur an `objektschutz` war da, aber `/assets/` wird einen ganzen Tag gecacht
+(siehe N12). Das ist jetzt behoben.
+
+⚠️ **Was fehlt, ist eine Entscheidung, nicht eine Messung:** entweder alle zehn
+**eckig** (dann müssen die neun Dateien neu ausgegeben werden, und die schwarze Ecke
+lässt sich nicht wiederherstellen — es wäre ein Beschnitt) oder alle zehn **rund**
+(dann genügt ein CSS-Radius, der die eingebackene Rundung sauber überdeckt, und
+`objektschutz` zieht mit). Zwei Zeilen Arbeit gegen zehn neue Bilddateien.

@@ -5151,6 +5151,57 @@ main h2 {
     );
   }
 
+  /* ═══ DER BLEED-HERO BRAUCHT SEINE EIGENE TELEFON-WASCHUNG ════════════
+     Kunde 02.09.2026 zum Prüfpunkt "Foto als Hintergrund des Hero, Text
+     darauf gut lesbar": "teilweise ist der Text nicht optimal lesbar. aber
+     nur teilweise — da müsste man den Verlauf vereinzelt dunkler machen an
+     bestimmten Stellen." Er hatte recht, und die Ursache ist eine
+     Spezifitätsfalle, kein zu schwacher Wert.
+
+     ⚠⚠ DIE REGEL DARÜBER HAT AUF EINEM BLEED-HERO NIE GEGRIFFEN.
+     .service-hero__bg::after ist (0,1,0), .service-hero--bleed
+     .service-hero__bg::after weiter oben in dieser Datei ist (0,2,0) — und
+     gewinnt damit unabhängig von Media Query und Dateireihenfolge. Auf dem
+     Telefon galt also der DESKTOP-Verlauf: eine Rampe von links nach rechts,
+     die bei 100 % Breite auf rgb(1 1 1 / 0) ausläuft. Am Telefon spannt der
+     Text über die ganze Breite, also lag jedes ZEILENENDE auf ungewaschenem
+     Foto.
+
+     GEMESSEN auf /werkschutz/ bei 390 px, hellster Bildpunkt im Rechteck des
+     Elements (Text ausgeblendet, ein Frame gewartet, WhatsApp-Knopf und
+     Cookie-Dialog mit entfernt):
+       H1    1,10:1 — 6,8 % der Fläche zu hell
+       Lede  1,88:1 — 2,7 %
+       Badge 1,11:1 — 1,0 %
+       Tics und Brotkrume 15–19:1 — 0 %
+     Genau "nur teilweise": die beleuchteten Fenster im Nachtfoto, die der
+     Aufheller brightness(1.34) auf fast Weiß zieht. Die übrigen ELF
+     Foto-Heroes messen 0 % zu helle Fläche — diese Seite ist der Einzelfall.
+
+     ⚠ SENKRECHT, nicht waagerecht — dieselbe Entscheidung, die der
+     nicht-bleed Hero und die Startseite an diesem Breakpoint schon treffen:
+     wo der Text die ganze Breite einnimmt, kann eine seitliche Rampe nichts
+     ausrichten. Werte sind die der Regel darüber, damit es EINE Entscheidung
+     in zwei Heroes ist und nicht zwei ähnliche.
+     ⚠ Das Kopfband bleibt: es trägt die Lesbarkeit von Logo und Navigation,
+     die hier ÜBER dem Foto liegen. Feste Länge, kein Prozentwert — es muss
+     die Kopfzeile abdecken, nicht einen Anteil der Herohoehe. */
+  .service-hero--bleed .service-hero__bg::after {
+    background-image:
+      linear-gradient(
+        to bottom,
+        rgb(1 1 1 / 0.62) 0,
+        rgb(1 1 1 / 0.28) var(--service-hero-overlap),
+        rgb(1 1 1 / 0) calc(var(--service-hero-overlap) * 2)
+      ),
+      linear-gradient(
+        to bottom,
+        rgb(1 1 1 / 0.7) 0%,
+        rgb(1 1 1 / 0.6) 45%,
+        rgb(1 1 1 / 0.78) 100%
+      );
+  }
+
   /* ---- FULL-WIDTH STACKED CTAs: A PHONE PATTERN, AND IT STOPS AT 640px ------
      ⚠️⚠️ THE 639.98 IS THE SITE-WIDE RULE FOR EVERY CTA ROW, NOT A LOCAL TWEAK.
      This is the canonical copy of the reasoning; the seven sibling rules that
