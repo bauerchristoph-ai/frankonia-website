@@ -2177,6 +2177,56 @@ main h2 {
   max-width: 28rem;
   overflow: hidden;
   background-color: var(--color-bg-elevated);
+
+  /* ═══ RUNDE ECKEN, UND SIE DECKEN EINE EINGEBACKENE RUNDUNG AB ══════════
+     Kunde 02.09.2026: "objektschutz Bild hat auf der Home seite immernoch
+     runde ecken", nach mehreren Runden zu den "schwarzen Ecken bei allen
+     Dienstleistungsbildern". Entscheidung des Kunden: alle zehn rund.
+
+     ⚠⚠ GEMESSEN AN DEN DATEIEN, nicht am CSS: NEUN der zehn Bilder in
+     assets/images/ tragen eine eingebackene Rundung, deren Ecken mit SCHWARZ
+     gefüllt sind — 51 bis 62 px in einer 820 px breiten Datei (Eckpixel gegen
+     einen Referenzpunkt 26 px diagonal innen). objektschutz ist die EINZIGE
+     ohne. Weil der Seitengrund ebenfalls schwarz ist, liest sich das als
+     "rundes Bild" — und objektschutz fällt als eckiges auf.
+
+     ⚠ HIER IST DIE EINZIGE STELLE, WO MAN ES SIEHT. Dieselben Dateien sind
+     auch das Hero-Foto der Serviceseiten, dort aber mit object-fit: cover in
+     einer Box anderer Proportion — gemessen Skalierung 1,089 am Telefon und
+     0,642 am Rechner, also wird in beiden Fällen genau der Rand samt Ecken
+     weggeschnitten. Dieses Fenster ist das einzige, das die Datei UNBESCHNITTEN
+     zeigt (aspect-ratio gleich der Quelle, Skalierung 0,546 in beiden Achsen),
+     also darf der Radius auch nur hier stehen.
+
+     ⚠ PROZENT UND ZWEI ACHSEN, keine Pixel: die Box behält die Proportion der
+     Quelle, also ist der Bogen bei JEDER Fenstergröße derselbe Bruchteil.
+     62/820 = 7,6 % der Breite und 62/1227 = 5,1 % der Höhe; mit 8 % / 5,3 %
+     bleibt eine kleine Reserve und die Ecke bleibt KREISFÖRMIG (gemessen bei
+     448 px Breite: 35,8 x 35,5 px gegen 33,9 px Bedarf). Ein einzelner
+     Prozentwert würde eine Ellipse ergeben und senkrecht zu viel Foto
+     wegschneiden.
+
+     ⚠⚠ DER WERT IST GEMESSEN, NICHT GERECHNET — und die Rechnung war zu
+     knapp. Aus der Kantenlänge des Bogens (51–67 px) folgt rechnerisch ein
+     Bedarf von 8,2 %; im Test bleibt dort aber noch Schwarz stehen. Also: alle
+     zehn Bilder in ECHTER Anzeigegröße (448x670) auf MAGENTA komponiert und
+     die reinschwarzen Punkte in den vier Eckquadraten gezählt, bei fünf
+     Radien. Der Verlauf trennt Rest-Füllung von dunklem Foto, weil das Foto
+     ein PLATEAU bildet und die Füllung verschwindet:
+       werkschutz          8,6 % : 160 → 10 % : 65 → 12 % : 43 → 15 % : 43
+       sicherheitstechnik  8,6 % :  56 → 10 % : 35 → 12 % : 31 → 15 % : 30
+       objektschutz (ohne)  durchweg 0–3  — das ist der Rauschboden
+     Bei 10 % ist die Füllung auf allen HELLEN Fotos weg (empfangsdienst,
+     kaufhausdetektei, baustellenbewachung messen 0–3), und die Reste liegen nur
+     noch auf den fast schwarzen Nachtfotos — dort ist Schwarz auf schwarzem
+     Seitengrund unsichtbar.
+     ⚠ Nicht unter 10 % gehen: bei 8,6 % blieb auf sicherheitstechnik (helles
+     Foto) eine dunkle Kerbe stehen.
+     ⚠ Ein zu KLEINER Radius lässt schwarze Zwickel in der Ecke stehen — das
+     ist der Fehler, der hier behoben wird. Nicht verkleinern.
+     ⚠ Die Handy-Miniaturen (.services__thumb) brauchen nichts: ihre Dateien in
+     services-thumb/ sind geprüft eckig und tragen schon --radius-sm. */
+  border-radius: 10% / 6.7%;
 }
 
 /* The <img>'s height: 100% below needs a definite height to resolve against, and
