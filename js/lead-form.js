@@ -134,6 +134,64 @@
 
   /* Verfuegbare Breite im Formular messen. Fallback auf das Fenster, wenn der
      Container noch keine Breite hat (etwa weil er ausgeblendet ist). */
+/* ⚠️⚠️ SELBSTKORREKTUR STATT EINER WEITEREN UNBELEGTEN REGEL — 02.09.2026.
+     Der Kunde hat die Überbreite dreimal gemeldet, zuletzt: "cloudflare geht
+     auch noch zur seite raus … zu behaupten, dass du es gelöst hast und dann
+     ist es nicht gelöst geht nicht."
+
+     Er hat recht, und der Grund für die Fehlmeldung ist eine Grenze meiner
+     Prüfumgebung, keine Meinungsfrage: TURNSTILE LÄDT IM HEADLESS-CHROME NICHT
+     (gemessen live auf vier Seiten, drei Breiten: der Container ist da,
+     `iframe: 0`). Ich konnte die tatsächliche Breite des Widgets also nie
+     messen — jede Regel dazu war eine Rechnung ohne Kontrolle.
+
+     Deshalb entscheidet hier nicht mehr nur eine Vorab-Schätzung, sondern der
+     Browser prüft NACH dem Rendern nach und bessert nach:
+       1. Nach dem Rendern die Breite des von Cloudflare eingesetzten iframe
+          gegen den Container messen.
+       2. Ragt es hinaus und ist es nicht schon `compact`, das Widget entfernen
+          und als `compact` neu rendern.
+     Das ist unabhängig davon, was ich hier messen kann, und greift auf jedem
+     Gerät und in jeder Kartenbreite.
+
+     ⚠️ Kein Re-Render, wenn schon ein Token da ist: das würde den Besucher aus
+     dem Formular werfen. Die Prüfung läuft nur in den ersten Sekunden, bevor
+     überhaupt gelöst werden kann — deshalb die kurze, endliche Kette von
+     Versuchen statt eines dauernden Beobachters.
+     ⚠️ `overflow: hidden` wäre die falsche Lösung: das Widget ist ein
+     Bedienelement, ein abgeschnittenes Bedienelement ist schlimmer als ein
+     überbreites. */
+  function turnstileBreitePruefen(behaelter, versuch) {
+    if (!behaelter || !window.turnstile) return;
+    var v = versuch || 0;
+    if (v > 6) return;                       /* rund 3 s, dann Ruhe */
+    var rahmen = behaelter.querySelector("iframe");
+    if (!rahmen) { setTimeout(function () { turnstileBreitePruefen(behaelter, v + 1); }, 500); return; }
+    var innen = behaelter.getBoundingClientRect().width;
+    var breit = rahmen.getBoundingClientRect().width;
+    if (!innen || !breit) { setTimeout(function () { turnstileBreitePruefen(behaelter, v + 1); }, 500); return; }
+    if (breit <= innen + 2) return;          /* passt */
+    if (behaelter.getAttribute("data-groesse") === "compact") return;  /* schon das Kleinste */
+    var id = behaelter.getAttribute("data-widget-id");
+    try {
+      if (id) window.turnstile.remove(id);
+      behaelter.innerHTML = "";
+      behaelter.setAttribute("data-groesse", "compact");
+      var neu = window.turnstile.render(behaelter, {
+        sitekey: behaelter.getAttribute("data-sitekey"),
+        action: behaelter.getAttribute("data-action") || undefined,
+        size: "compact",
+      });
+      behaelter.setAttribute("data-widget-id", neu);
+      if (window.console) {
+        console.info("Turnstile: " + Math.round(breit) + " px in " + Math.round(innen) +
+          " px Platz — auf compact umgestellt.");
+      }
+    } catch (e) {
+      if (window.console) console.warn("Turnstile: Umstellung auf compact fehlgeschlagen:", e && e.message);
+    }
+  }
+
   function turnstileGroesse(behaelter) {
     var breite = 0;
     try {
@@ -169,6 +227,7 @@
       return;
     }
     try {
+      var gewaehlt = turnstileGroesse(behaelter);
       var id = window.turnstile.render(behaelter, {
         sitekey: behaelter.getAttribute("data-sitekey") || form.getAttribute("data-turnstile-sitekey"),
         // "auto" folgt der Sprache des Browsers; die Seite ist deutsch, aber
@@ -195,9 +254,13 @@
         // waehrend des Ausfuellens verkleinert, behaelt die grosse Variante;
         // ein Re-Render wuerde das Token verwerfen und den Besucher aus dem
         // Formular werfen. Das ist der bessere Kompromiss.
-        size: turnstileGroesse(behaelter),
+        size: gewaehlt,
       });
       behaelter.setAttribute("data-widget-id", id);
+      behaelter.setAttribute("data-groesse", gewaehlt);
+      /* Nachkontrolle im Browser: ragt das Widget doch hinaus, auf compact
+         umstellen. Siehe turnstileBreitePruefen. */
+      turnstileBreitePruefen(behaelter, 0);
     } catch (e) {
       turnstileKaputt = true;
       if (window.console) console.warn("Turnstile konnte nicht gerendert werden:", e && e.message);

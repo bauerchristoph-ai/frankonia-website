@@ -318,9 +318,36 @@ async function main() {
          0,861 d Breite (Grenze rand 0,070), bei 0,520:1 hoechstens 0,887 d Hoehe
          (Grenze rand 0,057). rand steuert immer die GROESSERE Kante. 0.08 bzw.
          0.10 liegen mit Reserve darunter. Wer die Zahlen anfasst, rechnet neu. */
-      { name: "icon-16.png", px: 16, form: "laterne", rand: 0.10, hintergrund: "#ffffff", kreis: true },
-      { name: "icon-32.png", px: 32, form: "laterne", rand: 0.10, hintergrund: "#ffffff", kreis: true },
-      { name: "icon-48.png", px: 48, form: "laterne", rand: 0.10, hintergrund: "#ffffff", kreis: true },
+      /* ═══ TAB-ICONS: GENAU WIE DIE ORIGINALSEITE — 02.09.2026 ═════════════
+         Kunde, nach mehreren Runden: "favicon passt uebrigens immernoch nicht
+         weil der schwung / die fahne immernoch abgeschnitten ist — anbei wie es
+         aktuell in der originalen webseite ist, bitte genau so umsetzen."
+
+         Also nicht geraten, sondern das Original AUSGEMESSEN. Heruntergeladen
+         von frankonia-sicherheit.de/wp-content/uploads/fbrfg/ und Pixel gezaehlt:
+           favicon-96x96.png   83,5 % transparent, 0 % Weiss
+           Tinte 88 x 54 in 96 — also die VOLLSTAENDIGE Marke (Verhaeltnis 1,63)
+           Raender 3 links, 5 rechts, 21 oben und unten
+         apple-touch-icon.png ergibt dieselbe Anordnung (165 x 101 in 180).
+
+         ⚠⚠ DAS KEHRT ZWEI FRUEHERE ENTSCHEIDUNGEN UM, und beide waren meine
+         Auslegung seiner Worte, nicht seine Vorgabe: der weisse KREIS ("runder
+         weisser kreis mit logo drin") und die Beschraenkung auf die LATERNE, mit
+         der ich das Abschneiden umgehen wollte. Genau dieses Weglassen des
+         Schwungs ist der Fehler, den er dreimal gemeldet hat. Das Original
+         zeigt die ganze Marke ohne Kreis — dem folgt das hier.
+
+         ⚠ rand 0.04 ist gerechnet: die Tinte des Originals nimmt 88 von 96 px
+         der GROESSEREN Kante ein, also (1 - 88/96) / 2 = 0,042. rand steuert
+         immer die groessere Kante, hier die Breite.
+         ⚠ Kein Hintergrund und kein Kreis — transparent wie das Original. Fuer
+         die APP-Icons weiter unten gilt das ausdruecklich NICHT: ein
+         transparentes Symbol wird auf einem iOS-Startbildschirm zur schwarzen
+         Kachel. Das Original macht diesen Fehler, wir uebernehmen ihn nicht. */
+      { name: "icon-16.png", px: 16, form: "voll", rand: 0.04 },
+      { name: "icon-32.png", px: 32, form: "voll", rand: 0.04 },
+      { name: "icon-48.png", px: 48, form: "voll", rand: 0.04 },
+      { name: "icon-96.png", px: 96, form: "voll", rand: 0.04 },
       { name: "icon-192.png", px: 192, form: "voll", rand: 0.08, hintergrund: "#ffffff", kreis: true },
       { name: "icon-512.png", px: 512, form: "voll", rand: 0.08, hintergrund: "#ffffff", kreis: true },
 
