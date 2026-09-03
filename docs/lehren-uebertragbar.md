@@ -265,6 +265,17 @@ Code `undefined` zurückgibt, meldet leicht „Element existiert nicht".
   (`split()/join()` statt `replace(/…/g)`, `String.fromCharCode(10)` statt `\n`).
 - **Git Bash wandelt Argumente wie `/pfad/` in Windows-Pfade um.**
   `MSYS_NO_PATHCONV=1` davor.
+- **In `execSync`/`spawn` über cmd.exe ist `^` das ESCAPE-Zeichen.** Aus
+  `git show abc123^:datei` wird `git show abc123:datei` — also genau der
+  Commit, den man nicht wollte. Der Befehl **gelingt** und liefert die falsche
+  Version. `~1` statt `^` benutzen, und nach jeder Wiederherstellung
+  gegenprüfen, dass wirklich drin ist, was drin sein soll.
+- **Ein Apostroph im Suchtext sprengt einfach-gequotete Shell-Strings.** Ein
+  Patch, der nach einem Kommentar mit einem Apostroph darin sucht, bricht
+  mitten im Argument ab, und die Shell führt die Bruchstücke als Befehle aus.
+  Solche Patches als Datei schreiben, nicht inline. (Diese Zeile ist selbst
+  daran gescheitert, als sie inline geschrieben werden sollte.)
+
 - **`grep -P` fehlt** in manchen Umgebungen („supports only unibyte and UTF-8
   locales") — dann in Node prüfen.
 - **`Page.captureScreenshot` mit `clip` erwartet SEITEN-Koordinaten**, nicht
