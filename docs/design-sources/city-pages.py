@@ -232,6 +232,7 @@ def r_hero(c, s):
             <line class="city-map__guide" x1="0" y1="50%" x2="100%" y2="50%"></line>
             {path}
           </svg>
+          <p class="city-map__label">Stadt {esc(c['name'])}</p>
         </div>
       </div>
     </section>"""

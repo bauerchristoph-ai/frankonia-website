@@ -214,8 +214,12 @@
      A height cap keeps all ten optically the same size, and the column's width
      is then just an upper bound. */
   display: flex;
+  /* Spalte statt Reihe, damit das Label unter dem Umriss sitzt. gap statt
+     Margin am Label: der Abstand gehoert der Anordnung, nicht dem Text. */
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--space-3);
 }
 
 .city-map {
@@ -362,6 +366,41 @@
   stroke-width: 2;
   stroke-dasharray: 16 16;
 }
+/* ── BESCHRIFTUNG DES UMRISSES ───────────────────────────────────────────────
+   Kunde 03.09.2026: "inklusive einer kleinen Beschriftung der Stadt Wuerzburg,
+   Stadt Nuernberg … und dann muss man das eben noch entsprechend mini
+   beschriften." Auf allen 26 Stadt- und Kombiseiten.
+
+   ⚠️ ALS HTML, NICHT ALS <text> IM SVG, und das ist eine Messung, keine
+   Bequemlichkeit: der Umriss wird je Breakpoint zwischen ~104px (Wuerzburg auf
+   dem Telefon) und ~580px breit gerendert, waehrend der viewBox immer 1000
+   Einheiten breit ist. Eine Schriftgroesse in viewBox-Einheiten skaliert also
+   mit — auf dem Telefon unlesbar klein, auf dem Desktop riesig. Genau diese
+   Falle ist fuer die Labels der Karte auf /einsatzgebiete/ dokumentiert, wo es
+   drei Groessen-Stufen in viewBox-Einheiten braucht. Als HTML nimmt das Label
+   die normale Typoskala und ist in jeder Groesse scharf.
+
+   ⚠️ Der Container traegt aria-hidden, das Label also auch. Richtig: die H1
+   derselben Seite nennt die Stadt bereits, und ein zweites Vorlesen von
+   "Stadt Wuerzburg" direkt danach waere Doppelung, keine Information. */
+.city-map__label {
+  margin: 0;
+  /* 12px, die Mikro-Label-Groesse dieses Projekts — es gibt keinen Token
+     darunter (--font-size-sm ist 14-15px), und --font-size-xs existiert NICHT:
+     mein erster Versuch damit fiel auf die geerbten 16px zurueck und war
+     alles andere als "mini". Gemessen: 16px neben einem 104px breiten Umriss
+     auf dem Telefon. */
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--color-blue-light);
+  /* Das Label gehoert zur Zeichnung, nicht zum Text der Seite — es sitzt auf
+     demselben Blau wie Umriss und Fuellung und bleibt damit als Teil der
+     Grafik lesbar. Als GRAFIK-nahe Auszeichnung auf dunklem Grund unkritisch:
+     #3D9AD3 auf #010101 misst 6,8:1. */
+  text-align: center;
+  white-space: nowrap;
+}
+
 
 /* ---- The outline at tablet/phone size ----------------------------------- */
 /* ⚠️ THIS BLOCK MUST STAY BELOW the two rules above. It is the same specificity
