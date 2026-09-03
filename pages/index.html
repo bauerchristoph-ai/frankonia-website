@@ -1949,25 +1949,32 @@
           <p class="social__lede" data-reveal data-reveal-delay>Echte Momente aus dem Einsatz, geteilt auf unseren Social-Media-Kanälen.</p>
         </div>
 
-                <!-- ⚠️⚠️ KEIN data-social-carousel MEHR — der 3D-Ring ist raus, 02.09.2026.
-             Kunde: "das social video / bild ist nach wie vor nicht da … das muss von
-             der user experience wie unten bei 'das sagen unsere kunden' sein: erst
-             Video 1, dann Video 2, dann Video 3, immer auf Swipe."
+        <!-- ⚠️⚠️ DREI MECHANISMEN, EIN BAUELEMENT — nach Breite getrennt, nicht
+             gegeneinander. Kunde 03.09.2026: "die Funktionalität wie auf dem
+             Desktop wie vorher beibehalten, dass es dieses sich drehende Wheel
+             ist, und die aktuelle Darstellung auf mobil auch beibehalten."
 
-             ES WAR KEIN FEHLER, SONDERN DIE ABSICHT DES RINGS — und genau darum
-             las es sich als fehlendes Bild. Gemessen bei 1440: die vordere Karte
-             272 px, die beiden hinteren je 117 px, weil sie perspektivisch
-             zurückgedreht sind (js/social-carousel.js, .is-carousel). Von den
-             Videos 2 und 3 war also nur ein Streifen zu sehen.
+               < 768 px   Wisch-Streifen (data-swipe-carousel)
+               768-1023   Wisch-Streifen (data-swipe-tablet)
+               >= 1024 px 3D-Ring (data-social-carousel -> .is-carousel)
 
-             Ohne das Attribut initialisiert das Skript nie, .is-carousel wird nie
-             gesetzt, und damit greift der @media-Block dazu in page-home.css auch
-             nicht mehr: ab 1024 px stehen die drei Karten wieder als Reihe
-             nebeneinander, darunter bleibt der Wisch-Streifen. Genau das Verhalten
-             der Kundenstimmen.
-             ⚠️ Skript und CSS bleiben unangetastet im Projekt: der Ring ist einen
-             Attributnamen weit entfernt, wenn er je zurückkommen soll. -->
-        <div class="social__grid" data-swipe-carousel data-swipe-tablet data-swipe-label="Videos aus dem Einsatz, horizontal scrollbar" data-reveal>
+             ⚠️ MEIN FEHLER VOM 02.09.2026, hier festgehalten damit er nicht
+             wiederkommt: gemeldet war "das dritte Social-Video fehlt" — richtig,
+             und die Ursache war der Ring, der die Karten 2 und 3 perspektivisch
+             wegdreht (gemessen bei 1440: vordere Karte 272 px, die beiden
+             hinteren je 117 px). Ich habe daraufhin `data-social-carousel`
+             ENTFERNT — und damit nicht das Telefon repariert, sondern den
+             Desktop mitgenommen: der Ring hängt an einer `matchMedia(min-width:
+             1024px)` IM SKRIPT, war also nie auf dem Telefon aktiv. Das Problem
+             lag allein im Streifen unterhalb 1024, und der ist davon unabhängig.
+             ⇒ Ein Attribut, das nach Breite schaltet, darf man nicht global
+             ziehen, um ein Problem in EINEM Band zu lösen.
+
+             ⚠️ Die 1024 steht an DREI Stellen und alle drei müssen übereinstimmen:
+             im Skript, im @media-Block von page-home.css (.is-carousel) und im
+             Tablett-Block von swipe-carousel.css. Sonst besitzen beide
+             Mechanismen dasselbe Band gleichzeitig. -->
+        <div class="social__grid" data-social-carousel data-swipe-carousel data-swipe-tablet data-swipe-label="Videos aus dem Einsatz, horizontal scrollbar" data-reveal>
           <div class="social__item">
             <div class="social__placeholder">
               <picture>
