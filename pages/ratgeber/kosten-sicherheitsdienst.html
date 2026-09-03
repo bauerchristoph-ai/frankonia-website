@@ -227,9 +227,9 @@
 
           <h2>Beispiel&shy;rechnungen aus der Praxis</h2>
           <ul class="rg-list">
-            <li><strong>Nachtbewachung Gewerbeobjekt</strong> (ein Posten, 22–6 Uhr, Mo–Fr): rund {{price.example.nightPostHours}} Stunden im Monat, alle in der tariflichen Nachtzeit. Basis {{price.example.nightPostHours}} × {{price.range}} € ≈ {{price.example.nightPostBase}} €, plus {{price.surcharge.night}} % Nachtzuschlag ≈ {{price.example.nightPostSurcharge}} €. Ergebnis: grob {{price.example.nightPostMonthly}} €/Monat netto.</li>
+            <li><strong>Nachtbewachung Gewerbeobjekt</strong> (ein Posten, 22–6 Uhr, Mo–Fr): rund {{price.example.nightPostHours}} Stunden im Monat, alle in der tariflichen Nachtzeit. Basis {{price.example.nightPostHours}} × {{price.min}} bis {{price.max}} € ≈ {{price.example.nightPostBase}} €, plus {{price.surcharge.night}} % Nachtzuschlag ≈ {{price.example.nightPostSurcharge}} €. Ergebnis: grob {{price.example.nightPostMonthly}} €/Monat netto.</li>
             <li><strong>Baustellenbewachung Wochenende</strong> (Fr 18 Uhr – Mo 6 Uhr): {{price.example.weekendHours}} Stunden Basis ≈ {{price.example.weekendBase}} €, davon {{price.example.weekendNightHours}} Nachtstunden mit {{price.surcharge.night}} % Zuschlag (≈ {{price.example.weekendNightSurcharge}} €) und {{price.example.weekendSundayHours}} Sonntagsstunden mit {{price.surcharge.sunday}} % Zuschlag (≈ {{price.example.weekendSundaySurcharge}} €). Ergebnis: grob {{price.example.weekendTotal}} € netto pro Wochenende.</li>
-            <li><strong>Brandwache bei BMA-Ausfall</strong> ({{price.example.continuousHours}} Stunden durchgehend, werktags): Basis {{price.example.continuousHours}} × {{price.range}} € ≈ {{price.example.continuousBase}} €, plus {{price.example.continuousNightHours}} Nachtstunden mit {{price.surcharge.night}} % Zuschlag ≈ {{price.example.continuousNightSurcharge}} €. Ergebnis: grob {{price.example.continuousTotal}} € netto — verglichen mit einem Nutzungsverbot oder Deckungsproblem meist die günstigste Option.</li>
+            <li><strong>Brandwache bei BMA-Ausfall</strong> ({{price.example.continuousHours}} Stunden durchgehend, werktags): Basis {{price.example.continuousHours}} × {{price.min}} bis {{price.max}} € ≈ {{price.example.continuousBase}} €, plus {{price.example.continuousNightHours}} Nachtstunden mit {{price.surcharge.night}} % Zuschlag ≈ {{price.example.continuousNightSurcharge}} €. Ergebnis: grob {{price.example.continuousTotal}} € netto — verglichen mit einem Nutzungsverbot oder Deckungsproblem meist die günstigste Option.</li>
           </ul>
           <p class="rg-note">Alle Beispiele vereinfacht und gerundet, netto, ohne Feiertage und individuelle Faktoren. Fällt ein Sonntag oder Feiertag in den Zeitraum, kommen {{price.surcharge.sunday}} % bzw. {{price.surcharge.holiday}} % für diese Stunden hinzu — Ihr konkreter Preis steht im unverbindlichen Angebot.</p>
 
@@ -303,8 +303,8 @@
             <svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
             {{phone.display}}
           </a>
-          <a class="service-link" href="/ratgeber/">Alle Ratgeber-Artikel
-            <svg class="service-link__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+          <a class="service-link" href="/ratgeber/"><span class="service-link__label">Alle Ratgeber-Artikel
+            </span><svg class="service-link__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
           </a>
         </div>
       </div>

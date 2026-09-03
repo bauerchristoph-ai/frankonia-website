@@ -103,8 +103,8 @@
       },
       "aggregateRating": {
         "@type": "AggregateRating",
-        "ratingValue": "4.7",
-        "reviewCount": "{{rating.count}}",
+        "ratingValue": "{{rating.valueSchema}}",
+        "reviewCount": "{{rating.countSchema}}",
         "bestRating": "5",
         "worstRating": "1"
       },
@@ -503,7 +503,7 @@
             <h3 class="city-fields__title">Innenstadt-Handel in Coburg</h3>
             <p>Zwischen Marktplatz und Spitalgasse gilt wie überall: Ladendiebstahl kostet Marge, zivile Detektive wirken.</p>
             <a class="service-link city-fields__link" href="/kaufhausdetektei/">
-              Zur Kaufhausdetektei
+              <span class="service-link__label">Zur Kaufhausdetektei</span>
               <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
             </a>
           </li>
@@ -534,7 +534,7 @@
 
         <div class="city-callout__actions" data-reveal>
           <a class="service-link city-callout__link" href="/sicherheitskonzept/">
-            So entsteht Ihr Sicherheitskonzept
+            <span class="service-link__label">So entsteht Ihr Sicherheitskonzept</span>
             <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
           </a>
         </div>

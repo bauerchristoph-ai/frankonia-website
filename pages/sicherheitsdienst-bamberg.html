@@ -118,8 +118,8 @@
       },
       "aggregateRating": {
         "@type": "AggregateRating",
-        "ratingValue": "4.7",
-        "reviewCount": "{{rating.count}}",
+        "ratingValue": "{{rating.valueSchema}}",
+        "reviewCount": "{{rating.countSchema}}",
         "bestRating": "5",
         "worstRating": "1"
       },
@@ -523,7 +523,7 @@
 
         <div class="city-callout__actions" data-reveal>
           <a class="service-link city-callout__link" href="/sicherheitskonzept/">
-            So entsteht Ihr Sicherheitskonzept
+            <span class="service-link__label">So entsteht Ihr Sicherheitskonzept</span>
             <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
           </a>
         </div>
@@ -585,7 +585,7 @@
             Jetzt anrufen: {{phone.display}}
           </a>
           <a class="service-link city-callout__link" href="/brandwache/">
-            Alles zur Brandwache
+            <span class="service-link__label">Alles zur Brandwache</span>
             <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
           </a>
         </div>

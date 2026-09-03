@@ -103,8 +103,8 @@
       },
       "aggregateRating": {
         "@type": "AggregateRating",
-        "ratingValue": "4.7",
-        "reviewCount": "{{rating.count}}",
+        "ratingValue": "{{rating.valueSchema}}",
+        "reviewCount": "{{rating.countSchema}}",
         "bestRating": "5",
         "worstRating": "1"
       },
@@ -387,7 +387,7 @@
             <h3 class="city-fields__title">Industrie und Gewerbe im Würzburger Osten</h3>
             <p>In den Gewerbegebieten im Osten der Stadt und entlang des Mains produzieren und lagern Traditionsunternehmen wie der Druckmaschinenbau, mit Werten, die nach Feierabend geschützt werden wollen: Werkschutz, Verschlussrunden und dokumentierte Kontrollgänge.</p>
             <a class="service-link city-fields__link" href="/werkschutz-wuerzburg/">
-              Werkschutz in Würzburg
+              <span class="service-link__label">Werkschutz in Würzburg</span>
               <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
             </a>
           </li>
@@ -401,7 +401,7 @@
             <h3 class="city-fields__title">Innenstadt-Handel zwischen Dom und Marktplatz</h3>
             <p>In den Einkaufslagen um Domstraße und Schönbornstraße ist Ladendiebstahl Alltag, zivile Kaufhausdetektive senken die Inventurdifferenz messbar, gerade zur Weihnachtszeit und in der Festsaison.</p>
             <a class="service-link city-fields__link" href="/kaufhausdetektei/">
-              Kaufhausdetektei in Würzburg
+              <span class="service-link__label">Kaufhausdetektei in Würzburg</span>
               <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
             </a>
           </li>
@@ -575,7 +575,7 @@
             Jetzt anrufen: {{phone.display}}
           </a>
           <a class="service-link city-callout__link" href="/brandwache-wuerzburg/">
-            Alles zur Brandwache in Würzburg
+            <span class="service-link__label">Alles zur Brandwache in Würzburg</span>
             <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
           </a>
         </div>
@@ -689,7 +689,7 @@
             </li>
           </ul>
 
-          <p class="trust-certs__memberships">Referenzen aus ganz Franken, nachprüfbar: <a class="service-link" href="/referenzen/">Kundenliste und Ergebnisse ansehen<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></p>
+          <p class="trust-certs__memberships">Referenzen aus ganz Franken, nachprüfbar: <a class="service-link" href="/referenzen/"><span class="service-link__label">Kundenliste und Ergebnisse ansehen</span><svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></p>
         </div>
       </div>
     </section>

@@ -107,8 +107,8 @@
       },
       "aggregateRating": {
         "@type": "AggregateRating",
-        "ratingValue": "4.7",
-        "reviewCount": "{{rating.count}}",
+        "ratingValue": "{{rating.valueSchema}}",
+        "reviewCount": "{{rating.countSchema}}",
         "bestRating": "5",
         "worstRating": "1"
       },
@@ -471,7 +471,7 @@
             <h3 class="city-fields__title">Behörden und Verwaltung in Ansbach</h3>
             <p>Als Regierungssitz Mittelfrankens konzentriert Ansbach Ämter, Gerichte und Institutionen — Zutrittssteuerung, Empfangsdienste und Objektschutz mit dokumentierten, vergabetauglichen Prozessen.</p>
             <a class="service-link city-fields__link" href="/empfangsdienst/">
-              Zum Empfangsdienst
+              <span class="service-link__label">Zum Empfangsdienst</span>
               <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
             </a>
           </li>

@@ -103,8 +103,8 @@
       },
       "aggregateRating": {
         "@type": "AggregateRating",
-        "ratingValue": "4.7",
-        "reviewCount": "{{rating.count}}",
+        "ratingValue": "{{rating.valueSchema}}",
+        "reviewCount": "{{rating.countSchema}}",
         "bestRating": "5",
         "worstRating": "1"
       },
@@ -373,7 +373,7 @@
             <h3 class="city-fields__title">Forschung &amp; Entwicklung in Erlangen</h3>
             <p>Labore, Prototypen, Konstruktionsdaten: Der Schutz dieses Wissens braucht konsequente Zutrittskontrolle, saubere Besucherprozesse und dokumentierte Rundgänge.</p>
             <a class="service-link city-fields__link" href="/werkschutz-erlangen/">
-              Werkschutz in Erlangen
+              <span class="service-link__label">Werkschutz in Erlangen</span>
               <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
             </a>
           </li>
@@ -387,7 +387,7 @@
             <h3 class="city-fields__title">Büro- &amp; Campusstandorte in Erlangen</h3>
             <p>Auf wachsenden Arealen wie dem neuen Siemens Campus im Erlanger Süden entstehen Büros, Parkhäuser und Baustellen nebeneinander, mit Bedarf von der Baustellenbewachung bis zum Empfangsdienst.</p>
             <a class="service-link city-fields__link" href="/baustellenbewachung-erlangen/">
-              Baustellenbewachung in Erlangen
+              <span class="service-link__label">Baustellenbewachung in Erlangen</span>
               <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
             </a>
           </li>
@@ -396,7 +396,7 @@
             <h3 class="city-fields__title">Gewerbegebiete wie Tennenlohe in Erlangen</h3>
             <p>Gewerbe- und Technologieparks sind nachts verwaist — Objektschutz zu Randzeiten kombiniert mit Alarmtechnik sichert hier wirtschaftlich.</p>
             <a class="service-link city-fields__link" href="/objektschutz-erlangen/">
-              Objektschutz in Erlangen
+              <span class="service-link__label">Objektschutz in Erlangen</span>
               <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
             </a>
           </li>
@@ -509,7 +509,7 @@
 
         <div class="city-callout__actions" data-reveal>
           <a class="service-link city-callout__link" href="/veranstaltungsschutz/">
-            Zum Veranstaltungsschutz
+            <span class="service-link__label">Zum Veranstaltungsschutz</span>
             <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
           </a>
         </div>
@@ -546,7 +546,7 @@
             Jetzt anrufen: {{phone.display}}
           </a>
           <a class="service-link city-callout__link" href="/brandwache-erlangen/">
-            Alles zur Brandwache in Erlangen
+            <span class="service-link__label">Alles zur Brandwache in Erlangen</span>
             <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
           </a>
         </div>
@@ -660,7 +660,7 @@
             </li>
           </ul>
 
-          <p class="trust-certs__memberships">Referenzen aus ganz Franken, nachprüfbar: <a class="service-link" href="/referenzen/">Kundenliste und Ergebnisse ansehen<svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></p>
+          <p class="trust-certs__memberships">Referenzen aus ganz Franken, nachprüfbar: <a class="service-link" href="/referenzen/"><span class="service-link__label">Kundenliste und Ergebnisse ansehen</span><svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></p>
         </div>
       </div>
     </section>

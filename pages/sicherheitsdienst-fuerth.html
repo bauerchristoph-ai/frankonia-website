@@ -102,8 +102,8 @@
       },
       "aggregateRating": {
         "@type": "AggregateRating",
-        "ratingValue": "4.7",
-        "reviewCount": "{{rating.count}}",
+        "ratingValue": "{{rating.valueSchema}}",
+        "reviewCount": "{{rating.countSchema}}",
         "bestRating": "5",
         "worstRating": "1"
       },
@@ -503,7 +503,7 @@
             <h3 class="city-fields__title">Innenstadt-Handel an der Fürther Freiheit</h3>
             <p>Einkaufslagen zwischen Fürther Freiheit und Neuer Mitte kämpfen wie überall mit Ladendiebstahl, zivile Detektive und Doorman-Präsenz senken die Verluste messbar.</p>
             <a class="service-link city-fields__link" href="/kaufhausdetektei/">
-              Kaufhausdetektei in Fürth
+              <span class="service-link__label">Kaufhausdetektei in Fürth</span>
               <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
             </a>
           </li>

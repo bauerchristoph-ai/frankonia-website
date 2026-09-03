@@ -101,8 +101,8 @@
       },
       "aggregateRating": {
         "@type": "AggregateRating",
-        "ratingValue": "4.7",
-        "reviewCount": "{{rating.count}}",
+        "ratingValue": "{{rating.valueSchema}}",
+        "reviewCount": "{{rating.countSchema}}",
         "bestRating": "5",
         "worstRating": "1"
       },
@@ -491,7 +491,7 @@
             <h3 class="city-fields__title">Behörden und Verwaltung in Bayreuth</h3>
             <p>Als Regierungssitz Oberfrankens konzentriert Bayreuth Ämter und Institutionen — Zutrittssteuerung, Empfangsdienste und Objektschutz mit dokumentierten Prozessen sind hier Standard-Anforderung.</p>
             <a class="service-link city-fields__link" href="/empfangsdienst/">
-              Zum Empfangsdienst
+              <span class="service-link__label">Zum Empfangsdienst</span>
               <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
             </a>
           </li>
@@ -539,7 +539,7 @@
             Jetzt anrufen: {{phone.display}}
           </a>
           <a class="service-link city-callout__link" href="/brandwache/">
-            Alles zur Brandwache
+            <span class="service-link__label">Alles zur Brandwache</span>
             <svg class="icon service-link__arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
           </a>
         </div>
