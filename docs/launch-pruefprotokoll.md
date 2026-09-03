@@ -3427,3 +3427,449 @@ Signatur von Hand kaputt machen und sehen, ob der Bau fällt. Er fiel nicht.
 Nach der Korrektur: `FEHLER … /css/app.css?X=… — Bau abgebrochen`, und ohne
 Manipulation wieder grün.
 **Jede neue Prüfung braucht diese Gegenprobe, sonst ist sie eine Behauptung.**
+
+---
+
+# Durchgang 03.09.2026 — die letzten Änderungen vor dem Livegang
+
+Elf Meldungen, in der Reihenfolge, in der sie kamen. Zwei davon haben sich als
+falsche Voraussetzung erwiesen und eine habe ich auf das falsche Element
+angewandt — beides steht unten so drin.
+
+## N32 — Social-Bereich: Ring auf dem Desktop zurück, Streifen auf Telefon und Tablett behalten
+
+**Gemeldet** „auf Desktop hast du jetzt die Funktion verkackt … kannst Du die
+Funktionalität wie auf dem Desktop wie vorher beibehalten, dass es dieses sich
+drehende Wheel ist, und die aktuelle Darstellung auf mobil auch behalten?"
+
+**Berechtigt, und der Fehler war meiner.** Am 02.09. war gemeldet, das dritte
+Social-Video fehle. Ursache war der 3D-Ring, der die Karten 2 und 3
+perspektivisch wegdreht — gemessen bei 1440: vordere Karte 272 px, die beiden
+hinteren je 117 px. Ich habe daraufhin `data-social-carousel` **entfernt** und
+damit nicht das Telefon reparaert, sondern den Desktop mitgenommen: der Ring
+hängt an einer `matchMedia(min-width: 1024px)` **im Skript** und war auf dem
+Telefon nie aktiv. Das Problem lag allein im Streifen unterhalb 1024.
+
+⇒ **Ein Attribut, das nach Breite schaltet, darf man nicht global ziehen, um
+ein Problem in EINEM Band zu lösen.** Nur das Attribut zurück, kein Umbau —
+die drei Bänder waren schon getrennt.
+
+| Breite | Modus | Karten | Seitenscroll |
+|---|---|---|---|
+| 390 | Wisch-Streifen | 3 × 335×527, alle erreichbar | 0 |
+| 834 | Wisch-Streifen | 3 × 389×728, alle erreichbar | 0 |
+| 1440 | 3D-Ring | vorn 272×520, hinten 2 × 117×508 | 0 |
+| 1920 | 3D-Ring | gleiche Werte | 0 |
+
+Zug 300 px nach rechts dreht in beiden Desktop-Breiten weiter: Karte 3 kommt mit
+272×520 nach vorn. Rückfallebenen geprüft, nicht angenommen: mit
+`prefers-reduced-motion` bei 1440 kein Ring, flache Reihe 200/232/200; im
+ausgelieferten Markup 0× `is-carousel`, drei Bilder, alle Bildunterschriften.
+
+---
+
+## N33 — Case-Study-Pitch: die Überschrift hatte GAR KEINEN Abstand zum Absatz
+
+**Gemeldet** zu allen drei Case Studies: Zeilenabstand minimal zu groß, „und der
+Abstand zum Text darunter passt vor allem überhaupt nicht" — nachgemeldet, dass
+es Telefon und Tablett genauso betrifft.
+
+**Gemessen war es kein zu kleiner Abstand, sondern keiner:** `h2
+margin-bottom: 0`, `p margin-top: 0`, sichtbare Lücke **0 px** bei 390 / 834 /
+1440 / 1920.
+
+**Ursache** Überall sonst liefert das Chassis diesen Abstand über
+`.section__intro > p { margin-top: var(--space-4) }`. Der Pitch-Absatz liegt
+aber nicht in einem `.section__intro`, sondern als nackter `<p>` in
+`.cs-pitch__inner` — es gab nichts, was greifen konnte. **Ein Abstand, der aus
+einer Wrapper-Klasse kommt, fehlt lautlos, sobald das Markup den Wrapper nicht
+benutzt.**
+
+Zeilenhöhe 1.25 → **1.12** (bei 60 px waren das 75 px pro Zeile, was über vier
+Zeilen auseinanderfällt), Abstand **32 px**. Werte durch Ansehen gewählt, nicht
+gerechnet — 1.15/24 px und 1.08/32 px lagen daneben. Ein Wert trägt beide Enden
+des Clamps: 67 px bei 60 px Schrift, 36 px bei 32 px auf dem Telefon, darum ohne
+Media Query.
+
+Gemessen danach: Lücke 32 px und Faktor 1.12 in allen **12 Kombinationen**
+(3 Seiten × 4 Breiten). Zusätzlich 18 Seiten nach `h2` mit direkt anschließendem
+Absatz abgesucht — **keine weitere Stelle**.
+
+⚠️ **Offen, deine Entscheidung:** du hast überlegt, am Ende dieser Seiten ein
+Formular zu setzen statt auf die Leistungsseite zu verweisen, und selbst gesagt
+„man kann's aber auch so lassen". Nicht geändert.
+
+---
+
+## N34 — Google-Bewertung: 4,7 bei 100+ Bewertungen
+
+**Bestätigt** „mittlerweile haben wir über hundert Google Bewertungen und 4,7
+Sterne — überall aktualisieren."
+
+⚠️ **`rating.count` steckte in ZWEI Rollen, und „100+" verträgt nur eine
+davon:** sichtbarer Text (43 Dateien) und JSON-LD `reviewCount`, wo schema.org
+eine reine Zahl verlangt — ein „100+" macht die Auszeichnung ungültig. Darum
+vier Werte für zwei Rollen:
+
+| Rolle | Werte |
+|---|---|
+| Anzeige | `value` 4,7 · `count` **100+** |
+| Schema | `valueSchema` 4.7 · `countSchema` **100** |
+| Zähler-Animation | `countTo` 4.7 |
+
+Dabei **28× hartes `"ratingValue": "4.7"`** und **3× hartes `"reviewCount": "97"`**
+aus dem Markup in Tokens überführt: die nächste Aktualisierung ist eine Zeile in
+`content/values.json` statt 31 Stellen.
+
+Gemessen am gebauten Ergebnis: 70 Seiten, **52 sichtbare „100+"**, kein Rest-97,
+keine unaufgelösten Tokens, 28 Seiten mit `aggregateRating` und **alle
+JSON-LD-Blöcke parsen**, `reviewCount` überall genau `100`. Und geprüft, dass der
+längere Text die schmale Pille nicht sprengt: 7 Seiten × 320/390/834/1440, kein
+Überstand, kein Umbruch, bei 320 px 254 px breit.
+
+⚠️ Ein **laufender** Abruf der Bewertungen aus Google (dein Wunsch für
+mittelfristig) ist etwas anderes: dafür braucht es die Places API mit Schlüssel,
+Abrechnung und einem Einwilligungs-Gate. Nicht gebaut.
+
+---
+
+## N35 — Rechenbeispiele: jede Zahl war richtig, die Addition ging trotzdem nicht auf
+
+**Gemeldet** „Es darf kein Rechenfehler in den Beispielen drin sein" und „die
+Rechenbeispiele müssen in sich passend sein".
+
+Nachgerechnet mit 24,50–32 €, 23 % Nacht, 26 % Sonntag. Jede Zahl war **einzeln**
+richtig gerundet (höchstens 25 € neben dem exakten Wert) — und weil jede für
+sich gerundet war, ging die Addition nicht auf:
+
+| Beispiel | angegebene Zahlen addiert | angegebene Summe | Differenz |
+|---|---|---|---|
+| Nachtposten | 4.250 + 1.000 = 5.250 | 5.200 | **50 €** |
+| Wochenende | 1.450 + 170 + 153 = 1.773 | 1.800 | **27 €** |
+| Brandwache | 1.750 + 170 = 1.920 | 1.950 | **30 €** |
+
+Der Text lautet „Basis ≈ X, plus ≈ Y. Ergebnis: grob Z" und lädt damit
+ausdrücklich zum Nachrechnen ein.
+
+**Jetzt alles auf 10 € gerundet, und die Summe ist die EXAKTE Summe der
+gerundeten Teile.** Jede angegebene Addition geht auf, keine Zahl ist mehr als
+5 € vom exakten Wert entfernt:
+
+```
+4.240 +   970 = 5.210        5.540 + 1.270 = 6.810
+1.470 + 170 + 150 = 1.790    1.920 + 220 + 200 = 2.340
+1.760 +   170 = 1.930        2.300 +   220 = 2.520
+```
+
+⚠️ **Zweideutigkeit in der Rechnung mitbehoben:** „Basis 173 × 24,50-32 €" — ein
+Bindestrich neben einem Dezimalkomma liest sich in einer Multiplikation wie
+„minus". `values.json` schreibt für Fließtext ohnehin min/bis/max vor, und du
+sprichst es selbst als „24,50 bis 32". Steht jetzt als **„173 × 24,50 bis
+32 €"**. Nur die zwei Multiplikationen; die sieben Vorkommen in der Preistabelle
+behalten die Kurzform, die du festgelegt hast.
+
+**Neues Bautor (Nr. 19)** rechnet Basis, Zuschläge und Summe aus Satz, Stunden
+und Prozenten nach und bricht den Bau ab, wenn eine Zahl mehr als 10 € neben dem
+exakten Wert liegt, nicht auf 10 gerundet ist oder die Summe nicht die Summe der
+angegebenen Teile ist. **Mit Gegenprobe belegt:** Summe um 10 € verstellt → Bau
+bricht ab; eine Zahl weggezogen → bricht ab; 153 statt 150 → bricht ab;
+Original → grün.
+
+---
+
+## N36 — Preisangaben durchgängig 24,50–32 €
+
+**Entschieden** „Das muss zwingend konsistent sein, also Kosten immer zwischen
+24,50 und 32 Euro."
+
+Es waren **fünf** Stellen, nicht die drei aus meiner Meldung:
+
+| Seite | stand da | widersprach |
+|---|---|---|
+| `/baustellenbewachung/` | zwischen 25 und 35 Euro | der Preis-Box derselben Seite |
+| `/empfangsdienst/` | zwischen 25 und 38 Euro | dito |
+| `/veranstaltungsschutz/` | zwischen 25 und 38 Euro | dito |
+
+Alle drei standen so in den Entwürfen und waren am 16.08. als Widerspruch
+gemeldet, nicht eigenmächtig geändert. Jetzt aus einer Quelle.
+
+Dazu zwei FAQ-Antworten mit eigenen Summen:
+
+| Seite | vorher | jetzt |
+|---|---|---|
+| `/baustellenbewachung-wuerzburg/` | 1.500–2.100 € | **1.790–2.340 €** |
+| `/objektschutz-erlangen/` | 4.000–6.000 € | **5.210–6.810 €** |
+
+⚠️ Das ist keine freie Angleichung: es sind **wortgleich dieselben Szenarien**,
+die der Kostenratgeber rechnet — „Fr 18 Uhr – Mo 6 Uhr" mit 60 Stunden und „ein
+Posten, Mo–Fr, rund 173 Stunden im Monat". Sie zeigen jetzt die Werte dieser
+Rechnung und folgen künftigen Preisrunden mit. Jede Antwort steht zweimal
+(sichtbar und im JSON-LD), beide Stellen bekamen denselben Token —
+**258 Antwortpaare auf 49 Seiten byte-identisch**.
+
+---
+
+## N37 — Die Haarlinie der Links sitzt am Text, nicht an der Klickfläche
+
+**Gemeldet** zum Link „Zur Brandwache": „sieht irgendwie nicht so geil aus."
+
+**Ein Folgefehler von mir.** Der Anker hat für die Touch-Fläche `min-height:
+44px` bekommen, und ein `border-bottom` sitzt am **Boden** dieser Box. Der Text
+ist ~24 px hoch und mittig, also schwebte die blaue Linie rund **10 px unter**
+dem Wort und lief zusätzlich unter dem Pfeil durch — eine abgelöste Linie, kein
+Unterstrich.
+
+Jetzt trägt der Anker die Klickfläche und **das Label die Linie**, in 81 Links
+auf 36 Seiten.
+
+⚠️ Der erste Durchgang hat **26 Links nicht erfasst**, weil das Muster
+`class="service-link"` exakt verlangte und diese mehrklassig sind
+(`service-link city-callout__link`). Aufgefallen nur durch die Messung, nicht
+beim Lesen.
+
+Gemessen auf 7 Seiten in dunklem, hellem und inline-Kontext: Anker 0 px, Label
+1 px, Pfeil 22 px frei; mit **echtem Zeiger** Text und Linie auf weiß plus
+45-Grad-Drehung des Pfeils.
+
+---
+
+## N38 — Mobiles Menü: gleichmäßige Zeilen und Trenner
+
+**Gemeldet** „im mobile Menü sind die Striche und die Abstände nicht ganz sauber
+sortiert oder?"
+
+**Berechtigt und messbar:** die erste Zeile war **44 px** hoch, alle anderen
+**61 px**. Ursache waren zwei Abstandssysteme übereinander — ein `gap` der Liste
+**plus** `border-top` und `padding-top` auf `li + li`. Die erste Zeile bekam
+beides nicht und stand 17 px flacher.
+
+Jetzt trägt der Abstand die Zeile selbst und der Trenner sitzt ohne eigenen
+Abstand dazwischen. `gap: 0` ist Teil des Trenners, kein Aufräumen: mit gap
+schwebt die Haarlinie in der Mitte von 24 px Nichts.
+
+Gemessen bei 390 × 844 / 667 / 568: Zeilen **63 / 64 / 64 / 64 …**, Schritte
+konstant, Trenner nur zwischen den Zeilen.
+
+⚠️⚠️ **Und ich bin in die Falle gelaufen, vor der der Kommentar an genau dieser
+Stelle warnt:** `gap` und `padding-block` zuerst in den **ersten**
+`max-width:1399.98`-Block geschrieben, wo beide verlieren — eine Media Query
+bringt keine Spezifität, und `.site-nav__list` ist weiter unten als Basisregel
+erneut deklariert. Gemessen nach dem ersten Versuch: gap blieb 24 px, Polster
+blieb 4 px, also hatte beides **keine Wirkung**.
+
+---
+
+## N39 — Linktree: nur noch sechs Ziele. Und: auf das falsche Element angewandt
+
+⚠️⚠️ **Mein Fehler, offen benannt.** „Bei meinem Linktree würde ich die Anpassung
+so vornehmen, dass nicht jede einzelne Leistung aufgeführt ist" habe ich auf das
+**mobile Menü** bezogen, weil die vorige Meldung eine Aufnahme des Drawers war.
+Gemeint war die Seite `/linktree/` — die es gibt und die genau die acht
+Einzelleistungen listete. **Dass die Beschreibung auf den Drawer passte, macht
+sie nicht zur Anweisung für den Drawer.**
+
+**Zurückgenommen** (war nicht bestellt): das Ausblenden der Untermenüs im
+Drawer, `initMobileSubmenu()` wiederhergestellt, der zweite CTA im Drawer.
+Leistungen und Einsatzgebiete klappen dort wieder auf, alle 22 Ziele sind wieder
+direkt erreichbar. **Geblieben** ist N38, der eigentliche gemeldete Punkt.
+
+**Umgesetzt auf `/linktree/`:**
+
+| vorher | jetzt |
+|---|---|
+| Alle Leistungen + **8 Einzelleistungen** | Alle Leistungen im Überblick |
+| Referenzen · Über uns · Jobs · Kontakt | Referenzen · Über uns · Jobs · Kontakt |
+| Startseite fehlte | **Startseite ganz oben** |
+| zwei Gruppen-Labels | eine Liste |
+| 16 Links in `<main>` | **9** (davon einer der Breadcrumb) |
+
+Die Gruppen-Labels sind mitgegangen: mit einem Eintrag unter „Leistungen" trug
+eine Überschrift nichts. Die dadurch tote Regel `.linktree__label` ist gelöscht.
+
+⚠️ **Kein interner Link verloren:** die acht Leistungsseiten stehen im Footer
+**jeder** Seite, auch dieser — am gebauten Footer geprüft, nicht angenommen.
+⚠️ Einsatzgebiete und Ratgeber stehen nicht in der Liste; genannt waren
+Referenzen, Über uns, Jobs, Kontakt. Zwei `<li>`, wenn sie dazu sollen.
+⚠️ „Startseite" steht jetzt zweimal auf der Seite: im Breadcrumb und als erstes
+Ziel. Der Breadcrumb ist Bestand; auf einer Seite, die aus einer Social-Bio
+geöffnet wird, wäre er entbehrlich. Nicht eigenmächtig entfernt.
+
+---
+
+## N40 — Stadtumriss beschriftet. Und zwei Voraussetzungen, die nicht zutreffen
+
+**Gewünscht** „nicht nur den Landkreis-Umriss zeichnen, sondern in einem leicht
+kräftigeren Blau auch den Stadtumriss, inklusive einer kleinen Beschriftung
+Stadt Würzburg, Stadt Nürnberg …"
+
+⚠️⚠️ **Drei Teile, zwei davon treffen nicht zu — gemessen, nicht vermutet:**
+
+**a) Gezeichnet wird schon heute die STADT, nicht der Landkreis.** Belegt an den
+Quelldaten: `forchheim.geojson` trägt „Forchheim, Landkreis Forchheim, Bayern,
+91301", ist also die Stadt **im** Kreis.
+
+**b) „Landkreis-Umriss mit der Stadt darin" ist für neun der zehn Städte
+geometrisch nicht möglich.** Bei Nominatim abgefragt (einmalig, 1 Anfrage/s,
+echter User-Agent):
+
+| Städte | admin_level | Bedeutung |
+|---|---|---|
+| Bamberg, Nürnberg, Würzburg, Erlangen, Fürth, Bayreuth, Schweinfurt, Coburg, Ansbach | **6** | **kreisfrei** |
+| Forchheim | 8 | Kreisstadt im Landkreis Forchheim |
+
+Der gleichnamige „Landkreis Würzburg" ist ein **Ring daneben**, der die Stadt
+ausdrücklich ausschließt. Nur bei Forchheim liegt die Stadt tatsächlich im Kreis.
+⚠️ Und die Namen wären nicht die erwarteten: zu Nürnberg gehört „Nürnberger
+Land", zu Erlangen „Erlangen-Höchstadt".
+
+**c) Das „leicht kräftigere Blau wie auf der interaktiven Map" ist schon da:**
+beide nutzen `#3D9AD3`, im Hero sogar stärker gefüllt (0,16 gegen 0,12).
+
+**Umgesetzt ist der Teil, der eindeutig und richtig ist: die Beschriftung**, auf
+allen 26 Stadt- und Kombiseiten.
+
+⚠️ Als HTML unter dem Umriss, **nicht als `<text>` im SVG**, und das ist eine
+Messung: der Umriss wird je Breite zwischen **109 px** (Würzburg, Telefon) und
+**445 px** gerendert, der viewBox ist immer 1000 Einheiten breit. Eine
+Schriftgröße in viewBox-Einheiten skaliert also mit — auf dem Telefon unlesbar,
+auf dem Desktop riesig.
+⚠️ Erster Versuch mit `var(--font-size-xs)` war 16 px: **dieser Token existiert
+nicht**, der Wert fiel auf die geerbten 16 px zurück. Jetzt 12 px.
+
+Gemessen auf 6 Seiten × 390 / 834 / 1440: Label überall vorhanden, 12 px,
+`#3D9AD3`, 12 px Abstand, **0 px vom Mittelpunkt**, kein Überstand. Und der
+Umriss ist durch das neue Spalten-Layout **nicht geschrumpft** — 576 px hoch bei
+1440 und 160 bei 390, genau die dokumentierten Werte.
+
+Beide Generatoren erzeugen das Label mit, damit ein erneuter Lauf es nicht
+wieder entfernt.
+
+**Deine Entscheidung:** wenn ein zweiter Umriss dazu soll, wären die
+sinnvollen Varianten (1) der umgebende Landkreis als Ring, wo es einen
+gleichnamigen gibt, oder (2) die Stadt im Umriss von **Franken**, den es im
+Projekt schon gibt. Beides ist machbar; „Stadt im gleichnamigen Landkreis" ist
+es nicht.
+
+---
+
+## N41 — Einwilligung live getestet, drei Phasen
+
+**Gefragt** „Beim Datenschutz kannst Du das irgendwie live testen, selbst
+nachprüfen?" — ja. Jede Phase in einem **frischen Browserprofil** (das
+Äquivalent zum privaten Fenster), und nach dem Klick **neu geladen**, weil die
+Tags erst beim nächsten Seitenaufruf feuern.
+
+| Phase | Cookiebot-Einwilligung | Cookies | angesprochene Fremd-Hosts |
+|---|---|---|---|
+| **1. vorher**, Dialog offen | alles `false` | **keine** | nur Cookiebot + Turnstile |
+| **2. nach Ablehnen** + Neuladen | alles `false` | nur `CookieConsent` | nur Cookiebot + Turnstile |
+| **3. nach Alle zulassen** + Neuladen | alles `true` | `CookieConsent`, `_ga`, `_ga_DCSDL25ZS6`, `_fbp` | Google Ads, Meta Pixel, Stape, unpkg, Tag Manager |
+
+**Zu deinen drei offenen Punkten:**
+
+- **„Annehmen → jetzt gehen sie raus?"** — **ja.** `fbevents.js`, Stapes
+  `v1.js`, unpkgs `clientParamBuilder.bundle.js` und die
+  Conversion-Aufrufe an Google gehen raus, `_ga` und `_fbp` werden gesetzt.
+- **„Laden `fbevents.js`, `v1.js` und `clientParamBuilder.bundle.js` mit 200?"**
+  — **ja, alle drei.** Und im gesamten Mitschnitt **keine einzige Antwort
+  ≥ 400**.
+- **„Steht irgendwo noch `blocked:csp`?"** — **eine Zeile, und sie war echt:**
+  `www.googleadservices.com/pagead/conversion/...` wurde von `connect-src`
+  blockiert. Der Host stand in `script-src`, aber nicht in `connect-src`: das
+  Skript durfte laden und seinen Aufruf per fetch nicht abschicken. **Behoben.**
+  Zwei weitere Kanäle derselben Conversion gingen mit 200 durch, die Messung war
+  also nicht blind — ein blockierter Kanal bleibt aber ein blockierter Kanal.
+
+⚠️⚠️ **Lücke im Bautor geschlossen, die dieser Test aufgedeckt hat.** Das Tor
+„Fremd-Hosts in /datenschutz/ genannt" durchsucht Markup und `dist/js`. **Sieben
+Anbieter stehen in keiner dieser Dateien**, weil der server-seitige Tag Manager
+sie erst nach der Zustimmung nachlädt — das Tor war grün, ohne sie je gesehen zu
+haben. Sie stehen jetzt als gemessene Liste im Tor. Mit Gegenprobe belegt:
+„unpkg" aus der Erklärung entfernt → Bau bricht ab; Original → grün.
+
+✅ **Zum Punkt „Stape und unpkg in der Datenschutzerklärung ergänzen": beide
+stehen dort schon**, mit Host und Zweck beschrieben. Am gebauten Text
+nachgewiesen. Der Protokollpunkt war veraltet.
+
+---
+
+## N42 — Weiterleitungen: waren schon eingerichtet, jetzt belegt
+
+**Gefragt** „Wir müssen alle aktuellen Seiten, die nicht 1:1 wiedergefunden
+werden, umleiten. Bekommst Du das hin oder muss ich das einrichten?"
+
+**Weder noch — es steht schon**, 84 Regeln in `vercel.json`. Statt das zu
+behaupten, habe ich den **vollständigen alten Bestand** aus `page-sitemap.xml`
+und `post-sitemap.xml` der laufenden Website geholt (23 Seiten + 8 Beiträge) und
+jede Adresse gegen das Deployment getestet:
+
+**38 von 38 alten Adressen enden mit 200**, kein Umweg länger als ein Sprung,
+kein 404.
+
+Darunter: die sieben `frankonia-*`-Leistungsseiten, `/sicherheitsanalyse/`, die
+zwei Kundenstorys, alle acht Blogbeiträge auf ihre Ratgeber-Artikel, die
+Personenseiten-Umbenennungen samt `.vcf`-Dateien, und die WordPress-Reste
+`/feed/`, `/comments/feed/`, `/author/*`, `/category/*`, `/tag/*`,
+`/hallo-welt/`, `/:pfad/feed/`.
+
+⚠️ Vercel liefert bei `permanent: true` einen **308**, nicht 301. Für Google
+gleichwertig (dokumentiert als permanente Weiterleitung), nur zur Kenntnis.
+⚠️ Eine Zuordnung würde ich dir zur Prüfung vorlegen:
+`/jobchancen-als-sicherheitskraft/` geht auf `/ratgeber/paragraph-34a-erklaert/`.
+Der alte Titel lautet „Was sind deine Jobchancen als Sicherheitskraft?" — `/jobs/`
+wäre womöglich näher.
+
+---
+
+## N43 — Meta-Beschriftungen aller 70 Seiten, in Pixeln gemessen
+
+**Gewünscht** eine Tabelle, wie jede Seite in Google auftaucht, mit einheitlicher
+Konvention je Seitentyp und nach Googles Pixelgrenzen.
+
+**Gemessen in Pixeln, nicht in Zeichen** — genau so schneidet Google ab, und bei
+deutschen Komposita führt eine Zeichenvorgabe systematisch daneben. Arial 20 px
+für den Title, Arial 14 px für die Description, die Größen des Desktop-Snippets.
+
+**Das Wichtigste ist grün: 0 doppelte Titles und 0 doppelte Descriptions** in 70
+Seiten. Doppelte wären das echte Problem; Überlänge ist nur ein
+Darstellungsverlust.
+
+**Konvention je Typ, gemessen:**
+
+| Typ | Muster | einheitlich? |
+|---|---|---|
+| Kombiseite (16) | `«Leistung» «Stadt» \| «Nutzen» 24/7 – FRANKONIA` | **ja**, 4 Gruppen à 4 |
+| Stadtseite (10) | `Sicherheitsdienst «Stadt» \| «Zusatz» – FRANKONIA` | Rahmen ja, Zusatz variiert |
+| Leistungsseite (11) | `«Leistung» Franken \| «Nutzen» – FRANKONIA` | 8 von 11 |
+| Person/QR (10) | `Name Rolle \| FRANKONIA Sicherheit` | ja, bis auf einen |
+| Ratgeber-Artikel (7) | Frage oder Thema, **ohne Marke** | ja, aber der einzige Typ ohne Marke |
+
+**Befunde, alle klein und alle deine Entscheidung** (Titles und Descriptions sind
+freigegebener Webtext, darum gemeldet und nicht geändert):
+
+1. **3 Titles über 600 px:** `/brandwache-erlangen/` 603, `/brandwache-nuernberg/`
+   607, `/brandwache-wuerzburg/` 610. Drei bis zehn Pixel — ein Wort kürzer
+   genügt.
+2. **34 von 70 Descriptions über 960 px.** Sie halten die Konvention von
+   140–160 Zeichen ein; auf dem Desktop fallen die letzten Wörter weg.
+3. **`/linktree/` beginnt klein:** „linktree | FRANKONIA Sicherheit" — der
+   einzige Titel im Bestand mit Kleinbuchstabe am Anfang.
+4. **Wortfolge:** `/sicherheitsdienst-fuerth/` sagt „Wachdienst 24/7",
+   `/sicherheitsdienst-wuerzburg/` „24/7 Wachdienst" — gleiche Wörter, zwei
+   Reihenfolgen.
+5. **Die 7 Ratgeber-Artikel tragen keine Marke im Title.** Untereinander
+   einheitlich und für Frage-Suchen gut, aber der einzige Typ ohne.
+
+Die vollständige Tabelle mit Google-Vorschau und Pixelbalken je Seite liegt als
+eigene Seite bei.
+
+---
+
+## N44 — Kennzahlen der Startseite bestätigt
+
+**Bestätigt** „die auf der Homepage stehen, sind die richtigen, also zehn Jahre,
+dreihundert plus Kunden, eine Million plus Stunden."
+
+Damit ist der offene Punkt aus dem Protokoll geschlossen; der Vermerk
+„unbestätigt" in `content/values.json` ist ersetzt. Der alte Punkt nannte noch
+„25+ Jahre" — die Seite zeigt **10+**, und das ist der richtige Wert.
