@@ -318,6 +318,30 @@
   margin-inline: auto;
 }
 
+/* ⚠️ DIESE ÜBERSCHRIFT HATTE GAR KEINEN ABSTAND ZU IHREM ABSATZ — gemeldet
+   03.09.2026 auf allen drei Case Studies und in allen Breiten.
+   Gemessen vorher: h2 margin-bottom 0, p margin-top 0, sichtbare Lücke 0 px bei
+   390 / 834 / 1440 / 1920.
+
+   Ursache: überall sonst auf der Seite liefert das Chassis diesen Abstand über
+   `.section__intro > p { margin-top: var(--space-4) }` (page-service.css). Der
+   Pitch-Absatz liegt aber NICHT in einem `.section__intro`, sondern als nackter
+   <p> in `.cs-pitch__inner` — es gab also nichts, was greifen konnte.
+   ⇒ Ein Abstand, der aus einer Wrapper-Klasse kommt, fehlt lautlos, sobald das
+   Markup diesen Wrapper nicht benutzt.
+
+   Zeilenhöhe 1.12 statt der geteilten 1.25: bei 60 px ergab 1.25 eine Zeilenhöhe
+   von 75 px, was über vier Zeilen sichtbar auseinanderfällt. Werte durch
+   Ansehen gewählt, nicht gerechnet — 1.15/24px und 1.08/32px lagen daneben
+   (zu locker bzw. zu gedrängt).
+   Ein Wert reicht für beide Enden des Clamps, geprüft an beiden: bei 60 px sind
+   das 67 px Zeilenhöhe, bei 32 px auf dem Telefon 36 px. Darum keine
+   Media Query. */
+.cs-pitch h2 {
+  line-height: 1.12;
+  margin-bottom: var(--space-6);
+}
+
 .cs-pitch p {
   font-size: var(--font-size-md);
   line-height: 1.65;
