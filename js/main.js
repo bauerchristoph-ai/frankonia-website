@@ -8,7 +8,6 @@
 
 initScrollReveal();
 initNavToggle();
-initMobileSubmenu();
 initServicePreview();
 initFaqToggle();
 initActiveNavLink();
@@ -110,100 +109,16 @@ function setNavScrollLock(locked) {
   else lenis.start();
 }
 
-/**
- * Turns the mobile nav's "Leistungen" submenu into a real disclosure.
- *
- * Below the desktop breakpoint the submenu renders as a permanently-expanded
- * nested list. That was a deliberate call (no extra tap-to-open step on touch),
- * but on a phone it costs more than it saves: the ten service links push
- * Referenzen / Unser System / Jobs / Kontakt — and the header's
- * Sicherheitsanalyse CTA, the site's primary conversion action — off the bottom
- * of the open menu, so the top-level nav no longer fits on one screen.
- *
- * Same JS-only-ever-enhances contract as initNavToggle above: the markup ships
- * expanded, and this function is the ONLY thing that ever collapses it. No JS,
- * a script error, or a viewport at/above the desktop breakpoint all leave every
- * service link visible and reachable. The caret in the markup is decorative
- * (aria-hidden) and lives inside the parent <a>, which must stay a real link to
- * /leistungen/ — so the disclosure gets its own sibling <button> rather than
- * hijacking that link's click.
- */
-function initMobileSubmenu() {
-  // ⚠️ querySelectorALL, and that is a fix, not a style choice. This used to be
-  // a singular querySelector, written when "Leistungen" was the only nav item
-  // with a submenu. The moment a second one existed (Einsatzgebiete, the ten
-  // city pages, 2026-08-10) that would have left the new submenu with NO
-  // toggle — i.e. permanently expanded on mobile, pushing the rest of the nav
-  // and the header CTA off the bottom of the open drawer, which is the exact
-  // bug this whole function was written to fix.
-  const items = document.querySelectorAll(".site-nav__item--has-submenu");
-  if (!items.length) return;
+/* initMobileSubmenu() ENTFERNT am 03.09.2026: der Drawer hat kein Akkordeon
+   mehr. Auf Kundenwunsch stehen dort nur noch die acht Ziele (Startseite,
+   Leistungen, Einsatzgebiete, Referenzen, Ueber uns, Jobs, Kontakt, Ratgeber);
+   die Untermenues sind unter 1400px per CSS ausgeblendet und ab 1400px das
+   Mega-Menue des Desktops, das ohne JS per :hover und :focus-within aufgeht.
+   Ein injizierter aria-expanded-Knopf haette dort ein Panel geschaltet, das
+   display:none ist — also einen Schalter ohne Wirkung. Wenn im Drawer je
+   wieder ein Akkordeon stehen soll, gehoert diese Funktion aus der Historie
+   zurueck; ein toter Schalter ist schlimmer als keiner. */
 
-  // Matches site-chrome.css's own desktop-nav breakpoint — above it the submenu
-  // is a hover/focus panel and this button has no business existing.
-  const mobile = window.matchMedia("(max-width: 1399.98px)");
-
-  items.forEach((item, i) => {
-    const submenu = item.querySelector(".site-nav__submenu");
-    const link = item.querySelector(".site-nav__link");
-    if (!submenu || !link) return;
-
-    // ⚠️ The fallback id is INDEXED. It used to be a bare "site-nav-submenu",
-    // which with two submenus would have given both panels the same id — so
-    // both toggles' aria-controls would point at whichever one the browser
-    // resolved first, and the second button would announce that it controls a
-    // region it does not.
-    const id = submenu.id || "site-nav-submenu-" + (i + 1);
-    submenu.id = id;
-
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "site-nav__submenu-toggle";
-    btn.setAttribute("aria-controls", id);
-    btn.setAttribute("aria-expanded", "false");
-    // The label names what it discloses; the visible caret is decorative. Taken
-    // from the parent link's own text, so it stays correct per item and per
-    // language without this function knowing any labels.
-    btn.setAttribute("aria-label", link.textContent.trim() + " – Untermenü");
-
-    function setOpen(open) {
-      btn.setAttribute("aria-expanded", String(open));
-      item.classList.toggle("is-submenu-open", open);
-    }
-
-    btn.addEventListener("click", () => {
-      const opening = btn.getAttribute("aria-expanded") !== "true";
-      // Accordion: opening one closes the others. With two submenus of ten
-      // links each, letting both stand open puts 20 links plus five top-level
-      // items in the drawer — past one screen again, which is the whole point
-      // of collapsing them. Closing a sibling only ever touches state this
-      // function owns.
-      if (opening) {
-        items.forEach((other) => {
-          if (other === item) return;
-          other.classList.remove("is-submenu-open");
-          const otherBtn = other.querySelector(".site-nav__submenu-toggle");
-          if (otherBtn) otherBtn.setAttribute("aria-expanded", "false");
-        });
-      }
-      setOpen(opening);
-    });
-
-    function apply() {
-      if (mobile.matches) {
-        if (!btn.isConnected) link.after(btn);
-        item.classList.add("has-js-submenu");
-        setOpen(false);
-      } else {
-        if (btn.isConnected) btn.remove();
-        item.classList.remove("has-js-submenu", "is-submenu-open");
-      }
-    }
-
-    apply();
-    mobile.addEventListener("change", apply);
-  });
-}
 
 /**
  * Fades/slides content into place as it enters the viewport. Mark

@@ -197,6 +197,16 @@
              to / in vercel.json). The switch itself had already been dropped
              from the nav on 2026-07-27. Do not re-add either half. -->
         <a class="btn btn--primary" href="/#sicherheitsanalyse">Angebot einholen<svg class="btn__arrow icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        <!-- ZWEITER CTA, NUR IM DRAWER (Kunde 03.09.2026: "unten die zwei Call
+             to Actions"). Im Kopf der Desktop-Ansicht steht weiter genau ein
+             Knopf — dort ist die Zeile schon voll, und das Telefon steht auf
+             jeder Seite im Hero und im Footer.
+             Versteckt wird er per CSS (.site-nav__actions-drawer-only), nicht
+             per zweitem Markup: ein Link, eine Wahrheit — dasselbe Verfahren
+             wie beim Ratgeber-Eintrag der Liste.
+             Gestaltung ist der EINE Sekundaer-CTA des Projekts (Regel G1):
+             1px weisser Rahmen, kein Fuellton, weisser Text. -->
+        <a class="btn btn--secondary site-nav__actions-drawer-only" href="{{phone.href}}"><svg class="btn__icon icon" aria-hidden="true"><use href="#icon-phone"></use></svg>{{phone.display}}</a>
       </div>
     </nav>
   </div>
