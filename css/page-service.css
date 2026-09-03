@@ -183,7 +183,22 @@ main h2 {
   font-weight: 500;
   text-decoration: none;
   color: var(--color-accent);
-  /* The hairline is the affordance, so the link is never colour-only. */
+  /* Die Haarlinie ist die Affordanz, der Link haengt also nie nur an der
+     Farbe — sie sitzt aber am LABEL, siehe die Regel darunter. */
+}
+
+/* ⚠️ DIE HAARLINIE GEHOERT DEM TEXT, NICHT DER KLICKFLAECHE — und dass sie am
+   Kasten hing, war ein Folgefehler von mir. Kunde 03.09.2026 zum Link "Zur
+   Brandwache": "sieht irgendwie nicht so geil aus".
+   Ursache: dieser Anker bekam eine Touch-Flaeche von min-height 44px, und ein
+   border-bottom sitzt am BODEN dieser Box. Der Text ist aber nur ~24px hoch und
+   mittig ausgerichtet, also schwebte die blaue Linie rund 10px UNTER dem Wort
+   und lief ausserdem unter dem Pfeil durch — eine abgeloeste Linie, kein
+   Unterstrich.
+   Jetzt tragen zwei Elemente je eine Aufgabe: der Anker die 44px Klickflaeche,
+   das Label die Linie. Der Pfeil bleibt frei, weil er kein Geschwister des
+   Textes im selben Kasten mehr ist, sondern neben dem Label steht. */
+.service-link__label {
   border-bottom: 1px solid rgb(61 154 211 / 0.4);
   padding-bottom: 2px;
 }
@@ -207,6 +222,10 @@ main h2 {
 .service-link:hover,
 .service-link:focus-visible {
   color: var(--color-white);
+}
+
+.service-link:hover .service-link__label,
+.service-link:focus-visible .service-link__label {
   border-bottom-color: var(--color-white);
 }
 

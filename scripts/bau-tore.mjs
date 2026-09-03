@@ -718,6 +718,77 @@ function torSignaturen() {
   return befunde;
 }
 
+/* ── Rechenbeispiele im Kostenratgeber gehen auf ─────────────────────────────
+   Kunde 03.09.2026: "Es darf kein Rechenfehler in den Beispielen drin sein."
+
+   ⚠️ WAS SCHIEFGING UND WARUM ES KEIN TIPPFEHLER WAR: jede Zahl war einzeln
+   gerundet, also stimmte jede EINZELN (hoechstens 25 EUR neben dem exakten
+   Wert) und die ADDITION ging trotzdem nicht auf — 4.250 + 1.000 sind 5.250,
+   als Summe stand 5.200. Der Text lautet "Basis ~ X, plus ~ Y. Ergebnis: grob
+   Z", laedt also zum Nachrechnen ein. Gemessen: 50 / 27 / 30 EUR Differenz.
+
+   Zwei Regeln, die dieses Tor durchsetzt:
+     1. jede Zahl auf 10 EUR gerundet, hoechstens 10 EUR vom exakten Wert
+     2. die Summe ist die EXAKTE Summe der GERUNDETEN Teile, nicht die
+        gerundete exakte Summe
+   Punkt 2 stand als Vorsatz schon im Kommentar von values.json — er war nur
+   nicht durchgesetzt, und deshalb galt er nicht. */
+function torRechenbeispiele() {
+  const befunde = [];
+  const werte = JSON.parse(fs.readFileSync(path.join(WURZEL, "content/values.json"), "utf8"));
+  const p = werte.price, e = p.example, s = p.surcharge;
+  const zahl = (x) => parseFloat(String(x).replace(/\./g, "").replace(",", "."));
+  const paar = (x) => String(x).split(/[\u2013-]/).map(zahl);
+  const min = zahl(p.min), max = zahl(p.max);
+  const nacht = zahl(s.night) / 100, sonntag = zahl(s.sunday) / 100;
+
+  /* Beispiel 1 verzuschlagt ALLE Stunden ("alle in der tariflichen Nachtzeit"),
+     darum steht dort dieselbe Stundenzahl wie in der Basis. */
+  const beispiele = [
+    ["Nachtposten", zahl(e.nightPostHours), "nightPostBase",
+      [["nightPostSurcharge", zahl(e.nightPostHours), nacht]], "nightPostMonthly"],
+    ["Wochenende", zahl(e.weekendHours), "weekendBase",
+      [["weekendNightSurcharge", zahl(e.weekendNightHours), nacht],
+       ["weekendSundaySurcharge", zahl(e.weekendSundayHours), sonntag]], "weekendTotal"],
+    ["Brandwache", zahl(e.continuousHours), "continuousBase",
+      [["continuousNightSurcharge", zahl(e.continuousNightHours), nacht]], "continuousTotal"],
+  ];
+
+  for (const [name, std, basisK, zus, summeK] of beispiele) {
+    const pruefe = (k, exakt) => {
+      const a = paar(e[k]);
+      if (a.length !== 2 || a.some(isNaN)) {
+        befunde.push(name + ": " + k + " ist kein Bereich (" + e[k] + ")");
+        return null;
+      }
+      for (let i = 0; i < 2; i++) {
+        const ab = Math.abs(a[i] - exakt[i]);
+        if (ab > 10) {
+          befunde.push(name + ": " + k + " = " + a[i] + " liegt " + ab.toFixed(2) +
+            " EUR neben dem exakten Wert " + exakt[i].toFixed(2));
+        }
+        if (a[i] % 10 !== 0) {
+          befunde.push(name + ": " + k + " = " + a[i] + " ist nicht auf 10 EUR gerundet");
+        }
+      }
+      return a;
+    };
+    const basis = pruefe(basisK, [std * min, std * max]);
+    const teile = zus.map(([k, h, satz]) => pruefe(k, [h * min * satz, h * max * satz]));
+    if (!basis || teile.some((t) => !t)) continue;
+
+    const summe = paar(e[summeK]);
+    for (let i = 0; i < 2; i++) {
+      const soll = basis[i] + teile.reduce((a, t) => a + t[i], 0);
+      if (summe[i] !== soll) {
+        befunde.push(name + ": " + summeK + " sagt " + summe[i] + ", die angegebenen Teile ergeben " +
+          soll + " (" + basis[i] + " + " + teile.map((t) => t[i]).join(" + ") + ")");
+      }
+    }
+  }
+  return befunde;
+}
+
 const TORE = [
   ["Radien am Behaelter und aus Token (Aufgabe 18)", torRadien],
   ["CTA-Varianten unter der Obergrenze (Aufgabe 19)", torCtaVarianten],
@@ -733,6 +804,7 @@ const TORE = [
   ["Erfolgsseiten je Formulartyp (Aufgabe 12)", torErfolgsseiten],
   ["SVG mit beiden Achsen auto tragen width und height", torSvgMasse],
   ["Signaturen an allen eigenen Adressen", torSignaturen],
+  ["Rechenbeispiele im Kostenratgeber gehen auf", torRechenbeispiele],
 ];
 
 if (!fs.existsSync(DIST)) {
