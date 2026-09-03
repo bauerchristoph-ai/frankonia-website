@@ -292,3 +292,20 @@ Code `undefined` zurückgibt, meldet leicht „Element existiert nicht".
 - **Ein Auto-Margin oder `justify-self: center` macht ein Grid-Item
   content-sized** — ein `<svg>` oder `<picture>` darin kollabiert dann. Es
   braucht zusätzlich `width: 100%`.
+- **Ohne `<meta name="viewport">` nimmt Chrome bei `mobile: true` die
+  Standardbreite 980 px** — auch wenn `setDeviceMetricsOverride` 390 verlangt.
+  Jede „390-px-Messung" ist dann in Wahrheit eine 980-px-Messung, und zwar eine
+  mit grünen Zahlen: kein seitliches Scrollen, keine Überbreite, alles ok. Das
+  Handy ist trotzdem ungeprüft. Der Verräter ist die Seitenhöhe — sie war fast
+  identisch mit der Desktop-Messung, obwohl eine Handyfassung viel höher sein
+  muss (hier 14 582 gegen echte 25 485 px). **Eine Sonde muss `innerWidth`
+  gegen die angeforderte Breite prüfen, bevor man ihr etwas glaubt.** Betrifft
+  jedes Dokument, dessen Viewport-Meta erst eine Hülle beisteuert — bei
+  Artefakten setzt es die Veröffentlichung, also lokal in derselben Hülle
+  messen.
+- **„Läuft aus dem Container" muss gegen den EIGENEN Container gemessen
+  werden.** Eine Sonde, die alles gegen die erste Karte vergleicht, meldet jede
+  Tabelle in einem eigenen Scroll-Kasten als Fehler — 277 Elemente „überbreit",
+  alle korrekt. Die belastbare Prüfung ist zweistufig: scrollt der
+  Seitenkörper seitlich (das ist der Fehler), und hat jedes breite Element
+  einen Vorfahren mit `overflow-x: auto` (dann ist es Absicht).
