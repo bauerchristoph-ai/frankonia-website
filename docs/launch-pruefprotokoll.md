@@ -3873,3 +3873,279 @@ dreihundert plus Kunden, eine Million plus Stunden."
 Damit ist der offene Punkt aus dem Protokoll geschlossen; der Vermerk
 „unbestätigt" in `content/values.json` ist ersetzt. Der alte Punkt nannte noch
 „25+ Jahre" — die Seite zeigt **10+**, und das ist der richtige Wert.
+
+## N45 — Titles und Descriptions auf die Pixelgrenze gebracht (03.09.2026)
+
+**Auftrag:** „alles descritpions und titles müssen passen in die maximale
+pixelzahl … muss alles seo technisch sinn machen".
+
+**Warum Pixel und nicht Zeichen:** Google schneidet das Snippet nach BREITE ab,
+nicht nach Zeichenzahl. „Sicherheitsdienst" ist bei gleicher Zeichenzahl
+deutlich breiter als „Illinois". Gemessen wurde daher mit Arial 20 px für den
+Title (Grenze ~600 px) und Arial 14 px für die Description (Grenze ~960 px) —
+die Maße des Desktop-Snippets.
+
+**Ausgangslage, gemessen an den 70 gebauten Seiten:** 3 Titles und 34
+Descriptions lagen über der Grenze, wurden also von Google mit „…" gekürzt.
+Die restlichen 33 Seiten lagen im Limit und **wurden nicht angefasst** — es
+wurde nichts auf Verdacht umformuliert.
+
+**Kürzungsregeln, in dieser Reihenfolge angewandt:**
+
+1. Doppelung raus. „Brandwache Nürnberg | Brandsicherheitswache" sagt zweimal
+   dasselbe und bringt kein zweites Keyword.
+2. Füllwörter raus — **nie das Keyword und nie den Ort**.
+3. Einheitliche Kurzform: „Angebot in 1 Werktag" statt „Angebot innerhalb
+   eines Werktages". Gleiche Aussage, ~45 px kürzer, und die Website benutzte
+   bisher beide Formen gemischt.
+4. Der Beleg bleibt (DEKRA, DIN, eine Zahl) — er ist das Stärkste am Snippet.
+
+⚠️ **Zwei eigene Fehler, die erst eine Prüfung gefunden hat, nicht das Auge.**
+Nach dem Schreiben lief eine Probe, die aus dem Slug ableitet, welches Keyword
+und welcher Beleg im Text stehen MUSS:
+
+- `/ratgeber/qualifikationen-sicherheitsdienst/` — meine Kürzung hatte
+  **„im Sicherheitsdienst" gestrichen, also genau das Keyword aus der Adresse**.
+  Die Endfassung führt es jetzt sogar nach vorn.
+- `/objektschutz-erlangen/` — meine Kürzung hatte **„DEKRA-zertifiziert"
+  gestrichen**. Wieder eingesetzt; dafür fällt dort „Angebot in 1 Werktag",
+  was zugleich die konsistente Form der anderen Stadtseiten ist (die enden
+  alle auf „DEKRA-zertifiziert.").
+
+**Gegengeprüft am ausgelieferten Zustand (`dist/`), nicht an der Quelle:**
+
+| Prüfung | Ergebnis |
+|---|---|
+| Titles über 600 px | **0** von 70 |
+| Descriptions über 960 px | **0** von 70 |
+| Descriptions unter 600 px (verschenkter Platz) | 0 |
+| Keyword aus dem Slug beim Kürzen verloren | **keines** (26 Seiten geprüft) |
+| Beleg (DEKRA/DIN/Zahl) verloren | **keiner** |
+| Doppelte Titles / Descriptions | keine / keine |
+| Seiten unbeabsichtigt verändert | keine (33 unangetastet, Soll-Ist-Vergleich) |
+| Geplant vs. ausgeliefert | 37 von 37 identisch |
+| Bau-Tore | 19 von 19 grün |
+
+⚠️ **Title und Description stehen je ZWEIMAL in einer Seite** — einmal als
+`<title>`/`<meta name="description">` und einmal als `og:title`/
+`og:description`. Beide wurden ersetzt (6 bzw. 63 Vorkommen), sonst hätte die
+Seite Google und Facebook Verschiedenes erzählt.
+
+⚠️ **Fünf Seiten haben absichtlich einen EIGENEN Social-Text**, der nicht mit
+der Description übereinstimmt: Startseite, `/danke/`, `/datenschutz/`,
+`/impressum/`, `/kontakt/`. Dort wurde nur die Description angepasst, der
+OG-Text blieb unverändert — geprüft und bewusst so gelassen.
+
+⚠️ **`/impressum/` wurde nicht gekürzt, sondern PRÄZISER.** Der alte Text las
+sich wie ein Unternehmen („FRANKONIA Sicherheitsdienst und FRANKONIA Werkschutz
+GmbH & Co. KG"), es sind aber zwei eigene KGs. Beide sind jetzt vollständig
+genannt. Platz kam aus dem gestrichenen „Angaben nach § 5 DDG" — das steht auf
+der Seite selbst und im OG-Text.
+
+### Alle 37 Änderungen zum Nachprüfen
+
+Je Eintrag: **alt** ist die bisherige Formulierung, **neu** die ausgelieferte.
+Die Zahl dahinter ist die gemessene Snippet-Breite in Pixeln.
+
+#### Kernseite (4)
+
+**`/jobs/`** — Description, 967 px → **881 px** (Grenze 960)
+
+- alt: Sicherheitsdienst-Jobs bei FRANKONIA: übertarifliche Bezahlung, Dienstplan nach deinen Präferenzen, sicherer Arbeitgeber. Jetzt unverbindlich bewerben.
+- neu: **Sicherheitsdienst-Jobs bei FRANKONIA: übertarifliche Bezahlung, Dienstplan nach deinen Präferenzen, sicherer Arbeitgeber. Jetzt bewerben.**
+
+**`/kontakt/`** — Description, 983 px → **887 px** (Grenze 960)
+
+- alt: FRANKONIA Sicherheitsdienst Bamberg: 24/7 erreichbar unter +49 951 964352-0. Unverbindliches Angebot in einem Werktag, kostenfreie Beratung inklusive.
+- neu: **FRANKONIA Sicherheitsdienst Bamberg: 24/7 erreichbar unter +49 951 964352-0. Unverbindliches Angebot in 1 Werktag, Beratung kostenfrei.**
+
+**`/referenzen/`** — Description, 1014 px → **953 px** (Grenze 960)
+
+- alt: FRANKONIA Referenzen: über 300 Unternehmen und Einrichtungen vertrauen uns, von ADAC bis Stadtwerke Bamberg. Echte Ergebnisse, echte Kundenstimmen.
+- neu: **FRANKONIA Referenzen: über 300 Unternehmen und Einrichtungen vertrauen uns, von ADAC bis Stadtwerke Bamberg. Echte Ergebnisse und Stimmen.**
+
+**`/sicherheitskonzept/`** — Description, 993 px → **926 px** (Grenze 960)
+
+- alt: Sicherheitskonzept für Ihr Unternehmen: Begehung, Risikoanalyse, Maßnahmenplan aus Personal & Technik. Vom zertifizierten Sicherheitsdienst aus Bamberg.
+- neu: **Sicherheitskonzept für Ihr Unternehmen: Begehung, Risikoanalyse, Maßnahmenplan aus Personal & Technik. Vom zertifizierten Dienst aus Bamberg.**
+
+#### Leistungsseite (6)
+
+**`//`** — Description, 1027 px → **885 px** (Grenze 960)
+
+- alt: DEKRA-zertifizierter Sicherheitsdienst aus Bamberg: Objektschutz, Werkschutz, Brandwache & mehr. Fester Ansprechpartner, 24/7 erreichbar. Angebot in 1 Werktag.
+- neu: **DEKRA-zertifizierter Sicherheitsdienst aus Bamberg: Objektschutz, Werkschutz, Brandwache & mehr. Fester Ansprechpartner, 24/7 erreichbar.**
+
+**`/baustellenbewachung/`** — Description, 1011 px → **887 px** (Grenze 960)
+
+- alt: Baustellenbewachung gegen Diebstahl & Vandalismus: flexible Konzepte, die mit dem Baufortschritt mitwachsen. Dokumentiert & zertifiziert, Angebot in 1 Werktag.
+- neu: **Baustellenbewachung gegen Diebstahl & Vandalismus: Konzepte, die mit dem Baufortschritt mitwachsen. Dokumentiert, Angebot in 1 Werktag.**
+
+**`/empfangsdienst/`** — Description, 1014 px → **830 px** (Grenze 960)
+
+- alt: Empfangsdienst mit Sicherheitskompetenz: Besuchermanagement, Pfortendienst, Postannahme, im Anzug oder Sicherheitsmontur. Fester Stamm statt Fluktuation.
+- neu: **Empfangsdienst mit Sicherheitskompetenz: Besuchermanagement, Pfortendienst, Postannahme. Im Anzug oder Montur, festes Team.**
+
+**`/objektschutz/`** — Description, 995 px → **939 px** (Grenze 960)
+
+- alt: Objektschutz vom DEKRA-zertifizierten Sicherheitsdienst aus Bamberg: Bestreifung, Zugangskontrolle, Alarmverfolgung. Kostenfreies Sicherheitskonzept vorab.
+- neu: **Objektschutz vom DEKRA-zertifizierten Sicherheitsdienst aus Bamberg: Bestreifung, Zugangskontrolle, Alarmverfolgung. Sicherheitskonzept kostenfrei.**
+
+**`/sicherheitstechnik/`** — Description, 981 px → **940 px** (Grenze 960)
+
+- alt: Sicherheitstechnik aus Bamberg: Videoüberwachung, Alarmanlagen, Zutrittskontrolle — Projektierung bis Wartung. Kombiniert mit Personal, wo es sinnvoll ist.
+- neu: **Sicherheitstechnik aus Bamberg: Videoüberwachung, Alarmanlagen, Zutrittskontrolle — von der Projektierung bis zur Wartung, kombiniert mit Personal.**
+
+**`/werkschutz/`** — Description, 996 px → **853 px** (Grenze 960)
+
+- alt: Werkschutz für Industrie & Produktion: Pfortendienst, Rundgänge, Anlagen-Bedienung durch technik-geschulte Kräfte. DEKRA-zertifiziert, Angebot in 1 Werktag.
+- neu: **Werkschutz für Industrie & Produktion: Pfortendienst, Rundgänge, Anlagen-Bedienung durch technik-geschulte Kräfte. DEKRA-zertifiziert.**
+
+#### Kombiseite (7)
+
+**`/brandwache-erlangen/`** — Title, 603 px → **524 px** (Grenze 600)
+
+- alt: Brandwache Erlangen | Brandsicherheitswache 24/7 – FRANKONIA
+- neu: **Brandwache Erlangen | Sofort einsatzbereit – FRANKONIA**
+
+**`/brandwache-nuernberg/`** — Title, 607 px → **528 px** (Grenze 600)
+
+- alt: Brandwache Nürnberg | Brandsicherheitswache 24/7 – FRANKONIA
+- neu: **Brandwache Nürnberg | Sofort einsatzbereit – FRANKONIA**
+
+**`/brandwache-wuerzburg/`** — Title, 610 px → **531 px** (Grenze 600)
+
+- alt: Brandwache Würzburg | Brandsicherheitswache 24/7 – FRANKONIA
+- neu: **Brandwache Würzburg | Sofort einsatzbereit – FRANKONIA**
+
+**`/baustellenbewachung-erlangen/`** — Description, 963 px → **844 px** (Grenze 960)
+
+- alt: Baustellenbewachung in Erlangen: Schutz für Campus-, Wohn- & Gewerbeprojekte vor Diebstahl & Vandalismus, dokumentiert. Angebot in einem Werktag.
+- neu: **Baustellenbewachung in Erlangen: Schutz für Campus-, Wohn- & Gewerbeprojekte vor Diebstahl & Vandalismus. Angebot in 1 Werktag.**
+
+**`/baustellenbewachung-fuerth/`** — Description, 961 px → **842 px** (Grenze 960)
+
+- alt: Baustellenbewachung in Fürth: Schutz vor Diebstahl & Vandalismus für Nachverdichtung, Sanierung & Gewerbe, dokumentiert. Angebot in einem Werktag.
+- neu: **Baustellenbewachung in Fürth: Schutz vor Diebstahl & Vandalismus für Nachverdichtung, Sanierung & Gewerbe. Angebot in 1 Werktag.**
+
+**`/objektschutz-erlangen/`** — Description, 967 px → **794 px** (Grenze 960)
+
+- alt: Objektschutz in Erlangen: Bestreifung, Zugangskontrolle & Alarmverfolgung für Büro, Forschung & Gewerbe. DEKRA-zertifiziert, Angebot in einem Werktag.
+- neu: **Objektschutz in Erlangen: Bestreifung, Zugangskontrolle & Alarmverfolgung für Büro, Forschung & Gewerbe. DEKRA-zertifiziert.**
+
+**`/werkschutz-nuernberg/`** — Description, 981 px → **808 px** (Grenze 960)
+
+- alt: Werkschutz für Nürnberger Industrie: Pforte, Rundgänge & Anlagen-Bedienung durch technik-geschulte Kräfte. DEKRA-zertifiziert, Angebot in einem Werktag.
+- neu: **Werkschutz für Nürnberger Industrie: Pforte, Rundgänge & Anlagen-Bedienung durch technik-geschulte Kräfte. DEKRA-zertifiziert.**
+
+#### Stadtseite (8)
+
+**`/sicherheitsdienst-ansbach/`** — Description, 991 px → **849 px** (Grenze 960)
+
+- alt: Sicherheitsdienst für Ansbach: Objektschutz, Wachdienst, Brandwache & Baustellenbewachung in Westmittelfranken. DEKRA-zertifiziert, Angebot in 1 Werktag.
+- neu: **Sicherheitsdienst für Ansbach: Objektschutz, Wachdienst, Brandwache & Baustellenbewachung in Westmittelfranken. DEKRA-zertifiziert.**
+
+**`/sicherheitsdienst-bamberg/`** — Description, 993 px → **890 px** (Grenze 960)
+
+- alt: FRANKONIA ist Ihr Sicherheitsdienst aus Bamberg: Objektschutz, Wachdienst, Brandwache & Events, seit über 10 Jahren für Stadt, Wirtschaft & Einrichtungen.
+- neu: **FRANKONIA ist Ihr Sicherheitsdienst aus Bamberg: Objektschutz, Wachdienst, Brandwache & Events, seit über 10 Jahren in Stadt und Region.**
+
+**`/sicherheitsdienst-bayreuth/`** — Description, 985 px → **813 px** (Grenze 960)
+
+- alt: Sicherheitsdienst für Bayreuth: Objektschutz, Wachdienst, Brandwache & Veranstaltungsschutz in Oberfranken. DEKRA-zertifiziert, Angebot in einem Werktag.
+- neu: **Sicherheitsdienst für Bayreuth: Objektschutz, Wachdienst, Brandwache & Veranstaltungsschutz in Oberfranken. DEKRA-zertifiziert.**
+
+**`/sicherheitsdienst-erlangen/`** — Description, 986 px → **844 px** (Grenze 960)
+
+- alt: Sicherheitsdienst für Erlangen: Objektschutz, Werkschutz & Brandwache für Technologie-, Klinik- und Bürostandorte. DEKRA-zertifiziert, Angebot in 1 Werktag.
+- neu: **Sicherheitsdienst für Erlangen: Objektschutz, Werkschutz & Brandwache für Technologie-, Klinik- und Bürostandorte. DEKRA-zertifiziert.**
+
+**`/sicherheitsdienst-fuerth/`** — Description, 1001 px → **880 px** (Grenze 960)
+
+- alt: Sicherheitsdienst für Fürth: Objektschutz, Wachdienst, Brandwache & Baustellenbewachung — IHK-qualifizierte Kräfte, DEKRA-zertifiziert, Angebot in 1 Werktag.
+- neu: **Sicherheitsdienst für Fürth: Objektschutz, Wachdienst, Brandwache & Baustellenbewachung durch IHK-qualifizierte Kräfte. DEKRA-zertifiziert.**
+
+**`/sicherheitsdienst-nuernberg/`** — Description, 966 px → **889 px** (Grenze 960)
+
+- alt: Sicherheitsdienst für Nürnberg: Objektschutz, Werkschutz, Brandwache & Baustellenbewachung durch IHK-qualifizierte Kräfte. DEKRA-zertifiziert seit 2016.
+- neu: **Sicherheitsdienst für Nürnberg: Objektschutz, Werkschutz, Brandwache & Baustellenbewachung durch IHK-qualifizierte Kräfte. DEKRA-geprüft.**
+
+**`/sicherheitsdienst-schweinfurt/`** — Description, 988 px → **815 px** (Grenze 960)
+
+- alt: Sicherheitsdienst für Schweinfurt: Werkschutz für Industrie, Objektschutz, Brandwache & Baustellenbewachung. DEKRA-zertifiziert, Angebot in einem Werktag.
+- neu: **Sicherheitsdienst für Schweinfurt: Werkschutz für Industrie, Objektschutz, Brandwache & Baustellenbewachung. DEKRA-zertifiziert.**
+
+**`/sicherheitsdienst-wuerzburg/`** — Description, 1014 px → **927 px** (Grenze 960)
+
+- alt: Sicherheitsdienst für Würzburg: Objektschutz, Baustellenbewachung, Brandwache & Veranstaltungsschutz. DEKRA-zertifiziert, Angebot innerhalb eines Werktages.
+- neu: **Sicherheitsdienst für Würzburg: Objektschutz, Baustellenbewachung, Brandwache & Veranstaltungsschutz. DEKRA-zertifiziert, Angebot in 1 Werktag.**
+
+#### Hub (2)
+
+**`/einsatzgebiete/`** — Description, 1026 px → **952 px** (Grenze 960)
+
+- alt: FRANKONIA Einsatzgebiete: Sicherheitsdienst für Bamberg, Nürnberg, Würzburg, Erlangen & ganz Franken. Ein Team, ein Standard — DEKRA-zertifiziert seit 2016.
+- neu: **FRANKONIA Einsatzgebiete: Sicherheitsdienst für Bamberg, Nürnberg, Würzburg, Erlangen & ganz Franken. Ein Team, ein Standard, DEKRA-zertifiziert.**
+
+**`/leistungen/`** — Description, 1040 px → **936 px** (Grenze 960)
+
+- alt: Alle Sicherheitsdienstleistungen von FRANKONIA aus Bamberg: Objektschutz, Werkschutz, Brandwache, Baustellenbewachung & mehr. DIN 77200-1, DEKRA-geprüft.
+- neu: **Alle Sicherheitsdienstleistungen von FRANKONIA aus Bamberg: Objektschutz, Werkschutz, Brandwache, Baustellenbewachung & mehr. DIN 77200-1.**
+
+#### Ratgeber-Artikel (5)
+
+**`/ratgeber/bewerbung-sicherheitsdienst/`** — Description, 1006 px → **830 px** (Grenze 960)
+
+- alt: Bewerbung im Sicherheitsdienst: Diese drei Fehler kosten die meisten Bewerber die Stelle — Erstkontakt, Lebenslauf und Verbindlichkeit, erklärt vom Arbeitgeber.
+- neu: **Bewerbung im Sicherheitsdienst: Diese drei Fehler kosten die meisten Bewerber die Stelle — Erstkontakt, Lebenslauf, Verbindlichkeit.**
+
+**`/ratgeber/brandwache-wann-vorgeschrieben/`** — Description, 966 px → **882 px** (Grenze 960)
+
+- alt: Wann ist eine Brandwache vorgeschrieben? BMA-Ausfall, Heißarbeiten, Veranstaltungen: alle Pflicht-Fälle, wer sie stellen darf und was sie kostet, kompakt.
+- neu: **Wann ist eine Brandwache vorgeschrieben? BMA-Ausfall, Heißarbeiten, Veranstaltungen: alle Pflicht-Fälle, wer sie stellen darf, was sie kostet.**
+
+**`/ratgeber/paragraph-34a-erklaert/`** — Description, 966 px → **912 px** (Grenze 960)
+
+- alt: Der 34a-Schein einfach erklärt: Unterschied Unterrichtung vs. Sachkundeprüfung, Kosten, Dauer und welche Jobs damit möglich sind, vom Sicherheitsprofi.
+- neu: **Der 34a-Schein einfach erklärt: Unterrichtung oder Sachkundeprüfung, Kosten, Dauer und welche Jobs damit möglich sind — vom Sicherheitsprofi.**
+
+**`/ratgeber/qualifikationen-sicherheitsdienst/`** — Description, 1007 px → **899 px** (Grenze 960)
+
+- alt: Unterrichtung, Sachkunde, GSSK: Dauer, Kosten und Prüfungsformat der drei Qualifikationen im Sicherheitsdienst im direkten Vergleich — mit Richtwerten je IHK.
+- neu: **Qualifikationen im Sicherheitsdienst: Unterrichtung, Sachkunde und GSSK im Vergleich — Dauer, Kosten, Prüfungsformat und Richtwerte je IHK.**
+
+**`/ratgeber/voraussetzungen-sicherheitsdienst/`** — Description, 1040 px → **935 px** (Grenze 960)
+
+- alt: Voraussetzungen im Sicherheitsdienst: für Unterrichtung und Sachkunde keine, für die GSSK strenge — dazu Führungszeugnis und Bewacherregister vor dem Einsatz.
+- neu: **Voraussetzungen im Sicherheitsdienst: für Unterrichtung und Sachkunde keine, für die GSSK strenge — dazu Führungszeugnis und Bewacherregister.**
+
+#### Case Study (2)
+
+**`/referenzen/case-study-schichtsystem/`** — Description, 979 px → **927 px** (Grenze 960)
+
+- alt: Wie FRANKONIA das Schichtsystem eines Bestandskunden optimierte: 20 % Kostenersparnis bei gleichbleibender Sicherheit. Die anonymisierte Case Study.
+- neu: **Wie FRANKONIA das Schichtsystem eines Bestandskunden optimierte: 20 % Kostenersparnis bei gleicher Sicherheit. Die anonymisierte Case Study.**
+
+**`/referenzen/case-study-sicherheitskonzept/`** — Description, 1001 px → **874 px** (Grenze 960)
+
+- alt: Wie ein Großkunde mit einem neuen Sicherheitskonzept 30 % Personalkosten sparte — bei gleicher Sicherheit. Die anonymisierte Case Study von FRANKONIA.
+- neu: **Wie ein Großkunde mit einem neuen Sicherheitskonzept 30 % Personalkosten sparte, bei gleicher Sicherheit. Die anonymisierte Case Study.**
+
+#### Rechtliches (2)
+
+**`/datenschutz/`** — Description, 1019 px → **879 px** (Grenze 960)
+
+- alt: Datenschutzerklärung der FRANKONIA Sicherheitsdienst GmbH & Co. KG, Bamberg: Verantwortlicher, Kontakt für datenschutzrechtliche Anfragen und Ihre Rechte.
+- neu: **Datenschutzerklärung der FRANKONIA Sicherheitsdienst GmbH & Co. KG, Bamberg: Verantwortlicher, Kontakt für Anfragen und Ihre Rechte.**
+
+**`/impressum/`** — Description, 1138 px → **898 px** (Grenze 960)
+
+- alt: Impressum von FRANKONIA Sicherheitsdienst GmbH & Co. KG und FRANKONIA Werkschutz GmbH & Co. KG, Neuerbstraße 19 in 96052 Bamberg: Anbieterangaben nach § 5 DDG.
+- neu: **Impressum: FRANKONIA Sicherheitsdienst GmbH & Co. KG und FRANKONIA Werkschutz GmbH & Co. KG, Neuerbstraße 19, 96052 Bamberg.**
+
+#### Danke (1)
+
+**`/danke/`** — Description, 1014 px → **935 px** (Grenze 960)
+
+- alt: Ihre Anfrage ist bei FRANKONIA angekommen. Wir melden uns innerhalb eines Werktages — bei dringenden Fällen erreichen Sie uns rund um die Uhr telefonisch.
+- neu: **Ihre Anfrage ist bei FRANKONIA angekommen. Wir melden uns innerhalb eines Werktages — in dringenden Fällen erreichen Sie uns rund um die Uhr.**
