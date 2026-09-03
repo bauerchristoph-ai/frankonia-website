@@ -316,6 +316,40 @@
      stayed at 0.18px. */
 }
 
+/* ── LANDKREIS ALS UMSCHLIESSENDE FORM ───────────────────────────────────────
+   Kunde 03.09.2026, mit einem Google-Maps-Bild von Landkreis Bamberg: "mach den
+   Landkreis-Umkreis und markier drinnen die Stadt".
+
+   ⚠️ NUR 7 DER 10 STAEDTE HABEN DIESE FORM, gemessen und nicht ausgewaehlt:
+   Erlangen-Hoechstadt, Landkreis Fuerth und Nuernberger Land liegen NEBEN ihrer
+   Stadt. Geprueft wurde, ob der Stadtmittelpunkt im AEUSSEREN Ring des Kreises
+   liegt — ein gewoehnlicher Punkt-in-Polygon-Test zaehlt Loecher als "draussen"
+   und haette jede kreisfreie Stadt verworfen, obwohl die Stadt im Loch genau
+   das gewuenschte Bild ist. Ohne Kreisdatei bleibt die Seite bei der Stadt
+   allein und diese Regeln greifen dort nicht.
+
+   ⚠️ NUR UMRISS, KEINE FLAECHE. Der Kreis ist bei Bamberg rund 15x so gross wie
+   die Stadt; schon 0,06 Fuellung waere die groesste Farbflaeche des Heroes und
+   genau das, was der Kunde auf der Karte von /einsatzgebiete/ ausgeschlossen
+   hat ("dass in keinem Moment alles hellblau gefuellt ist, nur die Umrisse").
+   Die Fuellung bleibt der Stadt — sie ist es, die heraussticht.
+
+   ⚠️ Die Loecher des Kreises werden MITGEZEICHNET, und eines davon IST die
+   Stadtgrenze. Dort liegen zwei Linien aufeinander: die schwache des Kreises,
+   darueber die starke der Stadt. Das ist richtig und keine Verdopplung — die
+   Innenkante des Kreises und die Stadtgrenze sind in der Wirklichkeit dieselbe
+   Linie. Die weiteren Loecher sind andere Enklaven und gehoeren ins Bild. */
+.city-map__kreis {
+  fill: none;
+  stroke: var(--color-blue-light);
+  /* Knapp halb so praesent wie die Stadt: der Kreis ist der Rahmen, nicht die
+     Aussage. 0,32 gegen 0,7 der Stadt, dieselbe Linienfarbe. */
+  stroke-opacity: 0.32;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
 /* The boundary itself: a BLUE hairline, not a filled shape (client 2026-08-14:
    "que sean como el hero de /einsatzgebiete/, o sea mapa con forma azul").
    Every value here is /einsatzgebiete/'s `.eg-map-svg__region` translated to
@@ -356,6 +390,15 @@
      .eg-map-svg__region. */
   stroke-linecap: round;
 }
+
+/* Im Kreis braucht die Stadt mehr Gewicht, sonst liest sie sich als eines von
+   mehreren Loechern. Nur in dieser Zusammenstellung: die drei Staedte ohne
+   Kreis behalten 0,16, wo die Stadt die einzige Form ist. */
+.city-map--mit-kreis .city-map__area {
+  fill-opacity: 0.24;
+  stroke-opacity: 0.95;
+}
+
 
 /* Dashed construction guides through the centre of the shape's box. They are
    what stops a bare outline from reading as a random blob — the same role the
@@ -400,6 +443,60 @@
   text-align: center;
   white-space: nowrap;
 }
+/* ── LEGENDE: WELCHE FORM IST WELCHE ─────────────────────────────────────────
+   Kunde 03.09.2026: "dann erkennt man nämlich, ah okay, das ist der Landkreis
+   Bamberg und da ist die Stadt Bamberg."
+   Zwei Namen allein reichen dafür nicht — es muss ablesbar sein, WELCHE der
+   zwei Formen welche ist. Darum trägt jede Zeile ihr eigenes Linienmuster:
+   die schwache Linie des Kreises und das gefüllte Feld der Stadt, in genau
+   denselben Werten wie im SVG.
+
+   ⚠️ Die drei Städte ohne umschließenden Landkreis behalten das einfache
+   <p class="city-map__label">. Eine Legende mit einem Eintrag erklärt nichts. */
+.city-map__legende {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--color-blue-light);
+}
+
+.city-map__legende-zeile {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.city-map__legende dd {
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Das Muster ist ein Streifen, kein Punkt: die zwei Formen unterscheiden sich
+   in der LINIE, nicht in der Farbe, und ein Punkt könnte das nicht zeigen. */
+.city-map__muster {
+  width: 1.25rem;
+  height: 0.5rem;
+  flex: none;
+  border: 1px solid var(--color-blue-light);
+  border-radius: 2px;
+}
+
+.city-map__muster--kreis {
+  /* Dieselbe Deckung wie .city-map__kreis im SVG. */
+  border-color: rgb(61 154 211 / 0.32);
+  background: none;
+}
+
+.city-map__muster--stadt {
+  /* Dieselben Werte wie .city-map--mit-kreis .city-map__area. */
+  border-color: rgb(61 154 211 / 0.95);
+  background: rgb(61 154 211 / 0.24);
+}
+
 
 
 /* ---- The outline at tablet/phone size ----------------------------------- */
@@ -492,6 +589,15 @@
     animation:
       city-map-draw 1.6s var(--easing-standard) 350ms backwards,
       city-map-fill var(--duration-slower) var(--easing-standard) 1150ms backwards;
+  }
+
+  /* Der Kreis zeichnet ZUERST und schneller: er ist der Rahmen, in den die
+     Stadt danach gesetzt wird. 200ms Vorlauf, damit es eine Reihenfolge ist und
+     kein gleichzeitiges Erscheinen. Dieselbe Kurve und dasselbe pathLength="1"
+     wie bei der Stadt, also eine Runde fuer jeden Ring in jeder Groesse. */
+  .city-map__kreis {
+    stroke-dasharray: 1;
+    animation: city-map-draw 1.3s var(--easing-standard) 150ms backwards;
   }
 
   .city-map__guide {

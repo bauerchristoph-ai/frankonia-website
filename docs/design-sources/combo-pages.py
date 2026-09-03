@@ -442,6 +442,20 @@ def r_hero(c, s):
              Groesse und ein Verhaeltnis, also loesen beide auto-Achsen in jeder
              Engine auf; max-* wirkt unveraendert weiter.
              -->
+        <!-- ⚠️⚠️ DER HERO-UMRISS UND SEINE BESCHRIFTUNG KOMMEN SEIT DEM
+             03.09.2026 NICHT MEHR VON HIER, sondern von
+             docs/design-sources/stadt-im-kreis.mjs. Dieser Generator schreibt
+             beides nur noch als PLATZHALTER; wer ihn laufen laesst, muss danach
+                 node docs/design-sources/stadt-im-kreis.mjs --schreibe
+             aufrufen, sonst steht hier ein Umriss ohne Landkreis.
+             Grund: der Hero zeigt jetzt den Landkreis als umschliessende Form
+             und die Stadt darin markiert (Kundenwunsch, mit einem
+             Google-Maps-Bild von Landkreis Bamberg). Dafuer muessen BEIDE
+             Formen mit demselben Faktor und demselben Ursprung projiziert
+             werden — das kann nur eine Stelle, die beide Dateien kennt.
+             ⚠️ Und: auf dieser Maschine laeuft kein Python, dieser Generator
+             ist also ohnehin nicht ausfuehrbar. Die Logik steht deshalb in
+             Node. -->
         <div class="city-hero__map" aria-hidden="true">
         <svg class="city-map" viewBox="{view}" width="{view.split()[2]}" height="{view.split()[3]}" fill="none" focusable="false">
             <line class="city-map__guide" x1="50%" y1="0" x2="50%" y2="100%"></line>
