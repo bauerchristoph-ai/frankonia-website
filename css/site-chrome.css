@@ -529,45 +529,6 @@
   .site-nav__actions {
     align-items: center;
   }
-  /* ── DRAWER: NUR DIE HUBS, KEINE EINZELNEN LEISTUNGEN ──────────────────────
-     Kunde 03.09.2026: "nicht jede einzelne Leistung aufgefuehrt, sondern oben
-     alle Leistungen und darunter die weiteren relevanten Punkte … die ganzen
-     einzelnen Leistungen bitte rausnehmen und Startseite ganz oben."
-
-     Die Liste im Drawer ist damit: Startseite, Leistungen, Einsatzgebiete,
-     Referenzen, Ueber uns, Jobs, Kontakt, Ratgeber — acht Ziele, jedes ein
-     echter Link auf seine Seite.
-
-     ⚠️ DAS MARKUP DER UNTERMENUES BLEIBT STEHEN und wird hier nur ausgeblendet:
-     ab 1400px ist es das Mega-Menue des Desktops. Loeschen wuerde die
-     Desktop-Navigation mitnehmen.
-
-     ⚠️ UND ES KOSTET KEINEN INTERNEN LINK — vor dem Ausblenden am gebauten
-     Footer geprueft, nicht angenommen: dort stehen auf JEDER Seite alle zehn
-     Leistungs- und alle zehn Stadt-Links. Die 20 Seiten bleiben also von
-     ueberall erreichbar.
-
-     Gemessen war der Grund handfest: mit den beiden offenen Akkordeons lief die
-     Liste von 100 bis 1998 px in einem 844-px-Fenster und der CTA sass bei
-     2031 px, also 1187 px unter dem Fold. */
-  .site-nav__submenu,
-  .site-nav__caret {
-    display: none;
-  }
-
-  /* ── GLEICHE ZEILEN, GLEICHE TRENNER ───────────────────────────────────────
-     Kunde: "im mobile Menue sind die Striche und die Abstaende nicht ganz
-     sauber sortiert."
-     Berechtigt und messbar: die erste Zeile war 44 px hoch, alle anderen 61 px.
-     Ursache war ein doppeltes Abstandssystem — ein `gap` der Liste PLUS
-     `border-top` und `padding-top` auf `li + li`. Die erste Zeile bekam beides
-     nicht und stand dadurch 17 px flacher als ihre Nachbarn.
-
-     Jetzt traegt der ABSTAND die Zeile selbst (padding-block am Link) und der
-     Trenner sitzt ohne eigenen Abstand dazwischen. `gap: 0` ist Teil des
-     Trenners, nicht Aufraeumen: mit gap schwebt die Haarlinie in der Mitte von
-     16 px Nichts und liest sich als lose Linie. Dasselbe Muster benutzen die
-     Unterlisten seit dem 19.08. */
   /* ⚠️ gap, padding-block und der Trenner stehen NICHT hier, sondern im
      LETZTEN max-width:1399.98-Block dieser Datei. Genau davor warnt der
      Kommentar dort, und ich bin trotzdem hineingelaufen: eine Media Query
@@ -575,7 +536,6 @@
      weiter unten als Basisregeln erneut deklariert. Gemessen nach dem ersten
      Versuch: gap blieb bei 24px und das Polster bei 4px, also hat beides
      nichts getan. */
-
 
   .site-nav__list a {
     /* --font-size-md (18–20px) → --font-size-lg (21–25px), the next step on the
@@ -784,25 +744,6 @@ a.site-nav__link[aria-current="page"]:focus-visible {
   border-bottom-color: var(--color-blue-dark);
 }
 
-/* Der zweite CTA im Drawer (Telefon) existiert nur dort. Ab 1400px ist die
-   Kopfzeile eine Reihe aus Logo, acht Nav-Punkten und dem Angebots-Knopf —
-   ein zweiter Knopf sprengt sie, und das Telefon steht auf jeder Seite im Hero
-   und im Footer. Ausblenden statt zweitem Markup: ein Link, eine Wahrheit. */
-@media (min-width: 1400px) {
-  .site-nav__actions-drawer-only {
-    display: none;
-  }
-}
-
-.site-nav__actions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-4);
-  margin-top: var(--space-5);
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--color-border);
-}
 
 /* Language switch (DE/EN) — small toggle in the header actions (added
    2026-07-22 for the bilingual homepage). Sits next to the CTA on desktop

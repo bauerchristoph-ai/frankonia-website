@@ -301,15 +301,12 @@
   background-color: rgb(255 255 255 / 0.08);
 }
 
-/* A quiet divider label between groups of destinations. Not a heading: the page
-   has one <h1> and these are three words of orientation, not sections. */
-.linktree__label {
-  margin: var(--space-5) 0 calc(-1 * var(--space-1));
-  font-size: var(--font-size-sm);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
+/* .linktree__label GELOESCHT am 03.09.2026: die Linktree-Seite hat keine
+   Gruppen mehr. Auf Kundenwunsch stehen dort nur noch sechs Ziele in EINER
+   Liste, und mit einem Eintrag unter "Leistungen" trug eine Gruppen-
+   Ueberschrift nichts. Eine Regel, die nichts treffen kann, ist eine Regel,
+   deren Zweck der Naechste erraten muss — deshalb weg und nicht liegen
+   gelassen. Die Werte stehen in der Historie, falls Gruppen zurueckkommen. */
 
 @media (max-width: 599.98px) {
   .person__contact a,
