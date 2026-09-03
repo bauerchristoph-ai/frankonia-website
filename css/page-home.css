@@ -3676,11 +3676,28 @@ main h2 {
    column centres on one line; since the gap + caption below each image are
    identical, that also lands every image's centre on the same horizontal
    line — the taller centre card simply extends equally above and below it. */
+/* ⚠️⚠️ UNTER 1024px EINE GESTAPELTE SPALTE, WIE DIE ZITATE AUF /referenzen/
+   (Kunde 03.09.2026: "mach bei mobil, wenn das Wheel eben nicht geht, die
+   Darstellung wie die Zitate bei Referenzen").
+
+   Vorher lief hier der geteilte Wisch-Streifen. Der FUNKTIONIERTE technisch —
+   auf dem Deployment bei 390px gemessen: snap x mandatory, drei Karten 335x527,
+   Zaehler und Fortschrittslinie da, kein Seitenscroll. Aber er zeigt nur EINE
+   Karte, und die anderen zwei muss man mit einer Querwischgeste holen. Genau das
+   war zweimal als "das dritte Video fehlt" gemeldet.
+   Gemessen, wie die Zitate es machen: .ref-quotes__grid ist ein grid, snap:none,
+   overflow-x:visible, KEIN Querscrollen — drei Karten schlicht untereinander,
+   alle sichtbar. Das ist die Darstellung, die keine Geste braucht und deshalb
+   auch nicht misslingen kann.
+
+   ⚠️ Der 3D-Ring ab 1024px ist UNBERUEHRT: er setzt in seinem eigenen
+   @media-Block display:block und positioniert die Karten absolut, ueberschreibt
+   diese Regel dort also vollstaendig. */
 .social__grid {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-5);
+  gap: var(--space-6);
   margin-top: var(--space-8);
 }
 
@@ -3909,84 +3926,37 @@ main h2 {
 
    The featured card loses its width bump here; at one-card-per-view there is no
    row for it to stand out from. */
-@media (max-width: 767.98px) {
-  .social {
-    /* The strip lives inside a padded .container, so it has to bleed out of that
-       padding before the shared 4vw edge applies — otherwise the cards start
-       ~28px in and the last one cannot reach its snap position. */
-    --swipe-bleed: calc(-1 * var(--container-padding));
-  }
-
-  /* Two-level: swipe-carousel.css loads last and zeroes margin-block, so a
-     single-class rule here would lose. */
-  .social .social__grid {
-    margin-top: var(--space-6);
-  }
-
-  /* 86vw of a 390px phone is 335px; at the placeholder's own 9/16 that would run
-     596px before the caption, i.e. most of the screen for one card. The media box
-     is capped and its image already uses object-fit: cover, so the crop is the
-     only thing that changes. */
+@media (max-width: 1023.98px) {
+  /* Volle Spaltenbreite, ein Video pro Zeile. Kein --swipe-* und kein Bleed
+     mehr: die haben ohne Streifen keinen Abnehmer. */
   .social__item,
   .social__item--featured {
-    width: var(--swipe-card);
-  }
-  .social__placeholder {
-    max-height: 58svh;
+    width: 100%;
+    max-width: 26rem;
   }
 
+  /* ⚠️ DIE HOEHE IST DER GANZE PUNKT DIESER REGEL. Das sind 9:16-Videos, also
+     ist die Kartenhoehe die Breite x 1,78: bei 390px waeren das 596px fuer EIN
+     Video, und drei davon uebereinander ergeben drei Bildschirme, durch die man
+     scrollt, um drei Bilder zu sehen. Der Deckel macht aus jedem Video einen
+     hohen Ausschnitt statt eines Vollformats — object-fit: cover ist schon
+     gesetzt, es aendert sich also nur der Beschnitt, nichts wird verzerrt.
+     42svh x 3 plus Beschriftungen bleibt unter zwei Bildschirmen. */
+  .social__placeholder {
+    max-height: 42svh;
+  }
+}
+
+@media (max-width: 767.98px) {
   .social__caption {
-    /* German compounds ("Veranstaltungsschutz") were breaking mid-word under
-       base.css's hyphens:auto for body copy. These are labels, not prose. */
+    /* Deutsche Komposita ("Veranstaltungsschutz") brachen unter dem
+       hyphens:auto von base.css mitten im Wort. Das sind Beschriftungen, keine
+       Prosa. */
     -webkit-hyphens: none;
     hyphens: none;
     font-size: var(--font-size-xs);
   }
-
-  .social__cta { margin-top: var(--space-6); }}
-
-/* The lede was hyphenating too ("unse-ren"), which on a two-line centred
-   paragraph reads as a defect rather than justification. */
-@media (max-width: 767.98px) {
-  .social__intro > p {
-    -webkit-hyphens: none;
-    hyphens: none;
-  }}
-
-/* ---- References on a phone (2026-07-30) ----------------------------------
-   base.css sets hyphens:auto on p/li/blockquote so long German compounds can't
-   overflow a narrow measure. In this section on a ~350px column that fired on
-   almost every line — "Si-cherheitskonzept", "profes-sionellen",
-   "Zutrittskon-trollen", "in punc-to" — six or more hyphenated line-ends per
-   quote, which reads as broken text rather than typesetting.
-
-   Two reasons it's wrong here specifically: the result descriptions are CENTRED,
-   and hyphenation only earns its keep against a flush edge — on centred text it
-   adds nothing but noise; and the safety net that hyphens:auto is really there
-   for (a single word wider than its column) is already covered sitewide by
-   overflow-wrap: break-word in base.css. The longest compound in this copy,
-   "Zutrittskontrollen", fits this measure unbroken. */
-@media (max-width: 767.98px) {
-  .references__results .stat__label,
-  .references .testimonial__quote,
-  .references__intro > p {
-    -webkit-hyphens: none;
-    hyphens: none;
-  }}
-
-/* ---- Free security analysis (primary conversion) ---- */
-/* MOVED 2026-08-03 to css/lead-form.css — /werkschutz/ became the second page
-   to need this section verbatim, and docs/build-checklist.md has it on all 49
-   planned pages, so it is no longer a homepage-scoped block. pages/index.html
-   links css/lead-form.css BEFORE this file, so anything homepage-specific can
-   still override it here.
-   Only the seam interaction below stays: the pixel-dissolve band is a
-   homepage-only effect (js/pixel-transition.js), so its reserved padding has
-   no business in the shared file. */
-.pixel-seam + .conversion {
-  padding-top: 200px;
-}
-@media (max-width: 767.98px) {
+}@media (max-width: 767.98px) {
   .pixel-seam + .conversion {
     padding-top: 120px;
   }}
