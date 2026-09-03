@@ -173,6 +173,28 @@ const FREMD_HOSTS = [
   ["bauerchristoph.de", null], /* Agenturnennung im Partnerbereich, blosser Link */
 ];
 
+/* ⚠️⚠️ HOSTS, DIE ERST ZUR LAUFZEIT GELADEN WERDEN — das Tor darunter kann sie
+   NICHT selbst finden, und das war eine echte Luecke.
+   torFremdHosts() durchsucht das ausgelieferte Markup und dist/js. Diese
+   Anbieter stehen in keiner dieser Dateien: der server-seitige Tag Manager
+   (d.frankonia-sicherheit.de) laedt sie erst NACH der Zustimmung nach. Das Tor
+   war also gruen, ohne sie je gesehen zu haben.
+
+   Die Liste stammt aus einer LIVE-MESSUNG am 03.09.2026 auf der Testdomain:
+   frisches Browserprofil, "Alle zulassen" geklickt, neu geladen, und dann jeder
+   Netzwerkabruf nach Anbieter gruppiert. Genau diese Hosts kamen dabei vor.
+   Wenn der Tag-Manager-Container geaendert wird, muss diese Messung wiederholt
+   und die Liste angepasst werden — sie kann sich nicht selbst aktualisieren. */
+const LAUFZEIT_HOSTS = [
+  ["www.googletagmanager.com", "Tag Manager"],
+  ["www.google-analytics.com", "Google Analytics"],
+  ["googleads.g.doubleclick.net", "Google Ads"],
+  ["www.googleadservices.com", "Google Ads"],
+  ["connect.facebook.net", "Meta"],
+  ["stapecdn.com", "Stape"],
+  ["unpkg.com", "unpkg"],
+];
+
 function sichtbarerText(html) {
   return html
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
@@ -212,6 +234,14 @@ function torFremdHosts() {
       if (host.endsWith("frankonia-sicherheit.de") && host !== "d.frankonia-sicherheit.de") continue;
       if (host.includes("{s}")) continue;
       gefunden.set(host, (gefunden.get(host) || 0) + 1);
+    }
+  }
+
+  /* Zuerst die Anbieter, die das Tor nicht selbst sehen kann (siehe
+     LAUFZEIT_HOSTS oben): sie muessen im sichtbaren Text stehen. */
+  for (const [host, name] of LAUFZEIT_HOSTS) {
+    if (!text.includes(name)) {
+      befunde.push(host + ' laedt zur Laufzeit, aber "' + name + '" kommt im sichtbaren Text von /datenschutz/ nicht vor');
     }
   }
 

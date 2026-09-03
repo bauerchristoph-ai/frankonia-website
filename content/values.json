@@ -33,7 +33,7 @@
     "valueSchema": "4.7"
   },
   "counters": {
-    "_comment": "Cifras del Live-Entwurf. 300+/1.000.000+/10+ siguen SIN confirmar por el cliente (CLAUDE.md). 'count' es el valor crudo que lee el contador animado; el resto es como se muestra.",
+    "_comment": "BESTAETIGT vom Kunden am 03.09.2026: 10+ Jahre, 300+ Kunden, 1.000.000+ Stunden sind die richtigen Zahlen ('die auf der Homepage stehen, sind die richtigen'). Damit ist der offene Punkt aus dem Pruefprotokoll geschlossen. 'count' ist der Rohwert fuer den animierten Zaehler, der Rest ist die Anzeigeform.",
     "customers": "300",
     "customersCount": "300",
     "hours": "1.000.000",
