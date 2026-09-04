@@ -490,6 +490,27 @@
   pointer-events: none;
 }
 
+/* Name der aeusseren Form — Landkreis oder Regierungsbezirk. Oben mittig im
+   Bild, damit ein sonst unbenannter Umriss benannt ist; bei "Mittelfranken"
+   waere er nicht einmal erratbar. Ersetzt die geloeschte Legende: dieselbe
+   Auskunft, aber IN der Zeichnung.
+   Eine Stufe leiser als der Stadtname — die Stadt ist die Aussage, der Rahmen
+   der Zusammenhang. 0,55 Weiss auf #010101 misst 8,6:1. */
+.city-map__rahmen-name {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  translate: -50% 0;
+  margin: 0;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.55);
+  white-space: nowrap;
+  text-shadow: 0 0 4px var(--color-bg), 0 0 9px var(--color-bg);
+  pointer-events: none;
+}
+
 /* ---- The outline at tablet/phone size ----------------------------------- */
 /* ⚠️ THIS BLOCK MUST STAY BELOW the two rules above. It is the same specificity
    (0,1,0), so placing it with the rest of the <1024 layout — where it naturally
@@ -601,6 +622,12 @@
      (-50% -50%), eine Animation darauf wuerde sie ueberschreiben. */
   .city-map__name {
     animation: city-map-name var(--duration-slower) var(--easing-standard) 1750ms backwards;
+  }
+
+  /* Der Rahmenname kommt VOR dem Stadtnamen: der Kreis zeichnet zuerst, also
+     wird er auch zuerst benannt. 1500ms = Ende der Kreislinie. */
+  .city-map__rahmen-name {
+    animation: city-map-name var(--duration-slower) var(--easing-standard) 1500ms backwards;
   }
 }
 

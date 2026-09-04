@@ -49,15 +49,32 @@ const STAEDTE = {
 /* Slug in der Datei -> Slug in den Seitennamen */
 const SEITEN_SLUG = { nuremberg: "nuernberg" };
 
-/* Welche Stadt einen umschliessenden gleichnamigen Landkreis hat, entscheidet
- * allein, ob <slug>-landkreis.geojson existiert — sieben von zehn. Es sind
- * NICHT die Namen aus dem Stadtnamen ableitbar: zu Nuernberg gehoert
- * "Nuernberger Land", zu Erlangen "Erlangen-Hoechstadt", und beide liegen
- * NEBEN der Stadt, nicht darum. Deshalb tragen Nuernberg, Erlangen und
- * Fuerth nur ihren Stadtumriss.
- * ⚠️ Eine Tabelle mit den Kreisnamen stand hier bis zum 04.09.2026 — sie
- * speiste die Legende unter der Karte. Die Legende ist weg (Kundenwunsch),
- * benannt wird nur noch die Stadt, also war die Tabelle toter Code. */
+/* Der RAHMEN jeder Karte ist die Verwaltungsflaeche, die die Stadt WIRKLICH
+ * enthaelt — und ihr Name steht mit im Bild, damit die aeussere Form nicht
+ * unbenannt bleibt.
+ *
+ * Sieben Staedte liegen in ihrem gleichnamigen Landkreis. Nuernberg, Erlangen
+ * und Fuerth sind KREISFREI, gehoeren also zu keinem Landkreis: die
+ * gleichnamigen Kreise "Nuernberger Land", "Erlangen-Hoechstadt" und
+ * "Landkreis Fuerth" liegen NEBEN der Stadt, nicht darum — geprueft an der
+ * Geometrie, nicht am Namen. Ueber der kreisfreien Stadt steht in der
+ * Verwaltungsgliederung direkt der Regierungsbezirk, und alle drei liegen in
+ * MITTELFRANKEN. Das ist damit der engste Rahmen, der sie tatsaechlich
+ * enthaelt.
+ * ⚠️ Der Preis ist die Groesse: Mittelfranken ist gross, deshalb erscheint die
+ * Stadt darin kleiner. Gemessen in Einheiten des 1000 breiten Zeichenbereichs
+ * — Nuernberg 192 (im Bereich der sieben Landkreise, 165 bis 361), Erlangen 90
+ * und Fuerth 88, also etwa halb so gross wie Bamberg im eigenen Landkreis.
+ * Eine engere Flaeche, die sie enthaelt, gibt es nicht. */
+const RAHMEN_NAME = {
+  ansbach: "Landkreis Ansbach", bamberg: "Landkreis Bamberg",
+  bayreuth: "Landkreis Bayreuth", coburg: "Landkreis Coburg",
+  forchheim: "Landkreis Forchheim", schweinfurt: "Landkreis Schweinfurt",
+  wuerzburg: "Landkreis Würzburg",
+  erlangen: "Mittelfranken", fuerth: "Mittelfranken", nuremberg: "Mittelfranken",
+};
+/* Gemeinsame Datei fuer die drei kreisfreien Staedte. */
+const RAHMEN_DATEI = { erlangen: "mittelfranken", fuerth: "mittelfranken", nuremberg: "mittelfranken" };
 
 function ringe(geo) {
   if (geo.type === "Polygon") return geo.coordinates;
@@ -101,10 +118,13 @@ const pfad = (pts) =>
 
 function baue(slug) {
   const stadtDatei = path.join(GRENZEN, slug + ".geojson");
-  const kreisDatei = path.join(GRENZEN, slug + "-landkreis.geojson");
+  /* Erst der eigene Landkreis, sonst die gemeinsame Regionsdatei. */
+  const kreisDatei = fs.existsSync(path.join(GRENZEN, slug + "-landkreis.geojson"))
+    ? path.join(GRENZEN, slug + "-landkreis.geojson")
+    : RAHMEN_DATEI[slug] ? path.join(GRENZEN, RAHMEN_DATEI[slug] + ".geojson") : null;
   if (!fs.existsSync(stadtDatei)) return { slug, fehler: "Stadtdatei fehlt" };
   const stadt = lade(stadtDatei);
-  const kreis = fs.existsSync(kreisDatei) ? lade(kreisDatei) : null;
+  const kreis = kreisDatei && fs.existsSync(kreisDatei) ? lade(kreisDatei) : null;
 
   /* Rahmen und Faktor kommen vom Kreis, wenn es einen gibt — sonst von der Stadt. */
   const rahmenGeo = kreis || stadt;
@@ -189,6 +209,13 @@ export function svgMarkup(b) {
    * Zeichnung liegend behaelt der Text seine Pixelgroesse bei jeder Breite,
    * bleibt auswaehlbar und sitzt trotzdem im Bild an der Stadt. */
   zeilen.push(`            <p class="city-map__name" style="--x: ${b.anker[0]}%; --y: ${b.anker[1]}%">Stadt ${b.name}</p>`);
+  /* Die aeussere Form wird ebenfalls im Bild benannt, oben mittig. Ohne den
+   * Namen bleibt ein unbekannter Umriss unbekannt — bei "Mittelfranken" waere
+   * er nicht einmal erratbar. Das ersetzt die geloeschte Legende: dieselbe
+   * Auskunft, aber in der Zeichnung statt darunter. */
+  if (b.kreisPfade.length && RAHMEN_NAME[b.slug]) {
+    zeilen.push(`            <p class="city-map__rahmen-name">${RAHMEN_NAME[b.slug]}</p>`);
+  }
   zeilen.push(`          </div>`);
   return zeilen.join("\n");
 }
