@@ -468,6 +468,13 @@ function torHeaderDeckend() {
   if (fs.existsSync(js)) {
     const src = fs.readFileSync(js, "utf8");
     if (src.indexOf("site-header--solid") < 0) befunde.push("js/main.js setzt site-header--solid nicht");
+    /* Der Ausloeser muss AUCH am Scrollen haengen, nicht nur an der Unterkante
+       des Hero. Sonst kehrt die Luecke zurueck, in der man im Hero scrollt und
+       Inhalt unter dem durchsichtigen Header durchlaeuft — gemeldet am
+       04.09.2026 fuer /ueber-uns/, dort 76 px Ueberdeckung. */
+    if (src.indexOf("SCROLL_SCHWELLE") < 0) {
+      befunde.push("der Header wird nicht beim Scrollen deckend — nur die Hero-Unterkante loest aus");
+    }
   }
   return befunde;
 }

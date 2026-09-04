@@ -673,10 +673,23 @@ function initHeaderScrollTheme() {
     ".hero, .service-hero, .jobs-hero, .ref-hero, .rg-hero, .ag-hero, .city-hero, .uu-hero, .eg-hero, .cs-hero"
   );
 
+  /* ⚠️ ERWEITERT 04.09.2026 (Kunde, mit Screenshot von /ueber-uns/: "irgendwas
+     ueberlagert da das Hero-Bild teilweise und schneidet so die Koepfe ab").
+     Die Unterkante des Hero als EINZIGER Ausloeser liess eine Luecke: solange
+     man IM Hero scrollt, blieb der Header durchsichtig und alles lief darunter
+     durch. Gemessen auf /ueber-uns/ bei y=260: das Foto lag 76 px (1280x800)
+     bzw. 55 px (1440x900) unter dem Header, Logo ueber der H1 und Burger ueber
+     den Koepfen.
+     Bei y=0 bleibt er durchsichtig — das ist die Entscheidung vom 17.07.2026,
+     dass Hero und Header eine Flaeche sind. Die Schwelle liegt nur knapp
+     darueber, damit das Gummiband auf iOS kein Flackern erzeugt. */
+  const SCROLL_SCHWELLE = 8;
+
   function solidPruefen() {
     const kopfHoehe = header.getBoundingClientRect().height;
     const grenze = hero ? hero.getBoundingClientRect().bottom : kopfHoehe;
-    header.classList.toggle("site-header--solid", grenze <= kopfHoehe);
+    const gescrollt = (window.scrollY || document.documentElement.scrollTop || 0) > SCROLL_SCHWELLE;
+    header.classList.toggle("site-header--solid", gescrollt || grenze <= kopfHoehe);
   }
 
   solidPruefen();

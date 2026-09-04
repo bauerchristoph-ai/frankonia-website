@@ -3755,7 +3755,21 @@ main h2 {
    mechanisms own the 768–1023 band at once.
    ⚠️ THIS NUMBER IS DUPLICATED in js/social-carousel.js's own matchMedia and in
    css/swipe-carousel.css's tablet block. All three have to agree. */
-@media (min-width: 1024px) {
+/* ⚠️ 04.09.2026: DIE 1024er MEDIENABFRAGE IST WEG — der Ring laeuft jetzt auf
+   JEDER Breite (Kunde: "Ring auf dem Desktop finde ich gut, wenn moeglich auch
+   Ring auf dem Telefon … so dass ich ihn genauso wischen kann").
+   Der alte Kommentar hatte recht mit dem WARUM, nicht mit dem Schluss: drei
+   15rem-Karten auf einem Ring mit 300px Radius projizieren bei 768px fast
+   uebereinander. Die Geometrie war das Problem, nicht die Breite — deshalb
+   bekommt jede Stufe jetzt ihre eigenen vier Werte statt eines Verbots.
+   Gerechnet, nicht geraten: die Karten liegen auf einem Kreis, der Nachbar
+   sitzt bei radius x sin(step) seitlich, und seine Karte zeigt nur noch
+   cos(step) ihrer Breite. Der Platzbedarf nach aussen ist damit
+      radius x sin(step) + (breite / 2) x cos(step)
+   und der muss in die halbe Spalte passen. Bei 390px sind das 183px:
+   150 x sin(50) + 88 x cos(50) = 115 + 57 = 172. Passt mit 11px Luft.
+   ⚠️ Wer eine der vier Zahlen aendert, muss diese Summe neu rechnen — sonst
+   ragt der Nachbar aus dem Bild. */
   .social__grid.is-carousel {
     /* The row becomes a stage: items are absolutely positioned on the ring, so
        flex has nothing left to lay out. */
@@ -3826,7 +3840,31 @@ main h2 {
     .social__grid.is-carousel {
       --social-card-w: 17rem;
       --social-radius: 360;
-    }}}
+    }}
+
+/* Maße je Stufe. Die Basiswerte oben gelten fuer Desktop; hier stehen die
+   engeren Ringe. Perspektive kuerzer, weil auf einem kleinen Ring eine lange
+   Perspektive die Tiefe verschluckt — bei 1400px waere der Nachbar nur 3 %
+   kleiner statt sichtbar hinten. */
+@media (max-width: 1023.98px) {
+  .social__grid.is-carousel {
+    --social-card-w: 13rem;
+    --social-radius: 210;
+    --social-step: 50;
+    --social-drag: 190;
+    perspective: 1000px;
+  }}
+
+@media (max-width: 639.98px) {
+  .social__grid.is-carousel {
+    --social-card-w: 11rem;
+    --social-radius: 150;
+    --social-step: 50;
+    /* Kuerzerer Weg je Karte: ein Daumen wischt auf 390px keine 260px. */
+    --social-drag: 150;
+    perspective: 800px;
+  }}
+
 
 /* Was a plain flat-color rectangle (no real social content existed yet)
    — now holds a real cover photo (.social__cover below), 2026-07-20.

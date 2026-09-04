@@ -54,11 +54,18 @@
   // kind of thing that setting is asking us not to build.
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-  // Phone AND TABLET keep the snap-scroll strip; the ring needs room for a
-  // centre card plus two receding ones.
-  // ⚠️ 1024 must match css/page-home.css's .is-carousel media query AND
-  // css/swipe-carousel.css's tablet block — the strip owns 768–1023 now.
-  var mq = window.matchMedia("(min-width: 1024px)");
+  // ⚠️ 04.09.2026: KEINE BREITENGRENZE MEHR. Der Ring laeuft auf jeder Breite
+  // (Kunde: "wenn moeglich auch Ring auf dem Telefon … so dass ich ihn genauso
+  // wischen kann"). Vorher stand hier eine 1024er Abfrage, weil die
+  // Desktop-Geometrie bei 768 fast uebereinander projizierte — das war ein
+  // Problem der VIER MASSE, nicht der Breite. Die stehen jetzt je Stufe in
+  // css/page-home.css.
+  // Der Ausstieg bleibt an zwei Stellen: reduced motion (oben) und fehlende
+  // Zeigerunterstuetzung — dann bleibt der gestapelte Fallback stehen.
+  // ⚠️ Zeigergesten deckt auch Beruehrung ab; damit die Seite dabei senkrecht
+  // scrollbar bleibt, traegt der Ring touch-action: pan-y im CSS. Ohne das
+  // frisst die Geste entweder das Drehen oder das Scrollen.
+  var mq = { matches: true, addEventListener: function () {}, addListener: function () {} };
 
   var N = items.length;
   var progress = 0; // float slot index currently at the front
