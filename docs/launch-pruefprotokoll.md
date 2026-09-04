@@ -4149,3 +4149,158 @@ Die Zahl dahinter ist die gemessene Snippet-Breite in Pixeln.
 
 - alt: Ihre Anfrage ist bei FRANKONIA angekommen. Wir melden uns innerhalb eines Werktages — bei dringenden Fällen erreichen Sie uns rund um die Uhr telefonisch.
 - neu: **Ihre Anfrage ist bei FRANKONIA angekommen. Wir melden uns innerhalb eines Werktages — in dringenden Fällen erreichen Sie uns rund um die Uhr.**
+
+## N46 — Stadtkarte: Landkreislinie kräftiger, Name im Bild (04.09.2026)
+
+**Auftrag (Kunde):** „der Landkreislinie ist jetzt zu unsichtbar, die muss etwas
+kräftiger sein" und „die Markierung unten drunter würde ich weglassen … diese
+Legende find ich scheiße. Ich würde nur bei der Stadt immer die Stadt … als
+Stadt Würzburg hinmachen."
+
+**Die Landkreislinie war messbar unter der Wahrnehmungsschwelle.** Der Eindruck
+war nicht Geschmack: `#3D9AD3` bei Deckung 0,32 auf `#010101` gemischt misst
+**1,56:1**. Eine Grafik braucht 3:1, um überhaupt als Form gelesen zu werden.
+Die ganze Kurve, gerechnet aus dem Wert, den der Browser anwendet:
+
+| Deckung | 0,32 | 0,55 | 0,60 | 0,65 | 0,70 | 1,00 |
+|---|---|---|---|---|---|---|
+| Kontrast | 1,56 | 2,61 | 2,93 | 3,27 | **3,66** | 6,72 |
+
+Neu: **0,7 Deckung, 2,6 Linienbreite**. Der Rangunterschied zur Stadt bleibt, er
+trägt jetzt die STÄRKE statt der Sichtbarkeit — offene Linie gegen gefüllte
+Fläche mit 0,95 Kontur.
+
+⚠️ **Mein erster Versuch war 0,6 und lag mit 2,93:1 NOCH darunter.** Ich hatte
+im Kommentar 4,3:1 behauptet — geschätzt statt gerechnet. Gefunden hat es die
+Messung, nicht das Auge.
+
+**Legende gelöscht**, Markup und CSS (`.city-map__legende`, `__muster`,
+`__label`). Stattdessen steht der Stadtname **im Bild an der Stadt**, auf allen
+26 Seiten.
+
+⚠️⚠️ **ECHTER TEXT ÜBER DER ZEICHNUNG, NICHT `<text>` IM SVG — und das ist eine
+Messung, keine Bequemlichkeit.** Der Zeichenbereich ist immer 1000 Einheiten
+breit, gerendert wird er je Stadt, Breite und Seitentyp zwischen **123 px und
+445 px**:
+
+| | 390 px | 768 px | 1024 px | 1440 px |
+|---|---|---|---|---|
+| Bamberg (viewBox 715 hoch) | 224 | 365 | 314 | 445 |
+| Würzburg (viewBox 1298 hoch) | 123 | 201 | 314 | 444 |
+| Kombiseite bei 1024 | — | — | 242 | — |
+
+Eine Schriftgröße im SVG skaliert mit diesem Faktor und bräuchte rund **zwanzig
+verschiedene Werte** — auf dem Telefon stand sie bei 7 px. Über der Zeichnung
+behält der Text **12 px bei jeder Breite**, bleibt auswählbar und sitzt trotzdem
+im Bild. Genau diese Falle ist für die Karten-Labels auf `/einsatzgebiete/` schon
+dokumentiert, wo es drei Größenstufen in viewBox-Einheiten braucht.
+
+**Der neue Umschlag `.city-map__rahmen` ist ein Rasterbehälter**, damit er sich
+in der zentrierten Flex-Spalte um das SVG schmiegt. Nur so sind Prozentwerte
+darin Prozente DER ZEICHNUNG — als Block wäre er so breit wie die ganze Spalte
+und die Beschriftung landete daneben.
+
+**Der Anker sitzt UNTER der Stadtform**, bei den drei Städten ohne Landkreis
+(Nürnberg, Erlangen, Fürth) am unteren Rand geklemmt — dort IST die Stadt der
+ganze Zeichenbereich.
+⚠️ **Diese Klemme ist anteilig (5 % der Zeichenhöhe), die Texthöhe aber konstant
+(~19 px).** Bei Nürnberg auf 390 px sind 5 % nur 8 px, und der Name ragte
+**1,6 px** heraus. Zweite Klemme in Pixeln in der CSS (`min(var(--y), calc(100%
+- 0.7rem))`).
+
+**`KREIS_NAME` aus dem Generator gelöscht** — die Tabelle speiste nur die
+Legende und war damit toter Code. Das Wissen (welche sieben Kreise umschließen,
+und warum Nürnberg „Nürnberger Land" heißt) bleibt als Kommentar.
+
+**Gegengeprüft:**
+
+| Prüfung | Ergebnis |
+|---|---|
+| Kartengrößen gegen den Stand vor dem Umbau | **16 von 16 identisch** (5 Seiten × 4 Breiten) |
+| Umschlag deckungsgleich mit dem SVG | ja, auf 1 px |
+| Alle 26 Seiten × 3 Breiten | Name vorhanden, 12 px, im Zeichenkasten |
+| Seitliches Scrollen | 0 auf allen |
+| Generator zweimal gelaufen | Dateien byte-identisch |
+| Bau-Tore | 19 von 19 grün |
+
+---
+
+## N47 — Warum der Tag Manager nichts meldet: die Website ist es nicht (04.09.2026)
+
+**Auftrag (Kunde):** „der Google Tag Manager wird immer noch nicht ausgelöst",
+mit der Tag-Assistant-Meldung „Eine Plattform zur Einwilligungsverwaltung
+blockiert möglicherweise Tags".
+
+**Die Website-Seite ist Punkt für Punkt belegt in Ordnung.** Gemessen am
+ausgelieferten Zustand der Testdomain, mit echtem Klick auf „Alle zulassen" —
+nicht mit entferntem Dialog, was jede frühere Sonde hier falsch gemacht hat:
+
+| Prüfung | Ergebnis |
+|---|---|
+| CSP erlaubt den Tagging-Server | ja, in `script-src`, `connect-src`, `frame-src`, `img-src` |
+| CSP-Verstöße beim Laden | keine |
+| Consent Mode `default` vor allen Tags | alle sechs auf `denied` ✓ |
+| Consent Mode `update` nach Zustimmung | alle sechs auf `granted` ✓ |
+| `ads_data_redaction` nach Zustimmung | `false` ✓ |
+| Container-Loader `7ll8fjctyrvc.js` | **HTTP 200**, 462 KB |
+| Container durchgelaufen | `gtm.js` → `gtm.dom` → `gtm.load` ✓ |
+| `google_tag_manager` | `GTM-NWLGMFJN`, `G-DCSDL25ZS6` ✓ |
+| GA4-Loader `gtag/js` | **HTTP 200**, 578 KB echtes JavaScript |
+| `/g/collect` am Tagging-Server | **HTTP 200** (nimmt Treffer an) |
+| `/healthy` am Tagging-Server | **HTTP 200** |
+| Anfragen an Messhosts VOR der Einwilligung | **0** — richtig so |
+| Messtreffer NACH der Einwilligung | **0** ⚠️ |
+
+**Die letzte Zeile ist der Befund, und die Ursache liegt im GTM-Container.** Aus
+dem ausgelesenen Container (24 Tags, 11 Trigger-Zuordnungen):
+
+1. ⚠️ **Der Google-Tag hat `send_page_view` auf `"false"`** —
+   `"vtp_configSettingsTable":[…["map","parameter","send_page_view","parameterValue","false"]]`.
+   Er sendet also absichtlich keinen Seitenaufruf.
+2. ⚠️ **Ein `page_view`-Event-Tag existiert** (neben `contact`, `generate_lead`,
+   `schedule` und 4× `standard`), **hat aber nicht gefeuert.** Die
+   Trigger-Bedingungen des Containers warten unter anderem auf das eigene
+   Ereignis **`stape_consent_update`** — und das kommt im gemessenen dataLayer
+   **nie vor**. Dort steht nur Cookiebots eigenes `cookie_consent_update`,
+   `cookie_consent_preferences`, `cookie_consent_statistics`,
+   `cookie_consent_marketing`.
+3. ⚠️ **Ein Trigger ist auf `https://frankonia-sicherheit.de/danke/` festgelegt**
+   — die **Live**-Domain. Auf der Testdomain kann dieser Conversion-Trigger
+   grundsätzlich nicht feuern, unabhängig von allem anderen.
+
+**Die Tag-Assistant-Meldung ist erwartetes Verhalten, kein Defekt.** Vor der
+Einwilligung darf und soll nichts feuern; Tag Assistant klickt den Banner nicht
+an und sieht deshalb nichts. Die Meldung sagt selbst „möglicherweise".
+**Zum Testen: den Banner IM Tag-Assistant-Fenster annehmen**, dann verbindet
+sich `GTM-NWLGMFJN`.
+
+**Was zu tun ist, liegt in GTM und im Stape-Container, nicht im Code** — deshalb
+hier nichts geändert:
+- Im Google-Tag `send_page_view` auf `true` setzen (oder die Zeile entfernen).
+- Prüfen, warum die Stape-Consent-Vorlage kein `stape_consent_update` in den
+  dataLayer schreibt — das ist das Ereignis, auf das die Trigger warten.
+- Den `/danke/`-Trigger für Tests auf die Testdomain erweitern, sonst ist die
+  Conversion erst nach dem Livegang messbar.
+
+⚠️ **Eine Änderung im Code wäre denkbar und wurde NICHT gemacht:** dem
+GTM-Loader `data-cookieconsent="ignore"` mitgeben, damit der Container schon vor
+der Einwilligung lädt und allein Consent Mode die Tags sperrt (so empfehlen es
+Google und Cookiebot). Das würde Tag Assistant den Container sofort zeigen und
+die Modellierung über Consent-denied-Pings ermöglichen — **es ändert aber, was
+vor der Einwilligung lädt, und das ist eine rechtliche Entscheidung, keine
+technische.** Und es würde das eigentliche Problem nicht lösen: die Tags feuern
+auch mit erteilter Einwilligung nicht.
+
+⚠️ **Messfallen dieser Runde, beide meine eigenen:**
+- Ein zu grobes Muster (`googleads|doubleclick|/conversion`) meldete **2
+  „Messtreffer" vor der Einwilligung**, die keine waren. Mit einer Hostliste
+  statt Stichwörtern: 0. **Ein Treffer-Zähler braucht eine Hostliste, keine
+  Wortsuche.**
+- `performance.getEntriesByType("resource")` sieht **keine
+  `sendBeacon`-Anfragen** — GA4 benutzt sie. Ohne
+  `Network.requestWillBeSent` kann man „es geht nichts raus" nicht belegen.
+  Der Messaufsatz hat dafür jetzt eine Ereignis-Anmeldung.
+- Und die dokumentierte Git-Bash-Falle noch einmal: ein Argument wie
+  `/sicherheitsdienst-bamberg/` wurde zu
+  `C:/Program Files/Git/sicherheitsdienst-bamberg/`. Die Sonde lud
+  `about:blank` und meldete „Element fehlt". `MSYS_NO_PATHCONV=1`.
