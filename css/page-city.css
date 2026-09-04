@@ -342,10 +342,24 @@
 .city-map__kreis {
   fill: none;
   stroke: var(--color-blue-light);
-  /* Knapp halb so praesent wie die Stadt: der Kreis ist der Rahmen, nicht die
-     Aussage. 0,32 gegen 0,7 der Stadt, dieselbe Linienfarbe. */
-  stroke-opacity: 0.32;
-  stroke-width: 2;
+  /* ⚠️ ANGEHOBEN 04.09.2026 von 0,32 / 2 (Kunde: "der Landkreislinie ist jetzt
+     zu unsichtbar, die muss etwas kräftiger sein"). Der Gedanke hinter 0,32 —
+     der Kreis ist der Rahmen, nicht die Aussage — war richtig, der Wert aber
+     viel zu weit unten. Gerechnet aus dem Wert, den der Browser wirklich
+     anwendet (#3D9AD3 auf #010101 gemischt):
+       0,32 → 1,56:1   0,55 → 2,61:1   0,60 → 2,93:1
+       0,65 → 3,27:1   0,70 → 3,66:1   1,00 → 6,72:1
+     Eine Grafik braucht 3:1, um ueberhaupt als Form gelesen zu werden — bei
+     0,32 war die Linie also nachweislich unter der Wahrnehmungsschwelle, das
+     war kein Geschmacksurteil des Kunden.
+     ⚠️ 0,6 war mein erster Versuch und liegt mit 2,93:1 NOCH darunter; ich
+     hatte 4,3:1 geschaetzt statt gerechnet. Deshalb 0,7 — mit Abstand ueber
+     der Schwelle.
+     Der Rangunterschied zur Stadt bleibt und traegt jetzt die STAERKE statt
+     der Sichtbarkeit: der Kreis ist eine offene Linie bei 3,66:1, die Stadt
+     eine gefuellte Flaeche mit 0,95 Kontur bei 6,72:1. */
+  stroke-opacity: 0.7;
+  stroke-width: 2.6;
   stroke-linejoin: round;
   stroke-linecap: round;
 }
@@ -426,7 +440,37 @@
    ⚠️ Der Container traegt aria-hidden, das Label also auch. Richtig: die H1
    derselben Seite nennt die Stadt bereits, und ein zweites Vorlesen von
    "Stadt Wuerzburg" direkt danach waere Doppelung, keine Information. */
-.city-map__label {
+/* ⚠️ NEU 04.09.2026: die Beschriftung sitzt IM BILD an der Stadt, nicht mehr
+   als Zeile unter der Karte (Kunde: "unten drunter nichts hinmachen … nur bei
+   der Stadt immer die Stadt … als Stadt Wuerzburg hinmachen"). Das Argument
+   oben gilt unveraendert — <text> im SVG skaliert mit —, deshalb ist es echter
+   Text UEBER der Zeichnung, positioniert in Prozent des SVG-Kastens. Prozente
+   des Kastens sind dasselbe wie Anteile des Zeichenbereichs, also folgt der
+   Text der Form bei jeder Groesse, behaelt aber seine Pixelgroesse. */
+.city-map__rahmen {
+  position: relative;
+  /* Rasterbehaelter, nicht Block: in der zentrierten Flex-Spalte darueber
+     wird er dadurch inhaltsbreit und schmiegt sich um das SVG. Nur so sind
+     Prozentwerte darin Prozente DER ZEICHNUNG — als Block waere er so breit
+     wie die ganze Spalte, und die Beschriftung landete daneben. */
+  display: grid;
+}
+
+.city-map__name {
+  position: absolute;
+  /* --x und --y liefert der Generator: Anteile des Zeichenbereichs in Prozent.
+     Der Anker liegt UNTER der Stadtform, bei den drei Staedten ohne Kreis am
+     unteren Rand geklemmt. */
+  left: var(--x);
+  /* ⚠️ Die Klemme im Generator ist ANTEILIG (5 % der Zeichenhoehe), die
+     Texthoehe aber KONSTANT (~19 px). Auf der kleinsten Darstellung reicht
+     der Anteil deshalb nicht: bei Nuernberg auf 390 px sind 5 % nur 8 px, und
+     der Name ragte 1,6 px unten heraus. Gemessen, nicht geschaetzt. Diese
+     zweite Klemme rechnet in Pixeln und gilt damit bei jeder Groesse. */
+  top: min(var(--y), calc(100% - 0.7rem));
+  /* Auf dem Anker zentriert, nicht daran haengend: sonst ragt der Text bei
+     geklemmtem Anker unten aus der Zeichnung heraus. */
+  translate: -50% -50%;
   margin: 0;
   /* 12px, die Mikro-Label-Groesse dieses Projekts — es gibt keinen Token
      darunter (--font-size-sm ist 14-15px), und --font-size-xs existiert NICHT:
@@ -436,68 +480,15 @@
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   color: var(--color-blue-light);
-  /* Das Label gehoert zur Zeichnung, nicht zum Text der Seite — es sitzt auf
-     demselben Blau wie Umriss und Fuellung und bleibt damit als Teil der
-     Grafik lesbar. Als GRAFIK-nahe Auszeichnung auf dunklem Grund unkritisch:
-     #3D9AD3 auf #010101 misst 6,8:1. */
-  text-align: center;
   white-space: nowrap;
+  /* Der Text liegt jetzt AUF der Zeichnung, also braucht er einen eigenen
+     Grund — ohne ihn kreuzt eine Kreislinie die Buchstaben. Der Schatten ist
+     der Seitenhintergrund selbst, kein Kasten: ein Kasten waere ein zweites
+     Element im Bild. */
+  text-shadow: 0 0 4px var(--color-bg), 0 0 9px var(--color-bg);
+  /* Die Karte ist Dekoration, der Text soll keine Auswahl abfangen. */
+  pointer-events: none;
 }
-/* ── LEGENDE: WELCHE FORM IST WELCHE ─────────────────────────────────────────
-   Kunde 03.09.2026: "dann erkennt man nämlich, ah okay, das ist der Landkreis
-   Bamberg und da ist die Stadt Bamberg."
-   Zwei Namen allein reichen dafür nicht — es muss ablesbar sein, WELCHE der
-   zwei Formen welche ist. Darum trägt jede Zeile ihr eigenes Linienmuster:
-   die schwache Linie des Kreises und das gefüllte Feld der Stadt, in genau
-   denselben Werten wie im SVG.
-
-   ⚠️ Die drei Städte ohne umschließenden Landkreis behalten das einfache
-   <p class="city-map__label">. Eine Legende mit einem Eintrag erklärt nichts. */
-.city-map__legende {
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.25rem 1rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  color: var(--color-blue-light);
-}
-
-.city-map__legende-zeile {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.city-map__legende dd {
-  margin: 0;
-  white-space: nowrap;
-}
-
-/* Das Muster ist ein Streifen, kein Punkt: die zwei Formen unterscheiden sich
-   in der LINIE, nicht in der Farbe, und ein Punkt könnte das nicht zeigen. */
-.city-map__muster {
-  width: 1.25rem;
-  height: 0.5rem;
-  flex: none;
-  border: 1px solid var(--color-blue-light);
-  border-radius: 2px;
-}
-
-.city-map__muster--kreis {
-  /* Dieselbe Deckung wie .city-map__kreis im SVG. */
-  border-color: rgb(61 154 211 / 0.32);
-  background: none;
-}
-
-.city-map__muster--stadt {
-  /* Dieselben Werte wie .city-map--mit-kreis .city-map__area. */
-  border-color: rgb(61 154 211 / 0.95);
-  background: rgb(61 154 211 / 0.24);
-}
-
-
 
 /* ---- The outline at tablet/phone size ----------------------------------- */
 /* ⚠️ THIS BLOCK MUST STAY BELOW the two rules above. It is the same specificity
@@ -603,6 +594,14 @@
   .city-map__guide {
     animation: city-map-guides var(--duration-slower) var(--easing-premium) 120ms backwards;
   }
+
+  /* Der Name kommt ZULETZT, wenn die Stadt gefuellt ist: er benennt etwas,
+     das schon da sein muss. 1750ms = Ende der Fuellung (1150 + 400).
+     ⚠️ Nur opacity, kein transform: translate traegt hier die Positionierung
+     (-50% -50%), eine Animation darauf wuerde sie ueberschreiben. */
+  .city-map__name {
+    animation: city-map-name var(--duration-slower) var(--easing-standard) 1750ms backwards;
+  }
 }
 
 @keyframes city-map-draw {
@@ -612,6 +611,10 @@
 
 @keyframes city-map-fill {
   from { fill-opacity: 0; }
+}
+
+@keyframes city-map-name {
+  from { opacity: 0; }
 }
 
 @keyframes city-map-guides {

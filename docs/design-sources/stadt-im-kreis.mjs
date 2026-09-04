@@ -49,15 +49,15 @@ const STAEDTE = {
 /* Slug in der Datei -> Slug in den Seitennamen */
 const SEITEN_SLUG = { nuremberg: "nuernberg" };
 
-/* Kreisnamen wie Nominatim sie liefert — NICHT aus dem Stadtnamen gebaut: zu
- * Nuernberg gehoert "Nuernberger Land", zu Erlangen "Erlangen-Hoechstadt".
- * Hier stehen nur die sieben, die die Stadt wirklich umschliessen. */
-const KREIS_NAME = {
-  ansbach: "Landkreis Ansbach", bamberg: "Landkreis Bamberg",
-  bayreuth: "Landkreis Bayreuth", coburg: "Landkreis Coburg",
-  forchheim: "Landkreis Forchheim", schweinfurt: "Landkreis Schweinfurt",
-  wuerzburg: "Landkreis Würzburg",
-};
+/* Welche Stadt einen umschliessenden gleichnamigen Landkreis hat, entscheidet
+ * allein, ob <slug>-landkreis.geojson existiert — sieben von zehn. Es sind
+ * NICHT die Namen aus dem Stadtnamen ableitbar: zu Nuernberg gehoert
+ * "Nuernberger Land", zu Erlangen "Erlangen-Hoechstadt", und beide liegen
+ * NEBEN der Stadt, nicht darum. Deshalb tragen Nuernberg, Erlangen und
+ * Fuerth nur ihren Stadtumriss.
+ * ⚠️ Eine Tabelle mit den Kreisnamen stand hier bis zum 04.09.2026 — sie
+ * speiste die Legende unter der Karte. Die Legende ist weg (Kundenwunsch),
+ * benannt wird nur noch die Stadt, also war die Tabelle toter Code. */
 
 function ringe(geo) {
   if (geo.type === "Polygon") return geo.coordinates;
@@ -135,17 +135,28 @@ function baue(slug) {
   const kreisPfade = kreis ? machPfade(kreis) : [];
   const stadtPfade = machPfade(stadt);
 
-  /* Mittelpunkt der Stadt in viewBox-Einheiten — Ankerpunkt fuer die
-   * Beschriftung, falls sie je in das SVG wandern soll. */
+  /* Ankerpunkt der Beschriftung in viewBox-Einheiten, als ANTEIL ausgegeben.
+   * Sie sitzt UNTER der Stadtform, nicht darauf: die Form ist die Aussage,
+   * der Name nur die Zutat — auf der Form liegend verdeckt er genau das,
+   * worauf er zeigt.
+   * ⚠️ Bei den drei Staedten ohne Kreis IST die Stadt der ganze
+   * Zeichenbereich; "unter der Form" laege dort ausserhalb und wuerde
+   * abgeschnitten. Deshalb klemmt der Wert am unteren Rand. */
   const sp = ringe(stadt).map(proj).flat().map(([x, y]) => [(x - x0) * faktor, (y - y0) * faktor]);
   const mx = sp.reduce((a, p) => a + p[0], 0) / sp.length;
   const my = sp.reduce((a, p) => a + p[1], 0) / sp.length;
+  const luft = vbH * 0.05;
+  const ay = Math.min(Math.max(...sp.map((p) => p[1])) + luft, vbH - luft);
 
   return {
     slug, name: STAEDTE[slug],
     viewBox: "0 0 " + BREITE + " " + vbH, vbH,
     kreisPfade, stadtPfade,
     stadtMitte: [Math.round(mx), Math.round(my)],
+    /* Anteile, damit die Beschriftung als HTML ueber der Zeichnung sitzen
+     * kann: Prozent des SVG-Kastens sind dasselbe wie Anteile des
+     * Zeichenbereichs, egal wie gross die Karte gerendert wird. */
+    anker: [(mx / BREITE * 100).toFixed(1), (ay / vbH * 100).toFixed(1)],
     tolGrad: tol,
     punkte: kreisPfade.reduce((a, p) => a + (p.match(/L/g) || []).length, 0) +
             stadtPfade.reduce((a, p) => a + (p.match(/L/g) || []).length, 0),
@@ -155,35 +166,30 @@ function baue(slug) {
 /* ── Markup fuer eine Seite ───────────────────────────────────────────────── */
 export function svgMarkup(b) {
   const zeilen = [];
-  zeilen.push(`          <svg class="city-map${b.kreisPfade.length ? " city-map--mit-kreis" : ""}" viewBox="${b.viewBox}" width="${BREITE}" height="${b.vbH}" fill="none" focusable="false">`);
-  zeilen.push(`            <line class="city-map__guide" x1="50%" y1="0" x2="50%" y2="100%"></line>`);
-  zeilen.push(`            <line class="city-map__guide" x1="0" y1="50%" x2="100%" y2="50%"></line>`);
+  /* Der Umschlag ist der Bezugsrahmen der Beschriftung: er schmiegt sich um
+   * das SVG (Rasterbehaelter in einer zentrierten Flex-Spalte), also sind
+   * Prozentwerte darin Prozente DER ZEICHNUNG. Ohne ihn wuerden sie gegen die
+   * ganze Spalte aufloesen, und die ist breiter und hoeher als die Karte. */
+  zeilen.push(`          <div class="city-map__rahmen">`);
+  zeilen.push(`            <svg class="city-map${b.kreisPfade.length ? " city-map--mit-kreis" : ""}" viewBox="${b.viewBox}" width="${BREITE}" height="${b.vbH}" fill="none" focusable="false">`);
+  zeilen.push(`              <line class="city-map__guide" x1="50%" y1="0" x2="50%" y2="100%"></line>`);
+  zeilen.push(`              <line class="city-map__guide" x1="0" y1="50%" x2="100%" y2="50%"></line>`);
   for (const p of b.kreisPfade) {
-    zeilen.push(`            <path class="city-map__kreis" pathLength="1" d="${p}"></path>`);
+    zeilen.push(`              <path class="city-map__kreis" pathLength="1" d="${p}"></path>`);
   }
   for (const p of b.stadtPfade) {
-    zeilen.push(`            <path class="city-map__area" pathLength="1" d="${p}"></path>`);
+    zeilen.push(`              <path class="city-map__area" pathLength="1" d="${p}"></path>`);
   }
-  zeilen.push(`          </svg>`);
-
-  /* Beschriftung: bei ZWEI Formen eine Legende mit Linienmuster, sonst ein
-   * einfaches Label. Zwei Namen ohne Muster sagen nicht, WELCHE Form welche
-   * ist — und genau das war der Kern des Wunsches ("dann erkennt man: das ist
-   * der Landkreis und da ist die Stadt"). Die Muster tragen im CSS dieselben
-   * Deckungswerte wie die Pfade im SVG. */
-  const kreisName = KREIS_NAME[b.slug];
-  if (b.kreisPfade.length && kreisName) {
-    zeilen.push(`          <dl class="city-map__legende">`);
-    for (const [klasse, name] of [["kreis", kreisName], ["stadt", "Stadt " + b.name]]) {
-      zeilen.push(`            <div class="city-map__legende-zeile">`);
-      zeilen.push(`              <dt class="city-map__muster city-map__muster--${klasse}" aria-hidden="true"></dt>`);
-      zeilen.push(`              <dd>${name}</dd>`);
-      zeilen.push(`            </div>`);
-    }
-    zeilen.push(`          </dl>`);
-  } else {
-    zeilen.push(`          <p class="city-map__label">Stadt ${b.name}</p>`);
-  }
+  zeilen.push(`            </svg>`);
+  /* ⚠️ ECHTER TEXT UEBER DER ZEICHNUNG, NICHT <text> IM SVG — und das ist eine
+   * Messung, keine Vorliebe: der Zeichenbereich ist immer 1000 Einheiten
+   * breit, gerendert wird er je Stadt, Breite und Seitentyp zwischen 123 px
+   * und 445 px. Eine Schriftgroesse darin skaliert mit und braeuchte rund
+   * zwanzig verschiedene Werte; auf dem Telefon stand sie bei 7 px. Ueber der
+   * Zeichnung liegend behaelt der Text seine Pixelgroesse bei jeder Breite,
+   * bleibt auswaehlbar und sitzt trotzdem im Bild an der Stadt. */
+  zeilen.push(`            <p class="city-map__name" style="--x: ${b.anker[0]}%; --y: ${b.anker[1]}%">Stadt ${b.name}</p>`);
+  zeilen.push(`          </div>`);
   return zeilen.join("\n");
 }
 
@@ -226,11 +232,22 @@ for (const f of dateien) {
   if (!b) { uebersprungen.push(basis + " (nicht gebaut)"); continue; }
 
   let t = fs.readFileSync(f, "utf8");
-  const anfang = t.indexOf('          <svg class="city-map');
+  /* Zwei moegliche Altzustaende: der neue Umschlag, oder das nackte <svg> aus
+   * der Zeit davor. Den Umschlag ZUERST suchen — sonst bliebe seine Huelle
+   * stehen und das Markup verdoppelte sich bei jedem Lauf. */
+  const iRahmen = t.indexOf('          <div class="city-map__rahmen">');
+  const anfang = iRahmen > -1 ? iRahmen : t.indexOf('          <svg class="city-map');
   if (anfang < 0) { uebersprungen.push(basis + " (kein <svg class=city-map>)"); continue; }
   let ende = t.indexOf("</svg>", anfang);
   if (ende < 0) { uebersprungen.push(basis + " (kein </svg>)"); continue; }
   ende += 6;
+  if (iRahmen > -1) {
+    /* Der Umschlag enthaelt nur das SVG und die Beschriftung, keine weiteren
+     * <div> — das erste </div> nach dem </svg> ist also seines. */
+    const iZu = t.indexOf("</div>", ende);
+    if (iZu < 0) { uebersprungen.push(basis + " (Rahmen ohne </div>)"); continue; }
+    ende = iZu + 6;
+  }
 
   /* Bestehende Beschriftung MIT ersetzen, damit sie zur Form passt: aus einem
    * Label wird eine Legende, sobald ein Kreis dazukommt, und umgekehrt.
