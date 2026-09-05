@@ -56,6 +56,107 @@ its-own-sake showcase either. Performance still matters (targets unchanged,
 see Performance below) — the rule is "use advanced interaction
 strategically and optimize it carefully," not "remove all animation."
 
+## Lehren aus dem Bilddurchgang vom 05.09.2026 — auch zuerst lesen
+
+Diese sieben Punkte haben jeweils **mindestens eine Korrekturrunde gekostet**, und
+die Hälfte davon hat der Kunde gefunden, nicht meine Messung. Sie stehen vor der
+Liste darunter, weil das Muster dasselbe ist und sich sonst wiederholt.
+
+**1. Eine Kennzahl, die grün ist, kann trotzdem den falschen Ort messen.** Ich
+hatte gemessen, dass die SEITENKANTEN des Team-Fotos um 0,0 Stufen springen, und
+daraus geschlossen, der Kunde sehe keinen Kasten. Sichtbar war der hellere
+Hintergrund **INNERHALB** des Rechtecks — 10 bis 27 Stufen gegen 1 der Seite.
+Im Vorher/Nachher nebeneinander sofort erkennbar. **Wenn der Kunde etwas sieht
+und die Messung sagt nein, misst die Messung am falschen Ort.**
+
+**2. Die Matting-Gleichung braucht den LOKALEN Vordergrund, keine Konstante.**
+Beobachtet wird `L = a·F + (1−a)·W`, also `a = (W − L)/(W − F)`. Ich hatte F als
+feste 196 eingesetzt; ein schwarzer Anzug hat F ≈ 20. Für ein Randpixel bei
+L = 165 rechnet das `a = 1,6` → gekappt auf 1 → **voll deckend in der Farbe des
+Weißsaums**. Richtig sind 0,36. Das war die Ursache des Saums, den der Kunde
+zweimal gemeldet hat — kein zu enger Schwellwert.
+
+**3. Vier Dinge, die ein Freisteller auf hellem Grund zusätzlich braucht**, jedes
+einzeln gemessen:
+- **Eingeschlossene Hintergrundflächen.** Eine Flutfüllung vom Bildrand erreicht
+  nur, was mit dem Rand verbunden ist. Der Spalt zwischen Arm und Körper ist
+  Hintergrund, aber eingeschlossen, sobald die Hand den Körper berührt — bei
+  einem Porträt 32.488 px reines Studioweiß mitten im Bild.
+  ⚠️ **Nicht jede eingeschlossene helle Fläche ist Hintergrund**: ein weißes
+  Einstecktuch ist eine. Zwei Wächter, beide müssen zutreffen — so hell wie der
+  **gemessene** Hintergrund (±7 Stufen) und groß genug, um sichtbar zu sein.
+- **Die Übergangszone muss tief genug sein.** 5 px reichen nicht: helle Lücken im
+  Haar liegen tiefer und bleiben deckend. 12 px sind gefahrlos, **weil die Formel
+  selbstbegrenzend ist** — ein dunkles Pixel hat L ≈ F, also a ≈ 1. Nur HELLE
+  Pixel verlieren Deckung, und genau das ist gewollt.
+- **Der Hintergrund wird JE KANAL gemessen.** Studioweiß ist nicht neutral
+  (248,248,250). Ein gemeinsamer Wert kippt das Kanalverhältnis: Grün landet auf
+  0, Rot und Blau nicht → **violetter Saum** am Haar.
+- **Alpha glätten.** Die Formel rechnet pixelweise und erbt das Rauschen der
+  JPEG-Quelle; an einer Haarkante sieht das aus wie Salz und Pfeffer.
+
+**4. Wo kein Freisteller möglich ist, hilft ein SCHWARZPUNKT — wenn das Histogramm
+es hergibt.** Beim Team-Foto sind die Anzüge so dunkel wie der Hintergrund, ein
+Freisteller ist also ausgeschlossen. Aber Hintergrund (p90 = 20) und Motiv
+(p05 = 48) trennen sich sauber, also lässt sich der Schwarzpunkt anheben.
+**Farbtonerhaltend rechnen** (alle drei Kanäle mit demselben Faktor skalieren) —
+ein Abzug pro Kanal erzeugt denselben Farbstich wie in Punkt 3.
+
+**5. Ein Wächter prüft Markup, nicht Prosa.** Meine Umbauskripte schlugen dreimal
+auf **meine eigenen neuen Kommentare** an, weil die die entfernte Klasse beim
+Namen nennen. Kommentare vor der Prüfung entfernen (`/<!--[^]*?-->/g`). Dieselbe
+Lehre steht weiter unten schon einmal, von einer Zählung von `<h1>`-Tags — sie
+wiederholt sich, weil sie in jedem neuen Skript neu gemacht wird.
+
+**6. Ein Suchmuster über mehrere Zeilen darf den EINZUG nie mitfordern.** Ein
+Kommentar stand mit neun Leerzeichen eingerückt, mein Muster suchte zehn — es
+griff bei **allen 16 Seiten** nicht. Am Text verankern.
+
+**7. Ein Regex, der über die Shell in eine Datei geschrieben wird, verliert eine
+Backslash-Ebene.** Aus `[\s\S]` wurde `[sS]`, und der Kommentarfilter matchte
+lautlos nichts. Das steht unten schon als Umgebungsfalle — hier die praktische
+Konsequenz: **Dateien mit Write schreiben, oder Backslashes vermeiden** (`[^]`
+statt `[\s\S]`, `[ \n\t]+` statt `\s+`).
+
+⚠️ **Und die Sonde selbst kann still kaputt sein.** Meine Halo-Messung startete
+die Suche bei `i = 0` mit `i > 0` als Schleifenbedingung — sie lief nie an und
+meldete für **jedes** Bild sauber null Kanten. Eine Sonde, die überall dasselbe
+perfekte Ergebnis liefert, ist verdächtig, nicht beruhigend.
+
+**8. Beim Bau eines neuen Blocks vorher grepen, ob es die Klasse schon gibt.**
+`.uu-team` existierte auf `/ueber-uns/` bereits für den Abschnitt „Menschen, die
+bleiben"; mein gleichnamiger neuer Block legte dem 96 px zusätzlichen Rand auf.
+Gefunden beim Prüfen des **ausgelieferten** CSS, wo plötzlich zwei gleichnamige
+Blöcke untereinander standen — in der Quelldatei sieht ein neuer Name harmlos aus.
+Ein neuer Name kostet nichts, eine Kollision kostet eine Runde.
+
+### Der optische Prüfmechanismus (Kundenanweisung 05.09.2026)
+
+> „bitte fang jetzt an, einen Prüfmechanismus bei Änderungen durchzuführen, dass
+> du einmal wirklich drauf schaust nach einer Änderung, wie es optisch aussieht
+> auf dem Live-Bildschirm … also selber prüfen und zur Not direkt selbst
+> korrigieren"
+
+Werkzeuge im Scratchpad, die **messen UND einen Abzug ablegen**, den man ansieht:
+`ring-check.mjs` (Überlappung im 3D-Ring), `uu-check.mjs`, `kombi-16.mjs`,
+`hero-paar.mjs` (Service-Hero gegen Kombi-Hero), `bogen.mjs` (Kontaktbogen),
+`lupe.mjs` (4-fache Vergrößerung einer Kante), `halo-mess.mjs` (Weißsaum),
+`loecher.mjs` (eingeschlossene helle Flächen).
+
+**Was in diesem Durchgang NUR das Hinsehen gefunden hat, keine Messung:** die
+316 px schwarze Fläche unter dem Social-Ring (die Zahlen waren grün), Namen, die
+auf den Anzügen lagen, Namen, die nicht auf einer Linie standen, der violette
+Saum im Haar, und der Kasten um das Team-Foto (siehe Punkt 1).
+
+⚠️ **Zwei Fallen beim Abzugnehmen:** `Page.captureScreenshot` mit `clip` rechnet
+in **Seiten**koordinaten — mit Viewport-Werten kommt ein schwarzes Bild zurück;
+also den Viewport aufnehmen und danach zuschneiden. Und **zweimal scrollen mit
+Wartezeit dazwischen**, weil die Reveal-Animationen das Layout verschieben.
+
+⚠️ **Eine Kennzahl kann echtes Streiflicht auf einer Schulter nicht von einem
+Freistell-Saum unterscheiden.** Die Zahl ist ein Wächter, das Bild entscheidet.
+
+
 ## Lehren aus dem Abnahmedurchgang — zuerst lesen
 
 Diese zehn Punkte haben im Durchgang vom 01./02.09.2026 jeweils **mindestens eine

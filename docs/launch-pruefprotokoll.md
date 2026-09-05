@@ -4503,3 +4503,138 @@ kostet eine Runde.
 
 Die Bilddateien behalten ihre Namen (`uu-team-<person>-560.webp`) — das sind
 Dateinamen, keine Klassen.
+
+## N54 — Der weiße Saum an den Freistellern (05.09.2026, abends)
+
+**Meldung:** „Steffens neues Foto ist nicht ganz sauber freigestellt … gerade auf
+dem schwarzen Hintergrund sieht man da diese weiße Umrandung sehr stark … vor
+allem beim Daniel Wettengel zum Beispiel ist extrem weißer Rand oder zwischen
+Arm und Ding ist zu weiß."
+
+**Ursache war ein Denkfehler in der Formel, kein zu enger Schwellwert.**
+Beobachtet wird `L = a·F + (1−a)·W`, also `a = (W − L)/(W − F)`. Ich hatte F als
+**Konstante 196** eingesetzt; ein schwarzer Anzug hat F ≈ 20. Für ein Randpixel
+bei L = 165 rechnet das `a = 1,6` → gekappt auf 1 → **voll deckend, und zwar in
+der Farbe des Saums**. Richtig sind 0,36. F wird jetzt lokal gemessen.
+
+**Vier weitere Ursachen, jede einzeln gemessen:**
+
+| | |
+|---|---|
+| Eingeschlossene Flächen | Bei Daniel Wettengel **32.488 px** reines Studioweiß zwischen Arm und Körper — vom Bildrand aus nicht erreichbar, also von der Flutfüllung nie gefunden |
+| Zone zu flach | 5 px erreichten die hellen Lücken im **Haar** nicht; jetzt 12 px |
+| Deckel auf F zu lax | erzeugte die Sprenkel im blonden Haar |
+| Ein Weißwert für alle Kanäle | Studioweiß ist nicht neutral (248,248,250) → **violetter Saum** |
+
+⚠️ **Nicht jede eingeschlossene helle Fläche ist Hintergrund: Bryans
+Einstecktuch** ist eine (1.839 px, neutral, hell). Zwei Wächter, beide müssen
+zutreffen — so hell wie der **gemessene** Hintergrund (±7) und groß genug, um
+sichtbar zu sein. Das Tuch liegt bei 235 gegen 248 und fällt schon am ersten
+Wächter raus. Nachgesehen bei 4-facher Vergrößerung: es ist noch da.
+
+**Gemessen:** Saum im Mittel **+17,3 → −4,8** (negativ heißt Kante dunkler als
+Körper — so soll es sein), Spitzenwert **54 → 13**. Alle Kanten bei 4-facher
+Vergrößerung angesehen.
+
+⚠️ **Die Kennzahl kann echtes Streiflicht auf einer Schulter nicht von einem Saum
+unterscheiden** — sie ist ein Wächter, das Bild entscheidet. Christophs Ohr wurde
+als Halo gemeldet und war bei 4× sauber.
+
+⚠️ **Sondenfehler, der fast als sauberes Ergebnis durchgegangen wäre:** die
+Halo-Messung startete bei `i = 0` mit `i > 0` als Schleifenbedingung — sie lief
+nie an und meldete für **jedes** Bild null Kanten.
+
+## N55 — Führungsreihe: vier statt fünf, größer, verlinkt (05.09.2026)
+
+**Meldung:** „Dann haben wir oben drüber ja ganz groß Steffen Walde stehen … dann
+würde ich den bei den Führungskräften nicht noch mal auflisten, sondern da dann
+nur die vier Führungskräfte machen … und unter die vier kann man natürlich auch
+zu ihrer Visitenkartenseite verlinken, genauso wie bei Steffen."
+
+- **Steffen ist raus** aus der Reihe. Sein Name im Absatz darüber ist stattdessen
+  verlinkt — der **Wortlaut ist unangetastet**, es kam nur ein Anker um zwei
+  Wörter.
+- **Von 208 auf 272 px** je Person („sehr klein aufgeführt").
+- **Jede Kachel ist ein Link** auf die Visitenkarte. Bryan hat nur eine
+  Werkschutz-Karte, die anderen drei die Sicherheitsdienst-Fassung — geprüft,
+  nicht aus dem Namen abgeleitet.
+
+⚠️ **Empfehlung zu den Visitenkarten: verlinken ja, indexieren nein.** Sie tragen
+`noindex` und stehen nicht im Sitemap. Ein Link von einer indexierten Seite auf
+eine noindex-Seite ist regulär; Google folgt ihm. Indexieren würde fünf bewusst
+dünne QR-Karten in den Index stellen, die mit den echten Seiten um dieselben
+Namen konkurrieren. Umzustellen wäre es eine Zeile je Karte.
+
+## N56 — Der Kasten um das Team-Hero, zweiter Anlauf (05.09.2026)
+
+**Meldung:** „Im Hero-Bild von der Über-uns-Seite sieht man nach wie vor einen
+helleren Hintergrund … Woran liegt das? Finde es heraus."
+
+⚠️ **Meine erste Fassung hat nur die KANTEN aufgelöst.** Gemessen am gerenderten
+Bildschirm lag die Hintergrundfläche bei **10 bis 27** Stufen, die Seite bei
+**1**. Eine große Fläche, 20 Stufen über dem Grund, ist ein sichtbares Rechteck,
+auch wenn die Ränder weich sind.
+
+**Ein echter Freisteller bleibt unmöglich** (Anzüge = Hintergrundhelligkeit).
+Der Ausweg ist ein **Schwarzpunkt**, und dass er geht, ist gemessen: im Original
+trennen sich Hintergrund (p50 8, **p90 20**, p99 24) und Motiv (**p05 48**, p25
+120, p50 160) sauber. Farbtonerhaltend gerechnet — ein Abzug pro Kanal hätte
+denselben Farbstich erzeugt wie am Haar.
+
+**Gemessen danach: Hintergrundfläche 13 → 1**, gleich dem Seitenschwarz.
+Gesichter und Hemden bei 86 bis 97 Prozent ihrer Helligkeit.
+
+## N57 — Die 16 Kombi-Heros tragen jetzt die Struktur ihrer Serviceseite (05.09.2026)
+
+**Auftrag:** „du sollst die Kombi-Seiten vom Header her exakt gleich mit den
+Dienstleistungsseiten gestalten … der Objektschutz-Nürnberg-Hero soll genauso wie
+der Objektschutz-Hero aussehen."
+
+**Gemessener Unterschied vorher** (Hero-Klassen sortiert verglichen):
+
+```
+nur Service: hero-badge  service-hero--split  service-hero__media
+nur Kombi:   city-hero  city-hero__badge(+icon)  city-hero__content
+             city-hero__grid  city-hero__points
+```
+
+⚠️ **Zwei Bauformen, weil die Serviceseiten selbst zwei haben.** Objektschutz,
+Brandwache und Baustellenbewachung nutzen `--split` mit dem Foto rechts;
+Werkschutz `--bleed` mit Vollbild im Hintergrund. Für `--bleed` **musste der
+Breadcrumb in die Sektion** — bliebe er darüber, finge das Foto erst darunter an
+und über dem Bild stünde ein schwarzer Streifen. Diese Lehre steht im Projekt
+seit dem 07.08.2026.
+
+⚠️ **Das Bild bleibt in EINEM Partial je Leistung.** Die `<figure>` in die 16
+Seiten zu schreiben wäre einfacher gewesen — dann wäre aber die Bedingung vom
+Vormittag wieder weg („damit ein Bildtausch später wirklich nur an einer Stelle
+passiert"). Das Partial trägt jetzt die Service-Struktur statt eines eigenen
+Rahmens; `.combo-hero__bild` ist **gelöscht**, nicht überschrieben.
+
+⚠️ **Der Badge behält seinen Pin.** Der Text ist ortsspezifisch („Einsatzgebiet
+Nürnberg …"); ein Schild-Symbol würde etwas anderes behaupten. Gleich wird die
+**Form**, nicht das Symbol.
+
+**Gemessen, Service gegen Kombi bei 1440 und 390:** Hero-Kasten,
+Breadcrumb-Lage, Badge-Form, H1-Größe und Fotomaß in allen vier Paaren identisch
+(526×644 bzw. Vollbild). Alle 16 bei 390: Bild geladen, nichts außerhalb, kein
+seitliches Scrollen. Beide Bauformen angesehen.
+
+⚠️ **Drei Sondenfehler auf dem Weg, alle drei vom Wächter gefangen, keiner hat
+eine Datei geschrieben:**
+1. Ein Suchmuster über mehrere Zeilen forderte den **Einzug** mit — der Kommentar
+   stand mit neun Leerzeichen, gesucht wurden zehn. Griff bei allen 16 nicht.
+2. Der Wächter prüfte den Rohtext und schlug auf **meinen eigenen neuen
+   Kommentar** an, der die entfernte Klasse beim Namen nennt. Ein Wächter prüft
+   Markup, nicht Prosa.
+3. Ein Regex, über die Shell in eine Datei geschrieben, verlor eine
+   **Backslash-Ebene**: aus `[\s\S]` wurde `[sS]`. Dateien mit Write schreiben
+   oder Backslashes vermeiden.
+
+## N58 — Die Lehren stehen jetzt in CLAUDE.md (05.09.2026)
+
+Auf ausdrückliche Bitte des Kunden („Du hast doch mal Learnings dokumentiert.
+Diese ganzen Learnings wird auch erneut dokumentieren und festhalten") stehen die
+acht Lehren dieses Durchgangs samt dem optischen Prüfmechanismus **ganz oben in
+CLAUDE.md**, vor der Liste vom 01./02.09.2026 — also dort, wo sie zuerst gelesen
+werden.
