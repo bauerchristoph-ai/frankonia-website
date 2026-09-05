@@ -1,118 +1,76 @@
-# Auftrag an Claude Cowork: Google Tag Manager in Ordnung bringen
+# Tracking: gelöst — und was in GTM noch offen ist
 
-Stand 05.09.2026. Alles darin ist **gemessen**, nicht vermutet — die Messwerte
-stehen in `docs/launch-pruefprotokoll.md`, Abschnitt N47.
+Stand 05.09.2026, gemessen am ausgelieferten Zustand von
+`frankonia-sicherheit-2.vercel.app`. Die Zahlen stehen in
+`docs/launch-pruefprotokoll.md`, Abschnitt N47.
 
-Diesen Text als Prompt in Claude Cowork geben, dort mit Zugriff auf den
-Google-Tag-Manager-Container.
+## Was das Problem war
 
----
+**Cookiebot hat den GTM-Container komplett blockiert.** Die automatische
+Blockade (`data-blockingmode="auto"`) hat den Loader abgefangen, also lief der
+Container erst nach der Zustimmung an — und dann in einer Reihenfolge, in der
+keine Tags mehr feuerten.
 
-## Prompt (ab hier kopieren)
+Die Lösung ist `data-cookieconsent="ignore"` am Loader: der Container lädt
+normal, und gesperrt wird allein über Consent Mode. Das entspricht der
+Empfehlung von Google und von Cookiebot selbst.
 
-Du arbeitest am Google-Tag-Manager-Setup von FRANKONIA Sicherheit. Ziel: nach
-erteilter Einwilligung sollen Seitenaufrufe und Conversions wieder gemessen
-werden — client-side wie server-side. Aktuell feuert **kein einziger Tag**,
-obwohl der Container fehlerfrei lädt.
+⚠️ **Korrektur einer früheren Aussage von mir.** Ich hatte drei Befunde aus der
+ausgelesenen Container-Konfiguration als Ursache benannt — fehlendes
+`stape_consent_update`, `send_page_view: false`, ein Trigger auf der
+Live-Domain. Die erste und zweite waren **nicht** die Ursache: ich hatte einen
+Container ausgelesen, der zu spät geladen hatte. Mit normal ladendem Container
+feuern die Tags.
 
-### Was bereits belegt in Ordnung ist — bitte nicht daran arbeiten
+## Was jetzt gemessen funktioniert
 
-Auf der Website ist alles geprüft und funktioniert:
+Nach Klick auf „Alle zulassen", alles mit echten Netzwerkanfragen belegt:
 
-- Die Content-Security-Policy erlaubt den Tagging-Server in `script-src`,
-  `connect-src`, `frame-src` und `img-src`. Beim Laden entstehen **null**
-  CSP-Verstöße.
-- Consent Mode v2 ist korrekt verdrahtet: vor jedem Tag steht
-  `gtag("consent","default", …)` mit allen sechs Signalen auf `denied`; nach
-  Klick auf „Alle zulassen" folgt `gtag("consent","update", …)` mit allen sechs
-  auf `granted`, und `ads_data_redaction` geht auf `false`.
-- Der Container lädt vom eigenen Tagging-Server mit **HTTP 200** (462 KB) und
-  läuft vollständig durch: `gtm.js` → `gtm.dom` → `gtm.load`.
-- `window.google_tag_manager` enthält danach `GTM-NWLGMFJN` und `G-DCSDL25ZS6`.
-- Der GA4-Loader `d.frankonia-sicherheit.de/gtag/js?id=G-DCSDL25ZS6` antwortet
-  mit **HTTP 200** und 578 KB echtem JavaScript.
-- `d.frankonia-sicherheit.de/g/collect` antwortet mit **200**, `/healthy`
-  ebenfalls. Der Tagging-Server nimmt Treffer also an.
-- Vor der Einwilligung geht **keine einzige** Anfrage an einen Messhost raus.
-  Das ist so gewollt und muss so bleiben.
+| | |
+|---|---|
+| GA4 `page_view` | `d.frankonia-sicherheit.de/g/collect`, `en=page_view`, `gcs=G111` |
+| Facebook-Pixel | `connect.facebook.net/en_US/fbevents.js` + `signals/config/…` |
+| Google Ads | `googleads.g.doubleclick.net/pagead/viewthroughconversion/…` |
+| Google-Nutzerlisten | `google.com` und `google.de` `/pagead/1p-user-list/…` |
 
-### Der Befund
+## ⚠️ Was sich vor der Einwilligung geändert hat — bitte bewusst entscheiden
 
-Nach erteilter Einwilligung geht **kein Messtreffer** raus. Aus der
-ausgelesenen Container-Konfiguration (24 Tags, 11 Trigger-Zuordnungen,
-Tag-Typen `__googtag`, `__gaawe`, `__cl`, `__hl`, `__tg`, dazu zwei Vorlagen
-aus der Galerie) stammen drei konkrete Ursachen:
+Vorher gingen vor der Zustimmung **null** Anfragen an Messhosts. Jetzt sind es
+vier, darunter **ein `/g/collect` mit `en=page_view` und `gcs=G100`**.
 
-**1. Die Consent-Brücke fehlt — das ist der Hauptblocker.**
-Die Trigger-Bedingungen des Containers warten unter anderem auf das
-benutzerdefinierte Ereignis **`stape_consent_update`**. Dieses Ereignis kommt im
-dataLayer **nie vor**. Gemessen steht dort nach der Zustimmung nur:
+Das ist das vorgesehene Verhalten von Consent Mode: ein **cookieloser** Ping,
+`ads_data_redaction` aktiv, keine Kennung gesetzt — die Grundlage für Googles
+Modellierung. Übertragen wird dabei die aufgerufene Seiten-URL.
 
-```
-["consent","default",{…alle sechs denied}]
-["set","ads_data_redaction",true]
-["consent","update",{…alle sechs granted}]
-["set","ads_data_redaction",false]
-{event:"cookie_consent_update"}
-{event:"cookie_consent_preferences"}
-{event:"cookie_consent_statistics"}
-{event:"cookie_consent_marketing"}
-{event:"gtm.js"} {event:"gtm.dom"} {event:"gtm.load"}
-```
+Rechtlich ist das in Deutschland nicht unumstritten. Zwei Wege:
 
-Also Cookiebots eigene Ereignisse — aber kein `stape_consent_update`.
-**Aufgabe:** herausfinden, welcher Tag dieses Ereignis schreiben soll (vermutlich
-die Stape-Consent-Vorlage), und ihn zum Laufen bringen. Falls das nicht
-gewünscht ist: die betroffenen Trigger stattdessen auf Cookiebots
-`cookie_consent_update` umstellen. **Nur eines von beidem**, nicht beides.
+- **So lassen** — Standard-Setup, volle Modellierung. Das ist der freigegebene
+  Stand.
+- **Zurücknehmen** — `data-cookieconsent="ignore"` entfernen. Dann geht vor der
+  Zustimmung wieder nichts raus, aber die Tags feuern auch danach nicht mehr,
+  solange die Ursache im Container nicht behoben ist.
 
-**2. Der Google-Tag sendet absichtlich keinen Seitenaufruf.**
-In seiner Konfiguration steht:
+Eine dritte Möglichkeit gibt es in GTM: den Google-Tag so einstellen, dass er
+**vor** der Einwilligung gar nichts sendet (`Consent Mode` → keine Pings bei
+`denied`). Dann lädt der Container früh, sendet aber erst nach der Zustimmung.
+Das ist vermutlich die Fassung, die du willst — sie behält beides.
 
-```
-"function":"__googtag", "vtp_configSettingsTable":[
-  ["map","parameter","server_container_url","parameterValue", …],
-  ["map","parameter","send_page_view","parameterValue","false"]]
-```
+## Was in GTM noch zu tun ist
 
-**Aufgabe:** entweder `send_page_view` auf `true` setzen, oder sicherstellen,
-dass das vorhandene GA4-Event-Tag mit dem Namen `page_view` auf einem Trigger
-liegt, der bei jedem Seitenaufruf feuert. **Nicht beides** — sonst wird jeder
-Seitenaufruf doppelt gezählt.
+1. **Conversion-ID setzen.** Die Ads-Aufrufe gehen aktuell an
+   `…/viewthroughconversion/PUT_YOUR_VALUE_HERE/`. (Machst du selbst.)
+2. **Den `/danke/`-Trigger entnageln.** Eine Trigger-Bedingung lautet wörtlich
+   `https://frankonia-sicherheit.de/danke/`, also die Live-Domain — auf der
+   Testdomain kann diese Conversion nicht feuern. Besser: „Page Path **gleich**
+   `/danke/`", der Pfad ist auf beiden Domains identisch.
+3. **Optional**, falls du Punkt 3 oben willst: im Google-Tag die Pings bei
+   verweigerter Einwilligung abschalten.
 
-**3. Ein Trigger ist auf die Live-Domain festgenagelt.**
-Eine Bedingung lautet wörtlich `https://frankonia-sicherheit.de/danke/`.
-Getestet wird aber auf `https://frankonia-sicherheit-2.vercel.app/`. Dort kann
-dieser Conversion-Trigger grundsätzlich nicht feuern.
-**Aufgabe:** die Bedingung so fassen, dass sie auf beiden Domains greift — zum
-Beispiel „Page Path **gleich** `/danke/`" statt der vollen URL. Der Pfad ist auf
-beiden Domains identisch.
+## Wie geprüft wird
 
-### Vorhandene GA4-Event-Tags
-
-`page_view`, `contact`, `generate_lead`, `schedule` und viermal `standard`
-(letzteres sind die Pixel-Events aus einer Galerie-Vorlage). Alle hängen an
-derselben Consent-Brücke aus Punkt 1 — deshalb feuert auch der Pixel nicht.
-
-### Wie geprüft wird, ob es funktioniert
-
-1. Vorschaumodus auf `https://frankonia-sicherheit-2.vercel.app/` öffnen.
-2. **Den Cookie-Banner im Vorschaufenster annehmen.** Ohne das darf und wird
-   nichts feuern; die Tag-Assistant-Meldung „Eine Plattform zur
+1. Vorschaumodus auf `https://frankonia-sicherheit-2.vercel.app/`.
+2. **Den Cookie-Banner im Vorschaufenster annehmen** — sonst feuert
+   bestimmungsgemäß nichts, und die Tag-Assistant-Meldung „Eine Plattform zur
    Einwilligungsverwaltung blockiert möglicherweise Tags" beschreibt genau
-   diesen erwarteten Zustand und ist kein Defekt.
-3. Erwartet nach der Zustimmung: `stape_consent_update` (oder das ersetzende
-   Ereignis) im dataLayer, der Google-Tag feuert, und eine Anfrage an
-   `d.frankonia-sicherheit.de/g/collect` mit `en=page_view` geht raus.
-4. Gegenprobe: **vor** der Zustimmung darf weiterhin **keine** Anfrage an einen
-   Messhost gehen. Das ist die wichtigere der beiden Prüfungen.
-
-### Randbedingungen
-
-- Container `GTM-NWLGMFJN`, GA4 `G-DCSDL25ZS6`, Google-Tag `GT-WBLSBKFT`,
-  Tagging-Server `d.frankonia-sicherheit.de` (stape).
-- Die Google-Ads-Conversion-ID steht noch als Platzhalter und wird vom Kunden
-  später selbst gesetzt — nicht raten.
-- Nichts an der Website ändern. Alles Nötige liegt im Container.
-
-## Prompt-Ende
+   diesen Zustand.
+3. Erwartet: `page_view` mit `gcs=G111`, `fbevents.js`, und die Ads-Aufrufe.
