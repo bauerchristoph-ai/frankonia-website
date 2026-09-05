@@ -4304,3 +4304,179 @@ auch mit erteilter Einwilligung nicht.
   `/sicherheitsdienst-bamberg/` wurde zu
   `C:/Program Files/Git/sicherheitsdienst-bamberg/`. Die Sonde lud
   `about:blank` und meldete „Element fehlt". `MSYS_NO_PATHCONV=1`.
+
+## N48 — Social-Ring: Nachbarkarten stießen durch die vordere (05.09.2026)
+
+**Meldung des Kunden:** „Alter, also jetzt ist der Social Ring ja wieder richtig
+verkackt … das erste Bild muss unberührt von den anderen zu sehen sein … die
+anderen ragen ja jetzt quasi durch das vorderste raus."
+
+**Die Bedingung ist rechenbar, und ich hatte sie nie geprüft.** Eine Karte auf
+dem Ring steht bei `translateZ(-R) rotateY(d·S) translateZ(R)`. Die Nachbarkarte
+sitzt damit bei `x = R·sin S`, in der Tiefe `R·(1−cos S)`, und die Perspektive
+skaliert sie um `k = P/(P+Tiefe)`. Ihre innere Kante darf den Rand der vorderen
+nicht erreichen:
+
+    k · (R·sin S − (w/2)·cos S)  >  w/2
+
+| | Breite w | Radius R | Schritt S | Perspektive P | Luft |
+|---|---|---|---|---|---|
+| Telefon vorher | 320 | 150 | 50° | 800 | **−149 px** |
+| Tablet vorher | 476 | 210 | 50° | 1000 | **−231 px** |
+| Desktop vorher | 272 | 360 | 52° | 1400 | +46 px |
+
+Der Desktop war die ganze Zeit richtig — deshalb sah er auch immer richtig aus.
+Praktisch heißt die Bedingung **R ≈ 1,3 × Kartenbreite**.
+
+**Neu:** Telefon 17,5rem / R 360, Tablet 24rem / R 500, Desktop unverändert.
+
+⚠️ **Die Breite steht jetzt FEST in rem, nicht in vw.** Mit `vw` wächst w mit dem
+Bildschirm, R aber nicht (das Skript liest eine blanke Zahl aus dem CSS) — die
+Bedingung kippt dann lautlos.
+
+**Zweiter Fehler, gefunden beim Hinsehen:** unter dem Ring klaffte eine schwarze
+Fläche, auf dem Tablet **316 px**. Die Bühne reservierte 9:16 der vollen
+Kartenbreite, während die Karte an anderer Stelle auf `42svh` gedeckelt war.
+Dieser Deckel stammt aus der **gestapelten** Liste, wo drei Videos untereinander
+stehen — auf dem Ring ist immer nur eine Karte zu sehen. Jetzt bestimmt EINE
+Zahl (`--social-card-h`) Bühne und Karte; der alte Deckel gilt nur noch für die
+Liste ohne JS.
+
+**Gemessen bei 320/390/430/768/1024/1440:** 0 px Überlappung, kein seitliches
+Scrollen, Totraum 316 → 4 px. Abzüge angesehen.
+
+**Neu im Werkzeugkasten:** `ring-check.mjs` misst die Überlappung und legt je
+Breite einen Abzug ab. ⚠️ **Ohne `clip`** — der rechnet in Seitenkoordinaten,
+nicht im Viewport, und liefert mit Viewport-Werten ein schwarzes Bild.
+
+## N49 — „Über uns": zwei Kästen, ein neues Foto, die Führungsreihe (05.09.2026)
+
+**Meldung des Kunden:** „ich sehe halt einen Kasten um das Hero-Bild bei Über
+uns, ganz klar, und ich sehe einen Kasten um Steffens Bild. Punkt. Also da gibt
+es keinen Diskussionsbedarf."
+
+⚠️ **Meine frühere Diagnose war falsch, und zwar auf lehrreiche Weise.** Ich
+hatte gemessen, dass die **Seitenkanten** um 0,0 Stufen springen, und daraus
+geschlossen, es sei nichts zu sehen. Sichtbar ist aber der **hellere Hintergrund
+INNERHALB** des Rechtecks. Im Vorher/Nachher nebeneinander ist es sofort
+erkennbar — die Messung hatte am falschen Ort gemessen.
+
+**Steffen:** neues Foto aus dem Werkschutz-Shooting (ganze Figur, **weißer**
+Grund), echt freigestellt statt Hintergrund auf `#010101` normalisiert. Der alte
+Weg hält nur, solange die Sektion schwarz bleibt.
+Verfahren, drei Teile, jeder gegen einen bekannten Fehler:
+
+1. **Randkonnektivität** statt Helligkeitsschwelle — ein Schwellwert frisst das
+   helle Hemd.
+2. **Weiche Kante nur im 2-px-Saum.** Erster Versuch ließ den Verlauf über die
+   Helligkeit laufen: **2,47 Mio.** Hintergrundpixel bekamen Teilalpha statt
+   null, weil ein Studiohintergrund nach außen abschattet — das hätte als grauer
+   Schleier gestanden. Jetzt entscheidet die Flutfüllung hart.
+3. **Matting-Gleichung** c = (c_beob − (1−a)·weiß)/a gegen den Weißsaum.
+
+Gegengeprüft **auf Magenta**, weil Löcher im dunklen Haar auf Schwarz unsichtbar
+wären: keine.
+
+⚠️ **Der Verlauf nach unten wird NICHT ins Bild gebrannt.** Den macht
+`.uu-lead__photo::after` in page-service.css, geteilt mit Jägers Portrait. Ein
+erster Versuch hatte beide Rampen, und der Anzug verschwand zu früh.
+
+**Team-Hero:** ein echter Freisteller ist dort **nicht** möglich — die Anzüge
+haben dieselbe Helligkeit wie der Hintergrund, gemessen. Also löst sich die
+KANTE auf statt das Motiv: seitlich und oben fällt Alpha nur dort, wo der Pixel
+dunkel ist (ein aufgehellter Kragen bleibt stehen, der Hintergrund geht — und
+dass ein fast schwarzer Anzugrand mitverschwindet, sieht niemand, er wird gegen
+dasselbe Schwarz getauscht). Unten bedingungsloser Verlauf.
+
+**Führungskräfte:** fünf Freisteller aus den eigenen Studio-Shootings der
+Personen (Walde, Wettengel/Bauer, Alex Jäger, Bryan Van Wey). Rollen wörtlich
+aus den Visitenkarten-Seiten.
+
+⚠️ **Der Anschnitt ist NICHT von Hand gesetzt, sondern aus der gemessenen
+KOPFBREITE abgeleitet** (Rahmenbreite = Kopf × 3,9, Höhe = Breite × 5/4). In
+einer Reihe fällt eine andere Kopfgröße sofort auf, und fünf handgesetzte
+Rechtecke treffen das nie. Erster Versuch nahm die **Schulterbreite** — die
+Aufnahmen sind aber unterschiedlich eng gerahmt, also fielen zwei Rahmen breiter
+aus als ihre Quelle (Alex −87 px, Bryan −310) und wurden stillschweigend
+beschnitten.
+
+⚠️ **Nicht auf die Visitenkarten verlinkt:** die tragen `noindex,follow` und
+stehen nicht im Sitemap. Ob sie öffentlich verlinkt werden, entscheidet der
+Kunde.
+
+**Zwei Fehler, die erst das ANSEHEN gezeigt hat:** die Namen lagen auf den
+Anzügen (negativer Abstand zu groß), und sie standen nicht auf einer Linie
+(`flex-end` richtet die **Kästen** unten aus, und zwei Rollen sind zweizeilig).
+Beides korrigiert und erneut angesehen.
+
+**Rückfälle als JPEG auf Seitenschwarz statt PNG: 1,4 MB → 133 KB.**
+
+## N50 — Kombi-Seiten: Hero-Bild der Leistung statt Stadtumriss (05.09.2026)
+
+**Auftrag:** „Bei den Kombi-Seiten macht es keinen Sinn, den Ort abzubilden,
+sondern dasselbe Hero-Bild wie bei der Dienstleistung."
+
+⚠️ **Ein Partial je LEISTUNG, nicht je Seite** — `partials/kombi-bild-<x>.html`.
+Die vier Kombi-Seiten einer Leistung ziehen dieselbe Datei, ein späterer
+Bildtausch ist damit **eine** Änderung statt vier. Das war die ausdrückliche
+Bedingung.
+
+Die zehn **Stadt**-Seiten behalten den Umriss — dort ist der Ort das Thema.
+Verifiziert: 16 Seiten mit Include, 0 Kartenreste, 10 Stadtseiten unberührt.
+
+⚠️ **Ein Rahmen für alle vier**, obwohl Werkschutz quer (1536×1059) und die
+anderen drei hoch (820×1227) sind: über 16 Seiten wiegt eine gleiche Hero-Form
+schwerer als die Originalproportion. Den Beschnitt trägt `object-position` — je
+Leistung derselbe Wert wie auf der Serviceseite. Bei einer **Quer**quelle im
+4:5-Rahmen wirkt der senkrechte Prozentwert kaum, weil die Breite beschnitten
+wird; deshalb hat Werkschutz einen eigenen Modifikator.
+
+⚠️ **Die Höhendeckelung ist wörtlich die des Umrisses** (`min(36rem, 100svh −
+20rem)`). Nicht Kosmetik: der zweite Term hält den Hero in der ersten
+Bildschirmhöhe, CTA und Trust-Leiste hängen daran.
+
+⚠️ **Ein Kommentar in allen 16 Kopfbereichen behauptete „this page has no
+photograph at all"** und begründete damit den fehlenden Preload. Richtiggestellt.
+Bewusst weiterhin kein Preload: das Bild ist `eager` + `fetchpriority="high"` und
+steht im ausgelieferten HTML; ein Preload auf die WebP-Fassung lädt bei Browsern
+ohne WebP zusätzlich das JPEG.
+
+**Ein Wächter im Umbauskript hat angeschlagen** — die handgebaute Seite
+`brandwache-nuernberg` trug eine zusätzliche Erwähnung der Karte. Es war ein
+Kommentar, kein Markup, aber lieber ein Abbruch als ein stiller Teiltreffer.
+
+**Gemessen bei 1440 und 390, alle 16:** Bild geladen, Rahmen überall 445×576
+bzw. 242×302, CTA und Trust-Leiste im Fold, kein seitliches Scrollen.
+
+## N51 — Optischer Prüfmechanismus nach Änderungen (05.09.2026)
+
+**Anweisung des Kunden:** „bitte fang jetzt an, einen Prüfmechanismus bei
+Änderungen durchzuführen, dass du einmal wirklich drauf schaust nach einer
+Änderung, wie es optisch aussieht auf dem Live-Bildschirm … wir sind locker bei
+der hundertsten Änderungsschleife vom Social Ring. Jedes Mal verkackst du es,
+also selber prüfen und zur Not direkt selbst korrigieren."
+
+Umgesetzt als Werkzeuge, die **messen UND einen Abzug ablegen**:
+`ring-check.mjs`, `uu-check.mjs`, `kombi-check.mjs`, `bogen.mjs`.
+
+**Was diese Runde nur das Hinsehen gefunden hat, keine Messung:**
+
+- die 316 px schwarze Fläche unter dem Social-Ring (die Zahlen waren grün),
+- die Namen auf den Anzügen in der Führungsreihe,
+- die nicht fluchtenden Namen,
+- der Kasten um das Team-Hero (eine Kantenmessung hatte ihn ausdrücklich verneint).
+
+⚠️ **Fallen im Abzugnehmen, beide diese Runde bezahlt:**
+`Page.captureScreenshot` mit `clip` rechnet in **Seiten**koordinaten — mit
+Viewport-Werten kommt ein schwarzes Bild zurück; also Viewport aufnehmen und
+danach zuschneiden. Und **zweimal scrollen mit Wartezeit dazwischen**, weil die
+Reveal-Animationen das Layout verschieben.
+
+## N52 — Cowork-Prompt für den Container aktualisiert (05.09.2026)
+
+`docs/gtm-cowork-prompt.md` neu, zum direkten Übergeben. Enthält den geprüften
+Ist-Zustand (Container lädt, GA4/Ads/Nutzerlisten feuern nach Zustimmung), den
+eingegrenzten Blocker (Meta-Pixel wird initialisiert, sendet aber **0** Anfragen
+an `facebook.com/tr` — es fehlt der `PageView`), den festgenagelten
+`/danke/`-Trigger und die offene Entscheidung zum cookielosen Ping vor der
+Einwilligung.
