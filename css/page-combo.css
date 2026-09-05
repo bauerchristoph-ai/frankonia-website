@@ -735,72 +735,18 @@
    21) sigue siendo la referencia — no re-derivar esos números. */
 
 /* ==========================================================================
-   HERO-BILD STATT STADTUMRISS (Kunde 05.09.2026)
+   HERO-BILD STATT STADTUMRISS — der Rahmen ist WEG (Kunde 05.09.2026, abends)
    --------------------------------------------------------------------------
-   "Bei den Kombi-Seiten macht es eigentlich keinen Sinn, den Ort abzubilden,
-   sondern würde ich tatsächlich statt dem Ort dasselbe Hero-Bild verwenden
-   wie bei der Dienstleistung."
+   Hier stand ein eigener .combo-hero__bild-Rahmen (4:5, eigene Hoehendeckelung,
+   eigener Radius). Der ist geloescht, nicht ueberschrieben.
 
-   Ersetzt .city-hero__map in den 16 Kombi-Seiten. Die zehn STADT-Seiten
-   behalten den Umriss — dort IST der Ort das Thema.
+   Grund: der Kunde will die Kombi-Heros EXAKT so wie die Heros der jeweiligen
+   Dienstleistungsseite — "der Objektschutz-Nürnberg-Hero soll genauso wie der
+   Objektschutz-Hero aussehen". Ein eigener Rahmen ist damit per Definition
+   falsch, egal wie gut er aussieht.
 
-   ⚠️ EIN Rahmen für alle vier Leistungen, obwohl die Quellen unterschiedlich
-   proportioniert sind (Werkschutz 1536x1059 quer, die anderen drei 820x1227
-   hoch). Über 16 Seiten hinweg wiegt eine gleiche Hero-Form schwerer als die
-   Originalproportion je Bild; den Beschnitt trägt object-position, das je
-   Leistung eingestellt ist.
+   Die 16 Seiten tragen jetzt .service-hero--split bzw. --bleed und die Klassen
+   aus page-service.css. Das Bild steht weiterhin in EINEM Partial je Leistung
+   (partials/kombi-bild-<leistung>.html) — nur enthaelt das Partial jetzt das
+   Markup der Serviceseite statt eines eigenen Rahmens.
    ========================================================================== */
-.combo-hero__bild {
-  margin: 0;
-  /* ⚠️ DIESELBE HÖHENDECKELUNG WIE VORHER DER UMRISS (.city-map in
-     page-city.css). Nicht kosmetisch: der zweite Term ist es, der den Hero in
-     die erste Bildschirmhöhe zwingt — CTA und Trust-Leiste hängen daran.
-     Wer ihn ändert, muss den CTA bei 1440x900 nachmessen.
-     Höhe führt, Breite folgt: so ist die Bildhöhe über alle 16 Seiten gleich,
-     egal wie breit die Spalte im jeweiligen Band ausfällt. */
-  height: min(36rem, calc(100svh - 20rem));
-  aspect-ratio: 4 / 5;
-  width: auto;
-  max-width: 100%;
-  margin-inline: auto;
-  align-self: center;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  /* Platzhalterfarbe = Seitengrund, damit vor dem Laden kein helles Rechteck
-     aufblitzt. */
-  background-color: var(--color-bg);
-}
-
-.combo-hero__bild picture {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.combo-hero__bild img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* Die drei hochformatigen Quellen zeigen den Menschen in der oberen Hälfte;
-     bei 50 % schneidet der 4:5-Ausschnitt Köpfe an. Derselbe Wert, den die
-     Serviceseiten für dieselben Dateien benutzen. */
-  object-position: 50% 32%;
-}
-
-/* ⚠️ Werkschutz ist QUER (1536x1059). Im 4:5-Rahmen wird deshalb die BREITE
-   beschnitten, nicht die Höhe — der senkrechte Prozentwert wirkt kaum, der
-   waagerechte trägt alles. 55 % hält die Kraft und das Fahrzeug im Bild; es
-   ist derselbe Wert, den die Werkschutz-Serviceseite für ihr Vollbild setzt. */
-.combo-hero__bild--quer img {
-  object-position: 55% 42%;
-}
-
-@media (max-width: 1023.98px) {
-  /* Wie vorher der Umriss: über den Text, nicht daneben. */
-  .combo-hero__bild {
-    order: -1;
-    height: auto;
-    width: min(20rem, 62vw);
-  }
-}

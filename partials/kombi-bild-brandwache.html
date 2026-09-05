@@ -1,18 +1,14 @@
 <!-- HERO-BILD DER KOMBI-SEITEN — Brandwache
      =========================================================================
-     Kunde 05.09.2026: "Bei den Kombi-Seiten macht es eigentlich keinen Sinn,
-     den Ort abzubilden, sondern würde ich tatsächlich statt dem Ort dasselbe
-     Hero-Bild verwenden wie bei der Dienstleistung."
-
-     ⚠️ EINE Datei je LEISTUNG, nicht je Seite — genau deshalb existiert dieses
-     Partial. Die vier Kombi-Seiten einer Leistung ziehen dasselbe Bild, also
-     ist ein späterer Bildtausch eine Änderung an EINER Stelle statt an vier.
-     Ersetzt den Stadtumriss (.city-hero__map); die zehn STADT-Seiten behalten
-     ihn, dort ist der Ort das Thema.
-
-     Der Rahmen (4:5, Höhe, Radius, Beschnitt) steht in page-combo.css unter
-     .combo-hero__bild — hier steht nur, WELCHES Bild. -->
-<figure class="combo-hero__bild">
+     Kunde 05.09.2026: die Kombi-Seiten sollen vom Hero her exakt so aussehen
+     wie ihre Dienstleistungsseite. Deshalb steht hier woertlich das Markup
+     von /brandwache/ — dieselben Klassen, dasselbe
+     aspect-ratio, dieselbe Bilddatei.
+     ⚠️ EINE Datei je LEISTUNG, nicht je Seite. Die vier Kombi-Seiten einer
+     Leistung ziehen dieses Partial, ein spaeterer Bildtausch ist damit EINE
+     Aenderung statt vier. Das war die ausdrueckliche Bedingung des Kunden.
+-->
+<figure class="service-hero__media" style="aspect-ratio: 820 / 1227">
   <picture>
     <source type="image/webp" srcset="/assets/images/brandwache.webp">
     <img src="/assets/images/brandwache.jpg" width="820" height="1227" alt="FRANKONIA Einsatzleitung im Briefing mit Sicherheitskräften vor einem Industriegebäude" loading="eager" fetchpriority="high">

@@ -321,11 +321,11 @@
          draft's Hero-Aufbau and is added here deliberately: this hero's ticks
          claim qualified, certified personnel and the seals are that claim's
          evidence. Same band the city page and /werkschutz/ carry, unchanged. -->
-    <section class="service-hero city-hero combo-hero" data-hero-reveal>
-      <div class="container service-hero__grid city-hero__grid">
-        <div class="service-hero__content city-hero__content">
-          <p class="city-hero__badge">
-            <svg class="icon city-hero__badge-icon" aria-hidden="true"><use href="#icon-pin"></use></svg>
+    <section class="service-hero service-hero--split combo-hero" data-hero-reveal>
+      <div class="container service-hero__grid">
+        <div class="service-hero__content">
+          <p class="hero-badge">
+            <svg class="icon" aria-hidden="true"><use href="#icon-pin"></use></svg>
             Einsatzgebiet Würzburg — Bewachung, die dem Bau folgt
           </p>
 
@@ -343,13 +343,14 @@
             </a>
           </div>
 
-          <!-- The draft's lines VERBATIM, so a stacked list rather than the
-               homepage hero's row of chips: these are full sentences and need
-               ~1000px in a row at this type size against the ~640px this column
-               has. .city-hero__points turns the shared row into a column and
-               supplies the align-items: flex-start the shared centred rule would
-               otherwise apply horizontally (§10.4). -->
-          <ul class="hero__reassurance service-hero__points city-hero__points">
+          <!-- Die Zeilen des Entwurfs WOERTLICH, also gestapelt statt als Reihe von
+               Chips: das sind ganze Saetze und braeuchten in einer Reihe rund
+               1000px gegen die rund 640px dieser Spalte.
+               HINWEIS 05.09.2026: die ortsspezifische Zusatzklasse ist raus,
+               damit dieser Hero exakt die Klassen der Serviceseite traegt. Die
+               geteilte Regel bricht ohnehin um, weil die Saetze zu lang fuer
+               eine Zeile sind — nachgemessen. -->
+          <ul class="hero__reassurance service-hero__points">
             <li class="service-hero__point">
               <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
               Nacht- und Wochenendbewachung oder Kontrollen zu variierenden Zeiten

@@ -284,23 +284,7 @@
          makes the geo hierarchy legible to a crawler. The breadcrumb sits ABOVE
          the hero (unlike /werkschutz/, whose hero is a full-bleed photograph)
          because this hero has no photo. -->
-    <nav class="breadcrumbs container" aria-label="Breadcrumb">
-      <ol class="breadcrumbs__list">
-        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
-        <li class="breadcrumbs__sep" aria-hidden="true">
-          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
-        </li>
-        <li><a class="breadcrumbs__link" href="/einsatzgebiete/">Einsatzgebiete</a></li>
-        <li class="breadcrumbs__sep" aria-hidden="true">
-          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
-        </li>
-        <li><a class="breadcrumbs__link" href="/sicherheitsdienst-fuerth/">Fürth</a></li>
-        <li class="breadcrumbs__sep" aria-hidden="true">
-          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
-        </li>
-        <li><span class="breadcrumbs__current" aria-current="page">Werkschutz</span></li>
-      </ol>
-    </nav>
+    <!-- Der Breadcrumb steht jetzt IN der Hero-Sektion, siehe dort. -->
 
 
     <!-- ============ 1. HERO ============ -->
@@ -321,11 +305,35 @@
          draft's Hero-Aufbau and is added here deliberately: this hero's ticks
          claim qualified, certified personnel and the seals are that claim's
          evidence. Same band the city page and /werkschutz/ carry, unchanged. -->
-    <section class="service-hero city-hero combo-hero" data-hero-reveal>
-      <div class="container service-hero__grid city-hero__grid">
-        <div class="service-hero__content city-hero__content">
-          <p class="city-hero__badge">
-            <svg class="icon city-hero__badge-icon" aria-hidden="true"><use href="#icon-pin"></use></svg>
+    <section class="service-hero service-hero--bleed combo-hero" data-hero-reveal>
+      <!-- include: kombi-bild-werkschutz -->
+
+      <!-- ACHTUNG: der Breadcrumb liegt IN der Sektion, wie auf /werkschutz/.
+           Stuende er darueber, finge das Foto erst darunter an und ueber dem
+           Bild bliebe ein schwarzer Streifen — im Projekt seit 2026-08-07
+           gemessen und dokumentiert. -->
+      <nav class="breadcrumbs service-hero__crumbs container" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list">
+        <li><a class="breadcrumbs__link" href="/">Startseite</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/einsatzgebiete/">Einsatzgebiete</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><a class="breadcrumbs__link" href="/sicherheitsdienst-fuerth/">Fürth</a></li>
+        <li class="breadcrumbs__sep" aria-hidden="true">
+          <svg class="breadcrumbs__sep-icon" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+        </li>
+        <li><span class="breadcrumbs__current" aria-current="page">Werkschutz</span></li>
+      </ol>
+    </nav>
+
+      <div class="container service-hero__grid">
+        <div class="service-hero__content">
+          <p class="hero-badge">
+            <svg class="icon" aria-hidden="true"><use href="#icon-pin"></use></svg>
             Einsatzgebiet Fürth — Werkschutz für den Mittelstand
           </p>
 
@@ -343,13 +351,14 @@
             </a>
           </div>
 
-          <!-- The draft's lines VERBATIM, so a stacked list rather than the
-               homepage hero's row of chips: these are full sentences and need
-               ~1000px in a row at this type size against the ~640px this column
-               has. .city-hero__points turns the shared row into a column and
-               supplies the align-items: flex-start the shared centred rule would
-               otherwise apply horizontally (§10.4). -->
-          <ul class="hero__reassurance service-hero__points city-hero__points">
+          <!-- Die Zeilen des Entwurfs WOERTLICH, also gestapelt statt als Reihe von
+               Chips: das sind ganze Saetze und braeuchten in einer Reihe rund
+               1000px gegen die rund 640px dieser Spalte.
+               HINWEIS 05.09.2026: die ortsspezifische Zusatzklasse ist raus,
+               damit dieser Hero exakt die Klassen der Serviceseite traegt. Die
+               geteilte Regel bricht ohnehin um, weil die Saetze zu lang fuer
+               eine Zeile sind — nachgemessen. -->
+          <ul class="hero__reassurance service-hero__points">
             <li class="service-hero__point">
               <svg class="icon service-hero__point-icon" aria-hidden="true"><use href="#icon-check"></use></svg>
               Pforte und Torkontrolle, die den Betrieb nicht aufhält
@@ -412,8 +421,7 @@
              path pasted in without it draws nothing at all.
              ⚠️ The guides are PERCENTAGES because every city's viewBox height
              differs; this one is 1196. -->
-        <!-- include: kombi-bild-werkschutz -->
-      </div>
+              </div>
     </section>
     <div class="pixel-seam" data-pixel-seam aria-hidden="true"></div>
     <!-- ============ 2. DER FÜRTHER KONTEXT (EIGENCONTENT) ============ -->
