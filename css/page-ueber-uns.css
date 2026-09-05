@@ -976,3 +976,101 @@
   margin-top: var(--space-6);
   color: var(--color-text-muted);
 }
+
+/* ==========================================================================
+   FÜHRUNGSMANNSCHAFT — die Reihe der fünf (Kunde 05.09.2026)
+   --------------------------------------------------------------------------
+   Fünf Freisteller auf dem Seitenschwarz, jeder unten weglaufend. Es gibt
+   hier bewusst KEINE Karte, keinen Rahmen und keinen Schatten: die Fotos sind
+   freigestellt, also wäre jede Kante genau der Kasten, den der Kunde an
+   dieser Seite bemängelt hat.
+
+   ⚠️ FLEX MIT WRAP, kein Grid — und das ist der Grund: fünf Elemente gehen in
+   keiner Spaltenzahl auf. Drei Spalten lassen zwei Waisen, zwei lassen eine.
+   Ein umbrechendes, zentriertes Flex-Layout stellt die Reste von selbst
+   mittig, ohne eine Sonderregel für das letzte Element.
+   ========================================================================== */
+.uu-team {
+  margin-top: var(--space-9);
+}
+
+/* Kopf zentriert über linksbündig gesetzten Namen — dieselbe Aufteilung, die
+   der Rest der Seite schon benutzt. */
+.uu-team__title {
+  text-align: center;
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  letter-spacing: normal;
+  margin: 0 0 var(--space-7);
+  color: var(--color-text);
+}
+
+.uu-team__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  /* ⚠️ flex-START, nicht flex-end. Mit flex-end richtet Flex die KAESTEN an
+     ihrer Unterkante aus — und weil zwei Rollen zweizeilig sind (Steffen,
+     Christoph), rutschten deren Namen um eine Zeile nach oben und die Reihe
+     stand nicht mehr auf einer Linie. Am Anfang ausgerichtet und mit gleich
+     hohen Fotos stehen alle Namen automatisch auf derselben Hoehe. */
+  align-items: flex-start;
+  gap: var(--space-6) var(--space-5);
+}
+
+.uu-team__item {
+  flex: 0 1 clamp(8.5rem, 17vw, 13rem);
+  max-width: 13rem;
+  text-align: center;
+}
+
+/* aspect-ratio hält den Platz, bevor das Bild da ist — sonst springt die
+   ganze Reihe beim Nachladen. 4:5 ist das Maß der Exporte (560x700). */
+.uu-team__foto {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: contain;
+  /* ⚠️ KEIN background-color. Das Bild ist freigestellt; eine Füllung wäre
+     wieder ein sichtbares Rechteck. */
+}
+
+/* ⚠️ KEIN negativer Abstand. Erster Versuch zog den Namen um 1,25rem hoch,
+   weil der Freisteller unten ausläuft und darunter Schwarz steht — im Bild
+   lag der Name dann aber AUF dem Anzug. Der Verlauf beginnt bei 70 % der
+   Bildhoehe, also sind die letzten 30 % noch sichtbarer Koerper, nicht Luft. */
+.uu-team__name {
+  margin: var(--space-2) 0 0;
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.uu-team__role {
+  margin: 0.125rem 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  /* Deutsche Komposita ("Geschäftsführender") brächen unter dem hyphens:auto
+     von base.css mitten im Wort. Das sind Rollenbezeichnungen, keine Prosa. */
+  -webkit-hyphens: none;
+  hyphens: none;
+  text-wrap: balance;
+}
+
+@media (max-width: 639.98px) {
+  .uu-team {
+    margin-top: var(--space-8);
+  }
+  .uu-team__list {
+    gap: var(--space-5) var(--space-4);
+  }
+  /* Zwei je Zeile auf dem Telefon: bei fünf nebeneinander wäre ein Kopf
+     ~55px breit und niemand zu erkennen. */
+  .uu-team__item {
+    flex: 0 1 calc(50% - var(--space-4));
+  }
+}

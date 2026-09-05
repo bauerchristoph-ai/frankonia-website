@@ -308,14 +308,20 @@
              got its own photo on 2026-08-14, so the two are now one treatment).
              Black backdrop, so the frame carries no radius/border/tint — see
              .uu-lead__photo.
-             ⚠️ CORRECTION 2026-08-14: this comment used to claim the backdrop was
-             "0,0,0 … matching --color-bg exactly". The first half was right and the
-             conclusion was NOT — --color-bg is #010101, i.e. 1, so the photo sat one
-             level BELOW the page it was supposed to match, and the bottom fade
-             below ramped to a colour the photo never reached. Re-exported with the
-             backdrop normalised to #010101 literally
-             (docs/design-sources/portrait-key-backdrop.py, same pass as Jäger's).
-             Measured across the seam afterwards: page 1, photo 1, delta 0.00.
+             ⚠️ 05.09.2026 — NEUES FOTO UND ECHTE TRANSPARENZ. Der Kunde sah
+             einen Kasten um dieses Bild ("da gibt es keinen Diskussionsbedarf"),
+             und er hatte recht: die alte Fassung hatte den Hintergrund nur auf
+             #010101 NORMALISIERT, also ein deckendes Rechteck in Seitenfarbe.
+             Das haelt genau so lange, wie die Sektion schwarz bleibt.
+             Jetzt ein echter Freisteller aus der Studioaufnahme auf WEISSEM Grund
+             (Werkschutz-Shooting 2023, ganze Figur) — Randkonnektivitaet, damit
+             das helle Hemd nicht mitgekeyt wird, weiche Kante nur im 2px-Saum,
+             und die Matting-Gleichung gegen den Weisssaum. Gegengeprueft auf
+             MAGENTA, weil Loecher im dunklen Haar auf Schwarz unsichtbar waeren.
+             ⚠️ Der Verlauf nach unten wird NICHT ins Bild gebrannt — den macht
+             .uu-lead__photo::after in page-service.css, geteilt mit Jaegers
+             Portrait. Zwei Rampen fuer dieselbe Aufgabe laufen auseinander; ein
+             erster Versuch hatte beide und der Anzug verschwand zu frueh.
              Enlarged same day (22rem → 30rem cap); re-exported at 480/960w so
              a 2x screen at the new cap still gets a sharp source. -->
         <div class="uu-lead__photo" data-reveal>
@@ -325,6 +331,71 @@
           </picture>
         </div>
       </div>
+
+        <!-- ============ Führungsmannschaft (Kunde 05.09.2026) ============
+             "darunter alle Führungskräfte … Christoph, Alex, Brian, Daniel,
+             also alle die, die eine gültige Visitenkarte haben".
+
+             ⚠️ Bewusst INNERHALB von .uu-lead und nicht als eigene Sektion:
+             zwischen Führung und Versprechen liegt ein GLOW-SEAM, der als
+             Hintergrundverlauf auf den beiden zugewandten Kanten sitzt
+             (siehe page-ueber-uns.css). Eine Sektion dazwischen würde dieses
+             Paar auseinanderreißen. Inhaltlich passt es ohnehin hierher:
+             oben steht, wer FRANKONIA führt, hier steht der Rest der Führung.
+
+             ⚠️ Die fünf sind NICHT auf ihre Visitenkarten-Seiten verlinkt.
+             Die tragen robots="noindex,follow" und stehen nicht im Sitemap —
+             das sind QR-Karten, keine Unterseiten. Ob sie öffentlich verlinkt
+             werden sollen, ist eine Entscheidung des Kunden, keine Bautechnik.
+
+             Rollen wörtlich aus den Visitenkarten-Seiten übernommen.
+             ⚠️ Die Überschrift ist für diesen Bau geschrieben, sie steht in
+             keinem Webtext — bitte von Chris bestätigen lassen. -->
+        <div class="uu-team">
+          <h3 class="uu-team__title">Unsere Führungskräfte</h3>
+          <ul class="uu-team__list" data-item-reveal="li">
+            <li class="uu-team__item">
+              <picture>
+                <source type="image/webp" srcset="/assets/images/uu-team-steffen-walde-280.webp 280w, /assets/images/uu-team-steffen-walde-560.webp 560w" sizes="(min-width: 1100px) 13rem, (min-width: 640px) 22vw, 40vw">
+                <img class="uu-team__foto" src="/assets/images/uu-team-steffen-walde-560.jpg" width="560" height="700" alt="Steffen Walde, Geschäftsführender Gesellschafter" loading="lazy" decoding="async">
+              </picture>
+              <p class="uu-team__name">Steffen Walde</p>
+              <p class="uu-team__role">Geschäftsführender Gesellschafter</p>
+            </li>
+            <li class="uu-team__item">
+              <picture>
+                <source type="image/webp" srcset="/assets/images/uu-team-alexander-jaeger-280.webp 280w, /assets/images/uu-team-alexander-jaeger-560.webp 560w" sizes="(min-width: 1100px) 13rem, (min-width: 640px) 22vw, 40vw">
+                <img class="uu-team__foto" src="/assets/images/uu-team-alexander-jaeger-560.jpg" width="560" height="700" alt="Alexander Jäger, Vertriebsleiter" loading="lazy" decoding="async">
+              </picture>
+              <p class="uu-team__name">Alexander Jäger</p>
+              <p class="uu-team__role">Vertriebsleiter</p>
+            </li>
+            <li class="uu-team__item">
+              <picture>
+                <source type="image/webp" srcset="/assets/images/uu-team-daniel-wettengel-280.webp 280w, /assets/images/uu-team-daniel-wettengel-560.webp 560w" sizes="(min-width: 1100px) 13rem, (min-width: 640px) 22vw, 40vw">
+                <img class="uu-team__foto" src="/assets/images/uu-team-daniel-wettengel-560.jpg" width="560" height="700" alt="Daniel Wettengel, Einsatzleiter" loading="lazy" decoding="async">
+              </picture>
+              <p class="uu-team__name">Daniel Wettengel</p>
+              <p class="uu-team__role">Einsatzleiter</p>
+            </li>
+            <li class="uu-team__item">
+              <picture>
+                <source type="image/webp" srcset="/assets/images/uu-team-bryan-van-wey-280.webp 280w, /assets/images/uu-team-bryan-van-wey-560.webp 560w" sizes="(min-width: 1100px) 13rem, (min-width: 640px) 22vw, 40vw">
+                <img class="uu-team__foto" src="/assets/images/uu-team-bryan-van-wey-560.jpg" width="560" height="700" alt="Bryan Van Wey, Einsatzleiter" loading="lazy" decoding="async">
+              </picture>
+              <p class="uu-team__name">Bryan Van Wey</p>
+              <p class="uu-team__role">Einsatzleiter</p>
+            </li>
+            <li class="uu-team__item">
+              <picture>
+                <source type="image/webp" srcset="/assets/images/uu-team-christoph-bauer-280.webp 280w, /assets/images/uu-team-christoph-bauer-560.webp 560w" sizes="(min-width: 1100px) 13rem, (min-width: 640px) 22vw, 40vw">
+                <img class="uu-team__foto" src="/assets/images/uu-team-christoph-bauer-560.jpg" width="560" height="700" alt="Christoph Bauer, Marketing- und Projektmanager" loading="lazy" decoding="async">
+              </picture>
+              <p class="uu-team__name">Christoph Bauer</p>
+              <p class="uu-team__role">Marketing- und Projektmanager</p>
+            </li>
+          </ul>
+        </div>
     </section>
 
     <!-- Führung (black) -> Versprechen (black): a SOFT GLOW SEAM, and there is no
