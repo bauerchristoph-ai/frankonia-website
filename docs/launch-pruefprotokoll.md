@@ -4480,3 +4480,26 @@ eingegrenzten Blocker (Meta-Pixel wird initialisiert, sendet aber **0** Anfragen
 an `facebook.com/tr` — es fehlt der `PageView`), den festgenagelten
 `/danke/`-Trigger und die offene Entscheidung zum cookielosen Ping vor der
 Einwilligung.
+
+## N53 — Namenskollision `.uu-team` (05.09.2026)
+
+Die neue Führungsreihe hieß zuerst `.uu-team`. **Diese Klasse gab es auf
+`/ueber-uns/` bereits** — der Abschnitt „Menschen, die bleiben" ist
+`section.section--light.uu-team`. Meine Regel `.uu-team { margin-top: --space-9 }`
+legte dem **96 px** zusätzlichen schwarzen Rand auf, zusätzlich zu seinem
+`padding-top` von 296.
+
+Gemessen und bestätigt: `marginTop: 96px` auf dem alten Abschnitt, nach dem
+Umbenennen auf `.uu-fuehrung` wieder `0px`. Der neue Block rendert unverändert.
+
+⚠️ **Gefunden beim Prüfen des AUSGELIEFERTEN CSS, nicht beim Schreiben** — im
+gebündelten Stylesheet standen plötzlich zwei `.uu-team`-Blöcke untereinander.
+Genau dafür findet die Prüfung am ausgelieferten Zustand statt und nicht an der
+Quelle: im Editor sieht ein neuer Blockname harmlos aus.
+
+**Regel für den nächsten neuen Block:** vor dem Benennen grepen, ob es die Klasse
+auf derselben Seite schon gibt. Ein neuer Name kostet nichts, eine Kollision
+kostet eine Runde.
+
+Die Bilddateien behalten ihre Namen (`uu-team-<person>-560.webp`) — das sind
+Dateinamen, keine Klassen.
