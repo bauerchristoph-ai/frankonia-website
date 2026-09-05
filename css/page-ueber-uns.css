@@ -990,13 +990,13 @@
    Ein umbrechendes, zentriertes Flex-Layout stellt die Reste von selbst
    mittig, ohne eine Sonderregel für das letzte Element.
    ========================================================================== */
-.uu-team {
+.uu-fuehrung {
   margin-top: var(--space-9);
 }
 
 /* Kopf zentriert über linksbündig gesetzten Namen — dieselbe Aufteilung, die
    der Rest der Seite schon benutzt. */
-.uu-team__title {
+.uu-fuehrung__title {
   text-align: center;
   font-size: var(--font-size-lg);
   font-weight: 500;
@@ -1005,7 +1005,7 @@
   color: var(--color-text);
 }
 
-.uu-team__list {
+.uu-fuehrung__list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -1021,7 +1021,7 @@
   gap: var(--space-6) var(--space-5);
 }
 
-.uu-team__item {
+.uu-fuehrung__item {
   flex: 0 1 clamp(8.5rem, 17vw, 13rem);
   max-width: 13rem;
   text-align: center;
@@ -1029,7 +1029,7 @@
 
 /* aspect-ratio hält den Platz, bevor das Bild da ist — sonst springt die
    ganze Reihe beim Nachladen. 4:5 ist das Maß der Exporte (560x700). */
-.uu-team__foto {
+.uu-fuehrung__foto {
   display: block;
   width: 100%;
   height: auto;
@@ -1043,14 +1043,14 @@
    weil der Freisteller unten ausläuft und darunter Schwarz steht — im Bild
    lag der Name dann aber AUF dem Anzug. Der Verlauf beginnt bei 70 % der
    Bildhoehe, also sind die letzten 30 % noch sichtbarer Koerper, nicht Luft. */
-.uu-team__name {
+.uu-fuehrung__name {
   margin: var(--space-2) 0 0;
   font-size: var(--font-size-base);
   font-weight: 500;
   color: var(--color-text);
 }
 
-.uu-team__role {
+.uu-fuehrung__role {
   margin: 0.125rem 0 0;
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
@@ -1062,15 +1062,15 @@
 }
 
 @media (max-width: 639.98px) {
-  .uu-team {
+  .uu-fuehrung {
     margin-top: var(--space-8);
   }
-  .uu-team__list {
+  .uu-fuehrung__list {
     gap: var(--space-5) var(--space-4);
   }
   /* Zwei je Zeile auf dem Telefon: bei fünf nebeneinander wäre ein Kopf
      ~55px breit und niemand zu erkennen. */
-  .uu-team__item {
+  .uu-fuehrung__item {
     flex: 0 1 calc(50% - var(--space-4));
   }
 }
