@@ -1021,10 +1021,42 @@
   gap: var(--space-6) var(--space-5);
 }
 
+/* ⚠️ 05.09.2026 DEUTLICH GROESSER (Kunde: "sehr klein aufgeführt") und nur noch
+   VIER statt fuenf — Steffen steht direkt darueber gross. Vier passen bei 17rem
+   samt Abstaenden in den Container (4 x 272 + 3 x 24 = 1160 gegen ~1300). */
 .uu-fuehrung__item {
-  flex: 0 1 clamp(8.5rem, 17vw, 13rem);
-  max-width: 13rem;
+  flex: 0 1 clamp(10rem, 21vw, 17rem);
+  max-width: 17rem;
   text-align: center;
+}
+
+/* Die ganze Kachel ist der Link, nicht nur der Name: ein 272 px breites Foto
+   mit Namen darunter ist ein Ziel, kein Foto neben einem Ziel.
+   ⚠️ display: block, sonst bleibt der Anker inline und das Foto bekommt die
+   Grundlinienluecke eines Inline-Elements darunter. */
+.uu-fuehrung__link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: transform var(--duration-base) var(--easing-standard);
+}
+
+/* ⚠️ transform, nicht translate: das Elternelement <li> traegt
+   data-item-reveal, und GSAP schreibt dort translate/rotate/scale inline.
+   Der Anker ist ein KIND davon, also kollidiert nichts — genau der Grund,
+   warum data-item-reveal auf dem <li> steht und nicht auf der Kachel. */
+.uu-fuehrung__link:hover,
+.uu-fuehrung__link:focus-visible {
+  transform: translateY(-4px);
+}
+.uu-fuehrung__link:hover .uu-fuehrung__name,
+.uu-fuehrung__link:focus-visible .uu-fuehrung__name {
+  color: var(--color-accent);
+}
+.uu-fuehrung__link:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: var(--space-2);
 }
 
 /* aspect-ratio hält den Platz, bevor das Bild da ist — sonst springt die
@@ -1044,6 +1076,7 @@
    lag der Name dann aber AUF dem Anzug. Der Verlauf beginnt bei 70 % der
    Bildhoehe, also sind die letzten 30 % noch sichtbarer Koerper, nicht Luft. */
 .uu-fuehrung__name {
+  display: block;
   margin: var(--space-2) 0 0;
   font-size: var(--font-size-base);
   font-weight: 500;
@@ -1051,6 +1084,7 @@
 }
 
 .uu-fuehrung__role {
+  display: block;
   margin: 0.125rem 0 0;
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
@@ -1068,9 +1102,30 @@
   .uu-fuehrung__list {
     gap: var(--space-5) var(--space-4);
   }
-  /* Zwei je Zeile auf dem Telefon: bei fünf nebeneinander wäre ein Kopf
-     ~55px breit und niemand zu erkennen. */
+  /* Zwei je Zeile auf dem Telefon: nebeneinander waere ein Kopf ~55px breit
+     und niemand zu erkennen. Bei vier Personen geht das glatt auf, ohne
+     einzelne Waise in der letzten Zeile. */
   .uu-fuehrung__item {
     flex: 0 1 calc(50% - var(--space-4));
+    max-width: none;
   }
+}
+
+/* Steffens Name im Fließtext führt auf seine Visitenkarte (Kunde 05.09.2026:
+   "genauso wie bei Steffen kann man dort hin verlinken").
+   ⚠️ Der WORTLAUT ist unangetastet — es kam nur ein Anker um die zwei Wörter.
+   Kein Unterstrich im Ruhezustand: der Absatz ist Fließtext, und eine
+   unterstrichene Zeile mitten im ersten Satz zieht mehr Aufmerksamkeit als die
+   Überschrift darüber. Beim Überfahren und beim Tabben ist er eindeutig. */
+.uu-lead__person {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-border-strong);
+  transition: color var(--duration-base) var(--easing-standard),
+    border-color var(--duration-base) var(--easing-standard);
+}
+.uu-lead__person:hover,
+.uu-lead__person:focus-visible {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
 }
