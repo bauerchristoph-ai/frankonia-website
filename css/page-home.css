@@ -3421,7 +3421,13 @@ main h2 {
    sits at this section's top — covered zone lands in empty space, never over
    real content, JS or not. Matches the band height (200px / 120px mobile —
    see .pixel-seam__band; keep in sync). */
+/* ⚠️ Die Nachbarkarten des Rings duerfen ueber den Bildrand haengen (Kundenwunsch
+   05.09.2026). Damit das keinen seitlichen Seitenscroll erzeugt, clippt die
+   SEKTION. Bewusst "clip" und nicht "hidden": hidden macht daraus einen
+   Scroll-Container, und ein Scroll-Container um eine preserve-3d-Buehne legt die
+   Tiefe flach. */
 .social {
+  overflow-x: clip;
   /* Reduced top padding (client 2026-07-24: "title a bit higher") — was
      space-9 + 200px, which pushed the whole section down. */
   padding-top: calc(var(--space-9) + 110px);
@@ -3848,16 +3854,26 @@ main h2 {
    kleiner statt sichtbar hinten. */
 @media (max-width: 1023.98px) {
   .social__grid.is-carousel {
-    --social-card-w: 13rem;
+    --social-card-w: min(22rem, 62vw);
     --social-radius: 210;
     --social-step: 50;
     --social-drag: 190;
     perspective: 1000px;
   }}
 
+/* ⚠️ 05.09.2026, Kunde: "das Hauptvideo sollte innerhalb des Rahmens
+   bleiben, maximal 90 Prozent des Bildschirms, aber die anderen duerfen zur
+   Seite raushaengen. Du musst das nicht zusammenquetschen."
+   Damit faellt die Rechnung von gestern weg, nach der ALLES in die halbe
+   Spalte passen musste — sie hat die vordere Karte auf 45 % des Bildschirms
+   gedrueckt. Jetzt bestimmt die vordere Karte die Groesse und die Nachbarn
+   duerfen ueber den Rand.
+   ⚠️ Dann MUSS etwas clippen, sonst scrollt die Seite seitlich. Das macht die
+   Sektion, nicht das Raster: ein overflow auf dem Raster wuerde die
+   3D-Darstellung flachlegen. */
 @media (max-width: 639.98px) {
   .social__grid.is-carousel {
-    --social-card-w: 11rem;
+    --social-card-w: min(20rem, 84vw);
     --social-radius: 150;
     --social-step: 50;
     /* Kuerzerer Weg je Karte: ein Daumen wischt auf 390px keine 260px. */

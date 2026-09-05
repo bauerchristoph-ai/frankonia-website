@@ -55,6 +55,33 @@ Eine dritte Möglichkeit gibt es in GTM: den Google-Tag so einstellen, dass er
 `denied`). Dann lädt der Container früh, sendet aber erst nach der Zustimmung.
 Das ist vermutlich die Fassung, die du willst — sie behält beides.
 
+## ⚠️ Der Meta-Pixel feuert kein Ereignis — genau eingegrenzt
+
+Der Kunde meldet über den Meta Pixel Helper, dass nichts feuert. **Stimmt**, und
+zwar genau in dieser Form (gemessen am 05.09.2026 nach erteilter Einwilligung):
+
+| Prüfung | Ergebnis |
+|---|---|
+| `connect.facebook.net/en_US/fbevents.js` | geladen |
+| `signals/config/25932606063047409` | geladen — die Pixel-ID ist also registriert |
+| `window.fbq` | vorhanden, Version 2.9.393 |
+| `fbq.getState().pixels` | `["25932606063047409"]` — `init` ist gelaufen |
+| **Aufrufe an `facebook.com/tr`** | **0** ← das sucht der Pixel Helper |
+| `fbq.queue` | 0 — es wartet also auch nichts |
+
+**Der Pixel wird initialisiert, aber es wird kein Ereignis getrackt.** Das ist
+kein Ladeproblem und keine Sache der Website — es fehlt der `PageView`.
+
+**Aufgabe:** im Container prüfen, ob es neben dem Init-Tag ein Tag gibt, das
+`fbq("track", "PageView")` auslöst. Die vier Tags mit dem Ereignisnamen
+`standard` sind die Kandidaten. Entweder hat keines davon einen Trigger, der bei
+jedem Seitenaufruf greift, oder das Init-Tag ist so eingestellt, dass es den
+automatischen PageView unterdrückt.
+
+**Gegenprobe nach der Änderung:** nach Zustimmung muss eine Anfrage an
+`https://www.facebook.com/tr/?id=25932606063047409&ev=PageView` rausgehen. Erst
+dann zeigt der Pixel Helper etwas an.
+
 ## Was in GTM noch zu tun ist
 
 1. **Conversion-ID setzen.** Die Ads-Aufrufe gehen aktuell an

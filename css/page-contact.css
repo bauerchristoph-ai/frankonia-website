@@ -1296,6 +1296,17 @@
 }
 
 .contact-location__map-wrap {
+  /* ⚠️ 05.09.2026 (Kunde: "die Map liegt ueber dem Mobile-Menue"). Leaflet
+     vergibt intern z-index bis 1000 — Bedienelemente 1000, Panes 400 bis 800.
+     Die Skala dieses Projekts endet bei --z-toast: 400, der Header liegt auf
+     --z-sticky: 100. Ohne eigenen Stapelkontext gewinnt also IMMER die Karte,
+     egal wie hoch man den Header setzt.
+     isolation: isolate sperrt Leaflets Zahlen in diesen Kasten. Von aussen
+     zaehlt dann nur noch der Kasten selbst, und der liegt unter dem Header.
+     ⚠️ NICHT den Header hochsetzen — beim naechsten Fremdskript mit einer
+     groesseren Zahl faengt dasselbe wieder an. */
+  isolation: isolate;
+
   position: relative;
   height: 360px;
   border: 1px solid rgb(59 73 86 / 0.12);
