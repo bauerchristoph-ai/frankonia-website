@@ -3772,10 +3772,10 @@ main h2 {
    sitzt bei radius x sin(step) seitlich, und seine Karte zeigt nur noch
    cos(step) ihrer Breite. Der Platzbedarf nach aussen ist damit
       radius x sin(step) + (breite / 2) x cos(step)
-   und der muss in die halbe Spalte passen. Bei 390px sind das 183px:
-   150 x sin(50) + 88 x cos(50) = 115 + 57 = 172. Passt mit 11px Luft.
-   ⚠️ Wer eine der vier Zahlen aendert, muss diese Summe neu rechnen — sonst
-   ragt der Nachbar aus dem Bild. */
+   ⚠️ VERALTET, 05.09.2026: hier stand die Rechnung, nach der ALLES in die
+   halbe Spalte passen musste. Die ist weg — der Kunde will die vordere Karte
+   gross, die Nachbarn duerfen ueber den Rand. Die geltende Bedingung steht
+   weiter unten bei den Maszen je Stufe. */
   .social__grid.is-carousel {
     /* The row becomes a stage: items are absolutely positioned on the ring, so
        flex has nothing left to lay out. */
@@ -3786,7 +3786,14 @@ main h2 {
        plus the caption row. Because the ring is pulled back by its own radius
        (see the script), the front card renders at exactly 1:1 scale, so this
        number is stable and does not shift when the radius is tuned. */
-    min-height: calc(var(--social-card-w) * 16 / 9 + 3rem);
+    /* ⚠️ EINE Zahl fuer Buehne und Karte. Vorher rechneten beide getrennt,
+       und weil die Karte anderswo gedeckelt war, reservierte die Buehne bis zu
+       316px zu viel — sichtbar als schwarzes Loch unter dem Ring.
+       Der svh-Term deckelt hohe Karten auf schmalen Geraeten: bei 768 waere
+       9:16 sonst 682px. Auf dem Desktop greift er nicht (484 < 558).
+       2,5rem = Abstand (12px) + Beschriftung (~26px). */
+    --social-card-h: min(calc(var(--social-card-w) * 16 / 9), 62svh);
+    min-height: calc(var(--social-card-h) + 2.5rem);
     /* A long perspective keeps the receding cards from distorting; a short one
        fisheyes them. */
     perspective: 1400px;
@@ -3841,6 +3848,10 @@ main h2 {
     transition: none;
   }
 
+  .social__grid.is-carousel .social__placeholder {
+    max-height: var(--social-card-h);
+  }
+
   /* Wider ring where there is room for it. */
   @media (min-width: 1200px) {
     .social__grid.is-carousel {
@@ -3852,13 +3863,22 @@ main h2 {
    engeren Ringe. Perspektive kuerzer, weil auf einem kleinen Ring eine lange
    Perspektive die Tiefe verschluckt — bei 1400px waere der Nachbar nur 3 %
    kleiner statt sichtbar hinten. */
+/* ⚠️ 05.09.2026, ZWEITE KORREKTUR. Vorher stiessen die Nachbarkarten durch
+   die vordere hindurch — auf dem Telefon um 149 px, auf dem Tablet um 231.
+   Die Bedingung, die ich nie geprueft hatte, ist rechenbar:
+      k · (R · sin S − (w/2) · cos S)  >  w/2      mit k = P / (P + R(1−cos S))
+   Links steht die innere Kante der Nachbarkarte nach Perspektive, rechts der
+   Rand der vorderen. Praktisch heisst das R ≈ 1,3 × Kartenbreite.
+   ⚠️ Deshalb ist die Breite hier FEST in rem und nicht in vw: mit vw waechst w
+   mit dem Bildschirm, R aber nicht (das Skript liest eine blanke Zahl), und die
+   Bedingung kippt lautlos. Wer w aendert, muss R mitziehen. */
 @media (max-width: 1023.98px) {
   .social__grid.is-carousel {
-    --social-card-w: min(22rem, 62vw);
-    --social-radius: 210;
+    --social-card-w: 24rem;
+    --social-radius: 500;
     --social-step: 50;
     --social-drag: 190;
-    perspective: 1000px;
+    perspective: 1100px;
   }}
 
 /* ⚠️ 05.09.2026, Kunde: "das Hauptvideo sollte innerhalb des Rahmens
@@ -3873,8 +3893,10 @@ main h2 {
    3D-Darstellung flachlegen. */
 @media (max-width: 639.98px) {
   .social__grid.is-carousel {
-    --social-card-w: min(20rem, 84vw);
-    --social-radius: 150;
+    /* 17,5rem = 280 px: bei 320 sind das 88 % des Bildschirms, bei 390
+       noch 72 %. Radius 360 haelt 20 px Luft zur Nachbarkarte. */
+    --social-card-w: 17.5rem;
+    --social-radius: 360;
     --social-step: 50;
     /* Kuerzerer Weg je Karte: ein Daumen wischt auf 390px keine 260px. */
     --social-drag: 150;
@@ -3996,7 +4018,12 @@ main h2 {
      hohen Ausschnitt statt eines Vollformats — object-fit: cover ist schon
      gesetzt, es aendert sich also nur der Beschnitt, nichts wird verzerrt.
      42svh x 3 plus Beschriftungen bleibt unter zwei Bildschirmen. */
-  .social__placeholder {
+  /* ⚠️ NUR fuer die gestapelte Liste. Auf dem Ring ist immer nur EINE Karte
+     zu sehen, dort waere der Deckel sinnlos — und er hat dort echten Schaden
+     angerichtet: die Buehnenhoehe unten rechnete mit dem ungekappten 9:16,
+     also klaffte auf dem Tablet 316px schwarze Flaeche unter dem Ring.
+     Der Ring bekommt seine Hoehe aus --social-card-h. */
+  .social__grid:not(.is-carousel) .social__placeholder {
     max-height: 42svh;
   }
 }
