@@ -1,0 +1,20 @@
+<!-- HERO-BILD DER KOMBI-SEITEN — Objektschutz
+     =========================================================================
+     Kunde 05.09.2026: "Bei den Kombi-Seiten macht es eigentlich keinen Sinn,
+     den Ort abzubilden, sondern würde ich tatsächlich statt dem Ort dasselbe
+     Hero-Bild verwenden wie bei der Dienstleistung."
+
+     ⚠️ EINE Datei je LEISTUNG, nicht je Seite — genau deshalb existiert dieses
+     Partial. Die vier Kombi-Seiten einer Leistung ziehen dasselbe Bild, also
+     ist ein späterer Bildtausch eine Änderung an EINER Stelle statt an vier.
+     Ersetzt den Stadtumriss (.city-hero__map); die zehn STADT-Seiten behalten
+     ihn, dort ist der Ort das Thema.
+
+     Der Rahmen (4:5, Höhe, Radius, Beschnitt) steht in page-combo.css unter
+     .combo-hero__bild — hier steht nur, WELCHES Bild. -->
+<figure class="combo-hero__bild">
+  <picture>
+    <source type="image/webp" srcset="/assets/images/objektschutz.webp">
+    <img src="/assets/images/objektschutz.jpg" width="820" height="1227" alt="Sicherheitsmitarbeiter von FRANKONIA bei einem Kontrollgang mit Taschenlampe an der Außenseite eines Bürogebäudes in der Dämmerung" loading="eager" fetchpriority="high">
+  </picture>
+</figure>
