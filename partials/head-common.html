@@ -98,8 +98,20 @@
      Die Container-ID steckt bereits im Snippet, deshalb liest dieser Loader
      GTM_CONTAINER_ID nicht aus; die Variable steht in .env.example nur als
      Dokumentation. -->
+<!-- ⚠️ 05.09.2026, FREIGEGEBEN VOM KUNDEN: data-cookieconsent="ignore".
+     Damit laedt der CONTAINER selbst schon vor der Einwilligung, und gesperrt
+     wird allein ueber Consent Mode (Block 2 oben, alle sechs Signale auf
+     "denied"). So empfehlen es Google und Cookiebot, und nur so sieht der Tag
+     Assistant den Container ueberhaupt.
+     ⚠️ DAS SETZT KEIN COOKIE UND SENDET KEINE MESSDATEN. Der Container ist eine
+     Ablaufsteuerung; was gemessen wird, entscheiden die Tags darin, und die
+     haengen an Consent Mode. Nach dem Deploy gehoert genau das geprueft: VOR
+     der Zustimmung darf keine Anfrage an einen Messhost rausgehen.
+     Das Attribut steht ZWEIMAL: am Skript-Tag, damit Cookiebot den Block nicht
+     ersetzt, und am erzeugten Element, weil die automatische Blockade auch das
+     dynamische Einfuegen abfaengt. Eines allein reicht nicht. -->
 <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;j.src="https://d.frankonia-sicherheit.de/7ll8fjctyrvc.js?"+i;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','28l=ChJPPiAuRyg0OjU0MikkQBVLQFdFRQ4IXhAAGBoIBQgKF18KHQACAxEeFxAATQ4D');</script>
+<script data-cookieconsent="ignore">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;j.setAttribute('data-cookieconsent','ignore');j.src="https://d.frankonia-sicherheit.de/7ll8fjctyrvc.js?"+i;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','28l=ChJPPiAuRyg0OjU0MikkQBVLQFdFRQ4IXhAAGBoIBQgKF18KHQACAxEeFxAATQ4D');</script>
 <!-- End Google Tag Manager -->
 
 <!-- No font preload here — typography is now a system stack (Helvetica
